@@ -3878,6 +3878,1188 @@ export const QUESTIONS: InvestingQuestion[] = [
       { label: "Property yield calculator", href: "/property-yield-calculator" },
     ],
   },
+
+  // ── BUDGETING (5 new) ────────────────────────────────────────────────────────
+
+  {
+    slug: "how-much-emergency-fund-australia",
+    category: "budgeting",
+    question: "How much should I have in an emergency fund in Australia?",
+    metaTitle: "How Much Should You Have in an Emergency Fund in Australia? (2026 Guide)",
+    metaDescription:
+      "Financial planners recommend 3–6 months of essential living expenses in a liquid, high-interest savings account. Learn how to calculate your target, where to keep it, and how Australian cost of living affects the number.",
+    shortAnswer:
+      "Australian financial planners recommend holding 3–6 months of essential living expenses in a liquid, easily accessible account such as a high-interest savings account (HISA). For a single person spending $4,000 per month on essentials, that means $12,000–$24,000. Households with variable income, children, or a single income should target the higher end.",
+    sections: [
+      {
+        heading: "Calculating your target emergency fund",
+        body: "Start by listing essential monthly expenses only — rent or mortgage repayments, groceries, utilities, transport, insurance premiums, and minimum debt repayments. Exclude discretionary spending (dining out, subscriptions, holidays). Multiply by 3 for a minimum buffer and by 6 for a full buffer. For a Sydney renter spending $2,800/month on rent, $600 on groceries, $300 on utilities and transport, and $400 on insurance, the essentials total is $4,100. A 3-month fund = $12,300; a 6-month fund = $24,600. The ABS Consumer Price Index shows average Australian household spending was $3,453 per week in 2023-24, but this includes discretionary items — your essentials figure will be lower.",
+      },
+      {
+        heading: "Where to keep your emergency fund",
+        body: "An emergency fund must be liquid — accessible within one business day without penalty. High-interest savings accounts (HISAs) from institutions like ING, Macquarie, UBank, and ME Bank pay 4–5%+ p.a. (as of 2026) on amounts up to $250,000 (the Financial Claims Scheme guarantee limit). Avoid locking emergency savings in term deposits (early break fees apply), managed funds (market timing risk at withdrawal), or super (not accessible until preservation age). Some Australians keep 1 month of expenses in a transaction account for immediate access and the remaining 2–5 months in a HISA for better interest.",
+      },
+      {
+        heading: "When 6 months is not enough",
+        body: "Standard 3–6 month guidance suits steady employees with two incomes, stable housing, and good health. Increase your target if you are: self-employed or a contractor (income can stop without notice); a sole income earner supporting dependants; in an industry with seasonal employment (construction, hospitality, tourism); carrying significant non-mortgage debt; or approaching a major planned expense (surgery, car replacement). Some financial counsellors recommend 9–12 months for business owners and people with health conditions. Australian median household savings rates have trended around 3–5% of disposable income in recent years, meaning building a 6-month fund from a standing start takes 5–8 years at that rate — automate savings contributions to compress this.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Should my emergency fund be separate from my home loan offset account?",
+        a: "Ideally yes, especially for investment property owners. Mixing your emergency fund with an investment loan offset can create tax complications if you withdraw money for personal use. For owner-occupiers, the offset approach is tax-equivalent to a HISA — the interest saved equals the after-tax return on a deposit — but the psychological benefit of a separate, clearly labelled emergency account often helps people resist spending it.",
+      },
+      {
+        q: "Can I invest my emergency fund in ETFs or shares?",
+        a: "No. Emergency funds must be in cash or near-cash because the entire purpose is certainty of access when you need it most. A sharemarket crash often coincides with job losses and economic downturns — exactly when you would need to draw on an emergency fund. Selling shares at a 20–30% loss to cover a three-month crisis destroys the fund's purpose. Keep emergency savings in cash.",
+      },
+      {
+        q: "How does the Australian welfare safety net affect emergency fund sizing?",
+        a: "Australia has a stronger safety net than many countries — JobSeeker payments, Medicare, and the rental assistance component of welfare reduce the magnitude of emergencies. However, JobSeeker in 2026 is approximately $762 per fortnight for a single person, far below most people's essential living costs. The safety net provides a floor but not a replacement income — an emergency fund bridges the gap between welfare payments and your actual essential expenses.",
+      },
+    ],
+    relatedSlugs: [
+      "how-to-avoid-living-paycheque-to-paycheque-australia",
+      "what-is-the-50-30-20-budgeting-rule-australia",
+      "best-high-interest-savings-accounts-australia",
+    ],
+    relatedTools: [
+      { label: "Savings calculator", href: "/savings-calculator" },
+      { label: "Compare savings accounts", href: "/savings-accounts" },
+    ],
+  },
+  {
+    slug: "what-is-the-50-30-20-budgeting-rule-australia",
+    category: "budgeting",
+    question: "What is the 50/30/20 budgeting rule and does it work in Australia?",
+    metaTitle: "The 50/30/20 Budgeting Rule in Australia: Does It Work? (2026 Guide)",
+    metaDescription:
+      "The 50/30/20 rule allocates 50% of after-tax income to needs, 30% to wants, and 20% to savings. Learn how to apply it to Australian cost of living — and when to adjust the percentages for Sydney or Melbourne budgets.",
+    shortAnswer:
+      "The 50/30/20 rule allocates 50% of your after-tax income to essential needs (rent, groceries, utilities, transport), 30% to wants (dining, entertainment, subscriptions), and 20% to savings and debt repayment. In high-cost Australian cities like Sydney and Melbourne, where rent can consume 35–45% of take-home pay, many budgeters must adjust to a 60/20/20 or 65/15/20 split and prioritise saving the full 20%.",
+    sections: [
+      {
+        heading: "How the 50/30/20 rule works",
+        body: "Created by US Senator Elizabeth Warren in 'All Your Worth' (2005), the rule uses after-tax (take-home) income as the base. Step 1: calculate monthly take-home pay after income tax and Medicare Levy. Step 2: allocate up to 50% to needs — rent or mortgage, groceries, essential utilities (electricity, water, internet), public transport or minimum car costs, health insurance, and minimum loan repayments. Step 3: allocate up to 30% to wants — restaurants, Netflix, gym, clothing beyond basics, holidays. Step 4: direct the remaining 20% to savings, super top-ups, and debt reduction above minimums. The rule's appeal is its simplicity — one calculation, three buckets.",
+      },
+      {
+        heading: "Adjusting for Australian cost of living",
+        body: "The 50% 'needs' allocation is under pressure in major Australian cities. In Sydney, median rent for a 1-bedroom apartment is approximately $2,800/month (Domain rental data, 2026). A person earning $80,000 gross (approximately $5,900/month after tax at 2026 rates) would spend 47% of take-home pay on rent alone, leaving almost nothing for other essentials within the 50% cap. In Melbourne, the figure is slightly lower at $2,300/month but still high. Practical adjustments: (1) If needs genuinely exceed 50%, cap wants at 20% and protect the 20% savings. (2) Consider reducing needs — house-sharing, further from the CBD, a smaller car. (3) Increase income — the fastest way to make the maths work is a higher salary or side income.",
+      },
+      {
+        heading: "Integrating super with the 20% savings bucket",
+        body: "Australia's compulsory superannuation (11.5% SG in FY2026) is not part of your take-home pay, so it is not counted in the 50/30/20 calculation. Some financial planners count employer SG contributions toward the 20% savings target — so your voluntary savings goal above SG might be closer to 8–10% of gross income. For a person on $80,000, employer SG ($9,200/year) plus $5,000/year of voluntary savings or salary sacrifice equals roughly 18% of gross income — close to the intent of the 20% rule. Super is genuinely savings — long-dated and tax-advantaged.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is 20% savings realistic for a first-time buyer saving for a house deposit in Australia?",
+        a: "For most Australians saving for a first home, 20% of take-home pay is likely insufficient to accumulate a deposit at the pace required in rising markets. To save a $120,000 deposit (20% on a $600,000 home) within 5 years, you need to save $24,000 per year — approximately 41% of the take-home income of someone earning $70,000. This requires significant sacrifice in the 'wants' category and may need a higher income, a partner's income, or parental assistance (the Bank of Mum and Dad funded approximately 60% of first home purchases in 2023–24 according to APRA data).",
+      },
+      {
+        q: "What is a zero-based budget vs the 50/30/20 rule?",
+        a: "A zero-based budget assigns every dollar of income a specific purpose — every category gets a pre-set allocation — so income minus all allocations equals zero. It requires more tracking effort than 50/30/20 but can be more effective for people with inconsistent spending patterns or those who overspend in the 'wants' bucket. Many budgeting apps like YNAB (You Need a Budget) use zero-based budgeting. The 50/30/20 rule is better for those who find detailed budgeting unsustainable.",
+      },
+      {
+        q: "Should I include my mortgage repayments in needs or savings?",
+        a: "The principal component of a mortgage repayment is a form of forced saving (building equity), so some budgeters treat it as savings rather than a need. The interest component is a pure cost. For simplicity, most frameworks include the entire mortgage repayment in 'needs', since it is a non-negotiable commitment. Once the 50% needs and 20% savings allocations are made, the priority order within savings is: (1) emergency fund, (2) high-interest debt repayment, (3) super top-ups, (4) investment or offset contributions.",
+      },
+    ],
+    relatedSlugs: [
+      "how-much-emergency-fund-australia",
+      "how-to-avoid-living-paycheque-to-paycheque-australia",
+      "what-is-salary-packaging-australia",
+    ],
+    relatedTools: [
+      { label: "Savings calculator", href: "/savings-calculator" },
+    ],
+  },
+  {
+    slug: "how-to-build-credit-score-australia",
+    category: "budgeting",
+    question: "How do you build a good credit score in Australia?",
+    metaTitle: "How to Build Your Credit Score in Australia (2026 Guide)",
+    metaDescription:
+      "Australia uses comprehensive credit reporting from three bureaus: Equifax, Illion, and Experian. Learn how your credit score is calculated, what hurts it, and the fastest ways to improve it before applying for a mortgage or car loan.",
+    shortAnswer:
+      "In Australia, credit scores are calculated by three bureaus — Equifax, Illion, and Experian — based on your credit report including payment history, credit applications, outstanding debts, and defaults. To build a good score: pay all bills on time, limit credit applications, keep credit card balances low relative to limits, and maintain a long credit history. Australia does not use the US FICO system — scores vary by bureau but Equifax scores range from 0–1,200.",
+    sections: [
+      {
+        heading: "How Australian credit scores work",
+        body: "Australia operates a comprehensive credit reporting (CCR) system since 2018 that includes both negative information (defaults, late payments, bankruptcies) and positive information (on-time payments, credit limits, account types). Three main bureaus operate: Equifax (scores 0–1,200), Illion (scores 0–1,000), and Experian (scores 0–1,000). Lenders pull reports from one or more bureaus when assessing loan applications. There is no single universal score like the US FICO — each bureau calculates independently. You are entitled to one free credit report per year from each bureau (under the Privacy Act), and free real-time access to your Equifax score via services like Credit Savvy, ClearScore, or directly through credit card providers.",
+      },
+      {
+        heading: "What affects your credit score",
+        body: "Positive factors: consistent on-time repayments (the single largest factor under CCR), long credit history, low credit card utilisation (ideally below 30% of the credit limit), and a mix of credit types (card, personal loan, mortgage). Negative factors: payment defaults (missed payments of 60+ days reported by lenders), credit enquiries (each application creates a 'hard enquiry' visible to future lenders for 5 years), accounts in arrears, debt agreements (Part IX), and bankruptcy (Part X). Under comprehensive credit reporting, lenders can now see 24 months of repayment history on all credit facilities — a good run of 12–24 months of on-time payments can substantially repair a damaged score.",
+      },
+      {
+        heading: "Practical steps to build and improve your score",
+        body: "For someone starting from scratch or repairing a damaged score: (1) Get a credit card and pay it in full each month — this is the fastest way to build positive payment history. A low-limit secured credit card is available even with no prior credit history. (2) Set up direct debits for all bills to avoid accidental late payments. (3) Do not apply for multiple credit products in a short period — multiple hard enquiries in a short window signal financial stress. (4) Check your credit reports annually for errors — dispute inaccurate defaults or listings via the bureau's online process. (5) Pay any overdue accounts — a settled default is better than an active one, though the listing remains for 5–7 years. (6) Keep older credit accounts open even if unused — length of history matters.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does buy now pay later (BNPL) affect my credit score in Australia?",
+        a: "From 2025, the Australian government's reforms to BNPL regulation require many BNPL providers to conduct credit checks and report to credit bureaus. Previously, most BNPL products (Afterpay, Zip, Klarna) did not appear on credit reports. Under the new framework, BNPL defaults and repayment history may increasingly appear on credit files. Missed BNPL payments could negatively affect your score. Check your specific BNPL provider's reporting obligations.",
+      },
+      {
+        q: "How long do negative listings stay on my credit file in Australia?",
+        a: "The timeframes under the Privacy Act are: payment defaults — 5 years from the date of listing; serious credit infringements (e.g. fraud) — 7 years; debt agreements (Part IX) — 5 years from the agreement date or 2 years after the agreement is completed, whichever is later; bankruptcy (Part X) — 5 years from the date of bankruptcy or 2 years after discharge, whichever is later. Hard credit enquiries remain for 5 years but are weighted less over time.",
+      },
+      {
+        q: "Does a credit score affect mortgage approval in Australia?",
+        a: "Yes, though Australian lenders weigh serviceability (your ability to repay based on income and expenses) more heavily than the credit score itself in most cases. A low credit score can result in higher interest rates, reduced borrowing capacity, or outright decline. Lenders such as the major banks typically require a minimum Equifax score of around 600–650 for prime mortgage approval. Non-conforming lenders will lend to lower scores at higher rates. Improving your score before applying can meaningfully reduce your interest rate offer.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-the-50-30-20-budgeting-rule-australia",
+      "how-much-emergency-fund-australia",
+      "how-to-buy-property-in-australia",
+    ],
+    relatedTools: [
+      { label: "Mortgage calculator", href: "/mortgage-calculator" },
+      { label: "Debt repayment calculator", href: "/debt-calculator" },
+    ],
+  },
+  {
+    slug: "what-is-salary-packaging-australia",
+    category: "budgeting",
+    question: "What is salary packaging and what can Australians salary sacrifice?",
+    metaTitle: "Salary Packaging in Australia: What You Can Salary Sacrifice (2026 Guide)",
+    metaDescription:
+      "Salary packaging lets you pay for certain expenses from pre-tax income, reducing your taxable income. Learn which benefits attract FBT exemptions, the $9,010 FBT threshold, and which employers offer the best salary packaging.",
+    shortAnswer:
+      "Salary packaging (salary sacrifice) lets you pay for approved benefits from your pre-tax salary, reducing your taxable income. Common packages include superannuation (the most tax-efficient option), novated car leases, laptops, childcare, and — for charity and hospital employees — living expenses up to an FBT-exempt threshold of $9,010 per year ($15,900 for hospital/public benevolent institutions). The tax saving depends on your marginal rate.",
+    sections: [
+      {
+        heading: "How salary packaging reduces tax",
+        body: "When you salary sacrifice, the packaged amount is paid from your gross salary before income tax is withheld. This reduces your taxable income. For example, a person earning $95,000 who salary sacrifices $10,000 into super has taxable income of $85,000, reducing their marginal tax rate exposure. The $10,000 enters super at 15% contributions tax instead of being taxed at their marginal rate of 32.5% (plus 2% Medicare Levy) — a saving of $1,850. Most Australian employers offer salary sacrifice into super. Other packaged benefits may attract Fringe Benefits Tax (FBT) charged to the employer — which the employer passes back to you, partially offsetting the benefit.",
+      },
+      {
+        heading: "Benefits exempt from FBT",
+        body: "Not all salary-packaged benefits attract FBT. Fully FBT-exempt benefits include: (1) Super contributions — no FBT, only 15% contributions tax. (2) Laptops and portable electronic devices — one per FBT year per category (work-related). (3) Protective clothing and tools of trade (work-related). (4) In-house expenses (gym, childcare at workplace) in some cases. Concessionally FBT-treated benefits include: novated car leases (the FBT value is calculated on a statutory formula, not actual use). Charity and public benevolent institution (PBI) employees — including most hospital workers, ambulance workers, and not-for-profit employees — can package up to $15,900 in general living expenses ($9,010 for other public benefit organisations) before FBT applies — this is one of the most valuable salary packaging benefits available in Australia.",
+      },
+      {
+        heading: "Common salary packaging items and their limits",
+        body: "Superannuation: up to the concessional contributions cap ($30,000 in FY2026, including employer SG). Novated car lease: covers lease payments, fuel, insurance, registration, and maintenance for a car under a three-way arrangement with employer and finance company. Electric vehicles purchased after 1 July 2022 are entirely FBT-exempt under the Electric Car Discount legislation — making EV novated leases extremely tax-effective. Childcare through employer-operated centres: FBT-exempt for on-site care. Portable electronic devices: one laptop, one phone per FBT year. Remote area benefits (housing, utilities) for employees in approved remote areas attract concessional FBT treatment. Meal entertainment: limited to $2,650 per FBT year for PBI/hospital employees under the meal entertainment cap.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does salary packaging affect my Centrelink entitlements?",
+        a: "Centrelink uses 'adjusted fringe benefits' in income assessments. If you package living expenses (a reportable fringe benefit), Centrelink adds the grossed-up value of those benefits to your income for means-testing purposes. This can reduce Family Tax Benefit, childcare subsidies, and other income-tested payments. The tax saving from packaging may be partly offset by reduced Centrelink entitlements — model your specific situation before packaging.",
+      },
+      {
+        q: "Can I salary sacrifice if I am a contractor or casual employee?",
+        a: "Salary sacrifice is only available if your employer offers it — casual employees and contractors working through their own entity cannot salary sacrifice, as there is no employer-employee relationship. Some labour-hire arrangements allow salary sacrifice if structured correctly. If you are a contractor working through a company, paying yourself a salary and then salary sacrificing super is possible but requires proper payroll setup.",
+      },
+      {
+        q: "What is a novated lease and how does it work?",
+        a: "A novated lease is a three-way agreement between you, your employer, and a finance company. Your employer takes on the lease obligation and deducts lease payments from your pre-tax salary. You drive the car; lease, running costs, registration, and insurance are all packaged. At lease end (typically 3 years) you can refinance, hand back, or buy out the residual. FBT applies on the personal-use component — but for EVs there is currently no FBT, making the saving very significant (effectively the entire lease is pre-tax).",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-the-50-30-20-budgeting-rule-australia",
+      "how-does-salary-sacrifice-super-work",
+      "how-to-avoid-living-paycheque-to-paycheque-australia",
+    ],
+    relatedTools: [
+      { label: "Super contributions calculator", href: "/super-contributions-calculator" },
+    ],
+  },
+  {
+    slug: "how-to-avoid-living-paycheque-to-paycheque-australia",
+    category: "budgeting",
+    question: "How do you stop living paycheque to paycheque in Australia?",
+    metaTitle: "How to Stop Living Paycheque to Paycheque in Australia (2026 Guide)",
+    metaDescription:
+      "About 40% of Australians report running out of money before their next pay. Learn automated savings strategies, the envelope method adapted for Australian cost of living, and practical steps to build financial buffers.",
+    shortAnswer:
+      "The most effective way to stop living paycheque to paycheque is to automate your savings before you spend — set up a direct debit to a separate savings account on payday, even if it is only $50. Pair this with a clear picture of your essential expenses, eliminate or reduce discretionary spending that is not delivering value, and work toward a $2,000–$3,000 starter emergency buffer as your first milestone.",
+    sections: [
+      {
+        heading: "Why automation is more effective than willpower",
+        body: "Behavioural finance research consistently shows that automated savings outperform manual savings because they remove the decision to save from willpower to system. Set up two automatic transfers on the day your salary arrives: one to a high-interest savings account (your emergency fund or savings goal) and one to your everyday account with only the money you need for bills and living. If the savings account is with a different institution and has no linked card, it becomes harder to access on impulse. 'Pay yourself first' — automating savings before discretionary spending — is the foundation of every successful personal financial system.",
+      },
+      {
+        heading: "Practical budgeting for Australian cost benchmarks",
+        body: "Use Australian cost benchmarks to calibrate your budget. As a rough guide for a single Sydney renter on median wage (~$90,000 gross, ~$6,500/month take-home in 2026): rent at median 1-bed ($2,800), groceries ($400), transport ($200), utilities ($150), phone/internet ($80), health insurance ($150) = $3,780 essentials per month (58% of take-home). For a couple both working and splitting rent: individual essential spending could be $2,500/month, leaving meaningful savings capacity. If you are earning under $60,000 gross in Sydney, the maths genuinely do not work on median rents — increasing income (second job, upskilling, negotiating salary) is as important as cutting costs.",
+      },
+      {
+        heading: "The envelope method adapted for Australia",
+        body: "The envelope method allocates cash for each spending category into a physical or digital envelope — once an envelope is empty, spending stops. In Australia's near-cashless economy, digital envelope apps work better than physical ones. Apps like YNAB (You Need a Budget), Frollo, or the budgeting features of Up Bank and ING enable digital envelope budgeting linked to real accounts. Practical categories for Australians: rent/mortgage, groceries, transport, utilities, eating out, entertainment, clothing, personal care, and miscellaneous. Set a realistic limit for each, fund the envelopes on payday, and track in real time. The discipline of seeing an envelope depleting makes overspending viscerally uncomfortable.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What should my first savings goal be if I have zero savings right now?",
+        a: "A $2,000 starter emergency fund. This covers most common financial emergencies — a car repair, dental bill, or one month of unexpected reduced income. Before this, a single unexpected expense pushes you into debt. Build $2,000 first, then work toward one month of expenses, then three months. Do not try to invest or top up super until you have the starter emergency fund — the guaranteed return of avoiding a high-interest credit card debt exceeds almost all investment returns.",
+      },
+      {
+        q: "Should I pay off debt or save first?",
+        a: "A small cash buffer ($1,000–$2,000) before aggressively paying down debt because without any cash reserve, every small emergency becomes more debt. Once the buffer is in place, focus on debt in order of interest rate — highest rate first (the avalanche method). Credit cards in Australia commonly charge 19–22% interest — paying off a $5,000 credit card balance is equivalent to a guaranteed 20% investment return. After high-interest consumer debt is cleared, resume building the full 3–6 month emergency fund.",
+      },
+      {
+        q: "How does the HECS-HELP debt repayment threshold affect cash flow?",
+        a: "HECS-HELP repayments are mandatory once your income exceeds the repayment threshold ($54,435 in 2026-27). Repayments are 1–10% of income depending on the bracket and are deducted through PAYG withholding — you may not notice them until your tax return. People who recently crossed the threshold may find their effective take-home pay lower than expected. Factor HECS repayments into your take-home pay calculation (subtract the repayment percentage before budgeting).",
+      },
+    ],
+    relatedSlugs: [
+      "how-much-emergency-fund-australia",
+      "what-is-the-50-30-20-budgeting-rule-australia",
+      "what-is-salary-packaging-australia",
+    ],
+    relatedTools: [
+      { label: "Savings calculator", href: "/savings-calculator" },
+      { label: "Debt repayment calculator", href: "/debt-calculator" },
+    ],
+  },
+
+  // ── BUSINESS (4 new) ─────────────────────────────────────────────────────────
+
+  {
+    slug: "sole-trader-vs-company-australia",
+    category: "business",
+    question: "Sole trader vs company in Australia: which structure should I choose?",
+    metaTitle: "Sole Trader vs Company Australia: Tax, Liability & Cost Comparison (2026)",
+    metaDescription:
+      "Sole traders pay tax at personal marginal rates; companies pay 25% or 30%. Learn the key differences in liability protection, admin cost, and tax treatment to choose the right structure for your Australian business.",
+    shortAnswer:
+      "Sole traders pay income tax at personal marginal rates (up to 47% including Medicare Levy), have unlimited personal liability, and cost almost nothing to set up. A company pays 25% tax (base rate entities with turnover under $50M) or 30% (others), provides limited liability protecting personal assets, but costs $576 to register and $310/year in ASIC fees plus compliance costs. Most businesses earning under $80,000–$100,000 profit start as sole traders; those above $150,000+ typically benefit from company structure.",
+    sections: [
+      {
+        heading: "Tax comparison: sole trader vs company",
+        body: "A sole trader's business profit is added directly to their personal tax return and taxed at marginal rates. At $150,000 net profit, the marginal rate on the last dollar is 37% (FY2026) — effective tax rate approximately 32%. A company paying 25% on the same $150,000 profit saves $10,500 in tax compared to the sole trader's effective rate. However, the company tax saving is only realised if profit is retained in the company — as soon as you pay a dividend to yourself, the shareholder pays income tax on the dividend (with franking credits offsetting company tax already paid). The benefit of a company is timing: you defer personal tax on retained earnings, which can compound in the business.",
+      },
+      {
+        heading: "Liability and asset protection",
+        body: "A sole trader has unlimited personal liability — if your business is sued or cannot pay debts, your personal assets (home, car, savings) are exposed. A company is a separate legal entity: shareholders' liability is limited to their paid-up share capital. This is significant for businesses with physical risks (trades, health services, events), employees, or significant contracts. In practice, banks often require personal guarantees from company directors on business loans, limiting the protection for debt financing. Professional indemnity and public liability insurance are essential regardless of structure. The limited liability benefit of a company is most relevant for trade creditors and negligence claims.",
+      },
+      {
+        heading: "Admin cost and complexity",
+        body: "Sole trader: register for an ABN (free via ABR), optionally register a business name ($44/year on ASIC), register for GST if turnover exceeds $75,000. Annual tax return via Schedule E (business income), no separate entity tax return. Estimated annual accounting cost: $500–$2,000. Company: register with ASIC ($576 initial registration fee, $310 annual review fee), requires a company constitution, maintain ASIC registers, file a separate company tax return, hold annual general meetings (or pass resolutions). Estimated annual accounting cost: $3,000–$8,000 for a small company. A discretionary (family) trust structure is a third option that combines income-splitting flexibility with simpler annual compliance than a company but is not a separate tax-paying entity at the company rate.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I switch from sole trader to company later?",
+        a: "Yes. The ATO provides a small business restructure rollover (Subdivision 328-G of ITAA 1997) that allows eligible small businesses with turnover under $10M to transfer assets to a company without triggering CGT or stamp duty (in most states). Legal requirements apply including genuine business restructure intent. The rollover preserves the cost base of transferred assets. Clients should seek advice from a tax agent before restructuring to confirm eligibility.",
+      },
+      {
+        q: "What is a discretionary trust and is it better than a company?",
+        a: "A discretionary (family) trust is a structure where a trustee distributes income to beneficiaries at their discretion each year. Income is taxed in the hands of beneficiaries at their marginal rates — allowing income splitting (distributing to lower-income family members). Trusts do not pay tax at a company rate — all income is distributed. They offer moderate asset protection (trust assets are generally separate from the trustee's personal assets). Setup costs $2,000–$5,000. Trusts are popular for family businesses because of income splitting flexibility; companies are preferred when profit retention or capital raising is the goal.",
+      },
+      {
+        q: "Do sole traders get access to the small business tax offset?",
+        a: "Yes. Sole traders who are small business entities (aggregated turnover under $10M) are eligible for the small business income tax offset of 16% on the tax payable on business income, capped at $1,000 per year. This partially compensates for the higher marginal rate that sole traders pay compared to the 25% company rate.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-the-small-business-cgt-concession-work-australia",
+      "what-is-division-7a-australia",
+      "how-to-register-for-gst-australia",
+    ],
+    relatedTools: [
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+    ],
+  },
+  {
+    slug: "how-does-the-small-business-cgt-concession-work-australia",
+    category: "business",
+    question: "How does the small business CGT concession work in Australia?",
+    metaTitle: "Small Business CGT Concessions in Australia: 4 Reliefs Explained (2026)",
+    metaDescription:
+      "Australia's small business CGT concessions can eliminate all tax on the sale of a qualifying business asset. Learn the 4 concessions, the $6M net assets test, the $2M turnover test, and the 15-year exemption.",
+    shortAnswer:
+      "Australia's small business CGT concessions (Subdivision 152 of ITAA 1997) can reduce or eliminate capital gains on disposing of active business assets. Four concessions apply: the 15-year exemption (full exemption if held for 15+ years and owner is 55+), the 50% active asset reduction, the retirement exemption (up to $500,000 lifetime into super), and the rollover. To qualify, you must pass either a $2M aggregated turnover test or a $6M maximum net assets test.",
+    sections: [
+      {
+        heading: "The basic eligibility conditions",
+        body: "To access any small business CGT concession, you must satisfy: (1) the basic conditions — either aggregated turnover under $2M or maximum net assets value of $6M. The $6M net assets test sums the net value of all assets of you, your affiliates, your connected entities, and spouses/children — excluding your home (if not used in the business), superannuation, personal use assets. (2) The asset must be an 'active asset' — used or ready for use in carrying on a business for at least half the period of ownership (or 7.5 years for assets held over 15 years). (3) You must be a CGT small business entity, a partner in a qualifying partnership, or a beneficiary of a qualifying trust.",
+      },
+      {
+        heading: "The four concessions",
+        body: "15-year exemption: if an asset has been held for at least 15 years continuously and the individual taxpayer (or entity) is at least 55 years old and retiring (or permanently incapacitated), the entire capital gain is exempt — no tax at all. This is the most powerful concession available to Australian small business owners planning their exit. 50% active asset reduction: after the standard 50% CGT discount (for 12-month+ holdings), an additional 50% reduction applies to the remaining gain. Combined, an individual may only include 25% of the original gain in their assessable income. Retirement exemption: up to $500,000 (lifetime cap) of capital gain can be disregarded; if you are under 55, the exempt amount must be contributed to super. Rollover: defer the capital gain for 2 years (or until you acquire a replacement asset) — the gain is rolled over rather than taxed immediately.",
+      },
+      {
+        heading: "Practical example: selling a business",
+        body: "Scenario: An individual sells a business with an active business goodwill value of $800,000. Cost base of goodwill: $50,000 (established from nothing). Capital gain: $750,000. Step 1: General 50% CGT discount (held 12+ months): $375,000. Step 2: 50% active asset reduction: $187,500. Step 3: Retirement exemption (individual is 58): $187,500 (all remaining gain exempt under the $500,000 cap). Final tax on the business sale: $0. Additionally, the $187,500 retirement exemption amount (for those over 55) does not need to go into super. The entire $800,000 sale proceeds are kept by the individual tax-free.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does commercial property qualify for the small business CGT concessions?",
+        a: "Only if it is an active asset used in the business. Commercial property that a business owner's company owns and leases to their operating business at arm's length terms can qualify as an active asset if the operating business contributes at least 51% of the total value of the entity. Pure investment commercial property with unrelated tenants does not qualify. The distinction between an active business asset and a passive investment asset is critical.",
+      },
+      {
+        q: "Can a company or trust access the small business CGT concessions?",
+        a: "Yes, but the concessions are often more complex for companies and trusts. For a company, the retirement exemption must be paid to individuals as a capital gain under section 152-325 (not retained in the company). For trusts, the concession can be passed through to beneficiaries. Companies do not receive the general 50% CGT discount, so for a company using the concessions, the sequence and calculations differ from an individual.",
+      },
+      {
+        q: "What is the CGT Small Business Rollover?",
+        a: "The small business rollover defers a capital gain on the disposal of an active asset for up to 2 years after the year of sale (or until you acquire a replacement active asset, whichever is earlier). If you acquire a replacement asset within the period, the deferred gain reduces its cost base. If no replacement asset is acquired, the gain becomes assessable at the end of the rollover period. The rollover is useful when selling a business and planning to acquire another business or asset.",
+      },
+    ],
+    relatedSlugs: [
+      "sole-trader-vs-company-australia",
+      "what-is-capital-gains-tax-discount",
+      "cgt-50-percent-discount-eligibility-australia",
+    ],
+    relatedTools: [
+      { label: "CGT calculator", href: "/cgt-calculator" },
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+    ],
+  },
+  {
+    slug: "what-is-division-7a-australia",
+    category: "business",
+    question: "What is Division 7A and why does it matter for Australian business owners?",
+    metaTitle: "Division 7A Explained: Loans from Company to Shareholder Australia (2026)",
+    metaDescription:
+      "Division 7A treats loans from a private company to shareholders or their associates as unfranked dividends unless a complying loan agreement is in place. Learn the minimum repayment rules, benchmark interest rate, and how to avoid costly mistakes.",
+    shortAnswer:
+      "Division 7A of the Income Tax Assessment Act 1936 treats loans, payments, or debt forgiveness from a private company to its shareholders or their associates as unfranked dividends — assessable to the individual at their marginal tax rate — unless a formal complying loan agreement is in place with minimum annual repayments at the ATO's benchmark interest rate (8.27% for 2024-25).",
+    sections: [
+      {
+        heading: "What triggers a Division 7A deemed dividend",
+        body: "Three situations trigger Division 7A: (1) a loan by a private company to a shareholder or associate, (2) a payment (advance, benefit, use of company asset) to a shareholder or associate, and (3) a debt the company forgives owed by a shareholder or associate. 'Associate' is defined broadly — it includes spouses, children, parents, siblings, trusts where the shareholder is a trustee or beneficiary, and partnerships. Director salary advances, company credit card use for personal expenses, and company-funded holidays all have the potential to trigger Division 7A if not properly documented and repaid. The division applies to payments made in an income year before the company lodges its tax return for that year.",
+      },
+      {
+        heading: "Complying loan agreements: avoiding the deemed dividend",
+        body: "A loan from a private company to a shareholder can be structured as a complying loan if: (1) a written loan agreement is in place by the earlier of the lodgment day or 30 June following the year the loan was made, (2) interest is charged at no less than the ATO's benchmark interest rate (published annually — 8.27% in 2024-25), (3) minimum annual repayments of principal and interest are made. The maximum loan term is 7 years for unsecured loans, or 25 years for loans secured by a registered mortgage over real property. If either the interest rate or minimum repayment is not met in any year, the shortfall is treated as a deemed dividend in that year.",
+      },
+      {
+        heading: "Minimum repayment calculation",
+        body: "The minimum yearly repayment (MYR) is calculated using an ATO formula that factors in the loan balance, interest rate, and remaining loan term. For a $100,000 loan on a 7-year term at 8.27%: the first year MYR is approximately $19,400 (principal plus interest). Failure to make the MYR by 30 June converts the shortfall to a deemed dividend — taxable to the shareholder at their marginal rate with no franking credit. Division 7A catches many business owners by surprise when they informally access company funds for personal use, particularly in trusts where companies act as trustees with unpaid present entitlements (UPEs) owed to related individuals.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does Division 7A apply to distributions from discretionary trusts?",
+        a: "Division 7A applies to trusts where a private company is a beneficiary and the trust does not pay the company the amount owed — the 'unpaid present entitlement' (UPE). Since 2010, UPEs owed to company beneficiaries can be caught by Division 7A if not placed on complying sub-trust or loan terms. This is one of the most complex areas of Australian tax law and requires careful trust distribution planning by tax advisers each year.",
+      },
+      {
+        q: "Can I retrospectively fix a Division 7A breach?",
+        a: "It is difficult to retrospectively reverse a deemed dividend once the lodgment date has passed. The ATO may allow the company to convert an existing non-complying loan to a complying loan agreement in limited circumstances, but the deemed dividend already assessed is generally not reversed. Prevention is far more effective — ensure all company payments to shareholders are tracked, properly documented as loans, and minimum repayments are met annually.",
+      },
+      {
+        q: "What are the penalties for Division 7A non-compliance?",
+        a: "The deemed dividend is included in the shareholder's assessable income at their marginal tax rate with no franking credit attached — so tax is payable on 100% of the amount at up to 47%. Penalties may apply for tax shortfalls, and general interest charge (GIC) accrues on underpaid tax. For significant amounts, Division 7A assessments from an ATO audit can produce large unexpected tax bills. The ATO publishes a Division 7A calculator on its website to help compute minimum repayments.",
+      },
+    ],
+    relatedSlugs: [
+      "sole-trader-vs-company-australia",
+      "how-does-the-small-business-cgt-concession-work-australia",
+      "how-to-register-for-gst-australia",
+    ],
+    relatedTools: [
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+    ],
+  },
+  {
+    slug: "how-to-register-for-gst-australia",
+    category: "business",
+    question: "How do you register for GST in Australia and when is it mandatory?",
+    metaTitle: "How to Register for GST in Australia: When, How & BAS Guide (2026)",
+    metaDescription:
+      "GST registration is mandatory when annual turnover reaches $75,000 ($150,000 for non-profits). Learn how to register via the ATO, choose quarterly or monthly BAS, and understand input tax credits.",
+    shortAnswer:
+      "GST registration is mandatory in Australia once your business turnover reaches $75,000 per year ($150,000 for non-profit organisations). Below $75,000 you can register voluntarily. Registration is done online via the ATO's ABR (Australian Business Register) portal. Once registered, you must charge 10% GST on most taxable supplies, lodge Business Activity Statements (BAS), and remit net GST to the ATO quarterly, monthly, or annually.",
+    sections: [
+      {
+        heading: "When GST registration is mandatory",
+        body: "You must register for GST if: your business's GST turnover (gross revenue from taxable supplies) is $75,000 or more in any 12-month period (current or projected). The $75,000 threshold looks at current turnover plus anticipated future turnover — if you expect to exceed $75,000 within the next 12 months, you must register before reaching the threshold. Special rules: if you provide taxi, rideshare, or hire-car services, you must register regardless of turnover. If your turnover is below $75,000, registration is voluntary — but you cannot charge or claim GST until registered. Registration is effective from the date you apply or a date you request (e.g. business start date).",
+      },
+      {
+        heading: "How to register for GST",
+        body: "Register online via the ATO's Business Registration Service (business.gov.au) or ATO Business Portal, or through a registered tax agent. You must have an ABN before registering for GST. Registration is typically processed within a few days. Once registered, you receive confirmation and a GST registration start date. You then need to: (1) add 10% GST to your invoices, (2) issue tax invoices for sales over $82.50 (including GST), (3) track input tax credits (GST paid on business expenses), and (4) lodge BAS. The accounting method for GST can be cash basis (GST remitted when payment received) or accruals basis (GST remitted when invoice issued) — cash basis is available to small businesses with turnover under $10M.",
+      },
+      {
+        heading: "Business Activity Statements (BAS) and lodgment",
+        body: "Once GST-registered, you must lodge BAS to report and pay the net GST owed (GST collected on sales minus input tax credits on purchases). Lodgment frequency options: quarterly (most common for businesses under $20M), monthly (for larger businesses or those wanting more frequent reconciliation), or annually (for businesses under $75,000 who chose voluntary registration — only available with annual turnover under $75,000). The quarterly BAS is due on the 28th of the month after each quarter (October, February, April, July). Using a registered BAS agent gives a 4-week lodgment extension. GST is a cash-flow management tool — collect 10% on sales, remit it net of input credits each quarter.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What expenses can I claim input tax credits for?",
+        a: "You can claim input tax credits (ITC) on GST paid for purchases used in carrying on your GST-registered business. Common examples: equipment, vehicles, supplies, contractor invoices (if supplier is GST-registered), commercial rent, and professional services. You cannot claim ITCs on: purchases for private use, wages, superannuation contributions, input-taxed supplies (residential rent, financial services), and purchases from non-registered suppliers. Apportion mixed-use items (e.g. a car used 60% for business) to the business percentage.",
+      },
+      {
+        q: "Is there a difference between taxable, input-taxed, and GST-free supplies?",
+        a: "Yes. Taxable supplies attract 10% GST. GST-free supplies (such as most basic food, medical services, education, and exports) are not subject to GST but you can still claim input tax credits on costs incurred. Input-taxed supplies (such as financial services, residential rent, and precious metals) are not subject to GST and you cannot claim ITCs on expenses that relate solely to making input-taxed supplies. Businesses with mixed supply types (e.g. a developer selling apartments — which are input-taxed residential supply — and commercial property) need to carefully apportion ITC claims.",
+      },
+      {
+        q: "Should a new business under $75,000 register for GST voluntarily?",
+        a: "It depends on your customer base. If you sell primarily to other businesses (B2B), they will want a tax invoice with GST so they can claim input credits — voluntary registration is often expected. If you sell to consumers (B2C), not registering below $75,000 means your prices are 10% cheaper than GST-registered competitors, which can be an advantage. Voluntary registration also lets you claim ITCs on business expenses — useful if you have significant start-up costs before revenue.",
+      },
+    ],
+    relatedSlugs: [
+      "sole-trader-vs-company-australia",
+      "how-does-the-small-business-cgt-concession-work-australia",
+      "what-is-division-7a-australia",
+    ],
+    relatedTools: [
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+    ],
+  },
+
+  // ── CRYPTO (4 new) ───────────────────────────────────────────────────────────
+
+  {
+    slug: "how-is-cryptocurrency-taxed-in-australia",
+    category: "crypto",
+    question: "How is cryptocurrency taxed in Australia?",
+    metaTitle: "Cryptocurrency Tax in Australia: ATO Rules for CGT & Income (2026 Guide)",
+    metaDescription:
+      "The ATO treats cryptocurrency as a CGT asset, not currency. Disposals trigger capital gains events. Mining and staking income is assessable income. Learn the ATO's rules for crypto tax in Australia.",
+    shortAnswer:
+      "The ATO treats cryptocurrency as a capital gains tax (CGT) asset — not foreign currency. Disposing of crypto (selling, trading, spending, gifting) triggers a CGT event. If held for more than 12 months, individuals receive the 50% CGT discount. Crypto received from mining or staking is ordinary income at its AUD value on receipt. All crypto transactions must be reported in your annual tax return.",
+    sections: [
+      {
+        heading: "Cryptocurrency as a CGT asset",
+        body: "The ATO confirmed in Tax Determination TD 2014/26 that cryptocurrency is a CGT asset under section 108-5 of the Income Tax Assessment Act 1997. Every time you dispose of cryptocurrency — sell for AUD, exchange for another crypto, use to pay for goods or services, or gift it — a CGT event occurs. The capital gain or loss is calculated as the proceeds (in AUD at the time of disposal) minus the cost base (in AUD at the time of acquisition, plus any additional costs such as exchange fees). Gains on assets held more than 12 months qualify for the 50% CGT discount for individual investors (not traders). Personal use assets exemption: if you acquire crypto solely for personal use and spend it, and the cost was under $10,000, it may be exempt — but the ATO scrutinises this closely for assets with investment intent.",
+      },
+      {
+        heading: "Mining, staking, and other crypto income",
+        body: "Crypto received from mining is assessed as ordinary income at the AUD market value on the date of receipt. The same amount becomes the cost base for future CGT purposes. If you mine as a business (commercial-scale GPU farms, etc.), the income is business income and associated expenses (electricity, equipment depreciation) are deductible. Hobby mining may not be business income but is still assessable under general income provisions. Staking rewards: the ATO's position (Tax Determination 2022/11, draft) treats staking rewards as ordinary income at market value on receipt. DeFi lending returns (yield farming), liquidity pool fees, and similar crypto income flows are also treated as assessable income. Airdrops may be ordinary income or capital gain depending on circumstances.",
+      },
+      {
+        heading: "Record-keeping and CGT calculation",
+        body: "Every crypto transaction requires a contemporaneous AUD record: date, coin, amount, AUD value at the time, exchange fees, and the purpose (purchase, sale, trade, staking reward). The ATO requires these records to be kept for 5 years after disposal. For investors with many transactions (hundreds of trades), specialist crypto tax software (Koinly, CoinTracker, Syla) integrates with Australian exchanges to automate CGT calculations. Cost base methods available in Australia: the default is FIFO (First In First Out), but the ATO's cost base rules actually allow individual asset identification if you have sufficient records — Specific Identification can minimise gains by identifying which acquisition lot to use for each disposal.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is swapping one cryptocurrency for another a taxable event in Australia?",
+        a: "Yes. When you exchange Bitcoin for Ethereum (or any crypto-to-crypto trade), the ATO treats this as a disposal of the first asset at its AUD market value at the time of the trade, and an acquisition of the second asset at the same value. A capital gain or loss arises on the disposed asset. This means every crypto-to-crypto trade is a taxable event, even if you never convert to AUD — you must value each trade in AUD at the time it occurs.",
+      },
+      {
+        q: "Do I need to declare crypto on my tax return if I made a loss?",
+        a: "Yes. All CGT events must be reported, including losses. Capital losses cannot be deducted against ordinary income, but they can offset capital gains in the same year or be carried forward indefinitely to offset future capital gains. Failing to report crypto transactions (including losses) may result in penalties if the ATO data-matches your account from exchange reporting.",
+      },
+      {
+        q: "What is the ATO's personal use asset exemption for crypto?",
+        a: "The personal use asset exemption (section 118-10 ITAA 1997) may apply if you acquire a crypto asset to purchase goods or services for personal use and dispose of it for that purpose within a short time. The exemption only applies if the cost was under $10,000. In practice, the ATO applies this narrowly — crypto bought and held for months before being spent, or crypto acquired partly for investment, does not qualify. Most crypto purchases are considered investment assets, not personal use assets.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-the-ato-approach-to-crypto-reporting-australia",
+      "can-you-hold-cryptocurrency-in-an-smsf-australia",
+      "cgt-50-percent-discount-eligibility-australia",
+      "how-do-i-report-crypto-tax-in-australia",
+    ],
+    relatedTools: [
+      { label: "CGT calculator", href: "/cgt-calculator" },
+    ],
+  },
+  {
+    slug: "what-is-the-ato-approach-to-crypto-reporting-australia",
+    category: "crypto",
+    question: "What is the ATO's approach to crypto tax reporting in Australia?",
+    metaTitle: "ATO Crypto Tax Reporting: Data Matching, TFN Withholding & Obligations (2026)",
+    metaDescription:
+      "The ATO uses data matching from Australian crypto exchanges to identify unreported transactions. Learn what the ATO knows, mandatory exchange reporting, TFN withholding, and your obligations.",
+    shortAnswer:
+      "The ATO actively data-matches cryptocurrency transaction records from Australian exchanges (Coinbase, CoinSpot, Binance AU, Independent Reserve) to identify taxpayers who have not reported crypto gains. Australian exchanges are required to report customer data to the ATO. TFN withholding may apply if you have not provided your TFN to your exchange. All crypto disposals must be reported in your annual tax return.",
+    sections: [
+      {
+        heading: "ATO data matching from exchanges",
+        body: "The ATO has operated a dedicated cryptocurrency data-matching program since 2019 under its data matching guidelines (PCG 2017/10). Australian-registered exchanges are required under the Anti-Money Laundering and Counter-Terrorism Financing Act 2006 (AML/CTF) to maintain KYC (Know Your Customer) records. The ATO issues data requests to exchanges for customer identity data, account balances, and transaction histories. Customers identified through this matching who have not reported crypto transactions in their tax returns receive reminder letters from the ATO — and those who have under-reported face amended assessments, penalties, and interest. The ATO has stated it has data on hundreds of thousands of Australians with cryptocurrency holdings.",
+      },
+      {
+        heading: "Mandatory reporting obligations",
+        body: "Every Australian taxpayer with cryptocurrency transactions must report them in their individual tax return under capital gains (myTax has a dedicated crypto section). Obligations include: reporting all disposals in the income year (sales, trades, spending, gifts); reporting mining and staking income as 'other income'; maintaining adequate records for 5 years; and if you use an offshore exchange not registered in Australia, you are still obligated to report — the ATO does not have automatic data feeds from foreign exchanges but expects self-reporting. Voluntary disclosures (using the ATO's Voluntary Disclosure facility) typically result in reduced penalties compared to audit-identified non-compliance.",
+      },
+      {
+        heading: "TFN withholding and exchange requirements",
+        body: "Australian-registered exchanges are financial institutions for TFN withholding purposes. If you have not provided your Tax File Number to your exchange, the exchange may withhold 47% from any cash withdrawals or interest-bearing activities. This is not common with standard crypto trading but applies to any yield products, interest accounts, or AUD deposits on exchange platforms. Providing your TFN to your exchange is best practice and does not give the ATO any additional access — the ATO already receives data under the data-matching program regardless. AML/CTF rules also require exchanges to verify customer identity (passport, driver's licence) for accounts exceeding transaction thresholds.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can the ATO see my hardware wallet or offshore exchange transactions?",
+        a: "The ATO has limited direct visibility into hardware wallets and offshore exchanges. However, on-chain analytics firms (Chainalysis, Elliptic) provide blockchain analysis tools to tax authorities globally that can trace transactions across wallets. The ATO has access to blockchain analytics capabilities. Additionally, if you ever move crypto from an offshore exchange to an Australian exchange (for fiat withdrawal), the Australian exchange data-match creates a link. Attempting to hide crypto transactions in offshore wallets or exchanges is tax evasion and carries serious penalties.",
+      },
+      {
+        q: "What are the penalties for not reporting crypto in Australia?",
+        a: "Failing to report taxable crypto gains can result in: base penalty of 25% of the tax shortfall for a failure to take reasonable care; 50% for recklessness; 75% for intentional disregard. General Interest Charge (GIC) accrues from the original due date. For significant under-reporting, the ATO may refer cases to the Australian Federal Police for criminal tax fraud prosecution (rare but possible for deliberate evasion of large amounts). Voluntary disclosure before an ATO audit typically reduces penalties to zero or 10%.",
+      },
+      {
+        q: "Do I need to report crypto held on overseas exchanges?",
+        a: "Yes. Australian tax residents must report all worldwide income and capital gains, including crypto held on foreign exchanges (Binance, Kraken, Gemini, Coinbase international). The ATO's international data exchange agreements (CRS — Common Reporting Standard) increasingly capture foreign account data. Even without direct exchange reporting, Australian residents are legally obligated to self-report all crypto transactions regardless of the exchange's jurisdiction.",
+      },
+    ],
+    relatedSlugs: [
+      "how-is-cryptocurrency-taxed-in-australia",
+      "can-you-hold-cryptocurrency-in-an-smsf-australia",
+      "what-is-defi-and-how-is-it-taxed-australia",
+    ],
+    relatedTools: [
+      { label: "CGT calculator", href: "/cgt-calculator" },
+    ],
+  },
+  {
+    slug: "can-you-hold-cryptocurrency-in-an-smsf-australia",
+    category: "crypto",
+    question: "Can you hold cryptocurrency in an SMSF in Australia?",
+    metaTitle: "Cryptocurrency in an SMSF: Rules, Compliance & ATO Requirements (2026)",
+    metaDescription:
+      "SMSFs can invest in cryptocurrency if the investment strategy allows it, the sole purpose test is met, and assets are correctly valued at market. Learn the ATO's requirements and the custody and audit obligations.",
+    shortAnswer:
+      "An SMSF can hold cryptocurrency as an investment if: the fund's investment strategy explicitly allows it, the sole purpose test is met (investment is solely for retirement benefits), crypto is held in the fund's name (not commingled with members' personal crypto), assets are valued at market value each year for the annual audit, and custody arrangements are properly documented. The ATO has specific guidance on SMSF crypto holdings in SMSF Ruling 2012/1 (asset ownership).",
+    sections: [
+      {
+        heading: "Investment strategy and trustee obligations",
+        body: "SMSF trustees have a duty under regulation 4.09 of the Superannuation Industry (Supervision) Regulations 1994 to formulate, review regularly, and give effect to an investment strategy. To hold cryptocurrency, the strategy must explicitly include it as a permitted asset class and address: the expected return from crypto investments, liquidity (ability to meet pension payments and benefit payments), the risk of investing in crypto given its volatility, and diversification. The strategy should specify the maximum percentage of fund assets allocated to crypto (e.g. '5–15% in digital assets'). SMSF auditors will flag a crypto holding that is not reflected in the investment strategy as a compliance breach.",
+      },
+      {
+        heading: "Sole purpose test and related party rules",
+        body: "Cryptocurrency in an SMSF must meet the sole purpose test — held exclusively for the purpose of providing retirement benefits. This means: members cannot access or use the SMSF's crypto for personal purposes (no using SMSF private keys to make personal transactions), the fund's crypto must be stored separately from any personal crypto holdings (separate wallets/exchanges), and the fund must be able to demonstrate that any crypto transactions were conducted at arm's length and at market rates. The ATO's specific concern is that the trustee's personal crypto and the SMSF's crypto remain clearly separated, particularly for hardware wallet storage.",
+      },
+      {
+        heading: "Valuation, custody, and annual audit requirements",
+        body: "SMSF assets must be valued at market value each year (reg 8.02B of SIS Regulations). For listed crypto assets, the AUD exchange rate on 30 June is used. SMSF auditors require: account statements or screenshots from the exchange showing the SMSF's holdings as at 30 June; proof that the exchange account is in the fund's name (or trustee's name on behalf of the fund); transaction records for all crypto trades in the year; and AUD valuations for every transaction. Cold wallet (hardware wallet) custody is permitted but the fund's name/trustee details should be documented, and the private key should be held by the trustees under a documented custody procedure — not a single member. Multi-signature wallets are recommended for SMSFs.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What exchanges can an SMSF use to buy crypto in Australia?",
+        a: "Any Australian-registered exchange that allows accounts in the name of a trustee or corporate trustee is suitable. Exchanges commonly used by SMSFs include Independent Reserve, CoinSpot, and Kraken (which allows corporate accounts). The exchange account should be in the format: '[SMSF Name] [Trustee Name] as Trustee for [Fund Name]'. Some exchanges only allow personal accounts — these are not suitable for SMSF crypto holdings as assets must be in the fund's name.",
+      },
+      {
+        q: "Is crypto in an SMSF taxed the same as other SMSF investments?",
+        a: "Yes. In accumulation phase, capital gains on crypto held in an SMSF are taxed at 15% (with a one-third discount for assets held over 12 months, giving an effective 10% rate). Staking income and mining income are taxed at 15% as ordinary income. In pension phase with all members drawing pensions, capital gains and income on pension-supporting assets are taxed at 0%. These are the same rates as for SMSF shares or other investments.",
+      },
+      {
+        q: "Can an SMSF invest in DeFi or staking?",
+        a: "Yes, but it adds compliance complexity. DeFi protocols are permissionless and pseudonymous — SMSF trustees need to ensure transactions are properly documented and that the sole purpose test is clearly met. Staking rewards are income to the fund. Each DeFi transaction (liquidity provision, yield farming, borrowing against collateral) is a separate event that may have CGT implications and must be recorded. Many SMSF auditors are not yet experienced with DeFi audit trails — use crypto tax software that generates a comprehensive transaction report.",
+      },
+    ],
+    relatedSlugs: [
+      "how-is-cryptocurrency-taxed-in-australia",
+      "what-is-defi-and-how-is-it-taxed-australia",
+      "what-is-smsf-and-is-it-worth-it",
+    ],
+    relatedTools: [
+      { label: "SMSF calculator", href: "/smsf-calculator" },
+      { label: "CGT calculator", href: "/cgt-calculator" },
+    ],
+  },
+  {
+    slug: "what-is-defi-and-how-is-it-taxed-australia",
+    category: "crypto",
+    question: "What is DeFi and how is it taxed in Australia?",
+    metaTitle: "DeFi Tax in Australia: ATO Treatment of Yield Farming, Staking & Liquidity Pools (2026)",
+    metaDescription:
+      "DeFi involves smart contract-based financial services including liquidity pools, yield farming, and wrapped tokens. The ATO treats most DeFi income as assessable income. Learn how each DeFi activity is taxed.",
+    shortAnswer:
+      "Decentralised Finance (DeFi) refers to blockchain-based financial services including lending, borrowing, liquidity pools, and yield farming operated by smart contracts without intermediaries. The ATO treats most DeFi returns as assessable ordinary income at the time received (valued in AUD). Wrapping or bridging tokens may constitute a CGT disposal event. The ATO published consultation on DeFi taxation (2023 discussion paper) but final guidance remains in development.",
+    sections: [
+      {
+        heading: "DeFi income: lending, staking, and yield farming",
+        body: "The ATO's position, consistent with general income tax principles, is that DeFi returns received as compensation for providing capital or services are ordinary income assessed at market value in AUD on receipt. Lending (Aave, Compound): interest or fees received on deposited crypto are income in the year received. Liquidity pool fees (Uniswap, SushiSwap): trading fees earned by liquidity providers are income. Yield farming rewards: tokens distributed as incentives for providing liquidity are income at market value when received. Staking rewards (Ethereum PoS, Cardano, Solana): assessed as income when receivable/received. The cost base of income-assessed tokens is the AUD value included in assessable income — meaning future capital gains are calculated from the value at which you recognised income, not zero.",
+      },
+      {
+        heading: "Wrapped tokens, bridging, and liquidity pool entry/exit",
+        body: "The ATO's draft guidance (2023 DeFi consultation) indicated that wrapping a token (e.g. converting ETH to WETH) may constitute a CGT disposal — the original asset is disposed of and a new asset is acquired. This is controversial and the final ruling has not been published as of 2026. Bridging (moving tokens across chains) similarly may be a disposal depending on whether the bridge is custodial or non-custodial. Depositing into a liquidity pool in exchange for LP tokens (e.g. depositing ETH/USDC into Uniswap for LP tokens): the ATO may treat this as a disposal of the underlying assets and acquisition of LP tokens. Withdrawing from a pool is a disposal of LP tokens and acquisition of underlying assets. If treated as disposals, each pool entry and exit is a CGT event.",
+      },
+      {
+        heading: "Record-keeping complexity for DeFi",
+        body: "DeFi creates substantially greater record-keeping complexity than simple spot trading. Each protocol interaction is an on-chain transaction with a timestamp and token amounts but no automatic AUD conversion. To comply with ATO requirements, you need: a complete transaction history (exportable from most protocols or obtainable via the blockchain), AUD spot prices at the time of each transaction (sourced from reputable exchanges like CoinGecko or CMC), and categorisation of each transaction (income, disposal, acquisition, gas fee). Gas fees paid in ETH or other native tokens are themselves CGT events if the ETH was acquired at a different value. Specialist DeFi tax software (Koinly DeFi module, CryptoTaxCalculator) integrates with DeFi wallets and protocols to automate this, but manual review is still required for complex positions.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Are gas fees deductible for DeFi tax purposes in Australia?",
+        a: "Gas fees paid to execute DeFi transactions may be deductible or added to the cost base depending on the type of transaction. Gas fees on income-producing transactions (e.g. claiming staking rewards) are deductible as a cost of earning assessable income. Gas fees on asset disposals add to the cost base (reducing the capital gain). Gas fees paid in ETH are themselves CGT events — you are disposing of ETH (a CGT asset) when paying gas. This creates a secondary CGT complexity where each gas payment must be tracked.",
+      },
+      {
+        q: "How are stablecoins treated for Australian tax purposes?",
+        a: "Stablecoins (USDC, USDT, DAI) are CGT assets for Australian tax purposes — not currency. Even though a stablecoin maintains parity with USD, the ATO treats it as a foreign currency-denominated CGT asset. Converting AUD to USDC and back may generate CGT gains or losses if the AUD/USD rate has changed. Small gains from stablecoin currency fluctuations are technically assessable but practically minimal. Using stablecoins in DeFi protocols (earning yield on USDC deposits) generates income in AUD equivalent.",
+      },
+      {
+        q: "Does the ATO have specific guidance on DeFi?",
+        a: "As of 2026, the ATO has published general guidance on crypto assets (crypto.ata.gov.au) and conducted a public consultation on DeFi taxation (2023 discussion paper). Final binding rulings specifically on DeFi (wrapping, liquidity pools, bridges) have not been published — the ATO has indicated these are being developed. In the absence of specific rulings, practitioners apply general income tax and CGT principles. The 2023 discussion paper's positions (wrapping = disposal, yield = income) are the most current indicator of ATO intent.",
+      },
+    ],
+    relatedSlugs: [
+      "how-is-cryptocurrency-taxed-in-australia",
+      "can-you-hold-cryptocurrency-in-an-smsf-australia",
+      "what-is-the-ato-approach-to-crypto-reporting-australia",
+    ],
+    relatedTools: [
+      { label: "CGT calculator", href: "/cgt-calculator" },
+    ],
+  },
+
+  // ── INSURANCE (4 new) ────────────────────────────────────────────────────────
+
+  {
+    slug: "types-of-life-insurance-australia",
+    category: "insurance",
+    question: "What types of life insurance exist in Australia?",
+    metaTitle: "Types of Life Insurance in Australia: Term, TPD, IP & Trauma (2026 Guide)",
+    metaDescription:
+      "Australia has four main personal insurance types: life (term), total and permanent disability (TPD), income protection, and trauma (critical illness). Learn how each works, what it covers, and whether it can be held inside super.",
+    shortAnswer:
+      "Australia has four main types of personal insurance: life insurance (pays a lump sum on death or terminal illness), total and permanent disability (TPD) insurance (lump sum if you can never work again), income protection insurance (monthly income replacement of 70–75% if you cannot work temporarily), and trauma insurance (lump sum on diagnosis of serious illness like cancer, heart attack, or stroke). Life, TPD, and income protection can be held inside superannuation; trauma insurance cannot.",
+    sections: [
+      {
+        heading: "Life (term) insurance",
+        body: "Life insurance (also called term insurance in Australia) pays a lump sum death benefit to your beneficiaries when you die, or to you if you are diagnosed with a terminal illness with less than 12–24 months to live. Benefit amounts range from $100,000 to several million dollars. Premiums are calculated based on age, health, smoker status, occupation, and sum insured. Life insurance can be held inside superannuation (most industry and retail super funds include automatic default life cover) or purchased outside super via a financial adviser or direct insurer. Life cover inside super uses super assets to pay premiums — preserving your take-home pay — but reducing your retirement savings. Outside super, premiums are paid from after-tax income but the death benefit is paid directly to nominated beneficiaries without going through the super system.",
+      },
+      {
+        heading: "Total and permanent disability (TPD) insurance",
+        body: "TPD insurance pays a lump sum if you become permanently and totally disabled and are unlikely to ever work again. Two definitions exist: own occupation TPD (unable to work in your specific occupation — broader protection) and any occupation TPD (unable to work in any occupation for which you are reasonably qualified by education, training, or experience). TPD held inside super must use the 'any occupation' definition (this is an SIS Act requirement). Own occupation TPD must be held outside super. The distinction matters significantly — own occupation is far easier to claim and costs more in premiums. TPD benefits are typically equal to or slightly less than life cover. The lump sum purpose is to clear debt, fund ongoing care, and adapt living arrangements.",
+      },
+      {
+        heading: "Income protection and trauma insurance",
+        body: "Income protection (IP) insurance replaces 70–75% of your pre-disability income while you cannot work due to illness or injury, paid monthly. Policies have a waiting period (typically 30, 60, or 90 days) and a benefit period (2 years, 5 years, or to age 65). IP premiums are tax-deductible when held outside super. Inside super, IP premiums reduce your super balance but are not personally tax-deductible. Trauma insurance (also called critical illness or recovery insurance) pays a lump sum on diagnosis of one of 40–50 listed conditions, regardless of your ability to work. Common conditions: cancer (most common claim), heart attack, stroke, coronary artery bypass surgery, and kidney failure. Trauma insurance cannot be held inside super. It fills the gap between IP (which requires inability to work) and TPD (which requires permanent disability) — a cancer patient who recovers and returns to work gets nothing from IP or TPD, but would receive the trauma lump sum.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How much life insurance does the average Australian need?",
+        a: "A common rule of thumb is 10x annual income. More precisely, calculate: outstanding mortgage balance + other debts + income replacement for dependants (10 × annual income) + childcare and education costs + funeral expenses. For a couple with a $600,000 mortgage, two young children, and combined income of $150,000, a reasonable total cover might be $1.5–$2M per person. Most Australians are underinsured — a 2022 Rice Warner (now Milliman) report found the median underinsurance gap was $160,000 per household.",
+      },
+      {
+        q: "Should I hold insurance inside or outside super?",
+        a: "Inside super: premiums are paid from super assets (no cash-flow impact, lower after-tax cost for those with significant super), but benefits are subject to super law restrictions (cannot pay income protection proceeds directly; death benefits may be taxed when paid to non-dependants). Outside super: premiums are paid from take-home pay (higher cash-flow cost), but benefits are paid directly, income protection premiums are tax-deductible, and own-occupation TPD is available. The optimal strategy for most people involves holding basic life and TPD inside super and own-occupation IP and trauma insurance outside super.",
+      },
+      {
+        q: "What is the stepped vs level premium structure in Australian insurance?",
+        a: "Stepped premiums start lower and increase each year as you age — they are cheaper in early years but can become expensive in your 40s and 50s. Level premiums start higher but remain relatively constant over the life of the policy (subject to insurer review). For long-term insurance needs (income protection to age 65), level premiums often provide better value over the full policy term. For short-term needs, stepped premiums are lower upfront. Most Australian insurers offer both; financial advisers typically model both options over a 10–20 year horizon.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-trauma-insurance-australia",
+      "income-protection-insurance-vs-workers-compensation-australia",
+      "how-much-life-insurance-do-i-need-australia",
+    ],
+    relatedTools: [
+      { label: "Compare life insurance", href: "/life-insurance" },
+    ],
+  },
+  {
+    slug: "what-is-trauma-insurance-australia",
+    category: "insurance",
+    question: "What is trauma insurance and do I need it in Australia?",
+    metaTitle: "Trauma Insurance in Australia: What It Covers and Who Needs It (2026 Guide)",
+    metaDescription:
+      "Trauma insurance pays a lump sum on diagnosis of 40+ serious conditions including cancer, heart attack, and stroke. It cannot be held inside super and fills the gap that income protection and TPD insurance leave.",
+    shortAnswer:
+      "Trauma insurance (also called critical illness or recovery insurance) pays a tax-free lump sum when you are diagnosed with one of 40–50 listed serious medical conditions — including cancer, heart attack, stroke, and coronary artery bypass surgery. Unlike income protection (which requires inability to work) or TPD (which requires permanent disability), trauma pays on diagnosis regardless of whether you can work. It cannot be held inside superannuation.",
+    sections: [
+      {
+        heading: "What trauma insurance covers",
+        body: "Trauma policies typically cover 40–50+ defined conditions. The core conditions covered by virtually all Australian trauma policies are: cancer (most commonly claimed — approximately 50% of trauma claims), acute myocardial infarction (heart attack), stroke, coronary artery bypass surgery, and kidney failure requiring dialysis. Other commonly covered conditions include: multiple sclerosis, major organ transplant, severe burns, blindness, deafness, paralysis, Parkinson's disease, Alzheimer's disease (early onset), and HIV from blood transfusion or workplace exposure. Policy quality varies significantly — some insurers define conditions narrowly (e.g. requiring specific cardiac enzyme levels for a heart attack claim), while others use broader definitions. Specialist life insurance advisers compare definitions across insurers.",
+      },
+      {
+        heading: "Why trauma insurance fills a critical gap",
+        body: "Consider a 45-year-old who is diagnosed with early-stage breast cancer, undergoes surgery and chemotherapy, and returns to full-time work 6 months later. She claims: Income protection insurance — pays for 6 months of recovery, then ends when she returns to work. TPD insurance — does not pay, because she recovered and returned to work. Life insurance — does not pay, because she survived. Trauma insurance — pays the full lump sum ($250,000) on diagnosis. The lump sum covers medical costs not covered by Medicare or private health insurance (e.g. reconstructive surgery, specialised chemotherapy, alternative therapies), lost income during recovery, mortgage costs, or a career pivot. Without trauma cover, this person bears all these costs personally.",
+      },
+      {
+        heading: "Cost, structure, and limitations",
+        body: "Trauma premiums are typically 20–40% higher than equivalent life insurance premiums because of the high claim frequency of cancer (1 in 2 Australians will be diagnosed with cancer by age 85 per AIHW data). Stepped premiums start around $80–$200/month for a 35-year-old non-smoking female with $250,000 sum insured; male premiums for similar cover are typically 30–50% higher given different claims frequencies. Trauma cannot be held inside super — there is no mechanism under super law to pay trauma benefits from a fund. Trauma policies often include a partial payment feature (30–50% of benefit on less severe conditions) and a buyback option (ability to reinstate life cover after a trauma claim). Pre-existing conditions are typically excluded; you must be in good health at application.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is trauma insurance tax-deductible in Australia?",
+        a: "No. Trauma insurance premiums are not tax-deductible when held personally (unlike income protection premiums, which are deductible). The benefit paid on a valid claim is also generally tax-free in the hands of the insured. For businesses, key person trauma insurance (where the employer insures a key employee) may be deductible as a business expense, though this has complexity depending on structure.",
+      },
+      {
+        q: "What is the difference between trauma insurance and private health insurance?",
+        a: "Private health insurance covers eligible medical treatment costs — hospital room costs, specialist fees, some extras. It does not replace income, pay off a mortgage, or provide a financial buffer during recovery. Trauma insurance provides a cash lump sum you can use for any purpose. The two products are complementary — private health covers the medical bills while trauma insurance covers the financial disruption of a serious diagnosis. An adequate trauma insurance payout is typically $200,000–$500,000, far exceeding what private health will reimburse.",
+      },
+      {
+        q: "Can I get trauma insurance if I have a pre-existing condition?",
+        a: "You can apply, but pre-existing conditions are typically excluded from cover. If you had a previous cancer diagnosis, the insurer will generally exclude cancer from your policy (an exclusion loading). Some conditions result in policy decline. Applying early — when young and healthy — is the key to securing comprehensive trauma cover without exclusions. If your application is declined, some group insurance products through super funds or employer schemes offer limited trauma cover without underwriting.",
+      },
+    ],
+    relatedSlugs: [
+      "types-of-life-insurance-australia",
+      "how-much-life-insurance-do-i-need-australia",
+      "income-protection-insurance-vs-workers-compensation-australia",
+    ],
+    relatedTools: [
+      { label: "Compare life insurance", href: "/life-insurance" },
+    ],
+  },
+  {
+    slug: "how-much-life-insurance-do-i-need-australia",
+    category: "insurance",
+    question: "How much life insurance does an Australian need?",
+    metaTitle: "How Much Life Insurance Do You Need in Australia? DIME Method (2026)",
+    metaDescription:
+      "Calculate your life insurance needs using the DIME method: Debt + Income replacement + Mortgage + Education. Learn what sum insured is appropriate for Australian households at different life stages.",
+    shortAnswer:
+      "The DIME method calculates your life insurance needs as: Debt (all non-mortgage debts) + Income (annual income × years until youngest child is independent) + Mortgage (outstanding balance) + Education (estimated private school or university costs for children). For most Australian families with a mortgage and young children, total cover of $1–$2 million per income-earner is appropriate.",
+    sections: [
+      {
+        heading: "The DIME method explained",
+        body: "DIME is a needs-based calculation framework: Debt: total all consumer debts your family would need to repay — car loans, credit cards, personal loans, business debts you have personally guaranteed. Income replacement: multiply your annual after-tax income by the number of years until your youngest child reaches financial independence (typically 18–25 years). This ensures your family can maintain their lifestyle even without your income. A common shortcut is 10× annual income. Mortgage: the outstanding balance of your home loan — so your family can pay it off and stay in the home. Education: if you have or plan to have children and want them to access private school or university, add an estimate — $50,000–$200,000 per child depending on schooling type. Adding these four components gives a total sum insured target.",
+      },
+      {
+        heading: "Australian worked example",
+        body: "Example: 38-year-old, $110,000 income, two children (aged 5 and 8), $650,000 remaining mortgage, $25,000 car loan + $8,000 credit card debt, wants to fund 12 years of private school for each child ($60,000 per child). Debt = $33,000. Income = $110,000 × 17 years = $1,870,000 (until youngest is 22). Mortgage = $650,000. Education = $120,000. Total DIME = $2,673,000. This is a theoretical maximum — many people insure for a lower amount based on: what they can afford in premiums, existing super death benefit (which effectively acts as life cover), dual-income households where the surviving partner could increase working hours, and the fact that mortgage and education are one-off finite costs.",
+      },
+      {
+        heading: "Adjusting for existing cover and super",
+        body: "Most Australians have default life insurance inside their superannuation fund. The median default life cover inside industry super funds is approximately $150,000–$300,000 depending on your age and occupational category — far less than the DIME calculation for most families. To find your existing super cover, log in to your fund's online portal or member statement. If you have multiple super funds (common in Australia due to job-changing), you may have duplicate cover with separate premiums reducing each fund balance — consolidating super and reviewing cover is worthwhile. The gap between your DIME target and your existing super cover represents the additional personal insurance you need outside super.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does life insurance pay out if death is from suicide?",
+        a: "Most Australian life insurance policies include a suicide exclusion for deaths occurring within the first 13 months of policy commencement (the standard exclusion period under the Code of Practice for Life Insurance). After the 13-month exclusion period, death from suicide is generally covered. This applies to policies taken out through an insurer directly — super fund default cover may have different exclusion periods. If you are experiencing mental health difficulties, please contact Lifeline on 13 11 14.",
+      },
+      {
+        q: "Should stay-at-home parents have life insurance?",
+        a: "Yes. The economic value of a stay-at-home parent's contributions — childcare, domestic work, household management — is substantial. If a stay-at-home parent died, the family would incur significant costs for childcare, cleaning, and household support. ABS data values unpaid domestic work at approximately $70,000–$90,000 per year. A stay-at-home parent should hold life insurance equivalent to the cost of replacing their contribution: $700,000–$1M (10 × economic value) is commonly recommended.",
+      },
+      {
+        q: "How does the First Home Super Saver scheme affect insurance planning?",
+        a: "The FHSS scheme allows first home buyers to save up to $50,000 in their super and withdraw it for a home deposit. Using super for a house deposit reduces the super balance and potentially the default life insurance amounts (which may be tied to account balances). Review your insurance cover after withdrawing under FHSS to ensure your remaining super insurance is still adequate for your new mortgage obligation.",
+      },
+    ],
+    relatedSlugs: [
+      "types-of-life-insurance-australia",
+      "what-is-trauma-insurance-australia",
+      "income-protection-insurance-vs-workers-compensation-australia",
+    ],
+    relatedTools: [
+      { label: "Compare life insurance", href: "/life-insurance" },
+    ],
+  },
+  {
+    slug: "income-protection-insurance-vs-workers-compensation-australia",
+    category: "insurance",
+    question: "What is the difference between income protection insurance and workers compensation in Australia?",
+    metaTitle: "Income Protection vs Workers Compensation in Australia (2026 Guide)",
+    metaDescription:
+      "Workers compensation covers work-related injuries only — income protection covers illness and injury anywhere. Learn how the two interact, own occupation vs any occupation definitions, and the 70-75% income replacement rule.",
+    shortAnswer:
+      "Workers compensation is compulsory employer-funded insurance covering work-related injuries and illnesses — managed by state schemes (WorkCover, icare, WorkSafe). Income protection insurance is personal insurance covering your inability to work from any illness or injury, regardless of where or how it occurred, paying 70–75% of pre-disability income. The two do not typically operate simultaneously — most income protection policies have a coordination of benefits clause that offsets workers compensation payments.",
+    sections: [
+      {
+        heading: "Workers compensation: scope and limitations",
+        body: "Workers compensation is governed by state and territory legislation (WorkCover QLD, SafeWork NSW/icare, WorkSafe VIC, ReturnToWork SA, etc.) and is compulsory for all employers. It covers: medical expenses for work-related injuries, weekly compensation payments (typically 80–95% of pre-injury earnings, reducing over time under most state schemes), rehabilitation and return-to-work support, and a lump sum for permanent impairment. Limitations: covers only work-related injuries and diseases — a cancer diagnosis, car accident outside work, or mental illness unrelated to work is not covered. Self-employed contractors are generally not covered by workers compensation (though some states allow voluntary registration). Premium costs are paid by employers — workers do not pay for workers compensation.",
+      },
+      {
+        heading: "Income protection insurance: scope and definitions",
+        body: "Income protection (IP) insurance covers you when you are unable to work due to any illness or injury — inside or outside work, anywhere in the world. Benefits are paid monthly at 70–75% of your pre-disability income (some policies cover 85% for shorter periods). The two critical definitions: own occupation (unable to perform the specific duties of your current occupation — a surgeon who loses fine motor control cannot perform surgery and claims) versus any occupation (unable to work in any occupation reasonably suited to your education, training, and experience — harder to claim). Own occupation IP outside super costs more but provides significantly broader protection for specialised professionals. Benefit periods range from 2 years to age 65 (or 70 for some products).",
+      },
+      {
+        heading: "How the two interact and the 70% rule",
+        body: "If you are injured at work and receiving workers compensation payments, most income protection policies will not pay simultaneously — they contain coordination of benefits clauses that offset workers compensation receipts dollar-for-dollar. This prevents over-insurance (receiving more than 100% of your income). If workers compensation ends (e.g. after the maximum payment period, or if a dispute results in reduced payments) and you are still unable to work, income protection then pays. The 70–75% income replacement cap exists because insurers argue that paying 100% of your income creates no incentive to return to work. Many policies have a rehabilitation incentive clause that temporarily increases the benefit during an active return-to-work program.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I claim both income protection and the government's Disability Support Pension simultaneously?",
+        a: "Generally no — IP policies contain offset clauses that reduce your IP benefit by any government disability payments received. If you receive the Disability Support Pension (DSP), your IP payment is reduced by the DSP amount. Some older policies do not have DSP offsets, but modern policies typically do. The DSP itself has strict eligibility criteria (permanent and significant functional impairment) — most IP claimants who are expected to recover would not qualify for DSP.",
+      },
+      {
+        q: "Are income protection premiums tax-deductible in Australia?",
+        a: "Yes — income protection insurance premiums are fully tax-deductible when the policy is held outside super (section 8-1 of ITAA 1997). This is a significant benefit — a person on the 37% marginal rate saving $3,600/year in IP premiums receives a $1,332 tax refund, making the effective cost $2,268. Premiums on life, TPD, and trauma insurance are not deductible. Income protection premiums inside super are paid from your pre-tax super contributions (not personally deductible, but reduce your super taxable income).",
+      },
+      {
+        q: "What happens to my IP cover if I change jobs or become self-employed?",
+        a: "IP policies follow the individual, not the employer — you retain cover regardless of employment changes. However, you must notify your insurer if your occupation changes significantly (e.g. from office-based to manual labour) as this may affect your policy terms or premiums. Self-employed individuals have different income documentation requirements for IP claims (typically 2 years of business tax returns to establish pre-disability income). Ensure your sum insured reflects your current income — a policy taken out when you earned $60,000 that has not been updated will only replace $60,000 even if you now earn $120,000.",
+      },
+    ],
+    relatedSlugs: [
+      "types-of-life-insurance-australia",
+      "what-is-trauma-insurance-australia",
+      "how-much-life-insurance-do-i-need-australia",
+    ],
+    relatedTools: [
+      { label: "Compare life insurance", href: "/life-insurance" },
+    ],
+  },
+
+  // ── RETIREMENT (3 new) ───────────────────────────────────────────────────────
+
+  {
+    slug: "how-to-use-ttr-to-reduce-work-hours-australia",
+    category: "retirement",
+    question: "How can a transition to retirement strategy help you reduce work hours in Australia?",
+    metaTitle: "Using a TTR to Reduce Work Hours in Australia: Practical Strategy (2026 Guide)",
+    metaDescription:
+      "A TTR pension lets you drop to part-time work at 60 while maintaining your income by drawing tax-free super. Learn the step-by-step strategy, the transfer balance cap considerations, and how to time the switch to full retirement.",
+    shortAnswer:
+      "A transition to retirement (TTR) pension lets Australians aged 60+ replace lost salary when dropping to part-time by drawing tax-free super income. For example, a person on $110,000 who moves to 3-day weeks ($66,000 salary) draws $44,000 from a TTR pension tax-free — maintaining $110,000 gross income. This gradually depletes the TTR account but smooths the shift from full-time work to retirement rather than stopping abruptly.",
+    sections: [
+      {
+        heading: "The part-time TTR strategy in practice",
+        body: "The income-replacement TTR strategy suits people approaching retirement who want to reduce working hours without reducing income. Step 1: Negotiate a reduction in employment from full-time to part-time. Step 2: Roll part of your super accumulation into a TTR pension — the TTR pays tax-free pension income to replace the lost part-time salary. Step 3: Keep making super contributions from part-time employment (including employer SG contributions) to partially offset the TTR drawdown. Example: $900,000 super balance, aged 63, earning $110,000 full-time. Move to 3 days/week at $66,000 salary. Roll $500,000 into a TTR pension; draw 8.8% ($44,000/year) to restore total income to $110,000. TTR pension payments are 100% tax-free at 60+ — no income tax on the $44,000 drawn. The remaining $400,000 stays in accumulation for future growth.",
+      },
+      {
+        heading: "How the TTR balance behaves over time",
+        body: "A TTR account is invested the same way as an accumulation account but with different drawdown rules. If you draw $44,000/year from a $500,000 TTR account invested in a balanced option returning 6% p.a., the account balance declines gradually — not immediately. At 6% return ($30,000 income) minus $44,000 drawn, the net depletion is $14,000/year. The account lasts approximately 25–30 years under this scenario. In practice, most TTR users transition to full retirement within 3–7 years of starting — the TTR is a bridge, not a permanent income stream. Timing the conversion from TTR to full retirement pension (which removes the 10% drawdown cap and eliminates the 15% earnings tax on the account) is the key planning decision.",
+      },
+      {
+        heading: "Transfer balance cap and TTR to retirement conversion",
+        body: "When you permanently retire and convert your TTR pension to a standard retirement pension, the balance at conversion counts against your transfer balance cap ($1.9M in FY2026). The transfer balance cap limits the total amount you can hold in tax-free retirement pension phase. If your TTR balance at conversion plus any other retirement pension interests exceeds the cap, the excess must be returned to accumulation phase. Planning the TTR drawdown rate with this cap in mind is important — you may want to draw down the TTR more aggressively before conversion if you anticipate exceeding the cap. Get advice from a financial planner before converting, as the timing affects how much goes into the zero-tax retirement phase.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I start a TTR while still employed full-time?",
+        a: "Yes. A TTR does not require you to reduce hours or change your employment in any way — you simply need to have reached preservation age. Full-time employees at 60+ commonly use a TTR solely for the tax arbitrage benefit (salary sacrifice + TTR draws to reduce overall tax) without reducing work hours at all. The income-replacement use case described above is one application; tax minimisation while maintaining full income is another.",
+      },
+      {
+        q: "What is the minimum TTR pension payment I must draw?",
+        a: "The minimum drawdown from a TTR pension is 4% of your account balance per year (as at 1 July each year, or the day you start the pension if mid-year). This is the same minimum as standard account-based pensions. The maximum is 10% per year. You cannot skip drawdowns — if you start a TTR, you must draw at least 4% per year. If you draw nothing in a year, the ATO may deem the TTR non-complying.",
+      },
+      {
+        q: "Does my employer know I am drawing a TTR pension?",
+        a: "No. A TTR pension is paid directly from your super fund to your bank account — your employer has no visibility into it. You manage the TTR through your super fund's online portal or by notifying your fund of your chosen drawdown amount and frequency. Many people prefer quarterly or annual drawdowns rather than monthly to simplify administration, though monthly draws can assist with cash-flow budgeting.",
+      },
+    ],
+    relatedSlugs: [
+      "how-do-transition-to-retirement-income-streams-work",
+      "what-is-the-super-preservation-age",
+      "when-can-i-access-my-super",
+      "asfa-retirement-standard-australia",
+    ],
+    relatedTools: [
+      { label: "Retirement calculator", href: "/retirement-calculator" },
+      { label: "Super contributions calculator", href: "/super-contributions-calculator" },
+    ],
+  },
+  {
+    slug: "asfa-retirement-standard-australia",
+    category: "retirement",
+    question: "How does the ASFA Retirement Standard work in Australia?",
+    metaTitle: "ASFA Retirement Standard: Modest vs Comfortable Benchmarks (2026 Guide)",
+    metaDescription:
+      "The ASFA Retirement Standard sets quarterly benchmarks for what modest and comfortable retirement costs. In 2026, a comfortable retirement needs $51,278/year single or $72,148/year couple. Learn what's included and how much super you need.",
+    shortAnswer:
+      "The ASFA (Association of Superannuation Funds of Australia) Retirement Standard provides quarterly benchmarks for retirement living costs. A comfortable retirement requires approximately $51,278 per year for a single person and $72,148 for a couple (as at March 2026 quarter, ASFA figures). A modest retirement requires $32,666 (single) and $47,387 (couple). These figures assume you own your home outright and exclude aged care costs.",
+    sections: [
+      {
+        heading: "What the ASFA benchmarks include",
+        body: "ASFA publishes two benchmarks: comfortable and modest. The comfortable standard covers: a good standard of living including regular leisure activities, domestic and some international travel, private health insurance, reasonable clothing and household goods, a reliable car, and some restaurant meals. The modest standard covers: a more basic lifestyle than the comfortable level but better than just relying on the Age Pension — it allows for items like a small car, occasional travel, and some social activities. Key assumption: both benchmarks assume you own your home outright and have no housing costs beyond rates and maintenance. Renting retirees need substantially more than these figures to fund market-rate rent. Both figures are updated quarterly for CPI inflation by ASFA.",
+      },
+      {
+        heading: "How much super you need to fund the benchmarks",
+        body: "ASFA and Treasury use a 4% sustainable withdrawal rate for lump-sum-to-income conversion. To generate $51,278 per year at a 4% drawdown rate, you need approximately $1.28M in super at retirement (age 65–67). The Age Pension partially offsets this — at the full Age Pension rate in 2026-27 ($29,754/year for a single person), approximately $21,524/year needs to come from super for a comfortable retirement. To generate $21,524 at 4%, you need approximately $538,000 in super at retirement. For couples, the combined full Age Pension ($44,855/year) means the shortfall to comfortable retirement ($72,148) is approximately $27,293/year — requiring approximately $682,000 combined in super. These are estimates — actual super required depends on investment returns, inflation, age of retirement, and partial Age Pension interactions.",
+      },
+      {
+        heading: "Limitations of the ASFA benchmark",
+        body: "The ASFA benchmark has been criticised for several limitations. Renters need significantly more: the benchmark assumes home ownership — adding median Sydney or Melbourne rent ($2,200–$2,800/month in 2026) adds $26,400–$33,600/year to the required income, effectively doubling or tripling the required super balance. Aged care costs are excluded: residential aged care can cost $30,000–$100,000+ per year — the benchmark does not model this major late-life expense. The comfortable standard may be aspirational: ASFA describes comfortable as able to participate fully in the community — critics note it does not include luxuries like international business class travel or investment properties. Despite limitations, it is Australia's most commonly cited retirement income benchmark and is used by super funds, financial advisers, and Treasury modelling.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does the ASFA retirement standard apply at what age?",
+        a: "The ASFA benchmarks are modelled for people aged 65 (the standard retirement age for Age Pension eligibility in 2026). The figures assume a 25-30 year retirement. Early retirees (retiring at 55–60) need to fund a longer retirement period and cannot rely on Age Pension until 67 — requiring a substantially larger balance. ASFA publishes separate commentary on early retirement needs.",
+      },
+      {
+        q: "How does the Age Pension interact with the ASFA comfortable standard?",
+        a: "The full Age Pension ($29,754/year for singles in 2026-27) partially funds comfortable retirement ($51,278/year). If you receive the full Age Pension, you need an additional $21,524/year from super. Many retirees will be on a partial Age Pension (assets test or income test reduces the pension), meaning they need more from super. The super fund industry's Retirement Income Covenant (effective 1 July 2022) requires funds to help members target sustainable retirement income — funds now publish retirement income projections to help members see if they are on track.",
+      },
+      {
+        q: "Is the 4% withdrawal rate appropriate for Australian retirees?",
+        a: "The 4% rule originated from US research (the Trinity Study, 1998) using US market data. Australian-specific research (Finsia, 2019; various actuarial studies) suggests 3.5–4% is appropriate for Australian portfolios given Australia's dividend imputation system (which boosts returns for super fund share holdings), longevity risk (Australians have among the world's highest life expectancy), and the Age Pension backstop. The Australian Treasury's retirement income review (2020) used 4.5–5% drawdown for illustrative projections, noting that many retirees significantly under-draw from super.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-a-transition-to-retirement-strategy-australia",
+      "can-i-retire-early-in-australia-what-is-fire",
+      "when-can-i-access-my-super",
+      "age-pension-assets-test-thresholds-australia",
+    ],
+    relatedTools: [
+      { label: "Retirement calculator", href: "/retirement-calculator" },
+    ],
+  },
+  {
+    slug: "can-i-retire-early-in-australia-what-is-fire",
+    category: "retirement",
+    question: "Can I retire early in Australia? What is the FIRE movement?",
+    metaTitle: "Early Retirement in Australia: FIRE Movement, Super Access & the 4% Rule (2026)",
+    metaDescription:
+      "FIRE (Financial Independence, Retire Early) is a movement to retire decades before 65 by saving 50–70% of income. In Australia, the challenge is super preservation age (60) — FIRE before 60 needs non-super assets. Learn the strategy.",
+    shortAnswer:
+      "The FIRE (Financial Independence, Retire Early) movement involves aggressively saving 50–70% of income to accumulate 25× your annual spending — enough to live off a 4% safe withdrawal rate indefinitely. In Australia, the key challenge is superannuation's preservation age of 60 — if you retire at 40 or 45, you cannot access super for 15–20 years. FIRE before 60 requires building sufficient non-super assets (shares, property, cash) to bridge the gap.",
+    sections: [
+      {
+        heading: "How FIRE works: the 25x rule and 4% SWR",
+        body: "FIRE's financial foundation is the safe withdrawal rate (SWR) research: studies of historical market returns (the 'Trinity Study' and subsequent updates) found that withdrawing 4% of your portfolio in year one of retirement and increasing for inflation has an extremely high probability of lasting 30 years. The corollary: to sustain a given lifestyle indefinitely, accumulate 25× your annual expenses (1 ÷ 0.04 = 25). If you spend $50,000/year, target $1.25M. If you spend $70,000/year, target $1.75M. The path to FIRE requires both: maximising your savings rate (saving 50–70% of income rather than the typical 5–20%) and investing savings in broad-market index funds for equity growth. A 70% savings rate historically leads to financial independence in approximately 8.5 years from a zero starting point.",
+      },
+      {
+        heading: "The super preservation age challenge for Australian FIRE seekers",
+        body: "Australia's superannuation system has a preservation age of 60 for those born after June 1964. Super cannot be accessed as a lump sum or income stream before preservation age (with limited exceptions: severe financial hardship, compassionate grounds, terminal illness, permanent incapacity). This means an Australian who achieves FIRE at age 40 cannot touch their super for 20 years. The solution: build a two-bucket portfolio. Bucket 1 (non-super): sufficient assets to fund your lifestyle from retirement date to preservation age. At a 4% SWR and 20-year bridge, you may need 70–80% of your total FIRE target in non-super assets. Bucket 2 (super): continue contributing and compounding until age 60, when you convert to a retirement pension. Employer SG contributions continue providing the incentive to not abandon super even in early FIRE.",
+      },
+      {
+        heading: "FIRE variants and the Australian context",
+        body: "Lean FIRE: living frugally on $30,000–$40,000/year, requiring a $750,000–$1M portfolio. Fat FIRE: living well on $100,000+/year, requiring $2.5M+. Barista FIRE (Coast FIRE): accumulating enough to coast to full retirement while working part-time for income and social engagement. In Australia, the Age Pension provides a genuine safety net below most FIRE target incomes — an early retiree's portfolio only needs to last until Age Pension age (67) on the non-super assets, after which Age Pension plus super drawdown provides a more robust floor. The franking credit system benefits FIRE investors holding Australian equity ETFs (dividend imputation boosts effective yield). FIRE is most achievable for high-income Australians in the technology, finance, law, and medicine sectors where savings rates of 50%+ are realistic.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What is the best investment strategy for FIRE in Australia?",
+        a: "Most Australian FIRE practitioners use a combination of: broad-market index ETFs (e.g. VAS for Australian equities, VGS for global equities) for the non-super portfolio; maximising super contributions (salary sacrifice to the $30,000 concessional cap) for the super bucket; and possibly an investment property for passive income, though property is illiquid and less suited to the drawdown phase than shares. Low-cost index funds align with the FIRE philosophy of minimising fees — even a 1% MER difference compounds significantly over a 20-40 year accumulation phase.",
+      },
+      {
+        q: "Does the Australian Age Pension affect FIRE planning?",
+        a: "Yes, positively. The Age Pension (from age 67) acts as a substantial safety net for FIRE retirees who live long enough to access it. If your portfolio is depleted, the full Age Pension ($29,754/year for a single in 2026-27) provides a floor. Some FIRE proponents argue you can target a lower non-super portfolio by factoring in eventual Age Pension access — 'half-FIRE' strategies plan to live off a smaller portfolio until 67 and then reduce drawdown with Age Pension support. The assets test threshold means significant super balances will reduce Age Pension access, but partial pension is likely for most.",
+      },
+      {
+        q: "How do I calculate my FIRE number in Australian dollars?",
+        a: "Step 1: Calculate your annual spending in AUD (use actuals from your bank statements — be honest). Include all costs: housing, food, transport, health, travel, entertainment. Step 2: Subtract any passive income sources you will have (rental income, part-time work if planning Barista FIRE). Step 3: Multiply the net annual spending by 25 (4% SWR) to get your total FIRE number. For the pre-60 bridge: multiply the net annual spending by the number of years until age 60 — this is approximately the non-super target. Adjust for inflation (multiply by 1.03^n for n years). FIRE calculators like cFIREsim allow Monte Carlo simulation with Australian market inputs.",
+      },
+    ],
+    relatedSlugs: [
+      "asfa-retirement-standard-australia",
+      "what-is-a-transition-to-retirement-strategy-australia",
+      "when-can-i-access-my-super",
+      "what-is-dollar-cost-averaging-australia",
+    ],
+    relatedTools: [
+      { label: "Retirement calculator", href: "/retirement-calculator" },
+      { label: "Compound interest calculator", href: "/compound-interest-calculator" },
+    ],
+  },
+
+  // ── ADDITIONAL (5 new) ───────────────────────────────────────────────────────
+
+  {
+    slug: "how-to-set-financial-goals-australia",
+    category: "budgeting",
+    question: "How do you set and achieve financial goals in Australia?",
+    metaTitle: "How to Set Financial Goals in Australia: SMART Framework (2026 Guide)",
+    metaDescription:
+      "Setting SMART financial goals — Specific, Measurable, Achievable, Relevant, Time-bound — is the foundation of personal financial planning. Learn how to prioritise goals, use automation, and adapt to Australian cost of living.",
+    shortAnswer:
+      "Effective financial goals in Australia should be SMART: Specific (save $20,000 house deposit), Measurable (track monthly progress), Achievable (consistent with your income), Relevant (aligned with your life priorities), and Time-bound (within 18 months). Rank goals by urgency: emergency fund first, then high-interest debt, then medium-term targets like a property deposit or car, then long-term wealth building through super and investments.",
+    sections: [
+      {
+        heading: "The SMART framework for Australian financial goals",
+        body: "Vague goals like 'save more money' fail because they have no deadline or measurement. SMART goals succeed because they create a clear plan. Example: 'Save $30,000 for a home deposit by 30 June 2028 by directing $800 per fortnight into a dedicated high-interest savings account.' Each element can be tracked and adjusted. In Australia, common financial goal milestones are: $2,000 starter emergency buffer (typically 2–4 months), $1,000 car maintenance reserve, $10,000–$30,000 emergency fund (3–6 months expenses), home deposit (20% of target purchase price in your market), and retirement readiness (super balance tracking to ASFA comfortable standard by age 67).",
+      },
+      {
+        heading: "Prioritising competing goals",
+        body: "Most Australians face multiple competing financial goals simultaneously. A practical priority order: (1) Build a $2,000 starter emergency fund — prevents new debt from small emergencies. (2) Get the employer super match — if your employer will match salary sacrifice contributions, capture this free money first. (3) Eliminate high-interest consumer debt (credit cards at 19–22%) — the guaranteed return is exceptional. (4) Build a full 3–6 month emergency fund. (5) Save for medium-term goals (house deposit, car, parental leave). (6) Maximise super contributions (concessional cap $30,000/year in FY2026) and build investment portfolio. Goals 1–4 are sequential prerequisites; goals 5 and 6 can run simultaneously once you have financial stability.",
+      },
+      {
+        heading: "Automation and goal accounts",
+        body: "The most effective implementation of financial goals uses automation and account separation. Set up named savings accounts for each goal — 'House Deposit', 'Emergency Fund', 'Car Replacement' — at a bank with competitive HISA rates. Schedule automatic transfers on payday to each account before the money reaches your everyday account. Review goals quarterly: have circumstances changed (new income, new expense, goal achieved)? Australian banking apps (ING, Up Bank, Macquarie) support multiple labelled savings pockets within a single account, making goal separation simple without requiring multiple bank relationships.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I set a realistic home deposit savings goal for Sydney or Melbourne?",
+        a: "Start with your target suburb's median property price and your deposit target (20% to avoid LMI, or 5% with the First Home Guarantee). Subtract any existing savings and the First Home Super Saver Scheme (FHSS) amount you can withdraw ($50,000 max). Divide the gap by your monthly savings capacity. If the result is more than 7–10 years, reconsider: a smaller property, a different suburb, the FHBG (5% deposit with no LMI), or a co-purchase with a partner or family member.",
+      },
+      {
+        q: "Should I set goals around my superannuation?",
+        a: "Yes — though super goals are longer-dated. Useful super goal: 'Increase concessional contributions to $25,000/year by FY2027 via salary sacrifice.' Check your super balance against the ASFA Retirement Standard milestones: at age 35 you should target approximately $100,000–$150,000 to stay on track for a comfortable retirement at 67 (based on ASFA modelling). Most industry super funds provide online projections showing whether your current balance and contributions will reach a comfortable retirement.",
+      },
+      {
+        q: "What tools help Australians track financial goals?",
+        a: "Free tools: ATO's MoneySmart budget planner and savings calculator, MoneySmart's financial goal calculator, Up Bank's Savers pockets (for Up customers), and spreadsheet templates from MoneySmart. Paid tools: YNAB (You Need a Budget) — the most popular zero-based budgeting app in Australia — and PocketSmith (NZ/Australian focus, bank feed integration). Many major banks also provide spending categorisation and goal-tracking in their mobile apps.",
+      },
+    ],
+    relatedSlugs: [
+      "how-much-emergency-fund-australia",
+      "what-is-the-50-30-20-budgeting-rule-australia",
+      "how-to-avoid-living-paycheque-to-paycheque-australia",
+    ],
+    relatedTools: [
+      { label: "Savings calculator", href: "/savings-calculator" },
+      { label: "Compound interest calculator", href: "/compound-interest-calculator" },
+    ],
+  },
+  {
+    slug: "what-is-a-family-trust-australia",
+    category: "business",
+    question: "What is a family (discretionary) trust in Australia and how does it work?",
+    metaTitle: "Family Trusts in Australia: How Discretionary Trusts Work for Tax (2026 Guide)",
+    metaDescription:
+      "A family discretionary trust lets a trustee distribute income to beneficiaries at their discretion each year, enabling income splitting. Learn the tax benefits, setup costs, and compliance obligations in Australia.",
+    shortAnswer:
+      "A family (discretionary) trust is a legal structure where a trustee holds and manages assets for the benefit of a class of beneficiaries, distributing income and capital at their discretion each year. The trustee chooses how much each beneficiary receives — allowing income to be directed to lower-tax-rate family members. Trusts are widely used in Australia for business income splitting, asset protection, and investment holding.",
+    sections: [
+      {
+        heading: "How income splitting works in a family trust",
+        body: "A discretionary trust does not pay tax itself — all income must be distributed to beneficiaries (or it is taxed at 47% in the trust). The trustee decides, by 30 June each year, how to allocate income among beneficiaries. In a family where the principal earner is on 45% marginal rate but has a spouse on 19% and adult children in the 0–19% bracket, distributing trust income to lower-bracket beneficiaries can save substantial tax. Example: $200,000 trust income distributed $90,000 to principal, $80,000 to spouse, $30,000 to adult child. Total tax is far less than if $200,000 went to the principal alone. From 1 July 2022 (following AAT's Owies case and ATO guidance), distributions to adult children must be carefully documented to withstand ATO scrutiny of 'effective economic benefit'.",
+      },
+      {
+        heading: "Trust set-up and ongoing compliance",
+        body: "Setting up a family trust requires: a trust deed (legal document specifying the trustee, beneficiaries class, and terms — typically $1,500–$3,500 from a solicitor or trustee company); appointment of a trustee (individual trustee or corporate trustee company); registration of the trust for an ABN and TFN; and potentially a corporate trustee company (recommended for asset protection and succession — ASIC registration $576 initial + $310/year). Annual compliance: the trust must lodge a trust tax return (Form T), record trustee distribution resolutions before 30 June, maintain financial statements, and keep trust records for 5 years. A trust cannot simply 'lend' money to beneficiaries without triggering trust deed terms or potential Division 7A issues if a company is involved.",
+      },
+      {
+        heading: "Asset protection and estate planning uses",
+        body: "Trusts provide asset protection because assets held in a trust belong to the trustee on behalf of beneficiaries — not personally to any individual. If a beneficiary is sued or goes bankrupt, trust assets are generally not accessible to their creditors (though courts can look through trusts in some circumstances). For estate planning, a trust can continue across generations without triggering capital gains events (unlike estate distributions, where CGT may apply on death). However, trusts do not receive the CGT discount at the trust level — capital gains are passed through to individual beneficiaries who claim the discount personally. Trusts do not have their own tax rate on capital gains.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can a family trust hold shares and receive dividends?",
+        a: "Yes. A family trust can hold a share portfolio and receive dividends, franking credits, and capital gains. Franking credits are distributed to beneficiaries who can offset them against their personal tax liability. The trust is a popular vehicle for holding share portfolios because of income splitting flexibility, though the CGT discount applies at the beneficiary level. Note: trusts cannot directly claim the CGT discount — individual beneficiaries do when they receive their share of the capital gain.",
+      },
+      {
+        q: "What is the difference between a family trust and a company?",
+        a: "A company is a separate legal entity that pays tax at 25–30% — retained earnings stay in the company. A family trust passes all income to beneficiaries and pays no tax itself — but the trustee must distribute (or risk 47% trust tax). A company suits profit retention and capital raising; a trust suits income splitting and flexibility. Many sophisticated structures use both: a family trust as the shareholder of a company, allowing income splitting on dividends and asset protection at both levels.",
+      },
+      {
+        q: "Does a family trust have to distribute all income each year?",
+        a: "Yes — under the trust taxation rules, all net income of a trust is assessed to beneficiaries in the year it is earned (whether distributed as cash or not). If the trustee does not make a distribution resolution before 30 June, the ATO taxes the accumulated income at 47%. Unlike a company, a trust cannot retain earnings within the structure for reinvestment without tax consequences. Some trusts hold investments that generate only capital gains (which can be unrealised) rather than income — these have more flexibility.",
+      },
+    ],
+    relatedSlugs: [
+      "sole-trader-vs-company-australia",
+      "how-does-the-small-business-cgt-concession-work-australia",
+      "what-is-division-7a-australia",
+    ],
+    relatedTools: [
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+      { label: "CGT calculator", href: "/cgt-calculator" },
+    ],
+  },
+  {
+    slug: "how-to-choose-a-crypto-exchange-australia",
+    category: "crypto",
+    question: "How do you choose a cryptocurrency exchange in Australia?",
+    metaTitle: "Best Cryptocurrency Exchanges in Australia: How to Choose (2026 Guide)",
+    metaDescription:
+      "Australian crypto exchanges must be registered with AUSTRAC. Compare fees, coin selection, security, AUD on/off ramp, and AUSTRAC registration when choosing where to trade crypto in Australia.",
+    shortAnswer:
+      "Australian cryptocurrency exchanges must be registered with AUSTRAC (the anti-money-laundering regulator). Key factors when choosing: AUSTRAC registration (mandatory), fee structure (maker/taker fees, deposit/withdrawal fees), AUD deposit and withdrawal options (bank transfer, PayID, OSKO), coin selection, security (cold storage, 2FA, insurance), and whether the exchange provides transaction reports for tax purposes. Major exchanges operating in Australia include CoinSpot, Independent Reserve, Swyftx, and international platforms with Australian operations.",
+    sections: [
+      {
+        heading: "AUSTRAC registration: the mandatory baseline",
+        body: "All cryptocurrency exchanges operating in Australia must be registered as a Digital Currency Exchange (DCE) provider with AUSTRAC under the Anti-Money Laundering and Counter-Terrorism Financing Act 2006. AUSTRAC publishes a register of all registered DCEs. Before depositing funds on any exchange, verify it appears on the AUSTRAC register at austrac.gov.au. Unregistered exchanges operate illegally in Australia and provide no regulatory recourse if funds are lost. In 2022, AUSTRAC fined several exchanges for non-compliance and deregistered others — the regulatory environment has tightened significantly since then. Australian-registered exchanges are also required to perform KYC (Know Your Customer) identity verification for all accounts.",
+      },
+      {
+        heading: "Fee comparison: what to look for",
+        body: "Crypto exchange fees vary significantly and compound over time for active traders. Spot trading fees: most Australian exchanges charge 0.1–1.0% per trade (maker/taker fee structure — makers who provide liquidity pay less than takers who fill orders). AUD deposit fees: bank transfers via OSKO/PayID are typically free; credit/debit card deposits attract 1.5–3% surcharges. Withdrawal fees: converting crypto back to AUD and withdrawing to bank account — typically free or small flat fee on reputable Australian exchanges. Network (gas) fees for on-chain withdrawals are set by the blockchain, not the exchange. For infrequent investors, a higher per-trade fee is less important than platform reliability and AUD access. For active traders, even 0.1% fee differences multiply significantly over many trades.",
+      },
+      {
+        heading: "Security, custody, and tax reporting features",
+        body: "Security: look for exchanges that keep the majority of funds in cold storage (offline), provide two-factor authentication (2FA — use an authenticator app, not SMS), and ideally carry crime insurance covering theft or hacks. Reputable Australian exchanges publish proof-of-reserves or undergo third-party audits. Tax reporting: Australian crypto investors are required to report all transactions to the ATO. Choose an exchange that provides downloadable transaction histories in CSV format compatible with Australian crypto tax software (Koinly, CryptoTaxCalculator, Syla). Some exchanges provide built-in tax reports (cost base calculation, capital gains summaries) — a significant time-saver at year end.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I use overseas exchanges like Binance or Coinbase from Australia?",
+        a: "Australians can use international exchanges that have registered their Australian-facing operations with AUSTRAC. Binance Australia operated and then exited the Australian market in 2023 due to banking relationship difficulties — its international platform (Binance.com) is not registered as an Australian DCE and using it may leave you without regulatory protection. Coinbase's international platform is not AUSTRAC-registered. Independent Reserve, CoinSpot, Swyftx, and Kraken (through Australian operations) are among the major AUSTRAC-registered platforms. Using a non-AUSTRAC-registered exchange does not make you legally liable, but you have no recourse under Australian law if funds are lost.",
+      },
+      {
+        q: "What is OSKO and PayID and why does it matter for crypto?",
+        a: "OSKO and PayID are near-instant bank transfer systems in Australia (operated by the NPP — New Payments Platform). Most major Australian crypto exchanges support PayID deposits, meaning you can transfer AUD from your bank account to the exchange in seconds (rather than waiting 1–2 business days for traditional bank transfers). This is important for seizing time-sensitive market opportunities. Some exchanges also support BPAY for deposits, though this is slower. PayID deposits are typically free with no surcharges.",
+      },
+      {
+        q: "Should I leave my crypto on the exchange or transfer to a wallet?",
+        a: "The crypto security maxim is 'not your keys, not your coins.' Keeping crypto on an exchange means trusting the exchange's security — if the exchange is hacked, defrauded, or goes insolvent (as happened with FTX globally in 2022), you may lose access. For significant holdings (above $10,000–$20,000), consider a hardware wallet (Ledger, Trezor) for cold storage. For small amounts and active trading, exchange storage is convenient. The tradeoff: hardware wallets require careful private key management — lose your seed phrase and you lose your crypto permanently.",
+      },
+    ],
+    relatedSlugs: [
+      "how-is-cryptocurrency-taxed-in-australia",
+      "what-is-the-ato-approach-to-crypto-reporting-australia",
+      "can-you-hold-cryptocurrency-in-an-smsf-australia",
+    ],
+    relatedTools: [
+      { label: "CGT calculator", href: "/cgt-calculator" },
+    ],
+  },
+  {
+    slug: "do-i-need-private-health-insurance-australia",
+    category: "insurance",
+    question: "Do I need private health insurance in Australia?",
+    metaTitle: "Do You Need Private Health Insurance in Australia? Medicare vs PHI (2026 Guide)",
+    metaDescription:
+      "Medicare covers most essential health services, but private health insurance can reduce wait times, offer extra coverage, and help avoid the Medicare Levy Surcharge. Learn when PHI makes financial sense in Australia.",
+    shortAnswer:
+      "Private health insurance (PHI) is not mandatory in Australia — Medicare provides universal coverage for essential medical treatment. However, high earners (single income above $93,000; family above $186,000) pay the Medicare Levy Surcharge (MLS) of 1–1.5% unless they hold hospital cover. PHI also reduces public hospital wait times for elective surgery, provides access to private hospitals, and includes extras like dental, optical, and physiotherapy not covered by Medicare.",
+    sections: [
+      {
+        heading: "Medicare vs private health insurance",
+        body: "Australia's Medicare system provides: free treatment as a public patient in public hospitals, rebates for GP and specialist consultations (Medicare rebate typically 85% of the schedule fee for out-of-hospital services), and access to the Pharmaceutical Benefits Scheme (PBS) for subsidised medicines. What Medicare does not cover: private hospital accommodation, choice of surgeon, dental (except limited emergency), optical, physiotherapy, podiatry, psychology (beyond 10 Mental Health Plan sessions), and ambulance (varies by state). Private health insurance fills these gaps. Hospital cover pays for private hospital room, meals, and theatre fees. Extras (ancillary) cover pays rebates for dental, optical, physio, and allied health services up to annual benefit limits.",
+      },
+      {
+        heading: "The Medicare Levy Surcharge and Lifetime Health Cover loading",
+        body: "Two financial incentives push higher-income Australians toward PHI. Medicare Levy Surcharge (MLS): if your income exceeds $93,000 (single) or $186,000 (family) and you do not hold hospital cover, you pay an extra 1–1.5% MLS on top of the standard 2% Medicare Levy. At $100,000 income, the 1% MLS is $1,000/year — often exceeding the cost of basic hospital cover ($800–$1,200/year), making PHI financially rational even ignoring health benefits. Lifetime Health Cover (LHC) loading: if you do not take out hospital cover before 1 July following your 31st birthday, you pay a 2% loading on your hospital premiums for every year you delay — up to a maximum of 70% loading. Taking out hospital cover at 31 is significantly cheaper than waiting until 40.",
+      },
+      {
+        heading: "How to choose the right level of cover",
+        body: "Hospital cover tiers (as of April 2019 reforms): Basic, Bronze, Silver, Gold. Basic is the minimum to avoid MLS. Gold covers all hospital treatment categories including joint replacements and pregnancy. Extras cover is highly discretionary — calculate your likely annual dental, optical, and physiotherapy costs versus the premium paid. Typical extras cover: $1,200–$2,000/year premium, annual dental benefit limit $500–$800, optical $150–$250, physiotherapy $400–$600. Many people find they claim less than they pay in extras premiums — calculate your historical usage before purchasing. The Australian Government's privatehealth.gov.au comparison tool allows side-by-side comparison of all approved private health insurance products.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is private health insurance tax deductible in Australia?",
+        a: "Private health insurance premiums are not directly tax-deductible for individuals. However, the government provides a Private Health Insurance Rebate — a means-tested subsidy that reduces your premium cost. The rebate is 24.608% for singles earning under $93,000 and reduces to 0% for incomes above $140,000. You can claim the rebate as a premium reduction (paid directly to your insurer, reducing your annual premium) or as a tax offset in your tax return. The rebate effectively makes a portion of your premium government-subsidised.",
+      },
+      {
+        q: "Can I use my super to pay private health insurance premiums?",
+        a: "No — private health insurance premiums cannot be paid from superannuation directly. However, if you have income protection insurance inside super, premiums are paid from your super balance. Once you retire and start drawing a pension from super, you can use that pension income to pay PHI premiums. Some employer salary packaging schemes (particularly for non-profit/hospital employees) allow PHI premiums to be packaged through salary sacrifice.",
+      },
+      {
+        q: "What is the 'excess' and 'gap' in private health insurance?",
+        a: "The excess is the amount you pay out of pocket when you are admitted to hospital — typically $250, $500, or $750. Choosing a higher excess reduces your annual premium. The gap is the difference between what your surgeon or specialist charges and what Medicare plus your fund pays. Doctors can charge above the MBS schedule fee — if your insurer offers 'no gap' arrangements with certain doctors, the gap is covered. Always ask your doctor or hospital if they participate in your fund's no-gap scheme before a procedure.",
+      },
+    ],
+    relatedSlugs: [
+      "types-of-life-insurance-australia",
+      "what-is-trauma-insurance-australia",
+      "income-protection-insurance-vs-workers-compensation-australia",
+    ],
+    relatedTools: [
+      { label: "Compare life insurance", href: "/life-insurance" },
+    ],
+  },
+  {
+    slug: "what-is-the-age-pension-income-test-australia",
+    category: "retirement",
+    question: "How does the Age Pension income test work in Australia?",
+    metaTitle: "Age Pension Income Test in Australia: Thresholds & Deeming Explained (2026)",
+    metaDescription:
+      "The Age Pension income test uses actual income plus deemed income from financial assets to assess entitlements. Learn the deeming rates, the pension reduction formula, and how super in accumulation phase is treated.",
+    shortAnswer:
+      "The Age Pension income test reduces your pension by 50 cents for every dollar of income above the threshold ($204/fortnight for singles; $360/fortnight for couples combined). Investment income from financial assets (super, bank accounts, shares) is assessed using the deeming rate (2.25% above $62,600 for singles as of 2026) rather than actual returns, regardless of what the assets actually earn.",
+    sections: [
+      {
+        heading: "How the income test works",
+        body: "Centrelink applies both an assets test and an income test to Age Pension eligibility — the test that produces the lower pension amount applies. The income test counts: employment income, business income, rental income (net of expenses — but not the same deductions as the ATO's investment property rules), overseas pensions, and deemed income from financial investments. The reduction rate is 50 cents per dollar of income above the threshold. For a single person with $600/fortnight income above the threshold ($204), the pension reduction is $300/fortnight — so pension income is reduced from the full rate ($1,144/fortnight in 2026-27) by $300, leaving $844/fortnight.",
+      },
+      {
+        heading: "Deeming rates: how financial assets are assessed",
+        body: "Rather than assessing actual investment returns (which vary with market conditions), Centrelink deems financial assets to earn a standardised return. Deeming rates (2026): 0.25% on financial assets up to $62,600 (singles) or $103,800 (couples combined); 2.25% above those thresholds. Financial assets include: savings accounts, term deposits, super in drawdown phase (account-based pensions for those reaching Age Pension age after 1 January 2015), shares, managed funds, and crypto. Key exception: superannuation in accumulation phase for people below Age Pension age is not assessed under the income test (though it is assessable once the holder reaches pension age).",
+      },
+      {
+        heading: "Strategies to manage income test exposure",
+        body: "For retirees approaching the Age Pension income test threshold: (1) If drawing more super than needed, reduce account-based pension payments to the 4% minimum — deeming applies to the balance regardless of what you draw, but drawing less may help with the assets test. (2) Gifting rules: you can gift $10,000/year (up to $30,000 over 5 years) without the gifted amount continuing to be counted — excess gifting is assessed under the assets test for 5 years. (3) Pre-retirement home improvements: spending on your principal home (assessed-exempt asset) reduces financial assets subject to deeming. (4) Funeral bonds up to $15,000 are exempt from both tests — can be a small planning tool. Always model the interaction of income test, assets test, and the combined rate of pension reduction before making large financial moves.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What is the income-free area for the Age Pension?",
+        a: "The income-free area is the amount of income you can receive without any reduction in your Age Pension. As of 2026-27: $204/fortnight for singles, $360/fortnight for couples combined ($180 each). These thresholds are indexed to CPI movements in March and September each year. Additionally, the Work Bonus allows pensioners who earn employment income to have the first $300/fortnight of employment income exempt from the income test — up to a maximum accrual of $11,800 in the pensioner's 'Work Bonus Balance'.",
+      },
+      {
+        q: "Are account-based pensions (super drawdown) assessed under the income test?",
+        a: "For people who reached Age Pension age on or after 1 January 2015, account-based pensions are subject to deeming under the income test (the balance is deemed to earn the standard rates regardless of actual payments). For grandfathered pensioners (reached age pension age before 1 January 2015 and had a pre-existing account-based pension), the pension payments themselves are counted as income — not deeming. Grandfathered status is lost if the account is rolled over to a new product.",
+      },
+      {
+        q: "How does rental income affect the Age Pension?",
+        a: "Net rental income (rent received minus allowable deductions — mortgage interest, rates, insurance, repairs, management fees, and depreciation on a continuing basis) is counted as income for the Age Pension income test. The deductions are similar to but not identical to ATO deductions — check with Services Australia for the exact formula. Negative gearing losses are not offset against other income for Centrelink purposes. If your investment property is positively geared, the net income increases your assessable income and may reduce your pension.",
+      },
+    ],
+    relatedSlugs: [
+      "asfa-retirement-standard-australia",
+      "can-i-retire-early-in-australia-what-is-fire",
+      "age-pension-assets-test-thresholds-australia",
+      "how-to-use-ttr-to-reduce-work-hours-australia",
+    ],
+    relatedTools: [
+      { label: "Retirement calculator", href: "/retirement-calculator" },
+    ],
+  },
 ];
 
 /** Lookup by slug — O(1) for static-generation. */
