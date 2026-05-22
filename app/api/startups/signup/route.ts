@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const body: unknown = await request.json();
     const parsed = StartupSignupSchema.safeParse(body);
     if (!parsed.success) {
-      const firstError = parsed.error.errors[0];
+      const firstError = parsed.error.issues[0];
       return NextResponse.json(
         { error: firstError?.message ?? "Invalid request data." },
         { status: 400 }
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (authError) {
-      if (authError.message.toLowerCase().includes("already been registered") ||
+      if (authError.message.toLowerCase().includes("already registered") ||
           authError.message.toLowerCase().includes("already exists")) {
         return NextResponse.json(
           { error: "An account with this email already exists. Please sign in instead." },

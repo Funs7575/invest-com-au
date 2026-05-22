@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
-const mockIsRateLimited = vi.fn();
+const { mockIsRateLimited } = vi.hoisted(() => ({ mockIsRateLimited: vi.fn() }));
 vi.mock("@/lib/rate-limit", () => ({ isRateLimited: mockIsRateLimited }));
 
 const mockMaybySingle = vi.fn();
