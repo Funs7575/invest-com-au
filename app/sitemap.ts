@@ -196,6 +196,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/compound-interest-calculator", "/dividend-reinvestment-calculator",
     "/fire-calculator", "/property-vs-shares-calculator",
     "/super-contributions-calculator", "/tco-calculator",
+    // CPD & events hub
+    "/academy", "/events", "/certificate",
+    // For-advisors sub-pages
+    "/for-advisors/pricing",
+    // Provider directory
+    "/providers", "/provider-apply",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),
@@ -1088,6 +1094,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.82,
   };
 
+  // ── CPD events — /events/[id] detail pages ──
+  const { data: publishedEvents } = supabase
+    ? await supabase
+        .from("advisor_events")
+        .select("id, updated_at")
+        .eq("status", "published")
+        .gte("starts_at", new Date().toISOString())
+    : { data: null };
+  const eventDetailPages = (publishedEvents || []).map((ev: { id: number; updated_at: string | null }) => ({
+    url: `${baseUrl}/events/${ev.id}`,
+    lastModified: ev.updated_at ? new Date(ev.updated_at) : new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.65,
+  }));
+
   // ── CO-03: /afsl/[number] — dynamic AFSL licensee SEO pages ──
   // The afsl_register table is populated pre-launch via admin CSV upload
   // or post-launch via weekly cron. Currently empty; query is future-ready
@@ -1107,5 +1128,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...findAdvisorCityPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...suburbInvestingPages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages, investingForIndexPage, ...investingForPages, taxReturnHubPage, ...afslPages, feedPage];
+  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...findAdvisorCityPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...suburbInvestingPages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages, investingForIndexPage, ...investingForPages, taxReturnHubPage, ...afslPages, feedPage, ...eventDetailPages];
 }
