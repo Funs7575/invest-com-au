@@ -161,7 +161,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       const { data: profile } = await admin
         .from("investor_profiles")
         .select("mot_sent_at")
-        .eq("user_id", user.id)
+        .eq("auth_user_id", user.id)
         .maybeSingle();
 
       if (profile?.mot_sent_at) {
@@ -198,13 +198,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         subject,
         html,
         from: `${SITE_NAME} <hello@invest.com.au>`,
-        tags: [{ name: "type", value: "annual-mot" }],
       });
 
       // Record send date to prevent duplicate sends this year
       await admin
         .from("investor_profiles")
-        .upsert({ user_id: user.id, mot_sent_at: today.toISOString() }, { onConflict: "user_id" });
+        .upsert({ auth_user_id: user.id, mot_sent_at: today.toISOString() }, { onConflict: "auth_user_id" });
 
       sent++;
       log.info("MOT email sent", { userId: user.id, yearsOnPlatform });

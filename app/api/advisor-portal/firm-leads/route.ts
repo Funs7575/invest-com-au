@@ -17,11 +17,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:advisor-portal:firm-leads");
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  if (!await isAllowed("advisor_firm_leads_get", ipKey(request), { max: 30, refillPerSec: 0.5 })) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
+
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
@@ -101,6 +106,10 @@ const AssignBody = z.object({
 });
 
 export async function PATCH(request: NextRequest): Promise<NextResponse> {
+  if (!await isAllowed("advisor_firm_leads_patch", ipKey(request), { max: 20, refillPerSec: 0.2 })) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
+
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });

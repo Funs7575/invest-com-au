@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:advisor-portal:slack-settings");
@@ -26,6 +27,10 @@ const Body = z.object({
 });
 
 export async function PATCH(request: NextRequest): Promise<NextResponse> {
+  if (!await isAllowed("advisor_slack_settings", ipKey(request), { max: 10, refillPerSec: 0.1 })) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
+
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
