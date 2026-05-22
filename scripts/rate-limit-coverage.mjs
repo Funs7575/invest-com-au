@@ -111,6 +111,10 @@ const EXEMPT_PATTERNS = [
   // absorbs repeats from the same IP. Per-IP throttle inside the
   // handler would cost cache hits with no real threat model.
   { match: /\/api\/country-rule-alerts(\/|$)/, reason: "public read w/ 5m CDN cache; provider-pooled" },
+  // Disabled pre-AFSL: these endpoints return 410 Gone unconditionally.
+  // A static error response cannot be abused; rate limiting adds nothing.
+  { match: /\/api\/portfolio-xray(\/|$)/, reason: "disabled pre-AFSL (410 Gone stub)" },
+  { match: /\/api\/tax-optimizer(\/|$)/, reason: "disabled pre-AFSL (410 Gone stub)" },
 ];
 
 async function findRouteFiles(dir) {
