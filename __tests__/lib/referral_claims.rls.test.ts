@@ -68,7 +68,7 @@ describe("referral_claims — RLS isolation", () => {
 
   it("user A cannot SELECT user B's referral claim", async () => {
     const { data } = await clientA.select();
-    expect(data!.filter((r) => r.claimant_user_id === USER_B)).toHaveLength(0);
+    expect(data!.filter((r: Row) => r.claimant_user_id === USER_B)).toHaveLength(0);
   });
 
   it("user B can SELECT their own referral claim", async () => {
