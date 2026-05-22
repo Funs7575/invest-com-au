@@ -712,8 +712,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  // Individual glossary term pages
-  const { GLOSSARY_ENTRIES } = await import("@/lib/glossary");
+  // Individual glossary term pages — full live set (203), so all term pages
+  // are discoverable. Server-only import keeps the client bundle lean.
+  const { FULL_GLOSSARY_ENTRIES: GLOSSARY_ENTRIES } = await import("@/lib/glossary-extended");
   const glossaryPages = GLOSSARY_ENTRIES.map((entry) => ({
     url: `${baseUrl}/glossary/${entry.slug}`,
     lastModified: new Date(),
