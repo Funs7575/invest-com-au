@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
@@ -19,6 +20,29 @@ export const metadata: Metadata = {
   },
 };
 
+const IGP_FAQ_LD = faqJsonLd([
+  {
+    q: "What is the Industry Growth Program?",
+    a: "The Industry Growth Program (IGP) is a federal Australian Government grant that provides matched funding to small and medium-sized enterprises (SMEs) commercialising new technologies and products in priority sectors under the Future Made in Australia agenda. It replaces the former Accelerating Commercialisation program and offers two funding streams ranging from $50,000 to $5 million.",
+  },
+  {
+    q: "Who is eligible for the Industry Growth Program?",
+    a: "To be eligible for the IGP, applicants must be an Australian SME (generally fewer than 200 employees), have an Australian Business Number (ABN), and be working on a project in one of the Future Made in Australia priority sectors such as clean energy, critical minerals processing, advanced manufacturing, or defence technology. A free advisory engagement with a Department of Industry advisor must be completed before a full application can be submitted.",
+  },
+  {
+    q: "How much funding can I get from the Industry Growth Program?",
+    a: "Stream 1 (Early-Stage Commercialisation) provides matched funding between $50,000 and $250,000 for projects at Technology Readiness Levels 3–6. Stream 2 (Commercialisation and Growth) provides matched funding between $100,000 and $5,000,000 for projects at TRL 4–9. Funding is provided on a matched basis, meaning applicants must contribute at least equal co-funding from non-government sources.",
+  },
+  {
+    q: "What sectors does the Industry Growth Program target?",
+    a: "The IGP targets sectors aligned with the Future Made in Australia agenda, including clean energy and net zero technologies, critical minerals extraction and processing, advanced manufacturing, quantum and AI technologies, defence technology, and agricultural innovation. Projects must demonstrate clear commercialisation pathways and economic benefit to Australia.",
+  },
+  {
+    q: "How do I apply for the Industry Growth Program?",
+    a: "The application process has two mandatory steps. First, you must register for a free advisory engagement — a Department of Industry advisor will assess your commercial readiness and produce a written advisory report, which takes 4–8 weeks. Second, after receiving the advisory report, you submit a full grant application through the Business.gov.au portal against the priority sector criteria. Allow 4–6 months for the entire process. Approximately 90% of the $287M funding pool is projected to be committed by June 2026, so early engagement is strongly recommended.",
+  },
+]);
+
 export default function IgpPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -29,6 +53,7 @@ export default function IgpPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {IGP_FAQ_LD && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(IGP_FAQ_LD) }} />}
 
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">

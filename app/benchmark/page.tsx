@@ -5,6 +5,7 @@ import { Suspense } from "react";
 export const revalidate = 3600; // 1 hour
 import BenchmarkClient from "./BenchmarkClient";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const metadata = {
   title: "Platform Fee Benchmarking Dashboard — Percentile Rankings",
@@ -45,6 +46,29 @@ function jsonLd() {
   };
 }
 
+const BENCHMARK_FAQ = faqJsonLd([
+  {
+    q: "What does this fee benchmarking tool measure?",
+    a: "The tool ranks each Australian investing platform across six key dimensions: ASX brokerage fees, US share fees, foreign exchange (FX) rates, platform quality rating, available features, and cost stability over time. Each platform receives a percentile score so you can see how it compares to the full market.",
+  },
+  {
+    q: "How are platform fees ranked and compared?",
+    a: "Each fee dimension is scored as a percentile relative to all active platforms in the Invest.com.au database. A platform at the 90th percentile has cheaper fees than 90% of other platforms on that dimension. The radar chart shows all six dimensions at a glance.",
+  },
+  {
+    q: "What is a good brokerage fee for Australian investors?",
+    a: "For ASX trades, competitive brokers charge between $2 and $10 per trade. For US shares, fees below $2 USD per trade are considered low-cost. Use the benchmarking tool to see exactly where your current platform sits relative to all alternatives.",
+  },
+  {
+    q: "Why do FX fees matter for international share investing?",
+    a: "When you buy US or international shares, your broker converts AUD to the foreign currency. FX margins typically range from 0.25% to 1.5% per conversion. On a $10,000 trade, a 1% FX margin costs $100 — often more than the brokerage fee itself.",
+  },
+  {
+    q: "How often is the fee benchmarking data updated?",
+    a: "Platform fee data is updated whenever brokers announce fee changes, typically within 48 hours of an official announcement. The newsletter subscribers receive a weekly digest of all fee changes detected that week.",
+  },
+]);
+
 export default async function BenchmarkPage() {
   const supabase = await createClient();
 
@@ -70,6 +94,12 @@ export default async function BenchmarkPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {BENCHMARK_FAQ && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(BENCHMARK_FAQ) }}
+        />
+      )}
       <Suspense fallback={<BenchmarkLoading />}>
         <BenchmarkClient brokers={(brokers as Broker[]) || []} />
       </Suspense>

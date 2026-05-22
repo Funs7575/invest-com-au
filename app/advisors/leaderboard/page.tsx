@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 
 export const revalidate = 3600;
@@ -130,9 +131,33 @@ export default async function LeaderboardPage() {
   const podium = entries.slice(0, 3);
   const rest = entries.slice(3);
 
+  const leaderboardFaq = faqJsonLd([
+    {
+      q: "How are advisors ranked on the leaderboard?",
+      a: "Advisors are ranked using a composite monthly score that combines client leads received, CPD (Continuing Professional Development) hours logged, verified client ratings and review count, response time to enquiries, profile completeness, and earned platform badges. The score resets on the 1st of each month.",
+    },
+    {
+      q: "What criteria determine an advisor's ranking?",
+      a: "The ranking algorithm weighs five factors: client ratings and review count, CPD hours and professional development activity, response time to client enquiries, profile completeness and verifications, and earned badges. Advisors who keep their profiles up to date, respond quickly, and accumulate genuine client reviews naturally score higher.",
+    },
+    {
+      q: "Are the top-ranked advisors the best choice for me?",
+      a: "A high leaderboard rank indicates strong platform engagement, client satisfaction, and professional development — but the best advisor for you also depends on your personal goals, location, and the specialist area you need (e.g. SMSF, retirement planning, or property investment). Use the leaderboard as a starting point, then review individual advisor profiles before reaching out.",
+    },
+    {
+      q: "How can advisors improve their ranking?",
+      a: "Advisors can improve their ranking by asking satisfied clients to leave verified reviews on invest.com.au, completing CPD hours, filling out their profile completely (including photo, bio, and credentials), responding promptly to new client enquiries, and earning platform badges for verified qualifications and experience milestones.",
+    },
+    {
+      q: "Are all advisors on the leaderboard verified?",
+      a: "Yes — only verified advisors registered on invest.com.au are included in the monthly leaderboard. Verification includes confirming AFSL authorisation details and identity. Advisors displaying the 'Verified' badge have completed invest.com.au's additional profile verification process.",
+    },
+  ]);
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {leaderboardFaq && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(leaderboardFaq) }} />}
 
       {/* Hero */}
       <div className="bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-400 py-14 px-4">
