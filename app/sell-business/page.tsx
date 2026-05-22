@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
@@ -19,6 +20,25 @@ export const metadata: Metadata = {
   },
 };
 
+const sellBusinessFaqLd = faqJsonLd([
+  {
+    q: "How do I value my business for sale in Australia?",
+    a: "Business valuation methods vary by type. Profitable service businesses are typically valued at 2–5× EBITDA (earnings before interest, tax, depreciation, amortisation). Retail and trade businesses typically use a multiple of seller's discretionary earnings (SDE) of 1.5–3×. SaaS and recurring-revenue tech businesses may command 3–8× ARR. Asset-heavy businesses (manufacturing, property) use asset-based approaches. A formal independent valuation by a qualified business valuation specialist gives a defensible number for negotiations with buyers and for tax structuring purposes.",
+  },
+  {
+    q: "What is the small business CGT concession for selling a business in Australia?",
+    a: "The small business CGT concessions can significantly reduce or eliminate CGT on the sale of a qualifying business asset. The 15-year exemption allows complete CGT exemption if you've owned the asset for 15+ years and are over 55 or retiring. The 50% active asset reduction applies if the business asset is an 'active asset' used in the business. The retirement exemption allows up to $500,000 lifetime cap to be excluded from CGT if proceeds are contributed to super. All require that your aggregated turnover is under $2M or net assets under $6M.",
+  },
+  {
+    q: "How long does it take to sell a business in Australia?",
+    a: "The typical timeline is 6–18 months from listing to settlement. Key phases: preparation and valuation (1–3 months), confidential marketing and initial expressions of interest (2–4 months), due diligence (1–3 months), negotiation and heads of agreement (2–4 weeks), formal legal contracts and settlement (4–8 weeks). Complex businesses with regulatory licences, franchisor approvals, or significant property interests take longer. Working with a business broker and M&A lawyer from the outset reduces surprises.",
+  },
+  {
+    q: "What is a business broker and should I use one?",
+    a: "A business broker facilitates the sale of small to medium businesses — similar to a real estate agent for property. They assist with valuation, confidential marketing, buyer screening, negotiation, and transaction management. Fees are typically 5–10% of the sale price (declining to 2–3% for larger transactions). For most owner-operators, a broker pays for themselves by securing a higher price, running a wider competitive process, maintaining confidentiality, and allowing the owner to keep running the business. Businesses below $300K sale price are often sold without a broker.",
+  },
+]);
+
 export default function SellBusinessHubPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -27,6 +47,7 @@ export default function SellBusinessHubPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(sellBusinessFaqLd) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
