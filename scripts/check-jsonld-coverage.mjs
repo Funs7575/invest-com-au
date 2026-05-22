@@ -113,6 +113,7 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "onboarding", category: "PORTAL" },
   { prefix: "dashboard", category: "PORTAL" },
   { prefix: "advisor-portal", category: "PORTAL" },
+  { prefix: "startup-portal", category: "PORTAL" }, // auth-gated founder portal; robots noindex
   { prefix: "broker-portal", category: "PORTAL" },
   { prefix: "firm-portal", category: "PORTAL" },
   { prefix: "marketplace-portal", category: "PORTAL" },
@@ -122,6 +123,7 @@ const EXEMPT_ROUTE_PATTERNS = [
   // FORM
   { prefix: "advisor-signup", category: "FORM" },
   { prefix: "advisor-apply", category: "FORM" },
+  { prefix: "startup-signup", category: "FORM" }, // founder sign-up form; robots noindex
   { prefix: "broker-signup", category: "FORM" },
   { prefix: "marketplace/register", category: "FORM" },
   { prefix: "community/new", category: "FORM" },
