@@ -13,7 +13,6 @@ interface RecentEnrollment {
 
 type Props = {
   org: Organisation | null;
-  /** Legacy prop — component fetches its own stats for freshness. */
   stats?: OrgStats | null;
   onNavigate: (v: OrgViewType) => void;
 };
@@ -66,6 +65,7 @@ const QUICK_LINKS: QuickLink[] = [
 
 /** Derive a checklist item's done state from org + stats. */
 function buildChecklist(org: Organisation | null, stats: OrgStats | null) {
+  const teamCount = stats?.team_member_count ?? 0;
   return [
     {
       id: "cpd_provider",
@@ -98,8 +98,11 @@ function buildChecklist(org: Organisation | null, stats: OrgStats | null) {
     {
       id: "team",
       label: "Invite team members",
-      detail: "Grant staff access to manage courses and view reports.",
-      done: false, // no team-count stat available yet
+      detail:
+        teamCount > 0
+          ? `${teamCount} team member${teamCount === 1 ? "" : "s"} active`
+          : "Grant staff access to manage courses and view reports.",
+      done: teamCount > 0,
       action: "team" as OrgViewType | null,
     },
   ];
@@ -148,7 +151,7 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
         <div className="h-7 w-48 bg-slate-200 rounded" />
         <div className="h-4 w-32 bg-slate-100 rounded" />
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 9 }).map((_, i) => (
             <div key={i} className="bg-slate-100 rounded-xl h-24" />
           ))}
         </div>
@@ -185,7 +188,7 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
         </div>
       )}
 
-      {/* KPI cards — 2×3 / 3×2 grid */}
+      {/* KPI cards — 3×3 grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
         {[
           {
@@ -246,6 +249,13 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
             icon: "clock",
             color: "text-cyan-600",
             bg: "bg-cyan-50",
+          },
+          {
+            label: "Team Members",
+            value: stats?.team_member_count ?? 0,
+            icon: "user-plus",
+            color: "text-pink-600",
+            bg: "bg-pink-50",
           },
         ].map((kpi, i) => (
           <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
@@ -360,19 +370,19 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
         <div className="px-4 py-3 border-b border-slate-100">
           <h2 className="text-sm font-bold text-slate-900">Quick Links</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 divide-y divide-slate-100">
           {QUICK_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors group"
+              className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-b-0 sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(3n)]:border-r-0"
             >
               <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-teal-50 transition-colors">
                 <Icon name={link.icon} size={16} className="text-slate-500 group-hover:text-teal-600 transition-colors" />
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold text-slate-900 group-hover:text-teal-700 transition-colors">
                   {link.label}
                 </p>
