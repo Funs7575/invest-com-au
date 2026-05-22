@@ -85,7 +85,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-27 | _complete_ | **#1032 MERGED 2026-05-20** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). **#1032 merged by founder 2026-05-20. Stream complete.** | Z-27 merged ✓ |
 | BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
-| PX | _complete_ | **merged to main** (`0f836ffc`) | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC on `claude/audit-remediation/px-api-tests`. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). Branch `claude/audit-remediation/px-api-tests` awaiting PR + CI. | All PX tasks + tests done |
+| PX | `claude/audit-remediation/px-api-tests` | **#1160 OPEN** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. Last CI: pending. | All PX tasks + tests merged |
 
 ---
 
@@ -206,6 +206,16 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 504 — 2026-05-22 — PX test coverage PR (#1160 opened)
+
+- **Stream:** PX (platform expansion — Tier A tests)
+- **Phase:** 3 + 6 — PR creation for unpublished branch
+- **Branch:** `claude/audit-remediation/px-api-tests`
+- **PR:** #1160 OPEN (just created)
+- **Commits covered:** `2e97f24d` (4 API route tests, 521 LOC), `3496f9fd` (slack-lead-notify, 98 LOC), `d060bdf9` (FeeImpactVisualiser, 102 LOC) — all 46 test cases
+- **Background:** iter 500 pushed the branch but could not open a PR due to GitHub auth. iter 504 opened #1160 to complete the PR lifecycle.
+- **STATUS: PROGRESS · stream=PX · item=PX-DISC-20260522-01..06 · pr=#1160**
 
 ### iter 503 — 2026-05-22 — SP CI rescue: Zod v4 .issues + vi.hoisted() fix
 
