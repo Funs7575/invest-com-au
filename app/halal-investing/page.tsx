@@ -112,7 +112,7 @@ export default function HalalInvestingHub() {
               Halal investing in Australia
             </h1>
             <p className="text-lg text-slate-600">
-              A practical guide for Australian Muslim investors: Sharia-compliant super, Islamic home finance, AAOIFI-screened ETFs, and the screening ratios for picking individual ASX names. {SITE_NAME} compares across providers — we don't recommend specific products.
+              A practical guide for Australian Muslim investors: Sharia-compliant super, Islamic home finance, AAOIFI-screened ETFs, and the screening ratios for picking individual ASX names. {SITE_NAME} compares across providers — we don&apos;t recommend specific products.
             </p>
           </header>
 
@@ -155,7 +155,7 @@ export default function HalalInvestingHub() {
             </p>
             <ul className="list-disc pl-6 space-y-2 text-slate-700">
               <li>
-                <strong>MCCA (Muslim Community Co-operative Australia):</strong> Ijarah (lease-to-own) and Murabaha (cost-plus) home finance since 1989 — Australia's longest-running Islamic finance co-op.
+                <strong>MCCA (Muslim Community Co-operative Australia):</strong> Ijarah (lease-to-own) and Murabaha (cost-plus) home finance since 1989 — Australia&apos;s longest-running Islamic finance co-op.
               </li>
               <li>
                 <strong>Hejaz Financial Services:</strong> Sharia-compliant home finance, investment products, and Islamic super partnerships.
@@ -173,10 +173,10 @@ export default function HalalInvestingHub() {
           <section className="mb-10">
             <h2 className="text-2xl font-bold mb-3">Self-directed ASX — applying the screen yourself</h2>
             <p className="text-slate-700 leading-relaxed mb-3">
-              For self-directed investors, applying the AAOIFI screen to ASX names is straightforward but requires re-checking each company's annual report. Roughly 30–40% of ASX 300 names typically pass a standard sector + ratio screen — heavily weighted toward miners, healthcare, and select consumer-staples. The big-four banks (CBA, WBC, NAB, ANZ) fail the sector screen; most LICs fail because their underlying portfolios mix compliant and non-compliant names.
+              For self-directed investors, applying the AAOIFI screen to ASX names is straightforward but requires re-checking each company&apos;s annual report. Roughly 30–40% of ASX 300 names typically pass a standard sector + ratio screen — heavily weighted toward miners, healthcare, and select consumer-staples. The big-four banks (CBA, WBC, NAB, ANZ) fail the sector screen; most LICs fail because their underlying portfolios mix compliant and non-compliant names.
             </p>
             <p className="text-slate-700 leading-relaxed">
-              The practical workflow: shortlist by sector → check trailing-24-month average market cap → check debt-to-marketcap and interest-income ratios from the financial report → exclude any ETF or fund-of-funds whose underlying holdings haven't been screened. A managed Sharia portfolio (Hejaz, Crescent) avoids this work but charges a management fee.
+              The practical workflow: shortlist by sector → check trailing-24-month average market cap → check debt-to-marketcap and interest-income ratios from the financial report → exclude any ETF or fund-of-funds whose underlying holdings haven&apos;t been screened. A managed Sharia portfolio (Hejaz, Crescent) avoids this work but charges a management fee.
             </p>
             <Link
               href="/best/share-trading"
@@ -194,10 +194,10 @@ export default function HalalInvestingHub() {
             </p>
             <ul className="list-disc pl-6 space-y-2 text-slate-700">
               <li>
-                A non-resident-friendly broker offering US/UK Sharia-screened ETFs (Wahed Invest's funds, iShares MSCI World Islamic, S&P 500 Shariah variants).
+                A non-resident-friendly broker offering US/UK Sharia-screened ETFs (Wahed Invest&apos;s funds, iShares MSCI World Islamic, S&P 500 Shariah variants).
               </li>
               <li>
-                A managed Sharia portfolio with an Australian Sharia supervisory board (Hejaz Equity, Crescent Wealth's growth options).
+                A managed Sharia portfolio with an Australian Sharia supervisory board (Hejaz Equity, Crescent Wealth&apos;s growth options).
               </li>
               <li>
                 Self-directed selection of compliant ASX names per the screen above.
@@ -226,7 +226,7 @@ export default function HalalInvestingHub() {
           <section className="mb-10">
             <h2 className="text-2xl font-bold mb-3">Cross-border halal investing (UAE / Saudi Arabia / Malaysia)</h2>
             <p className="text-slate-700 leading-relaxed mb-3">
-              For investors based in the UAE, Saudi Arabia, or Malaysia investing into Australia, country-specific tax treatment matters. Australia has no DTA with UAE or Saudi Arabia (so 30% WHT on unfranked dividends applies); Malaysia's DTA + transitional foreign-source-income exemption is in flux.
+              For investors based in the UAE, Saudi Arabia, or Malaysia investing into Australia, country-specific tax treatment matters. Australia has no DTA with UAE or Saudi Arabia (so 30% WHT on unfranked dividends applies); Malaysia&apos;s DTA + transitional foreign-source-income exemption is in flux.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/foreign-investment/united-arab-emirates" className="text-emerald-700 hover:text-emerald-900 underline underline-offset-2 text-sm">
@@ -244,7 +244,7 @@ export default function HalalInvestingHub() {
           {/* Compliance footer */}
           <footer className="text-xs text-slate-500 leading-relaxed border-t border-slate-200 pt-6">
             <p className="mb-2">
-              {SITE_NAME} provides general information and comparison content only. We are not Islamic-finance scholars and do not certify Sharia compliance — refer to each provider's Sharia supervisory board for compliance attestations. Different boards apply different screening thresholds; what is permissible under one ruling may not be under another.
+              {SITE_NAME} provides general information and comparison content only. We are not Islamic-finance scholars and do not certify Sharia compliance — refer to each provider&apos;s Sharia supervisory board for compliance attestations. Different boards apply different screening thresholds; what is permissible under one ruling may not be under another.
             </p>
             <p>
               See a qualified Islamic finance scholar / accountant / financial advisor for rulings and advice tailored to your circumstances.
