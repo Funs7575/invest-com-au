@@ -8,6 +8,7 @@ import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
 import ForeignInvestorCallout from "@/components/ForeignInvestorCallout";
 import RateAlertCapture from "@/components/RateAlertCapture";
+import InvestorCopilot from "@/components/InvestorCopilot";
 
 const vertical = getVerticalBySlug("savings")!;
 
@@ -111,6 +112,7 @@ export default async function SavingsPage() {
           defaultThresholdPct={5.25}
         />
       </div>
+      <InvestorCopilot />
     </>
   );
 }
