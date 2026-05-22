@@ -9,6 +9,7 @@ import type { Organisation, OrgStats, OrgViewType } from "./types";
 
 const OrgDashboardTab = dynamic(() => import("./OrgDashboardTab"));
 const OrgCoursesTab = dynamic(() => import("./OrgCoursesTab"));
+const OrgEventsTab = dynamic(() => import("./OrgEventsTab"));
 const OrgStudentsTab = dynamic(() => import("./OrgStudentsTab"));
 const OrgTeamTab = dynamic(() => import("./OrgTeamTab"));
 const OrgBillingTab = dynamic(() => import("./OrgBillingTab"));
@@ -18,6 +19,7 @@ const OrgSettingsTab = dynamic(() => import("./OrgSettingsTab"));
 const navItems = [
   { key: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
   { key: "courses", label: "Courses", icon: "book-open" },
+  { key: "events", label: "Events", icon: "calendar" },
   { key: "students", label: "Students", icon: "users" },
   { key: "team", label: "Team", icon: "user-plus" },
   { key: "billing", label: "Billing", icon: "dollar-sign" },
@@ -140,6 +142,9 @@ export default function OrgPortalPage() {
         )}
         {view === "courses" && (
           <OrgCoursesTab org={org} />
+        )}
+        {view === "events" && (
+          <OrgEventsTab org={org} />
         )}
         {view === "students" && (
           <OrgStudentsTab org={org} />

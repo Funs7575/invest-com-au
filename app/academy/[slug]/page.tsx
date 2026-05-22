@@ -12,7 +12,11 @@ import {
   creatorSlug,
   creatorLogoUrl,
 } from "@/lib/academy";
+import { createClient } from "@/lib/supabase/server";
+// eslint-disable-next-line no-restricted-imports -- enrollment SELECT + certificate SELECT require service_role; course_enrollments has deny-all-anon RLS and certificate lookup is cross-scoped (see CLAUDE.md)
+import { createAdminClient } from "@/lib/supabase/admin";
 import EnrollButton from "./EnrollButton";
+import CourseCompleteButton from "@/components/CourseCompleteButton";
 
 const CourseReviews = dynamic(
   () => import("@/app/courses/[slug]/CourseReviews"),
@@ -64,6 +68,53 @@ export default async function AcademyCourseDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const course = await getAcademyCourse(slug);
   if (!course || course.status !== "published") notFound();
+
+  // ── Enrollment status (server-side, for CourseCompleteButton) ────────────
+  // createClient() resolves the user JWT; createAdminClient() is used for the
+  // actual SELECT because course_enrollments has deny-all-anon RLS and there
+  // is no authenticated-role SELECT policy today (see CLAUDE.md allowed scope).
+  let isEnrolled = false;
+  let isCompleted = false;
+  let certificateId: string | null = null;
+  let isAuthenticated = false;
+
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      isAuthenticated = true;
+      const admin = createAdminClient();
+      const courseIdStr = String(course.id);
+
+      const { data: enrollment } = await admin
+        .from("course_enrollments")
+        .select("status")
+        .eq("course_id", courseIdStr)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (enrollment) {
+        isEnrolled = true;
+        isCompleted = (enrollment as { status: string }).status === "completed";
+
+        if (isCompleted) {
+          const { data: cert } = await admin
+            .from("course_certificates")
+            .select("id")
+            .eq("course_id", courseIdStr)
+            .eq("user_id", user.id)
+            .maybeSingle();
+          certificateId = (cert as { id: string } | null)?.id ?? null;
+        }
+      }
+    }
+  } catch {
+    // Non-fatal: if auth/DB check fails, the completion button simply won't
+    // render. Do not crash the page for unauthenticated or misconfigured envs.
+  }
 
   const name = creatorName(course);
   const profilePath = creatorSlug(course);
@@ -255,6 +306,15 @@ export default async function AcademyCourseDetailPage({ params }: PageProps) {
                   courseSlug={slug}
                   isFree={isFree}
                 />
+
+                {isAuthenticated && (
+                  <CourseCompleteButton
+                    courseId={String(course.id)}
+                    isEnrolled={isEnrolled}
+                    isCompleted={isCompleted}
+                    certificateId={certificateId}
+                  />
+                )}
 
                 {course.cpd_hours != null && course.cpd_hours > 0 && (
                   <div className="mt-4 flex items-start gap-2 text-xs text-slate-500">

@@ -1,6 +1,7 @@
 export type OrgViewType =
   | "dashboard"
   | "courses"
+  | "events"
   | "students"
   | "team"
   | "billing"
