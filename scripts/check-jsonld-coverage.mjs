@@ -136,6 +136,7 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "find-advisor", category: "FORM" }, // interactive quiz; OG/metadata cover SERP
   { prefix: "quick-audit", category: "FORM" },
   { prefix: "quiz", category: "FORM" },
+  { prefix: "certificate", category: "FORM" }, // /certificate is a lookup-form entry point; /certificate/[number] is the public content page that carries JSON-LD
   // UTILITY
   { prefix: "newsletter/confirm", category: "UTILITY" },
   { prefix: "newsletter/unsubscribe", category: "UTILITY" },
@@ -163,7 +164,11 @@ const EXEMPT_ROUTE_PATTERNS = [
  * keep as escape hatch for future false positives where a SALES/etc. prefix
  * does have rich-snippet value.
  */
-const EXEMPT_OVERRIDE_PATTERNS = [];
+const EXEMPT_OVERRIDE_PATTERNS = [
+  // /certificate/[number] is the public verification page (carries JSON-LD);
+  // only the /certificate index (lookup form) should be exempt as a FORM.
+  { prefix: "certificate/[number]" },
+];
 
 /* ────────────────────────────────────────────────────────────────────────── */
 /*  Helpers — exported for unit tests                                         */
