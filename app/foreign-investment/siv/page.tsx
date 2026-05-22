@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
@@ -101,6 +102,29 @@ const COUNTRY_GUIDES = [
   },
 ];
 
+const sivFaqLd = faqJsonLd([
+  {
+    q: "What is the Significant Investor Visa (SIV) in Australia?",
+    a: "The Significant Investor Visa (subclass 188A) allows foreign nationals to live and work in Australia by investing a minimum of A$5 million in complying investments for at least 4 years. Investors gain a 4-year provisional visa with a pathway to permanent residency (subclass 888). The SIV is designed to attract high-net-worth investors who can make a significant economic contribution to Australia.",
+  },
+  {
+    q: "What are complying SIV investments in Australia?",
+    a: "SIV investors must allocate their $5 million across three mandated categories: at least $500,000 in eligible venture capital or growth private equity funds (10%); at least $1.5 million in emerging companies listed on the ASX (30%); and the remaining $3 million in a 'balancing investment' including managed funds, ASX-listed stocks, bonds, real estate investment trusts, and debentures (60%). Property cannot constitute the balancing investment. The allocation must be maintained for the visa's duration.",
+  },
+  {
+    q: "How long does it take to get an SIV visa?",
+    a: "Processing times vary based on complexity, completeness of the application, and DIBP workload. Typically expect 6–18 months for the provisional 188A. The permanent 888 visa requires holding the provisional for at least 4 years and meeting state/territory nomination requirements. Some states offer faster nomination timelines in exchange for regional investment commitments.",
+  },
+  {
+    q: "Which Australian states nominate SIV applicants?",
+    a: "All states and territories participate in SIV nomination but have different requirements and quotas. VIC, NSW, and WA historically process the most SIV applications. Each state sets its own nomination requirements — business links, investment focus areas, or language skills. Most require a genuine intention to live and invest in the nominating state. Nomination is the first step; rejection by one state doesn't preclude applying to another.",
+  },
+  {
+    q: "What are the tax implications of the SIV in Australia?",
+    a: "SIV holders on a provisional visa (188A) are generally treated as Australian tax residents once they meet the residency tests (physical presence, domicile, or 183-day rule). Australian tax residents are taxed on worldwide income. SIV investors should obtain specialist cross-border tax advice before transferring capital to Australia — particularly regarding deemed disposal rules, trust distributions, and CGT events in their home country triggered by emigration.",
+  },
+]);
+
 export default async function SivPage() {
   const sivFunds = await fetchSivFunds();
 
@@ -116,6 +140,12 @@ export default async function SivPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {sivFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(sivFaqLd) }}
+        />
+      )}
       <ForeignInvestmentNav current="/foreign-investment/siv" />
 
       {/* Hero */}
