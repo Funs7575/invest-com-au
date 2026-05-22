@@ -19,7 +19,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | C | `claude/audit-remediation/c-disc-20260522-admin-scope` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541/**#1165 OPEN** | C-01..C-02 done. C-03..C-05 blocked (see Blocked). C-DISC-20260522-01: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/v1/brokers/route.ts`; 20 tests pass. C-DISC-20260522-02: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/community/categories/route.ts`; 6 tests pass. PR #1165 OPEN. | C-DISC-01+02 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
-| F | _complete_ | **#925 MERGED 2026-05-20** | F-01..F-07 done. F-08 blocked. F-DISC-01 #741 MERGED. F-DISC-20260519-01: **#925 MERGED by founder 2026-05-20** — `requireAdmin` consolidated, `escapeHtml` consolidated, 21 false-positives allowlisted. **Stream engineering complete.** F-DISC-20260522-01: pending (scout 2026-05-22) — `formatAud` redefined in `components/FeeImpactVisualiser.tsx`; fix: import from `lib/first-home-buyer/state-grants.ts` instead of local redefinition. | F-DISC-20260522-01 merged |
+| F | _complete_ | **#925 MERGED 2026-05-20** | F-01..F-07 done. F-08 blocked. F-DISC-01 #741 MERGED. F-DISC-20260519-01: **#925 MERGED by founder 2026-05-20** — `requireAdmin` consolidated, `escapeHtml` consolidated, 21 false-positives allowlisted. **Stream engineering complete.** F-DISC-20260522-01: **false-positive** (iter 517) — `formatAud` in `FeeImpactVisualiser.tsx` takes dollars (compact `$Xk`/`$XM` for chart labels); `lib/first-home-buyer/state-grants.ts:formatAud` takes cents (full `Intl.NumberFormat`). Different signatures, different units, different output format — not a SSOT violation. | **Stream complete.** |
 | G | `claude/audit-remediation/g-04-mfa-gaps` | #213/#306/#342/#371/#385/#457/#471/#544 | G-01..G-03 done. G-04 blocked (see Blocked). | G-04 unblocked + merged |
 | H | `claude/audit-remediation/h-06-stripe-webhooks` | #214/#307/#343/#386/#457/#472/#545 | H-01..H-06 done. | H-06 merged ✓ |
 | I | `claude/audit-remediation/i-05-advisor-gaps` | #215/#308/#344/#387/#457/#473/#546 | I-01..I-05 done. | I-05 merged ✓ |
@@ -210,10 +210,20 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 | CL-07 (social media entity-only) | Source code social links are entity-level: `@investcomau` on X/Twitter, `linkedin.com/company/invest-com-au`. No personal founder accounts referenced in shipped code. |
 | CL-08 (press inquiry handling) | `app/press/page.tsx` and `app/contact/page.tsx` already use `press@invest.com.au` (role address). No founder personal email in code. |
 | MM-V05 (alternative collectibles listings) | `app/invest/alternatives/listings/page.tsx` exists on main and covers all MM-V05 sub-categories (whisky, wine, art, watches, cars, coins, etc.) via `ALTERNATIVES_SUB_CATEGORIES`. No new page needed. |
+| F-DISC-20260522-01 (formatAud in FeeImpactVisualiser) | Local `formatAud(n: number)` takes dollars and outputs compact chart labels (`$100k`, `$1.50M`). Library `formatAud(cents: number)` in `state-grants.ts` takes cents and outputs full `Intl.NumberFormat` currency. Different units, different output — not a duplicate. (iter 517) |
 
 ---
 
 ## Iteration log (most recent first)
+
+### iter 517 — 2026-05-22 — F-DISC-20260522-01 — false-positive (formatAud unit mismatch)
+
+- **Stream:** F (hygiene / SSOT — false-positive resolution)
+- **Phase:** 4 — verification gate
+- **Item:** F-DISC-20260522-01
+- **Verification:** `components/FeeImpactVisualiser.tsx:formatAud(n: number)` takes DOLLARS, outputs compact chart labels: `$100k`, `$1.50M`. `lib/first-home-buyer/state-grants.ts:formatAud(cents: number)` takes CENTS, outputs `Intl.NumberFormat("en-AU", {style:"currency"})` — e.g. `A$100,000`. Also checked `lib/listing-kind.ts:formatAudCompact(cents)` — same cents-in pattern. None of the library functions serve the FeeImpactVisualiser's chart-label use case (would require `/100` conversion AND lose the compact M/k formatting). Consolidation would break the chart's visual output.
+- **Queue update:** F-DISC-20260522-01 marked `false-positive` in F stream row and Resolved table.
+- **STATUS: PROGRESS (false-positive resolution) · stream=F · item=F-DISC-20260522-01**
 
 ### iter 516 — 2026-05-22 — C-DISC-20260522-01+02 — replace createAdminClient in brokers + community-categories routes
 
