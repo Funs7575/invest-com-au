@@ -20,3 +20,22 @@
 - [Calculators](https://invest.com.au/calculators): Free Australian finance calculators (franking credits, CGT, super, retirement, compound interest, and more).
 - [Guides & Articles](https://invest.com.au/articles): Educational guides for Australian investors.
 - [Find a Financial Advisor](https://invest.com.au/find-advisor): Match with Australian financial advisers by location and need.
+
+## Financial advisors
+- [Advisor Directory](https://invest.com.au/advisors): Search licensed Australian financial advisers by location, specialty, and fee model.
+- [Advisor Leaderboard](https://invest.com.au/advisors/leaderboard): Top-rated financial advisers ranked by client feedback and engagement.
+- [Submit an Advice Brief](https://invest.com.au/briefs/new): Describe your situation; matched advisers respond with proposals.
+
+## CPD & professional development
+- [Academy](https://invest.com.au/academy): Accredited CPD courses and professional development for Australian financial advisers and planners.
+- [Training Providers](https://invest.com.au/providers): Directory of ASIC-recognised CPD providers and course publishers.
+- [Upcoming Events](https://invest.com.au/events): Webinars, workshops and seminars hosted by Australian financial professionals.
+
+## Foreign & cross-border investing
+- [Foreign Investment Guide](https://invest.com.au/foreign-investment): FIRB rules, DASP, non-resident CGT, and how to invest in Australia from overseas.
+- [Non-Resident Mortgage Guide](https://invest.com.au/non-resident-cgt-checker): CGT implications for Australian property sold by non-residents.
+
+## Rates & market data
+- [Term Deposits](https://invest.com.au/term-deposits): Current Australian term deposit rates by bank and term.
+- [Savings Rates](https://invest.com.au/savings): Best high-interest savings account rates in Australia.
+- [Rate Alerts](https://invest.com.au/rate-alerts): Free email alerts when Australian savings, term deposit, or investment rates change.
