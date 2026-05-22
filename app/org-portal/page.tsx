@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import OrgPortalLogin from "./OrgPortalLogin";
-import type { Organisation, OrgStats, OrgViewType } from "./types";
+import type { Organisation, OrgViewType } from "./types";
 
 const OrgDashboardTab = dynamic(() => import("./OrgDashboardTab"));
 const OrgCoursesTab = dynamic(() => import("./OrgCoursesTab"));
@@ -29,7 +29,6 @@ const navItems = [
 
 export default function OrgPortalPage() {
   const [org, setOrg] = useState<Organisation | null>(null);
-  const [orgStats, setOrgStats] = useState<OrgStats | null>(null);
   const [view, setView] = useState<OrgViewType>("dashboard");
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
@@ -56,23 +55,6 @@ export default function OrgPortalPage() {
     })();
     return () => { cancelled = true; };
   }, []);
-
-  useEffect(() => {
-    if (!authenticated) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/org-auth/dashboard");
-        if (cancelled) return;
-        if (res.ok) {
-          const data = await res.json();
-          if (cancelled) return;
-          setOrgStats(data.stats ?? null);
-        }
-      } catch { /* ignore */ }
-    })();
-    return () => { cancelled = true; };
-  }, [authenticated]);
 
   const logout = async () => {
     await fetch("/api/org-auth/session", { method: "DELETE" });
@@ -138,7 +120,7 @@ export default function OrgPortalPage() {
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 py-6">
         {view === "dashboard" && (
-          <OrgDashboardTab org={org} stats={orgStats} onNavigate={setView} />
+          <OrgDashboardTab org={org} onNavigate={setView} />
         )}
         {view === "courses" && (
           <OrgCoursesTab org={org} />
