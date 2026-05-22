@@ -3,10 +3,10 @@ import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
-const mockAdminFrom = vi.fn();
+const { mockServerFrom } = vi.hoisted(() => ({ mockServerFrom: vi.fn() }));
 
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+vi.mock("@/lib/supabase/server", () => ({
+  createClient: vi.fn().mockResolvedValue({ from: mockServerFrom }),
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -120,7 +120,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("returns broker list with meta", async () => {
     const broker = makeBroker();
-    mockAdminFrom.mockReturnValue(makeBrokersBuilder([broker], null, 1));
+    mockServerFrom.mockReturnValue(makeBrokersBuilder([broker], null, 1));
 
     const res = await GET(makeGet());
     expect(res.status).toBe(200);
@@ -134,7 +134,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("strips private fields from broker rows", async () => {
     const broker = { ...makeBroker(), stripe_customer_id: "cus_secret", internal_notes: "hidden" };
-    mockAdminFrom.mockReturnValue(makeBrokersBuilder([broker], null, 1));
+    mockServerFrom.mockReturnValue(makeBrokersBuilder([broker], null, 1));
 
     const res = await GET(makeGet());
     const body = await res.json();
@@ -144,7 +144,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("respects limit query param (max 100)", async () => {
     const builder = makeBrokersBuilder([], null, 0);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
 
     await GET(makeGet({ limit: "5" }));
     expect(builder.range).toHaveBeenCalledWith(0, 4);
@@ -152,7 +152,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("clamps limit to 100 even if 200 requested", async () => {
     const builder = makeBrokersBuilder([], null, 0);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
 
     await GET(makeGet({ limit: "200" }));
     expect(builder.range).toHaveBeenCalledWith(0, 99);
@@ -160,7 +160,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("defaults limit to 20 when invalid", async () => {
     const builder = makeBrokersBuilder([], null, 0);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
 
     await GET(makeGet({ limit: "abc" }));
     expect(builder.range).toHaveBeenCalledWith(0, 19);
@@ -168,7 +168,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("respects offset query param", async () => {
     const builder = makeBrokersBuilder([], null, 100);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
 
     await GET(makeGet({ offset: "20" }));
     expect(builder.range).toHaveBeenCalledWith(20, 39);
@@ -176,7 +176,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("filters by platform_type", async () => {
     const builder = makeBrokersBuilder([], null, 0);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
 
     await GET(makeGet({ platform_type: "share_broker" }));
     expect(builder.eq).toHaveBeenCalledWith("platform_type", "share_broker");
@@ -184,7 +184,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("filters chess_sponsored=true", async () => {
     const builder = makeBrokersBuilder([], null, 0);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
 
     await GET(makeGet({ chess_sponsored: "true" }));
     expect(builder.eq).toHaveBeenCalledWith("chess_sponsored", true);
@@ -192,7 +192,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("filters chess_sponsored=false", async () => {
     const builder = makeBrokersBuilder([], null, 0);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
 
     await GET(makeGet({ chess_sponsored: "false" }));
     expect(builder.eq).toHaveBeenCalledWith("chess_sponsored", false);
@@ -200,7 +200,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("filters smsf_support=true", async () => {
     const builder = makeBrokersBuilder([], null, 0);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
 
     await GET(makeGet({ smsf_support: "true" }));
     expect(builder.eq).toHaveBeenCalledWith("smsf_support", true);
@@ -208,7 +208,7 @@ describe("GET /api/v1/brokers — success", () => {
 
   it("filters is_crypto=true", async () => {
     const builder = makeBrokersBuilder([], null, 0);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
 
     await GET(makeGet({ is_crypto: "true" }));
     expect(builder.eq).toHaveBeenCalledWith("is_crypto", true);
@@ -221,7 +221,7 @@ describe("GET /api/v1/brokers — success", () => {
       order: vi.fn().mockReturnThis(),
       range: vi.fn(() => Promise.resolve({ data: null, count: null, error: { message: "DB error" } })),
     };
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
 
     const res = await GET(makeGet());
     expect(res.status).toBe(500);
@@ -230,14 +230,14 @@ describe("GET /api/v1/brokers — success", () => {
   });
 
   it("returns 500 on unexpected throw", async () => {
-    mockAdminFrom.mockImplementation(() => { throw new Error("boom"); });
+    mockServerFrom.mockImplementation(() => { throw new Error("boom"); });
 
     const res = await GET(makeGet());
     expect(res.status).toBe(500);
   });
 
   it("logs successful requests with apiKeyId", async () => {
-    mockAdminFrom.mockReturnValue(makeBrokersBuilder([makeBroker()], null, 1));
+    mockServerFrom.mockReturnValue(makeBrokersBuilder([makeBroker()], null, 1));
 
     await GET(makeGet());
     expect(mockLogApiRequest).toHaveBeenCalledWith(
@@ -246,7 +246,7 @@ describe("GET /api/v1/brokers — success", () => {
   });
 
   it("includes Cache-Control header on success", async () => {
-    mockAdminFrom.mockReturnValue(makeBrokersBuilder([], null, 0));
+    mockServerFrom.mockReturnValue(makeBrokersBuilder([], null, 0));
 
     const res = await GET(makeGet());
     expect(res.headers.get("Cache-Control")).toContain("max-age=3600");
@@ -257,7 +257,7 @@ describe("GET /api/v1/brokers — success", () => {
       makeBroker({ updated_at: "2026-01-01T00:00:00Z" }),
       makeBroker({ name: "SelfWealth", updated_at: "2026-04-01T00:00:00Z" }),
     ];
-    mockAdminFrom.mockReturnValue(makeBrokersBuilder(brokers, null, 2));
+    mockServerFrom.mockReturnValue(makeBrokersBuilder(brokers, null, 2));
 
     const res = await GET(makeGet());
     const body = await res.json();
