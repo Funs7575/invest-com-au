@@ -71,14 +71,15 @@ describe("GET /api/advisor-compare", () => {
     expect(json.advisors[0].slug).toBe("alice-fp");
   });
 
-  it("caps slugs at 4 even if more than 4 are passed", async () => {
+  it("caps slugs at 3 even if more than 3 are passed", async () => {
     const fiveSlugs = ["a", "b", "c", "d", "e"];
     mockFrom.mockReturnValue(makeChain({ data: [], error: null }));
     await GET(makeGet(fiveSlugs));
-    // The .in() call should have been passed at most 4 slugs
+    // The .in() call should have been passed at most 3 slugs (UI max is 3)
     const chain = mockFrom.mock.results[0].value as Record<string, ReturnType<typeof vi.fn>>;
     const inCall = (chain.in as ReturnType<typeof vi.fn>).mock.calls[0] as [string, string[]];
-    expect(inCall[1]).toHaveLength(4);
+    expect(inCall[1]).toHaveLength(3);
+    expect(inCall[1]).not.toContain("d");
     expect(inCall[1]).not.toContain("e");
   });
 
