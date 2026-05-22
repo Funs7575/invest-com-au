@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
-const mockAdminFrom = vi.fn();
+const { mockServerFrom } = vi.hoisted(() => ({ mockServerFrom: vi.fn() }));
 
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+vi.mock("@/lib/supabase/server", () => ({
+  createClient: vi.fn().mockResolvedValue({ from: mockServerFrom }),
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -47,7 +47,7 @@ describe("GET /api/community/categories", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("returns empty list when no categories", async () => {
-    mockAdminFrom.mockReturnValue(makeCategoriesBuilder([]));
+    mockServerFrom.mockReturnValue(makeCategoriesBuilder([]));
     const res = await GET();
     expect(res.status).toBe(200);
     const data = await res.json();
@@ -56,7 +56,7 @@ describe("GET /api/community/categories", () => {
 
   it("returns list of active categories", async () => {
     const cats = [makeCategory({ slug: "investing" }), makeCategory({ slug: "super", sort_order: 2 })];
-    mockAdminFrom.mockReturnValue(makeCategoriesBuilder(cats));
+    mockServerFrom.mockReturnValue(makeCategoriesBuilder(cats));
     const res = await GET();
     expect(res.status).toBe(200);
     const data = await res.json();
@@ -66,20 +66,20 @@ describe("GET /api/community/categories", () => {
 
   it("filters by status=active", async () => {
     const builder = makeCategoriesBuilder([]);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
     await GET();
     expect(builder.eq).toHaveBeenCalledWith("status", "active");
   });
 
   it("orders by sort_order ascending", async () => {
     const builder = makeCategoriesBuilder([]);
-    mockAdminFrom.mockReturnValue(builder);
+    mockServerFrom.mockReturnValue(builder);
     await GET();
     expect(builder.order).toHaveBeenCalledWith("sort_order", { ascending: true });
   });
 
   it("returns 500 on DB error", async () => {
-    mockAdminFrom.mockReturnValue(makeCategoriesBuilder([], { message: "DB error" }));
+    mockServerFrom.mockReturnValue(makeCategoriesBuilder([], { message: "DB error" }));
     const res = await GET();
     expect(res.status).toBe(500);
     const data = await res.json();
@@ -87,7 +87,7 @@ describe("GET /api/community/categories", () => {
   });
 
   it("returns 500 on unexpected throw", async () => {
-    mockAdminFrom.mockImplementation(() => { throw new Error("boom"); });
+    mockServerFrom.mockImplementation(() => { throw new Error("boom"); });
     const res = await GET();
     expect(res.status).toBe(500);
   });
