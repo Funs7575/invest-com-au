@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { createClient } from "@/lib/supabase/server";
@@ -21,6 +22,29 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
+
+const SETUP_FAQS = faqJsonLd([
+  {
+    q: "How much does it cost to set up an SMSF?",
+    a: "Setting up an SMSF typically costs between $800 and $3,500 depending on trustee structure. An individual-trustee setup runs $800–$1,500; a corporate-trustee setup runs $1,500–$3,500 including the $538 ASIC establishment fee for the special-purpose company. Annual ongoing costs (audit, tax return, accounting) typically add another $1,500–$3,000 per year.",
+  },
+  {
+    q: "What is the minimum balance for an SMSF?",
+    a: "There is no legal minimum balance, but the ATO and most financial advisers suggest at least $200,000 in combined member balances before setting up an SMSF. Below that threshold, annual running costs (typically $1,500–$3,000+) often exceed the cost-savings and investment-control benefits compared with a retail or industry super fund.",
+  },
+  {
+    q: "Individual trustee vs corporate trustee — which is better?",
+    a: "A corporate trustee is the default recommendation for most SMSFs. It simplifies asset ownership when members join or leave, makes borrowing (LRBA) cleaner, provides stronger succession planning, and limits personal liability. Individual trustees cost less upfront ($800–$1,500 vs $1,500–$3,500) and suit simple single-asset funds, but create administrative burden if your membership changes.",
+  },
+  {
+    q: "How long does it take to set up an SMSF?",
+    a: "Most SMSFs take 2–4 weeks from engagement to operational. Drafting the trust deed and establishing the corporate trustee (if applicable) takes 3–5 business days; ATO registration for an ABN and TFN typically takes 1–4 weeks. The fund cannot receive rollovers or contributions until the ATO registration is confirmed.",
+  },
+  {
+    q: "What are the ongoing compliance obligations for an SMSF trustee?",
+    a: "SMSF trustees must lodge an annual SMSF annual return with the ATO, arrange an independent audit each financial year, maintain an up-to-date written investment strategy, keep minutes of all trustee decisions, and ensure all assets are held separately from personal assets. Failure to comply can result in the fund being made non-complying, losing its tax concessions.",
+  },
+]);
 
 const SETUP_STEPS = [
   { n: 1, title: "Choose trustee structure", body: "Individual or corporate trustee. Corporate is the right default for property, borrowing, and succession." },
@@ -50,6 +74,7 @@ export default async function SmsfSetupPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {SETUP_FAQS && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(SETUP_FAQS) }} />}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
