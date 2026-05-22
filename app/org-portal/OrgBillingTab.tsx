@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
 import type { Organisation } from "./types";
 
@@ -15,9 +15,44 @@ const TIER_LABELS: Record<string, { label: string; price: string }> = {
   featured: { label: "Featured", price: "$299/mo" },
 };
 
+interface RevenueStats {
+  revenue_this_month_cents: number;
+  total_revenue_cents: number;
+  enrollments_this_month: number;
+  total_enrollments: number;
+}
+
+function formatCents(cents: number): string {
+  return (cents / 100).toLocaleString("en-AU", { style: "currency", currency: "AUD" });
+}
+
 export default function OrgBillingTab({ org }: Props) {
   const [connectingStripe, setConnectingStripe] = useState(false);
   const [stripeError, setStripeError] = useState("");
+  const [revenueStats, setRevenueStats] = useState<RevenueStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/org-auth/stats")
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((data: { stats: RevenueStats }) => {
+        if (!cancelled) {
+          setRevenueStats(data.stats);
+          setStatsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setStatsError(true);
+          setStatsLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleConnectStripe = async () => {
     setConnectingStripe(true);
@@ -84,6 +119,15 @@ export default function OrgBillingTab({ org }: Props) {
                 Account: <span className="font-mono">{org.stripe_connect_account_id}</span>
               </p>
             )}
+            <a
+              href="https://dashboard.stripe.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-700 font-semibold text-xs rounded-lg hover:bg-slate-200 transition-colors mt-1"
+            >
+              <Icon name="external-link" size={13} />
+              View Stripe Dashboard
+            </a>
           </div>
         ) : (
           <div>
@@ -134,17 +178,53 @@ export default function OrgBillingTab({ org }: Props) {
       {/* Revenue summary */}
       <div className="bg-white border border-slate-200 rounded-xl p-5">
         <h2 className="text-sm font-bold text-slate-900 mb-3">Revenue</h2>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-600">This month</span>
-            <span className="font-bold text-slate-900">
-              Contact billing for details
-            </span>
+        {statsLoading ? (
+          <div className="space-y-2 animate-pulse">
+            <div className="h-4 bg-slate-100 rounded w-3/4" />
+            <div className="h-4 bg-slate-100 rounded w-1/2" />
           </div>
-        </div>
-        <p className="text-[0.62rem] text-slate-400 mt-3">
-          Detailed payout history and invoices will appear here. Payouts are processed monthly via Stripe.
-        </p>
+        ) : statsError ? (
+          <p className="text-xs text-slate-500">Unable to load revenue data. Please refresh.</p>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-600">This month</span>
+              <span className="font-bold text-slate-900">
+                {formatCents(revenueStats?.revenue_this_month_cents ?? 0)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm border-t border-slate-100 pt-3">
+              <span className="text-slate-600">Enrollments this month</span>
+              <span className="font-semibold text-slate-700">
+                {revenueStats?.enrollments_this_month ?? 0}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm border-t border-slate-100 pt-3">
+              <span className="text-slate-600">All-time revenue</span>
+              <span className="font-semibold text-slate-700">
+                {formatCents(revenueStats?.total_revenue_cents ?? 0)}
+              </span>
+            </div>
+          </div>
+        )}
+        {isStripeConnected ? (
+          <p className="text-[0.62rem] text-slate-400 mt-3">
+            Payout history and invoices are in your{" "}
+            <a
+              href="https://dashboard.stripe.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-slate-600"
+            >
+              Stripe dashboard
+            </a>
+            . Payouts are processed monthly.
+          </p>
+        ) : (
+          <p className="text-[0.62rem] text-slate-400 mt-3">
+            Connect Stripe above to enable payouts. Revenue figures reflect course enrollments on this platform.
+          </p>
+        )}
       </div>
     </div>
   );
