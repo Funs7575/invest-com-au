@@ -409,6 +409,61 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
             </section>
           )}
 
+          {/* ── Join Our Team ── */}
+          {(() => {
+            const memberTypes = [...new Set(members.map(m => PROFESSIONAL_TYPE_LABELS[m.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || m.type))];
+            const hiringRoles: string[] = memberTypes.length > 0
+              ? memberTypes.slice(0, 4)
+              : ["Financial Planner", "Mortgage Broker", "Wealth Manager", "Investment Adviser"];
+            const applyUrl = `/advisor-apply?firm_id=${typedFirm.id}&firm_name=${encodeURIComponent(typedFirm.name)}`;
+            return (
+              <div className="bg-white rounded-xl border border-violet-100 shadow-sm p-6 relative overflow-hidden">
+                {/* Background accent */}
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-50/60 to-transparent pointer-events-none" />
+                <div className="relative">
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <Icon name="users" size={18} className="text-violet-600" />
+                    </div>
+                    <div>
+                      <h2 className="text-base font-bold text-slate-900">
+                        Join {typedFirm.name}
+                      </h2>
+                      <p className="text-sm text-slate-500 mt-0.5">
+                        This firm is growing and open to expressions of interest from qualified advisers.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mb-5">
+                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2.5">
+                      Roles typically sought
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {hiringRoles.map(role => (
+                        <span
+                          key={role}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 text-violet-700 text-xs font-semibold rounded-lg border border-violet-200"
+                        >
+                          <Icon name="check-circle" size={12} className="text-violet-500" />
+                          {role}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <Link
+                    href={applyUrl}
+                    className="inline-flex items-center gap-2 bg-violet-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-violet-700 transition-colors text-sm shadow-sm"
+                  >
+                    <Icon name="send" size={15} />
+                    Express Interest
+                  </Link>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* ── Request a Consultation CTA ── */}
           <div className="bg-gradient-to-r from-violet-600 to-violet-500 rounded-xl p-6 sm:p-8 text-center">
             <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
