@@ -5062,6 +5062,57 @@ export type Database = {
         }
         Relationships: []
       }
+      business_finance_enquiries: {
+        Row: {
+          annual_revenue_cents: number | null
+          business_name: string
+          contact_name: string
+          created_at: string
+          email: string
+          finance_type: string
+          id: string
+          loan_amount_cents: number | null
+          message: string | null
+          phone: string | null
+          purpose: string | null
+          status: string
+          time_in_business_months: number | null
+          updated_at: string
+        }
+        Insert: {
+          annual_revenue_cents?: number | null
+          business_name: string
+          contact_name: string
+          created_at?: string
+          email: string
+          finance_type: string
+          id?: string
+          loan_amount_cents?: number | null
+          message?: string | null
+          phone?: string | null
+          purpose?: string | null
+          status?: string
+          time_in_business_months?: number | null
+          updated_at?: string
+        }
+        Update: {
+          annual_revenue_cents?: number | null
+          business_name?: string
+          contact_name?: string
+          created_at?: string
+          email?: string
+          finance_type?: string
+          id?: string
+          loan_amount_cents?: number | null
+          message?: string | null
+          phone?: string | null
+          purpose?: string | null
+          status?: string
+          time_in_business_months?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       buyer_agents: {
         Row: {
           agency_name: string | null
@@ -12647,7 +12698,9 @@ export type Database = {
           id: number
           lead_value: number | null
           message: string | null
+          next_action_at: string | null
           outcome: string | null
+          pipeline_stage: string
           post_drip_last_at: string | null
           post_drip_step: number | null
           professional_id: number
@@ -12678,7 +12731,9 @@ export type Database = {
           id?: number
           lead_value?: number | null
           message?: string | null
+          next_action_at?: string | null
           outcome?: string | null
+          pipeline_stage?: string
           post_drip_last_at?: string | null
           post_drip_step?: number | null
           professional_id: number
@@ -12709,7 +12764,9 @@ export type Database = {
           id?: number
           lead_value?: number | null
           message?: string | null
+          next_action_at?: string | null
           outcome?: string | null
+          pipeline_stage?: string
           post_drip_last_at?: string | null
           post_drip_step?: number | null
           professional_id?: number
