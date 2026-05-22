@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import {
   QUESTIONS,
   CATEGORY_LABELS,
@@ -36,6 +37,10 @@ const breadcrumbLd = breadcrumbJsonLd([
   { name: "Questions", url: absoluteUrl("/questions") },
 ]);
 
+const questionsHubFaqLd = faqJsonLd(
+  QUESTIONS.slice(0, 20).map((q) => ({ q: q.question, a: q.shortAnswer }))
+);
+
 const CATEGORY_ORDER: QuestionCategory[] = [
   "super",
   "tax",
@@ -44,6 +49,8 @@ const CATEGORY_ORDER: QuestionCategory[] = [
   "retirement",
   "budgeting",
   "business",
+  "crypto",
+  "insurance",
 ];
 
 function groupByCategory(
@@ -67,6 +74,12 @@ export default function QuestionsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {questionsHubFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(questionsHubFaqLd) }}
+        />
+      )}
       <main className="max-w-4xl mx-auto px-4 py-12">
         <header className="mb-10">
           <h1 className="text-3xl font-bold text-gray-900 mb-3">
