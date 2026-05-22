@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -13,6 +14,8 @@ import { getCourse, getCourseLessons, groupLessonsIntoModules } from "@/lib/cour
 import { GENERAL_ADVICE_WARNING, COURSE_AFFILIATE_DISCLOSURE, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import CoursePageClient from "./CoursePageClient";
 import CoursesGate from "../CoursesGate";
+
+const CourseReviews = dynamic(() => import("./CourseReviews"), { ssr: false });
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -302,6 +305,9 @@ export default async function CourseDetailPage({ params }: PageProps) {
               ))}
             </div>
           </div>
+
+          {/* Reviews */}
+          <CourseReviews slug={slug} />
 
           {/* Compliance */}
           <div className="space-y-3 text-center">
