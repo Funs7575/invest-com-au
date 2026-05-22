@@ -16,10 +16,10 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 |--------|--------|------------------------|-------|-----------|
 | A | _complete_ | #207/#322/#351/#352/#353/#354/#355/#378/#380/#381/#382/#457/#540 | A-01..A-04 done. A-05 resolved as **false-positive** — `broker_reviews`/`broker_ratings` don't exist in schema; covered by `user_reviews` (A-02). **Stream complete.** | A-05 merged ✓ |
 | B | `claude/audit-remediation/b-09-edge-fn-secrets` | #208/#301/#457 | B-01..B-08 done. B-09 blocked (see Blocked). | B-09 unblocked + merged |
-| C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
+| C | `claude/audit-remediation/c-disc-20260522-admin-scope` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541/**#1165 OPEN** | C-01..C-02 done. C-03..C-05 blocked (see Blocked). C-DISC-20260522-01: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/v1/brokers/route.ts`; 20 tests pass. C-DISC-20260522-02: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/community/categories/route.ts`; 6 tests pass. PR #1165 OPEN. | C-DISC-01+02 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
-| F | _complete_ | **#925 MERGED 2026-05-20** | F-01..F-07 done. F-08 blocked. F-DISC-01 #741 MERGED. F-DISC-20260519-01: **#925 MERGED by founder 2026-05-20** — `requireAdmin` consolidated, `escapeHtml` consolidated, 21 false-positives allowlisted. **Stream engineering complete.** | F-DISC-20260519-01 merged ✓ |
+| F | _complete_ | **#925 MERGED 2026-05-20** | F-01..F-07 done. F-08 blocked. F-DISC-01 #741 MERGED. F-DISC-20260519-01: **#925 MERGED by founder 2026-05-20** — `requireAdmin` consolidated, `escapeHtml` consolidated, 21 false-positives allowlisted. **Stream engineering complete.** F-DISC-20260522-01: **false-positive** (iter 517) — `formatAud` in `FeeImpactVisualiser.tsx` takes dollars (compact `$Xk`/`$XM` for chart labels); `lib/first-home-buyer/state-grants.ts:formatAud` takes cents (full `Intl.NumberFormat`). Different signatures, different units, different output format — not a SSOT violation. | **Stream complete.** |
 | G | `claude/audit-remediation/g-04-mfa-gaps` | #213/#306/#342/#371/#385/#457/#471/#544 | G-01..G-03 done. G-04 blocked (see Blocked). | G-04 unblocked + merged |
 | H | `claude/audit-remediation/h-06-stripe-webhooks` | #214/#307/#343/#386/#457/#472/#545 | H-01..H-06 done. | H-06 merged ✓ |
 | I | `claude/audit-remediation/i-05-advisor-gaps` | #215/#308/#344/#387/#457/#473/#546 | I-01..I-05 done. | I-05 merged ✓ |
@@ -51,7 +51,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | MM | _complete_ | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 MERGED 2026-05-20** | MM-V01..V08 done. **Stream complete — #921 merged by founder 2026-05-20.** | All MM phases merged ✓ |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
-| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07 done (iter 492): data room upload + per-investor access grants + revoke (`d036cf47`). SP-08 done (iter 493): wholesale cert flow — /account/wholesale-cert + /api/wholesale-investor-cert/{submit,verify} + 14 tests (`60e4ca9`). SP-09 done (iter 494): ESIC verification — /startup-portal/esic-verification + /api/startups/esic-verify + 15 tests (`3d11fd6`). SP-10 done (iter 495): investor sector-thesis profile — /account/startup-thesis + /api/account/startup-thesis + 173 LOC tests (`42c58f03`). SP-11 done (iter 496): personalised deal feed — /invest/startups/for-you + lib/startup-match.ts scoring + 23 tests (`4df3145`). SP-11 merge conflict resolved (iter 497). SP-12 engineering done (iter 498): admin startup review UI — /admin/startups + /api/admin/startups/[id]/review + 9 tests (`3a0bc96`). SP-12 compliance signoff BLOCKED (see Blocked). SP-13 done (iter 499): Playwright E2E — 20 tests across 12 startup-portal routes + 5 API auth gates (`df18e10a`). Branch synced with main (merge `e6f14476`). CI rescue (iter 503): Zod v4 .issues migration + vi.hoisted() fix (`e41e72f`) — pending CI re-run. SP-DISC-07 (iter 505): `app/api/startups/round/route.ts` unit tests — 9 cases (`dc3daef`). CI rescue (iter 506): AccountKind TS gaps — `startup` entry missing from KIND_META in 2 components, `Stats.startups` field, BriefForm kind union (`7ceefa5` + `6e27699`). CI rescue (iter 508): lint 18→0 warnings (`fffeba1`). CI rescue (iter 509): async params build fix (`0e13cbc`) — pending CI re-run. | All SP tasks merged + compliance signoff |
+| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07 done (iter 492): data room upload + per-investor access grants + revoke (`d036cf47`). SP-08 done (iter 493): wholesale cert flow — /account/wholesale-cert + /api/wholesale-investor-cert/{submit,verify} + 14 tests (`60e4ca9`). SP-09 done (iter 494): ESIC verification — /startup-portal/esic-verification + /api/startups/esic-verify + 15 tests (`3d11fd6`). SP-10 done (iter 495): investor sector-thesis profile — /account/startup-thesis + /api/account/startup-thesis + 173 LOC tests (`42c58f03`). SP-11 done (iter 496): personalised deal feed — /invest/startups/for-you + lib/startup-match.ts scoring + 23 tests (`4df3145`). SP-11 merge conflict resolved (iter 497). SP-12 engineering done (iter 498): admin startup review UI — /admin/startups + /api/admin/startups/[id]/review + 9 tests (`3a0bc96`). SP-12 compliance signoff BLOCKED (see Blocked). SP-13 done (iter 499): Playwright E2E — 20 tests across 12 startup-portal routes + 5 API auth gates (`df18e10a`). Branch synced with main (merge `e6f14476`). CI rescue (iter 503): Zod v4 .issues migration + vi.hoisted() fix (`e41e72f`). SP-DISC-07 (iter 505): `app/api/startups/round/route.ts` unit tests — 9 cases (`dc3daef`). CI rescue (iter 506): AccountKind TS gaps — `startup` entry missing from KIND_META in 2 components, `Stats.startups` field, BriefForm kind union (`7ceefa5` + `6e27699`). CI rescue (iter 508): lint 18→0 warnings (`fffeba1`). CI rescue (iter 509): async params build fix (`0e13cbc`). CI rescue (iter 511): metadata-coverage gate — add `app/startup-signup/layout.tsx` (`41bc52c`). CI rescue (iter 515): JSON-LD exemption gate — add startup-portal (PORTAL) + startup-signup (FORM) to EXEMPT_ROUTE_PATTERNS (`fdd8f37`) — pending CI re-run. | All SP tasks merged + compliance signoff |
 | CO | `claude/audit-remediation/co-cutover-prep` | **#1046 MERGED 2026-05-20** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485+486): sitemap finalisation. CO-04 blocked (DNS — registrar access). CO-05 done (iter 487): pre-launch QA automation suite (30 Playwright tests). CO-06 done (iter 482): apex domain cutover runbook. CO-07 done (iter 483): final anonymity audit — CL-09 PASSED. **#1046 merged by founder 2026-05-20.** CO-01/CO-02/CO-04 remain blocked (external credentials/registrar action). | All CO tasks done + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
@@ -85,7 +85,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-27 | _complete_ | **#1032 MERGED 2026-05-20** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). **#1032 merged by founder 2026-05-20. Stream complete.** | Z-27 merged ✓ |
 | BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
-| PX | `claude/audit-remediation/px-api-tests` | **#1160 OPEN** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth fix + FeeImpactVisualiser multi-match fix (`e6f90e8`). CI rescue (iter 509): async params build fix (`0e13cbc`). Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 511): advisor-portal pipeline PATCH tests — 14 cases (`727ea010`). PX-DISC-20260522-08 (iter 512): business-finance enquiry POST tests — 15 cases (`306184d9`). PX-DISC-20260522-09 (iter 513): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e6`). All DISC items done — 95 total test cases on #1160, ~1500 LOC. | All PX tasks + tests merged |
+| PX | `claude/audit-remediation/px-api-tests` | **#1160 OPEN** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. | All PX tasks + tests merged |
 
 ---
 
@@ -195,6 +195,14 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ---
 
+~~### PX-DISC-20260522-07 — advisor-portal pipeline route tests~~ **DONE (iter 512)**
+
+~~### PX-DISC-20260522-08 — business-finance enquiry route tests~~ **DONE (iter 513)**
+
+~~### PX-DISC-20260522-09 — investor copilot + lead-followup cron tests~~ **DONE (iter 514)**
+
+---
+
 ## Resolved as false positives
 
 | Item | Reason |
@@ -202,66 +210,104 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 | CL-07 (social media entity-only) | Source code social links are entity-level: `@investcomau` on X/Twitter, `linkedin.com/company/invest-com-au`. No personal founder accounts referenced in shipped code. |
 | CL-08 (press inquiry handling) | `app/press/page.tsx` and `app/contact/page.tsx` already use `press@invest.com.au` (role address). No founder personal email in code. |
 | MM-V05 (alternative collectibles listings) | `app/invest/alternatives/listings/page.tsx` exists on main and covers all MM-V05 sub-categories (whisky, wine, art, watches, cars, coins, etc.) via `ALTERNATIVES_SUB_CATEGORIES`. No new page needed. |
+| F-DISC-20260522-01 (formatAud in FeeImpactVisualiser) | Local `formatAud(n: number)` takes dollars and outputs compact chart labels (`$100k`, `$1.50M`). Library `formatAud(cents: number)` in `state-grants.ts` takes cents and outputs full `Intl.NumberFormat` currency. Different units, different output — not a duplicate. (iter 517) |
 
 ---
 
 ## Iteration log (most recent first)
 
-### iter 513 — 2026-05-22 — PX-DISC-20260522-09 — investor copilot + lead-followup-reminders tests
+### iter 517 — 2026-05-22 — F-DISC-20260522-01 — false-positive (formatAud unit mismatch)
+
+- **Stream:** F (hygiene / SSOT — false-positive resolution)
+- **Phase:** 4 — verification gate
+- **Item:** F-DISC-20260522-01
+- **Verification:** `components/FeeImpactVisualiser.tsx:formatAud(n: number)` takes DOLLARS, outputs compact chart labels: `$100k`, `$1.50M`. `lib/first-home-buyer/state-grants.ts:formatAud(cents: number)` takes CENTS, outputs `Intl.NumberFormat("en-AU", {style:"currency"})` — e.g. `A$100,000`. Also checked `lib/listing-kind.ts:formatAudCompact(cents)` — same cents-in pattern. None of the library functions serve the FeeImpactVisualiser's chart-label use case (would require `/100` conversion AND lose the compact M/k formatting). Consolidation would break the chart's visual output.
+- **Queue update:** F-DISC-20260522-01 marked `false-positive` in F stream row and Resolved table.
+- **STATUS: PROGRESS (false-positive resolution) · stream=F · item=F-DISC-20260522-01**
+
+### iter 516 — 2026-05-22 — C-DISC-20260522-01+02 — replace createAdminClient in brokers + community-categories routes
+
+- **Stream:** C (admin.ts scope reset — Tier B refactor)
+- **Branch:** `claude/audit-remediation/c-disc-20260522-admin-scope` (new)
+- **PR:** #1165 OPEN
+- **Commit:** `d8f666d` — fix(c): C-DISC-20260522-01/02 — replace createAdminClient with server client
+- **Diff:** +32/-32 LOC across 4 files (2 routes + 2 test files)
+- **Items done:**
+  - C-DISC-20260522-01: `app/api/v1/brokers/route.ts` — admin client replaced with `await createClient()` from server. Verified: `brokers` has "Public read for active brokers" anon SELECT policy (`001_initial.sql`). Route uses API-key auth not cookie auth; anon role reads active brokers normally.
+  - C-DISC-20260522-02: `app/api/community/categories/route.ts` — admin client replaced. Verified: `forum_categories` has "public read" policy granting TO anon, authenticated (`20260429_o_iter6_rls_forum.sql`).
+  - Test mocks updated: `createAdminClient` → `createClient` (async, `vi.hoisted()` to avoid TDZ hoisting bug). 26 tests pass.
+- **STATUS: PROGRESS · stream=C · item=C-DISC-20260522-01+02 · pr=#1165**
+
+### CI-RESCUE iter 515 — 2026-05-22 — SP CI rescue: JSON-LD exemption gate
+
+- **Stream:** SP (startup portal — CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `fdd8f37` — fix(sp): CI rescue — exempt startup-portal and startup-signup from JSON-LD gate
+- **Diff:** +2 LOC (`scripts/check-jsonld-coverage.mjs`)
+- **Root cause:** `node scripts/check-jsonld-coverage.mjs` (a step in the `Lint · Type-check · Test · Build` job) was failing because 8 startup portal pages and the startup-signup form had no JSON-LD. These pages are: auth-gated portal routes (startup-portal/*) and a founder sign-up form (startup-signup) — identical rationale to existing advisor-portal (PORTAL) and advisor-signup (FORM) exemptions. Added `startup-portal` → PORTAL and `startup-signup` → FORM to EXEMPT_ROUTE_PATTERNS.
+- **Verified:** `node scripts/check-jsonld-coverage.mjs` → ✅ 278 exempt, all public routes covered. `__tests__/lib/metadata-coverage.test.ts` (519 cases) ✓. Lint exit 0. Rate-limit audit 100%. Test coverage thresholds met.
+- **Note:** `Supabase types drift` and `Preview smoke test` failures on #1048 are pre-existing (types will sync after merge+migration-apply; smoke test is Vercel-environment-specific). JSON-LD gate was the only fixable failure in `Lint · Type-check · Test · Build`.
+- **STATUS: CI-RESCUE · stream=SP · pr=#1048**
+
+### iter 514 — 2026-05-22 — PX-DISC-20260522-09 — investor copilot + lead-followup-reminders tests (concurrent fire)
 
 - **Stream:** PX (platform expansion — Tier A tests)
-- **Phase:** 5 — implementation
 - **Branch:** `claude/audit-remediation/px-api-tests`
 - **PR:** #1160 OPEN
-- **Commit:** `b2f201e6` — test(px): add coverage for investor copilot POST and lead-followup-reminders cron
-- **Diff:** +336 LOC (2 new test files)
-- **Items done:**
-  - `__tests__/api/investor-copilot.test.ts` (11 cases): rate-limit, bad JSON, missing/empty messages, last-message-not-user guard, all-invalid-roles guard, success, compliance filter fallback, Anthropic SDK error (503), 10-message window truncation, invalid-role stripping
-  - `__tests__/api/cron-lead-followup-reminders.test.ts` (9 cases): cron auth rejection, nothing_overdue, overdue-leads query error, advisor lookup error, single-advisor email, multi-advisor emails, skipped advisor (null email/not found), sendEmail failure counted, response shape validation
-- **Route coverage:** `app/api/investor/copilot/route.ts` + `app/api/cron/lead-followup-reminders/route.ts`
-- **Mocks:** `@anthropic-ai/sdk` (messages.create), `@/lib/compliance` (filterFactualOutput, GAW_AI_PREFIX), `@/lib/cron-auth` (requireCronAuth), `@/lib/supabase/admin` (queue-based chain builder), `@/lib/resend` (sendEmail)
+- **Commit:** `b2f201e` — test(px): add coverage for investor copilot POST and lead-followup-reminders cron
+- **Diff:** +336 LOC (2 new test files: `investor-copilot.test.ts`, `cron-lead-followup-reminders.test.ts`)
+- **Items done:** 11 copilot cases + 9 cron cases = 20 cases total. Key patterns: mock `@anthropic-ai/sdk` messages.create, mock `filterFactualOutput` from compliance, CRON_SECRET must be ≥16 chars (fail-closed).
+- **Note:** Queue update for this iter was incorrectly placed on PX branch by concurrent fire — corrected in this main update (iter 514's queue update lands on main now).
 - **STATUS: PROGRESS · stream=PX · item=PX-DISC-20260522-09 · pr=#1160**
 
-### iter 512 — 2026-05-22 — PX-DISC-20260522-08 — business-finance enquiry POST tests
+### iter 513 — 2026-05-22 — PX-DISC-20260522-08 — business-finance enquiry POST tests (concurrent fire)
 
 - **Stream:** PX (platform expansion — Tier A tests)
-- **Phase:** 5 — implementation
 - **Branch:** `claude/audit-remediation/px-api-tests`
 - **PR:** #1160 OPEN
-- **Commit:** `306184d9` — test(px): add coverage for business-finance enquiry POST route
-- **Diff:** +206 LOC (1 new test file)
-- **Items done:**
-  - `__tests__/api/business-finance-enquiry.test.ts` (15 cases): rate-limit, bad JSON, missing required fields, invalid finance_type enum, isValidEmail gate (secondary check post-Zod), disposable email gate, honeypot bypass, DB insert error, success + confirmation email, email lowercasing, loan_amount→cents conversion, annual_revenue→cents conversion, all 6 finance_type enums, status='new' on insert, optional fields pass-through
-- **Route coverage:** `app/api/business-finance/enquiry/route.ts`
-- **Key learning:** Zod `.email()` fires before `isValidEmail` — test must pass a Zod-valid email when testing the isValidEmail gate.
+- **Commit:** `306184d` — test(px): add coverage for business-finance enquiry POST route
+- **Diff:** +206 LOC (1 new test file: `business-finance-enquiry.test.ts`)
+- **Items done:** 15 cases — rate-limit, bad JSON, missing fields, invalid enum, isValidEmail gate, disposable email, honeypot bypass, DB error, success+email, email lowercasing, loan_amount→cents, annual_revenue→cents, all 6 finance_type enums, status='new', optional fields.
 - **STATUS: PROGRESS · stream=PX · item=PX-DISC-20260522-08 · pr=#1160**
 
-### iter 511 — 2026-05-22 — PX-DISC-20260522-07 — advisor-portal pipeline PATCH tests
+### iter 512 — 2026-05-22 — PX-DISC-20260522-07 — advisor-portal pipeline PATCH tests (concurrent fire)
 
 - **Stream:** PX (platform expansion — Tier A tests)
-- **Phase:** 5 — implementation
 - **Branch:** `claude/audit-remediation/px-api-tests`
 - **PR:** #1160 OPEN
-- **Commit:** `727ea010` — test(px): add coverage for advisor-portal pipeline PATCH route
-- **Diff:** +197 LOC (1 new test file)
-- **Items done:**
-  - `__tests__/api/advisor-portal-pipeline.test.ts` (14 cases): rate-limit, session auth (non-ok + null advisor), bad JSON, invalid pipeline_stage enum, nothing-to-update guard, missing lead_id, DB error, pipeline_stage-only update, next_action_at-only update, null next_action_at clear, combined update, invalid datetime string, all 6 enum values accepted
-- **Route coverage:** `app/api/advisor-portal/pipeline/route.ts`
-- **Auth pattern:** internal `fetch` to `/api/advisor-auth/session` — mocked via `vi.stubGlobal("fetch", ...)` on a per-test basis
-- **Pre-push issue:** stale `.next/types/validator.ts` (gitignored) from a prior build on a different branch blocked `tsc --noEmit` in pre-push hook. Fix: `rm -rf .next`. Pre-existing on main too — not caused by this PR.
+- **Commit:** `727ea01` — test(px): add coverage for advisor-portal pipeline PATCH route
+- **Diff:** +197 LOC (1 new test file: `advisor-portal-pipeline.test.ts`)
+- **Items done:** 14 cases — rate-limit, session auth (non-ok + null advisor), bad JSON, invalid enum, nothing-to-update guard, missing lead_id, DB error, pipeline_stage-only, next_action_at-only, null clear, combined, invalid datetime, all 6 enum values.
 - **STATUS: PROGRESS · stream=PX · item=PX-DISC-20260522-07 · pr=#1160**
 
-### iter 510 — 2026-05-22 — PX a11y investigation + discovery sweep (3 new DISC items)
+### CI-RESCUE iter 511 — 2026-05-22 — SP CI rescue: metadata-coverage gate (startup-signup layout)
 
-- **Stream:** PX (platform expansion — CI rescue investigation + discovery)
-- **Phase:** 2 (CI investigation) + 6.5 (discovery sweep)
+- **Stream:** SP (startup portal — CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `41bc52c` — fix(sp): CI rescue — add metadata layout for startup-signup page
+- **Diff:** +11 LOC (`app/startup-signup/layout.tsx` new file)
+- **Root cause:** `__tests__/lib/metadata-coverage.test.ts` requires every public page to export metadata (directly or via ancestor layout.tsx). `app/startup-signup/page.tsx` is `"use client"` so cannot export metadata inline; no parent layout existed. The test surfaced this under `Lint · Type-check · Test · Build`. Fixed by adding `app/startup-signup/layout.tsx` with `title`, `description`, and `robots:{index:false,follow:false}` (matching the startup-portal layout convention). Branch merged with origin/main (5-feature wave + queue commits, no conflicts).
+- **Verified:** metadata-coverage test (519 cases) ✓, all SP tests (110 cases) ✓, lint clean.
+- **STATUS: CI-RESCUE · stream=SP · pr=#1048**
+
+### iter 510 — 2026-05-22 — PX a11y investigation + 5-feature wave discovery
+
+- **Stream:** PX (accessibility investigation) + discovery
+- **Phase:** 2 CI rescue check + Phase 6.5 discovery
 - **Branch:** `claude/audit-remediation/px-api-tests`
 - **PR:** #1160 OPEN
-- **Outcome:** `Accessibility (axe-core on key routes)` CI failure investigated — PX branch is test-only (no UI changes). Failure is non-causal; CI re-run triggered by concurrent fire rebase. Discovery sweep of `89a235bb` (founder's 5-feature wave merged to main 2026-05-22) identified 3 untested API routes:
-  - `app/api/advisor-portal/pipeline/route.ts` (PATCH — pipeline_stage + next_action_at CRM columns) → PX-DISC-20260522-07
-  - `app/api/business-finance/enquiry/route.ts` (POST — business finance lead submission) → PX-DISC-20260522-08
-  - `app/api/investor/copilot/route.ts` + `app/api/cron/lead-followup-reminders/route.ts` (investor AI chat + overdue-lead reminder cron) → PX-DISC-20260522-09
-- **STATUS: PROGRESS · stream=PX · item=discovery · pr=#1160**
+- **CI state:** a11y failure confirmed NOT from PX code (test-only PR, no page routes changed). Reviewed all a11y-tested routes (/, /glossary, /tools, /foreign-investment, /about, /how-we-earn, /privacy, /terms) — no obvious critical violations found. Concurrent loop fire already rebased PX branch to `7296e81`; CI re-running. This is the 1st a11y rescue attempt on PX (no stuck-detection).
+- **Discovery (Phase 6.5 analog):** main landed `89a235bb` (5-feature wave) during this fire — 4 new API routes without test coverage:
+  - `app/api/advisor-portal/pipeline/route.ts` → PX-DISC-20260522-07
+  - `app/api/business-finance/enquiry/route.ts` → PX-DISC-20260522-08
+  - `app/api/investor/copilot/route.ts` + `app/api/cron/lead-followup-reminders/route.ts` → PX-DISC-20260522-09
+- **Migrations check:** `20260522010000_professional_leads_pipeline.sql` (ALTER TABLE, no new table) + `20260522020000_business_finance_enquiries.sql` (CREATE TABLE + RLS + policies) — both look clean.
+- **Queue state:** No unblocked pending items remain (SP blocked on compliance, other streams all done or blocked). 3 new DISC items added for next fires.
+- **STATUS: PROGRESS · stream=PX · item=discovery(PX-DISC-20260522-07..09)**
 
 ### CI-RESCUE iter 509 — 2026-05-22 — SP CI rescue: async params build fix
 
