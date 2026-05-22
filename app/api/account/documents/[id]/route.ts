@@ -32,7 +32,8 @@ export async function DELETE(
   }
 
   // Fetch row first (RLS ensures this only returns the user's own rows)
-  const { data: doc, error: fetchError } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: doc, error: fetchError } = await (supabase as any)
     .from("user_documents")
     .select("id, file_path")
     .eq("id", id)
@@ -54,7 +55,8 @@ export async function DELETE(
     // Proceed to DB delete anyway — orphaned storage files are less bad than orphaned DB rows
   }
 
-  const { error: dbError } = await supabase.from("user_documents").delete().eq("id", id);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: dbError } = await (supabase as any).from("user_documents").delete().eq("id", id);
   if (dbError) {
     log.error("DB delete failed", { userId: user.id, id, error: dbError.message });
     return NextResponse.json({ error: "Failed to delete document" }, { status: 500 });

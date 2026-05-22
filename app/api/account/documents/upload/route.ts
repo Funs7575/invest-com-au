@@ -106,7 +106,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 
-  const { data: inserted, error: dbError } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: inserted, error: dbError } = await (supabase as any)
     .from("user_documents")
     .insert({
       id: docId,
