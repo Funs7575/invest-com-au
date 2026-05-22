@@ -7,7 +7,8 @@ export type ViewType =
   | "billing"
   | "articles"
   | "team"
-  | "settings";
+  | "settings"
+  | "widgets";
 
 export type Advisor = {
   id: number; name: string; slug: string; firm_name?: string; email?: string;
@@ -60,6 +61,9 @@ export type Lead = {
   qualification_data?: Record<string, unknown>; lead_tier?: string;
   bill_amount_cents: number; billed: boolean;
   review_requested_at?: string | null;
+  // Pipeline CRM columns
+  pipeline_stage?: string | null;
+  next_action_at?: string | null;
   // Firm inbox additions — only present in firm-leads API responses
   professional_id?: number;
   professional_name?: string;

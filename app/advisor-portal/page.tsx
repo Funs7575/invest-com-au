@@ -19,6 +19,7 @@ const ProfileTab = dynamic(() => import("./ProfileTab"));
 const BillingTab = dynamic(() => import("./BillingTab"));
 const SettingsTab = dynamic(() => import("./SettingsTab"));
 const TeamTab = dynamic(() => import("./TeamTab"));
+const WidgetBuilderTab = dynamic(() => import("./WidgetBuilderTab"));
 
 export default function AdvisorPortalPage() {
   const [view, setView] = useState<ViewType>("login");
@@ -197,6 +198,7 @@ export default function AdvisorPortalPage() {
     { key: "profile", label: "Profile", icon: "user" },
     { key: "billing", label: "Billing", icon: "credit-card" },
     ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
+    { key: "widgets", label: "Widgets", icon: "code-2" },
     { key: "settings", label: "Settings", icon: "settings" },
   ];
 
@@ -337,6 +339,11 @@ export default function AdvisorPortalPage() {
         {/* ─── TEAM (firm admins only) ─── */}
         {view === "team" && isFirmAdmin && (
           <TeamTab advisor={advisor} />
+        )}
+
+        {/* ─── WIDGETS ─── */}
+        {view === "widgets" && (
+          <WidgetBuilderTab />
         )}
 
       </div>
