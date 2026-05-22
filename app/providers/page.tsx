@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { getVerifiedOrganisations, ORG_TYPE_LABELS } from "@/lib/organisations";
 
 export const revalidate = 3600;
@@ -85,12 +86,26 @@ export default async function ProvidersPage() {
     { name: "Providers", url: absoluteUrl("/providers") },
   ]);
 
+  const faqLd = faqJsonLd([
+    { q: "What is a CPD provider in Australia?", a: "A CPD (Continuing Professional Development) provider is an organisation accredited to deliver training that counts toward the mandatory 40-hour annual CPD requirement for Australian financial advisors, planners, and tax agents under ASIC and TPB rules. Providers are verified against ASIC or TPB accreditation before listing." },
+    { q: "How many CPD hours do financial advisors need in Australia?", a: "Australian financial advisors must complete 40 hours of CPD per year under FASEA rules (now administered by ASIC). At least 70% must be in approved CPD categories (technical competence, client care, regulatory compliance, professionalism and ethics). Tax agents must complete 90 hours over 3 years under TPB requirements." },
+    { q: "Are CPD courses tax-deductible for advisors?", a: "Yes — CPD costs directly related to maintaining your professional licence or skills are generally deductible under s8-1 of the ITAA 1997. This includes course fees, travel to attend training, and study materials. You cannot claim deductions for CPD to gain a new qualification in a different field. Consult your tax agent for your specific circumstances." },
+    { q: "How do I verify a CPD provider is legitimate?", a: "For financial advice CPD, check the provider is listed on the ASIC Financial Advisers Register or holds direct ASIC accreditation. For tax agent CPD, verify the provider is registered with the Tax Practitioners Board (TPB). All providers on this directory have been checked for current accreditation status." },
+    { q: "Can I complete CPD online in Australia?", a: "Yes — ASIC and the TPB both accept online CPD for financial advisors and tax agents. Online courses must still meet the relevant curriculum and assessment standards for accreditation. Many providers on this directory offer self-paced online modules that issue digital CPD certificates on completion." },
+  ]);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-800 text-white py-12 md:py-16 px-4">

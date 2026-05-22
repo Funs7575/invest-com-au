@@ -36,4 +36,5 @@ export interface OrgStats {
   total_revenue_cents: number;
   active_courses: number;
   cpd_hours_issued: number;
+  team_member_count: number;
 }

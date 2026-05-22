@@ -54,6 +54,13 @@ export async function GET(request: NextRequest) {
     const active_courses = orgCourseIds.length;
 
     if (orgCourseIds.length === 0) {
+      // Still count team members even if no courses published yet
+      const { count: teamCountEarly } = await admin
+        .from("organisation_members")
+        .select("id", { count: "exact", head: true })
+        .eq("organisation_id", session.organisationId)
+        .eq("status", "active");
+
       return NextResponse.json({
         stats: {
           enrollments_this_month: 0,
@@ -62,6 +69,7 @@ export async function GET(request: NextRequest) {
           total_revenue_cents: 0,
           active_courses: 0,
           cpd_hours_issued: 0,
+          team_member_count: teamCountEarly ?? 0,
         },
         recent_enrollments: [],
       });
@@ -114,7 +122,20 @@ export async function GET(request: NextRequest) {
       0,
     );
 
-    // 4. Build recent enrollments (last 5) — resolve user display names
+    // 4. Count accepted team members
+    const { count: teamCount, error: teamErr } = await admin
+      .from("organisation_members")
+      .select("id", { count: "exact", head: true })
+      .eq("organisation_id", session.organisationId)
+      .eq("status", "active");
+
+    if (teamErr) {
+      log.warn("Failed to fetch team member count", { error: teamErr });
+    }
+
+    const team_member_count = teamCount ?? 0;
+
+    // 5. Build recent enrollments (last 5) — resolve user display names
     const recentPurchases = allPurchases.slice(0, 5);
     const recentUserIds = [...new Set(recentPurchases.map((p: { user_id: string }) => p.user_id))];
 
@@ -153,6 +174,7 @@ export async function GET(request: NextRequest) {
         total_revenue_cents,
         active_courses,
         cpd_hours_issued,
+        team_member_count,
       },
       recent_enrollments,
     });

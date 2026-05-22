@@ -18,6 +18,93 @@ type Props = {
   onNavigate: (v: OrgViewType) => void;
 };
 
+interface QuickLink {
+  label: string;
+  description: string;
+  href: string;
+  icon: string;
+}
+
+const QUICK_LINKS: QuickLink[] = [
+  {
+    label: "ASIC Professional Registers",
+    description: "Verify adviser licensing and CPD compliance",
+    href: "https://connectonline.asic.gov.au/RegistrantSearch/faces/landing/searchRego.jspx",
+    icon: "shield",
+  },
+  {
+    label: "Tax Practitioners Board",
+    description: "CPD requirements for registered tax agents",
+    href: "https://www.tpb.gov.au/cpd-requirements",
+    icon: "file-text",
+  },
+  {
+    label: "FPA CPD Standards",
+    description: "Financial Planning Association CPD framework",
+    href: "https://fpa.com.au/members/cpd/",
+    icon: "award",
+  },
+  {
+    label: "FAAA CPD Framework",
+    description: "Financial Advice Association Australia",
+    href: "https://faaa.com.au/cpd",
+    icon: "book-open",
+  },
+  {
+    label: "ASIC RG 105 Guide",
+    description: "AFS licensing — CPD obligations reference",
+    href: "https://asic.gov.au/regulatory-resources/find-a-document/regulatory-guides/rg-105-afs-licensing-requirements/",
+    icon: "external-link",
+  },
+  {
+    label: "Stripe Connect Dashboard",
+    description: "View payouts, disputes, and account details",
+    href: "https://dashboard.stripe.com/connect/accounts/overview",
+    icon: "dollar-sign",
+  },
+];
+
+/** Derive a checklist item's done state from org + stats. */
+function buildChecklist(org: Organisation | null, stats: OrgStats | null) {
+  return [
+    {
+      id: "cpd_provider",
+      label: "Apply for a CPD provider number",
+      detail: org?.cpd_provider_number
+        ? `Provider #${org.cpd_provider_number}`
+        : "Required for ASIC-recognised CPD. Apply via your professional association.",
+      done: Boolean(org?.cpd_provider_number),
+      action: null as string | null,
+    },
+    {
+      id: "first_course",
+      label: "List your first course",
+      detail:
+        (stats?.active_courses ?? 0) > 0
+          ? `${stats?.active_courses} course${(stats?.active_courses ?? 0) === 1 ? "" : "s"} published`
+          : "Create a CPD course so learners can enroll.",
+      done: (stats?.active_courses ?? 0) > 0,
+      action: "courses" as OrgViewType | null,
+    },
+    {
+      id: "stripe",
+      label: "Set up Stripe Connect for payouts",
+      detail: org?.stripe_connect_payouts_enabled
+        ? "Payouts enabled — you'll receive funds from enrollments."
+        : "Required before you can collect enrollment fees.",
+      done: Boolean(org?.stripe_connect_payouts_enabled),
+      action: "billing" as OrgViewType | null,
+    },
+    {
+      id: "team",
+      label: "Invite team members",
+      detail: "Grant staff access to manage courses and view reports.",
+      done: false, // no team-count stat available yet
+      action: "team" as OrgViewType | null,
+    },
+  ];
+}
+
 export default function OrgDashboardTab({ org, onNavigate }: Props) {
   const [stats, setStats] = useState<OrgStats | null>(null);
   const [recentEnrollments, setRecentEnrollments] = useState<RecentEnrollment[]>([]);
@@ -43,6 +130,17 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
 
   const revenueThisMonth = ((stats?.revenue_this_month_cents ?? 0) / 100).toFixed(0);
   const totalRevenue = ((stats?.total_revenue_cents ?? 0) / 100).toFixed(0);
+
+  const totalEnrollments = stats?.total_enrollments ?? 0;
+  const totalRevenueCents = stats?.total_revenue_cents ?? 0;
+  const avgRevenue =
+    totalEnrollments > 0
+      ? `$${(totalRevenueCents / totalEnrollments / 100).toFixed(0)}`
+      : "$0";
+
+  const checklist = buildChecklist(org, stats);
+  const completedSteps = checklist.filter((c) => c.done).length;
+  const allDone = completedSteps === checklist.length;
 
   if (loading) {
     return (
@@ -87,7 +185,7 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
         </div>
       )}
 
-      {/* KPI cards — 6 stats in a 2×3 / 3×2 grid */}
+      {/* KPI cards — 2×3 / 3×2 grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
         {[
           {
@@ -113,7 +211,7 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
           },
           {
             label: "Total Enrollments",
-            value: stats?.total_enrollments ?? 0,
+            value: totalEnrollments,
             icon: "user-check",
             color: "text-indigo-600",
             bg: "bg-indigo-50",
@@ -131,6 +229,23 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
             icon: "award",
             color: "text-rose-600",
             bg: "bg-rose-50",
+          },
+          {
+            label: "Avg. Revenue / Enrollment",
+            value: avgRevenue,
+            icon: "bar-chart-2",
+            color: "text-orange-600",
+            bg: "bg-orange-50",
+          },
+          {
+            label: "CPD Hours per Enrollment",
+            value:
+              totalEnrollments > 0
+                ? ((stats?.cpd_hours_issued ?? 0) / totalEnrollments).toFixed(1)
+                : "0",
+            icon: "clock",
+            color: "text-cyan-600",
+            bg: "bg-cyan-50",
           },
         ].map((kpi, i) => (
           <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
@@ -197,6 +312,78 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
         )}
       </div>
 
+      {/* Getting Started checklist — hidden once all steps done */}
+      {!allDone && (
+        <div className="bg-white border border-slate-200 rounded-xl mb-6 overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <h2 className="text-sm font-bold text-slate-900">Getting Started</h2>
+            <span className="text-xs text-slate-500 font-medium">
+              {completedSteps}/{checklist.length} complete
+            </span>
+          </div>
+          <ul className="divide-y divide-slate-100">
+            {checklist.map((step) => (
+              <li key={step.id} className="px-4 py-3 flex items-start gap-3">
+                <div
+                  className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                    step.done
+                      ? "bg-teal-500 border-teal-500"
+                      : "border-slate-300 bg-white"
+                  }`}
+                >
+                  {step.done && (
+                    <Icon name="check" size={11} className="text-white" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-semibold ${step.done ? "line-through text-slate-400" : "text-slate-900"}`}>
+                    {step.label}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-0.5">{step.detail}</p>
+                </div>
+                {!step.done && step.action && (
+                  <button
+                    onClick={() => onNavigate(step.action as OrgViewType)}
+                    className="text-xs text-teal-600 hover:text-teal-700 font-semibold whitespace-nowrap mt-0.5"
+                  >
+                    Go &rarr;
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Quick Links */}
+      <div className="bg-white border border-slate-200 rounded-xl mb-6 overflow-hidden">
+        <div className="px-4 py-3 border-b border-slate-100">
+          <h2 className="text-sm font-bold text-slate-900">Quick Links</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+          {QUICK_LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors group"
+            >
+              <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center shrink-0 group-hover:bg-teal-50 transition-colors">
+                <Icon name={link.icon} size={16} className="text-slate-500 group-hover:text-teal-600 transition-colors" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-slate-900 group-hover:text-teal-700 transition-colors">
+                  {link.label}
+                </p>
+                <p className="text-xs text-slate-500 mt-0.5 truncate">{link.description}</p>
+              </div>
+              <Icon name="external-link" size={12} className="text-slate-300 shrink-0 mt-0.5 group-hover:text-teal-400 transition-colors" />
+            </a>
+          ))}
+        </div>
+      </div>
+
       {/* Quick actions */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <button
@@ -214,7 +401,7 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
           <Icon name="users" size={20} className="text-blue-600 mb-2" />
           <div className="text-sm font-bold text-slate-900">View Students</div>
           <div className="text-xs text-slate-500">
-            {(stats?.total_enrollments ?? 0).toLocaleString()} total enrollments
+            {totalEnrollments.toLocaleString()} total enrollments
           </div>
         </button>
         <button

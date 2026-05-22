@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import {
   getAcademyCourses,
   creatorName,
@@ -172,6 +173,14 @@ export default async function AcademyPage() {
     (c) => c.cpd_hours != null && c.cpd_hours > 0
   );
 
+  const academyFaqLd = faqJsonLd([
+    { q: "What is CPD for Australian financial advisors?", a: "CPD (Continuing Professional Development) is mandatory ongoing training for Australian financial advisors. ASIC requires 40 hours per year across four categories: technical competence, client care and practice, regulatory compliance and consumer protection, and professionalism and ethics. At least 70% of CPD must come from accredited providers." },
+    { q: "How do I claim CPD hours for a course on Invest.com.au Academy?", a: "After completing a CPD-eligible course, you receive a digital certificate with a unique serial number confirming the provider, CPD hours, and category. You record this certificate in your licensee's CPD register or ASIC's Financial Advisers Register portal. The certificate is verifiable at invest.com.au/certificate." },
+    { q: "What CPD categories count toward the ASIC 40-hour requirement?", a: "ASIC recognises four CPD categories: (1) Technical competence — financial planning, investment, insurance, tax; (2) Client care and practice — advice documentation, client communication; (3) Regulatory compliance and consumer protection — AFCA, RG 175, BID; (4) Professionalism and ethics — FPA/AFA code. Structured CPD (formal courses) must make up at least 70% of your requirement." },
+    { q: "Can I complete CPD online in Australia?", a: "Yes — ASIC accepts online, self-paced CPD for the 40-hour requirement provided it meets accreditation standards. Online courses must include assessments or structured activities and be delivered by an approved provider. All courses on this Academy meet ASIC accreditation requirements." },
+    { q: "How many CPD hours do mortgage brokers need?", a: "ASIC requires mortgage brokers to complete CPD as part of their annual licence renewal under the National Consumer Credit Protection Act. MFAA members must complete 30 CPD points per year; FBAA members require 20 CPD hours per year. Both recognise industry-accredited courses from approved training providers." },
+  ]);
+
   return (
     <>
       <script
@@ -182,6 +191,12 @@ export default async function AcademyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogJsonLd) }}
       />
+      {academyFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(academyFaqLd) }}
+        />
+      )}
 
       <div className="py-6 md:py-14">
         <div className="container-custom max-w-6xl">
