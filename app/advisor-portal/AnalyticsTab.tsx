@@ -18,7 +18,7 @@ function BenchmarkRow({
   label,
   yours,
   peerMedian,
-  _peerTop25,
+  peerTop25: _peerTop25,
   format,
   lowerIsBetter = false,
 }: {
