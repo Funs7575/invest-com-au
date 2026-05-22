@@ -21,6 +21,7 @@ const BillingTab = dynamic(() => import("./BillingTab"));
 const SettingsTab = dynamic(() => import("./SettingsTab"));
 const TeamTab = dynamic(() => import("./TeamTab"));
 const CourseBuilderTab = dynamic(() => import("./CourseBuilderTab"));
+const EventsTab = dynamic(() => import("./EventsTab"));
 
 export default function AdvisorPortalPage() {
   const [view, setView] = useState<ViewType>("login");
@@ -198,6 +199,7 @@ export default function AdvisorPortalPage() {
     { key: "cpd", label: "CPD", icon: "award" },
     { key: "articles", label: "Articles", icon: "file-text" },
     { key: "courses", label: "Courses", icon: "book-open" },
+    { key: "events", label: "Events", icon: "calendar" },
     { key: "profile", label: "Profile", icon: "user" },
     { key: "billing", label: "Billing", icon: "credit-card" },
     ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
@@ -339,6 +341,11 @@ export default function AdvisorPortalPage() {
         {/* ─── COURSES ─── */}
         {view === "courses" && (
           <CourseBuilderTab advisor={advisor} />
+        )}
+
+        {/* ─── EVENTS ─── */}
+        {view === "events" && (
+          <EventsTab advisor={advisor} />
         )}
 
         {/* ─── SETTINGS ─── */}

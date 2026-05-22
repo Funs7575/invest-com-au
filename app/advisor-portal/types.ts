@@ -8,6 +8,7 @@ export type ViewType =
   | "billing"
   | "articles"
   | "courses"
+  | "events"
   | "team"
   | "settings";
 
