@@ -23,6 +23,7 @@ const TeamTab = dynamic(() => import("./TeamTab"));
 const CourseBuilderTab = dynamic(() => import("./CourseBuilderTab"));
 const EventsTab = dynamic(() => import("./EventsTab"));
 const BadgesTab = dynamic(() => import("./BadgesTab"));
+const FeedTab = dynamic(() => import("./FeedTab"));
 
 export default function AdvisorPortalPage() {
   const [view, setView] = useState<ViewType>("login");
@@ -198,6 +199,7 @@ export default function AdvisorPortalPage() {
     { key: "leads", label: "Leads", icon: "inbox" },
     { key: "analytics", label: "Analytics", icon: "bar-chart" },
     { key: "cpd", label: "CPD", icon: "award" },
+    { key: "feed", label: "Feed", icon: "activity" },
     { key: "articles", label: "Articles", icon: "file-text" },
     { key: "courses", label: "Courses", icon: "book-open" },
     { key: "events", label: "Events", icon: "calendar" },
@@ -336,6 +338,11 @@ export default function AdvisorPortalPage() {
         )}
 
         {view === "articles" && <AdvisorArticlesSection advisorId={advisor?.id} />}
+
+        {/* ─── FEED ─── */}
+        {view === "feed" && (
+          <FeedTab advisor={advisor} />
+        )}
 
         {/* ─── CPD TRACKER ─── */}
         {view === "cpd" && <CPDTab />}

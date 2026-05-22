@@ -11,7 +11,8 @@ export type ViewType =
   | "events"
   | "badges"
   | "team"
-  | "settings";
+  | "settings"
+  | "feed";
 
 export type Advisor = {
   id: number; name: string; slug: string; firm_name?: string; email?: string;
