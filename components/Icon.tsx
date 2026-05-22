@@ -654,6 +654,10 @@ const icons: Record<string, string[]> = {
     "M9 3v18",
     "M15 3v18",
   ],
+  columns: [
+    "rect:3,3,8,18,2",
+    "rect:13,3,8,18,2",
+  ],
   map: [
     "M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z",
     "M9 4v16",

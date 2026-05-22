@@ -29,6 +29,10 @@ interface AdvisorData {
   afsl_number?: string;
   bio?: string;
   booking_link?: string;
+  languages?: string[];
+  accepts_international_clients?: boolean;
+  firb_specialist?: boolean;
+  accepts_new_clients?: boolean;
 }
 
 function Stars({ rating }: { rating: number }) {
@@ -48,37 +52,46 @@ function formatFee(a: AdvisorData): string {
   return "Not disclosed";
 }
 
-const COMPARE_ROWS: { label: string; render: (a: AdvisorData) => React.ReactNode }[] = [
+/** Returns the index of the advisor with the best numeric rating (ties: first wins). */
+function bestRatingIndex(advisors: AdvisorData[]): number {
+  let best = -1;
+  let bestVal = -1;
+  advisors.forEach((a, i) => {
+    if (a.rating > bestVal) {
+      bestVal = a.rating;
+      best = i;
+    }
+  });
+  return bestVal > 0 ? best : -1;
+}
+
+/** Returns the index of the advisor with the most reviews. */
+function mostReviewsIndex(advisors: AdvisorData[]): number {
+  let best = -1;
+  let bestVal = -1;
+  advisors.forEach((a, i) => {
+    if (a.review_count > bestVal) {
+      bestVal = a.review_count;
+      best = i;
+    }
+  });
+  return bestVal > 0 ? best : -1;
+}
+
+type RowDef = {
+  label: string;
+  render: (a: AdvisorData) => React.ReactNode;
+  /** Optional: returns index (0-based) of the column that should be highlighted green. */
+  bestIndex?: (advisors: AdvisorData[]) => number;
+};
+
+const COMPARE_ROWS: RowDef[] = [
   {
-    label: "Rating",
-    render: (a) =>
-      a.rating > 0 ? (
-        <span className="flex items-center gap-1.5 flex-wrap">
-          <Stars rating={a.rating} />
-          <span className="font-semibold text-slate-800">{a.rating.toFixed(1)}</span>
-          <span className="text-slate-400 text-xs">({a.review_count})</span>
-        </span>
-      ) : (
-        <span className="text-slate-400 text-xs">No reviews yet</span>
-      ),
-  },
-  {
-    label: "Verified",
-    render: (a) =>
-      a.verified ? (
-        <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold text-xs">
-          <Icon name="check-circle" size={13} /> Verified
-        </span>
-      ) : (
-        <span className="text-slate-400 text-xs">Unverified</span>
-      ),
-  },
-  {
-    label: "Specialty",
+    label: "Advisor Type",
     render: (a) =>
       a.type ? (
         <span className="text-slate-700 text-sm font-medium">
-          {PROFESSIONAL_TYPE_LABELS[a.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || a.type}
+          {PROFESSIONAL_TYPE_LABELS[a.type as keyof typeof PROFESSIONAL_TYPE_LABELS] ?? a.type}
         </span>
       ) : (
         <span className="text-slate-400 text-xs">—</span>
@@ -94,8 +107,64 @@ const COMPARE_ROWS: { label: string; render: (a: AdvisorData) => React.ReactNode
       ),
   },
   {
-    label: "Fees",
+    label: "Rating",
+    render: (a) =>
+      a.rating > 0 ? (
+        <span className="flex items-center gap-1.5 flex-wrap">
+          <Stars rating={a.rating} />
+          <span className="font-semibold text-slate-800">{a.rating.toFixed(1)}</span>
+        </span>
+      ) : (
+        <span className="text-slate-400 text-xs">No reviews yet</span>
+      ),
+    bestIndex: bestRatingIndex,
+  },
+  {
+    label: "Reviews",
+    render: (a) =>
+      a.review_count > 0 ? (
+        <span className="text-slate-700 text-sm font-semibold">{a.review_count.toLocaleString()}</span>
+      ) : (
+        <span className="text-slate-400 text-xs">None yet</span>
+      ),
+    bestIndex: mostReviewsIndex,
+  },
+  {
+    label: "Verified",
+    render: (a) =>
+      a.verified ? (
+        <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold text-xs">
+          <Icon name="check-circle" size={13} /> Verified
+        </span>
+      ) : (
+        <span className="text-slate-400 text-xs">Unverified</span>
+      ),
+  },
+  {
+    label: "Fee Structure",
     render: (a) => <span className="text-slate-700 text-sm">{formatFee(a)}</span>,
+  },
+  {
+    label: "Hourly Rate",
+    render: (a) =>
+      a.hourly_rate_cents ? (
+        <span className="text-slate-700 text-sm font-semibold">
+          ${(a.hourly_rate_cents / 100).toLocaleString()}/hr
+        </span>
+      ) : (
+        <span className="text-slate-400 text-xs">—</span>
+      ),
+  },
+  {
+    label: "Flat Fee",
+    render: (a) =>
+      a.flat_fee_cents ? (
+        <span className="text-slate-700 text-sm font-semibold">
+          ${(a.flat_fee_cents / 100).toLocaleString()}
+        </span>
+      ) : (
+        <span className="text-slate-400 text-xs">—</span>
+      ),
   },
   {
     label: "Free Consultation",
@@ -105,15 +174,45 @@ const COMPARE_ROWS: { label: string; render: (a: AdvisorData) => React.ReactNode
       ) : (
         <span className="text-slate-400 text-xs">Paid</span>
       ),
+    bestIndex: (advisors) => {
+      const idx = advisors.findIndex((a) => a.initial_consultation_free);
+      return idx;
+    },
   },
   {
-    label: "AFSL",
+    label: "Languages",
     render: (a) =>
-      a.afsl_number ? (
-        <span className="text-slate-700 text-sm font-mono">{a.afsl_number}</span>
+      a.languages?.length ? (
+        <div className="flex flex-wrap gap-1">
+          {a.languages.slice(0, 4).map((lang) => (
+            <span key={lang} className="text-[0.6rem] px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded-full">
+              {lang}
+            </span>
+          ))}
+        </div>
       ) : (
-        <span className="text-slate-400 text-xs">Not listed</span>
+        <span className="text-slate-400 text-xs">English</span>
       ),
+  },
+  {
+    label: "International Clients",
+    render: (a) =>
+      a.accepts_international_clients ? (
+        <span className="text-emerald-700 font-semibold text-xs">Accepted</span>
+      ) : (
+        <span className="text-slate-400 text-xs">Not specified</span>
+      ),
+    bestIndex: (advisors) => advisors.findIndex((a) => a.accepts_international_clients),
+  },
+  {
+    label: "FIRB Specialist",
+    render: (a) =>
+      a.firb_specialist ? (
+        <span className="text-emerald-700 font-semibold text-xs">Yes</span>
+      ) : (
+        <span className="text-slate-400 text-xs">No</span>
+      ),
+    bestIndex: (advisors) => advisors.findIndex((a) => a.firb_specialist),
   },
   {
     label: "Specialties",
@@ -131,6 +230,19 @@ const COMPARE_ROWS: { label: string; render: (a: AdvisorData) => React.ReactNode
       ),
   },
   {
+    label: "Accepts New Clients",
+    render: (a) => {
+      if (a.accepts_new_clients === true) {
+        return <span className="text-emerald-700 font-semibold text-xs">Yes</span>;
+      }
+      if (a.accepts_new_clients === false) {
+        return <span className="text-red-500 font-semibold text-xs">Not currently</span>;
+      }
+      return <span className="text-slate-400 text-xs">Not specified</span>;
+    },
+    bestIndex: (advisors) => advisors.findIndex((a) => a.accepts_new_clients === true),
+  },
+  {
     label: "Online Booking",
     render: (a) =>
       a.booking_link ? (
@@ -138,6 +250,7 @@ const COMPARE_ROWS: { label: string; render: (a: AdvisorData) => React.ReactNode
       ) : (
         <span className="text-slate-400 text-xs">Enquiry only</span>
       ),
+    bestIndex: (advisors) => advisors.findIndex((a) => Boolean(a.booking_link)),
   },
 ];
 
@@ -181,11 +294,13 @@ export default function AdvisorCompareClient() {
       return;
     }
     setLoading(true);
-    const params = slugs.map((s) => `slugs=${encodeURIComponent(s)}`).join("&");
+    // Compare page shows max 3 side-by-side
+    const compareSlgs = slugs.slice(0, 3);
+    const params = compareSlgs.map((s) => `slugs=${encodeURIComponent(s)}`).join("&");
     fetch(`/api/advisor-compare?${params}`)
       .then((r) => r.json())
       .then((data) => {
-        if (Array.isArray(data.advisors)) setAdvisors(data.advisors);
+        if (Array.isArray(data.advisors)) setAdvisors(data.advisors as AdvisorData[]);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -210,7 +325,7 @@ export default function AdvisorCompareClient() {
         <Icon name="bookmark" size={48} className="text-slate-300 mx-auto mb-4" />
         <h1 className="text-2xl font-extrabold text-slate-900 mb-2">No advisors saved</h1>
         <p className="text-slate-500 mb-6 max-w-sm mx-auto">
-          Browse advisors and tap the bookmark icon to save up to 4 for side-by-side comparison.
+          Browse advisors and tap the bookmark icon to save up to 3 for side-by-side comparison.
         </p>
         <Link
           href="/advisors"
@@ -222,13 +337,18 @@ export default function AdvisorCompareClient() {
     );
   }
 
+  // Only show up to 3 in the compare matrix
+  const displayed = advisors.slice(0, 3);
+
   return (
     <div>
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Compare Advisors</h1>
-          <p className="text-sm text-slate-500 mt-1">{advisors.length} advisor{advisors.length !== 1 ? "s" : ""} saved for comparison</p>
+          <p className="text-sm text-slate-500 mt-1">
+            {displayed.length} advisor{displayed.length !== 1 ? "s" : ""} compared side by side
+          </p>
         </div>
         <button
           onClick={clear}
@@ -239,10 +359,10 @@ export default function AdvisorCompareClient() {
       </div>
 
       {/* Advisor header cards */}
-      <div className="grid gap-4 mb-0" style={{ gridTemplateColumns: `160px repeat(${advisors.length}, 1fr)` }}>
+      <div className="grid gap-4 mb-0" style={{ gridTemplateColumns: `160px repeat(${displayed.length}, 1fr)` }}>
         {/* Empty label column */}
         <div />
-        {advisors.map((a) => (
+        {displayed.map((a) => (
           <div key={a.slug} className="bg-white border border-slate-200 rounded-2xl p-4 text-center relative">
             <button
               onClick={() => toggle(a.slug)}
@@ -286,26 +406,34 @@ export default function AdvisorCompareClient() {
 
       {/* Comparison table */}
       <div className="mt-4 rounded-2xl border border-slate-200 overflow-hidden">
-        {COMPARE_ROWS.map((row, i) => (
-          <div
-            key={row.label}
-            className={`grid items-center min-h-13 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
-            style={{ gridTemplateColumns: `160px repeat(${advisors.length}, 1fr)` }}
-          >
-            <div className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide border-r border-slate-100">
-              {row.label}
-            </div>
-            {advisors.map((a) => (
-              <div key={a.slug} className="px-4 py-3 border-r border-slate-100 last:border-r-0">
-                {row.render(a)}
+        {COMPARE_ROWS.map((row, i) => {
+          const highlightIdx = row.bestIndex ? row.bestIndex(displayed) : -1;
+          return (
+            <div
+              key={row.label}
+              className={`grid items-center min-h-13 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
+              style={{ gridTemplateColumns: `160px repeat(${displayed.length}, 1fr)` }}
+            >
+              <div className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide border-r border-slate-100">
+                {row.label}
               </div>
-            ))}
-          </div>
-        ))}
+              {displayed.map((a, colIdx) => (
+                <div
+                  key={a.slug}
+                  className={`px-4 py-3 border-r border-slate-100 last:border-r-0 ${
+                    highlightIdx === colIdx ? "bg-emerald-50" : ""
+                  }`}
+                >
+                  {row.render(a)}
+                </div>
+              ))}
+            </div>
+          );
+        })}
       </div>
 
       {/* Add more prompt */}
-      {advisors.length < 4 && (
+      {displayed.length < 3 && (
         <div className="mt-6 text-center">
           <Link
             href="/advisors"
