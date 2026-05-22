@@ -780,13 +780,6 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
     category: "Share Trading",
   },
   {
-    term: "Return on Equity",
-    slug: "return-on-equity",
-    definition:
-      "How much profit a company generates for each dollar of shareholder equity. A higher ROE generally means management is using capital efficiently. Look for sustained ROE above 15%.",
-    category: "Share Trading",
-  },
-  {
     term: "Economic Moat",
     slug: "economic-moat",
     definition:
