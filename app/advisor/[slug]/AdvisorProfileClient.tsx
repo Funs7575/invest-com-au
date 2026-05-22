@@ -8,8 +8,6 @@ import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import Icon from "@/components/Icon";
 import BookingWidget from "@/components/BookingWidget";
 import AdvisorAppointmentsWidget from "@/components/AdvisorAppointmentsWidget";
-import AdvisorCalendarEmbed from "@/components/AdvisorCalendarEmbed";
-import AdvisorVideoIntro from "@/components/AdvisorVideoIntro";
 import AdvisorReviewForm from "@/components/AdvisorReviewForm";
 import VerifiedClientBadge from "@/components/VerifiedClientBadge";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -295,7 +293,6 @@ export default function AdvisorProfileClient({
                     method={pro.verification_method ?? null}
                     abn={pro.abn ?? null}
                     afsl={pro.afsl_number ?? null}
-                    lastVerifiedAt={pro.last_verified_at ?? null}
                     compact
                   />
                   {pro.accepts_international_clients && (
@@ -313,9 +310,24 @@ export default function AdvisorProfileClient({
                       Cross-Border Tax
                     </span>
                   )}
-                  {pro.accepting_new_clients === false && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-bold shrink-0">
-                      Not accepting clients
+                  {/* Availability status badge — prefers the new availability_status field;
+                      falls back to the legacy accepting_new_clients boolean. */}
+                  {(pro.availability_status === 'open' || (!pro.availability_status && pro.accepting_new_clients !== false)) && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                      Accepting clients
+                    </span>
+                  )}
+                  {pro.availability_status === 'waitlist' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+                      Waitlist
+                    </span>
+                  )}
+                  {(pro.availability_status === 'closed' || (!pro.availability_status && pro.accepting_new_clients === false)) && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-bold shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
+                      Not taking clients
                     </span>
                   )}
                 </div>
@@ -768,14 +780,18 @@ export default function AdvisorProfileClient({
               </SectionCard>
             )}
 
-            {/* Intro Video — MK-02: lazy-load with poster overlay + Vimeo support */}
+            {/* Intro Video */}
             {pro.intro_video_url && (
               <SectionCard title="Introduction Video" icon="video">
-                <AdvisorVideoIntro
-                  videoUrl={pro.intro_video_url!}
-                  posterUrl={pro.intro_video_poster_url}
-                  advisorName={pro.name}
-                />
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-100">
+                  <iframe
+                    src={(pro.intro_video_url!).replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")}
+                    className="absolute inset-0 w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
               </SectionCard>
             )}
 
@@ -843,20 +859,6 @@ export default function AdvisorProfileClient({
                 </div>
               </SectionCard>
             ) : null}
-
-            {/* MK-01: Calendly/Cal.com inline embed — shows when booking_link is
-                a supported calendar platform. Eliminates the new-tab context
-                switch that hurts conversion on mobile. Falls back to link for
-                other booking URLs. */}
-            {pro.booking_link && (
-              <SectionCard title="Book a Time" icon="calendar">
-                <AdvisorCalendarEmbed
-                  bookingLink={pro.booking_link}
-                  advisorName={pro.name}
-                  consultationLabel={pro.initial_consultation_free ? "free consultation" : "consultation"}
-                />
-              </SectionCard>
-            )}
 
             {/* Wave 17 first-party concrete-slot booking.
                 Renders nothing if the advisor has no open slots in
