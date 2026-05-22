@@ -30,6 +30,7 @@ import {
   breadcrumbJsonLd,
   ORGANIZATION_JSONLD,
 } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 86400;
 
@@ -54,6 +55,29 @@ const breadcrumb = breadcrumbJsonLd([
   { name: "Halal Investing", url: absoluteUrl("/halal-investing") },
 ]);
 
+const halalFaqLd = faqJsonLd([
+  {
+    q: "What is halal investing in Australia?",
+    a: "Halal investing means investing in a way that complies with Islamic finance principles (Sharia law). This excludes investments in companies that earn significant revenue from alcohol, tobacco, pork products, conventional banking (interest/riba), weapons, gambling, or adult entertainment. Islamic finance scholars use AAOIFI screening ratios (financial ratios screening for debt, interest-bearing assets, and impermissible income) to determine whether a company is Sharia-compliant. In Australia, this includes Sharia-compliant super funds (Crescent Wealth), home finance (MCCA, Hejaz), and ETFs listed on US or UK exchanges.",
+  },
+  {
+    q: "Is there a halal super fund in Australia?",
+    a: "Yes. Crescent Wealth offers Australia's first APRA-regulated Sharia-compliant superannuation fund. All investments are screened against AAOIFI standards, avoiding interest-bearing bonds, conventional banks, and haram industries. The fund uses equity-based alternatives to fixed income. Like all super funds, contributions are preserved until retirement age. Hejaz Financial Services also offers a managed account structure with Sharia-compliant investment options.",
+  },
+  {
+    q: "Can Muslims own shares in Australia (ASX)?",
+    a: "Yes, provided the underlying company passes Sharia screening. Many ASX-listed companies in sectors like mining, healthcare, utilities, and technology are considered Sharia-compliant (subject to periodic review). Companies in banking, insurance, alcohol, tobacco, pork, gambling, and weapons are excluded. International Sharia-screened ETFs (available through global brokers) provide broader diversification across pre-screened global equities — which is often more practical than screening individual ASX stocks.",
+  },
+  {
+    q: "What is an Ijarah home loan in Australia?",
+    a: "Ijarah is an Islamic finance structure for property purchase that avoids conventional interest (riba). The financier purchases the property and leases it to the buyer. The buyer pays rent plus a capital repayment, gradually buying the financier's share. At the end of the term, full ownership transfers. In Australia, MCCA and Hejaz offer Ijarah-based home finance. Rates are typically comparable to conventional mortgages, though the market is smaller and less competitive. It is a regulated financial product requiring ASIC authorisation.",
+  },
+  {
+    q: "Are there any halal ETFs available in Australia?",
+    a: "ASX-listed Sharia-compliant ETFs are limited. The most common approach for Australian Muslims is accessing US or UK Sharia-screened ETFs through international brokers (Interactive Brokers, Stake). Examples include iShares MSCI World Islamic UCITS ETF and HSBC Islamic Global Equity Index Fund. These are screened by AAOIFI-certified scholars. Within Australian super, Crescent Wealth's growth option invests in global Sharia-compliant equities. Always verify current screening status — a company's Sharia compliance can change with its business activities.",
+  },
+]);
+
 export default function HalalInvestingHub() {
   return (
     <>
@@ -64,6 +88,10 @@ export default function HalalInvestingHub() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSONLD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(halalFaqLd) }}
       />
       <main className="bg-white text-slate-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
