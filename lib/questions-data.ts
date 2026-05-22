@@ -1496,6 +1496,1123 @@ export const QUESTIONS: InvestingQuestion[] = [
       { label: "Compare super funds", href: "/super" },
     ],
   },
+  {
+    slug: "how-does-dividend-investing-work",
+    category: "investing",
+    question: "How does dividend investing work in Australia?",
+    metaTitle: "How Dividend Investing Works in Australia (2026 Guide)",
+    metaDescription:
+      "Dividend investing means earning regular cash payments from shares. Learn about yield vs growth, franking credits, DRIPs, and how to build a tax-effective income portfolio in Australia.",
+    shortAnswer:
+      "Dividend investing involves holding shares that pay regular cash distributions (dividends) from company profits. In Australia, many dividends come with franking credits that offset personal tax, making them especially attractive for low-income and retired investors. Building a diversified dividend portfolio provides a growing passive income stream alongside capital appreciation.",
+    sections: [
+      {
+        heading: "What dividends are and how they work",
+        body: "A dividend is a portion of a company's after-tax profits distributed to shareholders, typically paid twice a year (interim and final). The dividend yield is the annual dividend divided by the share price — a $2.00 annual dividend on a $40 share equals a 5% yield. Australian banks, telcos, and infrastructure companies are historically high yielders (4–7%), while growth-focused tech companies often pay nothing, reinvesting profits instead.",
+      },
+      {
+        heading: "Franking credits: the Australian tax advantage",
+        body: "Australia's dividend imputation system means companies pay 30% corporate tax, then attach franking credits to dividends to avoid double taxation. A $70 cash dividend from a fully franked company carries a $30 franking credit, grossing up to $100 of income. If your marginal tax rate is below 30%, you receive a cash refund from the ATO. Retirees in the zero-tax bracket can receive entire franking credit refunds — a powerful income boost unique to Australia.",
+      },
+      {
+        heading: "Dividend reinvestment plans (DRIPs)",
+        body: "Most ASX-listed companies offer dividend reinvestment plans, allowing shareholders to receive additional shares instead of cash, often at a slight discount (1–2.5%) to market price with no brokerage. DRIPs compound holdings over time without requiring active reinvestment. The reinvested amount is still taxable income in the year received — only the cash doesn't change hands.",
+      },
+      {
+        heading: "Building an income portfolio",
+        body: "A sensible dividend portfolio blends high-yield stocks (banks, property REITs, telcos) with lower-yield, high-growth stocks for capital appreciation. ETFs such as VHY (Vanguard Australian Shares High Yield ETF) and HVST (BetaShares) provide instant diversification across dividend payers. Aim for 15–25 positions across sectors to avoid concentration risk — having 40% in the big four banks, for instance, exposes you heavily to the Australian credit cycle.",
+      },
+      {
+        heading: "Tax implications",
+        body: "Dividends are assessed as ordinary income in the year paid. Franking credits are added to assessable income then offset against tax. If you hold shares for less than 45 days around the ex-dividend date (the '45-day rule'), you cannot claim franking credit offsets. The 12-month CGT discount does not apply to dividends — only to capital gains on sale. Salary earners on high marginal rates may find dividends taxed at 47%; in that case growth stocks or index funds may be more tax-efficient.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Are fully franked dividends better than unfranked?",
+        a: "For most Australian resident investors, yes. A fully franked dividend grosses up to a higher pre-tax equivalent and may generate a tax refund if your rate is below 30%. However, the share price should theoretically adjust for the value of franking, so comparing yields requires normalising for franking levels.",
+      },
+      {
+        q: "What is a good dividend yield for Australian shares?",
+        a: "The ASX 200 average dividend yield is roughly 4–5% including franking credits. Yields above 7–8% on individual stocks can signal the market expects a dividend cut — high yields sometimes reflect a falling share price rather than generous payouts. Sustainable payout ratios (dividends as a fraction of earnings) of 60–80% are generally healthy for mature businesses.",
+      },
+      {
+        q: "Can I hold dividend shares inside my SMSF?",
+        a: "Yes, and SMSFs in pension phase pay zero tax on investment income, meaning franking credit refunds flow back entirely in cash. This makes fully franked Australian shares particularly compelling inside a pension-phase SMSF.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-franking-credits-work",
+      "how-do-etfs-work",
+      "what-are-the-best-etfs-for-beginners",
+      "what-is-capital-gains-tax",
+    ],
+    relatedTools: [
+      { label: "Compare share brokers", href: "/share-trading" },
+      { label: "Compare ETFs", href: "/etfs" },
+    ],
+  },
+  {
+    slug: "what-is-a-margin-loan",
+    category: "investing",
+    question: "What is a margin loan and how does it work in Australia?",
+    metaTitle: "What Is a Margin Loan? Risks, LVR & Tax in Australia (2026)",
+    metaDescription:
+      "A margin loan lets you borrow money to invest in shares or managed funds using your existing portfolio as security. Learn about LVR, margin calls, tax deductibility, and when margin lending is appropriate.",
+    shortAnswer:
+      "A margin loan allows you to borrow money from a lender using your share or managed fund portfolio as security, effectively amplifying your investment exposure. The lender sets a loan-to-value ratio (LVR) for each approved security, and if the portfolio value falls below a threshold you face a margin call — requiring you to top up equity or sell assets. Interest on the loan is generally tax-deductible if the borrowed funds are used to earn assessable income.",
+    sections: [
+      {
+        heading: "How a margin loan works",
+        body: "You contribute cash or securities as initial equity, and the lender provides additional funds up to the approved LVR. For example, a 70% LVR on $10,000 of BHP shares means the lender will advance up to $7,000, giving you $17,000 of investment exposure with only $10,000 of your own money. You pay interest on the borrowed amount (typically 7–10% p.a. variable) and receive all dividends and capital gains on the full holding.",
+      },
+      {
+        heading: "Loan-to-value ratios and approved securities",
+        body: "Each security on the margin lending approved list has an LVR reflecting its perceived risk. Major ASX 200 blue-chips and diversified ETFs attract LVRs of 70–75%. Smaller or more volatile stocks may be unlendable or carry LVRs of 40–50%. Unlisted managed funds sit lower again. The buffer between current LVR and maximum LVR is your margin — the cushion before a call.",
+      },
+      {
+        heading: "Margin calls: the critical risk",
+        body: "If portfolio values fall and the outstanding loan exceeds the maximum LVR (or a trigger LVR set by the lender), you receive a margin call — usually requiring top-up within 24 hours. Failure to respond allows the lender to force-sell securities, potentially at the worst possible time. In the March 2020 COVID crash, many leveraged investors faced simultaneous margin calls across a multi-day selldown. Volatile portfolios with LVRs near the maximum are most exposed.",
+      },
+      {
+        heading: "Tax deductibility of margin loan interest",
+        body: "Interest on a margin loan used to invest in income-producing assets (shares paying dividends, managed funds) is generally deductible under s8-1 ITAA 1997. If you invest in growth stocks with no dividend history, the ATO may challenge deductibility — the borrowed funds must be directed toward income-producing purposes. Keep records of what securities were purchased with borrowed funds. Prepaying interest before 30 June can bring forward a deduction into the current financial year.",
+      },
+      {
+        heading: "When margin lending does and does not suit",
+        body: "Margin lending can accelerate wealth accumulation in rising markets and enhance returns when the after-tax borrowing cost is below the portfolio return. It suits disciplined investors who can tolerate volatility, have separate liquid assets to cover potential margin calls, and hold diversified, defensive portfolios. It is poorly suited to undiversified share portfolios, investors close to retirement who cannot recover from a drawdown, or anyone without a cash buffer to service margin calls.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What is the typical interest rate on a margin loan in Australia?",
+        a: "Variable rates typically range from 7% to 10.5% per annum as of 2026, depending on the lender and loan size. Some lenders offer fixed-rate options for 1–3 months. Rates move with the RBA cash rate. The after-tax cost for an investor on a 45% marginal rate is roughly 55% of the headline rate.",
+      },
+      {
+        q: "Can I use a margin loan to buy ETFs?",
+        a: "Yes. Most major ETFs from Vanguard, BetaShares, and iShares are on the approved securities lists of margin lenders such as Leveraged Equities, CommSec Margin Lending, and NAB Equity Lending. Diversified ETFs often attract LVRs of 70–75%.",
+      },
+      {
+        q: "What is a buffer LVR vs maximum LVR?",
+        a: "The maximum LVR is the absolute limit before a margin call is triggered. Prudent investors maintain an 'operational LVR' 5–10 percentage points below the maximum to provide a buffer against market falls without triggering a call. Lenders may also set a 'trigger LVR' slightly above the maximum that automatically generates the call notice.",
+      },
+    ],
+    relatedSlugs: [
+      "how-do-etfs-work",
+      "what-is-capital-gains-tax",
+      "how-does-dividend-investing-work",
+      "how-to-invest-in-shares",
+    ],
+    relatedTools: [
+      { label: "Compare share brokers", href: "/share-trading" },
+      { label: "Compare ETFs", href: "/etfs" },
+    ],
+  },
+  {
+    slug: "how-does-inflation-affect-investments",
+    category: "investing",
+    question: "How does inflation affect investments in Australia?",
+    metaTitle: "How Inflation Affects Investments in Australia (2026)",
+    metaDescription:
+      "Inflation erodes purchasing power and affects investment returns differently across asset classes. Learn how shares, property, bonds, and cash perform during inflationary periods, and how the RBA's 2–3% band shapes strategy.",
+    shortAnswer:
+      "Inflation reduces the purchasing power of money over time, meaning a 7% nominal return during a 4% inflation period delivers only a 3% real return. Shares and property have historically outpaced inflation over long horizons, while cash and fixed-rate bonds underperform. Understanding real versus nominal returns is essential for assessing whether your portfolio is actually growing.",
+    sections: [
+      {
+        heading: "Real vs nominal returns",
+        body: "Nominal return is the headline percentage gain; real return adjusts for inflation. The Fisher equation approximates: real return ≈ nominal return − inflation rate. If your term deposit pays 4.5% and CPI is 3.5%, your real return is roughly 1%. Over 30 years, 3% annual inflation halves the real value of money. Planning for retirement using nominal figures without adjusting for inflation routinely understates how much capital is needed.",
+      },
+      {
+        heading: "Asset classes in inflationary environments",
+        body: "Shares (equities) historically beat inflation over 10+ year horizons because companies can raise prices and grow nominal earnings. The ASX 200 total return (dividends reinvested) has averaged roughly 9–10% p.a. over 30 years against average CPI of ~2.5%. Property also tends to keep pace or beat inflation due to construction cost indexation and rental income growth. Bonds are hurt by inflation — rising inflation leads to rising interest rates which push bond prices down. Cash in savings accounts often trails inflation, especially when the RBA holds rates below CPI.",
+      },
+      {
+        heading: "The RBA's inflation band and investment implications",
+        body: "The Reserve Bank of Australia targets CPI inflation of 2–3% on average over time. When inflation exceeds this band (as in 2022–23 when it reached 7.8%), the RBA raises the cash rate, making borrowing more expensive, reducing asset valuations, and favouring savers. High-growth, long-duration assets (tech stocks, REITs) are particularly sensitive to rate rises because their value depends on discounting future cash flows. Value stocks and commodity exporters tend to be more resilient.",
+      },
+      {
+        heading: "Inflation-linked bonds and real assets",
+        body: "Australian government inflation-linked bonds (Capital Indexed Bonds) pay a coupon on a principal amount that grows with CPI. They provide explicit inflation protection but are complex and illiquid for retail investors. Infrastructure assets — toll roads, airports, utilities — often have revenues contractually indexed to CPI, making them effective inflation hedges inside superannuation or managed funds. Commodities (gold, oil, agricultural products) also tend to rise with inflation.",
+      },
+      {
+        heading: "Superannuation and inflation",
+        body: "Super funds are long-horizon investors with a natural inflation hedge through equity and property allocations. The key risk is the real value of your super balance at retirement — a $1 million balance in 2026 will have significantly less purchasing power at age 65 if inflation averages 3% annually. ASFA's comfortable retirement standard ($72k/yr in FY2026) will be higher in nominal terms by then. Check that your super fund's default option targets returns of CPI +3% to +4% or better over rolling 10-year periods.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is gold a good inflation hedge in Australia?",
+        a: "Gold has a mixed track record as an inflation hedge over short periods but has preserved purchasing power over very long horizons. It pays no income, so opportunity cost is high when real interest rates are positive. AUD-denominated gold also depends on the AUD/USD exchange rate — a stronger Australian dollar can offset gains from rising USD gold prices.",
+      },
+      {
+        q: "How does inflation affect property investment?",
+        a: "Property benefits from inflation in two ways: rental income typically rises with CPI over time, and replacement construction costs (and hence values of existing dwellings) increase with input costs. Mortgage holders with fixed-rate loans benefit in real terms as the real value of their debt erodes. However, rising inflation also triggers interest rate increases that reduce borrowing capacity and can suppress prices in the short term.",
+      },
+      {
+        q: "What is the difference between CPI and underlying inflation?",
+        a: "The Consumer Price Index (CPI) measures the change in price of a fixed basket of goods and services. 'Underlying' or 'trimmed mean' inflation removes the most volatile items (fuel, fresh produce) to show the persistent inflation trend — this is the measure the RBA targets most closely. CPI can spike due to temporary supply shocks while underlying remains contained.",
+      },
+    ],
+    relatedSlugs: [
+      "how-do-etfs-work",
+      "how-does-compound-interest-work",
+      "how-does-superannuation-work",
+      "what-is-a-managed-fund",
+    ],
+    relatedTools: [
+      { label: "Compare ETFs", href: "/etfs" },
+      { label: "Compare super funds", href: "/super" },
+    ],
+  },
+  {
+    slug: "what-is-salary-sacrifice-australia",
+    category: "tax",
+    question: "How does salary sacrifice work in Australia?",
+    metaTitle: "Salary Sacrifice Australia: Super, Novated Leases & Tax (2026)",
+    metaDescription:
+      "Salary sacrifice lets you redirect pre-tax income into super contributions or fringe benefits, reducing taxable income. Learn the concessional cap, novated leases, and the tax benefits at different income levels.",
+    shortAnswer:
+      "Salary sacrifice allows you to redirect a portion of your pre-tax salary into superannuation or employer-provided benefits (such as a novated car lease), reducing your assessable taxable income and hence the income tax you pay. Salary sacrifice super contributions are taxed at the 15% concessional rate inside super — rather than your marginal rate — and count toward the $30,000 annual concessional contributions cap.",
+    sections: [
+      {
+        heading: "How salary sacrifice into super works",
+        body: "You agree with your employer to forgo a portion of future salary in exchange for additional employer super contributions. Because the contributions are made before income tax, they reduce your assessable income. On $100,000 salary, sacrificing $10,000 into super means you pay income tax on $90,000 instead of $100,000. The $10,000 enters super taxed at 15% concessional rate. For someone on a 39% marginal rate (32.5% + 2% Medicare), the tax saving is 24 cents per dollar sacrificed.",
+      },
+      {
+        heading: "Concessional contributions cap",
+        body: "All concessional contributions — including mandatory employer Superannuation Guarantee contributions (11.5% in FY2026), salary sacrifice, and any personal deductible contributions — count toward the annual concessional cap of $30,000 (FY2025–26). Exceeding the cap means the excess is included in your assessable income and taxed at marginal rates (with a 15% offset for tax already paid). High earners and those near retirement approaching the cap should model contributions carefully.",
+      },
+      {
+        heading: "Fringe benefits: novated leases and beyond",
+        body: "Beyond super, salary sacrifice can fund fringe benefits such as novated car leases, laptops, work-related memberships, and (for certain employers) expense payments. Under a novated lease, your employer leases a car from a financier, deducting repayments from your pre-tax salary. You save income tax on those lease payments, and running costs (fuel, insurance, registration) can also be salary sacrificed. The employer pays FBT on the benefit, though employees typically bear the FBT via a gross-up arrangement.",
+      },
+      {
+        heading: "Tax benefits at different income levels",
+        body: "The higher your marginal tax rate, the larger the salary sacrifice benefit. At $45,000 (marginal rate 19% + 2% Medicare), salary sacrificing $5,000 saves $350 above super concessional savings. At $120,000 (marginal rate 37% + 2%), the same $5,000 saves $1,200 — over three times more. Very high earners (income + concessional contributions > $250,000) pay an additional 15% Division 293 tax on their concessional contributions, halving the tax advantage.",
+      },
+      {
+        heading: "Interaction with the Superannuation Guarantee",
+        body: "Your employer's mandatory SG contributions (11.5% of ordinary time earnings in FY2026) count toward the $30,000 concessional cap. If your employer contributes $11,500 on a $100,000 salary, you have $18,500 of cap remaining for salary sacrifice. Agreements made before 1 January 2020 often had salary sacrifice reduce the SG base — the 2020 SG integrity legislation fixed this so SG is calculated on ordinary time earnings regardless of sacrifice amount.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I access salary sacrificed super contributions early?",
+        a: "No. Salary sacrifice contributions go into super as concessional contributions and are subject to the same preservation rules as all super — you generally cannot access them until you meet a condition of release (retirement, preservation age, terminal illness, etc.). This is a key trade-off: you reduce tax now but lock funds away until retirement.",
+      },
+      {
+        q: "Does salary sacrifice affect my income for other purposes?",
+        a: "Yes. Reducing your taxable income through salary sacrifice affects means-tested government benefits (Family Tax Benefit, childcare subsidies, HECS-HELP repayment thresholds), income-assessed Medicare Levy Surcharge thresholds, and borrowing capacity calculations. Some lenders use pre-sacrifice salary for serviceability; others use the sacrifice package gross. Check with your broker.",
+      },
+      {
+        q: "What is the carry-forward concessional contribution rule?",
+        a: "If your total super balance is below $500,000 on 30 June of the previous year, you can carry forward unused concessional cap space from up to five prior years and make a larger concessional contribution in a future year. This allows people who had breaks from the workforce to catch up super contributions in high-income years.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-superannuation-work",
+      "what-is-concessional-contribution",
+      "what-are-the-super-contribution-limits",
+      "what-is-the-tax-rate-on-super",
+    ],
+    relatedTools: [
+      { label: "Super contributions calculator", href: "/super-contributions-calculator" },
+      { label: "Compare super funds", href: "/super" },
+    ],
+  },
+  {
+    slug: "how-to-reduce-capital-gains-tax-australia",
+    category: "tax",
+    question: "How can I reduce capital gains tax in Australia?",
+    metaTitle: "How to Reduce Capital Gains Tax in Australia (2026 Strategies)",
+    metaDescription:
+      "Legal strategies to minimise CGT in Australia include the 12-month discount, tax-loss harvesting, timing asset sales across financial years, using trusts, and small-business CGT concessions. Learn how each works.",
+    shortAnswer:
+      "Capital gains tax can be legally minimised through several strategies: holding assets for more than 12 months to access the 50% CGT discount (for individuals), tax-loss harvesting to offset gains with capital losses, timing disposals to fall in a lower-income year, directing distributions through trusts, and — for eligible small-business owners — applying up to four additional CGT concessions that can reduce or eliminate the gain entirely.",
+    sections: [
+      {
+        heading: "The 12-month CGT discount",
+        body: "Australian resident individuals and trusts that hold a CGT asset for more than 12 months are entitled to a 50% discount on the capital gain before it is included in assessable income. For superannuation funds the discount is 33.33%; companies receive no discount. The discount effectively halves the tax on long-term investments — an individual on a 47% marginal rate pays 23.5% effective CGT on a discounted gain. Ensure the 12-month holding period is genuine; the ATO scrutinises wash-sale arrangements designed to reset cost bases.",
+      },
+      {
+        heading: "Tax-loss harvesting",
+        body: "Capital losses can only be offset against capital gains, not ordinary income. Strategically selling underperforming assets before 30 June to crystallise losses that offset gains in the same year reduces net CGT. Losses not used in the current year carry forward indefinitely. When harvesting losses, avoid the 'wash sale' trap — selling an asset and immediately repurchasing an identical one; the ATO has anti-avoidance provisions and the ATO's 2024 guidance specifically flagged aggressive wash-sale activity.",
+      },
+      {
+        heading: "Timing disposals across financial years",
+        body: "If your income will be lower next financial year (for example, after retirement or changing jobs), deferring an asset sale past 1 July pushes the gain into the lower-income year. Similarly, if you expect a large capital gain, avoiding other assessable income in the same year — by deferring the exercise of options or timing trust distributions carefully — reduces the total tax rate applied. This is legal tax planning as long as it involves genuine commercial decisions.",
+      },
+      {
+        heading: "Using trust structures",
+        body: "Family trusts can distribute capital gains to beneficiaries with lower marginal tax rates, effectively splitting the tax burden across multiple taxpayers. A discretionary trust can pass the 50% discount through to individual beneficiaries who have been allocated the gain. The trustee must be careful with streaming rules (s115-C ITAA 1997) to avoid double-counting the discount. The ATO has scrutinised trust distribution minutes — ensure minutes are signed before 30 June each year.",
+      },
+      {
+        heading: "Small-business CGT concessions",
+        body: "Eligible small businesses (active assets below $6 million net or turnover below $2 million) may access up to four additional concessions: 15-year exemption (full CGT exemption if asset held 15+ years), 50% active-asset reduction (halves the gain), retirement exemption (up to $500,000 lifetime limit if contributed to super), and rollover (defer gain if you buy a replacement asset). These concessions are complex, can completely eliminate CGT, and are commonly used when selling a business or commercial property. Professional tax advice is essential.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I donate shares to charity to avoid CGT?",
+        a: "Donating listed shares to a Deductible Gift Recipient (DGR) charity directly avoids realising a capital gain — there is no disposal for CGT purposes in some structures — and you receive a tax deduction for the market value of the shares. The ATO's guidance under Subdivision 30-C allows donors to claim the market value of donated shares. This strategy works best for highly appreciated shares where the embedded gain would otherwise create significant CGT.",
+      },
+      {
+        q: "Does my principal residence have CGT exemption?",
+        a: "Yes. Your main residence (the home you live in) is fully exempt from CGT on sale provided it has always been your principal place of residence and has never been used to produce income. If you have rented out part of your home or used it for business, a partial CGT liability applies using the floor-space and time fractions.",
+      },
+      {
+        q: "What is the CGT implications of selling investment property?",
+        a: "Selling an investment property triggers CGT on the difference between the adjusted cost base (purchase price + buying costs + capital improvements) and the sale proceeds less selling costs. The 50% discount applies if held over 12 months. Depreciation claimed under Division 43 (capital works) reduces the cost base, potentially increasing the gain. Keep meticulous records of all capital improvements and depreciation schedules.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-capital-gains-tax",
+      "how-does-negative-gearing-work",
+      "what-is-a-family-trust",
+      "what-is-a-trust-structure-for-investing",
+    ],
+    relatedTools: [
+      { label: "Compare share brokers", href: "/share-trading" },
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+    ],
+  },
+  {
+    slug: "what-is-the-first-home-guarantee",
+    category: "property",
+    question: "What is the First Home Guarantee in Australia?",
+    metaTitle: "First Home Guarantee Australia: 5% Deposit, No LMI (2026)",
+    metaDescription:
+      "The First Home Guarantee lets eligible buyers purchase with a 5% deposit and no Lenders Mortgage Insurance. Learn eligibility, income caps, property price caps by state, and how it stacks with the FHSS.",
+    shortAnswer:
+      "The First Home Guarantee (FHBG) allows eligible first home buyers to purchase a property with just a 5% deposit, with the federal government guaranteeing 15% of the loan to avoid Lenders Mortgage Insurance (LMI). This saves buyers $10,000–$35,000 in LMI premiums. Income caps, property price caps by state, and limited scheme places apply each financial year.",
+    sections: [
+      {
+        heading: "How the guarantee works",
+        body: "Housing Australia (formerly NHFIC) provides a guarantee to the lender covering the difference between the buyer's 5% deposit and the standard 20% threshold. The buyer still borrows 95% of the purchase price — there is no government cash payment. The guarantee allows the lender to waive LMI, which is otherwise charged when an LVR exceeds 80%. The guarantee remains in place until the borrower's equity reaches 20% through repayments and/or capital growth.",
+      },
+      {
+        heading: "Eligibility criteria (2026)",
+        body: "Australian citizens or permanent residents aged 18 or over. First home buyers only — you must never have owned or held a legal interest in residential property in Australia. Income threshold: $125,000 for individuals, $200,000 for couples (based on the prior financial year's taxable income). Plan to occupy as principal place of residence (not investment). Application must be made through an approved participating lender.",
+      },
+      {
+        heading: "Property price caps by state (FY2026)",
+        body: "Capital cities and regional centres: NSW $900,000, VIC $800,000, QLD $700,000, WA $600,000, SA $600,000, TAS $600,000, ACT $750,000, NT $600,000. For the rest of each state: NSW $750,000, VIC $650,000, QLD $550,000, WA $450,000, SA $450,000, TAS $450,000. Prices are reviewed periodically. Buyers should check the Housing Australia website for the current schedule at time of application.",
+      },
+      {
+        heading: "Regional First Home Buyer Guarantee (RFHBG)",
+        body: "A companion scheme — the Regional First Home Buyer Guarantee — applies the same 5% deposit and no-LMI benefit but is restricted to buyers purchasing in regional Australia who have lived or worked regionally for the preceding 12 months. It effectively extends the FHBG to regional areas where affordability pressure has increased. Place allocations are separate from the main FHBG quota.",
+      },
+      {
+        heading: "Stacking with other first home buyer schemes",
+        body: "The FHBG can be used with the First Home Super Saver Scheme (FHSS), where super savings are released for the deposit. State-based First Homeowner Grants (FHOG) generally also stack with the FHBG, providing a cash grant of $10,000–$30,000 depending on state and property type. The Family Home Guarantee (2% deposit for eligible single parents who may have previously owned) is a separate scheme with different criteria.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How many First Home Guarantee places are available?",
+        a: "The federal government allocates a set number of FHBG places each financial year. In recent years the combined allocation across FHBG, RFHBG, and FHG has been 50,000 places. Places are taken on a first-come-first-served basis via participating lenders. Schemes typically fill up mid-year — apply early in the financial year for best availability.",
+      },
+      {
+        q: "Does using the FHBG affect my ability to get a larger loan?",
+        a: "No. The guarantee does not change the loan amount the bank will approve — that is still based on your income and expenses serviceability. It only removes the LMI premium that would otherwise apply. Your repayments and borrowing capacity are the same as any 95% LVR loan.",
+      },
+      {
+        q: "What if I want to rent out the property later?",
+        a: "The FHBG requires you to occupy the property as your principal residence. If you subsequently move out and rent the property, you may be in breach of scheme conditions. Housing Australia may require the guarantee to be discharged — which could force you to pay LMI if your equity is still below 20%. Check the scheme's conditions of approval before changing occupancy.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-a-first-home-super-saver-scheme",
+      "how-to-buy-property-in-australia",
+      "how-does-negative-gearing-work",
+    ],
+    relatedTools: [
+      { label: "Mortgage calculator", href: "/mortgage-calculator" },
+      { label: "Compare home loans", href: "/home-loans" },
+    ],
+  },
+  {
+    slug: "how-does-land-tax-work-in-australia",
+    category: "property",
+    question: "How does land tax work in Australia?",
+    metaTitle: "How Land Tax Works in Australia: State Rates & Exemptions (2026)",
+    metaDescription:
+      "Land tax is a state-based annual tax on land values above a threshold. Learn which states charge land tax, the principal residence exemption, trust surcharges, foreign buyer surcharges, and how rates differ.",
+    shortAnswer:
+      "Land tax is an annual state-based tax levied on the unimproved value of land you own above a threshold. It is assessed at 31 December (in most states) and varies significantly by state. Your principal place of residence is generally exempt, but investment properties, holiday homes, and properties held in trusts or by foreign persons may be subject to surcharges.",
+    sections: [
+      {
+        heading: "What land tax is and how it is assessed",
+        body: "Land tax is charged by state and territory governments on the taxable value of land owned as at a specified date (usually 31 December or 30 June, depending on the state). The taxable value is the unimproved land value — not the value of the building on it — and is determined by the state's valuation authority (e.g., NSW Valuer General, Victorian Valuer-General). Each owner's landholdings are aggregated within the state to determine if they exceed the tax-free threshold.",
+      },
+      {
+        heading: "State thresholds and rates",
+        body: "Thresholds and rates differ sharply by state. In FY2026: NSW — $1,075,000 threshold, 1.6% base rate scaling to 2% for holdings above $6.57 million; VIC — $300,000 threshold (primary production and trusts differ), graduated rates 0.2–2.25%; QLD — $600,000 threshold for individuals, 1–2.75% above threshold; SA — $723,000 threshold, 0.5–3.7%; WA — $300,000 threshold, 0.09–2.67%; ACT — no threshold, rates 0.15–0.92% on AUV; TAS and NT have separate regimes. Land tax is NOT a federal tax.",
+      },
+      {
+        heading: "Principal residence exemption",
+        body: "All states exempt your principal place of residence (PPR/PPOR) from land tax provided you genuinely reside there as your main home. You can only have one PPR exemption at a time. Exemptions are not automatic in all states — some require an annual application. Temporarily vacating (e.g., six-month interstate posting) generally preserves the exemption provided the property is not rented.",
+      },
+      {
+        heading: "Trust surcharges",
+        body: "Several states (notably Victoria and New South Wales) impose higher land tax rates on properties held in discretionary (family) trusts. In Victoria, a 0.5% surcharge applies to discretionary trusts on top of normal land tax rates. NSW charges trust land tax at a flat 1.6% with no tax-free threshold for residential trusts. These surcharges were introduced to prevent wealth concentration hiding behind trust structures. Fixed unit trusts and SMSFs often have different treatment.",
+      },
+      {
+        heading: "Foreign person surcharges",
+        body: "Most states and the ACT impose additional land tax surcharges on foreign purchasers and foreign-owned entities. In NSW, a 4% annual foreign surcharge applies on top of standard land tax for foreign persons. VIC charges a 2% absentee owner surcharge. These surcharges compound for offshore investors holding Australian residential land. Foreign citizens must also be aware of duty surcharges at purchase (separate from annual land tax).",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is land tax deductible for investment properties?",
+        a: "Yes. Land tax paid on investment properties is generally deductible against rental income under s8-1 ITAA 1997 as a cost incurred in producing assessable income. Land tax on your principal residence is not deductible as it produces no assessable income.",
+      },
+      {
+        q: "Do I pay land tax in multiple states if I own property interstate?",
+        a: "Yes, but each state assesses only the land within that state's borders. You may therefore owe land tax in two or more states. Some people use this to stay below thresholds in each individual state, but as portfolios grow this strategy becomes less effective. There is no national aggregation — each state applies its own threshold independently.",
+      },
+      {
+        q: "Does an SMSF pay land tax?",
+        a: "SMSFs are generally not eligible for the principal residence exemption (they are not natural persons living in the property). Commercial property held in an SMSF may be exempt from land tax in some states where business real property exemptions apply. Residential investment property in an SMSF is subject to land tax. Rates and exemptions vary by state — seek state-specific advice.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-negative-gearing-work",
+      "how-to-buy-property-in-australia",
+      "what-is-a-family-trust",
+      "what-is-a-trust-structure-for-investing",
+    ],
+    relatedTools: [
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+      { label: "Compare property investment platforms", href: "/property-platforms" },
+    ],
+  },
+  {
+    slug: "what-is-a-bare-trust",
+    category: "property",
+    question: "What is a bare trust and why do SMSFs use them?",
+    metaTitle: "What Is a Bare Trust? SMSF Property & LRBA Explained (2026)",
+    metaDescription:
+      "A bare trust gives the beneficiary absolute entitlement to assets held by the trustee. SMSFs use bare trusts to borrow and buy property under Limited Recourse Borrowing Arrangements (LRBAs). Learn how the structure works.",
+    shortAnswer:
+      "A bare trust (also called a holding trust or custodian trust) is a trust structure in which the trustee holds a specific asset on behalf of a beneficiary who has an absolute and immediate entitlement to both the asset and any income it produces. SMSFs use bare trusts as the required legal mechanism for buying assets on borrowed money under a Limited Recourse Borrowing Arrangement — the asset sits in the bare trust until the loan is fully repaid, then legal title transfers to the SMSF trustee.",
+    sections: [
+      {
+        heading: "What a bare trust is",
+        body: "In a bare trust, the trustee is a 'naked' title holder — they hold legal ownership but have no discretion over the asset. The beneficiary (in the SMSF context, the SMSF itself) has the equitable interest and controls what happens to the asset. Unlike a discretionary trust where the trustee decides distributions, a bare trustee acts solely on the beneficiary's instructions. Bare trusts are simple documents (often a one-page deed) and do not require ongoing trustee discretion.",
+      },
+      {
+        heading: "Limited Recourse Borrowing Arrangements (LRBAs) for SMSFs",
+        body: "Section 67A of the Superannuation Industry (Supervision) Act 1993 permits SMSFs to borrow money to acquire a 'single acquirable asset' provided it is held in a bare trust and the lender's recourse is limited to that asset (i.e., if the SMSF defaults, the lender cannot pursue other SMSF assets). The LRBA structure requires: (1) a bare trust holding the asset, (2) the SMSF as the beneficial owner and loan obligor, (3) a lender (related party or arm's length), and (4) a loan at commercial terms (post-2016 ATO safe harbour rates).",
+      },
+      {
+        heading: "Why the bare trust is legally required",
+        body: "SIS Act s67A requires that borrowed funds be used to acquire an asset held on trust. The SMSF trustee cannot hold legal title to borrowed property directly until the loan is repaid — if the SMSF defaults, the lender needs a separate trustee holding the asset to exercise its security rights without contaminating other SMSF assets. Once the loan is fully repaid, the bare trustee transfers legal title to the SMSF trustee at no additional duty (in most states — duties treatment varies).",
+      },
+      {
+        heading: "ATO compliance requirements",
+        body: "The ATO has issued extensive guidance on LRBAs (LCR 2016/5, PCG 2016/5). Key compliance points: the bare trust must be established before the purchase contract is entered (critical — cannot be backdated), the asset must be a single acquirable asset (no development or major renovation while under LRBA), the SMSF investment strategy must justify the borrowing, and related-party loans must meet the ATO's safe harbour interest rate and LVR conditions. Non-compliance can trigger the loan to be treated as an in-house asset — a SIS Act breach.",
+      },
+      {
+        heading: "Residential vs commercial property in SMSFs via bare trust",
+        body: "SMSFs can borrow to buy both residential and commercial property under an LRBA. Commercial property (e.g., the SMSF buys the premises of the members' own business) is a common strategy — the business pays commercial rent to the SMSF, which accumulates tax-effectively. Residential property can also be purchased, but cannot be used or rented by members or their related parties. Both must be held in a bare trust for the duration of the loan.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can an SMSF borrow from a related party for a bare trust LRBA?",
+        a: "Yes, but the loan must be on arm's-length commercial terms as specified in the ATO's Practical Compliance Guideline PCG 2016/5. The safe harbour interest rate for residential property is the RBA indicator lending rate for small business; for listed shares it is different. The LVR must not exceed 70% for residential property, 60% for other real property, and 50% for listed shares. Departing from these terms requires independent evidence of arm's-length pricing.",
+      },
+      {
+        q: "What happens to the bare trust when the SMSF loan is repaid?",
+        a: "Once the final loan payment is made, the bare trustee executes a transfer of legal title to the SMSF trustee. In most states, this transfer is exempt from stamp duty as no change in beneficial ownership has occurred — but duty treatment varies (Queensland and some states may assess nominal duty). Update the SMSF's asset register and ensure the lender discharges any registered mortgage.",
+      },
+      {
+        q: "Does the bare trust need its own TFN or ABN?",
+        a: "No. A bare trust that holds a single acquirable asset for an SMSF is generally not a separate taxpaying entity and does not need its own TFN or ABN. All income and capital gains are reported in the SMSF's tax return as if the SMSF held the asset directly. Some accountants register an ABN for administrative convenience — seek advice from your SMSF auditor.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-a-self-managed-super-fund",
+      "what-is-smsf-and-is-it-worth-it",
+      "what-is-a-trust-structure-for-investing",
+      "how-to-buy-property-in-australia",
+    ],
+    relatedTools: [
+      { label: "Compare SMSF providers", href: "/smsf" },
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+    ],
+  },
+  {
+    slug: "what-are-the-super-contribution-limits",
+    category: "super",
+    question: "What are the superannuation contribution limits in Australia?",
+    metaTitle: "Super Contribution Limits Australia FY2026: Concessional & Non-Concessional Caps",
+    metaDescription:
+      "The concessional super contribution cap is $30,000 and the non-concessional cap is $120,000 in FY2026. Learn about the bring-forward rule, carry-forward contributions, total super balance thresholds, and what happens if you exceed the caps.",
+    shortAnswer:
+      "In FY2025–26, the concessional (pre-tax) super contribution cap is $30,000 and the non-concessional (after-tax) cap is $120,000 per year. Exceeding either cap triggers additional tax — excess concessional contributions are included in assessable income; excess non-concessional contributions are taxed at 47%. Bring-forward and carry-forward rules allow eligible Australians to contribute more in certain years.",
+    sections: [
+      {
+        heading: "Concessional contributions cap ($30,000)",
+        body: "Concessional contributions include mandatory employer Super Guarantee contributions (11.5% of ordinary time earnings in FY2026), salary sacrifice contributions, and personal deductible contributions (where you claim a tax deduction for out-of-pocket contributions). All count toward the same $30,000 annual cap. The cap was $27,500 in FY2024 and was indexed to AWOTE (Average Weekly Ordinary Time Earnings) in $2,500 increments. Excess concessional contributions are included in your assessable income, taxed at marginal rates, with a 15% offset for tax already paid in the fund.",
+      },
+      {
+        heading: "Non-concessional contributions cap ($120,000)",
+        body: "Non-concessional contributions are after-tax personal contributions for which no tax deduction is claimed. The annual cap is $120,000 (four times the concessional cap). If you make a non-concessional contribution when your total super balance (TSB) is $1.9 million or above on 30 June of the prior year, your non-concessional cap is reduced to nil. Between $1.66 million and $1.9 million TSB, partial caps apply. Excess non-concessional contributions are taxed at 47% unless you elect to withdraw them.",
+      },
+      {
+        heading: "Bring-forward rule",
+        body: "Individuals under age 75 may trigger the bring-forward rule if their TSB was below $1.66 million on 30 June of the prior year. This allows you to contribute up to three years of non-concessional cap ($360,000) in a single year or over two years ($240,000), bringing forward future contributions. The bring-forward is triggered automatically when you make a non-concessional contribution exceeding $120,000. Once triggered, the three-year window begins and you cannot contribute again until the window closes or the bring-forward is fully used.",
+      },
+      {
+        heading: "Carry-forward concessional contributions",
+        body: "Since 1 July 2019, unused concessional cap space from up to five prior financial years can be carried forward and used in a subsequent year if your total super balance is below $500,000 on the prior 30 June. For example, if you made only $20,000 in concessional contributions each year for three years (unused: $10,000 × 3 = $30,000), you could make a $60,000 concessional contribution in Year 4. This suits people who had career breaks or self-employed periods with lower contributions.",
+      },
+      {
+        heading: "Exceeding the caps: consequences",
+        body: "Excess concessional contributions: assessed as income, taxed at marginal rate minus the 15% concessional tax offset. You must pay the shortfall from your tax return; the excess can remain in the fund. Excess non-concessional contributions: the fund must release the excess plus associated earnings back to you, and the earnings component is taxed at marginal rate. If you keep the excess, it is taxed at 47%. The ATO will issue an excess contributions determination — act promptly to avoid the default 47% rate.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Do employer contributions count toward my concessional cap?",
+        a: "Yes. All employer contributions — mandatory SG, salary sacrifice, and any additional employer contributions — count toward your $30,000 concessional cap. If your employer contributes $15,000 as SG on a $130,000 salary, you have $15,000 of cap remaining for salary sacrifice or personal deductible contributions.",
+      },
+      {
+        q: "What is the total super balance threshold?",
+        a: "The total super balance (TSB) is the combined value of all your super interests across all funds at 30 June. The key thresholds in FY2026 are: $500,000 (carry-forward concessional access), $1.66 million (full bring-forward available), $1.78 million (two-year bring-forward available), $1.9 million (one-year bring-forward available), $1.9 million and above (no non-concessional contributions allowed).",
+      },
+      {
+        q: "Can I make super contributions after age 75?",
+        a: "From 1 January 2025, the work test for personal contributions between ages 67–74 was removed. However, from age 75, you can no longer make personal voluntary contributions. Employer SG contributions continue to be required by law regardless of age if you are employed. Spouse contributions can be made for a spouse aged under 75.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-concessional-contribution",
+      "how-does-superannuation-work",
+      "what-is-salary-sacrifice-australia",
+      "what-is-the-tax-rate-on-super",
+    ],
+    relatedTools: [
+      { label: "Super contributions calculator", href: "/super-contributions-calculator" },
+      { label: "Compare super funds", href: "/super" },
+    ],
+  },
+  {
+    slug: "when-can-i-access-my-super",
+    category: "super",
+    question: "When can I access my superannuation in Australia?",
+    metaTitle: "When Can You Access Your Super in Australia? (2026 Guide)",
+    metaDescription:
+      "You can generally access super at your preservation age (55–60 depending on birth year) after retiring. Learn about conditions of release, TTR pensions, compassionate grounds, hardship access, and the First Home Super Saver Scheme.",
+    shortAnswer:
+      "You can generally access your superannuation when you reach your preservation age and meet a condition of release. Preservation ages range from 55 (born before 1 July 1960) to 60 (born after 30 June 1964). Most people access super after age 60 when benefit payments are fully tax-free. Earlier access is possible on compassionate grounds, permanent incapacity, terminal illness, severe financial hardship, or through the First Home Super Saver Scheme.",
+    sections: [
+      {
+        heading: "Preservation age by birth year",
+        body: "Your preservation age determines when you can first access super. Born before 1/7/1960: age 55. Born 1/7/1960–30/6/1961: age 56. Born 1/7/1961–30/6/1962: age 57. Born 1/7/1962–30/6/1963: age 58. Born 1/7/1963–30/6/1964: age 59. Born after 30/6/1964: age 60. Once you reach preservation age AND retire (cease employment and do not intend to be re-employed full-time), your entire preserved benefit is accessible.",
+      },
+      {
+        heading: "Tax on super withdrawals",
+        body: "The tax you pay on super withdrawals depends on your age and the components (taxable vs tax-free) in your fund. Aged 60 or over: all benefits from a taxed super fund are tax-free (no tax on lump sums or pensions). Aged preservation age to 59: taxable component of lump sums above a threshold ($235,000 in FY2026) taxed at 15% (plus Medicare Levy); below the threshold, tax-free. Below preservation age: taxable component taxed at 20% (plus Medicare Levy) in almost all cases.",
+      },
+      {
+        heading: "Transition to retirement (TTR) pension",
+        body: "Once you reach preservation age but have not yet retired, you can commence a Transition to Retirement (TTR) pension. This allows you to draw 4–10% of your account balance per year as a pension income stream. TTR pensions are taxed as income if you are under 60, but supplement earned income, allowing some to salary sacrifice more into super while maintaining cash flow. The SMSF TTR tax concession (investment earnings exempt from tax) was removed in 2017 for accumulation-phase TTR accounts.",
+      },
+      {
+        heading: "Compassionate grounds and hardship",
+        body: "The ATO can approve early super access on compassionate grounds for: medical treatment (you or a dependent) not covered by Medicare, preventing foreclosure or forced sale of your home, palliative care, funeral expenses for a dependent, modification of home or vehicle for severe disability. Severe financial hardship access requires: receiving a Centrelink income support payment for 26 consecutive weeks and being unable to meet reasonable and immediate family living expenses. The maximum accessible amount is $10,000 in a 12-month period.",
+      },
+      {
+        heading: "First Home Super Saver Scheme (FHSS) and other exceptions",
+        body: "The FHSS allows first home buyers to release voluntary super contributions (up to $15,000 per year, $50,000 lifetime maximum) made since 1 July 2017 to use as a home deposit. Withdrawals are taxed at marginal rate minus a 30% offset. Terminal illness: if you have two medical certifications of terminal illness with a life expectancy under 24 months, your entire super balance is released tax-free. Permanent incapacity: if you are permanently unable to work due to physical or mental ill-health, early access is available. Temporary incapacity (death and disability) insurance inside super may also trigger payments.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I access super while still working?",
+        a: "Yes, under a Transition to Retirement (TTR) pension from preservation age. You can draw 4–10% of your TTR account balance annually while continuing to work. Full unrestricted access requires retiring after reaching preservation age (or reaching age 65 regardless of work status).",
+      },
+      {
+        q: "What is the age when super access is unrestricted?",
+        a: "At age 65, you can access all of your superannuation regardless of employment status — you do not need to have retired. Before 65, you must have reached preservation age and met a condition of release (retirement, TTR, etc.).",
+      },
+      {
+        q: "Is the super preservation age changing?",
+        a: "The preservation age has already been incrementally raised from 55 to 60 (completed for those born after 30 June 1964 as of 1 July 2024). The retirement age of 65 for unconditional access is not currently scheduled to change, though long-term policy discussions continue as Australians live longer.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-the-super-preservation-age",
+      "how-does-superannuation-work",
+      "what-is-a-transition-to-retirement-pension",
+      "what-is-a-self-managed-super-fund",
+    ],
+    relatedTools: [
+      { label: "Super contributions calculator", href: "/super-contributions-calculator" },
+      { label: "Compare super funds", href: "/super" },
+    ],
+  },
+  {
+    slug: "how-to-invest-in-us-shares-from-australia",
+    category: "investing",
+    question: "How can Australians invest in US shares?",
+    metaTitle: "How to Invest in US Shares from Australia (2026 Guide)",
+    metaDescription:
+      "Australians can invest in US shares via ASX-listed US ETFs, mFunds, or directly through international brokers. Learn about the W-8BEN form, 15% dividend withholding tax, USD currency risk, and PFIC rules for US citizens.",
+    shortAnswer:
+      "Australians can invest in US shares through ASX-listed US ETFs (the simplest route), international share brokers such as Interactive Brokers or Stake, or mFunds. You must complete a W-8BEN form to reduce dividend withholding tax from 30% to 15% under the Australia-US tax treaty. Currency risk (AUD/USD) affects returns, and dual US citizens face additional PFIC complexity.",
+    sections: [
+      {
+        heading: "Option 1: ASX-listed US ETFs",
+        body: "The easiest path is buying ASX-listed ETFs that hold US shares and are denominated in AUD. Examples: IVV (iShares S&P 500 ETF — AUD hedged: IHVV), VTS (Vanguard US Total Market ETF, AUD unhedged), NDQ (BetaShares Nasdaq 100 ETF). You buy these through any Australian share broker, pay brokerage in AUD, and receive AUD distributions. The ETF manager handles currency, foreign tax withholding, and US tax paperwork. No W-8BEN required at the investor level.",
+      },
+      {
+        heading: "Option 2: International share brokers",
+        body: "Platforms such as Interactive Brokers (IBKR), Stake, and Superhero allow Australians to buy US-listed shares (NYSE, Nasdaq) directly. You fund the account in AUD (converted to USD on the platform) and hold actual US shares. You must complete a W-8BEN (Certificate of Foreign Status) to certify non-US person status and reduce dividend withholding tax from 30% to 15%. IBKR charges USD $0.005 per share minimum USD $1 brokerage; Stake charges 0.7% FX on funding with $3 per trade.",
+      },
+      {
+        heading: "W-8BEN and dividend withholding tax",
+        body: "The US applies 30% withholding tax on dividends paid to foreign investors by default. Under the Australia-US tax treaty, Australian tax residents can reduce this to 15% by lodging a W-8BEN with their broker or the dividend paying agent. The W-8BEN is valid for three years. The 15% withheld is a foreign tax credit claimable on your Australian tax return, reducing (but not fully eliminating) Australian tax on those dividends.",
+      },
+      {
+        heading: "Currency risk (AUD/USD)",
+        body: "When you hold unhedged USD-denominated assets, your AUD return depends on both the US market return and the AUD/USD exchange rate. If the AUD strengthens from 0.65 to 0.70 against the USD while your US shares rise 10%, your AUD return is reduced to approximately 3%. Conversely, a falling AUD amplifies returns. Hedged ETFs (e.g., IHVV) remove this volatility but cost 0.10–0.15% more in management fees and do not perfectly hedge in volatile periods.",
+      },
+      {
+        heading: "PFIC rules for US citizens and dual citizens",
+        body: "Australian-listed US ETFs (such as VTS and IVV) are classified as Passive Foreign Investment Companies (PFICs) under US tax law. US citizens or green card holders holding these ETFs face punitive PFIC taxation — default 'excess distribution' treatment can result in tax at the highest marginal rate plus interest on deferred gains. Dual citizens holding Australian super funds may also face PFIC exposure through super's underlying investments. US persons in Australia should seek US tax advice before investing in Australian-listed funds.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Do I pay tax in both the US and Australia on US shares?",
+        a: "You pay tax in Australia on all worldwide income as an Australian resident. Dividend withholding tax deducted in the US (15% after W-8BEN) is a foreign income tax offset claimable in Australia, generally reducing double taxation. Capital gains on selling US shares are reported only in Australia — the US does not typically tax capital gains of non-resident aliens (subject to the treaty).",
+      },
+      {
+        q: "Is Stake or Interactive Brokers better for Australians?",
+        a: "Interactive Brokers suits more sophisticated investors: fractional shares, options, very low margin rates, 135+ currencies, and CHESS (no) or Custodian model. Stake is simpler and better for beginners or those investing modest regular amounts. Both are ASIC-regulated and use custodian models (you don't hold ASX-CHESS sponsorship). For large portfolios, IBKR's lower brokerage costs ($0.005/share) dominate. Check current SIPC and IBKR asset protection arrangements.",
+      },
+      {
+        q: "What is estate tax risk for Australians holding US shares directly?",
+        a: "The US imposes estate tax (up to 40%) on US-sited assets held by non-US domiciliaries above USD $60,000. Direct holdings of US shares above this threshold could expose your estate to US estate tax — far exceeding any Australian estate tax. Holding US exposure through Australian-domiciled ETFs avoids this risk, as the fund (not the individual investor) owns the US securities.",
+      },
+    ],
+    relatedSlugs: [
+      "how-do-etfs-work",
+      "what-are-the-best-etfs-for-beginners",
+      "what-is-dollar-cost-averaging",
+      "how-to-invest-in-shares",
+    ],
+    relatedTools: [
+      { label: "Compare share brokers", href: "/share-trading" },
+      { label: "Compare ETFs", href: "/etfs" },
+    ],
+  },
+  {
+    slug: "what-is-dollar-cost-averaging-vs-lump-sum",
+    category: "investing",
+    question: "Is dollar-cost averaging better than investing a lump sum?",
+    metaTitle: "Dollar-Cost Averaging vs Lump Sum Investing: What the Evidence Says (2026)",
+    metaDescription:
+      "Lump-sum investing beats dollar-cost averaging about two-thirds of the time in rising markets, according to Vanguard research. Learn when DCA makes sense, the psychology behind it, and how Australian investors should choose.",
+    shortAnswer:
+      "Vanguard's 2012 research found that lump-sum investing outperformed dollar-cost averaging (DCA) approximately 67% of the time across US, UK, and Australian markets over 10-year horizons. Because markets trend upward over time, deploying capital immediately generally captures more return. DCA remains valuable for regular salary investors, those with genuine cash-flow constraints, or investors whose sleep-at-night factor matters more than optimising expected returns.",
+    sections: [
+      {
+        heading: "How dollar-cost averaging works",
+        body: "Dollar-cost averaging means investing a fixed dollar amount at regular intervals — say $1,000 per month into an index ETF — regardless of market conditions. When prices are low, you buy more units; when prices are high, you buy fewer. Over time, this smooths your average cost per unit. DCA is the default strategy for most salary earners who invest their savings progressively each pay cycle — it is how most superannuation contributions work.",
+      },
+      {
+        heading: "The lump-sum evidence",
+        body: "Vanguard's 2012 study 'Dollar-cost averaging just means taking risk later' analysed US, UK, and Australian market data from 1926–2011. It found that immediately investing a lump sum outperformed a 12-month DCA plan in 67% (US), 71% (UK), and 70% (Australia) of rolling 10-year periods. The reason is straightforward: equities have a long-run positive expected return, so time in market typically beats timing the market. The average outperformance of lump sum was approximately 1.3–2.4 percentage points over the DCA period.",
+      },
+      {
+        heading: "When DCA reduces regret (not returns)",
+        body: "DCA is inferior to lump-sum on a pure expected-return basis but may be superior on a risk-adjusted or psychological basis. An investor who deploys $500,000 in February 2020 and watches it fall 35% in March may panic-sell at the worst point — destroying far more value than DCA would have. If spreading investment over 6–12 months allows you to stay invested through a drawdown, DCA is rational even if it has a lower expected return. The academic literature calls this the 'regret asymmetry' — the pain of investing at the top and watching it fall exceeds the pleasure of capturing upside by going in early.",
+      },
+      {
+        heading: "Practical considerations for Australian investors",
+        body: "Most Australians do not face a genuine 'lump sum vs DCA' choice — they invest salary savings progressively. The true choice arises for: (1) inheritance or property sale proceeds sitting in a high-interest savings account, (2) an exercise of employee share options, or (3) moving from a cash allocation back into markets after going to cash. Transaction costs matter less in an era of zero-brokerage apps (Pearler, Sharesies), but FX costs for international exposure (Stake: 0.7% per topup) can add up with frequent small purchases.",
+      },
+      {
+        heading: "Hybrid approach: value averaging",
+        body: "Value averaging is a DCA variant where the target is a growing portfolio value, not a fixed investment amount — you invest more when markets are down and less (or sell) when they are up. Theoretically, it improves on pure DCA by enforcing 'buy low, buy more' discipline. In practice, it requires more cash management complexity and may result in holding large cash reserves waiting for dips that may not come. Most financial planners recommend staying simple: lump sum if you have it and the emotional constitution, DCA if you don't.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What is the best frequency for dollar-cost averaging?",
+        a: "Monthly is the most practical for most investors — it aligns with salary cycles and keeps brokerage costs manageable. Weekly or fortnightly investing has marginally better theoretical smoothing but incurs more brokerage (use platforms with $0 brokerage or flat fees). Daily DCA (possible on some platforms) adds complexity without meaningful benefit.",
+      },
+      {
+        q: "Does DCA work better in volatile or bear markets?",
+        a: "DCA performs best relative to lump sum in falling or highly volatile markets. If you begin DCA at the start of a protracted bear market, you accumulate more units at lower prices. But since you cannot predict market direction, the long-run expectation still favours lump sum in rising markets (which represent the majority of 10-year periods). DCA during a bear market is great in hindsight; identifying the bear market in advance is the hard part.",
+      },
+      {
+        q: "Is Pearler or Sharesies good for DCA in Australia?",
+        a: "Both Pearler and Sharesies offer automated recurring investment features well-suited to DCA. Pearler is CHESS-sponsored and targets long-term investors with a clean auto-invest feature. Sharesies uses a custodian model and offers fractional investing with lower minimums. For ETF DCA strategies, both are competitive. Compare brokerage on your specific trade size before committing.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-dollar-cost-averaging",
+      "how-do-etfs-work",
+      "what-are-the-best-etfs-for-beginners",
+      "how-to-start-investing-with-small-amounts",
+    ],
+    relatedTools: [
+      { label: "Compare share brokers", href: "/share-trading" },
+      { label: "Compare ETFs", href: "/etfs" },
+    ],
+  },
+  {
+    slug: "what-is-an-index-fund",
+    category: "investing",
+    question: "What is an index fund and how does it work?",
+    metaTitle: "What Is an Index Fund? Passive Investing Explained for Australians (2026)",
+    metaDescription:
+      "An index fund tracks a market index like the ASX 200 or S&P 500, offering broad diversification at low cost. Learn how index funds work, how they compare to active funds, and which Australian index funds suit beginners.",
+    shortAnswer:
+      "An index fund is a type of managed fund or ETF that aims to replicate the performance of a specific market index — such as the ASX 200, S&P 500, or MSCI World — by holding the same securities in the same proportions as the index. Because there is no active stock-picking, management fees are very low (typically 0.03–0.20% per year) and long-run performance tends to beat most actively managed funds after fees.",
+    sections: [
+      {
+        heading: "How index funds work",
+        body: "An index fund manager purchases every security in the target index (or a statistically representative sample for very large indices) in proportion to each security's weight. For example, an ASX 200 index fund holds shares in all 200 companies in the S&P/ASX 200, weighted by market capitalisation. When the index rebalances (companies promoted or relegated), the fund adjusts its holdings accordingly. Investors receive their proportional share of all dividends and capital growth. The fund generates no turnover from active trading, resulting in low transaction costs and minimal capital gains distributions.",
+      },
+      {
+        heading: "Index funds vs active funds",
+        body: "Active fund managers attempt to outperform a benchmark index by selecting individual securities and timing the market. Decades of SPIVA (S&P Indices Versus Active) data show that after fees, the majority of active Australian equity funds underperform the S&P/ASX 200 Total Return index over 5- and 10-year periods. SPIVA Australia 2025 reported that 78% of Australian active general equity funds underperformed over 15 years. The primary culprit is management expense ratios of 0.8–1.5% versus 0.07–0.20% for index funds — a gap compounding to enormous amounts over decades.",
+      },
+      {
+        heading: "ASX 200 and global index funds in Australia",
+        body: "Common Australian index funds and their management expense ratios (approximate): VAS — Vanguard Australian Shares Index ETF (ASX 200 + mid-caps), MER 0.07%; STW — SPDR S&P/ASX 200 ETF, MER 0.05%; VGS — Vanguard MSCI Index International Shares ETF (World ex-Australia), MER 0.18%; BGBL — BetaShares Global Shares ETF (developed markets), MER 0.08%; IVV — iShares S&P 500 ETF, MER 0.03%. These ETFs are available on ASX through any broking account.",
+      },
+      {
+        heading: "How index rebalancing works",
+        body: "The S&P/ASX 200 is reviewed quarterly by S&P Dow Jones Indices. Companies that grow above the threshold size enter the index; those that shrink or delist exit. When a company is added to the index, index fund managers must buy it; when one is removed, they must sell it. This forces a degree of 'buy high, sell low' trading — a theoretical disadvantage sometimes called 'reconstitution cost'. In practice, this cost is small (estimated 0.03–0.05% per year for the ASX 200) relative to the fee savings over active funds.",
+      },
+      {
+        heading: "Dividend reinvestment and tax",
+        body: "Index ETFs distribute dividends quarterly or semi-annually. Investors can elect to receive cash or enrol in a distribution reinvestment plan. Dividends from Australian index funds carry significant franking credits — VAS typically distributes 80–100% franked dividends. Distributions are taxed as ordinary income in the year received. Index funds are generally more tax-efficient than active funds because low turnover means fewer realised capital gains distributed to unit holders.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What is the difference between an index fund and an ETF?",
+        a: "All ETFs are funds, but not all ETFs are index funds — there are actively managed ETFs too. Conversely, unlisted index managed funds (such as Vanguard's mFunds) exist but are not ETFs. In practice, most ETFs available to Australian retail investors track an index passively. The distinction that matters for most investors is: ETFs trade on exchange (like shares, with a bid/ask spread) while unlisted index funds are priced once daily and transacted at NAV.",
+      },
+      {
+        q: "Can I lose all my money in an index fund?",
+        a: "An index fund can only go to zero if every company in the underlying index goes to zero simultaneously — an extreme scenario that would imply the collapse of the entire market economy. In practice, index funds have declined 30–50% during severe market crashes (GFC 2008–09, COVID March 2020) but recovered fully within years. Diversified index funds hold tens to thousands of securities, making a total loss practically impossible for broad-market indices.",
+      },
+      {
+        q: "How do I choose between a domestic and global index fund?",
+        a: "Australian index funds (ASX 200) benefit from franking credits and AUD denomination but are concentrated in financials (banks: ~30%) and resources (~20%). Global index funds (MSCI World, S&P 500) provide exposure to technology, healthcare, and consumer sectors underrepresented on the ASX. A common approach is 70% global / 30% Australian — or the Vanguard 'Four Pillars' split popularised by Scott Pape's Barefoot Investor.",
+      },
+    ],
+    relatedSlugs: [
+      "how-do-etfs-work",
+      "what-are-the-best-etfs-for-beginners",
+      "what-is-a-managed-fund",
+      "what-is-dollar-cost-averaging",
+    ],
+    relatedTools: [
+      { label: "Compare ETFs", href: "/etfs" },
+      { label: "Compare share brokers", href: "/share-trading" },
+    ],
+  },
+  {
+    slug: "what-is-a-target-date-fund",
+    category: "retirement",
+    question: "What is a target date fund and how does it work in Australia?",
+    metaTitle: "What Is a Target Date Fund? Lifecycle Super Options Explained (2026)",
+    metaDescription:
+      "A target date fund gradually shifts from growth to defensive assets as your retirement date approaches. Learn how glide paths work, Australian lifecycle super equivalents, and whether they suit your situation.",
+    shortAnswer:
+      "A target date fund (also called a lifecycle or glide-path fund) is an investment option that automatically shifts asset allocation from growth (shares) toward defensive (bonds and cash) as the target retirement year approaches. In Australia, these are most commonly offered as lifecycle super investment options by retail and industry super funds, providing a set-and-forget approach for members who don't want to actively manage their super allocation.",
+    sections: [
+      {
+        heading: "How the glide path works",
+        body: "A typical target date fund for a 2040 retirement might hold 85% growth assets (shares, property) in 2026 and gradually reduce to 50% growth by 2035 and 30% growth by 2040. The theory is that younger investors can absorb volatility in exchange for higher long-run returns, while older investors approaching retirement cannot afford a large drawdown just before they need the money. The transition — the glide path — is automatic, requiring no action from the investor.",
+      },
+      {
+        heading: "Australian lifecycle super options",
+        body: "Australian super funds offer lifecycle or age-based investment options that mirror this concept. AwareSuper, Australian Retirement Trust, and AustralianSuper offer lifecycle options that automatically shift members into more conservative allocations as they age. For example, AustralianSuper's Lifecycle investment option moves members through Super Sustain (high growth, under 45), Balanced, Conservative Balanced, and Stable stages automatically. These are distinct from the default 'Balanced' option that holds a fixed ~70/30 allocation regardless of age.",
+      },
+      {
+        heading: "Target date funds vs self-directed super",
+        body: "The benefit of target date / lifecycle funds is automation and behavioural discipline — you cannot panic-switch to cash during a downturn or forget to de-risk as retirement approaches. The cost is loss of customisation: a 60-year-old who plans to work until 70 may be over-conservatised by a lifecycle fund targeting a 2026 date, missing out on a decade of growth returns. Self-directed investors who monitor their allocation and understand risk-return tradeoffs may generate better outcomes with a fixed-allocation index portfolio.",
+      },
+      {
+        heading: "Comparison to managed funds and MySuper defaults",
+        body: "Australia's MySuper regime requires default super options to satisfy a 'balanced' allocation test but does not mandate lifecycle glide paths. Most MySuper defaults (such as industry fund Balanced options) are static — they don't automatically de-risk with age. Some funds (notably Hostplus and AustralianSuper) offer lifecycle as an electable default but not as the only MySuper option. Managed funds outside super can also be structured with glide paths, though this is uncommon in the Australian retail market.",
+      },
+      {
+        heading: "Pros and cons",
+        body: "Pros: automatic de-risking, eliminates the 'sequence of returns' problem near retirement, set-and-forget simplicity, removes emotion from allocation decisions. Cons: one-size-fits-all doesn't account for individual retirement date uncertainty, income outside super affects the right allocation, many lifecycle funds use conservative transition curves that sacrifice meaningful returns in the 50–60 age bracket, fees may be higher than DIY index portfolios. The best approach depends on your engagement level, total wealth picture, and planned retirement date.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is a lifecycle super option right for everyone?",
+        a: "No. Lifecycle options suit members who want full automation and are not engaged with investment decisions. They are less appropriate for high-balance members who have significant other assets, plan to retire well past the target date, or want to optimise tax with higher growth exposure in their 60s when in pension phase (where earnings are tax-free). Speak to a financial planner about whether lifecycle suits your personal circumstances.",
+      },
+      {
+        q: "What is the 'sequence of returns' risk?",
+        a: "Sequence of returns risk is the risk that a large market decline early in retirement — when you are drawing down from your portfolio — permanently impairs your capital. A 40% decline in year 1 of retirement at a 5% drawdown rate is far more damaging than a 40% decline 10 years in. Target date funds (and glide-path de-risking) are specifically designed to reduce this risk by reducing equity exposure as retirement approaches.",
+      },
+      {
+        q: "Do target date funds exist outside super in Australia?",
+        a: "They are rare outside super. Most Australian managed funds offer static balanced, conservative balanced, and growth options rather than glide-path products. Some financial planners manually implement a glide path by gradually shifting clients' portfolios from growth to defensive over time, but automated retail glide-path funds are predominantly a super product in Australia.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-superannuation-work",
+      "what-is-a-self-managed-super-fund",
+      "how-much-super-should-i-have-at-my-age",
+      "what-is-a-transition-to-retirement-pension",
+    ],
+    relatedTools: [
+      { label: "Compare super funds", href: "/super" },
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+    ],
+  },
+  {
+    slug: "how-much-super-should-i-have-at-my-age",
+    category: "retirement",
+    question: "How much super should I have at my age in Australia?",
+    metaTitle: "Super Balance Benchmarks by Age in Australia (2026)",
+    metaDescription:
+      "ASFA's comfortable retirement standard requires roughly $690,000 (single) or $960,000 (couple). Learn super balance benchmarks by age, average vs median figures, the gender gap, and strategies to catch up.",
+    shortAnswer:
+      "ASFA's comfortable retirement standard requires approximately $690,000 for a single person and $960,000 for a couple at retirement (FY2026), assuming full Age Pension entitlement supplements the balance. Common benchmarks suggest having roughly 1× your annual salary by age 35, 2× by 45, 3× by 55, and 5–7× by 67 (retirement). Average balances significantly exceed medians due to skew from high-balance outliers.",
+    sections: [
+      {
+        heading: "ASFA retirement standards (FY2026)",
+        body: "The Association of Superannuation Funds of Australia (ASFA) publishes the Retirement Standard each quarter. For a comfortable retirement (private health insurance, occasional holidays, modest dining out, reliable car): single — $50,004 per year, needing a $690,000 balance at retirement; couple — $70,482 per year, needing $960,000. These figures assume receipt of a part Age Pension. A 'modest' retirement (basic activities, mostly public transport) requires $34,216 (single) or $49,050 (couple) — substantially less capital.",
+      },
+      {
+        heading: "Super balance benchmarks by age",
+        body: "These are approximate guidelines based on APRA data and industry rules of thumb for someone earning the median Australian wage (~$75,000): Age 25 — $10,000–$20,000; Age 30 — $30,000–$55,000; Age 35 — $55,000–$100,000; Age 40 — $90,000–$160,000; Age 45 — $130,000–$240,000; Age 50 — $180,000–$340,000; Age 55 — $240,000–$450,000; Age 60 — $310,000–$580,000; Age 65 — $400,000–$720,000. These are medians; high earners and those who have salary sacrificed will sit higher.",
+      },
+      {
+        heading: "Average vs median super balances",
+        body: "APRA data for FY2025 shows average super balances of approximately $170,000 for women and $230,000 for men overall — but these are pulled up by high-balance outliers. Median balances (the middle person) are 30–40% lower. A 50-year-old with $300,000 is above median but below average. When comparing yourself against benchmarks, use median figures — they better represent a typical Australian's position. The ATO's superannuation statistics publication breaks down balances by age and sex.",
+      },
+      {
+        heading: "The super gender gap",
+        body: "Women retire with on average 35–40% less super than men, driven by lower wages, more part-time work, and time out of the workforce for caregiving. APRA FY2025 data shows median super balance at retirement (ages 60–64) of approximately $122,000 for women vs $183,000 for men. Government initiatives include the Super Guarantee on employer-funded paid parental leave (from 1 July 2025), and co-contribution and low-income super tax offset (LISTO) provisions for low-income earners.",
+      },
+      {
+        heading: "Catch-up strategies if behind",
+        body: "If your balance is below benchmark: (1) Salary sacrifice — even $100/fortnight extra makes significant compound difference over 10 years. (2) Carry-forward concessional contributions — if TSB below $500,000, use unused cap space from prior five years in one large contribution. (3) Voluntary after-tax contributions — up to $120,000 per year non-concessional. (4) Spouse contributions — if your partner has a lower balance, contribute up to $3,000 per year to their super for an $540 tax offset. (5) Review investment option — if you're in a conservative default and 20+ years from retirement, a higher-growth option may significantly increase your final balance.",
+      },
+    ],
+    faqs: [
+      {
+        q: "What if I have less super than the benchmarks suggest?",
+        a: "Below-benchmark balances are common — roughly half of Australians are below the median. The most effective actions are: increase contributions even modestly (starting early matters most), ensure your investment option is appropriate for your age (not sitting in conservative at age 40), consolidate multiple super accounts (lost fees compound heavily), and trace any lost super through the ATO's myGov super account tool.",
+      },
+      {
+        q: "How does the Age Pension interact with required super savings?",
+        a: "The ASFA comfortable retirement standard assumes the retiree receives a partial Age Pension. The full single Age Pension in FY2026 is approximately $29,754 per year. A person with $400,000 in super at age 67 may receive a partial pension plus their super drawdown, meaning their personal super target is lower than the full $690,000. Your specific target depends on your other assets, income, housing status, and lifestyle expectations.",
+      },
+      {
+        q: "Does owning a home affect how much super I need?",
+        a: "Significantly. The ASFA benchmarks assume home ownership (no rent or mortgage). Renters in retirement need substantially more capital — an additional $100,000–$250,000 depending on location and rent — because no pension supplement for housing exists. The Age Pension includes a rent assistance component, but it rarely covers full market rent. Owning your home outright at retirement is a major determinant of financial comfort.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-superannuation-work",
+      "what-is-concessional-contribution",
+      "what-are-the-super-contribution-limits",
+      "what-is-salary-sacrifice-australia",
+    ],
+    relatedTools: [
+      { label: "Super contributions calculator", href: "/super-contributions-calculator" },
+      { label: "Compare super funds", href: "/super" },
+    ],
+  },
+  {
+    slug: "what-is-a-transition-to-retirement-pension",
+    category: "retirement",
+    question: "What is a transition to retirement pension in Australia?",
+    metaTitle: "Transition to Retirement (TTR) Pension Explained (Australia 2026)",
+    metaDescription:
+      "A transition to retirement pension lets you draw super income while still working after reaching preservation age. Learn the 4–10% drawdown rule, tax benefits after 60, SMSF TTR strategies, and the role of a financial planner.",
+    shortAnswer:
+      "A transition to retirement (TTR) pension allows you to draw a pension from your superannuation account once you reach preservation age (60 for those born after 30 June 1964) while still working. You can draw between 4% and 10% of your account balance each year. From age 60, TTR pension payments are completely tax-free, making them a powerful tool to supplement salary, reduce hours, or boost super through salary sacrifice.",
+    sections: [
+      {
+        heading: "Who can start a TTR pension",
+        body: "You can commence a TTR pension once you reach your preservation age — 60 for those born after 30 June 1964. You must still be employed or self-employed; once you fully retire (and notify the trustee of your intention not to seek further gainful employment), the TTR income stream converts to a fully accessible account-based pension with no maximum drawdown limit. There is no minimum dollar amount to start a TTR — it depends on your fund's rules.",
+      },
+      {
+        heading: "The 4% to 10% drawdown rule",
+        body: "TTR pensions have a minimum drawdown of 4% and a maximum of 10% of the account balance per year. The minimum ensures the pension is genuinely used as income, not just as a tax shelter. The 10% maximum prevents full depletion while still working. Drawdowns can be taken monthly, quarterly, or annually. The balance is not locked — if you need to access more than 10%, you would need to retire and convert to a standard account-based pension.",
+      },
+      {
+        heading: "Tax on TTR pension payments",
+        body: "Aged 60 or over: all payments from a taxed super fund (virtually all Australian super funds) are tax-free. Aged 55–59 (those on older preservation age schedules): the taxable component of TTR payments is taxed as income but with a 15% pension tax offset, effectively meaning 85% of the taxable component is included in assessable income. For most people aged 60+ this means the TTR is entirely tax-free income — a major benefit compared to the marginal tax rate applied to salary.",
+      },
+      {
+        heading: "SMSF TTR strategies",
+        body: "Before 1 July 2017, earnings in the SMSF on assets backing a TTR pension were taxed at 0% (same as a retirement pension). This allowed SMSFs to reclassify assets to a TTR sub-account and earn tax-free investment income. The Turnbull Government removed this concession in the 2016 Budget, effective 1 July 2017 — TTR assets in an SMSF are now taxed at 15% like accumulation phase. The primary benefit remaining is on the pension payment side (tax-free income after 60), not the fund's investment earnings.",
+      },
+      {
+        heading: "Using TTR with salary sacrifice",
+        body: "A classic TTR strategy: a 61-year-old earning $90,000 salary starts a TTR pension drawing $20,000/year tax-free from super. They simultaneously salary sacrifice $20,000 into super (taxed at 15% in the fund). Net cash flow is unchanged, but they have shifted $20,000 from 39% marginal tax income into super at 15% — saving ~$4,800 per year in tax while accelerating super accumulation. A financial planner should model this against personal circumstances.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I make contributions to super while on a TTR pension?",
+        a: "Yes. Being on a TTR pension does not prevent you from making concessional or non-concessional contributions to your accumulation account. In fact, the TTR-with-salary-sacrifice strategy described above requires maintaining an accumulation account while drawing a TTR pension from a separate sub-account.",
+      },
+      {
+        q: "Does a TTR pension affect my Age Pension eligibility?",
+        a: "Superannuation in TTR phase is assessed under the Centrelink assets test from preservation age. The account balance counts as an assessable asset once you reach pension age (67). TTR pension payments count as income for means-test purposes — assessed under the income test. If you are between preservation age and 67 and also receiving Centrelink payments, model the interaction carefully.",
+      },
+      {
+        q: "What happens to my TTR when I retire?",
+        a: "When you formally retire (cease working and do not intend to seek full-time employment), your TTR income stream automatically becomes eligible to convert to a retirement account-based pension. The 10% cap is removed, tax-exempt pension status is confirmed, and (for SMSFs) the assets backing the pension move to the 0% earnings tax rate. Notify your fund trustee of your retirement to trigger the conversion.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-the-super-preservation-age",
+      "how-does-superannuation-work",
+      "when-can-i-access-my-super",
+      "how-much-super-should-i-have-at-my-age",
+    ],
+    relatedTools: [
+      { label: "Super contributions calculator", href: "/super-contributions-calculator" },
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+    ],
+  },
+  {
+    slug: "how-does-mortgage-offset-work",
+    category: "property",
+    question: "How does a mortgage offset account work in Australia?",
+    metaTitle: "How a Mortgage Offset Account Works: Save Interest & Tax (2026)",
+    metaDescription:
+      "A mortgage offset account reduces the interest charged on your home loan by the amount sitting in the offset. Learn how 100% offset works, the difference from redraw, tax implications for investment properties, and common mistakes.",
+    shortAnswer:
+      "A mortgage offset account is a transaction account linked to your home loan where the balance offsets the principal on which interest is calculated. If you have a $500,000 mortgage and $50,000 in your offset account, you pay interest only on $450,000. Unlike a savings account, the offset earns no interest — the benefit is interest saved on the mortgage, which is effectively a tax-free return equal to your mortgage rate.",
+    sections: [
+      {
+        heading: "How a 100% offset account works",
+        body: "A 100% offset account reduces the daily interest-bearing principal of your mortgage by the full balance in the linked account. Interest on Australian home loans is calculated daily and charged monthly. With a $600,000 loan at 6.2% and $80,000 in offset, daily interest is calculated on $520,000 — saving $4,960 per year in interest. The offset balance does not earn interest itself; the benefit is implicit in the reduced loan interest charge. Some older products offer partial offset (e.g., 50% offset) — these are less efficient and now uncommon.",
+      },
+      {
+        heading: "Offset vs redraw: the critical difference",
+        body: "Offset and redraw both allow you to benefit from extra money sitting near your mortgage, but they work differently. Offset: a separate transaction account — funds are readily accessible, never legally repaid to the lender, treated as your own cash at all times. Redraw: extra repayments credited directly to the loan account — technically lent to the bank, accessible by drawing down the loan again. The critical tax distinction: for investment properties, funds redrawn from a loan and used for private purposes contaminate the loan's deductibility. Money moved through an offset does not touch the loan principal and preserves deductibility.",
+      },
+      {
+        heading: "Investment property and the offset/deductibility question",
+        body: "For investment property loans, the ATO allows interest deductions based on the purpose of the borrowing — not the current loan balance. Keeping funds in an offset account (rather than redrawing) preserves deductibility because the loan purpose remains investment. If you redraw a repayment and use the funds privately (holiday, car), the ATO may apportion the loan interest, disallowing some deductions. This is a common trap for investors who mix personal and investment finances through redraw. The clean rule: use offset for investment properties, never redraw for personal purposes.",
+      },
+      {
+        heading: "Partial offset accounts",
+        body: "Some lenders offer 'partial offset' or 'interest-adjusting' accounts where only a percentage of the account balance offsets the loan. These products are less common in 2026 and are generally less efficient than a 100% offset. Fixed-rate home loans typically do not offer offset accounts — most lenders only allow 100% offset on variable or split loans. If you have a fixed portion of your loan, keep fixed funds in the variable portion's offset if you have a split loan.",
+      },
+      {
+        heading: "Common offset mistakes",
+        body: "Not using the offset: many borrowers have an offset account but leave savings in a bank account earning lower interest than their mortgage rate. Using redraw instead of offset for investment properties: see above on deductibility risk. Paying too much in fees: some lenders charge $10–$20/month for offset accounts — on a small loan the fee may exceed the interest saved. Mixing PPOR and investment loans in one offset: each investment loan should have its own offset account to cleanly attribute savings and preserve deductibility records.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does a mortgage offset account reduce my loan term?",
+        a: "If you maintain minimum required repayments (which may be lower thanks to the offset reducing interest), the loan term stays the same. However, if repayments are calculated on the original balance without adjustment, keeping minimum payments constant while holding a large offset will shorten the effective term because each repayment covers more principal. Some borrowers deliberately keep their repayment fixed at a higher level to pay the loan down faster.",
+      },
+      {
+        q: "Is the interest saved on an offset account taxable?",
+        a: "No. Interest not charged on a loan is not income — the ATO does not tax the implicit 'return' from reducing mortgage interest. This makes the offset effectively a tax-free savings vehicle, equivalent in return to a savings account paying your mortgage rate on a gross basis. Someone on a 47% tax rate saving 6.2% in mortgage interest gets a 6.2% tax-free return — equivalent to earning 11.7% in a taxable savings account.",
+      },
+      {
+        q: "Can I have multiple offset accounts?",
+        a: "Yes. Many lenders allow multiple offset accounts linked to the same variable home loan — useful for budgeting (separate sub-accounts for holiday savings, car, emergency fund) while all balances contribute to offsetting mortgage interest. Check your lender's product terms — some charge per account, while others include multiple offsets in the loan package.",
+      },
+    ],
+    relatedSlugs: [
+      "how-to-buy-property-in-australia",
+      "how-does-negative-gearing-work",
+      "what-is-an-investment-property-depreciation-schedule",
+    ],
+    relatedTools: [
+      { label: "Mortgage calculator", href: "/mortgage-calculator" },
+      { label: "Compare home loans", href: "/home-loans" },
+    ],
+  },
+  {
+    slug: "what-is-an-investment-property-depreciation-schedule",
+    category: "property",
+    question: "What is a depreciation schedule for an investment property?",
+    metaTitle: "Investment Property Depreciation Schedules Explained (Australia 2026)",
+    metaDescription:
+      "A depreciation schedule lets investment property owners claim non-cash deductions for the wear and tear of a building and its fixtures. Learn the two types, the 2017 budget changes, and how depreciation reduces tax on a negatively geared property.",
+    shortAnswer:
+      "A property depreciation schedule is a report prepared by a quantity surveyor that itemises all deductible decline-in-value claims available on an investment property. Australian tax law allows two types of deductions: Division 43 capital works (2.5% per year on the construction cost of the building shell) and Division 40 plant and equipment (items like ovens, hot water systems, carpets). A typical new investment property generates $5,000–$15,000 in depreciation deductions annually.",
+    sections: [
+      {
+        heading: "Two types of property depreciation",
+        body: "Division 43 — capital works deductions: applies to the building structure itself, at 2.5% of the original construction cost per year, available for 40 years from when construction was completed. A building that cost $300,000 to construct generates $7,500 in capital works deductions per year until the 40-year period ends. Division 40 — plant and equipment: applies to removable fixtures and fittings (ovens, dishwashers, carpet, blinds, hot water systems) at various effective life rates published by the ATO. Rates vary — carpets at 10 years (diminishing value 20% p.a.), ovens at 12 years.",
+      },
+      {
+        heading: "The 2017 Budget changes: second-hand property restrictions",
+        body: "From 1 July 2017, investors who purchase a second-hand residential property can no longer claim Division 40 depreciation on plant and equipment that was already installed in the property at purchase — even if the equipment is genuinely worn. This change was legislated in the 2017 Federal Budget and significantly reduced depreciation benefits for buyers of established properties. Plant and equipment purchased new (after settlement) can still be depreciated. Division 43 capital works deductions remain available for second-hand properties if construction commenced after 16 September 1987.",
+      },
+      {
+        heading: "Who prepares a depreciation schedule",
+        body: "A depreciation schedule should be prepared by a registered quantity surveyor who has inspection access to the property. Firms such as BMT Tax Depreciation, Washington Brown, and Depreciator are specialist providers. A schedule costs $600–$900 (tax-deductible) and is valid for the life of the property. It itemises every eligible item with its cost, effective life, and annual deduction. Some accountants estimate depreciation from building cost data, but a professional quantity surveyor inspection maximises the claim and provides ATO-defensible documentation.",
+      },
+      {
+        heading: "How depreciation reduces tax on a negatively geared property",
+        body: "Depreciation is a non-cash deduction — you don't spend money to claim it. It reduces the taxable income (or increases the tax loss) on an investment property, reducing the tax payable or increasing the refund from the ATO. Example: rental income $30,000, interest and maintenance costs $38,000 (rental loss $8,000), depreciation $9,000 — total deductible loss $17,000. On a 37% marginal rate, this generates a $6,290 tax refund. Without depreciation, the refund was $2,960. The $3,330 difference is entirely from a non-cash claim.",
+      },
+      {
+        heading: "Depreciation and the cost base",
+        body: "Capital works deductions (Division 43) reduce the cost base of the property for CGT purposes. If you have claimed $50,000 in capital works over 10 years, the cost base is reduced by $50,000, potentially increasing the capital gain on sale. Plant and equipment deductions do not reduce the property's cost base — each item is depreciable asset in its own right with a separate cost base. When a depreciable item is sold (e.g., a dishwasher included in a property sale), a balancing adjustment may arise if the proceeds differ from the written-down value.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is a depreciation schedule worth it for an older property?",
+        a: "Generally yes, even for older properties. Capital works deductions are available on construction costs for buildings completed after 16 September 1987 — many properties built in the 1990s and 2000s still have significant remaining Division 43 claims. A quantity surveyor can estimate construction cost from comparable projects if original records are unavailable. For very old buildings (pre-1987) or properties already past 40 years from construction, only Division 40 plant deductions apply (post-2017 rules apply to second-hand plant as noted).",
+      },
+      {
+        q: "Can I use a depreciation schedule prepared for the previous owner?",
+        a: "No. Each new owner requires a fresh depreciation schedule reflecting their purchase price and any renovations they undertake. Some quantity surveying firms provide 'update reports' for purchasers of properties where a prior schedule exists, at reduced cost, by adjusting the prior report to the new owner's cost base.",
+      },
+      {
+        q: "What if I renovate the investment property?",
+        a: "Renovation costs to the building structure create new Division 43 capital works deductions from the date of the renovation. New plant and equipment installed during renovation is depreciable under Division 40 regardless of the property's age or whether it is second-hand — the 2017 changes only affect items already in the property at purchase. Keep all renovation receipts and inform your quantity surveyor — they will add the new assets to your schedule.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-negative-gearing-work",
+      "how-to-buy-property-in-australia",
+      "how-does-mortgage-offset-work",
+      "what-is-capital-gains-tax",
+    ],
+    relatedTools: [
+      { label: "Compare property investment platforms", href: "/property-platforms" },
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+    ],
+  },
+  {
+    slug: "what-is-rentvesting",
+    category: "property",
+    question: "What is rentvesting and how does it work in Australia?",
+    metaTitle: "What Is Rentvesting? Strategy, Tax & CGT in Australia (2026)",
+    metaDescription:
+      "Rentvesting means renting where you want to live while buying an investment property in a more affordable area. Learn the financial benefits, CGT implications, cash flow management, and when rentvesting makes sense.",
+    shortAnswer:
+      "Rentvesting is a strategy where you rent in a location you prefer to live (typically an expensive city) and buy an investment property in a more affordable area where the numbers stack up financially. The investment property generates rental income and negative gearing tax benefits, while you maintain lifestyle flexibility. The trade-off is that the investment property does not attract the principal place of residence CGT exemption — you will pay CGT on sale.",
+    sections: [
+      {
+        heading: "How rentvesting works",
+        body: "A rentvestor rents their home (keeping flexibility to live near work, good schools, or lifestyle amenities) and simultaneously buys an investment property in a market they can afford — often interstate or in a regional area with stronger rental yields. For example, renting in Sydney's inner suburbs for $2,800/month while owning a $550,000 townhouse in Brisbane's outer suburbs with $2,200/month rental income. The investment property mortgage and rental income partially cancel, generating negative gearing benefits.",
+      },
+      {
+        heading: "CGT implications: no PPOR exemption",
+        body: "The most significant financial implication of rentvesting is the loss of the principal place of residence (PPOR) CGT exemption on the investment property. If the Brisbane townhouse appreciates from $550,000 to $850,000 over 7 years, the $300,000 gain is fully subject to CGT (less the 50% discount for >12 months holding). At a 37% marginal rate with the 50% discount, the effective CGT is roughly $55,500 on a $300,000 gain. A homeowner who lived in the property would pay zero CGT. This is the core trade-off rentvestors accept.",
+      },
+      {
+        heading: "Cash flow management",
+        body: "Rentvesting creates two parallel cash flows: rent paid on your home (outgoing) and rent received on your investment property (incoming), less mortgage interest, rates, insurance, and property management fees. Negatively geared properties require cash top-up each month, while the ATO provides a tax refund after 30 June. Rentvestors should model after-tax cash flow carefully — a $2,200/month rent received minus $2,800/month mortgage and expenses generates a -$600/month shortfall before tax benefits. Lodging a PAYG Withholding Variation allows the ATO to reduce your tax at source each pay cycle rather than waiting for an annual refund.",
+      },
+      {
+        heading: "Where rentvesting works best",
+        body: "Rentvesting is most common in cities where purchase prices are far above what yields justify — particularly Sydney, Melbourne, and to a lesser extent Brisbane. A $1.2 million Sydney apartment might yield 2.5% gross ($30,000 rent), whereas a $550,000 Brisbane townhouse yields 4.5% ($24,750 rent). The rentvestor captures the better yield market for their investment capital and maintains lifestyle in the expensive market. Perth and Adelaide have historically offered better yields than Sydney and Melbourne, attracting rentvestors from eastern capitals.",
+      },
+      {
+        heading: "First home buyer implications",
+        body: "Purchasing an investment property first (before ever buying a PPOR) permanently disqualifies you from the First Home Owner Grant (FHOG) in most states, which requires the first property you buy to be your home and that you live in it within 12 months. Similarly, the First Home Guarantee (5% deposit, no LMI) requires owner-occupation. Rentvestors who intend to eventually buy a home should be aware that their investment property purchase may disqualify them from these schemes. Some states have cleaner rules than others — seek state-specific advice.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I convert my investment property to my PPOR later?",
+        a: "Yes. If you move into your investment property and live in it as your main residence, it becomes your PPOR and starts accruing CGT exemption from that date. The portion of the gain accrued while it was an investment property (calculated on a time-proportion basis) remains taxable, but future growth from the date you move in is exempt. This is sometimes called 'flipping' a property from investment to PPOR.",
+      },
+      {
+        q: "Is rentvesting financially better than buying a home to live in?",
+        a: "There is no universal answer. Rentvesting can outperform if: (1) the investment property appreciates faster than the area you'd buy a PPOR in, (2) negative gearing tax benefits are significant, (3) rental yields in the investment market are strong. It underperforms if: (1) your would-be PPOR appreciates faster and is CGT-exempt, (2) the investment property has cash flow difficulties, (3) you incur significantly more in rent than a PPOR mortgage would cost. Run the numbers for your specific situation over a 10-year horizon.",
+      },
+      {
+        q: "Does rentvesting affect my borrowing capacity?",
+        a: "Rental income (at 70–80% of gross, as lenders apply a rental income discount) is added to income for serviceability, which may help future borrowing. However, investment mortgage debt is also counted against you. Lenders assess the investment property on a interest-only or principal-and-interest basis at a stressed rate. Some lenders treat investment and PPOR debt differently for serviceability calculations — a mortgage broker can model the impact for your specific situation.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-negative-gearing-work",
+      "how-to-buy-property-in-australia",
+      "what-is-capital-gains-tax",
+      "what-is-an-investment-property-depreciation-schedule",
+    ],
+    relatedTools: [
+      { label: "Compare property investment platforms", href: "/property-platforms" },
+      { label: "Mortgage calculator", href: "/mortgage-calculator" },
+    ],
+  },
+  {
+    slug: "how-do-i-get-a-tax-file-number",
+    category: "tax",
+    question: "How do I get a tax file number (TFN) in Australia?",
+    metaTitle: "How to Get a Tax File Number (TFN) in Australia (2026 Guide)",
+    metaDescription:
+      "A Tax File Number is essential for employment, super, and ATO identity. Learn how to apply via myGov or the ATO app, what withholding applies without a TFN, and why linking your TFN to super matters.",
+    shortAnswer:
+      "A Tax File Number (TFN) is a unique nine-digit identifier issued by the Australian Taxation Office for tax and super purposes. You can apply online through the ATO via myGov, through the ATO app, or in person at a participating Australia Post outlet. Processing takes approximately 28 days. Without a TFN, employers must withhold tax at the highest marginal rate (47% in FY2026) from your wages, and super funds must hold contributions at 47%.",
+    sections: [
+      {
+        heading: "What a TFN is and why you need one",
+        body: "Your Tax File Number is used by the ATO to match tax returns, super contributions, PAYG withholding, and investment income. It is required by employers to avoid maximum withholding, by super funds to accept contributions at the 15% concessional rate, by banks and investment platforms to avoid withholding on interest and dividends, and by the ATO for identity verification. You cannot lodge a tax return, access myGov tax services, or link your super accounts without a TFN. Australian citizens, permanent residents, and most temporary visa holders are eligible to apply.",
+      },
+      {
+        heading: "How to apply for a TFN",
+        body: "Online via myGov (Australian citizens with a passport or birth certificate): create a myGov account, verify identity online, complete the TFN application. Takes around 28 days. Via the ATO's online services (myTax): similar online process. ATO app: identity verification and application on a smartphone. In person at Australia Post: complete the form online, take identity documents to an Australia Post outlet that participates in the Document Verification Service. Overseas applicants: apply using the ATO's international form; process may take longer.",
+      },
+      {
+        heading: "TFN without a TFN: withholding consequences",
+        body: "If you start a job without providing your TFN to your employer, they are legally required to withhold tax at the top marginal rate (47% plus 2% Medicare Levy for most earners). This is not a permanent tax — you claim a credit for over-withheld amounts when you lodge your tax return — but it creates a cash flow problem until the refund arrives. Similarly, banks and investment platforms will withhold 47% on interest and dividends if no TFN is provided (or a withholding exemption is claimed for low-income earners).",
+      },
+      {
+        heading: "Linking your TFN to superannuation",
+        body: "When you join a super fund, you must provide your TFN. Under the Superannuation Industry (Supervision) Act, a fund that holds contributions without your TFN must tax those contributions at 47% (rather than the standard 15% concessional rate) and hold the funds in a suspense account. Once you provide your TFN, the ATO refunds the excess tax as a low-income super tax offset (LISTO) if applicable or as a credit in your super account. Government co-contributions also cannot be received without a TFN linked to the fund.",
+      },
+      {
+        heading: "TFN privacy and security",
+        body: "Your TFN is sensitive personal information protected by the Privacy Act 1988. You are not legally required to provide your TFN to employers, banks, or super funds — but the withholding consequence means it is in your interest to do so. Never provide your TFN by email — it should only be submitted through official government portals, in person, or via official paper forms. If you believe your TFN has been compromised, contact the ATO's fraud reporting line immediately. The ATO does not ask for TFNs by phone or email unprompted.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I get a TFN on the same day I start a job?",
+        a: "No. TFN applications take approximately 28 days to process. However, if you apply online, the ATO issues a provisional TFN (visible in your myGov account) which you can provide to your employer to avoid the highest-rate withholding while your application is processed. Provide your full TFN to your employer once it arrives.",
+      },
+      {
+        q: "Do I need a TFN if I'm on a working holiday visa?",
+        a: "Yes. Working holiday visa holders (subclass 417, 462) are entitled to a TFN and should apply before starting work. Without a TFN, you will be taxed at the 47% no-TFN rate. Working holiday makers have a special flat 15% tax rate on earnings up to $45,000 (FY2026) — but this rate only applies if a TFN is provided. After $45,000, marginal rates apply.",
+      },
+      {
+        q: "What if I lose my TFN?",
+        a: "Your TFN never changes and is permanent. If you have lost it, the easiest way to find it is in myGov under ATO Online Services, on any previous tax return, on payment summaries or income statements from employers, or by calling the ATO on 13 28 61 (identity verification required). The ATO will never re-issue a new TFN — you have one TFN for life.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-capital-gains-tax",
+      "how-does-superannuation-work",
+      "what-is-salary-sacrifice-australia",
+    ],
+    relatedTools: [
+      { label: "Find a financial adviser", href: "/financial-advisers" },
+      { label: "Compare super funds", href: "/super" },
+    ],
+  },
 ];
 
 /** Lookup by slug — O(1) for static-generation. */
