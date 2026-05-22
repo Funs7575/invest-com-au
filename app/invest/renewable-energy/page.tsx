@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -19,6 +20,29 @@ export const metadata: Metadata = {
   },
 };
 
+const renewableEnergyFaqLd = faqJsonLd([
+  {
+    q: "How can I invest in renewable energy in Australia?",
+    a: "Australians can invest in renewable energy through several pathways: buying shares in ASX-listed generators and developers (AGL, Origin Energy, Neoen), purchasing clean energy ETFs (ERTH, CLNE), participating in direct project co-investment alongside ARENA or CEFC-supported projects (typically $1M+), or buying green bonds issued by renewable energy developers. Each approach offers a different balance of liquidity, return, and minimum investment.",
+  },
+  {
+    q: "What renewable energy ETFs are available on the ASX?",
+    a: "Key ASX-listed clean energy ETFs include ERTH (BetaShares Climate Change Innovation ETF, which covers global clean energy and climate solutions companies), ETHI (BetaShares Global Sustainability Leaders ETF, providing ESG-screened global equities), and CLNE (iShares Global Clean Energy ETF, tracking global clean energy producers). These can be purchased through any ASX broker with no minimum beyond the cost of one unit.",
+  },
+  {
+    q: "Can I invest directly in solar or wind projects in Australia?",
+    a: "Yes. Direct co-investment in utility-scale solar or wind projects is available to wholesale and institutional investors, typically requiring a minimum of $1 million or more. Returns depend on the Power Purchase Agreement (PPA) terms, capacity factor, and operating costs. Foreign investors should note that electricity infrastructure is a sensitive sector under FIRB and mandatory notification applies to certain energy asset acquisitions.",
+  },
+  {
+    q: "What government incentives exist for renewable energy investment in Australia?",
+    a: "Australia offers several incentive programs: ARENA (Australian Renewable Energy Agency) provides grants and concessional loans for renewable energy projects; the CEFC (Clean Energy Finance Corporation) offers debt finance at commercial rates; federal Production Tax Credits (PTC) introduced in 2024 provide ongoing support for eligible clean energy generation; and state governments offer additional incentives including reverse auctions for long-term energy contracts.",
+  },
+  {
+    q: "Are renewable energy investments eligible for the R&D Tax Incentive?",
+    a: "Some renewable energy technology development activities may qualify for Australia's R&D Tax Incentive (RDTI), which provides a 43.5% refundable tax offset for eligible small companies (turnover under $20M) and a 38.5% non-refundable offset for larger companies. Eligible activities include development of new solar cell technology, battery storage innovations, or green hydrogen production processes. Routine construction or project financing does not qualify — the activities must involve genuine experimental development.",
+  },
+]);
+
 export default function RenewableEnergyPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -31,6 +55,10 @@ export default function RenewableEnergyPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(renewableEnergyFaqLd) }}
       />
 
       {/* Hero */}
@@ -180,7 +208,7 @@ export default function RenewableEnergyPage() {
 
             <h3>5. Critical Minerals</h3>
             <p>
-              Investing in Australian lithium, cobalt, nickel, and rare earth companies provides indirect exposure to the energy transition supply chain. The "picks and shovels" approach to clean energy.
+              Investing in Australian lithium, cobalt, nickel, and rare earth companies provides indirect exposure to the energy transition supply chain. The &ldquo;picks and shovels&rdquo; approach to clean energy.
             </p>
 
             <h3>FIRB for Energy Infrastructure</h3>
