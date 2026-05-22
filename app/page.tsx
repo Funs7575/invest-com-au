@@ -22,6 +22,7 @@ import CountryPopularLinks from "@/components/country-mode/CountryPopularLinks";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import HomeActivitySection from "@/components/HomeActivitySection";
+import HomeHowItWorks from "@/components/HomeHowItWorks";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 
 export const metadata = {
@@ -298,6 +299,10 @@ export default async function HomePage() {
 
       <ScrollFadeIn>
         <HomeListingsTeaser listings={listingList} totalCount={totalListingCount} />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
+        <HomeHowItWorks />
       </ScrollFadeIn>
 
       <CountryExpertsPreview />
