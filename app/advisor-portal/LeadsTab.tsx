@@ -8,6 +8,15 @@ import { logger } from "@/lib/logger";
 
 const log = logger("advisor-portal-leads");
 
+const PIPELINE_STAGES = [
+  { value: "new", label: "New", color: "text-amber-700 bg-amber-50 border-amber-200" },
+  { value: "contacted", label: "Contacted", color: "text-blue-700 bg-blue-50 border-blue-200" },
+  { value: "proposal_sent", label: "Proposal Sent", color: "text-violet-700 bg-violet-50 border-violet-200" },
+  { value: "negotiating", label: "Negotiating", color: "text-orange-700 bg-orange-50 border-orange-200" },
+  { value: "won", label: "Won", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
+  { value: "lost", label: "Lost", color: "text-red-600 bg-red-50 border-red-200" },
+] as const;
+
 type LeadStatusFilter = "all" | "new" | "contacted" | "converted" | "lost";
 
 type Props = {
@@ -38,6 +47,7 @@ export default function LeadsTab({
   // Firm inbox — only visible to firm admins
   const isFirmAdmin = !!advisor?.is_firm_admin && !!advisor?.firm_id;
   const [firmView, setFirmView] = useState(false);
+  const [pipelineUpdating, setPipelineUpdating] = useState<number | null>(null);
   const [firmLeads, setFirmLeads] = useState<Lead[]>([]);
   const [firmMembers, setFirmMembers] = useState<FirmMemberOption[]>([]);
   const [firmLoading, setFirmLoading] = useState(false);
@@ -75,6 +85,26 @@ export default function LeadsTab({
       );
     } catch { /* ignore */ }
     setReassigning(null);
+  };
+
+  const updatePipeline = async (
+    leadId: number,
+    patch: { pipeline_stage?: string; next_action_at?: string | null },
+  ) => {
+    setPipelineUpdating(leadId);
+    try {
+      await fetch("/api/advisor-portal/pipeline", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lead_id: leadId, ...patch }),
+      });
+      onLeadsUpdate((prev) =>
+        prev.map((l) => (l.id === leadId ? { ...l, ...patch } : l)),
+      );
+    } catch (err) {
+      log.warn("pipeline update failed", { err: String(err) });
+    }
+    setPipelineUpdating(null);
   };
 
   const filteredLeads = leads.filter((l) => {
@@ -333,6 +363,44 @@ export default function LeadsTab({
               {lead.message && (
                 <div className="bg-slate-50 rounded-lg p-3 text-xs text-slate-600 mb-3 leading-relaxed">{lead.message}</div>
               )}
+
+              {/* Pipeline stage + follow-up date */}
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <select
+                  value={lead.pipeline_stage ?? "new"}
+                  disabled={pipelineUpdating === lead.id}
+                  onChange={(e) => updatePipeline(lead.id, { pipeline_stage: e.target.value })}
+                  className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-50"
+                  aria-label="Pipeline stage"
+                >
+                  {PIPELINE_STAGES.map((s) => (
+                    <option key={s.value} value={s.value}>{s.label}</option>
+                  ))}
+                </select>
+                <div className="flex items-center gap-1">
+                  <Icon name="calendar" size={12} className="text-slate-400 shrink-0" />
+                  <input
+                    type="date"
+                    value={lead.next_action_at ? lead.next_action_at.slice(0, 10) : ""}
+                    disabled={pipelineUpdating === lead.id}
+                    onChange={(e) =>
+                      updatePipeline(lead.id, {
+                        next_action_at: e.target.value
+                          ? new Date(e.target.value + "T09:00:00+10:00").toISOString()
+                          : null,
+                      })
+                    }
+                    className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-50"
+                    title="Next follow-up date"
+                  />
+                </div>
+                {lead.next_action_at && new Date(lead.next_action_at) < new Date() && (
+                  <span className="text-[0.62rem] font-semibold text-red-600 bg-red-50 border border-red-200 rounded-full px-1.5 py-0.5">
+                    Overdue
+                  </span>
+                )}
+              </div>
+
               <div className="flex items-center gap-2 flex-wrap">
                 {lead.source_page && (
                   <span className="text-[0.56rem] font-semibold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">

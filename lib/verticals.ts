@@ -955,6 +955,80 @@ const VERTICALS: VerticalConfig[] = [
     ],
     advisorTypes: [{ type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" }],
   },
+  {
+    slug: "business-finance",
+    platformTypes: ["business_lender"],
+    title: `Best Business Finance Options in Australia (${yr})`,
+    h1: "Business Finance",
+    metaDescription: `Compare business loans, equipment finance, and lines of credit in Australia for ${yr}. Find the right SMB finance solution with rates and features side by side.`,
+    heroHeadline: "Find the right finance for your business",
+    heroSubtext: `Compare business loans, equipment finance, invoice finance, and lines of credit from Australian lenders. Independently researched and updated ${CURRENT_MONTH_YEAR}.`,
+    color: {
+      bg: "bg-indigo-50",
+      border: "border-indigo-200",
+      text: "text-indigo-900",
+      accent: "text-indigo-600",
+      gradient: "from-indigo-50 to-white",
+    },
+    stats: [
+      { label: "SMBs in Australia", value: "2.5M+" },
+      { label: "Avg business loan rate", value: "~8–12%" },
+      { label: "Equipment finance term", value: "1–7 yrs" },
+      { label: "Invoice advance rate", value: "70–90%" },
+    ],
+    subcategories: [
+      { label: "Business Loans", href: "/business-finance#business-loans", description: "Secured and unsecured working capital loans from $10k–$5M" },
+      { label: "Equipment Finance", href: "/business-finance#equipment", description: "Chattel mortgages, finance leases, and hire purchase" },
+      { label: "Invoice Finance", href: "/business-finance#invoice", description: "Unlock cash tied up in unpaid invoices — debtor finance & factoring" },
+      { label: "Line of Credit", href: "/business-finance#loc", description: "Revolving credit for ongoing working capital needs" },
+      { label: "Trade Finance", href: "/business-finance#trade", description: "Import/export finance and supply chain solutions" },
+    ],
+    tools: [
+      { label: "Enquire Now", href: "/business-finance#enquire", icon: "send" },
+      { label: "Advisors", href: "/advisors/financial-planners", icon: "user-check" },
+    ],
+    sections: [
+      {
+        heading: "Choosing the right business finance product",
+        body: "Business finance is not one-size-fits-all. A business loan suits working capital or expansion where you need a lump sum. Equipment finance lets you spread the cost of machinery or vehicles across its useful life. Invoice finance is ideal when your cash flow is tied up in accounts receivable — you advance against unpaid invoices rather than taking on new debt. A line of credit works like a corporate credit card: draw and repay as needed, paying interest only on what you use.",
+      },
+      {
+        heading: "Key rates and costs to compare",
+        body: "Business loan interest rates in Australia typically range from 8%–15% p.a. for unsecured loans and 6%–10% for secured facilities, though rates vary significantly by lender, term, security, and your business's credit profile. Always compare the comparison rate (which includes fees) rather than the advertised rate alone. Look for establishment fees, monthly admin fees, early repayment penalties, and the total cost of credit over the loan term.",
+      },
+      {
+        heading: "What lenders assess",
+        body: "Most lenders evaluate: time in business (typically ≥6–12 months), annual revenue (often $75k–$250k minimum), personal and business credit history, existing debt levels, and the purpose of funds. Providing GST-registered ABN records, BAS statements, and bank statements speeds the process. Non-bank lenders (fintechs) generally approve faster but charge higher rates than banks.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is the minimum revenue to qualify for a business loan in Australia?",
+        answer: "Most non-bank lenders require at least $75,000–$150,000 in annual revenue and 6–12 months of trading history. Major banks typically require $250,000+ in revenue and 2 years of financials. Some specialist lenders work with startups under 6 months old, usually requiring strong personal credit and sometimes security.",
+      },
+      {
+        question: "Is equipment finance or a business loan better for buying machinery?",
+        answer: "Equipment finance (chattel mortgage or finance lease) is usually better for machinery because: the asset serves as security so rates are lower; you can claim the full depreciation (or instant asset write-off) upfront under a chattel mortgage; and the finance term matches the asset life. A business loan is more flexible but typically costs more for asset purchases.",
+      },
+      {
+        question: "How does invoice finance work?",
+        answer: "Invoice finance (debtor finance or factoring) lets you advance 70–90% of the face value of unpaid invoices immediately, rather than waiting 30–90 days for your customers to pay. The lender collects payment from your customers (factoring) or you collect it yourself (invoice discounting). The cost is typically 1.5–3% of the invoice value per 30 days.",
+      },
+      {
+        question: "Does applying for business finance affect my credit score?",
+        answer: "Some lenders do a soft credit check (no impact) for pre-qualification and a hard check only on formal application. Others go straight to a hard inquiry. Multiple hard inquiries in a short period can reduce your score, so compare multiple offers before formally applying where possible. Ask lenders whether they run a hard or soft check upfront.",
+      },
+      {
+        question: "Do I need to provide security for a business loan?",
+        answer: "Not always. Unsecured business loans up to $250k–$500k are available from non-bank lenders based on cash flow alone, though rates are higher. Secured loans (using real property, equipment, or receivables as collateral) attract lower rates. Most bank loans above $250k require security. Personal guarantees are standard for director-owned SMBs regardless of security type.",
+      },
+    ],
+    disclaimer: "General information only — not financial or credit advice. Product features and rates are indicative and subject to change. Always read the relevant credit guide and loan contract before applying.",
+    advisorTypes: [
+      { type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" },
+    ],
+    expertTags: ["business-finance", "sme", "equipment-finance", "invoice-finance", "business-loan"],
+  },
 ];
 
 /** Look up a vertical config by its URL slug */
