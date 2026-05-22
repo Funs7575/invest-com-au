@@ -15,6 +15,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
 
   let body: { certId: string; action: "approve" | "reject"; rejectionReason?: string };
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- admin-only PATCH; fields validated inline (certId + action enum)
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });

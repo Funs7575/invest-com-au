@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-restricted-imports -- startup_sessions is deny-all-anon by design (mirrors advisor_sessions pattern); no auth.uid() linkage on session cookies (CLAUDE.md §"Two Supabase clients")
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import type { NextRequest } from "next/server";

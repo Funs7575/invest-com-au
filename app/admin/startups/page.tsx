@@ -42,6 +42,7 @@ export default function AdminStartupsPage() {
     setLoading(false);
   }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- loadRows is async; setState calls are in resolved promise, not synchronous effect body
   useEffect(() => { void loadRows(); }, [loadRows]);
 
   async function handleReview(id: string, action: "approve" | "reject") {

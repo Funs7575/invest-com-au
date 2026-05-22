@@ -41,7 +41,7 @@ const VALID_THESIS = {
   geography: ["australia"],
 };
 
-function makeGetReq(): NextRequest {
+function _makeGetReq(): NextRequest {
   return new NextRequest("http://localhost/api/account/startup-thesis", { method: "GET" });
 }
 
@@ -128,7 +128,7 @@ describe("PUT /api/account/startup-thesis", () => {
   });
 
   it("returns 400 for too many sector_tags (>10)", async () => {
-    const tags = Array.from({ length: 11 }, (_, i) => VALID_THESIS.sector_tags[0]!);
+    const tags = Array.from({ length: 11 }, () => VALID_THESIS.sector_tags[0]!);
     const res = await PUT(makePutReq({ ...VALID_THESIS, sector_tags: tags }));
     expect(res.status).toBe(400);
   });

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { NextRequest } from "next/server";
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
@@ -29,13 +30,13 @@ import { requireStartupSession } from "@/lib/require-startup-session";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function makeRequest(cookies: Record<string, string> = {}): Request {
+function makeRequest(cookies: Record<string, string> = {}): NextRequest {
   return {
     cookies: {
       get: (name: string) =>
         cookies[name] ? { value: cookies[name] } : undefined,
     },
-  } as unknown as Request;
+  } as unknown as NextRequest;
 }
 
 function futureDate(offsetMs = 60_000): string {
@@ -57,7 +58,7 @@ describe("requireStartupSession — JWT path", () => {
     mockGetUser.mockResolvedValue({ data: { user: { id: "uid-1", email: "founder@example.com" } } });
     mockMaybeSingle.mockResolvedValue({ data: { id: "sp-uuid-1" }, error: null });
 
-    const result = await requireStartupSession(makeRequest() as any);
+    const result = await requireStartupSession(makeRequest());
 
     expect(result).toBe("sp-uuid-1");
     expect(mockAdminFrom).toHaveBeenCalledWith("startup_profiles");
@@ -67,7 +68,7 @@ describe("requireStartupSession — JWT path", () => {
     mockGetUser.mockResolvedValue({ data: { user: { id: "uid-2", email: "draft@example.com" } } });
     mockMaybeSingle.mockResolvedValue({ data: { id: "sp-uuid-draft" }, error: null });
 
-    const result = await requireStartupSession(makeRequest() as any);
+    const result = await requireStartupSession(makeRequest());
     expect(result).toBe("sp-uuid-draft");
   });
 
@@ -75,14 +76,14 @@ describe("requireStartupSession — JWT path", () => {
     mockGetUser.mockResolvedValue({ data: { user: { id: "uid-investor", email: "investor@example.com" } } });
     mockMaybeSingle.mockResolvedValue({ data: null, error: null });
 
-    const result = await requireStartupSession(makeRequest() as any);
+    const result = await requireStartupSession(makeRequest());
     expect(result).toBeNull();
   });
 
   it("returns null when getUser returns no user and no cookie present", async () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });
 
-    const result = await requireStartupSession(makeRequest() as any);
+    const result = await requireStartupSession(makeRequest());
     expect(result).toBeNull();
   });
 });
@@ -101,7 +102,7 @@ describe("requireStartupSession — cookie fallback path", () => {
     });
 
     const request = makeRequest({ startup_session: "valid-token-abc" });
-    const result = await requireStartupSession(request as any);
+    const result = await requireStartupSession(request);
 
     expect(result).toBe("sp-uuid-from-cookie");
     expect(mockAdminFrom).toHaveBeenCalledWith("startup_sessions");
@@ -114,7 +115,7 @@ describe("requireStartupSession — cookie fallback path", () => {
     });
 
     const request = makeRequest({ startup_session: "expired-token" });
-    const result = await requireStartupSession(request as any);
+    const result = await requireStartupSession(request);
     expect(result).toBeNull();
   });
 
@@ -122,7 +123,7 @@ describe("requireStartupSession — cookie fallback path", () => {
     mockSingle.mockResolvedValue({ data: null, error: { code: "PGRST116" } });
 
     const request = makeRequest({ startup_session: "unknown-token" });
-    const result = await requireStartupSession(request as any);
+    const result = await requireStartupSession(request);
     expect(result).toBeNull();
   });
 });
@@ -136,7 +137,7 @@ describe("requireStartupSession — service-role admin client usage", () => {
     });
 
     const request = makeRequest({ startup_session: "tok" });
-    await requireStartupSession(request as any);
+    await requireStartupSession(request);
 
     // The admin from() was called with startup_sessions — not a server client
     expect(mockAdminFrom).toHaveBeenCalledWith("startup_sessions");

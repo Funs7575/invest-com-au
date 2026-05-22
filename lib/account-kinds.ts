@@ -19,6 +19,7 @@
  */
 
 import { cookies } from "next/headers";
+// eslint-disable-next-line no-restricted-imports -- cross-user membership view; account_kind_membership UNIONs across all *_accounts tables, not scopeable to auth.uid() (CLAUDE.md §"Two Supabase clients")
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import type { AccountKind } from "@/lib/account-types";

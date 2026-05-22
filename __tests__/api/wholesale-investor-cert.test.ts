@@ -213,7 +213,7 @@ describe("PATCH /api/wholesale-investor-cert/verify", () => {
     vi.clearAllMocks();
 
     const updateChain = { eq: vi.fn().mockResolvedValue({ error: null }) };
-    const insertAuditChain = { then: vi.fn() };
+    const _insertAuditChain = { then: vi.fn() };
 
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "wholesale_investor_certifications") {

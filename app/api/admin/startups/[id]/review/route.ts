@@ -31,6 +31,7 @@ export async function PATCH(
 
   let body: Record<string, unknown>;
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- admin-only PATCH; body fields are validated inline below (action enum + notes string guard)
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
