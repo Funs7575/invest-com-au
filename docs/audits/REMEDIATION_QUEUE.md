@@ -51,7 +51,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | MM | _complete_ | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 MERGED 2026-05-20** | MM-V01..V08 done. **Stream complete — #921 merged by founder 2026-05-20.** | All MM phases merged ✓ |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
-| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07 done (iter 492): data room upload + per-investor access grants + revoke (`d036cf47`). SP-08 done (iter 493): wholesale cert flow — /account/wholesale-cert + /api/wholesale-investor-cert/{submit,verify} + 14 tests (`60e4ca9`). SP-09 done (iter 494): ESIC verification — /startup-portal/esic-verification + /api/startups/esic-verify + 15 tests (`3d11fd6`). SP-10 done (iter 495): investor sector-thesis profile — /account/startup-thesis + /api/account/startup-thesis + 173 LOC tests (`42c58f03`). SP-11 done (iter 496): personalised deal feed — /invest/startups/for-you + lib/startup-match.ts scoring + 23 tests (`4df3145`). SP-11 merge conflict resolved (iter 497). SP-12 engineering done (iter 498): admin startup review UI — /admin/startups + /api/admin/startups/[id]/review + 9 tests (`3a0bc96`). SP-12 compliance signoff BLOCKED (see Blocked). SP-13 done (iter 499): Playwright E2E — 20 tests across 12 startup-portal routes + 5 API auth gates (`df18e10a`). Branch synced with main (merge `e6f14476`). CI rescue (iter 503): Zod v4 .issues migration + vi.hoisted() fix (`e41e72f`) — pending CI re-run. SP-DISC-07 (iter 505): `app/api/startups/round/route.ts` unit tests — 9 cases (`dc3daef`). | All SP tasks merged + compliance signoff |
+| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07 done (iter 492): data room upload + per-investor access grants + revoke (`d036cf47`). SP-08 done (iter 493): wholesale cert flow — /account/wholesale-cert + /api/wholesale-investor-cert/{submit,verify} + 14 tests (`60e4ca9`). SP-09 done (iter 494): ESIC verification — /startup-portal/esic-verification + /api/startups/esic-verify + 15 tests (`3d11fd6`). SP-10 done (iter 495): investor sector-thesis profile — /account/startup-thesis + /api/account/startup-thesis + 173 LOC tests (`42c58f03`). SP-11 done (iter 496): personalised deal feed — /invest/startups/for-you + lib/startup-match.ts scoring + 23 tests (`4df3145`). SP-11 merge conflict resolved (iter 497). SP-12 engineering done (iter 498): admin startup review UI — /admin/startups + /api/admin/startups/[id]/review + 9 tests (`3a0bc96`). SP-12 compliance signoff BLOCKED (see Blocked). SP-13 done (iter 499): Playwright E2E — 20 tests across 12 startup-portal routes + 5 API auth gates (`df18e10a`). Branch synced with main (merge `e6f14476`). CI rescue (iter 503): Zod v4 .issues migration + vi.hoisted() fix (`e41e72f`) — pending CI re-run. SP-DISC-07 (iter 505): `app/api/startups/round/route.ts` unit tests — 9 cases (`dc3daef`). CI rescue (iter 506): AccountKind TS gaps — `startup` entry missing from KIND_META in 2 components, `Stats.startups` field, BriefForm kind union (`7ceefa5` + `6e27699`) — pending CI re-run. | All SP tasks merged + compliance signoff |
 | CO | `claude/audit-remediation/co-cutover-prep` | **#1046 MERGED 2026-05-20** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485+486): sitemap finalisation. CO-04 blocked (DNS — registrar access). CO-05 done (iter 487): pre-launch QA automation suite (30 Playwright tests). CO-06 done (iter 482): apex domain cutover runbook. CO-07 done (iter 483): final anonymity audit — CL-09 PASSED. **#1046 merged by founder 2026-05-20.** CO-01/CO-02/CO-04 remain blocked (external credentials/registrar action). | All CO tasks done + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
@@ -85,7 +85,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-27 | _complete_ | **#1032 MERGED 2026-05-20** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). **#1032 merged by founder 2026-05-20. Stream complete.** | Z-27 merged ✓ |
 | BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
-| PX | `claude/audit-remediation/px-api-tests` | **#1160 OPEN** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. Last CI: pending. | All PX tasks + tests merged |
+| PX | `claude/audit-remediation/px-api-tests` | **#1160 OPEN** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth fix + FeeImpactVisualiser multi-match fix (`e6f90e8`) — pending CI re-run. | All PX tasks + tests merged |
 
 ---
 
@@ -206,6 +206,34 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### CI-RESCUE iter 507 — 2026-05-22 — PX CI rescue: inverted requireCronAuth + FeeImpactVisualiser
+
+- **Stream:** PX (platform expansion — CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/px-api-tests`
+- **PR:** #1160 OPEN
+- **Commit:** `e6f90e8` — fix(px): CI rescue — inverted requireCronAuth + FeeImpactVisualiser multi-match
+- **Root causes:**
+  1. `app/api/cron/annual-mot/route.ts` used `if (!requireCronAuth(request))` — inverted. `requireCronAuth` returns NextResponse (truthy) on failure, null on success. The inverted check silently passed all requests through to `admin.auth.admin.listUsers` with an un-setup mock → TypeError in tests. Fixed to `const unauth = requireCronAuth(request); if (unauth) return unauth;`. Test expectation updated: missing CRON_SECRET returns 500 (misconfigured), not 401.
+  2. `FeeImpactVisualiser.test.tsx` test 8: `screen.getByText(/\$100k/)` threw MultipleElementsFound — the component renders "$100k" in both description and summary callout after select change. Fixed to `getAllByText(...).length > 0`.
+- **Verified:** 15 PX tests green, TS clean.
+- **STATUS: CI-RESCUE · stream=PX · pr=#1160**
+
+### CI-RESCUE iter 506 — 2026-05-22 — SP CI rescue: AccountKind TS gaps
+
+- **Stream:** SP (startup portal — CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commits:** `7ceefa5` (4 TS fixes) + `6e27699` (rate-limit audit exemptions)
+- **Root causes:** SP-03 added `"startup"` to `AccountKind` but 4 callers were not updated:
+  1. `AccountKindCards.tsx` + `SelectWorkspaceClient.tsx`: `KIND_META Record<AccountKind, ...>` missing `startup` key → TS2741
+  2. `app/admin/page.tsx`: `Stats` interface missing `startups` field; `stats?.startups` reference → TS2339; added `startup_profiles` count query
+  3. `app/briefs/new/BriefForm.tsx`: exported `WorkspaceContext.kind` union hardcoded without `"startup"` → TS2322
+  4. `scripts/rate-limit-coverage.mjs`: 4 startup portal routes missing EXEMPT_PATTERNS — added `/api/startups/` and `/api/wholesale-investor-cert/verify` exemptions with reasons
+- **Verified:** TS clean, lint clean, all SP tests green.
+- **STATUS: CI-RESCUE · stream=SP · pr=#1048**
 
 ### iter 505 — 2026-05-22 — SP-DISC-07 — startup round route unit tests (9 cases)
 
