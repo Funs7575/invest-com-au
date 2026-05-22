@@ -16,7 +16,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 |--------|--------|------------------------|-------|-----------|
 | A | _complete_ | #207/#322/#351/#352/#353/#354/#355/#378/#380/#381/#382/#457/#540 | A-01..A-04 done. A-05 resolved as **false-positive** — `broker_reviews`/`broker_ratings` don't exist in schema; covered by `user_reviews` (A-02). **Stream complete.** | A-05 merged ✓ |
 | B | `claude/audit-remediation/b-09-edge-fn-secrets` | #208/#301/#457 | B-01..B-08 done. B-09 blocked (see Blocked). | B-09 unblocked + merged |
-| C | `claude/audit-remediation/c-disc-20260522-admin-scope` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541/**#1165 OPEN** | C-01..C-02 done. C-03..C-05 blocked (see Blocked). C-DISC-20260522-01: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/v1/brokers/route.ts`; 20 tests pass. C-DISC-20260522-02: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/community/categories/route.ts`; 6 tests pass. PR #1165 OPEN. | C-DISC-01+02 merged |
+| C | `claude/audit-remediation/c-disc-20260522-admin-scope` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541/**#1165 OPEN** | C-01..C-02 done. C-03..C-05 blocked (see Blocked). C-DISC-20260522-01: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/v1/brokers/route.ts`; 20 tests pass. C-DISC-20260522-02: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/community/categories/route.ts`; 6 tests pass. PR #1165 OPEN. Synced with main (iter 520, `04a1aa8`) to trigger CI. | C-DISC-01+02 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
 | F | _complete_ | **#925 MERGED 2026-05-20** | F-01..F-07 done. F-08 blocked. F-DISC-01 #741 MERGED. F-DISC-20260519-01: **#925 MERGED by founder 2026-05-20** — `requireAdmin` consolidated, `escapeHtml` consolidated, 21 false-positives allowlisted. **Stream engineering complete.** F-DISC-20260522-01: **false-positive** (iter 517) — `formatAud` in `FeeImpactVisualiser.tsx` takes dollars (compact `$Xk`/`$XM` for chart labels); `lib/first-home-buyer/state-grants.ts:formatAud` takes cents (full `Intl.NumberFormat`). Different signatures, different units, different output format — not a SSOT violation. | **Stream complete.** |
@@ -215,6 +215,18 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 520 — 2026-05-22 — C branch CI trigger (merge-with-main)
+
+- **Stream:** C (admin.ts scope reset — Tier B refactor)
+- **Phase:** 2 — CI check / sync
+- **Branch:** `claude/audit-remediation/c-disc-20260522-admin-scope`
+- **PR:** #1165 OPEN (commit `04a1aa8` — merge origin/main)
+- **Action:** Merged `origin/main` into C branch; PR #1165 only showed Vercel check (CI hadn't fired). Merge triggers fresh CI run.
+- **PX #1160 status:** `Lint · Type-check · Test · Build` → SUCCESS. Non-required checks failing (advisory/pre-existing). `mergeable_state: "unstable"`. Tier A — ready for founder merge.
+- **STATUS: PROGRESS · stream=C · item=C-sync · pr=#1165**
+
+### CI-RESCUE iter 519 — 2026-05-22 — SP CI rescue: route coverage for data-room + esic-verify
 
 ### CI-RESCUE iter 518 — 2026-05-22 — PX branch merge-with-main (dirty-state fix)
 
