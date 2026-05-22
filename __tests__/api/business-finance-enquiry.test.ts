@@ -4,24 +4,22 @@ import { NextRequest } from "next/server";
 // ─── Mocks ───────────────────────────────────────────────────────────
 
 const mockIsAllowed = vi.hoisted(() => vi.fn<() => Promise<boolean>>(() => Promise.resolve(true)));
-
-vi.mock("@/lib/rate-limit-db", () => ({
-  isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
-  ipKey: vi.fn(() => "ip:1.2.3.4"),
-}));
-
 const mockIsValidEmail = vi.hoisted(() => vi.fn<(e: string) => boolean>(() => true));
 const mockIsDisposableEmail = vi.hoisted(() => vi.fn<(e: string) => boolean>(() => false));
+const mockInsert = vi.hoisted(() => vi.fn(() => Promise.resolve({ error: null as { message: string } | null })));
+
+vi.mock("@/lib/rate-limit-db", () => ({
+  isAllowed: () => mockIsAllowed(),
+  ipKey: vi.fn(() => "ip:1.2.3.4"),
+}));
 
 vi.mock("@/lib/validate-email", () => ({
   isValidEmail: (e: string) => mockIsValidEmail(e),
   isDisposableEmail: (e: string) => mockIsDisposableEmail(e),
 }));
 
-const mockSendEmail = vi.fn(async () => ({ id: "e1", ok: true }));
-
 vi.mock("@/lib/resend", () => ({
-  sendEmail: (...args: unknown[]) => mockSendEmail(...args),
+  sendEmail: vi.fn(async () => ({ id: "e1", ok: true })),
 }));
 
 vi.mock("@/lib/url", () => ({ getSiteUrl: () => "https://invest.com.au" }));
@@ -30,8 +28,6 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockInsert = vi.fn();
-
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
     from: vi.fn(() => ({ insert: mockInsert })),
@@ -39,6 +35,7 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 
 import { POST } from "@/app/api/business-finance/enquiry/route";
+import { sendEmail } from "@/lib/resend";
 
 // ─── Helpers ──────────────────────────────────────────────────────────
 
@@ -69,7 +66,7 @@ describe("POST /api/business-finance/enquiry", () => {
     mockIsValidEmail.mockReturnValue(true);
     mockIsDisposableEmail.mockReturnValue(false);
     mockInsert.mockResolvedValue({ error: null });
-    mockSendEmail.mockResolvedValue({ id: "e1", ok: true });
+    vi.mocked(sendEmail).mockResolvedValue({ ok: true });
   });
 
   it("returns 429 when rate limited", async () => {
@@ -106,8 +103,7 @@ describe("POST /api/business-finance/enquiry", () => {
 
   it("returns 400 when email fails isValidEmail check", async () => {
     mockIsValidEmail.mockReturnValue(false);
-    // Must be a Zod-valid email so the schema check passes; isValidEmail is the secondary gate
-    const res = await POST(makeReq(validBody({ email: "jane@acme.com.au" })));
+    const res = await POST(makeReq(validBody()));
     expect(res.status).toBe(400);
     const body = await res.json() as Record<string, unknown>;
     expect(body.error).toMatch(/valid email/i);
@@ -142,8 +138,8 @@ describe("POST /api/business-finance/enquiry", () => {
     expect(res.status).toBe(200);
     const body = await res.json() as Record<string, unknown>;
     expect(body.success).toBe(true);
-    expect(mockSendEmail).toHaveBeenCalledOnce();
-    expect(mockSendEmail).toHaveBeenCalledWith(
+    expect(sendEmail).toHaveBeenCalledOnce();
+    expect(sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({ to: "jane@acme.com.au" }),
     );
   });
