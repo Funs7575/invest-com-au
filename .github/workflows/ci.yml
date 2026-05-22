@@ -49,6 +49,13 @@ jobs:
       STRIPE_WEBHOOK_SECRET: placeholder
       NEXT_PUBLIC_SITE_URL: https://invest.com.au
       CRON_SECRET: placeholder
+      # Heap headroom for the whole job. The v8-coverage run over the full
+      # suite (12.5k tests, pool: forks) can exhaust the default Node heap on
+      # the runner — a worker dies before writing its coverage/.tmp/*.json and
+      # the merge step throws ENOENT, failing the Test step non-deterministically.
+      # tsc + the Next build are also heap-heavy here. Mirrors the
+      # --max-old-space-size=5120 guidance in CLAUDE.md for the pre-push tsc OOM.
+      NODE_OPTIONS: "--max-old-space-size=6144"
 
     steps:
       - uses: actions/checkout@v6
