@@ -6,6 +6,7 @@ import FeeImpactClient from "./FeeImpactClient";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
 import { absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 1800;
 
@@ -66,6 +67,25 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   };
 }
 
+const feeImpactFaqLd = faqJsonLd([
+  {
+    q: "How much do investment fees affect long-term returns?",
+    a: "Fees compound just like returns — a seemingly small difference matters enormously over decades. At 7% annual return, $100,000 grows to $761,000 over 30 years at 0% fees. At 1% annual fees, it grows to $574,000 — a $187,000 difference. At 2% fees, the result is only $432,000. This is why moving from a 1.5% managed fund to a 0.2% ETF often adds hundreds of thousands of dollars to a retirement balance, even with identical underlying asset exposure.",
+  },
+  {
+    q: "What is the difference between management fees and brokerage?",
+    a: "Management fees (MER — Management Expense Ratio) are ongoing charges deducted from the fund's assets, expressed as a percentage per year. They cover fund management, administration, and costs. ETFs typically charge 0.04%–0.67% p.a. Brokerage is the transaction fee paid each time you buy or sell — it is a one-off cost at the point of trade, not ongoing. Both reduce your returns, but management fees compound and are the primary drag for buy-and-hold investors.",
+  },
+  {
+    q: "Which Australian broker has the lowest annual fees for buy-and-hold investors?",
+    a: "For investors who make 1–2 trades per month and hold long term, total annual cost depends on brokerage per trade and inactivity fees. Pearler ($6.50/trade, no inactivity fee, CHESS-sponsored) and SelfWealth ($9.50/trade, no inactivity fee, CHESS-sponsored) are consistently competitive. Moomoo ($3/trade) is cheapest by transaction but uses a custodian structure. For US shares held long term, Interactive Brokers has the lowest FX and custody fees, typically under 0.1% total for large accounts.",
+  },
+  {
+    q: "Do ETF management fees compound negatively?",
+    a: "Yes. An ETF charging 0.67% p.a. silently deducts this from its net asset value daily. You never see a fee deducted from your account — but the ETF's price grows more slowly than the underlying index by approximately the MER. Over 20 years, a 0.5% MER difference relative to a 0.07% ETF costs roughly 9% of final portfolio value. The fee calculator shows this compounding effect in dollar terms for your specific balance and time horizon.",
+  },
+]);
+
 function jsonLd() {
   return {
     "@context": "https://schema.org",
@@ -104,6 +124,10 @@ export default async function FeeImpactPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd()) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(feeImpactFaqLd) }}
       />
       <Suspense fallback={<FeeImpactLoading />}>
         <FeeImpactClient brokers={(brokers as Broker[]) || []} />
