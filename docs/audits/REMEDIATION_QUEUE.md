@@ -85,7 +85,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-27 | _complete_ | **#1032 MERGED 2026-05-20** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). **#1032 merged by founder 2026-05-20. Stream complete.** | Z-27 merged ✓ |
 | BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
-| PX | `claude/audit-remediation/px-api-tests` | **#1160 OPEN** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. | All PX tasks + tests merged |
+| PX | `claude/audit-remediation/px-api-tests` | **#1160 OPEN** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. CI-RESCUE iter 518: merged origin/main into PX branch (`aaac185`) — resolved `mergeable_state: dirty` caused by stale queue commit on PX; all 99 PX tests pass. | All PX tasks + tests merged |
 
 ---
 
@@ -215,6 +215,19 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### CI-RESCUE iter 518 — 2026-05-22 — PX branch merge-with-main (dirty-state fix)
+
+- **Stream:** PX (platform expansion — CI rescue)
+- **Phase:** 2 — CI rescue (mergeable_state: dirty)
+- **Branch:** `claude/audit-remediation/px-api-tests`
+- **PR:** #1160 OPEN
+- **Commit:** `aaac185` — chore(px): merge origin/main — resolve queue conflict, keep main's authoritative state
+- **Diff:** merge commit only (conflict in REMEDIATION_QUEUE.md resolved by taking main's authoritative version)
+- **Root cause:** PX branch had `docs/audits/REMEDIATION_QUEUE.md` committed by accident during concurrent cloud fires (iters 510-513). Main's queue updates (iters 514-517) diverged, making PX `mergeable_state: dirty` and preventing full CI from running (only Vercel check was showing, 1 of expected ~38). The ci-retrigger commit (`8e89999`) on PX was also incorporated.
+- **Phase 1.5 result:** Types regen from live DB (`guggzyqceattncjwvgyc`) produced empty diff — `lib/database.types.ts` is in sync. `Supabase types drift` failures on C #1165 and SP #1048 are: C = was likely transient/timing (founder's `f7f6111` commit briefly off main; now main FF'd to `f7f6111` so C is clean 1-commit PR); SP = pre-existing (startup tables in types not in live DB yet).
+- **All 99 PX tests verified locally before push.**
+- **STATUS: CI-RESCUE · stream=PX · pr=#1160**
 
 ### iter 517 — 2026-05-22 — F-DISC-20260522-01 — false-positive (formatAud unit mismatch)
 
