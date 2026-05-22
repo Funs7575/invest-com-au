@@ -80,7 +80,7 @@ function makeChain(res: { data?: unknown; error?: unknown } = {}) {
   }
   chain["single"] = vi.fn(() => Promise.resolve(resolved));
   chain["maybeSingle"] = vi.fn(() => Promise.resolve(resolved));
-  chain["then"] = (resolve: (v: { data: unknown; error: unknown; count: unknown }) => unknown) => Promise.resolve(resolve(resolved));
+  chain["then"] = (resolve: (v: { data: unknown; error: unknown; count?: unknown }) => unknown) => Promise.resolve(resolve(resolved));
   chain["catch"] = () => chain;
   return chain;
 }

@@ -61,7 +61,7 @@ function makeBuilder(result: unknown = { data: null, error: null, count: null })
   return b;
 }
 
-const mockFrom = vi.fn(() => makeBuilder());
+const mockFrom = vi.fn((_table: string) => makeBuilder());
 
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockFrom })),

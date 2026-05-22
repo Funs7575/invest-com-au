@@ -39,7 +39,7 @@ function makeChain(res: { data?: unknown; error?: unknown; count?: number | null
   return chain;
 }
 
-const mockAdminFrom = vi.fn(() => makeChain());
+const mockAdminFrom = vi.fn((_table: string) => makeChain());
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
 }));

@@ -5,10 +5,12 @@ import type { NextRequest } from "next/server";
 
 const { mockIsRateLimited, mockGetUser, mockServerFrom } = vi.hoisted(() => ({
   mockIsRateLimited: vi.fn<() => Promise<boolean>>(async () => false),
-  mockGetUser: vi.fn(async () => ({
-    data: { user: { id: "user-1" } },
-    error: null,
-  })),
+  mockGetUser: vi.fn<() => Promise<{ data: { user: { id: string } | null }; error: null }>>(
+    async () => ({
+      data: { user: { id: "user-1" } },
+      error: null,
+    }),
+  ),
   mockServerFrom: vi.fn(() => makeChain()),
 }));
 

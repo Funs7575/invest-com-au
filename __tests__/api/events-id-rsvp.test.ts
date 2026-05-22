@@ -65,7 +65,7 @@ const makeChain = (
       error: overrideError !== undefined ? overrideError : null,
     }),
   );
-  chain["then"] = (resolve: (v: { data: unknown; error: unknown; count: unknown }) => unknown) =>
+  chain["then"] = (resolve: (v: { data: unknown; error: unknown; count?: unknown }) => unknown) =>
     Promise.resolve(
       resolve({
         data: overrideData !== undefined ? overrideData : null,

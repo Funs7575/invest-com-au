@@ -63,7 +63,7 @@ const makeChain = (table: string) => {
     Promise.resolve({ data: res().data ?? null, error: res().error ?? null }),
   );
   // Allow awaiting the chain directly (for update/insert without .single())
-  chain["then"] = (resolve: (v: { data: unknown; error: unknown; count: unknown }) => unknown) =>
+  chain["then"] = (resolve: (v: { data: unknown; error: unknown; count?: unknown }) => unknown) =>
     Promise.resolve(
       resolve({ data: res().data ?? null, error: res().error ?? null }),
     );
@@ -84,7 +84,7 @@ const mockIssueCertificate = vi.fn<
 >();
 
 vi.mock("@/lib/course-certificates", () => ({
-  issueCertificate: (...args: unknown[]) => mockIssueCertificate(...args),
+  issueCertificate: () => mockIssueCertificate(),
 }));
 
 // ─── Route under test ─────────────────────────────────────────────────────────
@@ -263,7 +263,7 @@ describe("POST /api/courses/[courseId]/complete", () => {
         for (const m of ["eq", "neq", "match"]) {
           updateChain[m] = vi.fn(() => updateChain);
         }
-        updateChain["then"] = (resolve: (v: { data: unknown; error: unknown; count: unknown }) => unknown) =>
+        updateChain["then"] = (resolve: (v: { data: unknown; error: unknown; count?: unknown }) => unknown) =>
           Promise.resolve(
             resolve({ data: null, error: { message: "update failed" } }),
           );
