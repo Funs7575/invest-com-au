@@ -19,6 +19,7 @@ import {
   normaliseAfslNumber,
 } from "@/lib/afsl-register";
 import { absoluteUrl, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 export const dynamic = "force-static";
@@ -72,6 +73,29 @@ function statusBadgeClasses(status: string): string {
   }
 }
 
+const AFSL_FAQS = faqJsonLd([
+  {
+    q: "What is an Australian Financial Services Licence (AFSL)?",
+    a: "An Australian Financial Services Licence (AFSL) is a licence issued by the Australian Securities and Investments Commission (ASIC) that authorises a person or entity to provide financial services in Australia. These services include giving financial product advice, dealing in financial products, making a market for financial products, and operating a registered managed investment scheme. Holding a valid AFSL is a legal requirement under the Corporations Act 2001.",
+  },
+  {
+    q: "How do I check if a financial advisor has a valid AFSL?",
+    a: "You can verify an adviser's licence status on ASIC's Financial Advisers Register (FAR) at moneysmart.gov.au, or search the AFS Licensee register on ASIC Connect. Both tools are free. Look for a 'Current' status and confirm the AFSL number matches what the adviser has quoted. An adviser may also operate as an authorised representative under another entity's AFSL — this is also disclosed on the register.",
+  },
+  {
+    q: "What does it mean if an AFSL is cancelled or suspended?",
+    a: "A cancelled AFSL means the licensee is no longer authorised to provide financial services in Australia. A suspended AFSL means authorisation has been temporarily removed, typically while ASIC investigates potential misconduct. In either case, the firm or adviser cannot legally provide financial advice or deal in financial products. If your adviser's AFSL is cancelled or suspended you should stop dealing with them and contact ASIC or the Australian Financial Complaints Authority (AFCA) if you believe you have suffered a loss.",
+  },
+  {
+    q: "What is the difference between a licensed adviser and an authorised representative?",
+    a: "A licensed adviser holds their own AFSL issued directly by ASIC and is responsible for their own compliance obligations. An authorised representative is a person or entity that has been authorised by an AFSL holder to provide specific financial services on the licensee's behalf. The licensee is responsible for the conduct of its authorised representatives. Both must be listed on ASIC's registers, and both are legally required to act in your best interests.",
+  },
+  {
+    q: "How do I lodge a complaint against an AFSL holder?",
+    a: "First, raise your complaint directly with the licensee in writing. AFSL holders are required to have an internal dispute resolution (IDR) process and must respond within 30 days for most complaints. If you are not satisfied with the outcome, you can escalate to the Australian Financial Complaints Authority (AFCA) at afca.org.au — a free and independent external dispute resolution scheme. For serious misconduct such as fraud or suspected licence breaches, you can also report directly to ASIC.",
+  },
+]);
+
 export default async function AfslLicenseePage({ params }: Props) {
   const { number } = await params;
   const normalised = normaliseAfslNumber(number);
@@ -96,6 +120,10 @@ export default async function AfslLicenseePage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(AFSL_FAQS) }}
       />
 
       <header className="space-y-3">

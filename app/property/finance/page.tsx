@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { LOAN_COMPARISON_DISCLAIMER, NCCP_CREDIT_NOTE } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
@@ -26,6 +27,29 @@ const LENDERS = [
   { name: "ING", rate: "6.29%", comparison: "6.35%", maxLvr: "80%", offset: true, interestOnly: false, minLoan: "$150,000" },
 ];
 
+const PROPERTY_FINANCE_FAQS = faqJsonLd([
+  {
+    q: "What is the typical interest rate for an investment loan in Australia?",
+    a: "As of 2026, investment property loan rates from major Australian lenders (CBA, Westpac, ANZ, NAB) typically range from around 6.20% to 6.60% p.a. for variable rates. Fixed rates and rates from smaller lenders and non-banks can vary significantly. The comparison rate — which includes most fees — is a better basis for comparison than the advertised rate alone.",
+  },
+  {
+    q: "What is the maximum LVR for an investment property loan?",
+    a: "Most major Australian lenders cap investment property loans at 80% LVR (loan-to-value ratio) without lenders mortgage insurance (LMI). Some non-bank lenders will lend up to 85%–90% LVR, but LMI will apply and the rate is typically higher. APRA guidelines and individual lender credit policies ultimately determine the maximum LVR available.",
+  },
+  {
+    q: "Can I claim interest on an investment loan as a tax deduction?",
+    a: "Yes. Interest charged on a loan used to purchase an income-producing investment property is generally tax-deductible in Australia under Section 8-1 of the ITAA 1997. If the property is negatively geared (interest costs exceed rental income), the net loss can be offset against other income, reducing your taxable income. You should consult a registered tax agent for advice specific to your situation.",
+  },
+  {
+    q: "What is the difference between interest-only and principal and interest for investment loans?",
+    a: "With an interest-only (IO) investment loan, you only pay the interest component each month — the loan balance does not reduce. Monthly repayments are lower, which can improve cash flow. With a principal and interest (P&I) loan, each repayment reduces the outstanding balance. IO periods are typically limited to 1–5 years by lenders, after which the loan reverts to P&I. IO loans often have a slightly higher interest rate than equivalent P&I loans.",
+  },
+  {
+    q: "How do lenders assess investment loan applications?",
+    a: "Australian lenders assess investment loan applications using serviceability calculations that factor in your income, existing debts, living expenses, and the proposed loan repayments at a stress-tested rate (typically 3% above the actual rate). Rental income is usually credited at 70%–80% of the gross rent to account for vacancy and costs. A lower debt-to-income ratio, stable employment history, and good credit score all improve your chances of approval.",
+  },
+]);
+
 export default function PropertyFinancePage() {
   return (
     <div className="bg-white min-h-screen">
@@ -38,6 +62,10 @@ export default function PropertyFinancePage() {
             { name: "Investment Loans" },
           ])),
         }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(PROPERTY_FINANCE_FAQS) }}
       />
 
       <section className="bg-white border-b border-slate-100">
