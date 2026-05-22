@@ -85,7 +85,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-27 | _complete_ | **#1032 MERGED 2026-05-20** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). **#1032 merged by founder 2026-05-20. Stream complete.** | Z-27 merged ✓ |
 | BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
-| PX | `claude/audit-remediation/px-api-tests` | **#1160 OPEN** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. CI rescue (iter 507): branch rebased to `7296e81` by concurrent fire — CI re-running. Accessibility CI failure (iter 510): failure confirmed NOT from PX code (test-only PR); likely main regression from recent founder merges; CI re-triggered to determine if transient. **PX-DISC-20260522-07..09 pending (iter 510 discovery)** — 4 new routes from `89a235bb` 5-feature wave need test coverage. | All PX tasks + tests merged |
+| PX | `claude/audit-remediation/px-api-tests` | **#1160 OPEN** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. | All PX tasks + tests merged |
 
 ---
 
@@ -195,33 +195,11 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ---
 
-### PX-DISC-20260522-07 — advisor-portal pipeline route tests (pending)
+~~### PX-DISC-20260522-07 — advisor-portal pipeline route tests~~ **DONE (iter 512)**
 
-**Status:** pending  
-**Surfaced by:** iter 510 discovery sweep on `89a235bb` (5-feature wave: Rate Alerts, Advisor Pipeline, Investor Copilot, Widget Builder, Business Finance)  
-**Route:** `app/api/advisor-portal/pipeline/route.ts` (81 LOC) — GET/PATCH pipeline stage + next_action_at for advisor CRM.  
-**No existing test.** The `admin-bd-pipeline.test.ts` tests a different route (`app/api/admin/bd-pipeline/route.ts`).  
-**Suggested stream:** PX branch (#1160) or a new branch if #1160 merges first.  
-**Expected coverage:** 401 unauth, 403 non-advisor, 200 GET pipeline list, 200 PATCH stage update, 400 invalid stage enum, 500 DB error — ~6-8 cases.
+~~### PX-DISC-20260522-08 — business-finance enquiry route tests~~ **DONE (iter 513)**
 
-### PX-DISC-20260522-08 — business-finance enquiry route tests (pending)
-
-**Status:** pending  
-**Surfaced by:** iter 510 discovery sweep on `89a235bb`  
-**Route:** `app/api/business-finance/enquiry/route.ts` (149 LOC) — POST business finance enquiry (rate-limited, Zod-validated, notifies advisor, logs to DB).  
-**No existing test.**  
-**Suggested stream:** PX branch.  
-**Expected coverage:** 429 rate-limited, 400 invalid body, 200 success with DB insert, 500 DB error, notification fire check — ~6-8 cases.
-
-### PX-DISC-20260522-09 — investor copilot + lead-followup cron tests (pending)
-
-**Status:** pending  
-**Surfaced by:** iter 510 discovery sweep on `89a235bb`  
-**Routes:** `app/api/investor/copilot/route.ts` (113 LOC, AI streaming route) + `app/api/cron/lead-followup-reminders/route.ts` (165 LOC, cron job).  
-**No existing tests.**  
-**Note:** copilot uses Anthropic API (streaming) — mock `anthropic.messages.create` in tests. Cron uses `requireCronAuth`.  
-**Suggested stream:** PX branch.  
-**Expected coverage (cron):** 401 missing CRON_SECRET, 401 wrong token, 200 no overdue leads, 200 sends reminders — ~5 cases. (Copilot: 401 unauth, 200 with mocked stream, 500 AI error — ~3 cases.)
+~~### PX-DISC-20260522-09 — investor copilot + lead-followup cron tests~~ **DONE (iter 514)**
 
 ---
 
@@ -236,6 +214,37 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 514 — 2026-05-22 — PX-DISC-20260522-09 — investor copilot + lead-followup-reminders tests (concurrent fire)
+
+- **Stream:** PX (platform expansion — Tier A tests)
+- **Branch:** `claude/audit-remediation/px-api-tests`
+- **PR:** #1160 OPEN
+- **Commit:** `b2f201e` — test(px): add coverage for investor copilot POST and lead-followup-reminders cron
+- **Diff:** +336 LOC (2 new test files: `investor-copilot.test.ts`, `cron-lead-followup-reminders.test.ts`)
+- **Items done:** 11 copilot cases + 9 cron cases = 20 cases total. Key patterns: mock `@anthropic-ai/sdk` messages.create, mock `filterFactualOutput` from compliance, CRON_SECRET must be ≥16 chars (fail-closed).
+- **Note:** Queue update for this iter was incorrectly placed on PX branch by concurrent fire — corrected in this main update (iter 514's queue update lands on main now).
+- **STATUS: PROGRESS · stream=PX · item=PX-DISC-20260522-09 · pr=#1160**
+
+### iter 513 — 2026-05-22 — PX-DISC-20260522-08 — business-finance enquiry POST tests (concurrent fire)
+
+- **Stream:** PX (platform expansion — Tier A tests)
+- **Branch:** `claude/audit-remediation/px-api-tests`
+- **PR:** #1160 OPEN
+- **Commit:** `306184d` — test(px): add coverage for business-finance enquiry POST route
+- **Diff:** +206 LOC (1 new test file: `business-finance-enquiry.test.ts`)
+- **Items done:** 15 cases — rate-limit, bad JSON, missing fields, invalid enum, isValidEmail gate, disposable email, honeypot bypass, DB error, success+email, email lowercasing, loan_amount→cents, annual_revenue→cents, all 6 finance_type enums, status='new', optional fields.
+- **STATUS: PROGRESS · stream=PX · item=PX-DISC-20260522-08 · pr=#1160**
+
+### iter 512 — 2026-05-22 — PX-DISC-20260522-07 — advisor-portal pipeline PATCH tests (concurrent fire)
+
+- **Stream:** PX (platform expansion — Tier A tests)
+- **Branch:** `claude/audit-remediation/px-api-tests`
+- **PR:** #1160 OPEN
+- **Commit:** `727ea01` — test(px): add coverage for advisor-portal pipeline PATCH route
+- **Diff:** +197 LOC (1 new test file: `advisor-portal-pipeline.test.ts`)
+- **Items done:** 14 cases — rate-limit, session auth (non-ok + null advisor), bad JSON, invalid enum, nothing-to-update guard, missing lead_id, DB error, pipeline_stage-only, next_action_at-only, null clear, combined, invalid datetime, all 6 enum values.
+- **STATUS: PROGRESS · stream=PX · item=PX-DISC-20260522-07 · pr=#1160**
 
 ### CI-RESCUE iter 511 — 2026-05-22 — SP CI rescue: metadata-coverage gate (startup-signup layout)
 
