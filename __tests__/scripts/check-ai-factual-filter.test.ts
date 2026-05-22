@@ -19,6 +19,7 @@ function runOn(workdir: string): { exitCode: number; output: string } {
   try {
     const output = execSync(`node ${SCRIPT} --json --root=${workdir}`, {
       encoding: "utf8",
+      timeout: 15000,
     });
     return { exitCode: 0, output };
   } catch (err) {
