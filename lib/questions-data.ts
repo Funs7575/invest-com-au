@@ -1544,10 +1544,10 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "how-does-franking-credits-work",
-      "how-do-etfs-work",
-      "what-are-the-best-etfs-for-beginners",
-      "what-is-capital-gains-tax",
+      "how-does-franking-credit-work",
+      "what-is-the-difference-between-etf-and-managed-fund",
+      "how-do-etf-fees-work-australia",
+      "what-is-capital-gains-tax-discount",
     ],
     relatedTools: [
       { label: "Compare share brokers", href: "/share-trading" },
@@ -1600,10 +1600,10 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "how-do-etfs-work",
-      "what-is-capital-gains-tax",
+      "what-is-the-difference-between-etf-and-managed-fund",
+      "what-is-capital-gains-tax-discount",
       "how-does-dividend-investing-work",
-      "how-to-invest-in-shares",
+      "what-is-the-difference-between-etf-and-managed-fund",
     ],
     relatedTools: [
       { label: "Compare share brokers", href: "/share-trading" },
@@ -1656,10 +1656,10 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "how-do-etfs-work",
+      "what-is-the-difference-between-etf-and-managed-fund",
       "how-does-compound-interest-work",
-      "how-does-superannuation-work",
-      "what-is-a-managed-fund",
+      "what-is-the-super-guarantee-rate-fy2026",
+      "what-is-the-difference-between-etf-and-managed-fund",
     ],
     relatedTools: [
       { label: "Compare ETFs", href: "/etfs" },
@@ -1712,10 +1712,10 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "how-does-superannuation-work",
+      "what-is-the-super-guarantee-rate-fy2026",
       "what-is-concessional-contribution",
       "what-are-the-super-contribution-limits",
-      "what-is-the-tax-rate-on-super",
+      "what-is-concessional-contribution",
     ],
     relatedTools: [
       { label: "Super contributions calculator", href: "/super-contributions-calculator" },
@@ -1768,10 +1768,10 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "what-is-capital-gains-tax",
+      "what-is-capital-gains-tax-discount",
       "how-does-negative-gearing-work",
-      "what-is-a-family-trust",
-      "what-is-a-trust-structure-for-investing",
+      "what-is-a-family-trust-australia",
+      "what-is-a-bare-trust",
     ],
     relatedTools: [
       { label: "Compare share brokers", href: "/share-trading" },
@@ -1824,8 +1824,8 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "what-is-a-first-home-super-saver-scheme",
-      "how-to-buy-property-in-australia",
+      "how-does-the-first-home-super-saver-scheme-work",
+      "what-is-rentvesting",
       "how-does-negative-gearing-work",
     ],
     relatedTools: [
@@ -1880,9 +1880,9 @@ export const QUESTIONS: InvestingQuestion[] = [
     ],
     relatedSlugs: [
       "how-does-negative-gearing-work",
-      "how-to-buy-property-in-australia",
-      "what-is-a-family-trust",
-      "what-is-a-trust-structure-for-investing",
+      "what-is-rentvesting",
+      "what-is-a-family-trust-australia",
+      "what-is-a-bare-trust",
     ],
     relatedTools: [
       { label: "Find a financial adviser", href: "/financial-advisers" },
@@ -1935,10 +1935,10 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "what-is-a-self-managed-super-fund",
       "what-is-smsf-and-is-it-worth-it",
-      "what-is-a-trust-structure-for-investing",
-      "how-to-buy-property-in-australia",
+      "what-is-smsf-and-is-it-worth-it",
+      "what-is-a-bare-trust",
+      "what-is-rentvesting",
     ],
     relatedTools: [
       { label: "Compare SMSF providers", href: "/smsf" },
@@ -1992,9 +1992,9 @@ export const QUESTIONS: InvestingQuestion[] = [
     ],
     relatedSlugs: [
       "what-is-concessional-contribution",
-      "how-does-superannuation-work",
+      "what-is-the-super-guarantee-rate-fy2026",
       "what-is-salary-sacrifice-australia",
-      "what-is-the-tax-rate-on-super",
+      "what-is-concessional-contribution",
     ],
     relatedTools: [
       { label: "Super contributions calculator", href: "/super-contributions-calculator" },
@@ -2048,9 +2048,9 @@ export const QUESTIONS: InvestingQuestion[] = [
     ],
     relatedSlugs: [
       "what-is-the-super-preservation-age",
-      "how-does-superannuation-work",
+      "what-is-the-super-guarantee-rate-fy2026",
       "what-is-a-transition-to-retirement-pension",
-      "what-is-a-self-managed-super-fund",
+      "what-is-smsf-and-is-it-worth-it",
     ],
     relatedTools: [
       { label: "Super contributions calculator", href: "/super-contributions-calculator" },
@@ -2103,10 +2103,10 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "how-do-etfs-work",
-      "what-are-the-best-etfs-for-beginners",
-      "what-is-dollar-cost-averaging",
-      "how-to-invest-in-shares",
+      "what-is-the-difference-between-etf-and-managed-fund",
+      "how-do-etf-fees-work-australia",
+      "how-does-dollar-cost-averaging-work",
+      "what-is-the-difference-between-etf-and-managed-fund",
     ],
     relatedTools: [
       { label: "Compare share brokers", href: "/share-trading" },
@@ -2159,10 +2159,10 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "what-is-dollar-cost-averaging",
-      "how-do-etfs-work",
-      "what-are-the-best-etfs-for-beginners",
-      "how-to-start-investing-with-small-amounts",
+      "how-does-dollar-cost-averaging-work",
+      "what-is-the-difference-between-etf-and-managed-fund",
+      "how-do-etf-fees-work-australia",
+      "how-does-compound-interest-work",
     ],
     relatedTools: [
       { label: "Compare share brokers", href: "/share-trading" },
@@ -2215,10 +2215,10 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "how-do-etfs-work",
-      "what-are-the-best-etfs-for-beginners",
-      "what-is-a-managed-fund",
-      "what-is-dollar-cost-averaging",
+      "what-is-the-difference-between-etf-and-managed-fund",
+      "how-do-etf-fees-work-australia",
+      "what-is-the-difference-between-etf-and-managed-fund",
+      "how-does-dollar-cost-averaging-work",
     ],
     relatedTools: [
       { label: "Compare ETFs", href: "/etfs" },
@@ -2271,8 +2271,8 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "how-does-superannuation-work",
-      "what-is-a-self-managed-super-fund",
+      "what-is-the-super-guarantee-rate-fy2026",
+      "what-is-smsf-and-is-it-worth-it",
       "how-much-super-should-i-have-at-my-age",
       "what-is-a-transition-to-retirement-pension",
     ],
@@ -2327,7 +2327,7 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "how-does-superannuation-work",
+      "what-is-the-super-guarantee-rate-fy2026",
       "what-is-concessional-contribution",
       "what-are-the-super-contribution-limits",
       "what-is-salary-sacrifice-australia",
@@ -2384,7 +2384,7 @@ export const QUESTIONS: InvestingQuestion[] = [
     ],
     relatedSlugs: [
       "what-is-the-super-preservation-age",
-      "how-does-superannuation-work",
+      "what-is-the-super-guarantee-rate-fy2026",
       "when-can-i-access-my-super",
       "how-much-super-should-i-have-at-my-age",
     ],
@@ -2439,7 +2439,7 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "how-to-buy-property-in-australia",
+      "what-is-rentvesting",
       "how-does-negative-gearing-work",
       "what-is-an-investment-property-depreciation-schedule",
     ],
@@ -2495,9 +2495,9 @@ export const QUESTIONS: InvestingQuestion[] = [
     ],
     relatedSlugs: [
       "how-does-negative-gearing-work",
-      "how-to-buy-property-in-australia",
+      "what-is-rentvesting",
       "how-does-mortgage-offset-work",
-      "what-is-capital-gains-tax",
+      "what-is-capital-gains-tax-discount",
     ],
     relatedTools: [
       { label: "Compare property investment platforms", href: "/property-platforms" },
@@ -2551,8 +2551,8 @@ export const QUESTIONS: InvestingQuestion[] = [
     ],
     relatedSlugs: [
       "how-does-negative-gearing-work",
-      "how-to-buy-property-in-australia",
-      "what-is-capital-gains-tax",
+      "what-is-rentvesting",
+      "what-is-capital-gains-tax-discount",
       "what-is-an-investment-property-depreciation-schedule",
     ],
     relatedTools: [
@@ -2606,8 +2606,8 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "what-is-capital-gains-tax",
-      "how-does-superannuation-work",
+      "what-is-capital-gains-tax-discount",
+      "what-is-the-super-guarantee-rate-fy2026",
       "what-is-salary-sacrifice-australia",
     ],
     relatedTools: [
@@ -3142,7 +3142,7 @@ export const QUESTIONS: InvestingQuestion[] = [
       "how-does-negative-gearing-work",
       "how-does-depreciation-work-for-investment-property",
       "what-is-an-investment-property-depreciation-schedule",
-      "what-is-capital-gains-tax",
+      "what-is-capital-gains-tax-discount",
     ],
     relatedTools: [
       { label: "Negative gearing calculator", href: "/negative-gearing/calculator" },
@@ -3382,7 +3382,7 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "how-to-buy-property-in-australia",
+      "what-is-rentvesting",
       "how-does-the-first-home-guarantee-work",
       "how-does-mortgage-offset-work",
       "what-is-rentvesting",
@@ -3481,7 +3481,7 @@ export const QUESTIONS: InvestingQuestion[] = [
       "should-i-pay-off-mortgage-or-invest",
       "how-does-mortgage-offset-work",
       "offset-account-vs-redraw-facility-australia",
-      "how-to-buy-property-in-australia",
+      "what-is-rentvesting",
     ],
     relatedTools: [
       { label: "Mortgage calculator", href: "/mortgage-calculator" },
@@ -3724,7 +3724,7 @@ export const QUESTIONS: InvestingQuestion[] = [
       "what-is-concessional-contribution",
       "what-are-the-super-contribution-limits",
       "what-is-salary-sacrifice-super",
-      "how-does-superannuation-work",
+      "what-is-the-super-guarantee-rate-fy2026",
     ],
     relatedTools: [
       { label: "Super contributions calculator", href: "/super-contributions-calculator" },
@@ -3871,7 +3871,7 @@ export const QUESTIONS: InvestingQuestion[] = [
       "what-is-smsf-and-is-it-worth-it",
       "how-does-negative-gearing-work",
       "what-is-an-investment-property-depreciation-schedule",
-      "how-to-buy-property-in-australia",
+      "what-is-rentvesting",
     ],
     relatedTools: [
       { label: "SMSF calculator", href: "/smsf-calculator" },
@@ -3921,7 +3921,7 @@ export const QUESTIONS: InvestingQuestion[] = [
     relatedSlugs: [
       "how-to-avoid-living-paycheque-to-paycheque-australia",
       "what-is-the-50-30-20-budgeting-rule-australia",
-      "best-high-interest-savings-accounts-australia",
+      "how-much-should-i-have-in-emergency-fund",
     ],
     relatedTools: [
       { label: "Savings calculator", href: "/savings-calculator" },
@@ -4014,7 +4014,7 @@ export const QUESTIONS: InvestingQuestion[] = [
     relatedSlugs: [
       "what-is-the-50-30-20-budgeting-rule-australia",
       "how-much-emergency-fund-australia",
-      "how-to-buy-property-in-australia",
+      "what-is-rentvesting",
     ],
     relatedTools: [
       { label: "Mortgage calculator", href: "/mortgage-calculator" },
@@ -4060,7 +4060,7 @@ export const QUESTIONS: InvestingQuestion[] = [
     ],
     relatedSlugs: [
       "what-is-the-50-30-20-budgeting-rule-australia",
-      "how-does-salary-sacrifice-super-work",
+      "what-is-salary-sacrifice-super",
       "how-to-avoid-living-paycheque-to-paycheque-australia",
     ],
     relatedTools: [
@@ -4767,7 +4767,7 @@ export const QUESTIONS: InvestingQuestion[] = [
       },
     ],
     relatedSlugs: [
-      "what-is-a-transition-to-retirement-strategy-australia",
+      "how-do-transition-to-retirement-income-streams-work",
       "can-i-retire-early-in-australia-what-is-fire",
       "when-can-i-access-my-super",
       "age-pension-assets-test-thresholds-australia",
@@ -4815,7 +4815,7 @@ export const QUESTIONS: InvestingQuestion[] = [
     ],
     relatedSlugs: [
       "asfa-retirement-standard-australia",
-      "what-is-a-transition-to-retirement-strategy-australia",
+      "how-do-transition-to-retirement-income-streams-work",
       "when-can-i-access-my-super",
       "what-is-dollar-cost-averaging-australia",
     ],
