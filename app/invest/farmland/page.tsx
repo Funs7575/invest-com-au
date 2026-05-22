@@ -181,7 +181,7 @@ export default function FarmlandPage() {
             <ul>
               <li><strong>$15M threshold</strong> — applies to cumulative agricultural land holdings. Once you exceed $15M total agricultural land, all subsequent acquisitions require approval</li>
               <li><strong>Water rights</strong> — separate $15M threshold for water entitlements acquired by foreign persons</li>
-              <li><strong>"Marketed widely" requirement</strong> — vendor must have genuinely tested the Australian market before foreign buyer can acquire</li>
+              <li><strong>&ldquo;Marketed widely&rdquo; requirement</strong> — vendor must have genuinely tested the Australian market before foreign buyer can acquire</li>
               <li><strong>Conditions</strong> — FIRB can impose local management, employment, or reporting obligations</li>
               <li><strong>Exemptions</strong> — certain FTA partner countries have higher thresholds (USA, NZ, Singapore, etc.)</li>
             </ul>
