@@ -20,7 +20,7 @@ export async function PATCH(request: NextRequest) {
   // (FIN_NOTEBOOK cross-border Phase B). Stored as ISO 3166-1 alpha-2
   // codes (au, gb, us, in, …); the matcher uses it to country-match-boost
   // incoming intent-country leads.
-  const allowedFields = ["bio", "specialties", "fee_structure", "fee_description", "website", "phone", "photo_url", "booking_link", "booking_intro", "offer_text", "offer_terms", "offer_active", "available_in_countries"];
+  const allowedFields = ["bio", "specialties", "fee_structure", "fee_description", "website", "phone", "photo_url", "booking_link", "booking_intro", "offer_text", "offer_terms", "offer_active", "available_in_countries", "availability_status"];
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
   for (const field of allowedFields) {

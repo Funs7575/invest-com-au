@@ -29,6 +29,8 @@ export type Advisor = {
    */
   available_in_countries?: string[];
   slack_webhook_url?: string | null;
+  /** Self-reported availability: 'open' | 'waitlist' | 'closed'. Default 'open'. */
+  availability_status?: 'open' | 'waitlist' | 'closed';
 };
 
 export type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string; role?: string; is_firm_admin?: boolean };
