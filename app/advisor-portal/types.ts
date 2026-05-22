@@ -5,6 +5,7 @@ export type ViewType =
   | "analytics"
   | "cpd"
   | "profile"
+  | "profile-details"
   | "billing"
   | "articles"
   | "courses"
@@ -38,6 +39,9 @@ export type Advisor = {
   availability_status?: 'open' | 'waitlist' | 'closed';
   /** Whether Stripe Connect payouts are enabled for this advisor. Used to gate course creation. */
   stripe_connect_payouts_enabled?: boolean;
+  languages_spoken?: string[];
+  min_client_assets_band?: string | null;
+  specializations?: string[];
 };
 
 export type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string; role?: string; is_firm_admin?: boolean };

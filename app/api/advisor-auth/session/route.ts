@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       // Find advisor by auth_user_id or email
       const { data: advisor } = await admin
         .from("professionals")
-        .select("id, name, slug, firm_name, email, photo_url, type, location_display, rating, review_count, verified, bio, specialties, fee_structure, fee_description, website, phone, booking_link, booking_intro, offer_text, offer_terms, offer_active, firm_id, is_firm_admin, account_type, status, free_leads_used, lead_price_cents, credit_balance_cents, lifetime_credit_cents, lifetime_lead_spend_cents, auth_user_id, stripe_connect_payouts_enabled")
+        .select("id, name, slug, firm_name, email, photo_url, type, location_display, rating, review_count, verified, bio, specialties, fee_structure, fee_description, website, phone, booking_link, booking_intro, offer_text, offer_terms, offer_active, firm_id, is_firm_admin, account_type, status, free_leads_used, lead_price_cents, credit_balance_cents, lifetime_credit_cents, lifetime_lead_spend_cents, auth_user_id, stripe_connect_payouts_enabled, languages_spoken, min_client_assets_band, specializations")
         .or(`auth_user_id.eq.${user.id},email.eq.${user.email}`)
         .in("status", ["active", "pending"])
         .maybeSingle();
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
       if (session && new Date(session.expires_at) > new Date()) {
         const { data: advisor } = await admin
           .from("professionals")
-          .select("id, name, slug, firm_name, email, photo_url, type, location_display, rating, review_count, verified, bio, specialties, fee_structure, fee_description, website, phone, booking_link, booking_intro, offer_text, offer_terms, offer_active, firm_id, is_firm_admin, account_type, status, free_leads_used, lead_price_cents, credit_balance_cents, lifetime_credit_cents, lifetime_lead_spend_cents, auth_user_id, stripe_connect_payouts_enabled")
+          .select("id, name, slug, firm_name, email, photo_url, type, location_display, rating, review_count, verified, bio, specialties, fee_structure, fee_description, website, phone, booking_link, booking_intro, offer_text, offer_terms, offer_active, firm_id, is_firm_admin, account_type, status, free_leads_used, lead_price_cents, credit_balance_cents, lifetime_credit_cents, lifetime_lead_spend_cents, auth_user_id, stripe_connect_payouts_enabled, languages_spoken, min_client_assets_band, specializations")
           .eq("id", session.professional_id)
           .single();
 

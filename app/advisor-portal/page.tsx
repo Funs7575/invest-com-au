@@ -17,6 +17,7 @@ const LeadsTab = dynamic(() => import("./LeadsTab"));
 const AnalyticsTab = dynamic(() => import("./AnalyticsTab"));
 const CPDTab = dynamic(() => import("./CPDTab"));
 const ProfileTab = dynamic(() => import("./ProfileTab"));
+const ProfileDetailsTab = dynamic(() => import("./ProfileDetailsTab"));
 const BillingTab = dynamic(() => import("./BillingTab"));
 const SettingsTab = dynamic(() => import("./SettingsTab"));
 const TeamTab = dynamic(() => import("./TeamTab"));
@@ -205,6 +206,7 @@ export default function AdvisorPortalPage() {
     { key: "events", label: "Events", icon: "calendar" },
     { key: "badges", label: "Badges", icon: "award" },
     { key: "profile", label: "Profile", icon: "user" },
+    { key: "profile-details", label: "Profile Details", icon: "layers" },
     { key: "billing", label: "Billing", icon: "credit-card" },
     ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
     { key: "settings", label: "Settings", icon: "settings" },
@@ -313,6 +315,11 @@ export default function AdvisorPortalPage() {
             reviews={reviews}
             onAdvisorChange={setAdvisor}
           />
+        )}
+
+        {/* ─── PROFILE DETAILS ─── */}
+        {view === "profile-details" && (
+          <ProfileDetailsTab advisor={advisor} />
         )}
 
         {/* ─── BILLING ─── */}
