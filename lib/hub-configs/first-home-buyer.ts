@@ -1,6 +1,7 @@
 import { CURRENT_YEAR } from "@/lib/seo";
 import type { HubConfig } from "@/lib/verticals";
 import { firstHomeBuyerBrokerDirectoryUrl } from "@/lib/first-home-buyer/broker-handoff";
+import { firstHomeBuyerBuyersAgentUrl } from "@/lib/first-home-buyer/buyers-agent-handoff";
 
 /**
  * Hub config for /first-home-buyer — consumed by the <HubPage> HOC.
@@ -101,6 +102,14 @@ export const firstHomeBuyerHubConfig: HubConfig = {
         "Waiting for FHSS release takes 20+ business days. A deposit bond (from $100) covers the 10% deposit at exchange while your ATO release processes.",
       href: firstHomeBuyerBrokerDirectoryUrl(),
       cta: "Talk to a Broker",
+    },
+    {
+      title: "Buyer's Agents",
+      icon: "search",
+      description:
+        "A buyer's agent works only for you — searching off-market listings, running due diligence, and negotiating the purchase. For first home buyers, a sharp negotiation often saves more than their fee.",
+      href: firstHomeBuyerBuyersAgentUrl(),
+      cta: "Find a Buyer's Agent",
     },
   ],
 
