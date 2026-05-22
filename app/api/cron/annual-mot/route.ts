@@ -32,9 +32,9 @@ interface UserRow {
 }
 
 interface BookmarkRow {
-  entity_type: string;
-  entity_slug: string;
-  entity_name?: string;
+  bookmark_type: string;
+  ref: string;
+  label: string | null;
 }
 
 function buildMOTEmail(
@@ -50,7 +50,7 @@ function buildMOTEmail(
           .slice(0, 6)
           .map(
             (b) =>
-              `<li style="margin-bottom:6px;color:#334155;">${b.entity_name ?? b.entity_slug} <span style="color:#94a3b8;font-size:12px;">(${b.entity_type.replace(/_/g, " ")})</span></li>`,
+              `<li style="margin-bottom:6px;color:#334155;">${b.label ?? b.ref} <span style="color:#94a3b8;font-size:12px;">(${b.bookmark_type.replace(/_/g, " ")})</span></li>`,
           )
           .join("")
       : "<li style='color:#94a3b8;'>No saved products — <a href='https://invest.com.au/brokers' style='color:#7c3aed;'>browse brokers →</a></li>";
@@ -183,7 +183,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       // Fetch their bookmarks
       const { data: bookmarks } = await admin
         .from("user_bookmarks")
-        .select("entity_type, entity_slug, entity_name")
+        .select("bookmark_type, ref, label")
         .eq("user_id", user.id)
         .limit(10);
 
