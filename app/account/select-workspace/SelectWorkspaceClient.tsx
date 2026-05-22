@@ -41,6 +41,12 @@ const KIND_META: Record<
     icon: "🏷️",
     tone: "bg-rose-50 border-rose-200 hover:border-rose-400",
   },
+  startup: {
+    label: "Startup founder",
+    description: "Raise capital, manage your data room, connect with investors.",
+    icon: "🚀",
+    tone: "bg-orange-50 border-orange-200 hover:border-orange-400",
+  },
 };
 
 export default function SelectWorkspaceClient({ memberships }: Props) {
