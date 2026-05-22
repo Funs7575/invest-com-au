@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 
 export interface AcademyCourse {
   id: number;
@@ -53,7 +54,12 @@ export async function getAcademyCourse(slug: string): Promise<AcademyCourse | nu
 }
 
 export async function getTopAcademyCourseSlugs(): Promise<string[]> {
-  const supabase = await createClient();
+  // generateStaticParams runs at build time with no HTTP request context, so
+  // cookies() is unavailable. Use the static (anon-key, cookie-free) client.
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return [];
+  }
+  const supabase = createStaticClient();
   const { data } = await supabase
     .from("courses")
     .select("slug")
