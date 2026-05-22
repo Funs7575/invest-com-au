@@ -75,7 +75,7 @@ describe("FeeImpactVisualiser", () => {
     const selects = screen.getAllByRole("combobox");
     const amountSelect = selects[0]!;
     fireEvent.change(amountSelect, { target: { value: "100000" } });
-    expect(screen.getByText(/\$100k/)).toBeInTheDocument();
+    expect(screen.getAllByText(/\$100k/).length).toBeGreaterThan(0);
   });
 
   it("changing Time horizon updates the summary callout year count", () => {

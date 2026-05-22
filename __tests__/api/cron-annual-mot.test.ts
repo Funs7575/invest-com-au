@@ -59,10 +59,10 @@ describe("GET /api/cron/annual-mot", () => {
     expect(maxDuration).toBe(120);
   });
 
-  it("returns 401 when CRON_SECRET is missing from env", async () => {
+  it("returns 5xx when CRON_SECRET is missing from env (misconfigured)", async () => {
     delete process.env.CRON_SECRET;
     const res = await GET(cronReq({ authorization: `Bearer ${CRON_SECRET}` }));
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(500);
   });
 
   it("returns 401 on wrong bearer token", async () => {
