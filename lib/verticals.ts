@@ -957,7 +957,7 @@ const VERTICALS: VerticalConfig[] = [
   },
   {
     slug: "business-finance",
-    platformTypes: [],
+    platformTypes: ["business_lender"],
     title: `Best Business Finance Options in Australia (${yr})`,
     h1: "Business Finance",
     metaDescription: `Compare business loans, equipment finance, and lines of credit in Australia for ${yr}. Find the right SMB finance solution with rates and features side by side.`,
