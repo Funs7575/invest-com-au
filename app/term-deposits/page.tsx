@@ -6,6 +6,7 @@ import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
 import RateAlertCapture from "@/components/RateAlertCapture";
+import InvestorCopilot from "@/components/InvestorCopilot";
 
 const vertical = getVerticalBySlug("term-deposits")!;
 
@@ -81,6 +82,7 @@ export default async function TermDepositsPage() {
           defaultThresholdPct={5.0}
         />
       </div>
+      <InvestorCopilot />
     </>
   );
 }
