@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 86400;
 
@@ -77,6 +78,29 @@ const OCCUPATION_GROUPS = [
   },
 ];
 
+const INVESTING_FOR_FAQS = faqJsonLd([
+  {
+    q: "Does my occupation affect how I should invest?",
+    a: "Yes. Your occupation influences your income stability, access to salary packaging, superannuation entitlements, available tax concessions, and risk profile. For example, public servants may have access to defined-benefit super schemes, while self-employed tradies must self-fund super contributions. The guides on this page tailor investing strategies to these occupation-specific factors.",
+  },
+  {
+    q: "Are there tax benefits for specific professions in Australia?",
+    a: "Some occupations carry specific tax concessions. Farmers can use Farm Management Deposits and income averaging. Mining workers in remote areas may access the zone tax offset. Medical professionals operating through a company or trust may access small-business CGT concessions. Each occupation guide explains the relevant ATO rules and how to use them legally.",
+  },
+  {
+    q: "What super strategies work best for high-income earners?",
+    a: "High-income earners (above $250,000 combined income and super) pay Division 293 tax, which reduces the super tax advantage. Key strategies include maximising concessional contributions up to the annual cap, using a spouse contribution split, and considering an SMSF for greater investment flexibility. A licensed financial advisor can model the optimal approach for your income level.",
+  },
+  {
+    q: "Do doctors get special investment advice considerations in Australia?",
+    a: "Doctors often have high but variable income, significant HECS-HELP debt, late career starts due to long training periods, and the option to operate through a medical practice structure. These factors make SMSF, income protection insurance, and trust structures particularly relevant. The doctors guide on this page covers practice structuring, SMSF eligibility, and CGT planning specific to medical professionals.",
+  },
+  {
+    q: "How does salary packaging affect investing for public servants?",
+    a: "Salary packaging allows eligible public servants — particularly those in health and not-for-profit roles — to pay for certain expenses from pre-tax income, effectively reducing taxable income. This can increase the net benefit of additional super contributions and free up more after-tax cash for investing. The guide for public servants explains which items qualify and how to integrate packaging into an overall wealth strategy.",
+  },
+]);
+
 const breadcrumb = breadcrumbJsonLd([
   { name: "Home", url: absoluteUrl("/") },
   { name: "Investing For", url: absoluteUrl("/investing-for") },
@@ -88,6 +112,10 @@ export default function InvestingForPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(INVESTING_FOR_FAQS) }}
       />
 
       <div className="container-custom py-8">
