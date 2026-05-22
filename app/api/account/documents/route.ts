@@ -39,7 +39,8 @@ export async function GET(): Promise<NextResponse> {
   }
 
   const documents = await Promise.all(
-    (rows ?? []).map(async (row) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (rows ?? []).map(async (row: any) => {
       const { data: signed } = await supabase.storage
         .from(STORAGE_BUCKET)
         .createSignedUrl(row.file_path, SIGNED_URL_EXPIRY_SECONDS);

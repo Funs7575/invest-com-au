@@ -49,7 +49,8 @@ export default async function VaultPage() {
     .order("created_at", { ascending: false });
 
   const documents: Document[] = await Promise.all(
-    (rows ?? []).map(async (row) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (rows ?? []).map(async (row: any) => {
       const { data: signed } = await supabase.storage
         .from(STORAGE_BUCKET)
         .createSignedUrl(row.file_path as string, SIGNED_URL_EXPIRY);
