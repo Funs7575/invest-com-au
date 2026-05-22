@@ -113,6 +113,7 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "onboarding", category: "PORTAL" },
   { prefix: "dashboard", category: "PORTAL" },
   { prefix: "advisor-portal", category: "PORTAL" },
+  { prefix: "org-portal", category: "PORTAL" },
   { prefix: "broker-portal", category: "PORTAL" },
   { prefix: "firm-portal", category: "PORTAL" },
   { prefix: "marketplace-portal", category: "PORTAL" },
