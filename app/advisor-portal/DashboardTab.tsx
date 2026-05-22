@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
@@ -8,6 +9,60 @@ import type { Advisor, Stats, Lead, ProfileCompleteness, Review, ViewDay, Weekly
 import type { BillingSummary } from "./billing/types";
 import PinnedBillingWidget from "./billing/PinnedBillingWidget";
 import AnnualBillingPrompt from "./billing/AnnualBillingPrompt";
+import AvailabilityWidget from "./AvailabilityWidget";
+
+type LeaderboardRank = {
+  rank: number;
+  score: number;
+  total: number;
+  percentile: number | null;
+} | { rank: null };
+
+function YourRankWidget() {
+  const [data, setData] = useState<LeaderboardRank | null>(null);
+
+  useEffect(() => {
+    fetch("/api/advisor-auth/leaderboard")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: LeaderboardRank | null) => { if (d) setData(d); })
+      .catch(() => { /* fail silently */ });
+  }, []);
+
+  if (!data) return null;
+
+  if (!data.rank) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Icon name="award" size={16} className="text-slate-400" />
+          <h3 className="text-sm font-bold text-slate-700">Your Leaderboard Rank</h3>
+        </div>
+        <p className="text-xs text-slate-500">Complete your profile and earn leads to appear on the <Link href="/advisors/leaderboard" className="text-teal-600 hover:underline font-medium">monthly leaderboard</Link>.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-4 mb-6 flex items-center justify-between gap-4">
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <Icon name="award" size={16} className="text-teal-600" />
+          <h3 className="text-sm font-bold text-teal-900">Your Leaderboard Rank</h3>
+        </div>
+        <p className="text-xs text-teal-700">
+          {data.percentile != null ? `Top ${100 - data.percentile}% of advisors this month` : `Score: ${data.score}`}
+        </p>
+      </div>
+      <div className="text-right shrink-0">
+        <div className="text-3xl font-extrabold text-teal-600">#{data.rank}</div>
+        <div className="text-[0.62rem] text-teal-500">of {data.total}</div>
+      </div>
+      <Link href="/advisors/leaderboard" className="shrink-0 text-xs font-bold text-teal-600 hover:text-teal-800 underline underline-offset-2">
+        View →
+      </Link>
+    </div>
+  );
+}
 
 type Props = {
   advisor: Advisor | null;
@@ -33,7 +88,9 @@ export default function DashboardTab({
   return (
     <>
       <h1 className="text-xl font-bold text-slate-900 mb-1">Welcome{isPending ? "" : " back"}, {advisor?.name?.split(" ")[0]}</h1>
-      <p className="text-sm text-slate-500 mb-6">{advisor?.firm_name || PROFESSIONAL_TYPE_LABELS[advisor?.type as keyof typeof PROFESSIONAL_TYPE_LABELS]}</p>
+      <p className="text-sm text-slate-500 mb-4">{advisor?.firm_name || PROFESSIONAL_TYPE_LABELS[advisor?.type as keyof typeof PROFESSIONAL_TYPE_LABELS]}</p>
+
+      <AvailabilityWidget advisor={advisor} />
 
       {advisor?.profile_complete && !advisor?.booking_link && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
@@ -73,6 +130,8 @@ export default function DashboardTab({
           </div>
         ))}
       </div>
+
+      <YourRankWidget />
 
       {/* Free-leads notice (advisor still on the launch trial) */}
       {(advisor?.free_leads_used ?? 0) < 3 && (

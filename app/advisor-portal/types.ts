@@ -13,7 +13,8 @@ export type ViewType =
   | "badges"
   | "team"
   | "settings"
-  | "feed";
+  | "feed"
+  | "case-studies";
 
 export type Advisor = {
   id: number; name: string; slug: string; firm_name?: string; email?: string;

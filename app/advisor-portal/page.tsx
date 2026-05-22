@@ -25,6 +25,7 @@ const CourseBuilderTab = dynamic(() => import("./CourseBuilderTab"));
 const EventsTab = dynamic(() => import("./EventsTab"));
 const BadgesTab = dynamic(() => import("./BadgesTab"));
 const FeedTab = dynamic(() => import("./FeedTab"));
+const CaseStudiesTab = dynamic(() => import("./CaseStudiesTab"));
 
 export default function AdvisorPortalPage() {
   const [view, setView] = useState<ViewType>("login");
@@ -202,6 +203,7 @@ export default function AdvisorPortalPage() {
     { key: "cpd", label: "CPD", icon: "award" },
     { key: "feed", label: "Feed", icon: "activity" },
     { key: "articles", label: "Articles", icon: "file-text" },
+    { key: "case-studies", label: "Case Studies", icon: "briefcase" },
     { key: "courses", label: "Courses", icon: "book-open" },
     { key: "events", label: "Events", icon: "calendar" },
     { key: "badges", label: "Badges", icon: "award" },
@@ -345,6 +347,9 @@ export default function AdvisorPortalPage() {
         )}
 
         {view === "articles" && <AdvisorArticlesSection advisorId={advisor?.id} />}
+
+        {/* ─── CASE STUDIES ─── */}
+        {view === "case-studies" && <CaseStudiesTab advisor={advisor} />}
 
         {/* ─── FEED ─── */}
         {view === "feed" && (

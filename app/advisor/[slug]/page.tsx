@@ -10,6 +10,7 @@ import ComplianceFooter from "@/components/ComplianceFooter";
 import ClaimListingButton from "@/components/claims/ClaimListingButton";
 import OutcomeBadge from "@/components/outcomes/OutcomeBadge";
 import TestimonialList from "@/components/outcomes/TestimonialList";
+import EndorsementsSection from "./components/EndorsementsSection";
 import {
   getProviderOutcomeBadge,
   getPublicTestimonials,
@@ -152,12 +153,28 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   if (pro.linkedin_url) sameAs.push(pro.linkedin_url);
   if (pro.twitter_url) sameAs.push(pro.twitter_url);
 
-  // Outcome flywheel display data — fetched in parallel to keep the
-  // page render fast. Both helpers fail-soft on DB errors.
-  const [outcomeBadge, testimonials] = await Promise.all([
+  // Outcome flywheel display data + endorsements + user session — fetched in parallel.
+  const [outcomeBadge, testimonials, endorsementsResult, sessionResult] = await Promise.all([
     getProviderOutcomeBadge({ professionalId: pro.id }),
     getPublicTestimonials({ professionalId: pro.id, limit: 5 }),
+    supabase.from("advisor_endorsements").select("skill, user_id").eq("professional_id", pro.id).limit(500),
+    supabase.auth.getUser(),
   ]);
+
+  const endorsementRows: { skill: string; user_id: string }[] = endorsementsResult.data ?? [];
+  const sessionUser = sessionResult.data.user;
+
+  const endorsementCounts: Record<string, number> = {};
+  for (const row of endorsementRows) {
+    endorsementCounts[row.skill] = (endorsementCounts[row.skill] ?? 0) + 1;
+  }
+  const myEndorsed = new Set(
+    sessionUser ? endorsementRows.filter((r) => r.user_id === sessionUser.id).map((r) => r.skill) : []
+  );
+  const initialSkills = Object.entries(endorsementCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 20)
+    .map(([skill, count]) => ({ skill, count, endorsedByMe: myEndorsed.has(skill) }));
 
   const personLd: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -232,6 +249,13 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
           <TestimonialList testimonials={testimonials} />
         </div>
       )}
+      <div className="container-custom max-w-4xl mt-4">
+        <EndorsementsSection
+          slug={slug}
+          initialSkills={initialSkills}
+          isLoggedIn={!!sessionUser}
+        />
+      </div>
       <ClaimListingButton
         claimType="advisor"
         targetSlug={pro.slug}
