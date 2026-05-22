@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { Scenario } from "@/lib/types";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -50,9 +51,20 @@ export default async function ScenariosPage() {
 
   const bcLd = breadcrumbJsonLd([{ name: "Home", url: absoluteUrl("/") }, { name: "Scenarios" }]);
 
+  const scenariosFaqLd = faqJsonLd([
+    { q: "What is an investing scenario?", a: "An investing scenario groups broker recommendations by your specific situation — such as whether you're an SMSF trustee, a first-home buyer using government schemes, a day trader who needs Level 2 data, or an expat managing overseas assets. Each scenario surfaces the platforms most relevant to that use case, saving you from comparing features you don't need." },
+    { q: "Which broker is best for SMSFs in Australia?", a: "SMSF trustees typically need a broker that supports corporate trustee accounts, CHESS-sponsored holdings for easy audit trails, international market access, and competitive brokerage on regular portfolio rebalancing. Platforms with dedicated SMSF onboarding (such as those offering HIN-segregated corporate accounts) are preferred by SMSF auditors over custodian-held structures." },
+    { q: "Which broker is best for day trading Australian shares?", a: "Active and day traders typically prioritise platforms with Level 2 market depth data, direct market access (DMA), low per-trade brokerage (under $10 for trades under $25,000), charting tools with technical indicators, and fast order execution. Some platforms offer a reduced fee schedule for high-volume traders." },
+    { q: "Can expats invest in Australian shares from overseas?", a: "Yes — most Australian brokers accept non-resident clients, though account opening requirements vary. You'll need to provide foreign address verification and a TFN or Australian tax number. Non-residents pay withholding tax on Australian dividends (30% standard, reduced under a DTA). CGT on Australian land and taxable Australian property still applies to non-residents. Confirm your broker supports non-resident status and correctly withholds tax before investing." },
+    { q: "Can you invest on behalf of children in Australia?", a: "Yes, through a parent/guardian account (often called an 'in-trust' account), a bare trust, or a custodial investment account. Some brokers allow adult account holders to open a linked account for minors. Earnings are taxed at penalty rates (up to 66%) for children under 18 if passive income exceeds $416 per year, unless the income is from employment or compensation. A tax adviser can help structure an investment for a minor to minimise the penalty tax." },
+  ]);
+
   return (
     <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bcLd) }} />
+    {scenariosFaqLd && (
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(scenariosFaqLd) }} />
+    )}
     <div className="py-5 md:py-12">
       <div className="container-custom">
         <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">Investing Scenarios</h1>
