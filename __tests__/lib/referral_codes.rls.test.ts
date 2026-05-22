@@ -69,7 +69,8 @@ describe("referral_codes — RLS isolation", () => {
 
   it("user A cannot SELECT user B's referral code", async () => {
     const { data } = await clientA.select();
-    expect(data!.filter((r) => r.user_id === USER_B)).toHaveLength(0);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect(data!.filter((r: any) => r.user_id === USER_B)).toHaveLength(0);
   });
 
   it("user B can SELECT their own referral code", async () => {
