@@ -16,7 +16,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 |--------|--------|------------------------|-------|-----------|
 | A | _complete_ | #207/#322/#351/#352/#353/#354/#355/#378/#380/#381/#382/#457/#540 | A-01..A-04 done. A-05 resolved as **false-positive** — `broker_reviews`/`broker_ratings` don't exist in schema; covered by `user_reviews` (A-02). **Stream complete.** | A-05 merged ✓ |
 | B | `claude/audit-remediation/b-09-edge-fn-secrets` | #208/#301/#457 | B-01..B-08 done. B-09 blocked (see Blocked). | B-09 unblocked + merged |
-| C | `claude/audit-remediation/c-disc-20260522-admin-scope` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541/**#1165 OPEN** | C-01..C-02 done. C-03..C-05 blocked (see Blocked). C-DISC-20260522-01: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/v1/brokers/route.ts`; 20 tests pass. C-DISC-20260522-02: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/community/categories/route.ts`; 6 tests pass. PR #1165 OPEN. Synced with main (iter 520, `04a1aa8`) to trigger CI. | C-DISC-01+02 merged |
+| C | `claude/audit-remediation/c-disc-20260522-admin-scope` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541/**#1165 MERGED 2026-05-22** | C-01..C-02 done. C-03..C-05 blocked (see Blocked). C-DISC-20260522-01: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/v1/brokers/route.ts`; 20 tests pass. C-DISC-20260522-02: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/community/categories/route.ts`; 6 tests pass. **#1165 MERGED 2026-05-22 (iter 523, `43dc1a8`)** — Tier B, 18-min observation window, all required checks green. C-DISC-01+02 complete. | C-DISC-01+02 merged ✓ |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
 | F | _complete_ | **#925 MERGED 2026-05-20** | F-01..F-07 done. F-08 blocked. F-DISC-01 #741 MERGED. F-DISC-20260519-01: **#925 MERGED by founder 2026-05-20** — `requireAdmin` consolidated, `escapeHtml` consolidated, 21 false-positives allowlisted. **Stream engineering complete.** F-DISC-20260522-01: **false-positive** (iter 517) — `formatAud` in `FeeImpactVisualiser.tsx` takes dollars (compact `$Xk`/`$XM` for chart labels); `lib/first-home-buyer/state-grants.ts:formatAud` takes cents (full `Intl.NumberFormat`). Different signatures, different units, different output format — not a SSOT violation. | **Stream complete.** |
@@ -85,7 +85,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-27 | _complete_ | **#1032 MERGED 2026-05-20** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). **#1032 merged by founder 2026-05-20. Stream complete.** | Z-27 merged ✓ |
 | BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
-| PX | `claude/audit-remediation/px-api-tests` | **#1160 OPEN** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. CI-RESCUE iter 518: merged origin/main into PX branch (`aaac185`) — resolved `mergeable_state: dirty` caused by stale queue commit on PX; all 99 PX tests pass. | All PX tasks + tests merged |
+| PX | `claude/audit-remediation/px-api-tests` | **#1160 MERGED 2026-05-22** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. CI-RESCUE iter 518: merged origin/main into PX branch (`aaac185`) — resolved `mergeable_state: dirty` caused by stale queue commit on PX; all 99 PX tests pass. **#1160 MERGED 2026-05-22 (iter 522, `8636b28`)** — Tier A auto-merge, all required checks green. **Stream complete.** | All PX tasks + tests merged ✓ |
 
 ---
 
@@ -128,7 +128,7 @@ review is required for the investor-startup connection flows.
 
 7 `CI-RESCUE` iterations on `Lint · Type-check · Test · Build` for PR #1048 in the last 24 hours: iters 503, 506, 508, 509, 511, 515, 519. Each rescue fixed a real sequential issue (the CI pipeline surfaces one failing step at a time — Zod v4 → AccountKind TS → lint warnings → async params → metadata gate → JSON-LD gate → coverage threshold). All local checks now pass: 119+ tests green, coverage thresholds met, lint exit 0, JSON-LD gate clean, rate-limits 100%. The current failure is in a step the sandbox cannot reproduce — full `npx tsc --noEmit` OOMs before completion, and `npm run build` times out within the sandbox's 180s budget. CI on GitHub Actions runners (higher RAM, no wall-clock OOM) is the authoritative gate.
 
-**Last 3 rescue commits:** `ba50786` (data-room + esic-verify tests, iter 519), `f390d6e` (merge main into SP, iter 519), `fdd8f37` (JSON-LD exemption gate, iter 515).
+**Last 3 rescue commits:** `be934c5` (empty re-trigger after local-vs-CI investigation, this fire), `ba50786` (data-room + esic-verify tests, iter 519), `fdd8f37` (JSON-LD exemption gate, iter 515). **All local gates confirmed green (tsc exit 0, lint exit 0, 56 new tests pass, coverage thresholds met, JSON-LD clean, rate-limits 100%).** CI run `26269076843` is in progress as of 04:50 UTC — awaiting conclusion to determine if stuck-detection block can be cleared.
 
 **Recommendation matrix:**
 - **(a) Investigate locally** with adequate RAM: `NODE_OPTIONS="--max-old-space-size=8192" npx tsc --noEmit` then `npm run build`. Identify the exact failing step from the CI job log for run 26268090584. The sequential pattern suggests the current failure is either a type error in one of the new SP pages/components (tsc step) or a Next.js build-boundary issue (build step).
@@ -234,6 +234,27 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 523 — 2026-05-22 — C #1165 merged (Tier B, 18-min observation)
+
+- **Stream:** C (admin.ts scope reset — Tier B refactor)
+- **Phase:** 6 — merge
+- **PR:** #1165 MERGED (`43dc1a8`)
+- **Merge basis:** All required CI checks green (Lint/Build = SUCCESS at 04:38:37 UTC, 18-min window elapsed). Tier B — additive refactor replacing `createAdminClient()` with `await createClient()` in `app/api/v1/brokers/route.ts` and `app/api/community/categories/route.ts`. Non-required failures (Supabase types drift, Preview smoke test) are pre-existing infrastructure issues, not regressions.
+- **STATUS: PROGRESS · stream=C · item=C-DISC-01+02 · pr=#1165**
+
+---
+
+### iter 522 — 2026-05-22 — PX #1160 merged (Tier A)
+
+- **Stream:** PX (platform expansion — test coverage)
+- **Phase:** 6 — merge
+- **PR:** #1160 MERGED (`8636b28`)
+- **Merge basis:** Tier A — test-only additions (`__tests__/**`), 1472 LOC additions ≤ 1500 limit. All required CI checks green (Lint/Build = SUCCESS, dated-stats, RLS isolation, Stripe idempotency, secret scan, dependency vulnerabilities, bundle size). Non-required failures (a11y, Preview smoke test, Supabase types drift) are pre-existing infrastructure issues, not regressions introduced by PX code.
+- **Stream complete:** All PX tasks (PX-01..PX-07 + DISC-07/08/09) merged. 95 total test cases on main.
+- **STATUS: PROGRESS · stream=PX · item=PX-merge · pr=#1160**
+
+---
 
 ### iter 521 — 2026-05-22 — SP stuck-detection guard (7 CI-RESCUE attempts)
 
