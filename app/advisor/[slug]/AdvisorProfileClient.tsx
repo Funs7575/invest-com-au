@@ -18,6 +18,7 @@ import { getVerificationConfig, getVerificationLinks } from "@/lib/advisor-verif
 import { getQualificationData } from "@/lib/qualification-store";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 import { isValidEmail } from "@/lib/validate-email";
+import SocialShareButtons from "@/components/SocialShareButtons";
 
 const TYPE_TO_PLATFORMS: Record<string, { label: string; href: string }[]> = {
   smsf_accountant: [
@@ -340,6 +341,15 @@ export default function AdvisorProfileClient({
                     </>
                   )}
                 </p>
+
+                {/* Social share */}
+                <div className="mb-3">
+                  <SocialShareButtons
+                    url={`https://invest.com.au/advisor/${pro.slug}`}
+                    title={`${pro.name} — ${typeLabel} | Invest.com.au`}
+                    compact
+                  />
+                </div>
 
                 {/* Meta row */}
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-500 mb-4">

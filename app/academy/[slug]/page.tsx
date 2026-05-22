@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import SocialShareButtons from "@/components/SocialShareButtons";
 import {
   getAcademyCourse,
   getTopAcademyCourseSlugs,
@@ -281,6 +282,14 @@ export default async function AcademyCourseDetailPage({ params }: PageProps) {
                     name
                   )}
                 </span>
+              </div>
+
+              <div className="mb-6">
+                <SocialShareButtons
+                  url={absoluteUrl(`/academy/${course.slug}`)}
+                  title={`${course.title} | Invest.com.au Academy`}
+                  compact
+                />
               </div>
 
               {course.description && (

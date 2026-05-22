@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdvisorsClient from "@/app/advisors/AdvisorsClient";
 import type { Professional } from "@/lib/types";
 
@@ -60,42 +60,49 @@ const professionals: Professional[] = [
   }),
 ];
 
-describe("AdvisorsClient — directory primitives wiring", () => {
+describe("AdvisorsClient — filter panel wiring", () => {
   beforeEach(() => {
     mockReplace.mockClear();
     paramsRef.current = new URLSearchParams();
   });
 
-  it("renders the Advisor Type options through the FacetGroup primitive", () => {
+  it("renders the Advisor Type toggle buttons in the filter panel", () => {
     render(<AdvisorsClient professionals={professionals} />);
+    // Filter panel is hidden until the Filters toggle is clicked
+    fireEvent.click(screen.getByRole("button", { name: /Filters/i }));
     expect(screen.getByText("Advisor Type")).toBeInTheDocument();
-    // FacetGroup labels are pluralised ("Financial Planners"); anchor to avoid
-    // matching compound types like "Energy Financial Planners".
-    expect(screen.getByRole("checkbox", { name: /^Financial Planners/ })).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: /^SMSF Accountants/ })).toBeInTheDocument();
+    // Component uses toggle buttons (not checkboxes) for type filtering
+    expect(screen.getByRole("button", { name: /^Financial Planners/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^SMSF Accountants/ })).toBeInTheDocument();
   });
 
-  it("renders the Minimum rating RangeSlider (single-handle)", () => {
+  it("renders the Min Rating filter select in the filter panel", () => {
     render(<AdvisorsClient professionals={professionals} />);
-    expect(screen.getByText("Minimum rating")).toBeInTheDocument();
-    expect(screen.getAllByRole("slider").length).toBeGreaterThanOrEqual(1);
+    fireEvent.click(screen.getByRole("button", { name: /Filters/i }));
+    expect(screen.getByText("Min Rating")).toBeInTheDocument();
+    // Component uses <select> elements for rating/state/fee filters
+    expect(screen.getAllByRole("combobox").length).toBeGreaterThanOrEqual(1);
   });
 
-  it("toggling a type facet writes the matching URL param (URL-first)", () => {
+  it("toggling a type button writes the matching URL param (URL-first)", async () => {
     render(<AdvisorsClient professionals={professionals} />);
-    fireEvent.click(screen.getByRole("checkbox", { name: /^Financial Planners/ }));
-    expect(mockReplace).toHaveBeenCalled();
-    expect(mockReplace.mock.calls.at(-1)?.[0]).toContain("type=financial_planner");
+    fireEvent.click(screen.getByRole("button", { name: /Filters/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^Financial Planners/ }));
+    // URL update is debounced 300ms; waitFor retries until the assertion passes
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalled();
+      expect(mockReplace.mock.calls.at(-1)?.[0]).toContain("type=financial_planner");
+    });
   });
 
   it("renders an active-filter chip strip derived from the URL", () => {
     paramsRef.current = new URLSearchParams("type=financial_planner");
     render(<AdvisorsClient professionals={professionals} />);
-    // The shared FilterChips strip renders its "Filtering:" prefix once a chip exists.
-    expect(screen.getByText(/Filtering:/i)).toBeInTheDocument();
+    // Active filters render a chip strip with a "Clear all" dismissal button
+    expect(screen.getByRole("button", { name: "Clear all" })).toBeInTheDocument();
   });
 
-  it("renders no FilterChips strip when the URL has no filters", () => {
+  it("renders no active-filter chips when the URL has no filters", () => {
     render(<AdvisorsClient professionals={professionals} />);
     expect(screen.queryByText(/Filtering:/i)).not.toBeInTheDocument();
   });
