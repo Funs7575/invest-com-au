@@ -15,10 +15,12 @@ import type { BillingSummary } from "./billing/types";
 const DashboardTab = dynamic(() => import("./DashboardTab"));
 const LeadsTab = dynamic(() => import("./LeadsTab"));
 const AnalyticsTab = dynamic(() => import("./AnalyticsTab"));
+const CPDTab = dynamic(() => import("./CPDTab"));
 const ProfileTab = dynamic(() => import("./ProfileTab"));
 const BillingTab = dynamic(() => import("./BillingTab"));
 const SettingsTab = dynamic(() => import("./SettingsTab"));
 const TeamTab = dynamic(() => import("./TeamTab"));
+const CourseBuilderTab = dynamic(() => import("./CourseBuilderTab"));
 
 export default function AdvisorPortalPage() {
   const [view, setView] = useState<ViewType>("login");
@@ -193,7 +195,9 @@ export default function AdvisorPortalPage() {
     { key: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
     { key: "leads", label: "Leads", icon: "inbox" },
     { key: "analytics", label: "Analytics", icon: "bar-chart" },
+    { key: "cpd", label: "CPD", icon: "award" },
     { key: "articles", label: "Articles", icon: "file-text" },
+    { key: "courses", label: "Courses", icon: "book-open" },
     { key: "profile", label: "Profile", icon: "user" },
     { key: "billing", label: "Billing", icon: "credit-card" },
     ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
@@ -328,6 +332,14 @@ export default function AdvisorPortalPage() {
         )}
 
         {view === "articles" && <AdvisorArticlesSection advisorId={advisor?.id} />}
+
+        {/* ─── CPD TRACKER ─── */}
+        {view === "cpd" && <CPDTab />}
+
+        {/* ─── COURSES ─── */}
+        {view === "courses" && (
+          <CourseBuilderTab advisor={advisor} />
+        )}
 
         {/* ─── SETTINGS ─── */}
         {view === "settings" && (
