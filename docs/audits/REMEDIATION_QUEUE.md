@@ -122,6 +122,25 @@ review is required for the investor-startup connection flows.
 
 ---
 
+### SP #1048 — Lint · Type-check · Test · Build persistent failure (stuck-detection guard, 7 attempts)
+
+**Stuck-detection guard fires per REMEDIATION_DEFAULTS.md §Phase 2.**
+
+7 `CI-RESCUE` iterations on `Lint · Type-check · Test · Build` for PR #1048 in the last 24 hours: iters 503, 506, 508, 509, 511, 515, 519. Each rescue fixed a real sequential issue (the CI pipeline surfaces one failing step at a time — Zod v4 → AccountKind TS → lint warnings → async params → metadata gate → JSON-LD gate → coverage threshold). All local checks now pass: 119+ tests green, coverage thresholds met, lint exit 0, JSON-LD gate clean, rate-limits 100%. The current failure is in a step the sandbox cannot reproduce — full `npx tsc --noEmit` OOMs before completion, and `npm run build` times out within the sandbox's 180s budget. CI on GitHub Actions runners (higher RAM, no wall-clock OOM) is the authoritative gate.
+
+**Last 3 rescue commits:** `ba50786` (data-room + esic-verify tests, iter 519), `f390d6e` (merge main into SP, iter 519), `fdd8f37` (JSON-LD exemption gate, iter 515).
+
+**Recommendation matrix:**
+- **(a) Investigate locally** with adequate RAM: `NODE_OPTIONS="--max-old-space-size=8192" npx tsc --noEmit` then `npm run build`. Identify the exact failing step from the CI job log for run 26268090584. The sequential pattern suggests the current failure is either a type error in one of the new SP pages/components (tsc step) or a Next.js build-boundary issue (build step).
+- **(b) Admin-merge after SP-12 compliance signoff** — if code is functionally verified and the CI failure is identified as environmental or a minor fixable error: the startup portal functionality was verified through 13 sub-items (SP-01..SP-13); the test suite at 119+ cases covers all API paths; the PR can be admin-merged (bypasses CI) after compliance signoff. Run `npx vitest run __tests__/...` locally first per CLAUDE.md admin-merge caution.
+- **(c) Rebase + fresh CI run** — after local investigation identifies and fixes the root cause, push the fix; the sequential CI pattern should clear on the next run.
+
+**Note:** SP-12 compliance signoff (separate Blocked entry above) is also required before merge regardless of CI state.
+
+**Once resolved:** delete this entry and the loop will resume SP work.
+
+---
+
 ### QQ-08 — Compliance signoff required before public Q&A exposure (human gate)
 
 QQ engineering is complete (QQ-05..QQ-10 all done in PR #920). The public
@@ -215,6 +234,20 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 521 — 2026-05-22 — SP stuck-detection guard (7 CI-RESCUE attempts)
+
+- **Stream:** SP (startup portal — stuck detection)
+- **Phase:** 2 — CI rescue → stuck-detection guard fires
+- **PR:** #1048 OPEN
+- **Stuck-detection trigger:** 7 `CI-RESCUE` entries on `Lint · Type-check · Test · Build` for PR #1048 in 24 hours (iters 503, 506, 508, 509, 511, 515, 519). Threshold is 3. Guard fires per REMEDIATION_DEFAULTS.md §Phase 2.
+- **Root cause analysis:** Each prior rescue fixed a sequentially surfaced CI step (Zod v4 → AccountKind TS → lint → async params → metadata gate → JSON-LD gate → coverage). All local checks pass (119+ tests, coverage thresholds, lint 0, JSON-LD clean, rate-limits 100%). Sandbox cannot reproduce the remaining failure — full `tsc --noEmit` OOMs, `npm run build` times out at 180s.
+- **PX #1160 status:** `Lint · Type-check · Test · Build` → SUCCESS. `Accessibility` check still failing (2nd occurrence on PX; root cause is NOT in PX code — PX is test-only). `mergeable_state: "unstable"`. Tier A — ready for founder merge. The a11y failure predates PX and belongs to a main fix.
+- **C #1165 status:** `Lint · Type-check · Test · Build` → SUCCESS (run 26268218661). E2E/a11y/Lighthouse were in-progress at last check. Tier B — await full CI completion then founder can merge.
+- **Blocked entry added:** "SP #1048 — Lint · Type-check · Test · Build persistent failure (stuck-detection guard, 7 attempts)" with recommendation matrix.
+- **STATUS: BLOCKED · stream=SP · item=persistent-CI-failure · pr=#1048**
+
+---
 
 ### iter 520 — 2026-05-22 — C branch CI trigger (merge-with-main)
 
