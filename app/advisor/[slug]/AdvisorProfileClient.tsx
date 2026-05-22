@@ -310,24 +310,22 @@ export default function AdvisorProfileClient({
                       Cross-Border Tax
                     </span>
                   )}
-                  {/* Availability status badge — prefers the new availability_status field;
-                      falls back to the legacy accepting_new_clients boolean. */}
-                  {(pro.availability_status === 'open' || (!pro.availability_status && pro.accepting_new_clients !== false)) && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                      Accepting clients
+                  {(pro.availability_status === 'open' || !pro.availability_status) && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 border border-green-200 text-xs font-bold shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+                      Accepting Clients
                     </span>
                   )}
                   {pro.availability_status === 'waitlist' && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                      Waitlist
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 border border-amber-200 text-xs font-bold shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                      Waitlist Open
                     </span>
                   )}
-                  {(pro.availability_status === 'closed' || (!pro.availability_status && pro.accepting_new_clients === false)) && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-bold shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
-                      Not taking clients
+                  {pro.availability_status === 'closed' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-700 border border-red-200 text-xs font-bold shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                      Not Taking New Clients
                     </span>
                   )}
                 </div>

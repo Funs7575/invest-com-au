@@ -395,8 +395,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       if (verifiedOnly) result = result.filter(p => p.verified);
       if (languageFilter !== "all") result = result.filter(p => (p.languages ?? []).includes(languageFilter));
       if (acceptingOnly) result = result.filter(p =>
-        p.availability_status === 'open' ||
-        (!p.availability_status && p.accepts_new_clients !== false)
+        p.availability_status === 'open' || !p.availability_status
       );
       if (videoOnly) result = result.filter(p => !!p.intro_video_url);
       if (search) {
@@ -432,8 +431,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       if (internationalOnly && !p.accepts_international_clients && !p.firb_specialist && !p.international_tax_specialist) return false;
       if (languageFilter !== "all" && !(p.languages ?? []).includes(languageFilter)) return false;
       if (acceptingOnly && !(
-        p.availability_status === 'open' ||
-        (!p.availability_status && p.accepts_new_clients !== false)
+        p.availability_status === 'open' || !p.availability_status
       )) return false;
       if (videoOnly && !p.intro_video_url) return false;
       if (search) {
@@ -1229,22 +1227,22 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                               <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">FIRB</span>
                             )}
                             {/* Availability status badge */}
-                            {(pro.availability_status === 'open' || (!pro.availability_status && pro.accepts_new_clients !== false)) && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center gap-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                                Accepting clients
+                            {(pro.availability_status === 'open' || !pro.availability_status) && (
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 border border-green-200 flex items-center gap-0.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+                                Accepting Clients
                               </span>
                             )}
                             {pro.availability_status === 'waitlist' && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100 flex items-center gap-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                                Waitlist
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200 flex items-center gap-0.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                                Waitlist Open
                               </span>
                             )}
                             {pro.availability_status === 'closed' && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 flex items-center gap-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
-                                Not taking clients
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200 flex items-center gap-0.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                                Not Taking New Clients
                               </span>
                             )}
                           </div>
