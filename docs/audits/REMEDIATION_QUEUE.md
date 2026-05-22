@@ -207,6 +207,16 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 501 — 2026-05-22 — lib/slack-lead-notify unit tests (8 cases)
+
+- **Stream:** PX (DISC-20260522-05 — lib helper unit tests)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/px-api-tests`
+- **Commit:** `3496f9fd` — test(px): lib/slack-lead-notify unit tests
+- **Diff:** +98 LOC (`__tests__/lib/slack-lead-notify.test.ts`)
+- **Items done:** 8 test cases covering Block Kit payload assembly, null field fallbacks, need-key label mapping, context array join, fetch error propagation
+- **STATUS: PROGRESS · stream=PX · item=PX-DISC-20260522-05 · branch=claude/audit-remediation/px-api-tests**
+
 ### iter 500 — 2026-05-22 — PX stream API tests (4 routes, 521 LOC)
 
 - **Stream:** PX (platform expansion — Tier A tests)
