@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
 import type { Advisor, Stats, Lead, ProfileCompleteness, ViewType } from "./types";
 import type { BenchmarksResponse } from "@/app/api/advisor-auth/benchmarks/route";
+import type { ProfileScoreResponse } from "@/app/api/advisor-auth/profile-score/route";
 
 function formatResponseTime(minutes: number | null): string {
   if (minutes === null) return "—";
@@ -73,6 +74,13 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
   const [benchmarkLoading, setBenchmarkLoading] = useState(true);
   const [benchmarkError, setBenchmarkError] = useState(false);
 
+  const [profileScore, setProfileScore] = useState<ProfileScoreResponse | null>(null);
+  const [profileScoreLoading, setProfileScoreLoading] = useState(true);
+  const [profileScoreError, setProfileScoreError] = useState(false);
+
+  const [exportPeriod, setExportPeriod] = useState<"30d" | "90d" | "all">("30d");
+  const [exporting, setExporting] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
     void (async () => {
@@ -88,11 +96,78 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
     return () => { cancelled = true; };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const r = await fetch("/api/advisor-auth/profile-score");
+        if (!r.ok) throw new Error("fetch failed");
+        const data = await r.json() as ProfileScoreResponse;
+        if (!cancelled) { setProfileScore(data); setProfileScoreLoading(false); }
+      } catch {
+        if (!cancelled) { setProfileScoreError(true); setProfileScoreLoading(false); }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  async function handleExportCsv() {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const r = await fetch(`/api/advisor-auth/analytics/export?period=${exportPeriod}`);
+      if (!r.ok) {
+        const body = await r.json() as { error?: string };
+        alert(body.error ?? "Export failed. Please try again.");
+        return;
+      }
+      const blob = await r.blob();
+      const disposition = r.headers.get("Content-Disposition") ?? "";
+      const filenameMatch = /filename="([^"]+)"/.exec(disposition);
+      const filename = filenameMatch?.[1] ?? `leads-${exportPeriod}.csv`;
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      alert("Export failed. Please try again.");
+    } finally {
+      setExporting(false);
+    }
+  }
+
   return (
     <div className="space-y-4 md:space-y-6">
-      <div>
-        <h2 className="text-lg md:text-xl font-bold text-slate-900">Performance Analytics</h2>
-        <p className="text-xs text-slate-500 mt-0.5">How your profile and content are performing across invest.com.au</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h2 className="text-lg md:text-xl font-bold text-slate-900">Performance Analytics</h2>
+          <p className="text-xs text-slate-500 mt-0.5">How your profile and content are performing across invest.com.au</p>
+        </div>
+
+        {/* CSV Export */}
+        <div className="flex items-center gap-2 shrink-0">
+          <select
+            value={exportPeriod}
+            onChange={(e) => setExportPeriod(e.target.value as "30d" | "90d" | "all")}
+            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-400"
+          >
+            <option value="30d">Last 30 days</option>
+            <option value="90d">Last 90 days</option>
+            <option value="all">All time</option>
+          </select>
+          <button
+            onClick={() => void handleExportCsv()}
+            disabled={exporting}
+            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          >
+            <Icon name={exporting ? "loader" : "download"} size={13} className={exporting ? "animate-spin" : ""} />
+            {exporting ? "Exporting…" : "Export CSV"}
+          </button>
+        </div>
       </div>
 
       {/* Top-level metrics */}
@@ -365,6 +440,89 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
             <p className="text-[0.55rem] text-slate-300 mt-3">
               &ldquo;Top 25%&rdquo; = best-performing quartile of your peer cohort. Benchmarks update nightly.
             </p>
+          </>
+        )}
+      </div>
+
+      {/* Profile Performance Score */}
+      <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-sm font-bold text-slate-900">Profile Performance Score</h3>
+          {profileScore && (
+            <span
+              className={`text-sm font-bold px-2.5 py-0.5 rounded-full ${
+                profileScore.score >= 80
+                  ? "bg-emerald-100 text-emerald-700"
+                  : profileScore.score >= 50
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-red-100 text-red-700"
+              }`}
+            >
+              {profileScore.score} / {profileScore.maxScore}
+            </span>
+          )}
+        </div>
+        <p className="text-[0.6rem] text-slate-400 mb-3">
+          A higher score means more trust signals for investors browsing your profile.
+        </p>
+
+        {profileScoreLoading && (
+          <div className="flex items-center gap-2 py-4 text-xs text-slate-400">
+            <span className="w-4 h-4 border-2 border-slate-200 border-t-slate-400 rounded-full animate-spin shrink-0" />
+            Calculating score…
+          </div>
+        )}
+
+        {profileScoreError && (
+          <p className="text-xs text-slate-400 py-2">Score unavailable — check back soon.</p>
+        )}
+
+        {!profileScoreLoading && !profileScoreError && profileScore && (
+          <>
+            {/* Progress bar */}
+            <div className="w-full bg-slate-100 rounded-full h-2 mb-4">
+              <div
+                className={`h-2 rounded-full transition-all duration-500 ${
+                  profileScore.score >= 80
+                    ? "bg-emerald-500"
+                    : profileScore.score >= 50
+                      ? "bg-amber-400"
+                      : "bg-red-400"
+                }`}
+                style={{ width: `${profileScore.score}%` }}
+              />
+            </div>
+
+            {/* Breakdown rows */}
+            <div className="space-y-1.5">
+              {profileScore.breakdown.map((item, i) => (
+                <div key={i} className={`flex items-start gap-2.5 p-2 rounded-lg ${item.earned ? "bg-emerald-50" : "bg-slate-50"}`}>
+                  <span className={`mt-0.5 shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[0.55rem] font-bold ${item.earned ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-400"}`}>
+                    {item.earned ? "✓" : "–"}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={`text-xs font-medium ${item.earned ? "text-emerald-800" : "text-slate-700"}`}>
+                        {item.label}
+                      </span>
+                      <span className={`text-[0.6rem] font-bold shrink-0 ${item.earned ? "text-emerald-600" : "text-slate-400"}`}>
+                        {item.earned ? `+${item.points}` : `+0/${item.points}`}
+                      </span>
+                    </div>
+                    {!item.earned && (
+                      <p className="text-[0.6rem] text-slate-400 mt-0.5 leading-relaxed">{item.tip}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {profileScore.score === 100 && (
+              <div className="mt-3 text-center text-emerald-600 text-xs font-semibold py-1.5">
+                <Icon name="check-circle" size={14} className="inline mr-1" />
+                Perfect score! Your profile is fully optimised.
+              </div>
+            )}
           </>
         )}
       </div>

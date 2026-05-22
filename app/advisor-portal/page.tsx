@@ -27,6 +27,7 @@ const BadgesTab = dynamic(() => import("./BadgesTab"));
 const FeedTab = dynamic(() => import("./FeedTab"));
 const CaseStudiesTab = dynamic(() => import("./CaseStudiesTab"));
 const ReviewsTab = dynamic(() => import("./ReviewsTab"));
+const EarnTab = dynamic(() => import("./EarnTab"));
 
 export default function AdvisorPortalPage() {
   const [view, setView] = useState<ViewType>("login");
@@ -212,6 +213,7 @@ export default function AdvisorPortalPage() {
     { key: "profile", label: "Profile", icon: "user" },
     { key: "profile-details", label: "Profile Details", icon: "layers" },
     { key: "billing", label: "Billing", icon: "credit-card" },
+    { key: "earn", label: "Earn", icon: "gift" },
     ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
     { key: "settings", label: "Settings", icon: "settings" },
   ];
@@ -380,6 +382,11 @@ export default function AdvisorPortalPage() {
         {/* ─── SETTINGS ─── */}
         {view === "settings" && (
           <SettingsTab advisor={advisor} />
+        )}
+
+        {/* ─── EARN / REFERRALS ─── */}
+        {view === "earn" && (
+          <EarnTab advisor={advisor} />
         )}
 
         {/* ─── TEAM (firm admins only) ─── */}

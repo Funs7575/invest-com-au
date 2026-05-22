@@ -15,7 +15,8 @@ export type ViewType =
   | "settings"
   | "feed"
   | "case-studies"
-  | "reviews";
+  | "reviews"
+  | "earn";
 
 export type Advisor = {
   id: number; name: string; slug: string; firm_name?: string; email?: string;
