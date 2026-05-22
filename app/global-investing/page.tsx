@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 import HubFAQ from "@/components/HubFAQ";
@@ -161,6 +162,29 @@ const HERO_STATS = [
   { label: "Updated", value: "Monthly", sub: "Fees verified each cycle" },
 ];
 
+const globalFaqLd = faqJsonLd([
+  {
+    q: "Can Australians invest in international shares?",
+    a: "Yes. Australian investors can access international shares through ASX-listed ETFs (e.g. VGS for global developed markets, IVV for S&P 500, NDQ for Nasdaq), direct international share trading via brokers like CommSec International, Interactive Brokers, or Stake, or through managed funds and LICs with international mandates. Most Australians prefer ETFs for simplicity — no currency account, tax-straightforward, and diversified. Direct international share trading is more complex (currency conversion, US W-8BEN forms, fractional shares) but offers more control and potentially lower costs for large portfolios.",
+  },
+  {
+    q: "What is the best way for Australians to invest in US shares?",
+    a: "Most Australian investors access US shares via ASX-listed ETFs (VGS, IVV, NDQ) — simple, low-cost, no foreign currency account needed, and straightforward for tax. For direct US share trading, Interactive Brokers offers the lowest costs: USD 0.0035/share brokerage and 0.002% FX conversion. Stake ($3 flat + 0.7% FX) and moomoo ($1.99 + 0.05% FX) are more accessible for smaller trades. All direct US share accounts require a W-8BEN form (tax form confirming non-US status) to receive the reduced 15% dividend withholding rate.",
+  },
+  {
+    q: "What taxes apply to international share investments from Australia?",
+    a: "Australian tax residents pay Australian income tax on foreign dividends (at marginal rates) and CGT on gains when selling foreign shares. Foreign tax withheld can be claimed as a Foreign Income Tax Offset (FITO) to prevent double taxation. US dividends face 15% withholding tax (reduced rate via DTA after W-8BEN). UK dividends have no withholding. ETF distributions are typically received as Australian source income, simplifying tax. Currency gains/losses from FX conversion are also assessable. Keep records of all transactions including exchange rates at purchase.",
+  },
+  {
+    q: "What is currency risk and how does it affect Australian investors buying international shares?",
+    a: "Currency risk is the impact of AUD/foreign currency exchange rate movements on your investment returns. If the AUD strengthens against the USD while you hold US shares, your returns in AUD terms are reduced. If the AUD weakens, your returns are amplified. Over long periods, AUD/USD fluctuation has been material — AUD has ranged from US$0.48 to US$1.10 over the past 25 years. Currency-hedged ETFs (like VGAD — hedged version of VGS) eliminate this risk but charge slightly higher fees. Most long-term investors accept currency risk as part of global diversification.",
+  },
+  {
+    q: "Which countries have the best returns for Australian investors?",
+    a: "Historical returns vary by period and market. The US S&P 500 has outperformed most other markets over the past 15 years. Emerging markets (China, India, Brazil) offer higher growth potential but more volatility. European equities are cheaper by valuation metrics but have historically underperformed the US. A globally diversified approach (e.g. VGS covers 23 developed markets by market cap) provides exposure without betting on a single country. Most financial planning guidance recommends Australians hold 30–60% in international shares as part of a balanced portfolio.",
+  },
+]);
+
 export default function GlobalInvestingHubPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
@@ -171,6 +195,7 @@ export default function GlobalInvestingHubPage() {
   return (
     <div className="bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(globalFaqLd) }} />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
