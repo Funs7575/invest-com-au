@@ -49,6 +49,12 @@ const KIND_META: Record<
     icon: "🏷️",
     tone: "bg-rose-50 border-rose-200 hover:border-rose-400",
   },
+  org_admin: {
+    label: "Organisation",
+    description: "CPD courses, training platform, team management.",
+    icon: "🏫",
+    tone: "bg-teal-50 border-teal-200 hover:border-teal-400",
+  },
 };
 
 interface Props {
