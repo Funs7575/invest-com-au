@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `CONTRIBUTING.md` — commit convention (Conventional Commits), PR expectations, migration discipline, code style.
 - `docs/runbooks/` — incident response procedures.
 - `docs/strategy/FIN_NOTEBOOK.md` — Fin's persistent strategy notebook (revenue backlog, decisions log, "revisit in N months" items). Read at session start if the user asks anything strategic, revenue-related, or "what were we going to do about X". Append to it when new strategic decisions are made — don't delete, move resolved items to the bottom.
+- `docs/strategy/REGULATORY-AVOID-LIST.md` — **regulatory escalators that need MORE than the planned AFSL** (CSF/market/credit/CDR/AML/custody licences, personal advice, client money, product issuing). Read before building or un-gating anything touching payments, advice/recommendations, capital-raising, credit, bank-data ingestion, or cross-border. **Every listed escalator is never-autonomous (Tier E-equivalent): do not build, merge, un-draft, or enable without explicit founder + legal sign-off.**
 
 Everything below is the Claude-specific working notes that aren't in those files.
 
