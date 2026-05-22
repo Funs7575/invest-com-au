@@ -112,8 +112,25 @@ async function handler(req: NextRequest) {
     }
   }
 
-  log.info("AFSL expiry monitor completed", stats);
-  return NextResponse.json({ ok: true, ...stats });
+  // Fail loud: if there were advisers to check but no lookup ran, the AFSL
+  // provider is unconfigured (AFSL_LOOKUP_URL unset) and this weekly ASIC
+  // check is silently inert — an advisor could retain "active" status after a
+  // licence cancellation/suspension. Alert ops instead of a clean no-op.
+  const inert = stats.scanned > 0 && stats.lookups_run === 0;
+  if (inert) {
+    log.error(
+      "afsl-expiry-monitor INERT — AFSL_LOOKUP_URL not configured; no adviser licences were re-checked against the ASIC register",
+      { scanned: stats.scanned, skipped_no_lookup: stats.skipped_no_lookup },
+    );
+    sendEmail(
+      ADMIN_EMAIL,
+      "⚠️ AFSL expiry monitor inert — no ASIC checks ran",
+      `<p>The weekly AFSL expiry monitor scanned ${stats.scanned} active adviser(s) but performed <strong>0</strong> ASIC register lookups because no AFSL lookup provider is configured (<code>AFSL_LOOKUP_URL</code> unset). Adviser licences are <strong>not</strong> being re-checked, so a ceased/suspended AFSL would go undetected. Set <code>AFSL_LOOKUP_URL</code> in production to enable enforcement.</p>`,
+    );
+  }
+
+  log.info("AFSL expiry monitor completed", { inert, ...stats });
+  return NextResponse.json({ ok: true, inert, ...stats });
 }
 
 function sendEmail(to: string | null, subject: string, html: string): void {

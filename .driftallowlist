@@ -72,6 +72,8 @@ spatial_ref_sys
 # Founder dashboard PRs (#891–#893) added these tables without migrations; pending Stream A backfill.
 # brief_promo_codes + brief_promo_redemptions get their migration in this PR (#899) and so are
 # intentionally omitted here — the gate will fail loudly if they slip out of the migration set.
-# investor_oauth_connections — migration landed, removed from allowlist
-# afsl_register — migration landed, removed from allowlist
-# sharesight_connections — dropped via 20260729_drop_orphan_sharesight_connections.sql; removed from lib/database.types.ts
+# investor_oauth_connections + afsl_register removed 2026-05-21 — their migrations
+# have since landed (drift gate confirmed both are no longer drifted).
+# sharesight_connections removed — orphan plaintext-token table dropped via
+# 20260729_drop_orphan_sharesight_connections.sql (audit §5 #2); its stale type
+# entry in lib/database.types.ts cleared here (the 7d7570db fix had regressed).

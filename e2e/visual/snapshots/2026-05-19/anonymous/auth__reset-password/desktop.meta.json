@@ -1,0 +1,8 @@
+{
+  "route": "/auth/reset-password",
+  "finalUrl": "https://invest-com-au.vercel.app/auth/reset-password",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-19T22:50:15.982Z",
+  "viewport": "desktop"
+}

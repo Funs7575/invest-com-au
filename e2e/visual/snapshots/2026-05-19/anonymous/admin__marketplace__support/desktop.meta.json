@@ -1,0 +1,8 @@
+{
+  "route": "/admin/marketplace/support",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fmarketplace%2Fsupport",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:38:35.761Z",
+  "viewport": "desktop"
+}

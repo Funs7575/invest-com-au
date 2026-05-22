@@ -783,6 +783,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // AA-05: /[suburb]/property-investing programmatic pages (top-level URL, higher SEO priority)
+  const suburbInvestingPages = (suburbSlugs || []).map((s) => ({
+    url: `${baseUrl}/${s.slug}/property-investing`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
   // Property static hub pages
   const propertyHubPages = [
     { url: `${baseUrl}/property`, priority: 0.8 },
@@ -1091,5 +1099,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...findAdvisorCityPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages, investingForIndexPage, ...investingForPages, taxReturnHubPage, ...afslPages];
+  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...findAdvisorCityPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...suburbInvestingPages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages, investingForIndexPage, ...investingForPages, taxReturnHubPage, ...afslPages];
 }

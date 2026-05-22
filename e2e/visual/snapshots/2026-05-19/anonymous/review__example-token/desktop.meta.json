@@ -1,0 +1,8 @@
+{
+  "route": "/review/example-token",
+  "finalUrl": "https://invest-com-au.vercel.app/review/example-token",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-20T00:14:52.241Z",
+  "viewport": "desktop"
+}

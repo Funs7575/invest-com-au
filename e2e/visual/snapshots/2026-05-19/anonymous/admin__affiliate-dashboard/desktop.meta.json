@@ -1,0 +1,8 @@
+{
+  "route": "/admin/affiliate-dashboard",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Faffiliate-dashboard",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:29:59.228Z",
+  "viewport": "desktop"
+}

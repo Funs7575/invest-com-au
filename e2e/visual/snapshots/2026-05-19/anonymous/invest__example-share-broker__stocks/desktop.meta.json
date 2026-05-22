@@ -1,0 +1,8 @@
+{
+  "route": "/invest/example-share-broker/stocks",
+  "finalUrl": "https://invest-com-au.vercel.app/invest/example-share-broker/stocks",
+  "status": 500,
+  "redirected": false,
+  "capturedAt": "2026-05-19T23:35:15.783Z",
+  "viewport": "desktop"
+}

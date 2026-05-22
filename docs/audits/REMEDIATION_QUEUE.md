@@ -51,7 +51,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | MM | _complete_ | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 MERGED 2026-05-20** | MM-V01..V08 done. **Stream complete — #921 merged by founder 2026-05-20.** | All MM phases merged ✓ |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
-| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07 done (iter 492): data room upload + per-investor access grants + revoke (`d036cf47`). SP-08 done (iter 493): wholesale cert flow — /account/wholesale-cert + /api/wholesale-investor-cert/{submit,verify} + 14 tests (`60e4ca9`). SP-09 done (iter 494): ESIC verification — /startup-portal/esic-verification + /api/startups/esic-verify + 15 tests (`3d11fd6`). SP-10..SP-13 pending. | All SP tasks merged + compliance signoff |
+| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07 done (iter 492): data room upload + per-investor access grants + revoke (`d036cf47`). SP-08 done (iter 493): wholesale cert flow — /account/wholesale-cert + /api/wholesale-investor-cert/{submit,verify} + 14 tests (`60e4ca9`). SP-09 done (iter 494): ESIC verification — /startup-portal/esic-verification + /api/startups/esic-verify + 15 tests (`3d11fd6`). SP-10 done (iter 495): investor sector-thesis profile — /account/startup-thesis + /api/account/startup-thesis + 173 LOC tests (`42c58f03`). SP-11 done (iter 496): personalised deal feed — /invest/startups/for-you + lib/startup-match.ts scoring + 23 tests (`4df3145`). SP-11 merge conflict resolved (iter 497). SP-12 engineering done (iter 498): admin startup review UI — /admin/startups + /api/admin/startups/[id]/review + 9 tests (`3a0bc96`). SP-12 compliance signoff BLOCKED (see Blocked). SP-13 pending (Playwright E2E). | All SP tasks merged + compliance signoff |
 | CO | `claude/audit-remediation/co-cutover-prep` | **#1046 MERGED 2026-05-20** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485+486): sitemap finalisation. CO-04 blocked (DNS — registrar access). CO-05 done (iter 487): pre-launch QA automation suite (30 Playwright tests). CO-06 done (iter 482): apex domain cutover runbook. CO-07 done (iter 483): final anonymity audit — CL-09 PASSED. **#1046 merged by founder 2026-05-20.** CO-01/CO-02/CO-04 remain blocked (external credentials/registrar action). | All CO tasks done + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
@@ -89,6 +89,37 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 ---
 
 ## Blocked — needs human input
+
+### BB-04 — Net-worth tracker (bank linking): missing CDR accreditation + API credentials
+
+BB-04 requires real-time bank-data integration via Basiq or Frollo (CDR/Open Banking AU). The following prerequisites are founder actions — the loop cannot proceed until they are in place:
+
+1. **CDR accreditation** — apply through the Australian Competition and Consumer Commission (ACCC) Data Recipient Register. Without accreditation, neither Basiq nor Frollo will issue production credentials for data requests.
+2. **API credentials** — provision `BASIQ_API_KEY` (or `FROLLO_CLIENT_ID` + `FROLLO_CLIENT_SECRET`) and set them in Vercel environment variables.
+3. **CPS230 privacy compliance review** — bank-transaction data is sensitive financial data under APRA CPS 230 and the Privacy Act 1988. The data handling, retention, and consent flows need legal review before a production build ships.
+4. **Security review** — as flagged in `REMEDIATION_DEFAULTS.md` §Review flags: BB-04 requires explicit security review before merge.
+
+**Once complete:** remove this blocked entry, set `BASIQ_API_KEY` (or Frollo equivalent) in the repo's secrets/env, and the loop can build BB-04.
+
+**Loop will now skip to BB-05 v1 (manual input — no bank-feed dependency).**
+
+---
+
+### SP-12 — Startup portal compliance signoff (human review gate)
+
+SP engineering (SP-01..SP-11, SP-13 pending) is functionally complete. Before
+PR #1048 can be merged and the startup portal enabled in production, a compliance
+review is required for the investor-startup connection flows.
+
+**What's needed:**
+1. Review the wholesale investor certification flow (`/account/wholesale-cert` + `/api/wholesale-investor-cert/submit` + `verify`): confirm the self-attestation disclaimers, document types accepted, and admin review process meet your AFSL obligations. The portal does NOT facilitate advice — it is a directory/connection layer — but the wholesale eligibility gate is a regulatory concept and the disclaimers must be accurate.
+2. Review the ESIC verification badge (`/startup-portal/esic-verification` + `/api/startups/esic-verify`): confirm the copy makes clear that the badge is based on founder attestation + admin review, and that invest.com.au makes no tax eligibility determination. Check `EsicVerificationClient.tsx` "What is ESIC?" disclaimer block.
+3. Review the data room access grant flow (`/startup-portal/data-room` + `/api/startups/data-room/grant`): confirm appropriate disclosures around access to deal documents (confidential information, no advice, investor own judgment).
+4. Commit `docs/audits/sp-compliance-signoff.md` with: reviewer name/role, review date, what was reviewed, in-scope/out-of-scope, and explicit sign-off on each of the three flow types above.
+
+**Once complete:** delete this blocked entry, mark SP-12 done in the SP stream row, and the loop will proceed to SP-13 (Playwright E2E) then merge PR #1048.
+
+---
 
 ### QQ-08 — Compliance signoff required before public Q&A exposure (human gate)
 
@@ -174,6 +205,72 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 498 — 2026-05-21 — SP-12 admin review UI (code side complete; compliance signoff still blocked)
+
+- **Stream:** SP (startup portal — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `3a0bc96` — feat(sp): SP-12 — admin startup review UI (draft → active/rejected)
+- **Diff:** +486 LOC (4 files)
+- **Items done:** SP-12 admin review code (engineering gate mechanism)
+  - `app/api/admin/startups/[id]/review/route.ts`: PATCH admin-only — requireAdmin() + createAdminClient(), approve → status=active, reject → status=rejected, logs to admin_audit_log; Rollback: UPDATE startup_profiles SET status='draft'
+  - `app/admin/startups/page.tsx`: "use client" admin page — tabs (pending/approved/rejected), inline approve/reject with optional notes textarea
+  - `app/admin/page.tsx`: +Startups stat card
+  - `__tests__/api/admin-startup-review.test.ts`: 9 test cases (401, 400-action, 400-json, 404, 409-non-draft, 200-approve, 200-reject, 500-update, audit-log spy)
+- **Note:** SP-12 compliance SIGNOFF (wholesale/ESIC/data-room disclaimer review) remains blocked — see Blocked section. The admin review UI is a prerequisite code artifact; the compliance document must still be written by the founder before PR #1048 can be merged.
+- **Items pending:** SP-13 (Playwright E2E — gates on SP-12 compliance sign-off)
+- **STATUS: PROGRESS · stream=SP · item=SP-12-code · pr=#1048**
+
+### iter 497 — 2026-05-21 — SP-11 merge + SP-12 surface to Blocked
+
+- **Stream:** SP (startup portal — Tier B)
+- **Phase:** 7 — queue update
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `719df188` — merge resolve (accepted concurrent session's lib/startup-match.ts approach)
+- **Items done:** SP-11 merge conflict resolved (concurrent session pushed superior lib-extracted scoring)
+- **Items surfaced to Blocked:** SP-12 (compliance gate — wholesale cert flow, ESIC badge copy, data room access disclosures require human review + `docs/audits/sp-compliance-signoff.md`)
+- **Items pending:** SP-13 (Playwright E2E — gates on SP-12 compliance sign-off)
+- **STATUS: BLOCKED · stream=SP · item=SP-12**
+
+### iter 496 — 2026-05-21 — SP-11 — personalised startup deal feed
+
+- **Stream:** SP (startup portal — Tier B)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `4df3145` — feat(sp): SP-11 — personalised startup deal feed (/invest/startups/for-you)
+- **Diff:** +692 LOC (6 files)
+- **Items done:** SP-11 (personalised match feed)
+- **Key deliverables:**
+  - `lib/startup-match.ts`: pure scoring helpers — `scoreRound()` (sector overlap normalisation "FinTech"↔"fintech"/"AI/ML"↔"ai_ml", stage +15, ESIC +5, ticket compat +10, wholesale gate), `rankRounds()` (filter inactive profiles + blocked wholesale rounds, sort by score then closes_at asc), `raisedPct()`, `formatAud()`
+  - `app/invest/startups/for-you/page.tsx`: RSC, `enforcePortalKind("investor")`, parallel fetches (investor_profiles, wholesale certs, open startup_rounds + startup_profiles); passes scored rounds to client
+  - `app/invest/startups/for-you/ForYouClient.tsx`: "use client" card grid — no-thesis CTA, no-results empty state with upgrade hint, round cards with progress bar + sector-match badge + ESIC badge
+  - `app/invest/startups/page.tsx`: +For You CTA card alongside Listings
+  - `app/account/dashboard/page.tsx`: +Startup Deal Feed NavCard
+  - `__tests__/lib/startup-match.test.ts`: 23 test cases (scoreRound: 11, rankRounds: 7, raisedPct: 3, formatAud: 3)
+- **Items pending:** SP-12..SP-13 (compliance gate — human review required, Playwright E2E)
+- **STATUS: PROGRESS · stream=SP · item=SP-11 · pr=#1048**
+
+### iter 495 — 2026-05-21 — SP-10 — investor sector-thesis profile
+
+- **Stream:** SP (startup portal — Tier B)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `42c58f03` — feat(sp): SP-10 — investor sector-thesis profile
+- **Diff:** +515 LOC (5 files)
+- **Items done:** SP-10 (investor thesis profile)
+- **Key deliverables:**
+  - `app/api/account/startup-thesis/route.ts`: GET (fetch prefs) + PUT (upsert investor_thesis — sector tags, stage, ticket size, geography)
+  - `app/account/startup-thesis/page.tsx`: RSC, investor-portal gated
+  - `app/account/startup-thesis/StartupThesisClient.tsx`: "use client" — sector tag multi-select, stage preference, ticket size range, geography; persists to DB
+  - `app/account/dashboard/page.tsx`: +thesis nav card
+  - `__tests__/api/startup-thesis.test.ts`: 173-LOC test suite
+- **Items pending:** SP-11..SP-13 (match feed, compliance gate, Playwright E2E)
+- **STATUS: PROGRESS · stream=SP · item=SP-10 · pr=#1048**
 
 ### iter 494 — 2026-05-21 — SP-09 — ESIC verification flow
 
