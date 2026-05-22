@@ -85,7 +85,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-27 | _complete_ | **#1032 MERGED 2026-05-20** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). **#1032 merged by founder 2026-05-20. Stream complete.** | Z-27 merged ✓ |
 | BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
-| PX | `claude/sweet-gates-izLBx` | open (in-progress) | Platform Expansion stream. PX-01 (Slack lead alerts) done: slack_webhook_url migration + lib/slack-lead-notify.ts + /api/internal/lead-webhooks + SettingsTab Slack section + /api/advisor-portal/slack-settings. PX-02 (webhook lead events) done: lead.received added to ALLOWED_EVENTS + submit-lead fires internal route. PX-03 (firm shared lead inbox) done: /api/advisor-portal/firm-leads (GET+PATCH) + LeadsTab Mine/Team toggle + lead assignment. PX-04 (fee impact visualiser) done: FeeImpactVisualiser.tsx component embedded in broker review pages. PX-05 (referral programme migration) done: referral_codes + referral_claims migration wiring the existing /api/referrals + /account/referrals UI. PX-06 (calendar booking on profile) was already done (booking_link + BookingWidget on advisor/[slug]). PX-07 (annual MOT email) done: /api/cron/annual-mot + mot_sent_at migration. | All PX tasks shipped — PR to merge |
+| PX | _complete_ | **merged to main** (`0f836ffc`) | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC on `claude/audit-remediation/px-api-tests`. | All PX tasks + tests done |
 
 ---
 
@@ -206,6 +206,22 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 500 — 2026-05-22 — PX stream API tests (4 routes, 521 LOC)
+
+- **Stream:** PX (platform expansion — Tier A tests)
+- **Phase:** 5 — implementation (tests for routes merged to main via 0f836ffc)
+- **Branch:** `claude/audit-remediation/px-api-tests` (new)
+- **PR:** pending (pushed, awaiting GitHub auth to open)
+- **Commit:** `2e97f24d` — test(px): PX stream API route tests
+- **Diff:** +521 LOC (4 test files)
+- **Items done:**
+  - `__tests__/api/px-slack-settings.test.ts` (7 cases): 429, 401, 400 bad JSON, 400 non-Slack URL, 200 success, 200 null clear, 500 DB error
+  - `__tests__/api/px-lead-webhooks.test.ts` (7 cases): 401 missing/wrong secret, 400 bad JSON, 400 missing fields, 200 success, Slack-fire conditional on URL
+  - `__tests__/api/px-firm-leads.test.ts` (9 cases): GET 429/401/403 non-admin/403 no-firm/200 empty; PATCH 429/401/400/403 not-in-firm/200 success
+  - `__tests__/api/cron-annual-mot.test.ts` (6 cases): exports, 401 missing CRON_SECRET, 401 wrong token, 200 no users, 200 listUsers error, 200 <1yr user skipped
+- **Queue housekeeping:** PX stream marked _complete_
+- **STATUS: PROGRESS · stream=PX · item=PX-DISC-20260522-01..04 · branch=claude/audit-remediation/px-api-tests**
 
 ### iter 499 — 2026-05-22 — SP-13 Playwright E2E + SP branch merge-with-main + queue housekeeping
 
