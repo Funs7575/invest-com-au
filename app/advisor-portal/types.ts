@@ -28,6 +28,7 @@ export type Advisor = {
    * AU is implicit — every advisor here is AU-licensed — and is omitted.
    */
   available_in_countries?: string[];
+  slack_webhook_url?: string | null;
 };
 
 export type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string; role?: string; is_firm_admin?: boolean };
@@ -59,7 +60,13 @@ export type Lead = {
   qualification_data?: Record<string, unknown>; lead_tier?: string;
   bill_amount_cents: number; billed: boolean;
   review_requested_at?: string | null;
+  // Firm inbox additions — only present in firm-leads API responses
+  professional_id?: number;
+  professional_name?: string;
+  professional_slug?: string | null;
 };
+
+export type FirmMemberOption = { id: number; name: string; slug: string };
 
 export type BillingRecord = {
   id: number; amount_cents: number; description: string; status: string;
