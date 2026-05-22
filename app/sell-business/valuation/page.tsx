@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import ValuationClient from "./ValuationClient";
 
 export const revalidate = 86400;
@@ -18,6 +19,29 @@ export const metadata: Metadata = {
   },
 };
 
+const VALUATION_FAQS = faqJsonLd([
+  {
+    q: "How is a small business valued in Australia?",
+    a: "Small businesses in Australia are most commonly valued using an EBITDA multiple, a revenue multiple, or an asset-based method. Service businesses with recurring revenue trade on EBITDA multiples of 2–4×; retail and trade businesses are typically lower. The asset-based method is used when the business has significant tangible assets or when earnings are minimal. In practice, the market price is whatever a willing buyer pays — the multiple is a starting point for negotiation.",
+  },
+  {
+    q: "What is EBITDA and how is it used to value a business?",
+    a: "EBITDA stands for Earnings Before Interest, Tax, Depreciation and Amortisation. It is used as a proxy for operating cash flow — stripping out financing structure, tax and non-cash charges to make businesses comparable. A business with $300,000 EBITDA and a 3× multiple has an indicative value of $900,000. Buyers and their accountants will scrutinise the EBITDA figure heavily, often adding back owner's salary above market and one-off expenses.",
+  },
+  {
+    q: "What is a reasonable multiple to sell a business for in Australia?",
+    a: "For small businesses (under $2M EBITDA), 2–4× EBITDA is typical in Australia. Professional services firms with sticky recurring revenue can attract 4–6×. Trades and retail with owner-dependent revenue often sit at 1.5–2.5×. Higher multiples reflect stronger recurring revenue, documented systems, multiple revenue streams and reduced key-person dependency. Larger businesses (over $5M EBITDA) attract higher multiples and private equity interest.",
+  },
+  {
+    q: "How does seller finance work when selling a business?",
+    a: "Seller finance (also called vendor finance) is when the seller agrees to accept part of the purchase price over time rather than as a lump sum at settlement. For example, the buyer pays 70% at settlement and 30% over two years. It helps buyers who cannot fully fund the purchase and can increase the pool of buyers. For sellers, it carries credit risk — if the buyer fails, recovery can be difficult. Seller finance is more common in smaller deals where bank finance is harder to obtain.",
+  },
+  {
+    q: "Can I get a business valuation for free?",
+    a: "An indicative valuation range can be calculated for free using an EBITDA or revenue multiple calculator. However, a formal business valuation for sale, legal, or dispute purposes requires a qualified business valuer and carries a professional fee. For most small business sales, a broker's indicative valuation (usually free as part of a listing assessment) is sufficient to set an asking price — a formal certified valuation is mainly required for partnership disputes, insurance, or family law proceedings.",
+  },
+]);
+
 export default function ValuationPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -27,6 +51,7 @@ export default function ValuationPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(VALUATION_FAQS) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom max-w-3xl">
