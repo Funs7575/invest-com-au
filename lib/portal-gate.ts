@@ -32,7 +32,6 @@ import { createClient } from "@/lib/supabase/server";
 import {
   getActiveKind,
   getKindsForUser,
-  setActiveKind,
   type WorkspaceKind,
 } from "@/lib/account-kinds";
 
@@ -56,9 +55,14 @@ export async function enforcePortalKind(expected: WorkspaceKind): Promise<void> 
   }
 
   if (active === null && holdsExpected) {
-    // First visit since cookie expired or new device. Set + allow.
-    await setActiveKind(expected);
-    return;
+    // Cookie not set (e.g. after password login which skips the magic-link
+    // callback). Cookies can only be written in Route Handlers / Server
+    // Actions, not during Server Component render — redirect through the
+    // activate-kind Route Handler which sets the cookie and bounces back.
+    const portal = currentPortalPath(expected);
+    redirect(
+      `/api/auth/activate-kind?kind=${expected}&next=${encodeURIComponent(portal)}`,
+    );
   }
 
   if (!holdsExpected) {
