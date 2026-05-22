@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { PROPERTY_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
@@ -48,6 +49,29 @@ const PROPERTY_TYPES = [
   { label: "Townhouses", icon: "home", type: "townhouse", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
   { label: "House & Land", icon: "map-pin", type: "house_land", color: "bg-amber-50 text-amber-700 border-amber-200" },
 ];
+
+const propertyFaqLd = faqJsonLd([
+  {
+    q: "Is property a good investment in Australia?",
+    a: "Australian residential property has delivered roughly 6–9% total returns per annum (capital growth plus rental yield) over the past 30 years, broadly comparable to shares. Property offers stable cash flow, leverage, and negative gearing tax benefits, but requires significant capital, is highly illiquid, and concentrates risk in a single asset and location. Whether property suits your situation depends on your investment horizon, tax position, and access to credit.",
+  },
+  {
+    q: "How do I find a buyer's agent in Australia?",
+    a: "A buyer's agent represents the purchaser in a property transaction — they source, evaluate, negotiate, and bid at auction on your behalf. They typically charge 1–3% of purchase price or a fixed fee. Use the directory to find licensed buyer's agents by state. Look for membership of the Real Estate Buyers Agents Association of Australia (REBAA) and verify their licence on the state property services register (NSW: Fair Trading; VIC: Consumer Affairs; QLD: QBCC).",
+  },
+  {
+    q: "What is FIRB approval and when do foreign investors need it?",
+    a: "FIRB (Foreign Investment Review Board) approval is required before most foreign non-residents purchase residential property in Australia. Foreign investors are generally restricted to new dwellings, off-the-plan purchases, or vacant land for development — existing established homes are prohibited. Application fees range from $14,100 to over $1 million depending on property value. Temporary visa holders may buy one established dwelling as a principal place of residence but must sell when they leave Australia.",
+  },
+  {
+    q: "What is negative gearing on investment property?",
+    a: "Negative gearing occurs when the rental income from an investment property is less than the interest and holding costs. The net loss is deductible against other income (including salary), reducing your tax. At a 37% marginal rate, a $10,000 annual loss saves $3,700 in tax, making the after-tax cost $6,300. The strategy only makes financial sense if expected capital growth exceeds the after-tax holding costs — it is not a profit strategy in itself.",
+  },
+  {
+    q: "What is a good rental yield for investment property in Australia?",
+    a: "Gross rental yield is annual rent divided by purchase price. In Australian capital cities, gross yields typically range from 2.5–4% (Sydney/Melbourne) to 4–6% (Brisbane, Perth, Adelaide, regional areas). Net yield — after deducting property management, rates, insurance, maintenance, and vacancy — is typically 1–1.5 percentage points lower. A gross yield of 5%+ is generally considered strong in an Australian context, though capital growth expectations also matter.",
+  },
+]);
 
 export default async function PropertyHubPage() {
   // Defensive fetch — if the property_listings or suburb_data table
@@ -121,6 +145,10 @@ export default async function PropertyHubPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Home", url: SITE_URL }, { name: "Property Investment" }])) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(propertyFaqLd) }}
       />
 
       {/* ── Hero ─────────────────────────────────── */}
