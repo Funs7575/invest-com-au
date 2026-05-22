@@ -10,7 +10,7 @@ import {
   CURRENT_YEAR,
   SITE_NAME,
 } from "@/lib/seo";
-import { faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
+import { faqJsonLd, speakableWebPageJsonLd, calculatorJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -69,6 +69,13 @@ const FAQ_ITEMS = [
   },
 ] as const;
 
+const toolLd = calculatorJsonLd({
+  name: "Salary Sacrifice Decision Tool",
+  description:
+    "Free interactive tool that weighs your income, employment type, concessional cap room, and Division 293 status to show whether salary sacrificing into super is likely to benefit you. No sign-up required.",
+  path: "/tools/salary-sacrifice",
+});
+
 const faqLd = faqJsonLd([...FAQ_ITEMS]);
 
 const speakableLd = speakableWebPageJsonLd({
@@ -80,7 +87,10 @@ const speakableLd = speakableWebPageJsonLd({
 export default function SalarySacrificePage() {
   return (
     <>
-      <JsonLd data={[breadcrumbLd, faqLd]} testId="salary-sacrifice-jsonld" />
+      <JsonLd
+        data={[breadcrumbLd, toolLd, faqLd]}
+        testId="salary-sacrifice-jsonld"
+      />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }} />
       <div className="py-8 md:py-12">
         <div className="container-custom max-w-2xl">

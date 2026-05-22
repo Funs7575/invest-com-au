@@ -10,7 +10,7 @@ import {
   CURRENT_YEAR,
   SITE_NAME,
 } from "@/lib/seo";
-import { faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
+import { faqJsonLd, speakableWebPageJsonLd, calculatorJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -66,6 +66,13 @@ const FAQ_ITEMS = [
   },
 ] as const;
 
+const toolLd = calculatorJsonLd({
+  name: "Buy vs Rent Decision Tool",
+  description:
+    "Free interactive decision tool that weighs your time horizon, deposit size, LMI, and personal situation to give a personalised buy-vs-rent recommendation. No sign-up required.",
+  path: "/tools/buy-vs-rent",
+});
+
 const faqLd = faqJsonLd([...FAQ_ITEMS]);
 
 const speakableLd = speakableWebPageJsonLd({
@@ -77,7 +84,7 @@ const speakableLd = speakableWebPageJsonLd({
 export default function BuyVsRentPage() {
   return (
     <>
-      <JsonLd data={[breadcrumbLd, faqLd]} testId="buy-vs-rent-jsonld" />
+      <JsonLd data={[breadcrumbLd, toolLd, faqLd]} testId="buy-vs-rent-jsonld" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }} />
       <div className="py-8 md:py-12">
         <div className="container-custom max-w-2xl">

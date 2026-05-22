@@ -4,7 +4,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { SITE_URL, CURRENT_YEAR, breadcrumbJsonLd } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
+import {
+  faqJsonLd,
+  brokerFinancialProductJsonLd,
+  itemListJsonLd,
+} from "@/lib/schema-markup";
 import { getBrokerBySlug } from "@/lib/request-cache";
 import type { Broker } from "@/lib/types";
 import Icon from "@/components/Icon";
@@ -193,12 +197,47 @@ export default async function BrokerVersusPage({
     { name: `${brokerA.name} vs ${brokerB.name}` },
   ]);
 
+  // ItemList summarising the two brokers being compared, plus a
+  // FinancialProduct block per broker. brokerFinancialProductJsonLd only
+  // emits an AggregateRating when a review count is present (Broker has
+  // none here), so no rating is ever fabricated.
+  const comparisonItemList = itemListJsonLd(
+    `${brokerA.name} vs ${brokerB.name}`,
+    [brokerA, brokerB].map((b, i) => ({
+      position: i + 1,
+      name: b.name,
+      url: `/broker/${b.slug}`,
+      description: b.tagline ?? undefined,
+    })),
+  );
+
+  const brokerProducts = [brokerA, brokerB].map((b) =>
+    brokerFinancialProductJsonLd({
+      slug: b.slug,
+      name: b.name,
+      description: b.tagline ?? null,
+      logoUrl: b.logo_url ?? null,
+      rating: b.rating ?? null,
+    }),
+  );
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(comparisonItemList) }}
+      />
+      {brokerProducts.map((product, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(product) }}
+        />
+      ))}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(brokerCompareFaqLd) }}
