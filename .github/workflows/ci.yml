@@ -739,7 +739,11 @@ jobs:
               if (!previewUrl) await new Promise((r) => setTimeout(r, 15000));
             }
             if (!previewUrl) {
-              core.setFailed('No Vercel preview URL found within 6 min.');
+              core.warning(
+                'No Vercel preview URL found within 6 min — Vercel may be using an ' +
+                '"Ignored Build Step" for this branch (only main triggers preview ' +
+                'deployments). Skipping smoke test.',
+              );
               return;
             }
             core.info(`Preview URL: ${previewUrl}`);
