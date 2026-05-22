@@ -43,6 +43,7 @@ const EXEMPT_PATTERNS = [
   // throttles inside the handler (bcrypt delay, lockout on bad attempts).
   { match: /\/api\/auth\//, reason: "built-in auth throttle/lockout" },
   { match: /\/api\/advisor-auth\//, reason: "advisor session + lockout built-in" },
+  { match: /\/api\/org-auth\//, reason: "org session auth — requireOrgSession() gate built-in" },
   // Session-authenticated user-scoped endpoints — throttled per user.
   { match: /\/api\/account\//, reason: "session auth + per-user throttle" },
   { match: /\/api\/user-profile(\/|$)/, reason: "session auth + per-user throttle" },
