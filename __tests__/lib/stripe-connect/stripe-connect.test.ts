@@ -57,6 +57,27 @@ describe("getMarketplaceTakeRateBps", () => {
 });
 
 describe("createPaymentForBrief", () => {
+  // The brief-payment clip is gated OFF pre-AFSL (RG 246 client money).
+  // These cases exercise the flag-on Stripe behaviour; the disabled-by-default
+  // gate is covered by its own test below.
+  beforeEach(() => {
+    vi.stubEnv("BRIEF_PAYMENTS_ENABLED", "true");
+  });
+
+  it("returns 'disabled' by default (flag off) and never calls Stripe", async () => {
+    vi.stubEnv("BRIEF_PAYMENTS_ENABLED", "");
+    const result = await createPaymentForBrief({
+      briefId: 1,
+      professionalId: 1,
+      consumerEmail: "x@example.com",
+      amountCents: 10000,
+      description: "test",
+    });
+    expect(result.unavailable).toBe("disabled");
+    expect(result.clientSecret).toBeNull();
+    expect(mockPaymentIntentsCreate).not.toHaveBeenCalled();
+  });
+
   it("returns 'no_secret' when STRIPE_SECRET_KEY missing", async () => {
     vi.stubEnv("STRIPE_SECRET_KEY", "");
     const result = await createPaymentForBrief({

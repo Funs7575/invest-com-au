@@ -6,6 +6,7 @@ import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import { getAffiliateLink, AFFILIATE_REL, trackClick } from "@/lib/tracking";
 import { TICKER_MAP } from "@/lib/ticker-sectors";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
 
 interface Holding {
@@ -87,7 +88,6 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
     const curr = brokers.find(b => b.slug === currentBroker);
     const cheapest = brokers[0];
     const tradesEst = holdings.length * 4; // assume 4 trades/year per holding
-    const avgSize = totalVal / holdings.length;
     const currFee = curr ? tradesEst * parseFee(curr.asx_fee) : 0;
     const cheapFee = cheapest ? tradesEst * parseFee(cheapest.asx_fee) : 0;
     const feeSavings = Math.max(0, currFee - cheapFee);
@@ -255,6 +255,7 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
                     Open Account →
                   </a>
                 </div>
+                <p className="text-[0.65rem] leading-snug text-emerald-700/80 mt-3">{GENERAL_ADVICE_WARNING}</p>
               </div>
             )}
 
