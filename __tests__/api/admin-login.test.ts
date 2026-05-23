@@ -4,7 +4,7 @@ import { makeRequest, createChainableBuilder } from "@/__tests__/helpers";
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
 const { mockCheckAdminMfaEnv } = vi.hoisted(() => ({
-  mockCheckAdminMfaEnv: vi.fn(() => ({ ok: true, missing: [] })),
+  mockCheckAdminMfaEnv: vi.fn((): { ok: boolean; missing: string[] } => ({ ok: true, missing: [] })),
 }));
 
 vi.mock("@/lib/admin-mfa-env-check", () => ({
