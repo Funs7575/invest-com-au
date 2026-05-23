@@ -34,7 +34,7 @@ to green. Seeded 2026-05-20 from the ordered work plan in
 | 17 | P2 | Outbound-webhook auto-retry | B | **already-green** | — | Verified iter 542: outbound-webhook retry already implemented. Audit text was stale. |
 | 18 | P2 | Alert when `property-suburb-refresh` runs the zero-stub | B | **already-green** | — | Verified iter 542: alert already implemented. Audit text was stale. |
 | 19 | P2 | Zod-validate `submit-lead` | B | **conflict-watch** | — | **Being worked live by another agent** (mtime 20:30 on `submit-lead/route.ts`). Duplicate-guard: defer to their PR. |
-| 20 | P2 | Consent fixes (SMS/WhatsApp record, unified unsubscribe, SSR cookie consent) | C | todo | — | Spam/Privacy Act. Multi-part — split. |
+| 20 | P2 | Consent fixes (SMS/WhatsApp record, unified unsubscribe, SSR cookie consent) | C | **in-pr** | #1180 | Part 1: `sms_consent` column on `leads`/`professional_leads` + `submit-lead` route + 2 tests. SSR consent (`lib/consent.ts` `iv_consent` mirror) and unified unsubscribe (`/api/unsubscribe`) already-green. |
 | 21 | P2 | Reconcile stale `process-data-exports` "table missing" comment | A | **merged** | #1063 | Comment-only; table applied 2026-05-08. **Merged by founder 2026-05-20.** |
 | §4-occ | completeness | Occupation pages (#83): 8 missing slugs | — | **already-green** | — | Verified: all 26 slugs in sync across config/sitemap/hub. Audit text was stale. (Optional: derive sitemap from `OCCUPATIONS` to prevent future drift.) |
 | §4-teams | completeness | `/teams` index + nav link (unlocks #23–31) | A | **already-green** | — | Verified iter 542: teams page already exists. Audit text was stale. |
