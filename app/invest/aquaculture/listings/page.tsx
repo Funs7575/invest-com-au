@@ -8,6 +8,7 @@ import {
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import ListingComplianceNotice from "@/components/invest/ListingComplianceNotice";
+import WholesaleAttestationGate from "@/components/invest/WholesaleAttestationGate";
 
 export const revalidate = 300;
 
@@ -51,15 +52,23 @@ export default async function AquacultureListingsPage() {
         productLabel="aquaculture and marine investment opportunities (including syndicated leases and farm operations)"
         classification="Aquaculture investments listed here may be regulated managed investment schemes."
       />
-      <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient
-          listings={listings}
-          categories={categoryTabs}
-          lockedCategory="aquaculture"
-          pageTitle="Aquaculture & Marine Investment Listings"
-          pageSubtitle="Browse Australian aquaculture and marine investment opportunities — salmon farming operations, oyster leases, abalone farms, prawn aquaculture, mussel cultivation, land-based RAS facilities and fishing quota."
-        />
-      </Suspense>
+      {/* C9: these offers may be regulated financial products / managed
+          investment schemes. Gate the listings (and their inline enquiry CTAs)
+          behind a wholesale (s708) self-attestation before they render. The
+          gate also surfaces the GENERAL_ADVICE_WARNING. */}
+      <div className="mx-4 mt-6">
+        <WholesaleAttestationGate productLabel="these aquaculture & marine opportunities">
+          <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
+            <InvestListingsClient
+              listings={listings}
+              categories={categoryTabs}
+              lockedCategory="aquaculture"
+              pageTitle="Aquaculture & Marine Investment Listings"
+              pageSubtitle="Browse Australian aquaculture and marine investment opportunities — salmon farming operations, oyster leases, abalone farms, prawn aquaculture, mussel cultivation, land-based RAS facilities and fishing quota."
+            />
+          </Suspense>
+        </WholesaleAttestationGate>
+      </div>
     </>
   );
 }
