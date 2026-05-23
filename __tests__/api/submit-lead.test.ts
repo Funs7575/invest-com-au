@@ -226,6 +226,57 @@ describe("POST /api/submit-lead", () => {
       expect(args.user_email).toBe("platform@test.com");
     });
 
+    it("stores sms_consent=true when caller opts in (Spam Act s.16)", async () => {
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "leads") {
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: { id: 55 }, error: null }),
+          );
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "platform",
+        user_email: "sms@test.com",
+        user_phone: "+61400000000",
+        sms_consent: true,
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+
+      const leadCalls = supabaseCalls.leads || [];
+      const insertCall = leadCalls.find((c) => c.method === "insert");
+      const args = insertCall?.args[0] as Record<string, unknown>;
+      expect(args.sms_consent).toBe(true);
+    });
+
+    it("defaults sms_consent=false when not provided", async () => {
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "leads") {
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: { id: 56 }, error: null }),
+          );
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "platform",
+        user_email: "nosms@test.com",
+        user_phone: "+61400000000",
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+
+      const leadCalls = supabaseCalls.leads || [];
+      const insertCall = leadCalls.find((c) => c.method === "insert");
+      const args = insertCall?.args[0] as Record<string, unknown>;
+      expect(args.sms_consent).toBe(false);
+    });
+
     it("returns 500 when platform lead insert fails", async () => {
       mockFrom.mockImplementation((table: string) => {
         const b = createChainableBuilder(table, supabaseCalls);
