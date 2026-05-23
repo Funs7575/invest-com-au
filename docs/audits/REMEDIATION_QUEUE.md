@@ -183,14 +183,18 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ---
 
-### ~~a11y-DISC-20260523-01~~ — **RESOLVED (false positive, iter 540)**
+### ~~a11y-DISC-20260523-01~~ — **RESOLVED (route conflict fixed, iter 541)**
 
-**Status:** RESOLVED — all 8 a11y tests pass on current main.
+**Status:** RESOLVED — all 8 a11y tests pass on current main (iter 541 fix `efa6e88`).
 
-**Root cause of rescue PR "failures" (iter 540 investigation):**
-The rescue PRs didn't fail at axe-core analysis. They failed because the `Accessibility (axe-core on key routes)` CI job depends on `needs: ci`, and when the ci job failed at the bundle-size budget step (exit 1, 12006.5 kB > 12000 kB), the "Upload .next build artifact" step was skipped. The a11y job's `actions/download-artifact@v8` step then failed with artifact-not-found, causing the whole a11y job to report as failed — NOT because of any axe violation. The iter 534 bundle-size fix (raised to 13000 kB) was the actual fix; the rescue PRs then merged cleanly.
+**Actual root cause (iter 541 investigation — deeper than iter 540 concluded):**
+Commit `199146f` (May 21) added `app/grants/[industry]/page.tsx` alongside the pre-existing `app/grants/[state]/[program]/` directory. Next.js 16 forbids two different dynamic segment names at the same route level (`'industry' !== 'state'`). This crash fires on **every request** — the Next.js router throws `unhandledRejection` before serving any response, returning HTTP 500 site-wide. This is why all rescue PRs failed a11y: the production server was crashing on every page load, so axe-core had nothing to analyse.
 
-**Verification (iter 540):** Built current main with placeholder creds (`npm run build`), started production server (`npm run start`), ran `npx playwright test e2e/a11y.spec.ts --project=chromium` — **all 8 tests passed**. Only "serious" violations logged (missing `<title>` + `html lang` in placeholder-creds build context) — these are expected and not blocking (spec only fails on "critical"). No critical violations on any of the 8 routes.
+**Fix (iter 541, commit `efa6e88` on main):** Deleted `app/grants/[industry]/page.tsx`, merged all content into `app/grants/[state]/page.tsx` with the param aliased as `slug` internally. All URL slugs (`/grants/tech`, `/grants/biotech`, etc.) unchanged. `generateStaticParams()` updated to return `{ state: slug }` keys.
+
+**Verification (iter 541):** Built main (`npm run build` — clean, no errors), started prod server (`npm run start -p 3001`), ran `PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers E2E_BASE_URL=http://localhost:3001 E2E_SKIP_WEBSERVER=1 npx playwright test e2e/a11y.spec.ts --project=chromium` — **all 8 tests passed (27.8s)**. Only "serious" violations logged (color-contrast) — not blocking (spec only fails on "critical"). No critical violations on any of the 8 routes.
+
+**Note on iter 540 conclusion:** The bundle-size theory (iter 540) was partially correct — it explained why CI a11y failed on the rescue PRs via the artifact-skip chain. The routing conflict is the underlying cause that would continue causing failures for any new PRs until fixed. Both are now resolved.
 
 ---
 
@@ -246,6 +250,19 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 541 — 2026-05-23 — STATUS: PROGRESS · stream=a11y-DISC · item=a11y-DISC-20260523-01 · direct-to-main
+
+- **Phase:** 2+5 — root-cause investigation + fix
+- **Stream:** a11y-DISC-20260523-01 — grants route segment conflict
+- **Root cause:** `app/grants/[industry]/page.tsx` (added commit `199146f`, May 21) coexisted with `app/grants/[state]/[program]/` directory, creating a Next.js 16 dynamic-segment name conflict (`'industry' !== 'state'`). This caused HTTP 500 on **every route** site-wide — not just grants routes. The a11y check failing on all rescue PRs was a downstream symptom: prod server crashed before axe-core could analyse any page.
+- **Fix:** Deleted `[industry]/page.tsx`. Created `[state]/page.tsx` with identical content, param renamed `state` (aliased as `slug` internally). All URL slugs unchanged. Git detected this as a rename (98% similarity). `generateStaticParams()` returns `{ state: slug }` keys.
+- **Commit:** `efa6e88` — `fix(routes): resolve grants [industry] vs [state] segment conflict`
+- **Verification:** `npm run build` clean → `npm run start` on port 3001 → `playwright test e2e/a11y.spec.ts --project=chromium` → **8/8 passed** (27.8s). Only serious violations (color-contrast) — non-blocking.
+- **Queue updates:** a11y-DISC-20260523-01 blocked entry updated (route-conflict fix, not false positive as iter 540 concluded).
+- **STATUS: PROGRESS · stream=a11y-DISC · item=a11y-DISC-20260523-01 · direct-to-main**
+
+---
 
 ### iter 540 — 2026-05-23 — STATUS: ALL-BLOCKED (a11y-DISC resolved, SP #1048 CI failure confirmed)
 
