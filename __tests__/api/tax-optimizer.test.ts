@@ -3,8 +3,10 @@ import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
-const mockIsAllowed = vi.fn();
-const mockIpKey = vi.fn((req: NextRequest) => req.headers.get("x-forwarded-for") ?? "127.0.0.1");
+const { mockIsAllowed, mockIpKey } = vi.hoisted(() => ({
+  mockIsAllowed: vi.fn(),
+  mockIpKey: vi.fn((req: NextRequest) => req.headers.get("x-forwarded-for") ?? "127.0.0.1"),
+}));
 
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),

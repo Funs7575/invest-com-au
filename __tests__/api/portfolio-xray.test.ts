@@ -3,13 +3,17 @@ import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
-const mockIsAllowed = vi.fn();
+const { mockIsAllowed, mockLookupTicker, mockFrom } = vi.hoisted(() => ({
+  mockIsAllowed: vi.fn(),
+  mockLookupTicker: vi.fn(),
+  mockFrom: vi.fn(),
+}));
+
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: vi.fn((req: NextRequest) => req.headers.get("x-forwarded-for") ?? "unknown"),
 }));
 
-const mockLookupTicker = vi.fn();
 const TICKER_MAP_FIXTURE = {
   VAS: { sector: "ETF-AU", country: "AU", dividend_yield_est: 0.04 },
   IVV: { sector: "ETF-US", country: "US", dividend_yield_est: 0.015 },
@@ -23,7 +27,6 @@ vi.mock("@/lib/ticker-sectors", () => ({
   },
 }));
 
-const mockFrom = vi.fn();
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockFrom })),
 }));
