@@ -8,6 +8,7 @@ import {
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import ListingComplianceNotice from "@/components/invest/ListingComplianceNotice";
+import WholesaleAttestationGate from "@/components/invest/WholesaleAttestationGate";
 
 export const revalidate = 300;
 
@@ -52,15 +53,23 @@ export default async function CarbonEnvironmentalMarketsListingsPage() {
         productLabel="Australian Carbon Credit Units (ACCUs) and related environmental-market products"
         classification="ACCUs are financial products under the Corporations Act 2001."
       />
-      <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient
-          listings={listings}
-          categories={categoryTabs}
-          lockedCategory="carbon-environmental-markets"
-          pageTitle="Carbon & Environmental Markets Investment Listings"
-          pageSubtitle="Browse Australian carbon and environmental market investment opportunities — ACCUs, voluntary carbon credits, biodiversity offsets, carbon farming projects and nature-positive assets."
-        />
-      </Suspense>
+      {/* C9: these offers may be regulated financial products / managed
+          investment schemes. Gate the listings (and their inline enquiry CTAs)
+          behind a wholesale (s708) self-attestation before they render. The
+          gate also surfaces the GENERAL_ADVICE_WARNING. */}
+      <div className="mx-4 mt-6">
+        <WholesaleAttestationGate productLabel="these carbon & environmental-market opportunities">
+          <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
+            <InvestListingsClient
+              listings={listings}
+              categories={categoryTabs}
+              lockedCategory="carbon-environmental-markets"
+              pageTitle="Carbon & Environmental Markets Investment Listings"
+              pageSubtitle="Browse Australian carbon and environmental market investment opportunities — ACCUs, voluntary carbon credits, biodiversity offsets, carbon farming projects and nature-positive assets."
+            />
+          </Suspense>
+        </WholesaleAttestationGate>
+      </div>
     </>
   );
 }
