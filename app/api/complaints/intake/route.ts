@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { isValidEmail } from "@/lib/validate-email";
@@ -9,6 +10,34 @@ import { escapeHtml } from "@/lib/html-escape";
 import crypto from "node:crypto";
 
 const log = logger("complaints-intake");
+
+/**
+ * Body schema. Fields are typed but optional/permissive — the inline guards
+ * below (email validity, subject/body length, category allowlist) stay the
+ * gatekeepers so the existing 400 messages and ordering are preserved
+ * bit-for-bit. The schema's role is to reject hard type mismatches (e.g.
+ * `subject: {}`, `related_advisor_id: "x"`) before they hit the insert,
+ * replacing the previous untyped `body.x` reads.
+ *
+ * Per-field `.catch(undefined)` + object-level `.catch({})` keep a single
+ * malformed field (or a wholly malformed body) degrading gracefully so the
+ * email/subject/body/category gates remain the first failures — matching the
+ * previous `request.json().catch(() => ({}))` + per-field `typeof` contract.
+ */
+const ComplaintIntakeSchema = z
+  .object({
+    complainant_email: z.string().optional().catch(undefined),
+    complainant_name: z.string().optional().catch(undefined),
+    complainant_phone: z.string().optional().catch(undefined),
+    subject: z.string().optional().catch(undefined),
+    body: z.string().optional().catch(undefined),
+    category: z.string().optional().catch(undefined),
+    severity: z.string().optional().catch(undefined),
+    related_advisor_id: z.number().optional().catch(undefined),
+    related_broker_slug: z.string().optional().catch(undefined),
+    related_lead_id: z.number().optional().catch(undefined),
+  })
+  .catch({});
 
 export const runtime = "nodejs";
 
@@ -54,7 +83,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const body = await request.json().catch(() => ({}));
+  const raw = await request.json().catch(() => ({}));
+  const body = ComplaintIntakeSchema.parse(raw);
   const email = typeof body.complainant_email === "string" ? body.complainant_email.trim().toLowerCase() : null;
   const name = typeof body.complainant_name === "string" ? body.complainant_name.trim().slice(0, 120) : null;
   const phone = typeof body.complainant_phone === "string" ? body.complainant_phone.trim().slice(0, 40) : null;
