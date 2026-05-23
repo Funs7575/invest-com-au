@@ -4,6 +4,7 @@ import { getAdminEmail } from "@/lib/admin";
 import { feeChangeAlertEmail } from "@/lib/email-templates";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { isAutomationEnabled } from "@/lib/autopilot";
 import { buildEmailToUserIdMap, notifyUser } from "@/lib/notifications";
 import { sendEmail } from "@/lib/resend";
 
@@ -36,6 +37,10 @@ function extractFees(text: string): Record<string, string> {
 export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
+
+  if (!await isAutomationEnabled("check-fees")) {
+    return NextResponse.json({ ok: true, message: "autopilot paused — skipping" });
+  }
 
   const supabase = createAdminClient();
 

@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { weeklyDigestEmail } from "@/lib/email-templates";
 import { NextRequest, NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { isAutomationEnabled } from "@/lib/autopilot";
 
 export const runtime = "edge";
 export const maxDuration = 120;
@@ -22,6 +23,10 @@ export const maxDuration = 120;
 export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
+
+  if (!await isAutomationEnabled("weekly-newsletter")) {
+    return NextResponse.json({ ok: true, message: "autopilot paused — skipping" });
+  }
 
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {

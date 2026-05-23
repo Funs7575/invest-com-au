@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminEmail } from "@/lib/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { isAutomationEnabled } from "@/lib/autopilot";
 
 const log = logger("cron-content-staleness");
 
@@ -22,6 +23,10 @@ export const maxDuration = 60;
 export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
+
+  if (!await isAutomationEnabled("content-staleness")) {
+    return NextResponse.json({ ok: true, message: "autopilot paused — skipping" });
+  }
 
   const supabase = createAdminClient();
 

@@ -7,6 +7,7 @@ import {
 } from "@/lib/email-templates";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { isAutomationEnabled } from "@/lib/autopilot";
 
 const log = logger("quiz-followup");
 
@@ -28,6 +29,10 @@ export const maxDuration = 60;
 export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
+
+  if (!await isAutomationEnabled("quiz-follow-up")) {
+    return NextResponse.json({ ok: true, message: "autopilot paused — skipping" });
+  }
 
   const supabase = createAdminClient();
 

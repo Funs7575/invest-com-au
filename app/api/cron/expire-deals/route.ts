@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { isAutomationEnabled } from "@/lib/autopilot";
 
 const log = logger("cron-deals");
 
@@ -18,6 +19,10 @@ export const maxDuration = 60;
 export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
+
+  if (!await isAutomationEnabled("expire-deals")) {
+    return NextResponse.json({ ok: true, message: "autopilot paused — skipping" });
+  }
 
   const supabase = createAdminClient();
 
