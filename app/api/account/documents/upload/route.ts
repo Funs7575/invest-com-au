@@ -86,7 +86,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const docId = crypto.randomUUID();
   const ext = extForMime(file.type);
-  const safeFileName = file.name.replace(/[^\w.\-]/g, "_").slice(0, 255) || `document.${ext}`;
+  // Strip path separators and any char outside [\w.-] (so "../" cannot survive),
+  // then reject names that are empty or composed solely of dots (".", "..") —
+  // a "../" or ".." path segment is malformed as a storage object key. The
+  // {uid}/ prefix and the storage.objects RLS policy already pin the owner
+  // folder, so this is defence-in-depth, not the primary IDOR guard.
+  const sanitised = file.name.replace(/[^\w.\-]/g, "_").slice(0, 255);
+  const safeFileName = !sanitised || /^\.+$/.test(sanitised) ? `document.${ext}` : sanitised;
   const storagePath = `${user.id}/${docId}/${safeFileName}`;
 
   let buffer: Buffer;

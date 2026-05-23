@@ -2,11 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendReviewRequest } from "@/lib/advisor-emails";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
+import { isAllowed } from "@/lib/rate-limit-db";
 
 export async function POST(request: NextRequest) {
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
+  // Rate limit per advisor — each call emails a converted lead a review
+  // request. Per-lead dedup exists below, but cap total review-email volume.
+  if (!(await isAllowed("advisor_request_review", `a:${advisorId}`, { max: 30, refillPerSec: 30 / 3600 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- Pre-existing advisor-session-gated endpoint; leadId guarded inline. Tracked for Zod migration.
   const body = await request.json().catch(() => null);
   const leadId = body?.leadId;
   if (!leadId || typeof leadId !== "number") {

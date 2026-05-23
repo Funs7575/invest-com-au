@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { subscribeToNewsletter } from "@/lib/newsletter";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { sendEmail } from "@/lib/resend";
@@ -6,6 +7,21 @@ import { SITE_URL } from "@/lib/seo";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:newsletter-segments:subscribe");
+
+/**
+ * Body schema. `email`/`segment` are typed but optional — the inline
+ * `if (!email)` gate stays the gatekeeper (preserving the "Missing email"
+ * 400). Per-field `.catch(undefined)` + object-level `.catch({})` keep a
+ * malformed body degrading to `{}` so an invalid JSON / wrong-type payload
+ * still falls through to the "Missing email" branch rather than throwing —
+ * matching the previous `request.json().catch(() => ({}))` contract.
+ */
+const NewsletterSegmentSchema = z
+  .object({
+    email: z.string().optional().catch(undefined),
+    segment: z.string().optional().catch(undefined),
+  })
+  .catch({});
 
 export const runtime = "nodejs";
 
@@ -31,7 +47,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => ({}));
+  const raw = await request.json().catch(() => ({}));
+  const body = NewsletterSegmentSchema.parse(raw);
   const email = typeof body.email === "string" ? body.email : null;
   const segment = typeof body.segment === "string" ? body.segment : null;
 
