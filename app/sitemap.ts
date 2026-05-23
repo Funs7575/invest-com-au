@@ -131,7 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/inheritance",
     "/pricing",
     "/firb-fee-estimator", "/non-resident-dividend-calculator", "/non-resident-cgt-checker",
-    "/franking-credits-calculator", "/chess-lookup",
+    "/franking-credits-calculator", "/investment-income-tax-calculator", "/chess-lookup",
     "/share-trading", "/crypto", "/crypto/quiz", "/savings", "/super", "/super/quiz", "/cfd",
     "/how-to",
     // Revenue-expansion hubs
