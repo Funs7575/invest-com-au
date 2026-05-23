@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -7,6 +8,20 @@ import { logger } from "@/lib/logger";
 
 const log = logger("fee-alerts");
 
+/**
+ * Body schema. Fields are typed but optional — the inline `if (!email)` gate
+ * below stays the required-field gatekeeper so the existing 400 message is
+ * unchanged, and the handler keeps applying its own `|| []` / `|| "any"` /
+ * `|| "instant"` defaults. The schema rejects hard type mismatches (e.g.
+ * `email: 5`, `brokerSlugs: "stake"`) before they reach the upsert.
+ */
+const FeeAlertSchema = z.object({
+  email: z.string().optional(),
+  brokerSlugs: z.array(z.string()).optional(),
+  alertType: z.string().optional(),
+  frequency: z.string().optional(),
+});
+
 export async function POST(request: NextRequest) {
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
@@ -14,7 +29,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests." }, { status: 429 });
     }
 
-    const { email, brokerSlugs, alertType, frequency } = await request.json();
+    const parsed = FeeAlertSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      // Hard type mismatch (e.g. brokerSlugs not an array). Surface a 400 so
+      // malformed shapes don't get persisted; the email gate handles the
+      // common missing-email case below.
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+    const { email, brokerSlugs, alertType, frequency } = parsed.data;
     if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
 
     const supabase = await createClient();

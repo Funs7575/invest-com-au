@@ -4,31 +4,31 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getSubscription } from "@/lib/server/get-subscription";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import ProPaywall from "@/components/ProPaywall";
 
 // FIN_NOTEBOOK Revenue #10: Premium research subscription.
 //
-// 90% built per the audit — full Stripe + Pro tier infra (lib/stripe.ts,
-// app/pro/, the subscriptions table, getSubscription helper) already
-// landed. The missing piece is a gated content surface; this page is
-// that surface for the "premium research" entitlement.
+// The Stripe + Pro-tier infrastructure (lib/stripe.ts, app/pro/, the
+// subscriptions table, the getSubscription helper) already shipped. This
+// page is the gated content surface for the "premium research"
+// entitlement: an index of deep-dive research reports backed by the
+// pro_research_reports table (migration 20260518070000), with the report
+// bodies gated behind the existing isPro check in [slug]/page.tsx.
 //
-// Today the entitlement is binary (any active subscription unlocks the
-// page); add tier checks later if we introduce stratified plans
-// (research-only vs full pro).
-//
-// Content is intentionally scaffolding only — the first 3–5 actual
-// reports are written outside engineering (editorial work) and dropped
-// into a `pro_research_reports` table in a follow-on PR. The page is
-// shipped now so the gate + funnel are testable end-to-end and the
-// upgrade CTA has a real destination.
+// The entitlement is binary today (any active subscription unlocks the
+// reports). The table keeps a `tier` column so we can stratify later
+// (research-only vs full pro) without a schema change.
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: `Premium Research — ${SITE_NAME}`,
   description:
-    "Deep-dive research reports on Australian investing platforms, super funds, and structural-economy themes. Available to Pro subscribers.",
+    "Deep-dive research reports on Australian investing platforms, super funds, and structural-economy themes. Available to Investor Pro subscribers.",
   alternates: { canonical: "/pro/research" },
+  // Pro-gated surface — keep out of the index like the rest of /pro/*.
+  robots: { index: false, follow: false },
   openGraph: {
     title: `Premium Research — ${SITE_NAME}`,
     description:
@@ -80,7 +80,8 @@ export default async function PremiumResearchPage() {
   const { user, isPro } = await getSubscription();
 
   // Pull published reports from the DB. Suspense not necessary — this
-  // is a small, lightly-cached SELECT.
+  // is a small, lightly-cached SELECT. Only summary/card columns are
+  // read here; body_html is never selected on the index.
   const supabase = await createClient();
   const { data: reportRows } = await supabase
     .from("pro_research_reports")
@@ -98,6 +99,10 @@ export default async function PremiumResearchPage() {
     { name: "Pro", url: absoluteUrl("/pro") },
     { name: "Research" },
   ]);
+
+  // Signed-out visitors go through login first, then land back here;
+  // signed-in non-subscribers go straight to the Pro upgrade page.
+  const upgradeHref = user ? "/pro" : "/auth/login?next=/pro/research";
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:py-14">
@@ -120,7 +125,21 @@ export default async function PremiumResearchPage() {
         </p>
       </header>
 
-      {!isPro && <UpgradeBanner signedIn={!!user} />}
+      {!isPro && (
+        <div className="mb-8">
+          <ProPaywall
+            variant="inline"
+            title={
+              user
+                ? "Upgrade to Pro to read full reports"
+                : "Pro subscribers read the full reports"
+            }
+            description="Each report runs 15–40 pages, with the underlying data tables you can sort and filter. Cancel any time — no contract."
+            ctaLabel={user ? "Upgrade to Pro" : "Sign in & subscribe"}
+            ctaHref={upgradeHref}
+          />
+        </div>
+      )}
 
       <section aria-label="Available research" className="space-y-4">
         {published.map((report) => (
@@ -149,10 +168,10 @@ export default async function PremiumResearchPage() {
               </Link>
             ) : (
               <Link
-                href="/account/upgrade"
+                href={`/pro/research/${report.slug}`}
                 className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-violet-700 hover:text-violet-900"
               >
-                Unlock with Pro &rarr;
+                Preview &amp; unlock with Pro &rarr;
               </Link>
             )}
           </article>
@@ -177,7 +196,7 @@ export default async function PremiumResearchPage() {
               </div>
             ) : (
               <Link
-                href="/account/upgrade"
+                href={upgradeHref}
                 className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-violet-700 hover:text-violet-900"
               >
                 Unlock with Pro &rarr;
@@ -187,31 +206,7 @@ export default async function PremiumResearchPage() {
         ))}
       </section>
 
-      <p className="mt-10 text-xs text-slate-400">
-        Reports are general information only — not personal advice. Pricing, fees, and
-        rates change frequently; always verify against the provider&apos;s current PDS
-        before acting.
-      </p>
-    </div>
-  );
-}
-
-function UpgradeBanner({ signedIn }: { signedIn: boolean }) {
-  return (
-    <div className="mb-8 rounded-xl border border-violet-200 bg-violet-50 p-5">
-      <h2 className="text-base font-semibold text-violet-900">
-        {signedIn ? "Upgrade to Pro to read full reports" : "Pro subscribers read the full reports"}
-      </h2>
-      <p className="mt-1 text-sm text-violet-800">
-        Each report runs 15–40 pages, with the underlying data tables you can sort + filter.
-        Cancel any time — no contract.
-      </p>
-      <Link
-        href={signedIn ? "/account/upgrade" : "/login?next=/account/upgrade"}
-        className="mt-3 inline-flex items-center rounded-lg bg-violet-700 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-800"
-      >
-        {signedIn ? "Upgrade to Pro" : "Sign in and upgrade"} &rarr;
-      </Link>
+      <p className="mt-10 text-xs text-slate-400">{GENERAL_ADVICE_WARNING}</p>
     </div>
   );
 }
