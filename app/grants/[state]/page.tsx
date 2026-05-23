@@ -264,27 +264,27 @@ const INDUSTRY_MAP: Record<string, IndustryConfig> = {
 // ─── Static params ────────────────────────────────────────────────────────────
 
 export function generateStaticParams() {
-  return Object.keys(INDUSTRY_MAP).map((industry) => ({ industry }));
+  return Object.keys(INDUSTRY_MAP).map((slug) => ({ state: slug }));
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Props = { params: Promise<{ industry: string }> };
+type Props = { params: Promise<{ state: string }> };
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { industry } = await params;
-  const cfg = INDUSTRY_MAP[industry];
+  const { state: slug } = await params;
+  const cfg = INDUSTRY_MAP[slug];
   if (!cfg) return { title: "Not found" };
   return {
     title: `${cfg.label} Grants ${CURRENT_YEAR}: Federal & State Funding | Invest.com.au`,
     description: cfg.metaDescription,
-    alternates: { canonical: `${SITE_URL}/grants/${industry}` },
+    alternates: { canonical: `${SITE_URL}/grants/${slug}` },
     openGraph: {
       title: `${cfg.label} Grants ${CURRENT_YEAR}`,
       description: cfg.metaDescription,
-      url: `${SITE_URL}/grants/${industry}`,
+      url: `${SITE_URL}/grants/${slug}`,
       type: "website",
     },
   };
@@ -293,8 +293,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function GrantsIndustryPage({ params }: Props) {
-  const { industry } = await params;
-  const cfg = INDUSTRY_MAP[industry];
+  const { state: slug } = await params;
+  const cfg = INDUSTRY_MAP[slug];
   if (!cfg) notFound();
 
   const breadcrumb = breadcrumbJsonLd([
