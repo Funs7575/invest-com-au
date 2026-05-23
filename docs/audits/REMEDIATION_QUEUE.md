@@ -236,6 +236,20 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 526 — 2026-05-23 — CI rescue #1171 (rescue/strategy-and-tools, Tier A): merge-with-main pushed
+
+- **Phase:** 2 — CI rescue
+- **Stream:** RESCUE
+- **PR:** #1171 OPEN (`rescue/strategy-and-tools`)
+- **Action:** Static-analysed all 11 files in the branch diff vs main. Calculator logic (`lib/calculators/investment-income-tax.ts`), RSC page (`app/investment-income-tax-calculator/page.tsx`), client component (`InvestmentIncomeTaxClient.tsx`), test file (`__tests__/lib/calculators-investment-income-tax.test.ts`), and sitemap all look correct — no TypeScript errors, valid icon names (`bar-chart`, `info`, `calculator`), correct `ComplianceFooter variant="calculator"`, clean sitemap change (adds one route, no duplicate).
+- **Root cause hypothesis:** Branch was built on `516afdf` (pre-#1172); the original CI run at 15:21 UTC was against a diverged base. After merging `origin/main` (3 commits: main merge + queue-update + security fix), the branch is current.
+- **Pushed:** `5cb6869` (merge origin/main) → fresh CI run triggered.
+- **`Supabase types drift` pre-existing:** Confirmed pre-existing — also fails on #1169 which passes Lint/Build. Not a blocker.
+- **Awaiting:** CI result on new commit. Cannot merge until Lint/Build green.
+- **STATUS: PROGRESS · stream=RESCUE · item=#1171-ci-rescue · pr=#1171**
+
+---
+
 ### iter 525 — 2026-05-23 — RESCUE stream adopted + #1172 MERGED (Tier B)
 
 - **Phase:** 2–3 — CI check → discovery → adoption of rescue PRs
