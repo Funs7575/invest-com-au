@@ -86,6 +86,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
 | PX | `claude/audit-remediation/px-api-tests` | **#1160 MERGED 2026-05-22** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. CI-RESCUE iter 518: merged origin/main into PX branch (`aaac185`) — resolved `mergeable_state: dirty` caused by stale queue commit on PX; all 99 PX tests pass. **#1160 MERGED 2026-05-22 (iter 522, `8636b28`)** — Tier A auto-merge, all required checks green. **Stream complete.** | All PX tasks + tests merged ✓ |
+| RESCUE | `rescue/compliance-gates` · `rescue/security-fixes` · `rescue/features-wave1` · `rescue/strategy-and-tools` · `rescue/security-wave2` | **#1168 OPEN** (Tier C, CI failing) · **#1169 OPEN** (Tier C, CI green — announced iter 525) · **#1170 OPEN** (Tier B, CI failing) · **#1171 OPEN** (Tier A, CI failing) · **#1172 MERGED 2026-05-23** (iter 525, `5cba432`) | 5 rescue PRs (from parallel session_01Nw94ru91SJFnnjczrNEsaz) adopted by audit-remediation loop iter 525. All address audit findings: #1172 (rate limits E/K, vault RLS B/DV, Zod E, Pro gate) MERGED Tier B. #1169 (RLS over-open C4-C6 + adminClient→serverClient on 3 broker routes) Tier C announced — merge next fire if no STOP. #1171 (regulatory docs + investment-income-tax calc) Tier A — CI rescue needed (Lint/Build failing). #1170 (AFSL lookup + brokerage fee index + advisor jobs) Tier B — CI rescue needed (Lint/Build failing). #1168 (pre-AFSL payment gate + wholesale attestation) Tier C — CI rescue needed (Lint/Build + smoke test failing). | All merged |
 
 ---
 
@@ -234,6 +235,24 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 525 — 2026-05-23 — RESCUE stream adopted + #1172 MERGED (Tier B)
+
+- **Phase:** 2–3 — CI check → discovery → adoption of rescue PRs
+- **Stream:** RESCUE (adopted from parallel session)
+- **Action:** Discovered 5 rescue PRs (#1168–#1172) created by session_01Nw94ru91SJFnnjczrNEsaz. All address findings from the 2026-04-24 audit. Adopted all 5 into the queue as a new RESCUE in-flight stream.
+- **CI assessment:**
+  - #1172 (rescue/security-wave2, Tier B): all required checks ✅ — **MERGED** `5cba432`. Rate limits on 9 routes (E/K stream), vault storage RLS migration (B/DV stream), Zod on 7 routes (E stream), Pro research gate. 15-min window elapsed (PR created 15:29 UTC, >30 min before merge).
+  - #1169 (rescue/security-fixes, Tier C): all required checks ✅ — OPEN. **Tier C intent announced** (merge next fire if no STOP). RLS over-open fixes (C4–C6: site_ab_tests, affiliate_monthly_reports, outbound_webhook_endpoints, startup_profiles, startup_rounds, firm_credit_balance_summary) + adminClient→serverClient on broker-health, v1/brokers/[slug], v1/compare routes.
+  - #1171 (rescue/strategy-and-tools, Tier A): Lint/Build ❌ — CI rescue needed.
+  - #1170 (rescue/features-wave1, Tier B): Lint/Build ❌ — CI rescue needed.
+  - #1168 (rescue/compliance-gates, Tier C): Lint/Build ❌ + smoke test ❌ — CI rescue needed.
+- **Phase 1.7 main CI:** Green (inferred — #1169 and #1172 build on main `516afdf` and pass Lint/Build/Test).
+- **SP #1048 status:** CI run `26269076843` (commit `be934c5`) completed — `Lint · Type-check · Test · Build` still FAILURE (8th attempt). Stuck-detection guard remains valid. Blocked entry unchanged.
+- **Next items:** iter 526 → CI rescue #1171 (Tier A); iter 527 → CI rescue #1170 (Tier B); iter 528 → CI rescue #1168 (Tier C); iter 529 → merge #1169 (Tier C, post-announcement).
+- **STATUS: PROGRESS · stream=RESCUE · item=#1172-merge · pr=#1172**
+
+---
 
 ### iter 524 — 2026-05-22 — STATUS: ALL-BLOCKED (all actionable items done or blocked)
 
