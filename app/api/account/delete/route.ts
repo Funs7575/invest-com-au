@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { sendEmail } from "@/lib/resend";
+import { isAllowed } from "@/lib/rate-limit-db";
 
 const log = logger("account-delete");
 
@@ -78,6 +79,12 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
+  // Rate limit per user — the row is idempotent (onConflict user_id) but each
+  // call fires a confirmation email, so cap repeated submissions.
+  if (!(await isAllowed("account_delete", `u:${user.id}`, { max: 5, refillPerSec: 5 / 3600 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   const parsed = AccountDeleteBody.safeParse(await request.json().catch(() => ({})));
