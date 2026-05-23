@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { validateApiKey, logApiRequest, API_CORS_HEADERS } from "@/lib/api-auth";
 import { escapeHtml } from "@/lib/html-escape";
@@ -134,7 +134,10 @@ export async function GET(request: NextRequest) {
     // Deduplicate
     const uniqueSlugs = [...new Set(validSlugs)];
 
-    const supabase = createAdminClient();
+    // Public read of active brokers — covered by the anon RLS policy
+    // ("Public read for active brokers": status = 'active'). Use the
+    // RLS-scoped server client rather than the service-role key.
+    const supabase = await createClient();
 
     const { data: brokers, error } = await supabase
       .from("brokers")
