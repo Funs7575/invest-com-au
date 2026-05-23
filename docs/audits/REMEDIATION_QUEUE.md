@@ -236,6 +236,19 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 533 — 2026-05-23 — STATUS: ALL-BLOCKED (3 rescue PRs awaiting CI)
+
+- **Phase:** 2 → 3 — CI rescue check → pick next item
+- **Result:** All 3 RESCUE PRs have fresh CI runs in_progress after iters 530+531+532 merges. No other actionable pending items remain.
+- **CI status snapshot (01:45 UTC):**
+  - #1170 (features-wave1, Tier B): `Lint/Build` in_progress · `Preview smoke test` ✅ · `Supabase types drift` ❌ (pre-existing) — looking clean
+  - #1168 (compliance-gates, Tier C): `Lint/Build` in_progress · `Preview smoke test` ✅ · `Supabase types drift` ❌ (pre-existing)
+  - #1171 (strategy-and-tools, Tier A): `Lint/Build` in_progress · `Preview smoke test` in_progress · `Supabase types drift` ❌ (pre-existing)
+- **Next action:** Next fire should re-check CI results. If all green → (a) merge #1171 (Tier A, auto-merge-safe), (b) merge #1170 after 15-min window (Tier B), (c) announce + merge #1168 (Tier C). If Lint/Build fails on any → CI-RESCUE again.
+- **STATUS: ALL-BLOCKED**
+
+---
+
 ### CI-RESCUE iter 532 — 2026-05-23 — #1171 strategy-and-tools merge-with-main (stale branch)
 
 - **Phase:** 2 — CI rescue
