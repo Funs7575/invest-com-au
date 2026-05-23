@@ -5,8 +5,8 @@ import { NextRequest } from "next/server";
 
 const mockAdminFrom = vi.fn();
 
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+vi.mock("@/lib/supabase/server", () => ({
+  createClient: vi.fn(async () => ({ from: mockAdminFrom })),
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -71,27 +71,6 @@ function makeChangelogEntry() {
 function makeGet(slug = SLUG): NextRequest {
   const url = `http://localhost/api/v1/brokers/${slug}`;
   return new NextRequest(url, { headers: { Authorization: "Bearer ica_testkey123" } });
-}
-
-function makeBrokerBuilder(brokerData: unknown, changelogData: unknown[] = [], brokerError: unknown = null) {
-  let callCount = 0;
-  const builder = {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    order: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    single: vi.fn(() => {
-      callCount++;
-      return Promise.resolve(callCount === 1
-        ? { data: brokerData, error: brokerError }
-        : { data: brokerData, error: brokerError });
-    }),
-    then: vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
-      cb({ data: changelogData, error: null });
-      return Promise.resolve();
-    }),
-  };
-  return builder;
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
