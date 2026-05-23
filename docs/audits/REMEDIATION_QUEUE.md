@@ -236,6 +236,18 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 530 — 2026-05-23 — CI rescue #1171 rescue/strategy-and-tools second merge attempt
+
+- **Phase:** 2 — CI rescue
+- **Stream:** RESCUE — `rescue/strategy-and-tools` / PR #1171
+- **Situation:** CI FAILED after iter 526's merge commit `5cb6869`. All branch-specific files inspected: `lib/calculators/investment-income-tax.ts` (pure math, no server deps), `app/investment-income-tax-calculator/page.tsx` (valid RSC with `calculatorJsonLd`/`faqJsonLd`/`breadcrumbJsonLd` all exported from `lib/schema-markup.ts`), `InvestmentIncomeTaxClient.tsx` ("use client", valid 3-arg `trackEvent`, `ComplianceFooter variant="calculator"` verified), test file (no mocks needed — pure function). Could not identify root cause without CI logs; all static checks pass.
+- **Action:** Merged latest `origin/main` (which now includes #1169's broker route + migration changes) into branch. Resolved `REMEDIATION_QUEUE.md` conflict. Push `013d346` → fresh CI run triggered.
+- **Dirty state:** `mergeable_state: dirty` from `28124db` (queue update on branch). Resolved by this merge commit.
+- **Next:** Await CI result. If still failing, investigate CI logs directly to identify the exact failing step.
+- **STATUS: PROGRESS · stream=RESCUE · item=#1171-ci-rescue · pr=#1171**
+
+---
+
 ### iter 529 — 2026-05-23 — #1169 rescue/security-fixes MERGED (Tier C)
 
 - **Phase:** 3 — merge
