@@ -38,6 +38,12 @@ export interface SubmitLeadPayload {
   /** Skip matching, create lead directly for this advisor. */
   confirm_advisor_id?: number;
   /**
+   * Spam Act 2003 s.16: true when the user explicitly opted in to SMS/WhatsApp
+   * contact at the point of submitting their phone number. Only set this when
+   * the form presented a visible, unchecked consent checkbox.
+   */
+  sms_consent?: boolean;
+  /**
    * Cross-border Phase A (FIN_NOTEBOOK 2026-05-01 #24): user arrived from
    * a country page with a specific cross-border specialty hint (e.g.
    * "UK Pension Transfer"). The matcher uses this to bias toward
