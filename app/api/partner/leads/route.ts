@@ -5,6 +5,7 @@ import { getSiteUrl } from "@/lib/url";
 import { timingSafeEqual } from "crypto";
 import { logger } from "@/lib/logger";
 import { crossBorderLeadMultiplier } from "@/lib/advisor-billing-multipliers";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("partner-leads");
 
@@ -28,6 +29,13 @@ interface PartnerLead {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit by IP — throttles api_key brute-forcing and caps the lead
+    // volume (each accepted lead writes DB rows, bills credit, and emails
+    // advisors). Each request may carry up to MAX_LEADS_PER_REQUEST leads.
+    if (!(await isAllowed("partner_leads", ipKey(request), { max: 30, refillPerSec: 30 / 3600 }))) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     // eslint-disable-next-line invest/no-unvalidated-req-json -- partner bulk endpoint; api_key is timing-safe checked and the leads array shape is validated inline below before any DB write
     const body = await request.json();
     const { api_key, leads } = body;
