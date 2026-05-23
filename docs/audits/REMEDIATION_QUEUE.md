@@ -86,7 +86,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
 | PX | `claude/audit-remediation/px-api-tests` | **#1160 MERGED 2026-05-22** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. CI-RESCUE iter 518: merged origin/main into PX branch (`aaac185`) — resolved `mergeable_state: dirty` caused by stale queue commit on PX; all 99 PX tests pass. **#1160 MERGED 2026-05-22 (iter 522, `8636b28`)** — Tier A auto-merge, all required checks green. **Stream complete.** | All PX tasks + tests merged ✓ |
-| RESCUE | `rescue/compliance-gates` · `rescue/security-fixes` · `rescue/features-wave1` · `rescue/strategy-and-tools` · `rescue/security-wave2` | **#1168 OPEN** (Tier C, CI rescue iter 528 — vi.hoisted fix, awaiting CI) · **#1169 MERGED 2026-05-23** (iter 529, `83666970`) · **#1170 OPEN** (Tier B, CI rescue iter 530 — stale eslint-disable removed, `f7fb60c`, awaiting CI) · **#1171 OPEN** (Tier A, CI rescue iter 526 — merge commit, awaiting CI) · **#1172 MERGED 2026-05-23** (iter 525, `5cba432`) | 5 rescue PRs (from parallel session_01Nw94ru91SJFnnjczrNEsaz) adopted by audit-remediation loop iter 525. #1172 MERGED Tier B. #1169 MERGED Tier C (`83666970`) — RLS over-open C4–C6 + adminClient→serverClient on 3 broker routes. #1171 CI rescue iter 526 (strategy-and-tools Tier A). #1170 CI rescue iter 527→530 (features-wave1 Tier B). #1168 CI rescue iter 528 (compliance-gates Tier C — vi.hoisted fix). | All merged |
+| RESCUE | `rescue/compliance-gates` · `rescue/security-fixes` · `rescue/features-wave1` · `rescue/strategy-and-tools` · `rescue/security-wave2` | **#1168 OPEN** (Tier C, CI rescue iter 531 — merge origin/main `3461d98`, awaiting CI) · **#1169 MERGED 2026-05-23** (iter 529, `83666970`) · **#1170 OPEN** (Tier B, CI rescue iter 530 — stale eslint-disable removed `f7fb60c`, awaiting CI) · **#1171 OPEN** (Tier A, CI rescue iter 526 — merge commit, awaiting CI) · **#1172 MERGED 2026-05-23** (iter 525, `5cba432`) | 5 rescue PRs (from parallel session_01Nw94ru91SJFnnjczrNEsaz) adopted by audit-remediation loop iter 525. #1172 MERGED Tier B. #1169 MERGED Tier C (`83666970`) — RLS over-open C4–C6 + adminClient→serverClient on 3 broker routes. #1171 CI rescue iter 526 (strategy-and-tools Tier A). #1170 CI rescue iter 527→530 (features-wave1 Tier B). #1168 CI rescue iter 528→531 (compliance-gates Tier C). | All merged |
 
 ---
 
@@ -235,6 +235,18 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### CI-RESCUE iter 531 — 2026-05-23 — #1168 compliance-gates merge-with-main (stale branch)
+
+- **Phase:** 2 — CI rescue
+- **Stream:** RESCUE — `rescue/compliance-gates` / PR #1168 (Tier C)
+- **Branch:** `rescue/compliance-gates`
+- **Commit:** `3461d98` — chore(rescue): merge origin/main into rescue/compliance-gates
+- **Diff:** merge commit (queue conflict resolved by taking main's authoritative state)
+- **Root cause:** PR #1168 was 2 commits behind main (`#1169` + queue commits). Branch was in `mergeable_state: dirty` state which causes CI to skip the full test suite. After merging main: lint exit 0, 20 tests pass, rate-limit audit 100%.
+- **STATUS: CI-RESCUE · stream=RESCUE · pr=#1168**
+
+---
 
 ### CI-RESCUE iter 530 — 2026-05-23 — #1170 features-wave1 lint fix (stale eslint-disable)
 
