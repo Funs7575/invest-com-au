@@ -4,7 +4,10 @@ import type { Metadata } from "next";
 
 import { createClient } from "@/lib/supabase/server";
 import { getSubscription } from "@/lib/server/get-subscription";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, ORGANIZATION_JSONLD, SITE_NAME } from "@/lib/seo";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { sanitizeHtml } from "@/lib/sanitize-html";
+import ProPaywall from "@/components/ProPaywall";
 
 export const revalidate = 3600;
 
@@ -55,6 +58,12 @@ export default async function PremiumResearchReportPage({ params }: PageProps) {
 
   const { user, isPro } = await getSubscription();
 
+  // Gate the body server-side: non-Pro readers never receive body_html
+  // in the RSC payload (only the public summary above the fold). This
+  // mirrors the strip-before-return pattern in lib/server/premium-content.ts
+  // so premium content never reaches a non-entitled browser.
+  const bodyHtml = isPro ? report.body_html : "";
+
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Pro", url: absoluteUrl("/pro") },
@@ -62,11 +71,38 @@ export default async function PremiumResearchReportPage({ params }: PageProps) {
     { name: report.title },
   ]);
 
+  // Gated-content Article schema: the body is behind the paywall, so we
+  // declare isAccessibleForFree:false and point Google at the gated
+  // region via [data-pro-gated] (same shape as /reports and /newsletter).
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: report.title,
+    description: report.summary,
+    datePublished: report.published_at ?? undefined,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl(`/pro/research/${report.slug}`),
+    },
+    publisher: ORGANIZATION_JSONLD,
+    author: ORGANIZATION_JSONLD,
+    isAccessibleForFree: false,
+    hasPart: {
+      "@type": "WebPageElement",
+      isAccessibleForFree: false,
+      cssSelector: "[data-pro-gated]",
+    },
+  };
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:py-14">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
       />
 
       <nav className="text-xs text-slate-500 mb-4">
@@ -90,34 +126,30 @@ export default async function PremiumResearchReportPage({ params }: PageProps) {
         )}
       </header>
 
-      {!isPro ? (
-        <div className="rounded-xl border border-violet-200 bg-violet-50 p-5">
-          <h2 className="text-base font-semibold text-violet-900">
-            {user ? "Upgrade to Pro to read the full report" : "Pro subscribers read the full report"}
-          </h2>
-          <p className="mt-1 text-sm text-violet-800">
-            The summary above is the public preview. Pro subscribers get the full report body,
-            underlying data tables, and a notification when next quarter&apos;s update drops.
-          </p>
-          <Link
-            href={user ? "/account/upgrade" : "/login?next=/account/upgrade"}
-            className="mt-3 inline-flex items-center rounded-lg bg-violet-700 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-800"
-          >
-            {user ? "Upgrade to Pro" : "Sign in and upgrade"} &rarr;
-          </Link>
-        </div>
-      ) : (
+      {isPro ? (
         <article
           className="prose prose-slate max-w-none"
-          // eslint-disable-next-line invest/no-unsafe-inner-html -- body_html is admin-authored only (RLS service-role write); the admin upload route will run through the same sanitizer as articles when it ships in the next PR. Until then, pre-launch reports are seeded by trusted editorial via SQL.
-          dangerouslySetInnerHTML={{ __html: report.body_html }}
+           
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(bodyHtml) }}
         />
+      ) : (
+        <div data-pro-gated>
+          <ProPaywall
+            title={user ? "Upgrade to Pro to read the full report" : "Pro subscribers read the full report"}
+            description="The summary above is the public preview. Pro subscribers get the full report body, the underlying data tables, and a notification when next quarter's update drops."
+            bullets={[
+              "Full report body & data tables",
+              "Complete premium-research archive",
+              "Email alert when each report updates",
+              "Cancel anytime",
+            ]}
+            ctaLabel={user ? "Upgrade to Pro" : "Sign in & subscribe"}
+            ctaHref={user ? "/pro" : "/auth/login?next=/pro/research"}
+          />
+        </div>
       )}
 
-      <p className="mt-10 text-xs text-slate-400">
-        General information only — not personal advice. Pricing, fees, and rates change
-        frequently; always verify against the provider&apos;s current PDS before acting.
-      </p>
+      <p className="mt-10 text-xs text-slate-400">{GENERAL_ADVICE_WARNING}</p>
     </div>
   );
 }

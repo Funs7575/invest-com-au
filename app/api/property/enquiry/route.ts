@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
@@ -10,6 +11,39 @@ import { processAdvisorOptIns } from "@/lib/advisor-opt-ins";
 
 const log = logger("property-enquiry");
 
+/**
+ * Body schema. Fields are typed but optional/permissive — the inline guards
+ * below (honeypot, required name+email, length caps, email validity) stay the
+ * gatekeepers so the existing 400 messages and ordering are preserved
+ * bit-for-bit. `.passthrough()` keeps any extra client fields, and the
+ * honeypot + advisor_opt_ins fields are declared so the existing reads stay
+ * type-safe. The schema rejects hard type mismatches (e.g. `user_name: {}`)
+ * before they reach the insert, replacing the previous `body.x` reads.
+ *
+ * `listing_id` is intentionally accepted as string|number (the column lookup
+ * coerces) so existing clients sending either form keep working.
+ */
+const PropertyEnquirySchema = z
+  .object({
+    listing_id: z.union([z.string(), z.number()]).optional().catch(undefined),
+    user_name: z.string().optional().catch(undefined),
+    user_email: z.string().optional().catch(undefined),
+    user_phone: z.string().optional().catch(undefined),
+    user_country: z.string().optional().catch(undefined),
+    user_message: z.string().optional().catch(undefined),
+    investment_budget: z.string().optional().catch(undefined),
+    timeline: z.string().optional().catch(undefined),
+    source_page: z.string().optional().catch(undefined),
+    utm_source: z.string().optional().catch(undefined),
+    // Honeypot fields — declared so the silent-reject guard can read them.
+    website: z.string().optional().catch(undefined),
+    fax: z.string().optional().catch(undefined),
+    company_url: z.string().optional().catch(undefined),
+    // Advisor opt-in fan-out (array of advisor-type slugs).
+    advisor_opt_ins: z.array(z.string()).optional().catch(undefined),
+  })
+  .passthrough();
+
 export async function POST(request: NextRequest) {
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
@@ -17,7 +51,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
-    const body = await request.json();
+    const parsed = PropertyEnquirySchema.safeParse(await request.json());
+    if (!parsed.success) {
+      // Hard type mismatch (e.g. `user_name: {}`). Surface the same generic
+      // 400 the required-field guard below would produce.
+      return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
+    }
+    const body = parsed.data;
     const { listing_id, user_name, user_email, user_phone, user_country, user_message, investment_budget, timeline, source_page, utm_source } = body;
 
     // Honeypot
@@ -25,12 +65,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, lead_id: null });
     }
 
-    // Validation
-    if (!listing_id || !user_name?.trim() || !user_email?.trim()) {
+    // Validation. The typeof checks both preserve the original runtime guard
+    // (name + email required) AND narrow user_name/user_email to `string` for
+    // the downstream `.trim()` / email-validation calls now that the schema
+    // types them as `string | undefined`.
+    if (
+      !listing_id ||
+      typeof user_name !== "string" ||
+      !user_name.trim() ||
+      typeof user_email !== "string" ||
+      !user_email.trim()
+    ) {
       return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
     }
 
-    if ((user_name as string).length > 200 || (user_email as string).length > 254 || (user_message as string || "").length > 5000) {
+    if (user_name.length > 200 || user_email.length > 254 || (user_message || "").length > 5000) {
       return NextResponse.json({ error: "Input too long." }, { status: 400 });
     }
 
