@@ -8,6 +8,7 @@ import {
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import ListingComplianceNotice from "@/components/invest/ListingComplianceNotice";
+import WholesaleAttestationGate from "@/components/invest/WholesaleAttestationGate";
 
 export const revalidate = 300;
 
@@ -51,15 +52,23 @@ export default async function LivestockListingsPage() {
         productLabel="livestock and equine investment opportunities (including racehorse and breeding syndications)"
         classification="Livestock and equine syndications listed here are commonly regulated managed investment schemes."
       />
-      <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient
-          listings={listings}
-          categories={categoryTabs}
-          lockedCategory="livestock"
-          pageTitle="Livestock & Equine Investment Listings"
-          pageSubtitle="Browse Australian livestock and equine investment opportunities — thoroughbred racehorse syndications via Magic Millions and Inglis, cattle herd programs, sheep and wool breeding, stud rights and genetic investment programs."
-        />
-      </Suspense>
+      {/* C9: these offers may be regulated financial products / managed
+          investment schemes. Gate the listings (and their inline enquiry CTAs)
+          behind a wholesale (s708) self-attestation before they render. The
+          gate also surfaces the GENERAL_ADVICE_WARNING. */}
+      <div className="mx-4 mt-6">
+        <WholesaleAttestationGate productLabel="these livestock & equine opportunities">
+          <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
+            <InvestListingsClient
+              listings={listings}
+              categories={categoryTabs}
+              lockedCategory="livestock"
+              pageTitle="Livestock & Equine Investment Listings"
+              pageSubtitle="Browse Australian livestock and equine investment opportunities — thoroughbred racehorse syndications via Magic Millions and Inglis, cattle herd programs, sheep and wool breeding, stud rights and genetic investment programs."
+            />
+          </Suspense>
+        </WholesaleAttestationGate>
+      </div>
     </>
   );
 }
