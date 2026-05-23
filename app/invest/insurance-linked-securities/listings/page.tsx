@@ -18,6 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Browse Australian insurance-linked securities (ILS) investment opportunities for wholesale investors. Catastrophe bonds, sidecars, collateralised reinsurance and ILW structures. Non-correlated alternative yield.",
     alternates: { canonical: `${SITE_URL}/invest/insurance-linked-securities/listings` },
+    // No live listings yet — de-indexed until supply threshold is met.
+    // Remove when countListingsByVertical("insurance-linked-securities") > 0 in prod.
+    robots: { index: false, follow: false },
     openGraph: {
       title: `Insurance-Linked Securities Investment Opportunities — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/insurance-linked-securities/listings`,
