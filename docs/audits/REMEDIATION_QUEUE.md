@@ -129,7 +129,7 @@ review is required for the investor-startup connection flows.
 
 7 `CI-RESCUE` iterations on `Lint · Type-check · Test · Build` for PR #1048 in the last 24 hours: iters 503, 506, 508, 509, 511, 515, 519. Each rescue fixed a real sequential issue (the CI pipeline surfaces one failing step at a time — Zod v4 → AccountKind TS → lint warnings → async params → metadata gate → JSON-LD gate → coverage threshold). All local checks now pass: 119+ tests green, coverage thresholds met, lint exit 0, JSON-LD gate clean, rate-limits 100%. The current failure is in a step the sandbox cannot reproduce — full `npx tsc --noEmit` OOMs before completion, and `npm run build` times out within the sandbox's 180s budget. CI on GitHub Actions runners (higher RAM, no wall-clock OOM) is the authoritative gate.
 
-**Last 3 rescue commits:** `be934c5` (empty re-trigger after local-vs-CI investigation, this fire), `ba50786` (data-room + esic-verify tests, iter 519), `fdd8f37` (JSON-LD exemption gate, iter 515). **All local gates confirmed green (tsc exit 0, lint exit 0, 56 new tests pass, coverage thresholds met, JSON-LD clean, rate-limits 100%).** CI run `26269076843` is in progress as of 04:50 UTC — awaiting conclusion to determine if stuck-detection block can be cleared.
+**Last 3 rescue commits:** `be934c5` (empty re-trigger after local-vs-CI investigation, this fire), `ba50786` (data-room + esic-verify tests, iter 519), `fdd8f37` (JSON-LD exemption gate, iter 515). **All local gates confirmed green (tsc exit 0, lint exit 0, 56 new tests pass, coverage thresholds met, JSON-LD clean, rate-limits 100%).** CI run `26269076843` **COMPLETED WITH FAILURE** (confirmed iter 540) — `Lint · Type-check · Test · Build` failed; `a11y`, `E2E`, `Lighthouse` all SKIPPED (dependency on failed ci job). Stuck-detection guard stands.
 
 **Recommendation matrix:**
 - **(a) Investigate locally** with adequate RAM: `NODE_OPTIONS="--max-old-space-size=8192" npx tsc --noEmit` then `npm run build`. Identify the exact failing step from the CI job log for run 26268090584. The sequential pattern suggests the current failure is either a type error in one of the new SP pages/components (tsc step) or a Next.js build-boundary issue (build step).
@@ -183,28 +183,14 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ---
 
-### a11y-DISC-20260523-01 — Accessibility (axe-core) critical violations re-emerging (surfaced iter 538, investigated iter 539)
+### ~~a11y-DISC-20260523-01~~ — **RESOLVED (false positive, iter 540)**
 
-**Status:** pending — needs node_modules to run tests
+**Status:** RESOLVED — all 8 a11y tests pass on current main.
 
-All 3 rescue PRs (#1168, #1170, #1171) failed `Accessibility (axe-core on key routes)` despite being synced with main (which includes the May-18 #905 fix). The failure is at the CRITICAL violation level (the spec's blocking threshold). The axe-core suite only tests 8 routes: `/`, `/glossary`, `/tools`, `/foreign-investment`, `/about`, `/how-we-earn`, `/privacy`, `/terms`.
+**Root cause of rescue PR "failures" (iter 540 investigation):**
+The rescue PRs didn't fail at axe-core analysis. They failed because the `Accessibility (axe-core on key routes)` CI job depends on `needs: ci`, and when the ci job failed at the bundle-size budget step (exit 1, 12006.5 kB > 12000 kB), the "Upload .next build artifact" step was skipped. The a11y job's `actions/download-artifact@v8` step then failed with artifact-not-found, causing the whole a11y job to report as failed — NOT because of any axe violation. The iter 534 bundle-size fix (raised to 13000 kB) was the actual fix; the rescue PRs then merged cleanly.
 
-**Investigation findings (iter 539):**
-The most significant changes to the tested routes since May 18 came from commit `5659062` (May 21, "fix(compliance): proactively alert on TMD coverage gap"). Despite its name, this commit created/recreated multiple components on the `/foreign-investment` route from scratch (new file mode): `WHTCalculator.tsx`, `DASPCalculator.tsx`, `PersonaSelector.tsx`, `ForeignInvestmentNav.tsx`, `DTASearchTable.tsx`, `app/about/page.tsx`. PR #905 (May 18) had fixed `WHTCalculator.tsx` + `DASPCalculator.tsx` — but `5659062` replaced them entirely. Whether the a11y fixes from PR #905 were carried over cannot be verified from git history (the May-18 fix commit is not in this clone's history).
-
-**Specific code lead:** `app/foreign-investment/PersonaSelector.tsx` has `<h3>` elements inside `<button>` elements (heading-in-interactive-element pattern). While typically "serious" not "critical" in axe, this warrants verification. `DASPCalculator.tsx` and `WHTCalculator.tsx` have proper htmlFor/id associations — verified clean.
-
-**What's needed:**
-1. Run `npm ci && npx playwright test e2e/a11y.spec.ts --project=chromium` against the dev server to capture the exact axe violation(s) and which route(s) fail.
-2. Fix the violation — likely small (< 50 LOC). Add `aria-hidden="true"` to decorative emoji, convert `<h3>` to `<span>` in buttons, or add missing labels.
-3. Optionally: download the `a11y-report` artifact from one of the rescue PR runs (#1168, #1170, or #1171) on GitHub Actions for the specific violation list without needing a local build.
-
-**Options:**
-- (a) **Loop fixes** — `npm ci` then run the spec and fix. Requires 5–10 min install + build time in an environment with sufficient resources.
-- (b) **Founder reviews** — GitHub Actions → rescue PR → CI run → `a11y-report` artifact download → identify violations → delegate fix to loop.
-- (c) **Demote threshold** — change `const blocking = critical;` to `const blocking = [];` in `e2e/a11y.spec.ts` if the violations are confirmed noise. Only if verified non-blocking.
-
-**Recommendation:** (a) on a session with node_modules available. This gate will fire on every future PR until fixed.
+**Verification (iter 540):** Built current main with placeholder creds (`npm run build`), started production server (`npm run start`), ran `npx playwright test e2e/a11y.spec.ts --project=chromium` — **all 8 tests passed**. Only "serious" violations logged (missing `<title>` + `html lang` in placeholder-creds build context) — these are expected and not blocking (spec only fails on "critical"). No critical violations on any of the 8 routes.
 
 ---
 
@@ -260,6 +246,17 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 540 — 2026-05-23 — STATUS: ALL-BLOCKED (a11y-DISC resolved, SP #1048 CI failure confirmed)
+
+- **Phase:** 3 — a11y-DISC-20260523-01 investigation concluded
+- **Stream:** a11y-DISC-20260523-01 — RESOLVED (false positive)
+- **Action:** Built current main with placeholder creds, started prod server (`npm run start`), ran `npx playwright test e2e/a11y.spec.ts --project=chromium`. **All 8 tests passed** — only "serious" violations (missing title/lang in placeholder build), no critical violations. Rescue PRs' "a11y CI failures" were infrastructure: when ci failed at bundle-size gate, `.next` artifact upload was skipped → a11y job's `actions/download-artifact` failed → whole job reported as failed. No actual axe violations were present. Confirmed SP #1048 CI run `26269076843` completed FAILURE (stuck-detection guard confirmed standing).
+- **Queue updates:** a11y-DISC-20260523-01 marked RESOLVED (false positive). SP #1048 blocked entry updated with CI run completion status.
+- **Queue state:** All remaining items blocked: SP #1048 (stuck-detection + SP-12 compliance), B-09, C-03..C-05, G-04, CO-01/02/04, CL-05, LL-05, BB-04, QQ-08.
+- **STATUS: ALL-BLOCKED**
+
+---
 
 ### iter 539 — 2026-05-23 — STATUS: ALL-BLOCKED (a11y investigation, no node_modules)
 
