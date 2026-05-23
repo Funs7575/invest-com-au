@@ -8,6 +8,7 @@ import { useSubscription } from "@/lib/hooks/useSubscription";
 import { useSearchParams } from "next/navigation";
 import Icon from "@/components/Icon";
 import AuthorByline from "@/components/AuthorByline";
+import FeeImpactChart from "@/components/FeeImpactChart";
 import { logger } from "@/lib/logger";
 
 import FeeImpactInputs from "./_components/FeeImpactInputs";
@@ -449,6 +450,24 @@ export default function FeeImpactClient({ brokers }: Props) {
               ShareResultsButton={ShareResultsButton}
             />
           </div>
+        </div>
+
+        {/* Long-term fee drag visualisation */}
+        <div className="mt-8 bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
+          <h2 className="text-xl md:text-2xl font-extrabold text-brand tracking-tight mb-1">
+            Why a Small Fee Difference Compounds
+          </h2>
+          <p className="text-sm text-slate-500 max-w-2xl mb-5 leading-relaxed">
+            Annual percentage fees look tiny, but they compound against your
+            balance every year. Here&apos;s the long-term drag of a 0.10% fee
+            versus a 0.30% fee on a $50,000 balance.
+          </p>
+          <FeeImpactChart
+            balance={50000}
+            rateA={0.001}
+            rateB={0.003}
+            years={10}
+          />
         </div>
 
         {/* Related Resources */}

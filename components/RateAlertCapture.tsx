@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { PDS_CONSIDERATION } from "@/lib/compliance";
 
 interface Props {
   /** Which product the rate alert applies to. */
@@ -157,6 +158,8 @@ export default function RateAlertCapture({
         We&apos;ll only email you when a {PRODUCT_LABELS[productKind]} crosses your
         threshold. One email per match, max one per day.
       </p>
+
+      <p className="mt-2 text-xs text-slate-400">{PDS_CONSIDERATION}</p>
     </form>
   );
 }
