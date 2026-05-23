@@ -28,6 +28,11 @@ vi.mock("@/lib/email-templates", () => ({
   weeklyDigestEmail: vi.fn(() => "<html>digest</html>"),
 }));
 
+vi.mock("@/lib/autopilot", () => ({
+  checkAutopilotGate: vi.fn().mockResolvedValue(null),
+  _resetAutopilotCache: vi.fn(),
+}));
+
 import { GET, runtime, maxDuration } from "@/app/api/cron/weekly-newsletter/route";
 
 const SECRET = "test-cron-secret-1234567890";

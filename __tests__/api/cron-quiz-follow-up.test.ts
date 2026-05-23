@@ -30,6 +30,11 @@ vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockFrom, rpc: vi.fn(() => makeBuilder()) })),
 }));
 
+vi.mock("@/lib/autopilot", () => ({
+  checkAutopilotGate: vi.fn().mockResolvedValue(null),
+  _resetAutopilotCache: vi.fn(),
+}));
+
 import { GET, runtime, maxDuration } from "@/app/api/cron/quiz-follow-up/route";
 
 const SECRET = "test-cron-secret-1234567890";
