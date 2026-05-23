@@ -83,7 +83,6 @@ export async function PATCH(req: NextRequest, ctx: RouteContext) {
 
     let raw: unknown;
     try {
-      // eslint-disable-next-line invest/no-unvalidated-req-json -- validated with PatchJobSchema.safeParse immediately below; try/catch needed to return 400 on malformed JSON
       raw = await req.json();
     } catch {
       return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
