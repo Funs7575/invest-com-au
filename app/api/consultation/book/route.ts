@@ -2,10 +2,21 @@ import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 const log = logger("consultation");
+
+/**
+ * Body schema. Only `consultation_slug` is consumed. Validated inline (rather
+ * than via withValidatedBody) because the rate-limit and auth checks must run
+ * and short-circuit BEFORE the body is parsed. A non-string / missing slug
+ * surfaces the same "consultation_slug is required" 400 as before.
+ */
+const ConsultationBookSchema = z.object({
+  consultation_slug: z.string().min(1),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,9 +37,9 @@ export async function POST(request: NextRequest) {
     // Read consultation_slug from request body
     let consultationSlug: string;
     try {
-      const body = await request.json();
-      if (body.consultation_slug && typeof body.consultation_slug === "string") {
-        consultationSlug = body.consultation_slug;
+      const parsed = ConsultationBookSchema.safeParse(await request.json());
+      if (parsed.success) {
+        consultationSlug = parsed.data.consultation_slug;
       } else {
         return NextResponse.json(
           { error: "consultation_slug is required" },
