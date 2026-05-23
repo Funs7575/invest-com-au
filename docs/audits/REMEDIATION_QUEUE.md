@@ -236,6 +236,19 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 528 — 2026-05-23 — CI rescue #1168 rescue/compliance-gates (Tier C)
+
+- **Phase:** 2–3 — CI rescue
+- **Stream:** RESCUE — `rescue/compliance-gates` / PR #1168
+- **Root cause:** `vi.mock()` factory functions in `__tests__/api/portfolio-xray.test.ts` and `__tests__/api/tax-optimizer.test.ts` referenced module-scope `const mockX = vi.fn()` variables inside their factory callbacks. After Vitest's hoisting, those variables are in the temporal dead zone when factories execute → "There was an error when mocking a module" runtime failure → entire `Lint · Type-check · Test · Build` check red.
+- **Fix:** Moved `mockIsAllowed`, `mockLookupTicker`, `mockFrom` (portfolio-xray) and `mockIsAllowed`, `mockIpKey` (tax-optimizer) into `vi.hoisted()` calls above the `vi.mock()` blocks. Pattern matches `stripe-connect.test.ts` which already used `vi.hoisted()` correctly.
+- **Commit:** `0b27c45` — `test(compliance-gates): fix vi.hoisted TDZ in portfolio-xray + tax-optimizer tests`
+- **Pushed:** `rescue/compliance-gates` → `0b27c45` (awaiting CI)
+- **Next:** iter 529 → merge #1169 (rescue/security-fixes, Tier C — announced iter 525, CI green).
+- **STATUS: PROGRESS · stream=RESCUE · item=#1168-ci-rescue · pr=#1168**
+
+---
+
 ### iter 525 — 2026-05-23 — RESCUE stream adopted + #1172 MERGED (Tier B)
 
 - **Phase:** 2–3 — CI check → discovery → adoption of rescue PRs
