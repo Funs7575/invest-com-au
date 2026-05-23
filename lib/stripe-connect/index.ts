@@ -203,13 +203,37 @@ export interface CreatePaymentResult {
   paymentId: number | null;
   paymentIntentId: string | null;
   clientSecret: string | null;
-  unavailable?: "no_secret" | "pro_not_connected" | "stripe_error";
+  unavailable?: "no_secret" | "pro_not_connected" | "stripe_error" | "disabled";
   detail?: string;
+}
+
+/**
+ * Handling client money for advice/broker introductions engages RG 246 and
+ * requires an AFSL we do not yet hold. This consumer→adviser brief-payment
+ * clip stays OFF until the licence lands: it MUST NOT create a charge unless
+ * `BRIEF_PAYMENTS_ENABLED` is explicitly set to "true". Defaults OFF — a
+ * missing/empty/any-other value keeps it gated. Do not enable pre-AFSL.
+ */
+export function areBriefPaymentsEnabled(): boolean {
+  return process.env.BRIEF_PAYMENTS_ENABLED === "true";
 }
 
 export async function createPaymentForBrief(
   input: CreatePaymentInput,
 ): Promise<CreatePaymentResult> {
+  if (!areBriefPaymentsEnabled()) {
+    log.warn("createPaymentForBrief blocked: brief payments disabled (pre-AFSL)", {
+      brief_id: input.briefId,
+    });
+    return {
+      paymentId: null,
+      paymentIntentId: null,
+      clientSecret: null,
+      unavailable: "disabled",
+      detail: "Brief payments are not currently available.",
+    };
+  }
+
   if (!process.env.STRIPE_SECRET_KEY) {
     return {
       paymentId: null,
