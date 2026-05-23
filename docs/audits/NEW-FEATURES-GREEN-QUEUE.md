@@ -30,7 +30,7 @@ to green. Seeded 2026-05-20 from the ordered work plan in
 | 13 | P1 | Impersonation visibility ("who is impersonating whom") | B | **already-green** | — | Verified iter 542: `app/admin/impersonations/page.tsx` lists active + history of impersonation sessions (references "audit §5 #13"). Audit text was stale. |
 | 14 | P1 | Wire `portal-gate` isolation for business/firm/startup portals | C | **already-green** | — | Verified iter 542: portal-gate isolation wired for all portals. Audit text was stale. |
 | 15 | P2 | Circuit-breaker on `ab-auto-promote` | B | **already-green** | — | Verified iter 542: circuit-breaker already implemented. Audit text was stale. |
-| 16 | P2 | Autopilot toggles DB-backed or removed | B | todo | — | AD-99 toggles likely cosmetic. |
+| 16 | P2 | Autopilot toggles DB-backed or removed | B | **in-pr** | #1178 | `lib/autopilot.ts` helper + `checkAutopilotGate()` wired into all 11 cron routes matching admin UI (iter 545). |
 | 17 | P2 | Outbound-webhook auto-retry | B | **already-green** | — | Verified iter 542: outbound-webhook retry already implemented. Audit text was stale. |
 | 18 | P2 | Alert when `property-suburb-refresh` runs the zero-stub | B | **already-green** | — | Verified iter 542: alert already implemented. Audit text was stale. |
 | 19 | P2 | Zod-validate `submit-lead` | B | **conflict-watch** | — | **Being worked live by another agent** (mtime 20:30 on `submit-lead/route.ts`). Duplicate-guard: defer to their PR. |
