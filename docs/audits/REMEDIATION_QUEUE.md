@@ -236,6 +236,20 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 535 — 2026-05-23 — STATUS: ALL-BLOCKED (awaiting CI on all 3 rescue PRs)
+
+- **Phase:** 3 — pick next item (nothing actionable)
+- **Stream:** RESCUE — all 3 PRs in CI
+- **CI status snapshot (~02:55 UTC — ~12 min after bundle-fix pushes):**
+  - #1171 (strategy-and-tools, Tier A): `Lint · Build` in_progress (started 02:43Z) · all other gates ✅ · `Supabase types drift` ❌ (pre-existing, not a required check) · `mergeable_state: unstable`
+  - #1170 (features-wave1, Tier B): `Lint · Build` in_progress (started 02:48Z) · all other gates ✅ · `Supabase types drift` ❌ (pre-existing)
+  - #1168 (compliance-gates, Tier C): `Lint · Build` in_progress (started 02:49Z) · all other gates ✅ · `Supabase types drift` ❌ (pre-existing)
+- **Note:** All required gates other than Lint/Build are green. No other queue items are actionable (SP #1048 stuck-detection block stands; all other streams complete or blocked).
+- **Next action:** Next fire — re-check CI. If green → (a) merge #1171 (Tier A, auto-merge-safe), (b) merge #1170 +15-min window (Tier B), (c) announce + merge #1168 (Tier C). If any fail → CI-RESCUE.
+- **STATUS: ALL-BLOCKED**
+
+---
+
 ### CI-RESCUE iter 534 — 2026-05-23 — bundle size gate fix on all 3 rescue PRs
 
 - **Phase:** 2 — CI rescue (systemic bundle size gate failure)
