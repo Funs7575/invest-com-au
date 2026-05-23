@@ -15,6 +15,7 @@ import {
   verifyAdminRecoveryCode,
 } from "@/lib/admin-mfa";
 import { isFlagEnabled } from "@/lib/feature-flags";
+import { checkAdminMfaEnv } from "@/lib/admin-mfa-env-check";
 
 const log = logger("admin-login");
 
@@ -113,6 +114,24 @@ async function clearRateLimit(ipHash: string): Promise<void> {
 }
 
 export async function POST(request: NextRequest) {
+  // Fail-closed when MFA env vars are not configured. Mirrors the enroll
+  // route's 503 guard so misconfigurations surface at login rather than
+  // after a multi-redirect journey to the MFA verify/enroll pages. Without
+  // ADMIN_MFA_KEY the TOTP crypto can't work; without ADMIN_MFA_COOKIE_SECRET
+  // the proxy gate rejects all admin cookies. Either missing = broken setup.
+  const envStatus = checkAdminMfaEnv();
+  if (!envStatus.ok) {
+    log.error("admin login rejected — MFA env not configured", { missing: envStatus.missing });
+    return NextResponse.json(
+      {
+        error: "Admin authentication is not fully configured. Contact the site operator.",
+        code: "mfa_not_configured",
+        missing: envStatus.missing,
+      },
+      { status: 503 },
+    );
+  }
+
   // Parse body
   let body: {
     email?: string;
