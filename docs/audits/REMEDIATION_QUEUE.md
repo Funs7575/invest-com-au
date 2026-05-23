@@ -183,25 +183,28 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ---
 
-### a11y-DISC-20260523-01 — Accessibility (axe-core) critical violations re-emerging (surfaced iter 538)
+### a11y-DISC-20260523-01 — Accessibility (axe-core) critical violations re-emerging (surfaced iter 538, investigated iter 539)
 
-**Status:** pending investigation
+**Status:** pending — needs node_modules to run tests
 
-All 3 rescue PRs (#1168, #1170, #1171) failed `Accessibility (axe-core on key routes)` despite being synced with main (which includes the May-18 #905 fix). The failure is at the CRITICAL violation level (the spec's blocking threshold). The axe-core suite only tests 8 pre-existing routes: `/`, `/glossary`, `/tools`, `/foreign-investment`, `/about`, `/how-we-earn`, `/privacy`, `/terms`. None of these routes were modified by the rescue PRs — the failure was pre-existing on main at the time the rescue branches were created.
+All 3 rescue PRs (#1168, #1170, #1171) failed `Accessibility (axe-core on key routes)` despite being synced with main (which includes the May-18 #905 fix). The failure is at the CRITICAL violation level (the spec's blocking threshold). The axe-core suite only tests 8 routes: `/`, `/glossary`, `/tools`, `/foreign-investment`, `/about`, `/how-we-earn`, `/privacy`, `/terms`.
 
-Since all 3 rescue PRs are now merged to main, any future PR that adds meaningful changes will also see this failure.
+**Investigation findings (iter 539):**
+The most significant changes to the tested routes since May 18 came from commit `5659062` (May 21, "fix(compliance): proactively alert on TMD coverage gap"). Despite its name, this commit created/recreated multiple components on the `/foreign-investment` route from scratch (new file mode): `WHTCalculator.tsx`, `DASPCalculator.tsx`, `PersonaSelector.tsx`, `ForeignInvestmentNav.tsx`, `DTASearchTable.tsx`, `app/about/page.tsx`. PR #905 (May 18) had fixed `WHTCalculator.tsx` + `DASPCalculator.tsx` — but `5659062` replaced them entirely. Whether the a11y fixes from PR #905 were carried over cannot be verified from git history (the May-18 fix commit is not in this clone's history).
+
+**Specific code lead:** `app/foreign-investment/PersonaSelector.tsx` has `<h3>` elements inside `<button>` elements (heading-in-interactive-element pattern). While typically "serious" not "critical" in axe, this warrants verification. `DASPCalculator.tsx` and `WHTCalculator.tsx` have proper htmlFor/id associations — verified clean.
 
 **What's needed:**
-1. Run `npx playwright test e2e/a11y.spec.ts --project=chromium` locally with `NODE_ENV=test` to reproduce the failure and capture the axe violations list.
-2. Identify which routes and which WCAG 2 AA critical rule is failing (likely a colour-contrast or missing-label issue introduced by one of the post-May-18 merges).
-3. Fix the violation in the relevant component and push.
+1. Run `npm ci && npx playwright test e2e/a11y.spec.ts --project=chromium` against the dev server to capture the exact axe violation(s) and which route(s) fail.
+2. Fix the violation — likely small (< 50 LOC). Add `aria-hidden="true"` to decorative emoji, convert `<h3>` to `<span>` in buttons, or add missing labels.
+3. Optionally: download the `a11y-report` artifact from one of the rescue PR runs (#1168, #1170, or #1171) on GitHub Actions for the specific violation list without needing a local build.
 
 **Options:**
-- (a) Loop investigates — run the a11y spec locally against a dev server and fix the critical violation(s). If the fix is small (<50 LOC), can be done in one iteration.
-- (b) Founder reviews — check the `a11y-report` artifact from one of the rescue PR runs on GitHub Actions for the specific axe violation details.
-- (c) Raise the suite threshold — if the "critical" failures are noise, demote to "serious" in the spec (already only logs serious, doesn't block). But only after verifying the violations are not genuine usability blockers.
+- (a) **Loop fixes** — `npm ci` then run the spec and fix. Requires 5–10 min install + build time in an environment with sufficient resources.
+- (b) **Founder reviews** — GitHub Actions → rescue PR → CI run → `a11y-report` artifact download → identify violations → delegate fix to loop.
+- (c) **Demote threshold** — change `const blocking = critical;` to `const blocking = [];` in `e2e/a11y.spec.ts` if the violations are confirmed noise. Only if verified non-blocking.
 
-**Recommendation:** (a) — run spec locally first. This prevents the failure from appearing on every future PR and confusing CI-rescue logic.
+**Recommendation:** (a) on a session with node_modules available. This gate will fire on every future PR until fixed.
 
 ---
 
@@ -257,6 +260,16 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 539 — 2026-05-23 — STATUS: ALL-BLOCKED (a11y investigation, no node_modules)
+
+- **Phase:** 3 — next item assessment after RESCUE stream complete
+- **Stream:** a11y-DISC-20260523-01 (investigated, cannot run tests without node_modules)
+- **Investigation:** Checked all 8 a11y-tested routes for recently changed code. Identified commit `5659062` (May 21) as the primary suspect — recreated WHTCalculator.tsx, DASPCalculator.tsx, PersonaSelector.tsx, ForeignInvestmentNav.tsx, DTASearchTable.tsx, app/about/page.tsx from scratch. PR #905's May-18 a11y fix may have been lost when these components were recreated. `PersonaSelector.tsx` has `<h3>` in `<button>` (heading-in-interactive pattern). `node_modules` missing prevents running `npm ci && npx playwright test e2e/a11y.spec.ts`. Queue entry updated with investigation findings.
+- **Queue state:** RESCUE stream complete. All remaining items blocked (SP #1048 stuck+compliance, B-09, C-03..C-05, G-04, CO-01/02/04, CL-05, LL-05, BB-04, QQ-08, a11y-DISC-20260523-01).
+- **STATUS: ALL-BLOCKED**
+
+---
 
 ### iter 538 — 2026-05-23 — STATUS: PROGRESS · stream=RESCUE · item=#1168-merge · pr=#1168
 
