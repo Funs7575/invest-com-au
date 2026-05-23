@@ -86,7 +86,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
 | PX | `claude/audit-remediation/px-api-tests` | **#1160 MERGED 2026-05-22** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. CI-RESCUE iter 518: merged origin/main into PX branch (`aaac185`) — resolved `mergeable_state: dirty` caused by stale queue commit on PX; all 99 PX tests pass. **#1160 MERGED 2026-05-22 (iter 522, `8636b28`)** — Tier A auto-merge, all required checks green. **Stream complete.** | All PX tasks + tests merged ✓ |
-| RESCUE | `rescue/compliance-gates` · `rescue/security-fixes` · `rescue/features-wave1` · `rescue/strategy-and-tools` · `rescue/security-wave2` | **#1168 OPEN** (Tier C, CI failing) · **#1169 OPEN** (Tier C, CI green — announced iter 525) · **#1170 OPEN** (Tier B, CI failing) · **#1171 OPEN** (Tier A, CI failing) · **#1172 MERGED 2026-05-23** (iter 525, `5cba432`) | 5 rescue PRs (from parallel session_01Nw94ru91SJFnnjczrNEsaz) adopted by audit-remediation loop iter 525. All address audit findings: #1172 (rate limits E/K, vault RLS B/DV, Zod E, Pro gate) MERGED Tier B. #1169 (RLS over-open C4-C6 + adminClient→serverClient on 3 broker routes) Tier C announced — merge next fire if no STOP. #1171 (regulatory docs + investment-income-tax calc) Tier A — CI rescue needed (Lint/Build failing). #1170 (AFSL lookup + brokerage fee index + advisor jobs) Tier B — CI rescue needed (Lint/Build failing). #1168 (pre-AFSL payment gate + wholesale attestation) Tier C — CI rescue needed (Lint/Build + smoke test failing). | All merged |
+| RESCUE | `rescue/compliance-gates` · `rescue/security-fixes` · `rescue/features-wave1` · `rescue/strategy-and-tools` · `rescue/security-wave2` | **#1168 OPEN** (Tier C, CI rescue iter 528 — vi.hoisted fix, awaiting CI) · **#1169 MERGED 2026-05-23** (iter 529, `83666970`) · **#1170 OPEN** (Tier B, CI rescue iter 527 — ESLint fix, awaiting CI) · **#1171 OPEN** (Tier A, CI rescue iter 526 — merge commit, awaiting CI) · **#1172 MERGED 2026-05-23** (iter 525, `5cba432`) | 5 rescue PRs (from parallel session_01Nw94ru91SJFnnjczrNEsaz) adopted by audit-remediation loop iter 525. #1172 MERGED Tier B. #1169 MERGED Tier C (`83666970`) — RLS over-open C4–C6 + adminClient→serverClient on 3 broker routes. #1171 CI rescue iter 526 (strategy-and-tools Tier A). #1170 CI rescue iter 527 (features-wave1 Tier B). #1168 CI rescue iter 528 (compliance-gates Tier C — vi.hoisted fix). | All merged |
 
 ---
 
@@ -236,32 +236,15 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
-### iter 527 — 2026-05-23 — CI rescue #1170 (rescue/features-wave1, Tier B): lint fix + merge-with-main pushed
+### iter 529 — 2026-05-23 — #1169 rescue/security-fixes MERGED (Tier C)
 
-- **Phase:** 2 — CI rescue
-- **Stream:** RESCUE
-- **PR:** #1170 OPEN (`rescue/features-wave1`)
-- **Root cause found:** `app/api/firm-portal/jobs/[id]/route.ts` had a bare `await req.json()` call in a try/catch block (to handle JSON parse errors gracefully) followed by `PatchJobSchema.safeParse(raw)`. The `invest/no-unvalidated-req-json` ESLint rule fires on any `req.json()` call regardless of downstream validation — `--max-warnings 0` upgrades the warning to a CI failure.
-- **Fix:** Added `// eslint-disable-next-line invest/no-unvalidated-req-json -- validated with PatchJobSchema.safeParse immediately below; try/catch needed to return 400 on malformed JSON` above the call.
-- **Other checks:** Static-analysed all 23 branch-specific files. All imports valid (`ORGANIZATION_JSONLD`, `REVIEW_AUTHOR`, `EDITORIAL_ACCURACY_COMMITMENT`, `Sparkline`, `readFeeIndex`, `computeTrend`, `FeeIndexSnapshot`, `FeeIndexTrend`, `TrendDelta`, `SearchInput`, `AFSL_STATUS_LABELS`). Supabase clients are untyped — no TypeScript errors from missing tables (`job_posts`, `job_applications`). Test files use `vi.hoisted()` correctly. `z.enum(VALID_TYPES, { error: "..." })` is valid Zod v4 API. Sitemap change is clean (adds `/afsl-lookup`).
-- **Pushed:** Merge commit + lint fix commit → fresh CI run triggered.
-- **`Supabase types drift` pre-existing:** Also fails on #1169 (which passes Lint/Build). Not a blocker.
-- **Awaiting:** CI result. Cannot merge until Lint/Build green.
-- **STATUS: PROGRESS · stream=RESCUE · item=#1170-ci-rescue · pr=#1170**
-
----
-
-### iter 526 — 2026-05-23 — CI rescue #1171 (rescue/strategy-and-tools, Tier A): merge-with-main pushed
-
-- **Phase:** 2 — CI rescue
-- **Stream:** RESCUE
-- **PR:** #1171 OPEN (`rescue/strategy-and-tools`)
-- **Action:** Static-analysed all 11 files in the branch diff vs main. Calculator logic (`lib/calculators/investment-income-tax.ts`), RSC page (`app/investment-income-tax-calculator/page.tsx`), client component (`InvestmentIncomeTaxClient.tsx`), test file (`__tests__/lib/calculators-investment-income-tax.test.ts`), and sitemap all look correct — no TypeScript errors, valid icon names (`bar-chart`, `info`, `calculator`), correct `ComplianceFooter variant="calculator"`, clean sitemap change (adds one route, no duplicate).
-- **Root cause hypothesis:** Branch was built on `516afdf` (pre-#1172); the original CI run at 15:21 UTC was against a diverged base. After merging `origin/main` (3 commits: main merge + queue-update + security fix), the branch is current.
-- **Pushed:** `5cb6869` (merge origin/main) → fresh CI run triggered.
-- **`Supabase types drift` pre-existing:** Confirmed pre-existing — also fails on #1169 which passes Lint/Build. Not a blocker.
-- **Awaiting:** CI result on new commit. Cannot merge until Lint/Build green.
-- **STATUS: PROGRESS · stream=RESCUE · item=#1171-ci-rescue · pr=#1171**
+- **Phase:** 3 — merge
+- **Stream:** RESCUE — `rescue/security-fixes` / PR #1169
+- **Action:** Tier C announced iter 525, no STOP received. `Lint · Type-check · Test · Build` ✅. Failing checks pre-existing/advisory: `Supabase types drift` (pre-existing), `Accessibility (axe-core)` (server-only changes can't affect a11y — confirmed pre-existing), `Lighthouse — Core Web Vitals (advisory)`. Un-drafted PR then merged.
+- **Merge commit:** `83666970` — 7 files, 303 additions, 34 deletions
+- **Content merged:** RLS over-open fixes (C4–C6: `site_ab_tests`, `affiliate_monthly_reports`, `outbound_webhook_endpoints`, `startup_profiles`, `startup_rounds`, `firm_credit_balance_summary`) + `adminClient→serverClient` on `broker-health`, `v1/brokers/[slug]`, `v1/compare`.
+- **RESCUE stream update:** #1172 ✅ merged · #1169 ✅ merged · #1168 (Tier C, CI rescue iter 528 — vi.hoisted fix pushed, awaiting CI) · #1170 (Tier B, CI rescue iter 527 — ESLint fix pushed, awaiting CI) · #1171 (Tier A, CI rescue iter 526 — merge commit pushed, awaiting CI).
+- **STATUS: PROGRESS · stream=RESCUE · item=#1169-merge · pr=#1169**
 
 ---
 
