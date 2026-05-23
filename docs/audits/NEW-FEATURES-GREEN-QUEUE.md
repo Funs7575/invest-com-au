@@ -38,7 +38,7 @@ to green. Seeded 2026-05-20 from the ordered work plan in
 | 21 | P2 | Reconcile stale `process-data-exports` "table missing" comment | A | **merged** | #1063 | Comment-only; table applied 2026-05-08. **Merged by founder 2026-05-20.** |
 | §4-occ | completeness | Occupation pages (#83): 8 missing slugs | — | **already-green** | — | Verified: all 26 slugs in sync across config/sitemap/hub. Audit text was stale. (Optional: derive sitemap from `OCCUPATIONS` to prevent future drift.) |
 | §4-teams | completeness | `/teams` index + nav link (unlocks #23–31) | A | **already-green** | — | Verified iter 542: teams page already exists. Audit text was stale. |
-| §4-vert | completeness | Empty listing verticals (#21): noindex or wire submit | A | partial | #1062 | carbon/aquaculture/livestock done; remaining empty verticals (VC, litigation-funding, ILS, royalties…) still indexed-but-empty — noindex or enable submit. |
+| §4-vert | completeness | Empty listing verticals (#21): noindex or wire submit | A | **in-pr** | #1177 | VC/litigation-funding/ILS/royalties noindexed + removed from sitemap (iter 544). Pattern matches #1062. |
 | §4-content | completeness | Reports / switch-stories / community seed | — | **human-gated** | — | DECISION NEEDED: seed real content or keep `noindex`. Founder call (don't auto-seed public content). |
 
 ## Human-gated — exact founder actions
