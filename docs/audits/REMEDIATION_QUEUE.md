@@ -87,7 +87,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
 | PX | `claude/audit-remediation/px-api-tests` | **#1160 MERGED 2026-05-22** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. CI-RESCUE iter 518: merged origin/main into PX branch (`aaac185`) — resolved `mergeable_state: dirty` caused by stale queue commit on PX; all 99 PX tests pass. **#1160 MERGED 2026-05-22 (iter 522, `8636b28`)** — Tier A auto-merge, all required checks green. **Stream complete.** | All PX tasks + tests merged ✓ |
 | RESCUE | _complete_ | **#1168 MERGED 2026-05-23** (iter 538, `edb54b3`) · **#1169 MERGED 2026-05-23** (iter 529, `83666970`) · **#1170 MERGED 2026-05-23** (iter 537, `50302ea`) · **#1171 MERGED 2026-05-23** (iter 536, `3c9d60b`) · **#1172 MERGED 2026-05-23** (iter 525, `5cba432`) | All 5 rescue PRs merged. #1172 (Tier B): rate limits + vault RLS + Zod + Pro gate. #1169 (Tier C): RLS C4–C6 + adminClient→serverClient. #1171 (Tier A): regulatory docs + investment income tax calculator. #1170 (Tier B): AFSL lookup + brokerage fee index + advisor jobs. #1168 (Tier C): pre-AFSL payment gate + wholesale attestation gate. **Stream complete.** | All 5 PRs merged ✓ |
-| NF | `claude/audit-remediation/nf-03-admin-mfa-login-env-guard` · `claude/audit-remediation/nf-sect4vert-empty-verticals-noindex` | **#1176 OPEN** · **#1177 OPEN** | New-features audit 2026-05-20 remediation stream. Items 1/5/6/8/9/10/11/12/13/14/15/17/18/21/§4-teams already-green (confirmed iter 542). Item 3 done (iter 542): admin MFA login env guard — #1176 OPEN (Tier C, announced). CI-RESCUE iter 543: merged main (grants `[industry]`→`[state]` fix) — `36e4d176`. §4-vert done (iter 544): noindex VC/litigation-funding/ILS/royalties listings + sitemap trim — **#1177 OPEN** (Tier A). Remaining todo: items 16 (autopilot toggles), 20 (consent fixes). | NF-03+§4-vert merged + remaining items addressed |
+| NF | `claude/audit-remediation/nf-03-admin-mfa-login-env-guard` · `claude/audit-remediation/nf-sect4vert-empty-verticals-noindex` · `claude/audit-remediation/nf-16-autopilot-db-backed` | **#1176 OPEN** · **#1177 OPEN** · **#1178 OPEN** | New-features audit 2026-05-20 remediation stream. Items 1/5/6/8/9/10/11/12/13/14/15/17/18/21/§4-teams already-green (confirmed iter 542). Item 3 done (iter 542): #1176 (Tier C, announced). CI-RESCUE iter 543: `36e4d176`. §4-vert done (iter 544): #1177 (Tier A). NF-16 done (iter 545): `lib/autopilot.ts` + 11 cron gates — **#1178 OPEN** (Tier B). Remaining todo: item 20 (consent fixes, Tier C multi-part). | All NF items merged |
 
 ---
 
@@ -261,6 +261,20 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 - **Commit:** `36e4d176` — merge commit
 - **Diff:** rename app/grants/{[industry] → [state]}/page.tsx + queue file updates (3 files)
 - **STATUS: CI-RESCUE · stream=NF · pr=#1176**
+
+---
+
+### iter 545 — 2026-05-23 — STATUS: PROGRESS · stream=NF · item=NF-16 · pr=#1178
+
+- **Phase:** 3+5 — NF-16: wire autopilot toggles to cron routes
+- **Stream:** NF (new-features audit 2026-05-20 remediation)
+- **Item NF-16 (P2, Tier B):** Admin UI at `/admin/autopilot` writes `site_settings.autopilot_<id>` but cron routes never read them — toggles were cosmetic. Created `lib/autopilot.ts` (88 LOC) with `checkAutopilotGate(id)` that reads master + per-automation switches with 30s in-process cache. Fail-open (DB error → cron proceeds). Added gate to all 11 cron routes matching AUTOMATIONS constant: check-fees, expire-deals, marketplace-stats, quiz-follow-up, auto-publish, content-staleness, check-affiliate-links, low-balance-alerts, welcome-drip, weekly-newsletter, retry-webhooks.
+- **Commit:** `04e8a809` — +133 LOC across 12 files (new helper + 11 route inserts of 3 lines each)
+- **PR:** #1178 OPEN (Tier B — 15-min observation window)
+- **CI status:** #1177 `Lint/Build` in_progress · `Preview smoke test` ❌ (pre-existing Vercel-preview-timing pattern, not caused by noindex metadata change). #1178 CI just starting.
+- **Remaining NF todo:** item 20 (consent fixes, Tier C multi-part) — investigating sub-items
+- **Discovery (Phase 6.5):** Scanned `lib/autopilot.ts` and the 11 cron routes. No adjacent SSOT violations or missing patterns. The `lib/ai-cost-caps.ts` precedent already covers the caching pattern — no duplication concern.
+- **STATUS: PROGRESS · stream=NF · item=NF-16 · pr=#1178**
 
 ---
 
