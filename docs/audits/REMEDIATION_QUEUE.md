@@ -253,6 +253,17 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 562 — 2026-05-24 — STATUS: ALL-BLOCKED · stream=DISC · all-7-PRs-ready-for-automerge
+
+- **Phase:** 1+2+3 — sync + CI check + item assessment
+- **Phase 2 (CI check):** All 7 DISC PRs confirmed: `Lint · Type-check · Test · Build` ✅, non-required failures only (`Supabase types drift` + `Preview smoke test`). All 7 now non-draft + `auto-merge-safe` after iter 561 un-draft fix.
+- **Phase 3:** Route count re-verified: 502 routes, same as iter 557 comprehensive scan. `afsl-search` route has `afsl-search.test.ts` — no new uncovered routes. No pending engineering items in any non-blocked stream. DISC-20260524 (7 PRs) + NF (4 PRs) = 11 PRs all awaiting auto-merge or founder merge. All other streams done or blocked.
+- **Queue state:** 7 DISC PRs (#1182–#1188): non-draft + auto-merge-safe + CI green → should auto-merge on next run. 4 NF PRs (#1176/#1177/#1178/#1180): all required CI green, awaiting founder merge (Tier A/B/C).
+- **Remaining blocked:** SP (#1048 stuck-detection + SP-12 compliance), B-09, C-03..C-05, G-04, CO-01/02/04, CL-05, LL-05, BB-04, QQ-08.
+- **STATUS: ALL-BLOCKED · stream=DISC · all-7-PRs-ready-for-automerge**
+
+---
+
 ### iter 561 — 2026-05-24 — STATUS: PROGRESS · stream=DISC · item=un-draft-fix(#1182,#1185,#1186,#1187)
 
 - **Phase:** 2+3+7 — CI check + PR state audit + queue update
