@@ -253,6 +253,26 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 564 — 2026-05-24 — STATUS: CI-RESCUE · stream=DISC+NF · systemic-auto-rebase-bot
+
+- **Phase:** 1+2 — sync + systemic CI rescue
+- **Root cause:** The iter 563 queue update pushed `b1b3c11` to main. This triggered the auto-rebase bot, which rebased ALL 7 DISC PRs and #1177 (NF §4-vert) against `03eae95` (main before my push). After bot rebase, all branches have new SHAs with 0 GitHub Actions check_runs — bot pushes don't fire `pull_request.synchronize` events, so CI never starts on the rebased HEADs.
+- **Confirmed:** `get_check_runs` for #1182 = 48 results ✅ (pre-bot-rebase; CI green), then #1184, #1185, #1186, #1188 all = 0 after rebase. `get_status` confirmed only Vercel "Account is blocked" (non-required pre-existing noise) on all PRs.
+- **Fix:** Pushed empty commits to all 8 affected branches to fire `pull_request.synchronize` from non-bot actor:
+  - #1182 (disc-jobs-tests): `3aa4ea2`
+  - #1183 (disc-jobs-tests-2): `4b93fbb`
+  - #1184 (disc-portal-routes-tests): `f02d385`
+  - #1185 (disc-afsl-notif-reviews-tests): `92cfbd8`
+  - #1186 (disc-admin-kyc-comments): `f76c786`
+  - #1187 (disc-admin-content-notif-tests): `388968d`
+  - #1188 (disc-admin-revalidate-objection): `462de9a`
+  - #1177 (nf-sect4vert): `44f891d` (required reset to origin first — local was 5 commits ahead of origin's 15 due to prior trigger attempts)
+- **Also:** Added `auto-merge-safe` label to #1177 (Tier A confirmed — SEO metadata only; iter 544 classification; CI was green per iter 549 before subsequent rebases).
+- **Risk:** If this queue commit triggers another bot rebase before CI completes (~18-24 min), all branches will be invalidated again. Next fire will need to re-trigger if that occurs.
+- **STATUS: CI-RESCUE · stream=DISC+NF · systemic-auto-rebase-bot**
+
+---
+
 ### iter 563 — 2026-05-24 — STATUS: CI-RESCUE · stream=DISC+NF · pr=#1183+#1177
 
 - **Phase:** 1+2 — sync + CI/PR state rescue
