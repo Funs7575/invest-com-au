@@ -253,6 +253,17 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 560 — 2026-05-24 — STATUS: ALL-BLOCKED · stream=DISC · ci-running(all-7-PRs)
+
+- **Phase:** 1+2+3 — sync + CI check + item assessment
+- **Phase 2 (CI check):** Verified all in-flight PRs. #1182 ✅, #1185 ✅, #1186 ✅, #1187 ✅ (E2E in_progress, non-blocking), #1188 ✅ — all required checks green. #1183 + #1184 CI just triggered (iter 559 CI-rescue pushed empty commits ~2 min ago). No red required-check failures on any PR.
+- **Phase 3:** No pending engineering items in any non-blocked stream. DISC-20260524 — 7 PRs all in CI with required checks passing/running. NF — 4 PRs awaiting founder merge (all required CI green, iter 549 confirmed). No new discovery items.
+- **Queue state:** DISC-20260524 7 PRs + NF 4 PRs = all awaiting CI completion or founder merge. All other streams done or blocked (SP-12/CI, B-09, C-03..C-05, G-04, CO-01/02/04, CL-05, LL-05, BB-04, QQ-08).
+- **Batch exit:** batch mode exits on STATUS: ALL-BLOCKED per stop-condition contract.
+- **STATUS: ALL-BLOCKED · stream=DISC · ci-running(all-7-PRs)**
+
+---
+
 ### iter 559 — 2026-05-24 — STATUS: CI-RESCUE · stream=DISC · pr=#1183+#1184
 
 - **Phase:** 2 — CI rescue check for #1183 and #1184
