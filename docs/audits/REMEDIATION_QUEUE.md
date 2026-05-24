@@ -253,6 +253,26 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 567 — 2026-05-24 — STATUS: ALL-BLOCKED · stream=DISC+NF · ci-4-remaining-in-progress
+
+- **Phase:** 1+2+3 — sync + CI check + item assessment
+- **Phase 2 (CI check):** All 8 in-flight PRs checked. CI state confirmed:
+  - #1182 (`disc-jobs-tests`): ✅ all required checks green — Lint/Build ✅, E2E/LH advisory in_progress (non-required). Auto-merge eligible.
+  - #1183 (`disc-jobs-tests-2`): ✅ all required checks green — Lint/Build ✅ (completed 04:35Z). `auto-merge-safe` label (fixed iter 566). Auto-merge eligible.
+  - #1184 (`disc-portal-routes-tests`): `Lint · Type-check · Test · Build` 🔄 in_progress (started 04:23:44Z).
+  - #1185 (`disc-afsl-notif-reviews-tests`): ✅ all required checks green — Lint/Build ✅ (completed 04:39:15Z). `auto-merge-safe` label confirmed. Auto-merge eligible.
+  - #1186 (`disc-admin-kyc-comments`): `Lint · Type-check · Test · Build` 🔄 in_progress (started 04:25:22Z).
+  - #1187 (`disc-admin-content-notif-tests`): ✅ all required checks green — Lint/Build ✅. `auto-merge-safe`. Auto-merge eligible.
+  - #1188 (`disc-admin-revalidate-objection`): `Lint · Type-check · Test · Build` 🔄 in_progress (started 04:26:13Z).
+  - #1177 (`nf-sect4vert`): `Lint · Type-check · Test · Build` 🔄 in_progress (started 04:24:53Z). `auto-merge-safe` label confirmed.
+  - All failures non-required: `Supabase types drift` ❌ + `Preview smoke test` ❌ (pre-existing infra noise).
+- **Phase 3:** No pending engineering items in any non-blocked stream.
+- **NF PRs (#1176 Tier C, #1178 Tier B, #1180 Tier C):** awaiting founder merge.
+- **Batch stop condition:** ALL-BLOCKED — no engineering items, 4 PRs still have Lint in_progress (expected to complete within ~5 min).
+- **STATUS: ALL-BLOCKED · stream=DISC+NF · ci-4-remaining-in-progress**
+
+---
+
 ### iter 566 — 2026-05-24 — STATUS: PROGRESS · stream=DISC · item=label-fix(#1183-auto-merge-safe)
 
 - **Phase:** 0+1+2+3+7 — lock + sync + CI check + label fix + queue update
