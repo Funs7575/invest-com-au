@@ -253,6 +253,19 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 565 — 2026-05-24 — STATUS: ALL-BLOCKED · stream=DISC+NF · ci-running(all-8-branches)
+
+- **Phase:** 1+2+3 — sync + CI check + item assessment
+- **Phase 2 (CI check):** Confirmed CI is actively running on all 8 triggered branches (trigger commits pushed in iter 564). For #1182 at 04:15:49Z: `Lint · Type-check · Test · Build` **in_progress**, all other required gates ✅ (compliance, RLS migration, RLS isolation, anonymity, dependency vulns, stale dated-stats, AI filter, Stripe idempotency, secret scan, dated strings). `Supabase types drift` ❌ (non-required, pre-existing). #1184 gates also queued/in_progress — CI started cleanly. `Apply path-based + override labels` ✅ ran on #1182.
+- **Bot-rebase risk note:** The iter 564 main push may trigger the auto-rebase bot to run on these branches while CI is in_progress. If branches are rebased before `Lint · Type-check · Test · Build` completes (~18 min), the next fire will need another round of trigger commits. This is the systemic issue documented in iter 564.
+- **#1177 (NF §4-vert):** CI running (check_runs queued at 04:16-17Z). `auto-merge-safe` label added in iter 564. `Apply path-based + override labels` workflow will re-run and may override label — next fire should verify.
+- **Phase 3:** No pending engineering items. All DISC + NF work complete in PRs. All other streams done or blocked.
+- **Queue state:** 7 DISC PRs + #1177 NF: CI in_progress on all. 3 NF PRs (#1176 Tier C, #1178 Tier B, #1180 Tier C): awaiting founder merge.
+- **Batch stop condition:** ALL-BLOCKED per spec (CI in progress, no engineering items to pick up).
+- **STATUS: ALL-BLOCKED · stream=DISC+NF · ci-running(all-8-branches)**
+
+---
+
 ### iter 564 — 2026-05-24 — STATUS: CI-RESCUE · stream=DISC+NF · systemic-auto-rebase-bot
 
 - **Phase:** 1+2 — sync + systemic CI rescue
