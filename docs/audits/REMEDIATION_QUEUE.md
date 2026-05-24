@@ -88,7 +88,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | PX | `claude/audit-remediation/px-api-tests` | **#1160 MERGED 2026-05-22** | Platform Expansion stream merged to main 2026-05-22 by founder. PX-01..PX-07 all done. API tests (iter 500 batch): slack-settings + firm-leads + lead-webhooks + annual-mot — 4 test files, 521 LOC. iter 501: slack-lead-notify unit tests (8 cases). iter 502: FeeImpactVisualiser component tests (9 cases). **#1160 OPEN** — 46 test cases, ~721 LOC. CI rescue (iter 507): inverted requireCronAuth + FeeImpactVisualiser multi-match fix. Discovery (iter 510): 3 new DISC items from 5-feature wave. PX-DISC-20260522-07 (iter 512): advisor-portal pipeline PATCH tests — 14 cases (`727ea01`). PX-DISC-20260522-08 (iter 513): business-finance enquiry POST tests — 15 cases (`306184d`). PX-DISC-20260522-09 (iter 514): investor copilot POST + lead-followup-reminders cron tests — 20 cases (`b2f201e`). All DISC items done — 95 total test cases on #1160. CI-RESCUE iter 518: merged origin/main into PX branch (`aaac185`) — resolved `mergeable_state: dirty` caused by stale queue commit on PX; all 99 PX tests pass. **#1160 MERGED 2026-05-22 (iter 522, `8636b28`)** — Tier A auto-merge, all required checks green. **Stream complete.** | All PX tasks + tests merged ✓ |
 | RESCUE | _complete_ | **#1168 MERGED 2026-05-23** (iter 538, `edb54b3`) · **#1169 MERGED 2026-05-23** (iter 529, `83666970`) · **#1170 MERGED 2026-05-23** (iter 537, `50302ea`) · **#1171 MERGED 2026-05-23** (iter 536, `3c9d60b`) · **#1172 MERGED 2026-05-23** (iter 525, `5cba432`) | All 5 rescue PRs merged. #1172 (Tier B): rate limits + vault RLS + Zod + Pro gate. #1169 (Tier C): RLS C4–C6 + adminClient→serverClient. #1171 (Tier A): regulatory docs + investment income tax calculator. #1170 (Tier B): AFSL lookup + brokerage fee index + advisor jobs. #1168 (Tier C): pre-AFSL payment gate + wholesale attestation gate. **Stream complete.** | All 5 PRs merged ✓ |
 | NF | `claude/audit-remediation/nf-03-admin-mfa-login-env-guard` · `claude/audit-remediation/nf-sect4vert-empty-verticals-noindex` · `claude/audit-remediation/nf-16-autopilot-db-backed` · `claude/audit-remediation/nf-20-part1-sms-consent` | **#1176 OPEN** · **#1177 OPEN** · **#1178 OPEN** · **#1180 OPEN** | New-features audit 2026-05-20 remediation stream. Items 1/5/6/8/9/10/11/12/13/14/15/17/18/21/§4-teams already-green (confirmed iter 542). Item 3 done (iter 542): #1176 (Tier C, announced). CI-RESCUE iter 543: `36e4d176`. §4-vert done (iter 544): #1177 (Tier A). NF-16 done (iter 545): `lib/autopilot.ts` + 11 cron gates — **#1178 OPEN** (Tier B). CI-RESCUE #1178 (concurrent with iter 546): `ca1f25c` — 10 cron test files missing `.like()` in local makeBuilder; mocked @/lib/autopilot gate in each. NF-20 part 1 done (iter 546): `sms_consent` column on leads/professional_leads + submit-lead route + 2 tests — **#1180 OPEN** (Tier C, announced). SSR consent + unified unsubscribe already-green. **CI retrigger iter 547 (2026-05-23):** auto-rebase bot pushed all 4 branches at 05:06:46Z but `github-actions[bot]` pushes don't fire GitHub Actions workflows — CI had never run on the post-rebase HEAD SHAs. Pushed empty commits to all 4 branches to trigger `pull_request.synchronize` from a non-bot actor: `2c0272e` (#1176), `ba214bf` (#1177), `1610794` (#1178), `b7b3aa9` (#1180). **CI confirmed green 2026-05-24 (iter 549):** `Lint · Type-check · Test · Build` ✅ on all 4 PRs. `Supabase types drift` ❌ + `Preview smoke test` ❌ on all 4 — both non-required (pre-existing infrastructure noise confirmed iter 523/534). All 4 PRs await founder merge. | All NF items merged |
-| DISC-20260524 | `claude/audit-remediation/disc-20260524-jobs-tests` | **#1182 OPEN** | iter 550: careers/jobs + firm-portal/jobs route tests — 21 cases across 2 test files for routes introduced in #1170 (merged 2026-05-23). Tier A. Awaiting CI. | #1182 merged ✓ |
+| DISC-20260524 | `claude/audit-remediation/disc-20260524-jobs-tests` · `claude/audit-remediation/disc-20260524-jobs-tests-2` | **#1182 OPEN** · **#1183 OPEN** | iter 550: careers/jobs + firm-portal/jobs route tests — 21 cases (#1182, Tier A). iter 551: apply/[id]/applications/fee-index route tests — 27 cases (#1183, Tier A). All from #1170 (merged 2026-05-23). Both awaiting CI. | #1183 merged ✓ |
 
 ---
 
@@ -252,6 +252,23 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 551 — 2026-05-24 — STATUS: PROGRESS · stream=DISC · item=jobs-extended-tests · pr=#1183
+
+- **Phase:** 3+5+6 — discovery + work + commit+push
+- **Stream:** DISC (discovery) — remaining zero-coverage routes from #1170 (merged 2026-05-23)
+- **Phase 3:** #1182 awaiting CI. Continued discovery — 4 more untested routes found.
+- **Phase 5 (work done):**
+  - `__tests__/api/careers-jobs-apply.test.ts` — 9 tests for POST /api/careers/jobs/apply (Zod validation, rate-limit, 404 job not active, insert error, 200 success)
+  - `__tests__/api/firm-portal-job-id.test.ts` — 20 tests: PATCH (7) + DELETE (6) + applications GET (7) for `/api/firm-portal/jobs/[id]` and `/api/firm-portal/jobs/[id]/applications`
+  - `__tests__/api/cron-fee-index.test.ts` — 4 tests for GET /api/cron/fee-index (cron auth, zero-broker skip, upsert failure, success)
+  - Dynamic [id] route ctx: `{ params: Promise.resolve({ id }) }` matching `await ctx.params`
+  - Multi-table `mockAdminFrom` handles professionals/job_posts (maybeSingle ownership + single update + then archive)/job_applications
+  - `@/lib/fee-index` module fully mocked at function level; `wrapCronHandler` unwrapped to raw handler
+- **Phase 6:** Committed `3c497dd`, pushed branch `claude/audit-remediation/disc-20260524-jobs-tests-2`, **#1183 OPEN** (Tier A, awaiting CI).
+- **STATUS: PROGRESS · stream=DISC · item=jobs-extended-tests · pr=#1183**
+
+---
 
 ### iter 550 — 2026-05-24 — STATUS: PROGRESS · stream=DISC · item=jobs-route-tests · pr=#1182
 
