@@ -109,7 +109,7 @@ describe("GET /api/careers/jobs", () => {
   it("applies eq type filter for valid employment type", async () => {
     const b = setupJobsQuery([]);
     await GET(makeGet({ type: "part_time" }));
-    const typeCalls = b.eq.mock.calls.filter(([col]: [string]) => col === "type");
+    const typeCalls = b.eq.mock.calls.filter(([col]: unknown[]) => col === "type");
     expect(typeCalls).toHaveLength(1);
     expect(typeCalls[0]?.[1]).toBe("part_time");
   });
@@ -117,7 +117,7 @@ describe("GET /api/careers/jobs", () => {
   it("skips type filter for unknown type param", async () => {
     const b = setupJobsQuery([]);
     await GET(makeGet({ type: "gig_economy" }));
-    const typeCalls = b.eq.mock.calls.filter(([col]: [string]) => col === "type");
+    const typeCalls = b.eq.mock.calls.filter(([col]: unknown[]) => col === "type");
     expect(typeCalls).toHaveLength(0);
   });
 
