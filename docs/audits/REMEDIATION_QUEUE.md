@@ -253,6 +253,16 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 558 — 2026-05-24 — STATUS: ALL-BLOCKED · stream=DISC · ci-running(#1183,#1184,#1187,#1188)
+
+- **Phase:** 1+2+3 — sync + CI check + item assessment
+- **Phase 2 (CI check):** #1187 ✅ `Lint/Build` (E2E in_progress, non-blocking). #1188 Lint/Build in_progress (no failure). #1183 and #1184 CI just triggered after iter 557 un-draft (5 checks so far — `claude-review` in_progress, labels applied). No red CI on any required check.
+- **Phase 3:** No pending engineering items in any non-blocked stream. All DISC work complete (7 PRs in CI). All NF items complete (4 PRs awaiting founder merge). No new discovery items (iter 557 confirmed comprehensive route coverage).
+- **Queue state:** DISC-20260524 — 7 PRs awaiting CI; NF — 4 PRs awaiting founder merge; all other streams done or blocked (SP-12/CI, B-09, C-03..C-05, G-04, CO-01/02/04, CL-05, LL-05, BB-04, QQ-08).
+- **STATUS: ALL-BLOCKED · stream=DISC · ci-running(#1183,#1184,#1187,#1188)**
+
+---
+
 ### iter 557 — 2026-05-24 — STATUS: PROGRESS · stream=DISC · item=draft-fix(#1183,#1184)
 
 - **Phase:** 2+3+6.5+7 — CI rescue check + draft fix + discovery audit + queue update
