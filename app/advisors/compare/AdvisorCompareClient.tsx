@@ -5,263 +5,99 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
-import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import {
+  buildAdvisorCompareMatrix,
+  type AdvisorCompareInput,
+  type MatrixCell,
+  type MatrixRowKey,
+} from "@/lib/advisor-compare-matrix";
 import Icon from "@/components/Icon";
 
-interface AdvisorData {
-  id: number;
-  slug: string;
-  name: string;
-  firm_name?: string;
-  type: string;
-  photo_url?: string;
-  rating: number;
-  review_count: number;
-  verified: boolean;
-  location_display?: string;
-  specialties: string[];
-  fee_structure?: string;
-  fee_description?: string;
-  hourly_rate_cents?: number;
-  flat_fee_cents?: number;
-  aum_percentage?: number;
-  initial_consultation_free?: boolean;
-  afsl_number?: string;
-  bio?: string;
-  booking_link?: string;
-  languages?: string[];
-  accepts_international_clients?: boolean;
-  firb_specialist?: boolean;
-  accepts_new_clients?: boolean;
-}
+/* ─── Cell renderers ──────────────────────────────────────────────────────── */
 
-function Stars({ rating }: { rating: number }) {
-  return (
-    <span className="text-amber-400 text-sm">
-      {"★".repeat(Math.floor(rating))}{"☆".repeat(5 - Math.floor(rating))}
-    </span>
-  );
-}
+function renderCell(cell: MatrixCell | undefined): React.ReactNode {
+  if (!cell) return <span className="text-slate-400 text-xs">—</span>;
 
-function formatFee(a: AdvisorData): string {
-  if (a.hourly_rate_cents) return `$${(a.hourly_rate_cents / 100).toLocaleString()}/hr`;
-  if (a.flat_fee_cents) return `$${(a.flat_fee_cents / 100).toLocaleString()} flat fee`;
-  if (a.aum_percentage) return `${a.aum_percentage}% AUM`;
-  if (a.fee_description) return a.fee_description.slice(0, 40);
-  if (a.fee_structure) return a.fee_structure;
-  return "Not disclosed";
-}
+  switch (cell.kind) {
+    case "text":
+      if (cell.missing) {
+        return <span className="text-slate-400 text-xs">—</span>;
+      }
+      return <span className="text-slate-700 text-sm">{cell.value}</span>;
 
-/** Returns the index of the advisor with the best numeric rating (ties: first wins). */
-function bestRatingIndex(advisors: AdvisorData[]): number {
-  let best = -1;
-  let bestVal = -1;
-  advisors.forEach((a, i) => {
-    if (a.rating > bestVal) {
-      bestVal = a.rating;
-      best = i;
-    }
-  });
-  return bestVal > 0 ? best : -1;
-}
-
-/** Returns the index of the advisor with the most reviews. */
-function mostReviewsIndex(advisors: AdvisorData[]): number {
-  let best = -1;
-  let bestVal = -1;
-  advisors.forEach((a, i) => {
-    if (a.review_count > bestVal) {
-      bestVal = a.review_count;
-      best = i;
-    }
-  });
-  return bestVal > 0 ? best : -1;
-}
-
-type RowDef = {
-  label: string;
-  render: (a: AdvisorData) => React.ReactNode;
-  /** Optional: returns index (0-based) of the column that should be highlighted green. */
-  bestIndex?: (advisors: AdvisorData[]) => number;
-};
-
-const COMPARE_ROWS: RowDef[] = [
-  {
-    label: "Advisor Type",
-    render: (a) =>
-      a.type ? (
-        <span className="text-slate-700 text-sm font-medium">
-          {PROFESSIONAL_TYPE_LABELS[a.type as keyof typeof PROFESSIONAL_TYPE_LABELS] ?? a.type}
-        </span>
-      ) : (
-        <span className="text-slate-400 text-xs">—</span>
-      ),
-  },
-  {
-    label: "Location",
-    render: (a) =>
-      a.location_display ? (
-        <span className="text-slate-600 text-sm">{a.location_display}</span>
-      ) : (
-        <span className="text-slate-400 text-xs">—</span>
-      ),
-  },
-  {
-    label: "Rating",
-    render: (a) =>
-      a.rating > 0 ? (
-        <span className="flex items-center gap-1.5 flex-wrap">
-          <Stars rating={a.rating} />
-          <span className="font-semibold text-slate-800">{a.rating.toFixed(1)}</span>
-        </span>
-      ) : (
-        <span className="text-slate-400 text-xs">No reviews yet</span>
-      ),
-    bestIndex: bestRatingIndex,
-  },
-  {
-    label: "Reviews",
-    render: (a) =>
-      a.review_count > 0 ? (
-        <span className="text-slate-700 text-sm font-semibold">{a.review_count.toLocaleString()}</span>
-      ) : (
-        <span className="text-slate-400 text-xs">None yet</span>
-      ),
-    bestIndex: mostReviewsIndex,
-  },
-  {
-    label: "Verified",
-    render: (a) =>
-      a.verified ? (
-        <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold text-xs">
-          <Icon name="check-circle" size={13} /> Verified
-        </span>
-      ) : (
-        <span className="text-slate-400 text-xs">Unverified</span>
-      ),
-  },
-  {
-    label: "Fee Structure",
-    render: (a) => <span className="text-slate-700 text-sm">{formatFee(a)}</span>,
-  },
-  {
-    label: "Hourly Rate",
-    render: (a) =>
-      a.hourly_rate_cents ? (
-        <span className="text-slate-700 text-sm font-semibold">
-          ${(a.hourly_rate_cents / 100).toLocaleString()}/hr
-        </span>
-      ) : (
-        <span className="text-slate-400 text-xs">—</span>
-      ),
-  },
-  {
-    label: "Flat Fee",
-    render: (a) =>
-      a.flat_fee_cents ? (
-        <span className="text-slate-700 text-sm font-semibold">
-          ${(a.flat_fee_cents / 100).toLocaleString()}
-        </span>
-      ) : (
-        <span className="text-slate-400 text-xs">—</span>
-      ),
-  },
-  {
-    label: "Free Consultation",
-    render: (a) =>
-      a.initial_consultation_free ? (
-        <span className="text-emerald-700 font-semibold text-xs">Yes — Free initial consult</span>
-      ) : (
-        <span className="text-slate-400 text-xs">Paid</span>
-      ),
-    bestIndex: (advisors) => {
-      const idx = advisors.findIndex((a) => a.initial_consultation_free);
-      return idx;
-    },
-  },
-  {
-    label: "Languages",
-    render: (a) =>
-      a.languages?.length ? (
+    case "badge_list":
+      if (cell.missing || cell.items.length === 0) {
+        return <span className="text-slate-400 text-xs">—</span>;
+      }
+      return (
         <div className="flex flex-wrap gap-1">
-          {a.languages.slice(0, 4).map((lang) => (
-            <span key={lang} className="text-[0.6rem] px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded-full">
-              {lang}
+          {cell.items.slice(0, 5).map((item) => (
+            <span
+              key={item}
+              className="text-[0.6rem] px-1.5 py-0.5 bg-violet-50 text-violet-700 rounded-full border border-violet-100 leading-normal"
+            >
+              {item}
             </span>
           ))}
         </div>
-      ) : (
-        <span className="text-slate-400 text-xs">English</span>
-      ),
-  },
-  {
-    label: "International Clients",
-    render: (a) =>
-      a.accepts_international_clients ? (
-        <span className="text-emerald-700 font-semibold text-xs">Accepted</span>
-      ) : (
-        <span className="text-slate-400 text-xs">Not specified</span>
-      ),
-    bestIndex: (advisors) => advisors.findIndex((a) => a.accepts_international_clients),
-  },
-  {
-    label: "FIRB Specialist",
-    render: (a) =>
-      a.firb_specialist ? (
-        <span className="text-emerald-700 font-semibold text-xs">Yes</span>
-      ) : (
-        <span className="text-slate-400 text-xs">No</span>
-      ),
-    bestIndex: (advisors) => advisors.findIndex((a) => a.firb_specialist),
-  },
-  {
-    label: "Specialties",
-    render: (a) =>
-      a.specialties?.length ? (
-        <div className="flex flex-wrap gap-1">
-          {a.specialties.slice(0, 3).map((s) => (
-            <span key={s} className="text-[0.6rem] px-1.5 py-0.5 bg-violet-50 text-violet-700 rounded-full border border-violet-100">
-              {s}
-            </span>
-          ))}
+      );
+
+    case "boolean":
+      if (cell.missing) {
+        return <span className="text-slate-400 text-xs">—</span>;
+      }
+      if (cell.value === true) {
+        return (
+          <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold text-xs">
+            <Icon name="check-circle" size={13} />
+            {cell.display}
+          </span>
+        );
+      }
+      return <span className="text-slate-500 text-xs font-medium">{cell.display}</span>;
+
+    case "score":
+      return (
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Gauge pill */}
+          <div className="relative w-20 h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div
+              className="absolute left-0 top-0 h-2 rounded-full bg-current transition-all"
+              style={{ width: `${cell.overall}%` }}
+            />
+          </div>
+          <span className="font-bold text-slate-800 text-sm tabular-nums">{cell.overall}</span>
+          <span className={`text-xs font-semibold ${cell.labelColor}`}>{cell.label}</span>
         </div>
-      ) : (
-        <span className="text-slate-400 text-xs">—</span>
-      ),
-  },
-  {
-    label: "Accepts New Clients",
-    render: (a) => {
-      if (a.accepts_new_clients === true) {
-        return <span className="text-emerald-700 font-semibold text-xs">Yes</span>;
-      }
-      if (a.accepts_new_clients === false) {
-        return <span className="text-red-500 font-semibold text-xs">Not currently</span>;
-      }
-      return <span className="text-slate-400 text-xs">Not specified</span>;
-    },
-    bestIndex: (advisors) => advisors.findIndex((a) => a.accepts_new_clients === true),
-  },
-  {
-    label: "Online Booking",
-    render: (a) =>
-      a.booking_link ? (
-        <span className="text-emerald-700 font-semibold text-xs">Available</span>
-      ) : (
-        <span className="text-slate-400 text-xs">Enquiry only</span>
-      ),
-    bestIndex: (advisors) => advisors.findIndex((a) => Boolean(a.booking_link)),
-  },
-];
+      );
+  }
+}
+
+/**
+ * Returns true when a cell holds a notably positive value (for green-highlight
+ * logic). Only applied to the verified and accepts_new_clients rows — we do
+ * NOT "best" highlight Trust Score because that would imply a recommendation.
+ */
+function isCellPositive(rowKey: MatrixRowKey, cell: MatrixCell | undefined): boolean {
+  if (!cell) return false;
+  if (rowKey === "verified" && cell.kind === "boolean") return cell.value === true;
+  if (rowKey === "accepts_new_clients" && cell.kind === "boolean") return cell.value === true;
+  return false;
+}
+
+/* ─── Slug validation ─────────────────────────────────────────────────────── */
 
 // Slug shape: lowercase letters, digits, hyphens. Reject anything else
 // so a crafted ?add=… URL can't inject arbitrary text into the
 // shortlist (which is rendered/used as part of API URLs downstream).
 const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,80}$/;
 
+/* ─── Component ───────────────────────────────────────────────────────────── */
+
 export default function AdvisorCompareClient() {
   const { slugs, toggle, clear, has } = useAdvisorShortlist();
-  const [advisors, setAdvisors] = useState<AdvisorData[]>([]);
+  const [advisors, setAdvisors] = useState<AdvisorCompareInput[]>([]);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -294,13 +130,14 @@ export default function AdvisorCompareClient() {
       return;
     }
     setLoading(true);
-    // Compare page shows max 3 side-by-side
     const compareSlgs = slugs.slice(0, 3);
     const params = compareSlgs.map((s) => `slugs=${encodeURIComponent(s)}`).join("&");
     fetch(`/api/advisor-compare?${params}`)
       .then((r) => r.json())
       .then((data) => {
-        if (Array.isArray(data.advisors)) setAdvisors(data.advisors as AdvisorData[]);
+        if (Array.isArray(data.advisors)) {
+          setAdvisors(data.advisors as AdvisorCompareInput[]);
+        }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -337,8 +174,8 @@ export default function AdvisorCompareClient() {
     );
   }
 
-  // Only show up to 3 in the compare matrix
-  const displayed = advisors.slice(0, 3);
+  const matrix = buildAdvisorCompareMatrix(advisors);
+  const { rows, columns, cells } = matrix;
 
   return (
     <div>
@@ -347,7 +184,7 @@ export default function AdvisorCompareClient() {
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Compare Advisors</h1>
           <p className="text-sm text-slate-500 mt-1">
-            {displayed.length} advisor{displayed.length !== 1 ? "s" : ""} compared side by side
+            {columns.length} advisor{columns.length !== 1 ? "s" : ""} compared side by side
           </p>
         </div>
         <button
@@ -358,83 +195,130 @@ export default function AdvisorCompareClient() {
         </button>
       </div>
 
-      {/* Advisor header cards */}
-      <div className="grid gap-4 mb-0" style={{ gridTemplateColumns: `160px repeat(${displayed.length}, 1fr)` }}>
-        {/* Empty label column */}
-        <div />
-        {displayed.map((a) => (
-          <div key={a.slug} className="bg-white border border-slate-200 rounded-2xl p-4 text-center relative">
-            <button
-              onClick={() => toggle(a.slug)}
-              className="absolute top-2 right-2 text-slate-300 hover:text-red-400 transition-colors"
-              title="Remove from comparison"
-            >
-              <Icon name="x" size={14} />
-            </button>
-            {a.photo_url ? (
-              <Image
-                src={a.photo_url}
-                alt={a.name}
-                width={64}
-                height={64}
-                className="w-16 h-16 rounded-full object-cover mx-auto mb-2"
-              />
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center text-2xl font-bold text-violet-600 mx-auto mb-2">
-                {a.name.charAt(0)}
-              </div>
-            )}
-            <p className="font-bold text-slate-900 text-sm leading-tight">{a.name}</p>
-            {a.firm_name && <p className="text-xs text-slate-500 mt-0.5">{a.firm_name}</p>}
-            <div className="mt-3 space-y-1.5">
-              <Link
-                href={`/advisor/${a.slug}`}
-                className="block w-full py-2 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-400 transition-colors"
-              >
-                View Profile
-              </Link>
-              <a
-                href={`/advisor/${a.slug}#contact`}
-                className="block w-full py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors"
-              >
-                Request Consult
-              </a>
-            </div>
-          </div>
-        ))}
+      {/* Comparison table — sticky Feature column + advisor columns */}
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            {/* ── Advisor header row ── */}
+            <thead>
+              <tr className="border-b border-slate-200">
+                {/* Feature label header */}
+                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide bg-slate-50 sticky left-0 z-10 min-w-[9rem]">
+                  Feature
+                </th>
+
+                {columns.map((col) => {
+                  const advisor = advisors.find((a) => a.slug === col.slug);
+                  return (
+                    <th key={col.slug} className="px-4 py-4 text-center min-w-[200px] align-top">
+                      {/* Remove button */}
+                      <div className="flex justify-end mb-1">
+                        <button
+                          onClick={() => toggle(col.slug)}
+                          className="text-slate-300 hover:text-red-400 transition-colors"
+                          title="Remove from comparison"
+                        >
+                          <Icon name="x" size={14} />
+                        </button>
+                      </div>
+
+                      {/* Photo */}
+                      <Link href={col.profilePath} className="block group">
+                        <div className="mx-auto mb-2 w-16 h-16">
+                          {col.photo_url ? (
+                            <Image
+                              src={col.photo_url}
+                              alt={col.name}
+                              width={64}
+                              height={64}
+                              className="w-16 h-16 rounded-full object-cover mx-auto"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center text-2xl font-bold text-violet-600 mx-auto">
+                              {col.name.charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                        <p className="font-bold text-slate-900 text-sm leading-tight group-hover:underline">
+                          {col.name}
+                        </p>
+                        {col.firm_name && (
+                          <p className="text-xs text-slate-500 mt-0.5">{col.firm_name}</p>
+                        )}
+                      </Link>
+
+                      {/* CTAs */}
+                      <div className="mt-3 space-y-1.5">
+                        <Link
+                          href={col.profilePath}
+                          className="block w-full py-2 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-400 transition-colors"
+                        >
+                          View Profile
+                        </Link>
+                        {advisor?.booking_link ? (
+                          <a
+                            href={advisor.booking_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block w-full py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors"
+                          >
+                            Book Now
+                          </a>
+                        ) : (
+                          <a
+                            href={`${col.profilePath}#contact`}
+                            className="block w-full py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors"
+                          >
+                            Request Consult
+                          </a>
+                        )}
+                      </div>
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+
+            {/* ── Feature rows ── */}
+            <tbody className="divide-y divide-slate-100">
+              {rows.map((row) => (
+                <tr key={row.key} className="hover:bg-slate-50/50">
+                  {/* Sticky label column */}
+                  <td className="px-4 py-3 bg-slate-50/50 sticky left-0 z-10 align-top">
+                    <p className="text-sm font-medium text-slate-700">{row.label}</p>
+                    <p className="text-[0.65rem] text-slate-400 mt-0.5 leading-snug max-w-[8rem]">
+                      {row.description}
+                    </p>
+                  </td>
+
+                  {/* One cell per advisor column */}
+                  {columns.map((col) => {
+                    const cell = cells[row.key]?.[col.slug];
+                    const highlight = isCellPositive(row.key, cell);
+                    return (
+                      <td
+                        key={col.slug}
+                        className={`px-4 py-3 align-top ${highlight ? "bg-emerald-50" : ""}`}
+                      >
+                        {renderCell(cell)}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Comparison table */}
-      <div className="mt-4 rounded-2xl border border-slate-200 overflow-hidden">
-        {COMPARE_ROWS.map((row, i) => {
-          const highlightIdx = row.bestIndex ? row.bestIndex(displayed) : -1;
-          return (
-            <div
-              key={row.label}
-              className={`grid items-center min-h-13 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
-              style={{ gridTemplateColumns: `160px repeat(${displayed.length}, 1fr)` }}
-            >
-              <div className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide border-r border-slate-100">
-                {row.label}
-              </div>
-              {displayed.map((a, colIdx) => (
-                <div
-                  key={a.slug}
-                  className={`px-4 py-3 border-r border-slate-100 last:border-r-0 ${
-                    highlightIdx === colIdx ? "bg-emerald-50" : ""
-                  }`}
-                >
-                  {row.render(a)}
-                </div>
-              ))}
-            </div>
-          );
-        })}
+      {/* AFSL compliance warning — required on all advisor pages */}
+      <div className="mt-6 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3">
+        <p className="text-xs text-amber-800 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
       </div>
 
       {/* Add more prompt */}
-      {displayed.length < 3 && (
-        <div className="mt-6 text-center">
+      {columns.length < 3 && (
+        <div className="mt-4 text-center">
           <Link
             href="/advisors"
             className="inline-flex items-center gap-2 text-sm font-semibold text-violet-600 hover:text-violet-700"
