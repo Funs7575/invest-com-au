@@ -38,6 +38,14 @@ import { buildExpatJourney, type JourneyStep } from "@/lib/expat-journey";
 import ForeignInvestmentNav from "../../ForeignInvestmentNav";
 import RememberCountry from "@/components/foreign-investment/RememberCountry";
 
+// ─── Bold-markdown renderer (safe: returns JSX, never innerHTML) ─────────────
+
+function renderBold(text: string) {
+  return text
+    .split(/\*\*(.+?)\*\*/g)
+    .map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : part));
+}
+
 // ─── Static params ───────────────────────────────────────────────────────────
 
 export function generateStaticParams() {
@@ -135,12 +143,7 @@ function CalloutBox({
         {variant === "critical" ? "Important" : "Note"}
       </p>
       <p className="text-xs font-semibold mb-1">{title}</p>
-      <p
-        className="text-xs leading-relaxed"
-        dangerouslySetInnerHTML={{
-          __html: body.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"),
-        }}
-      />
+      <p className="text-xs leading-relaxed">{renderBold(body)}</p>
     </div>
   );
 }
@@ -180,14 +183,7 @@ function StepCard({ step }: { step: JourneyStep }) {
             {step.bullets.map((bullet, i) => (
               <li key={i} className="flex gap-2.5 text-xs text-slate-700 leading-relaxed">
                 <span className="text-amber-500 font-bold mt-0.5 shrink-0">—</span>
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: bullet.replace(
-                      /\*\*(.+?)\*\*/g,
-                      "<strong>$1</strong>",
-                    ),
-                  }}
-                />
+                <span>{renderBold(bullet)}</span>
               </li>
             ))}
           </ul>
