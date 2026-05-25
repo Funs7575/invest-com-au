@@ -229,7 +229,7 @@ export default function HomepageComparisonTable({
           {/* Sticky View All link — always visible */}
           <Link
             href="/compare"
-            className="shrink-0 text-[0.69rem] font-semibold text-amber-600 hover:text-amber-800 transition-colors whitespace-nowrap"
+            className="shrink-0 text-[0.69rem] font-semibold text-amber-700 hover:text-amber-800 transition-colors whitespace-nowrap"
           >
             View full comparison &rarr;
           </Link>
@@ -252,7 +252,7 @@ export default function HomepageComparisonTable({
               <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400">
                 <span className="flex items-center gap-1 justify-center">
                   Rating
-                  <Link href="/methodology" className="text-amber-500 hover:text-amber-700 transition-colors font-normal normal-case tracking-normal text-[0.6rem]" title="How we rate platforms">(how we rate)</Link>
+                  <Link href="/methodology" className="text-amber-700 hover:text-amber-800 transition-colors font-normal normal-case tracking-normal text-[0.6rem]" title="How we rate platforms">(how we rate)</Link>
                 </span>
               </th>
               )}
