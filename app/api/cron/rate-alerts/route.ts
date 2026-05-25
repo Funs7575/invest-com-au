@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
 import { notifyUser } from "@/lib/notifications";
+import { dispatchPushToUser } from "@/lib/push-dispatch";
 import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
 import {
@@ -273,17 +274,30 @@ export async function GET(req: NextRequest) {
       })
       .eq("id", rawSub.id);
 
-    // Write in-app notification for user-linked subscriptions.
+    // Write in-app notification + browser push for user-linked subscriptions.
     if (rawSub.user_id) {
       // Dedup key: one in-app notification per subscription per calendar day.
       const dayKey = Math.floor(nowMs / 86_400_000);
+      const notifTitle = `${label.charAt(0).toUpperCase() + label.slice(1)} alert`;
+      const notifBody = `${label.charAt(0).toUpperCase() + label.slice(1)} (${valueDisplay}) ${directionText} your ${kind === "broker_fee" ? `$${thresholdPct}` : `${thresholdPct}%`} threshold.`;
+
       await notifyUser({
         userId: rawSub.user_id,
         type: "fee_change",
-        title: `${label.charAt(0).toUpperCase() + label.slice(1)} alert`,
-        body: `${label.charAt(0).toUpperCase() + label.slice(1)} (${valueDisplay}) ${directionText} your ${kind === "broker_fee" ? `$${thresholdPct}` : `${thresholdPct}%`} threshold.`,
+        title: notifTitle,
+        body: notifBody,
         linkUrl: path,
         emailDeliveryKey: `rate_alert:${rawSub.id}:${dayKey}`,
+      });
+
+      // Browser push — reuses the same dedupe key already stamped above on
+      // last_notified_at, so double-fires are structurally impossible within
+      // the cooldown window enforced by evaluateThreshold.
+      await dispatchPushToUser(rawSub.user_id, {
+        title: notifTitle,
+        body: notifBody,
+        url: path,
+        tag: `rate_alert:${rawSub.id}`,
       });
     }
 
