@@ -12,6 +12,7 @@ import { getDtaCountries, getDefaultWHT } from "@/lib/fi-data-server";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
 import PersonaSelector from "./PersonaSelector";
+import FIPersonaRouter from "./FIPersonaRouter";
 import DTASearchTable from "./DTASearchTable";
 import ForeignInvestmentNav from "./ForeignInvestmentNav";
 import WHTCalculator from "./WHTCalculator";
@@ -236,13 +237,25 @@ export default async function ForeignInvestmentHubPage() {
         </div>
       </section>
 
-      {/* ── Persona Selector ────────────────────────────────────────── */}
-      <section id="find-your-situation" className="py-12 md:py-16 bg-slate-50">
+      {/* ── Journey Persona Router ───────────────────────────────────── */}
+      <section id="find-your-situation" className="py-12 md:py-16 bg-white border-b border-slate-100">
         <div className="container-custom">
           <SectionHeading
-            eyebrow="Find your situation"
-            title="What best describes you?"
-            sub="Select your situation to see the rules, key considerations, and next steps that apply specifically to you."
+            eyebrow="Where are you in your journey?"
+            title="What brings you here?"
+            sub="Select your situation to see the guides, tools, and next steps that apply to you. General information only — not financial advice."
+          />
+          <FIPersonaRouter />
+        </div>
+      </section>
+
+      {/* ── Detailed Persona Selector ────────────────────────────────── */}
+      <section className="py-12 md:py-16 bg-slate-50">
+        <div className="container-custom">
+          <SectionHeading
+            eyebrow="Investor type"
+            title="What best describes your investor status?"
+            sub="Select your visa and residency status to see the specific rules, key considerations, and recommended specialists."
           />
           <PersonaSelector personas={FOREIGN_INVESTOR_PERSONAS} />
         </div>
