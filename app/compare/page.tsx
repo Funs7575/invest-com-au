@@ -8,6 +8,7 @@ import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
+import NextActions from "@/components/NextActions";
 
 export const metadata = {
   title: "Compare Investing Platforms — Fees & Features",
@@ -165,6 +166,10 @@ export default function ComparePage() {
       </div>
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareData />
+      </Suspense>
+      {/* Personalised next-action strip — suppresses compare CTA since the user is already here */}
+      <Suspense fallback={null}>
+        <NextActions surface="compare" />
       </Suspense>
       <HomeToolsStrip />
       <div className="container-custom pb-8">
