@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { validateApiKey, logApiRequest, API_CORS_HEADERS } from "@/lib/api-auth";
 import { escapeHtml } from "@/lib/html-escape";
+import { computeAdvisorTrustScore, type AdvisorTrustScoreInput } from "@/lib/advisor-trust-score";
 
 export const runtime = "nodejs";
 // Per-key auth gating — see /api/v1/brokers/route.ts for the same reasoning.
@@ -16,6 +17,11 @@ const log = logger("api-v1-advisors");
  * Excludes PII (email, phone), billing/payment (stripe_customer_id,
  * credit_balance_cents, etc.), admin fields (admin_notes, admin_tags,
  * health_status), and lead/billing counters (total_leads, etc.).
+ *
+ * Note: verified_at, registration_number, education are also fetched because
+ * they are inputs to the Trust Score computation. They are not exposed in the
+ * sanitized output (they remain scoring-only inputs), but the trust_score
+ * field is exposed.
  */
 const PUBLIC_FIELDS = [
   "id",
@@ -68,6 +74,17 @@ const PUBLIC_FIELDS = [
 ] as const;
 
 /**
+ * Additional fields fetched from DB solely for Trust Score computation.
+ * These are NOT included in the sanitized output row — only the computed
+ * trust_score object is surfaced.
+ */
+const TRUST_SCORE_EXTRA_FIELDS = [
+  "verified_at",
+  "registration_number",
+  "education",
+] as const;
+
+/**
  * Sanitize an advisor row: keep only public fields, escape string values.
  */
 function sanitizeAdvisor(row: Record<string, unknown>): Record<string, unknown> {
@@ -79,6 +96,53 @@ function sanitizeAdvisor(row: Record<string, unknown>): Record<string, unknown> 
     }
   }
   return clean;
+}
+
+/**
+ * Append the Advisor Trust Score to an already-sanitized advisor row.
+ *
+ * The raw DB row (before sanitization) is passed in so the scorer can read
+ * fields that are NOT in the public output (e.g. verified_at, education).
+ *
+ * AFSL NOTE: The score is factual, single-entity only. It does NOT compare
+ * this advisor to any other — it is not a ranking, award, or "best" label.
+ * Methodology link: /advisor/trust-score-methodology.
+ */
+function withTrustScore(
+  sanitized: Record<string, unknown>,
+  rawRow: Record<string, unknown>,
+): Record<string, unknown> {
+  const input: AdvisorTrustScoreInput = {
+    verified: rawRow.verified as boolean | null,
+    afsl_number: rawRow.afsl_number as string | null,
+    registration_number: rawRow.registration_number as string | null,
+    verified_at: rawRow.verified_at as string | null,
+    created_at: rawRow.created_at as string | null,
+    years_experience: rawRow.years_experience as number | null,
+    bio: rawRow.bio as string | null,
+    photo_url: rawRow.photo_url as string | null,
+    qualifications: rawRow.qualifications as unknown[] | null,
+    education: rawRow.education as unknown[] | null,
+    memberships: rawRow.memberships as unknown[] | null,
+    fee_structure: rawRow.fee_structure as string | null,
+    fee_description: rawRow.fee_description as string | null,
+    linkedin_url: rawRow.linkedin_url as string | null,
+    website: rawRow.website as string | null,
+    languages: rawRow.languages as unknown[] | null,
+    rating: rawRow.rating as number | null,
+    review_count: rawRow.review_count as number | null,
+  };
+
+  const result = computeAdvisorTrustScore(input);
+
+  return {
+    ...sanitized,
+    trust_score: {
+      overall: result.overall,
+      label: result.label,
+      methodology_url: "https://invest.com.au/advisor/trust-score-methodology",
+    },
+  };
 }
 
 /**
@@ -144,9 +208,12 @@ export async function GET(request: NextRequest) {
     // matching how the public /advisors page fetches.
     const supabase = await createClient();
 
+    // Fetch public fields + extra fields needed for trust-score computation.
+    const SELECT_FIELDS = [...PUBLIC_FIELDS, ...TRUST_SCORE_EXTRA_FIELDS].join(",");
+
     let query = supabase
       .from("professionals")
-      .select(PUBLIC_FIELDS.join(","), { count: "exact" })
+      .select(SELECT_FIELDS, { count: "exact" })
       .eq("status", "active")
       .order("rating", { ascending: false })
       .order("name", { ascending: true });
@@ -201,10 +268,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Sanitize each advisor row
-    const sanitized = (advisors || []).map((a) =>
-      sanitizeAdvisor(a as unknown as Record<string, unknown>),
-    );
+    // Sanitize each advisor row and append the computed Trust Score.
+    // The raw row (including scoring-only fields) is passed to withTrustScore
+    // before sanitization strips them from the output.
+    const sanitized = (advisors || []).map((a) => {
+      const raw = a as unknown as Record<string, unknown>;
+      return withTrustScore(sanitizeAdvisor(raw), raw);
+    });
 
     // Most recent updated_at across returned rows
     const latestUpdate =

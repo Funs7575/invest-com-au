@@ -141,6 +141,31 @@ const HEALTH_SNIPPETS = [
   },
 ];
 
+const BADGE_SNIPPETS = [
+  {
+    title: "Advisor Trust Score badge",
+    description:
+      "Compact gauge badge showing a single advisor's Trust Score (0–100), label, and methodology link. Not a ranking.",
+    code: `<script src="https://invest.com.au/api/widget/badge?type=advisor&slug=jane-smith-cfp"></script>`,
+  },
+  {
+    title: "Broker Health Score badge",
+    description:
+      "Compact gauge badge showing a single broker's Health Score (0–100), label, and methodology link.",
+    code: `<script src="https://invest.com.au/api/widget/badge?type=broker&slug=stake"></script>`,
+  },
+  {
+    title: "Dark Theme advisor badge",
+    description: "Advisor Trust Score badge styled for dark-mode pages.",
+    code: `<script src="https://invest.com.au/api/widget/badge?type=advisor&slug=jane-smith-cfp&theme=dark"></script>`,
+  },
+  {
+    title: "With Partner Attribution",
+    description: "Thread your partner ID through to invest.com.au profile and methodology links.",
+    code: `<script src="https://invest.com.au/api/widget/badge?type=advisor&slug=jane-smith-cfp&ref=yourpartnerId"></script>`,
+  },
+];
+
 function SnippetBlock({ snippet }: { snippet: { title: string; description: string; code: string } }) {
   return (
     <div className="border border-slate-200 rounded-xl overflow-hidden">
@@ -359,6 +384,30 @@ export default function EmbedPage() {
           { param: "brokers", values: "slug,slug,...", def: "(top by rating)", desc: "Comma-separated broker slugs to include." },
           { param: "theme", values: "light | dark", def: "light", desc: "Colour theme." },
           { param: "limit", values: "1–10", def: "5", desc: "Maximum brokers displayed." },
+          REF_PARAM_ROW,
+        ]} />
+
+        {/* ── Score Badge Widget ── */}
+        <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-1">Score Badge Widget</h2>
+        <p className="text-sm text-slate-500 mb-5">
+          A compact, embeddable badge showing a <strong>single entity&apos;s own factual score</strong> — either
+          an Advisor Trust Score or a Broker Health Score. Includes a gauge (0–100), a band label
+          (e.g. &ldquo;Good&rdquo; or &ldquo;Strong&rdquo;), and a link to the published scoring methodology.
+          Not a ranking, award, or comparison. General-advice disclaimer is always included.
+        </p>
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-xs text-amber-900 leading-relaxed">
+          <strong>Compliance note:</strong> The badge surfaces a single entity&apos;s own score only.
+          It does not compare entities, rank them, or use &ldquo;best&rdquo; or &ldquo;award&rdquo; language.
+          The badge always links to the methodology page so visitors can audit the scoring algorithm.
+        </div>
+        <div className="space-y-6 mb-8">
+          {BADGE_SNIPPETS.map((s) => <SnippetBlock key={s.title} snippet={s} />)}
+        </div>
+        <h3 className="text-base font-extrabold text-slate-900 mb-4">Score Badge Parameters</h3>
+        <ParamsTable rows={[
+          { param: "type", values: "advisor | broker", def: "(required)", desc: "Which score to display — advisor Trust Score or broker Health Score." },
+          { param: "slug", values: "entity slug", def: "(required)", desc: "Slug of the advisor or broker (found in their profile URL)." },
+          { param: "theme", values: "light | dark", def: "light", desc: "Colour theme." },
           REF_PARAM_ROW,
         ]} />
 

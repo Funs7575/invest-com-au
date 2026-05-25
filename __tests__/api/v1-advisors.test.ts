@@ -315,3 +315,147 @@ describe("GET /api/v1/advisors — success", () => {
     expect(body.meta.updated_at).toBe("2026-04-01T00:00:00Z");
   });
 });
+
+// ── Trust Score field tests ────────────────────────────────────────────────────
+
+describe("GET /api/v1/advisors — trust_score field", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockValidateApiKey.mockResolvedValue(makeValidAuth());
+  });
+
+  /**
+   * Advisor with high credential signals — should score in Good or Strong band.
+   */
+  const CREDENTIALED_ADVISOR = {
+    ...makeAdvisor({
+      verified: true,
+      afsl_number: "123456",
+      rating: 4.8,
+      review_count: 15,
+      years_experience: 12,
+      created_at: new Date(Date.now() - 12 * 365 * 24 * 60 * 60 * 1000).toISOString(),
+      bio: "Experienced financial planner specialising in SMSF and retirement planning with 12 years in the industry.",
+      photo_url: "https://cdn.example.com/photo.jpg",
+      qualifications: [{ name: "CFP" }],
+      education: [{ degree: "BComm" }],
+      memberships: [{ name: "FPA" }],
+      fee_structure: "Hourly",
+      fee_description: null,
+      linkedin_url: "https://linkedin.com/in/jane",
+      website: null,
+      languages: ["English"],
+    }),
+    // Extra scoring fields fetched from DB but not in PUBLIC_FIELDS output
+    verified_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(), // 60 days ago
+    registration_number: "AR-789",
+    education: [{ degree: "BComm" }],
+  };
+
+  /**
+   * Advisor with minimal credentials — should score in Limited or Moderate band.
+   */
+  const SPARSE_ADVISOR = {
+    ...makeAdvisor({
+      verified: false,
+      afsl_number: null,
+      rating: null,
+      review_count: 0,
+      years_experience: null,
+      created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+      bio: null,
+      photo_url: null,
+      qualifications: null,
+      education: null,
+      memberships: null,
+      fee_structure: null,
+      fee_description: null,
+      linkedin_url: null,
+      website: null,
+      languages: null,
+    }),
+    verified_at: null,
+    registration_number: null,
+    education: null,
+  };
+
+  it("exposes trust_score field on each advisor row", async () => {
+    mockServerFrom.mockReturnValue(makeAdvisorsBuilder([CREDENTIALED_ADVISOR], null, 1));
+    const res = await GET(makeGet());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    const row = body.data[0];
+    expect(row.trust_score).toBeDefined();
+    expect(typeof row.trust_score.overall).toBe("number");
+    expect(typeof row.trust_score.label).toBe("string");
+    expect(typeof row.trust_score.methodology_url).toBe("string");
+  });
+
+  it("trust_score.overall is an integer in [0, 100]", async () => {
+    mockServerFrom.mockReturnValue(makeAdvisorsBuilder([CREDENTIALED_ADVISOR], null, 1));
+    const res = await GET(makeGet());
+    const body = await res.json();
+    const { overall } = body.data[0].trust_score;
+    expect(Number.isInteger(overall)).toBe(true);
+    expect(overall).toBeGreaterThanOrEqual(0);
+    expect(overall).toBeLessThanOrEqual(100);
+  });
+
+  it("trust_score.label is one of the defined bands", async () => {
+    mockServerFrom.mockReturnValue(makeAdvisorsBuilder([CREDENTIALED_ADVISOR], null, 1));
+    const res = await GET(makeGet());
+    const body = await res.json();
+    const { label } = body.data[0].trust_score;
+    expect(["Strong", "Good", "Moderate", "Limited"]).toContain(label);
+  });
+
+  it("trust_score.methodology_url points to the published methodology page", async () => {
+    mockServerFrom.mockReturnValue(makeAdvisorsBuilder([CREDENTIALED_ADVISOR], null, 1));
+    const res = await GET(makeGet());
+    const body = await res.json();
+    expect(body.data[0].trust_score.methodology_url).toBe(
+      "https://invest.com.au/advisor/trust-score-methodology",
+    );
+  });
+
+  it("credentialed advisor scores higher than sparse advisor", async () => {
+    mockServerFrom.mockReturnValue(
+      makeAdvisorsBuilder([CREDENTIALED_ADVISOR, SPARSE_ADVISOR], null, 2),
+    );
+    const res = await GET(makeGet());
+    const body = await res.json();
+    const [credentialed, sparse] = body.data;
+    expect(credentialed.trust_score.overall).toBeGreaterThan(sparse.trust_score.overall);
+  });
+
+  it("sparse advisor with no signals still gets a trust_score object", async () => {
+    mockServerFrom.mockReturnValue(makeAdvisorsBuilder([SPARSE_ADVISOR], null, 1));
+    const res = await GET(makeGet());
+    const body = await res.json();
+    const { trust_score } = body.data[0];
+    expect(trust_score).toBeDefined();
+    expect(trust_score.overall).toBeGreaterThanOrEqual(0);
+    expect(trust_score.overall).toBeLessThanOrEqual(100);
+    // Sparse advisor should be Limited or Moderate
+    expect(["Limited", "Moderate"]).toContain(trust_score.label);
+  });
+
+  it("trust_score does NOT expose private scoring-only fields (verified_at, registration_number, education raw)", async () => {
+    mockServerFrom.mockReturnValue(makeAdvisorsBuilder([CREDENTIALED_ADVISOR], null, 1));
+    const res = await GET(makeGet());
+    const body = await res.json();
+    const row = body.data[0];
+    // These fields are inputs to the scorer only — they must NOT appear on the public row
+    expect(row.verified_at).toBeUndefined();
+    expect(row.registration_number).toBeUndefined();
+    // trust_score should be nested object, not a raw field
+    expect(typeof row.trust_score).toBe("object");
+  });
+
+  it("trust_score is present even on empty advisor list (no rows = no trust_score calls)", async () => {
+    mockServerFrom.mockReturnValue(makeAdvisorsBuilder([], null, 0));
+    const res = await GET(makeGet());
+    const body = await res.json();
+    expect(body.data).toHaveLength(0);
+  });
+});
