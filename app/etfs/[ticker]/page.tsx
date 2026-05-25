@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { getETFByTicker, ALL_TICKERS, type ETF } from "@/lib/etf-data";
+import DividendProjectionWidget from "@/components/etf/DividendProjectionWidget";
 
 export const revalidate = 3600;
 
@@ -243,6 +244,20 @@ export default async function ETFTickerPage({
           </div>
         </div>
       </section>
+
+      {/* Dividend income projection — only for ETFs with a declared yield */}
+      {etf.distributionYield > 0 && (
+        <section className="py-8 border-b border-slate-200">
+          <div className="container-custom max-w-3xl">
+            <DividendProjectionWidget
+              distributionYield={etf.distributionYield}
+              frankingPercent={etf.frankingPercent}
+              distributionFrequency={etf.distributionFrequency}
+              ticker={etf.ticker}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Compare with similar ETFs */}
       {etf.relatedTickers.length > 0 && (
