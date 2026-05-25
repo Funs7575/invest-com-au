@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@/lib/hooks/useUser";
-import EmptyState from "@/components/directory/EmptyState";
 
 interface SavedComparison {
   id: string;
@@ -172,12 +171,23 @@ export default function SavedComparisonsClient() {
 
         {/* Empty state */}
         {comparisons.length === 0 && (
-          <EmptyState
-            icon="bar-chart"
-            title="No saved comparisons yet"
-            body="Compare brokers side by side, then save your shortlist — you can return to it any time."
-            ctas={[{ label: "Start comparing", href: "/compare" }]}
-          />
+          <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
+            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+              </svg>
+            </div>
+            <h2 className="text-lg font-bold text-slate-900 mb-1">No saved comparisons yet</h2>
+            <p className="text-sm text-slate-500 mb-4">
+              Compare brokers side by side and save your comparisons for easy access later.
+            </p>
+            <Link
+              href="/compare"
+              className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-colors"
+            >
+              Start Comparing
+            </Link>
+          </div>
         )}
 
         {/* Comparisons list */}
