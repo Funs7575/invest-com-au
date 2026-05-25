@@ -30,6 +30,8 @@ export const revalidate = 3600;
  *   ?theme=light|dark      — colour theme (default: light)
  *   ?limit=5               — max brokers to show (default: 5, max: 10)
  *   ?amount=5000           — default trade amount pre-filled (default: 5000)
+ *   ?ref=<partnerId>       — partner attribution; appended to all outbound
+ *                            invest.com.au links (no storage, query-param only)
  */
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
@@ -43,6 +45,8 @@ export async function GET(request: NextRequest) {
   const defaultAmount = Number.isNaN(parsedAmount)
     ? 5000
     : Math.min(Math.max(parsedAmount, 1), 1_000_000);
+  // Partner attribution — see /api/widget for the same pattern.
+  const ref = params.get("ref") || "";
 
   // Anon-key client: RLS enforces active-only broker rows. See header comment.
   const supabase = createStaticClient();
@@ -70,6 +74,12 @@ export async function GET(request: NextRequest) {
 
   const brokersJson = JSON.stringify(rows);
 
+  // Ref param string for outbound links. Partner ID takes priority; falls
+  // back to the generic calculator-widget attribution signal.
+  const refParam = ref
+    ? `ref=${encodeURIComponent(ref)}&source=calc-widget`
+    : "ref=widget&source=calc-embed";
+
   // General-advice disclaimer text — keep in sync with
   // lib/compliance.ts GENERAL_ADVICE_WARNING.
   const DISCLAIMER =
@@ -86,6 +96,7 @@ export async function GET(request: NextRequest) {
   var DEFAULT_AMOUNT = ${JSON.stringify(defaultAmount)};
   var THEME = ${JSON.stringify(theme)};
   var DISCLAIMER = ${JSON.stringify(DISCLAIMER)};
+  var REF_PARAM = ${JSON.stringify(refParam)};
   var BASE = "https://invest.com.au";
 
   // Find the script tag that loaded us (last matching script on page)
@@ -218,7 +229,7 @@ export async function GET(request: NextRequest) {
     container.innerHTML =
       '<div class="icw-header">' +
         '<span>Brokerage Fee Calculator</span>' +
-        '<a href="' + BASE + '/trade-cost-calculator?ref=widget" target="_blank" style="font-size:11px;font-weight:400;color:' + textMuted + ';text-decoration:none;">Full calculator &rarr;</a>' +
+        '<a href="' + BASE + '/trade-cost-calculator?' + REF_PARAM + '" target="_blank" style="font-size:11px;font-weight:400;color:' + textMuted + ';text-decoration:none;">Full calculator &rarr;</a>' +
       '</div>';
 
     // Controls
@@ -253,8 +264,8 @@ export async function GET(request: NextRequest) {
 
       var badge = isCheapest ? '<span class="icw-badge">Cheapest</span>' : '';
       var link = r.broker.affiliate_url
-        ? esc(r.broker.affiliate_url) + (r.broker.affiliate_url.includes("?") ? "&" : "?") + "ref=widget&source=calc-embed"
-        : BASE + "/go/" + esc(r.broker.slug) + "?ref=widget&source=calc-embed";
+        ? esc(r.broker.affiliate_url) + (r.broker.affiliate_url.includes("?") ? "&" : "?") + REF_PARAM
+        : BASE + "/go/" + esc(r.broker.slug) + "?" + REF_PARAM;
 
       container.innerHTML +=
         '<div class="icw-row' + (isCheapest ? " cheapest" : "") + '">' +
@@ -280,7 +291,7 @@ export async function GET(request: NextRequest) {
     container.innerHTML += '<div class="icw-disclaimer">' + esc(DISCLAIMER) + '</div>';
 
     // Footer
-    container.innerHTML += '<div class="icw-footer">Powered by <a href="' + BASE + '?ref=calc-widget" target="_blank">invest.com.au</a></div>';
+    container.innerHTML += '<div class="icw-footer">Powered by <a href="' + BASE + "?" + REF_PARAM + '" target="_blank">invest.com.au</a></div>';
 
     // Swap in
     while (shadow.firstChild && shadow.firstChild !== styles) shadow.removeChild(shadow.firstChild);

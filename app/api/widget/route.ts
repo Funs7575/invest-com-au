@@ -35,6 +35,8 @@ export const revalidate = 3600;
  *   ?type=table|compact      — widget layout (default: table)
  *   ?theme=light|dark        — colour theme (default: light)
  *   ?limit=5                 — max brokers to show (default: 5, max: 10)
+ *   ?ref=<partnerId>         — partner attribution; appended to all outbound
+ *                              invest.com.au links (no storage, query-param only)
  */
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
@@ -42,6 +44,10 @@ export async function GET(request: NextRequest) {
   const widgetType = params.get("type") === "compact" ? "compact" : "table";
   const theme = params.get("theme") === "dark" ? "dark" : "light";
   const limit = Math.min(Math.max(parseInt(params.get("limit") || "5", 10) || 5, 1), 10);
+  // Partner attribution: threaded through all outbound links to invest.com.au.
+  // No storage, no new tables — purely a query-param passthrough so the
+  // destination page can attribute traffic back to the embedding partner.
+  const ref = params.get("ref") || "";
 
   // FIN_NOTEBOOK #16 — curated content filter. `?widget=` picks a
   // pre-defined audience (cheapest-brokers, us-shares, top-crypto,
@@ -95,6 +101,12 @@ export async function GET(request: NextRequest) {
   // Serialise broker data into the JS payload
   const brokersJson = JSON.stringify(rows);
 
+  // Ref param string for outbound links. Partner ID takes priority; falls
+  // back to the generic widget attribution signal.
+  const refParam = ref
+    ? `ref=${encodeURIComponent(ref)}&source=widget`
+    : "ref=widget&source=embed";
+
   const js = `
 (function() {
   "use strict";
@@ -104,6 +116,7 @@ export async function GET(request: NextRequest) {
   var TYPE = ${JSON.stringify(widgetType)};
   var THEME = ${JSON.stringify(theme)};
   var WIDGET_HEADING = ${JSON.stringify(widgetHeading)};
+  var REF_PARAM = ${JSON.stringify(refParam)};
   var BASE = "https://invest.com.au";
 
   // Find the script tag that loaded us (last script on page)
@@ -167,7 +180,7 @@ export async function GET(request: NextRequest) {
       var logoHtml = b.logo_url
         ? '<div class="icw-logo" style="background:#fff;border:1px solid ' + border + '"><img src="' + esc(b.logo_url) + '" alt="' + esc(b.name) + '"></div>'
         : '<div class="icw-logo" style="background:' + esc(b.color) + '20;color:' + esc(b.color) + '">' + esc((b.icon || b.name.charAt(0))) + '</div>';
-      var link = BASE + "/go/" + esc(b.slug) + "?ref=widget&source=embed";
+      var link = BASE + "/go/" + esc(b.slug) + "?" + REF_PARAM;
       container.innerHTML += '<div class="icw-card">' +
         logoHtml +
         '<div class="icw-info">' +
@@ -186,7 +199,7 @@ export async function GET(request: NextRequest) {
       var logoHtml = b.logo_url
         ? '<div class="icw-logo" style="background:#fff;border:1px solid ' + border + '"><img src="' + esc(b.logo_url) + '" alt="' + esc(b.name) + '"></div>'
         : '<div class="icw-logo" style="background:' + esc(b.color) + '20;color:' + esc(b.color) + '">' + esc((b.icon || b.name.charAt(0))) + '</div>';
-      var link = BASE + "/go/" + esc(b.slug) + "?ref=widget&source=embed";
+      var link = BASE + "/go/" + esc(b.slug) + "?" + REF_PARAM;
       container.innerHTML += '<div class="icw-row">' +
         '<div class="icw-name">' + logoHtml + esc(b.name) + '</div>' +
         '<div>' + esc(b.asx_fee || "N/A") + '</div>' +
@@ -197,7 +210,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  container.innerHTML += '<div class="icw-footer">Powered by <a href="' + BASE + '?ref=widget" target="_blank">invest.com.au</a></div>';
+  container.innerHTML += '<div class="icw-footer">Powered by <a href="' + BASE + "?" + REF_PARAM + '" target="_blank">invest.com.au</a></div>';
   shadow.appendChild(container);
 
   function esc(s) {
