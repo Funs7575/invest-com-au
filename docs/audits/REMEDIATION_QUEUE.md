@@ -19,7 +19,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | C | `claude/audit-remediation/c-disc-20260522-admin-scope` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541/**#1165 MERGED 2026-05-22** | C-01..C-02 done. C-03..C-05 blocked (see Blocked). C-DISC-20260522-01: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/v1/brokers/route.ts`; 20 tests pass. C-DISC-20260522-02: **done** (iter 516) — replaced `createAdminClient()` with `await createClient()` in `app/api/community/categories/route.ts`; 6 tests pass. **#1165 MERGED 2026-05-22 (iter 523, `43dc1a8`)** — Tier B, 18-min observation window, all required checks green. C-DISC-01+02 complete. | C-DISC-01+02 merged ✓ |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
-| F | _complete_ | **#925 MERGED 2026-05-20** | F-01..F-07 done. F-08 blocked. F-DISC-01 #741 MERGED. F-DISC-20260519-01: **#925 MERGED by founder 2026-05-20** — `requireAdmin` consolidated, `escapeHtml` consolidated, 21 false-positives allowlisted. **Stream engineering complete.** F-DISC-20260522-01: **false-positive** (iter 517) — `formatAud` in `FeeImpactVisualiser.tsx` takes dollars (compact `$Xk`/`$XM` for chart labels); `lib/first-home-buyer/state-grants.ts:formatAud` takes cents (full `Intl.NumberFormat`). Different signatures, different units, different output format — not a SSOT violation. F-DISC-20260525-01: **pending** — `parseMoney` in `app/investment-income-tax-calculator/InvestmentIncomeTaxClient.tsx` (local: strips non-digit/decimal, returns 0 for invalid) shadows `lib/holdings/csv-import/_utils.ts:parseMoney` (strips currency symbols + whitespace, returns NaN for empty). Different semantics, different domains. Surfaced by scout fire 2026-05-25. Iterator: evaluate for `ALLOWED_NAMES` addition in `scripts/check-duplicate-functions.mjs` (with comment explaining domain difference) or consolidate. | **Stream complete.** |
+| F | _complete_ | **#925 MERGED 2026-05-20** | F-01..F-07 done. F-08 blocked. F-DISC-01 #741 MERGED. F-DISC-20260519-01: **#925 MERGED by founder 2026-05-20** — `requireAdmin` consolidated, `escapeHtml` consolidated, 21 false-positives allowlisted. **Stream engineering complete.** F-DISC-20260522-01: **false-positive** (iter 517) — `formatAud` in `FeeImpactVisualiser.tsx` takes dollars (compact `$Xk`/`$XM` for chart labels); `lib/first-home-buyer/state-grants.ts:formatAud` takes cents (full `Intl.NumberFormat`). Different signatures, different units, different output format — not a SSOT violation. F-DISC-20260525-01: **done** (iter 573) — `parseMoney` false-positive resolved. Added to `ALLOWED_NAMES` in `scripts/check-duplicate-functions.mjs` with explanation (different invalid-input sentinel: 0 vs NaN; different sign handling; different domains — form UI vs CSV importer). Also fixed F-DISC-20260522-01 (`formatAud`) allowlist entry that iter 517 missed committing. Both now in `#1198` (`064705f`). | **Stream complete.** |
 | G | `claude/audit-remediation/g-04-mfa-gaps` | #213/#306/#342/#371/#385/#457/#471/#544 | G-01..G-03 done. G-04 blocked (see Blocked). | G-04 unblocked + merged |
 | H | `claude/audit-remediation/h-06-stripe-webhooks` | #214/#307/#343/#386/#457/#472/#545 | H-01..H-06 done. | H-06 merged ✓ |
 | I | `claude/audit-remediation/i-05-advisor-gaps` | #215/#308/#344/#387/#457/#473/#546 | I-01..I-05 done. | I-05 merged ✓ |
@@ -247,11 +247,35 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 | CL-07 (social media entity-only) | Source code social links are entity-level: `@investcomau` on X/Twitter, `linkedin.com/company/invest-com-au`. No personal founder accounts referenced in shipped code. |
 | CL-08 (press inquiry handling) | `app/press/page.tsx` and `app/contact/page.tsx` already use `press@invest.com.au` (role address). No founder personal email in code. |
 | MM-V05 (alternative collectibles listings) | `app/invest/alternatives/listings/page.tsx` exists on main and covers all MM-V05 sub-categories (whisky, wine, art, watches, cars, coins, etc.) via `ALTERNATIVES_SUB_CATEGORIES`. No new page needed. |
-| F-DISC-20260522-01 (formatAud in FeeImpactVisualiser) | Local `formatAud(n: number)` takes dollars and outputs compact chart labels (`$100k`, `$1.50M`). Library `formatAud(cents: number)` in `state-grants.ts` takes cents and outputs full `Intl.NumberFormat` currency. Different units, different output — not a duplicate. (iter 517) |
+| F-DISC-20260522-01 (formatAud in FeeImpactVisualiser) | Local `formatAud(n: number)` takes dollars and outputs compact chart labels (`$100k`, `$1.50M`). Library `formatAud(cents: number)` in `state-grants.ts` takes cents and outputs full `Intl.NumberFormat` currency. Different units, different output — not a duplicate. (iter 517) Gate fix (ALLOWED_NAMES) shipped in iter 573 PR #1198. |
+| F-DISC-20260525-01 (parseMoney in InvestmentIncomeTaxClient) | Local `parseMoney(value)` strips non-digit/dot, returns 0 for invalid/negative — form-field semantics (tax amounts ≥ 0). Library `parseMoney(raw)` in `lib/holdings/csv-import/_utils.ts` preserves minus sign, returns NaN for empty — CSV import semantics. Different sentinel, different sign handling, different domains. Not substitutable. Added to `ALLOWED_NAMES` in iter 573 PR #1198. |
 
 ---
 
 ## Iteration log (most recent first)
+
+### iter 573 — 2026-05-25 — STATUS: PROGRESS · stream=F · item=F-DISC-20260525-01 · pr=#1198
+
+- **Phase:** 0+0.5+1+1.5+1.7+2+3+4+5+6+6.5+7 — full iteration
+- **Phase 0:** Lock acquired cleanly.
+- **Phase 0.5:** No LOOP_PAUSE sentinel.
+- **Phase 1 (Sync):** `git pull --ff-only origin/main` — advanced 5 commits (workflow updates from #1197 merge, scout fire queue commit). Main at `e6c7f37`.
+- **Phase 1.5 (Types drift precondition):** 0 migration SQL files added in last 24h. Skip regen.
+- **Phase 1.7 (Main CI preflight):** Main inferred healthy (last main commit was workflow/queue-only, no code changes).
+- **Phase 2 (CI rescue check):**
+  - #1191 (`fix-auto-merge-noise-checks`): `Lint · Type-check · Test · Build` ✅. `Preview smoke test` ❌ + `Supabase types drift` ❌ — confirmed infra noise. No rescue.
+  - #1182–#1188 (DISC-20260524): All `Lint · Type-check · Test · Build` ✅. No rescue.
+  - #1176/#1177/#1178/#1180 (NF): CI green (confirmed prior iters). No rescue.
+- **Phase 3 (Item selection):** One pending item: `F-DISC-20260525-01` — `parseMoney` duplicate-function gate finding surfaced by scout fire 2026-05-25. No override conditions (no CL/LL Tier-0/1 pending). No dup PR found via search. Created branch `claude/audit-remediation/f-disc-20260525-parsemoney-fp` from main.
+- **Phase 4 (Verify):** Confirmed both findings are false-positives:
+  - `parseMoney` local (form UI): strips all non-digit/dot, returns 0 for invalid/negative. Lib (CSV import): preserves `-`, returns NaN for empty. Different sentinels, different sign handling.
+  - `formatAud` (F-DISC-20260522-01, iter 517 FP): local takes dollars/compact labels; lib takes cents/full Intl format. ALLOWED_NAMES commit was missed in iter 517 — bundling fix into this PR.
+- **Phase 5 (Work):** Added `"parseMoney"` and `"formatAud"` entries to `ALLOWED_NAMES` in `scripts/check-duplicate-functions.mjs`. `node scripts/check-duplicate-functions.mjs` exits 0.
+- **Phase 6 (Commit + push):** Commit `064705f` on `claude/audit-remediation/f-disc-20260525-parsemoney-fp`. Pushed. PR #1198 opened (Tier A — script allowlist only, no code logic changed).
+- **Phase 6.5 (Discovery sweep):** Only file touched: `scripts/check-duplicate-functions.mjs`. No sibling script files with obvious gaps. 0 discovery items.
+- **STATUS: PROGRESS · stream=F · item=F-DISC-20260525-01 · pr=#1198**
+
+---
 
 ### iter 572 — 2026-05-25 — STATUS: ALL-BLOCKED · stream=all · no-change-since-571
 
