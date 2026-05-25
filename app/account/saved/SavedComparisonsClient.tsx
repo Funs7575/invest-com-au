@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@/lib/hooks/useUser";
+import ShareComparisonButton from "@/components/compare/ShareComparisonButton";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 interface SavedComparison {
   id: string;
@@ -316,16 +318,25 @@ export default function SavedComparisonsClient() {
                 </div>
               )}
 
-              {/* View comparison link */}
-              <Link
-                href={`/compare?brokers=${comparison.broker_slugs.join(",")}`}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
-              >
-                View Comparison
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
+              {/* View + Share — both use ?ids= which CompareClient reads to
+                  pre-select the pinned shortlist (?brokers= was a no-op).
+                  Share copies a deep link to the same brokers; no account or
+                  saved-comparison id is exposed. */}
+              <div className="flex items-center gap-4">
+                <Link
+                  href={`/compare?ids=${comparison.broker_slugs.slice(0, 4).join(",")}`}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                >
+                  View Comparison
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+                <ShareComparisonButton
+                  brokerSlugs={comparison.broker_slugs}
+                  name={comparison.name}
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -334,6 +345,15 @@ export default function SavedComparisonsClient() {
         {comparisons.length > 0 && (
           <p className="mt-4 text-xs text-slate-400 text-center">
             {comparisons.length} of 25 saved comparisons used
+          </p>
+        )}
+
+        {/* General advice warning — saved comparisons surface broker
+            shortlists, which are general information only, not personal
+            advice. Reuses the single source of truth in lib/compliance.ts. */}
+        {comparisons.length > 0 && (
+          <p className="mt-6 text-xs text-slate-400 leading-relaxed">
+            {GENERAL_ADVICE_WARNING}
           </p>
         )}
       </div>
