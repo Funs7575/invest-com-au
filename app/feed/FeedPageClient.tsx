@@ -82,9 +82,14 @@ function PostCard({ post }: { post: PostRow }) {
           {post.comment_count > 0 && <span>{post.comment_count} {post.comment_count === 1 ? "comment" : "comments"}</span>}
         </div>
         {pro?.slug && (
-          <Link href={`/advisor/${pro.slug}`} style={{ fontSize: 12, fontWeight: 600, color: "var(--color-blue-700)", textDecoration: "none" }}>
-            View profile →
-          </Link>
+          <div style={{ display: "flex", gap: 12 }}>
+            <Link href={`/advisor/${pro.slug}/insights/${post.id}`} style={{ fontSize: 12, fontWeight: 600, color: "var(--color-blue-700)", textDecoration: "none" }}>
+              Read more →
+            </Link>
+            <Link href={`/advisor/${pro.slug}`} style={{ fontSize: 12, color: "var(--color-ink-400)", textDecoration: "none" }}>
+              Profile
+            </Link>
+          </div>
         )}
       </div>
     </article>

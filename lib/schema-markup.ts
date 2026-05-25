@@ -18,6 +18,7 @@
  *   - Speakable     — voice / AI answer-extraction selectors
  *   - ComparisonPage — versus/compare pages (Article + ItemList + FinancialProducts)
  *   - ArticleKeyTakeaways — answer-first Article with hasPart ClaimReview hints
+ *   - BlogPosting      — advisor short-form insights (/advisor/[slug]/insights/[id])
  *
  * Every builder accepts the minimum required fields and gracefully
  * omits optional ones so empty values don't leak into the rendered
@@ -81,6 +82,50 @@ export function articleJsonLd(input: ArticleSchemaInput) {
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": absoluteUrl(`/article/${input.slug}`),
+    },
+  });
+}
+
+// ─── BlogPosting — advisor insights ──────────────────────────
+
+export interface BlogPostingSchemaInput {
+  postId: number;
+  advisorSlug: string;
+  body: string;
+  postType: string;
+  publishedAt: string;
+  authorName: string;
+  authorSlug: string;
+  authorPhotoUrl?: string | null;
+}
+
+/** Schema.org BlogPosting for advisor short-form insights.
+ *  Helps Google surface the post in search + AI citation engines. */
+export function blogPostingJsonLd(input: BlogPostingSchemaInput) {
+  const url = absoluteUrl(`/advisor/${input.advisorSlug}/insights/${input.postId}`);
+  const headline = input.body.slice(0, 110);
+  const description = input.body.slice(0, 160);
+
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline,
+    description,
+    articleBody: input.body,
+    keywords: input.postType,
+    url,
+    datePublished: input.publishedAt,
+    dateModified: input.publishedAt,
+    author: compact({
+      "@type": "Person",
+      name: input.authorName,
+      url: absoluteUrl(`/advisor/${input.authorSlug}`),
+      image: input.authorPhotoUrl ?? undefined,
+    }),
+    publisher: ORG,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": url,
     },
   });
 }

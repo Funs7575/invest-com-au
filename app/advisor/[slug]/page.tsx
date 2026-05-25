@@ -20,6 +20,7 @@ import { computeAdvisorReputation } from "@/lib/advisor-reputation";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import AdvisorTrustScoreSection from "./components/AdvisorTrustScoreSection";
 import AdvisorReputationSummary from "./components/AdvisorReputationSummary";
+import RecentAdvisorInsights from "./components/RecentAdvisorInsights";
 import FollowAdvisorButton from "@/components/FollowAdvisorButton";
 
 export const revalidate = 1800;
@@ -571,6 +572,9 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
           isLoggedIn={!!sessionUser}
         />
       </div>
+      {/* ── Recent insights from this advisor ── */}
+      <RecentAdvisorInsights slug={slug} advisorId={pro.id} advisorName={pro.name} />
+
       <ClaimListingButton
         claimType="advisor"
         targetSlug={pro.slug}
