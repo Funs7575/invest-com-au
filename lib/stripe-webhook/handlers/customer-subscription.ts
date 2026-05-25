@@ -27,9 +27,19 @@ import {
   sendTransactionalEmail,
 } from "../lib/email";
 import { handleSubscriptionWebhook } from "@/lib/pro-subscription/billing";
+import {
+  handleApiKeySubscriptionCreated,
+  handleApiKeySubscriptionUpdated,
+  handleApiKeySubscriptionDeleted,
+} from "./api-key-subscription";
 
 export const handleCustomerSubscriptionCreated: WebhookHandler = async (event, ctx) => {
   const newSub = event.data.object as Stripe.Subscription;
+
+  // API key billing: short-circuit for API key subscriptions (different flow)
+  const apiHandled = await handleApiKeySubscriptionCreated(event, ctx);
+  if (apiHandled.handled) return { status: "done" };
+
   await upsertSubscription(newSub, ctx.admin, ctx.log);
 
   // Send Pro welcome email on new subscription
@@ -119,6 +129,10 @@ export const handleCustomerSubscriptionTrialWillEnd: WebhookHandler = async (eve
 };
 
 export const handleCustomerSubscriptionUpdated: WebhookHandler = async (event, ctx) => {
+  // API key billing: short-circuit for API key subscriptions
+  const apiHandled = await handleApiKeySubscriptionUpdated(event, ctx);
+  if (apiHandled.handled) return { status: "done" };
+
   await upsertSubscription(event.data.object as Stripe.Subscription, ctx.admin, ctx.log);
   // Mirror the status / period_end onto the professionals row if this is
   // a pro tier subscription (mm31). Skip silently for consumer-Pro
@@ -136,6 +150,11 @@ export const handleCustomerSubscriptionUpdated: WebhookHandler = async (event, c
 
 export const handleCustomerSubscriptionDeleted: WebhookHandler = async (event, ctx) => {
   const subscription = event.data.object as Stripe.Subscription;
+
+  // API key billing: short-circuit for API key subscriptions
+  const apiHandled = await handleApiKeySubscriptionDeleted(event, ctx);
+  if (apiHandled.handled) return { status: "done" };
+
   await upsertSubscription(subscription, ctx.admin, ctx.log);
 
   // Flip the pro back to the free tier if this was a pro subscription
