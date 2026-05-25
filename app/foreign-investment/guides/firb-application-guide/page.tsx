@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { FIRB_FEES, FIRB_PROCESS_STEPS, FIRB_FAQS, WHO_NEEDS_FIRB } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
@@ -77,6 +78,20 @@ export default function FirbApplicationGuidePage() {
               { name: "Guides", url: `${SITE_URL}/foreign-investment/guides` },
               { name: "FIRB Application Guide" },
             ])
+          ),
+        }}
+      />
+      {/* FAQPage — mirrors the visible FAQ block below (first 6 FIRB FAQs). */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            faqJsonLd(
+              FIRB_FAQS.slice(0, 6).map((faq) => ({
+                q: faq.question,
+                a: faq.answer,
+              }))
+            )
           ),
         }}
       />

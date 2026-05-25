@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { FIRB_FEES, STATE_SURCHARGES } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
@@ -148,6 +149,15 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
               { name: "Guides", url: `${SITE_URL}/foreign-investment/guides` },
               { name: "Buy Property as a Foreigner" },
             ])
+          ),
+        }}
+      />
+      {/* FAQPage — mirrors the visible FAQ block below. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            faqJsonLd(FAQS.map((faq) => ({ q: faq.question, a: faq.answer })))
           ),
         }}
       />

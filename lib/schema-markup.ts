@@ -136,6 +136,75 @@ export function brokerFinancialProductJsonLd(input: BrokerSchemaInput) {
   });
 }
 
+// ─── Investment fund / FinancialProduct ───────────────────────
+
+export interface FundSchemaInput {
+  slug: string;
+  name: string;
+  description?: string | null;
+  /** Managing entity — the AFSL holder, surfaced as the product provider. */
+  managerName?: string | null;
+  /** Human-readable fund-type label, e.g. "Managed Fund", "Infrastructure". */
+  fundType?: string | null;
+  /** Average rating across approved reviews. Pair with `reviewCount`. */
+  rating?: number | null;
+  /** Count of approved reviews. AggregateRating is omitted unless > 0. */
+  reviewCount?: number | null;
+  /** Minimum investment in AUD (whole dollars), if disclosed. */
+  minInvestmentAud?: number | null;
+}
+
+/**
+ * FinancialProduct JSON-LD for an investment-fund detail page
+ * (/invest/funds/[slug]).
+ *
+ * `brokerFinancialProductJsonLd` hardcodes the /broker/ path and uses the
+ * site Organisation as the brand, so it doesn't fit funds. This builder
+ * points at the fund URL, records the fund manager as the `provider`
+ * Organization (the AFSL holder), and — crucially — only emits an
+ * `aggregateRating` when real approved-review data exists, so no rating is
+ * ever fabricated for funds that have not been reviewed. The optional
+ * `offers` carries the disclosed minimum investment as the entry price.
+ */
+export function fundFinancialProductJsonLd(input: FundSchemaInput) {
+  const url = absoluteUrl(`/invest/funds/${input.slug}`);
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "FinancialProduct",
+    "@id": `${url}#product`,
+    name: input.name,
+    url,
+    description: input.description ?? undefined,
+    category: input.fundType ?? undefined,
+    brand: ORG,
+    provider: input.managerName
+      ? { "@type": "Organization", name: input.managerName }
+      : undefined,
+    ...(input.rating && input.reviewCount && input.reviewCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: input.rating,
+            reviewCount: input.reviewCount,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+    ...(input.minInvestmentAud && input.minInvestmentAud > 0
+      ? {
+          offers: {
+            "@type": "Offer",
+            priceCurrency: "AUD",
+            price: input.minInvestmentAud,
+            url,
+            availability: "https://schema.org/InStock",
+          },
+        }
+      : {}),
+  });
+}
+
 // ─── Advisor / LocalBusiness + Person ─────────────────────────
 
 export interface AdvisorSchemaInput {
@@ -204,6 +273,85 @@ export function advisorJsonLd(input: AdvisorSchemaInput) {
     : null;
 
   return { person, localBusiness };
+}
+
+// ─── Advisory firm / FinancialService ─────────────────────────
+
+export interface AdvisorFirmSchemaInput {
+  slug: string;
+  name: string;
+  bio?: string | null;
+  logoUrl?: string | null;
+  website?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  /** AFSL number — emitted as a credential identifier when present. */
+  afslNumber?: string | null;
+  locationState?: string | null;
+  locationSuburb?: string | null;
+  /**
+   * Aggregate of the firm's verified client reviews. Both must be
+   * present and `reviewCount` > 0 for an AggregateRating to be emitted —
+   * never synthesise a rating for an unreviewed firm.
+   */
+  rating?: number | null;
+  reviewCount?: number | null;
+}
+
+/**
+ * FinancialService JSON-LD for an advisory-firm profile (/firm/[slug]).
+ *
+ * A firm is an organisation, not a person, so `advisorJsonLd` (Person +
+ * optional LocalBusiness keyed off an individual's fields) is the wrong
+ * shape. This builder emits the firm as a `FinancialService` business
+ * entity with its contact details, postal address, website (`sameAs`),
+ * and AFSL as a regulatory `identifier`. The AggregateRating is only
+ * included when the page passes in a real review-derived rating and a
+ * positive review count.
+ */
+export function advisorFirmJsonLd(input: AdvisorFirmSchemaInput) {
+  const url = absoluteUrl(`/firm/${input.slug}`);
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "FinancialService",
+    "@id": `${url}#firm`,
+    name: input.name,
+    url,
+    description: input.bio ?? undefined,
+    image: input.logoUrl ?? undefined,
+    logo: input.logoUrl ?? undefined,
+    telephone: input.phone ?? undefined,
+    email: input.email ?? undefined,
+    sameAs: input.website ? [input.website] : undefined,
+    identifier: input.afslNumber
+      ? {
+          "@type": "PropertyValue",
+          propertyID: "AFSL",
+          value: input.afslNumber,
+        }
+      : undefined,
+    address:
+      input.locationState || input.locationSuburb
+        ? compact({
+            "@type": "PostalAddress",
+            addressRegion: input.locationState ?? undefined,
+            addressLocality: input.locationSuburb ?? undefined,
+            addressCountry: "AU",
+          })
+        : undefined,
+    parentOrganization: ORG,
+    ...(input.rating && input.reviewCount && input.reviewCount > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: input.rating,
+            reviewCount: input.reviewCount,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+  });
 }
 
 // ─── ItemList — best-for pages + versus pages ────────────────
