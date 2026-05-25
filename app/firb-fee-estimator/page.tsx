@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
 import FirbFeeEstimatorClient from "./FirbFeeEstimatorClient";
@@ -38,6 +39,29 @@ const breadcrumbLd = breadcrumbJsonLd([
   { name: "FIRB Fee Estimator", url: absoluteUrl("/firb-fee-estimator") },
 ]);
 
+const firbFaqLd = faqJsonLd([
+  {
+    q: "Who needs to apply to FIRB?",
+    a: "Foreign persons (including temporary residents) must apply to the Foreign Investment Review Board (FIRB) before acquiring an interest in Australian residential real estate, agricultural land above certain thresholds, or sensitive national security businesses. Temporary residents generally need FIRB approval to buy residential property (except a principal place of residence for their own use).",
+  },
+  {
+    q: "How much does a FIRB application cost?",
+    a: "FIRB application fees are set by the Australian Treasury based on the type and value of the acquisition. For residential property, fees start at $4,200 for properties valued under $75,000 and scale to $272,400 for properties valued at $10 million or more. Commercial, agricultural, and business acquisitions follow different fee schedules.",
+  },
+  {
+    q: "How long does FIRB approval take?",
+    a: "The standard FIRB review period is 30 days, but the government can extend this by up to 90 days by issuing an interim order. In practice, most straightforward residential applications are decided within 30 days. Complex commercial or national security reviews can take significantly longer.",
+  },
+  {
+    q: "Are there exemptions from FIRB approval?",
+    a: "Yes. Australian citizens, permanent residents, and New Zealand citizens are generally exempt. Acquisitions through an Australian company or trust where no foreign person holds more than 20% are often exempt. Certain low-value commercial acquisitions below thresholds (the commercial land threshold is $330 million for most countries, $1.339 billion for FTA partners) are also exempt.",
+  },
+  {
+    q: "What happens if you buy property without FIRB approval?",
+    a: "Acquiring property without required FIRB approval is a criminal offence. The Australian government can order the sale of the property, impose civil penalties up to $157,500 for individuals, and pursue criminal prosecution. In practice, enforcement focuses on high-value or politically sensitive cases, but the risk of forced disposal is real.",
+  },
+]);
+
 function Loading() {
   return (
     <div className="py-5 md:py-12 animate-pulse">
@@ -60,6 +84,10 @@ export default function FirbFeeEstimatorPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(firbFaqLd) }}
       />
       <Suspense fallback={<Loading />}>
         <FirbFeeEstimatorClient />

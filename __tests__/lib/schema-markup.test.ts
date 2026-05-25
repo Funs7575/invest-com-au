@@ -17,6 +17,7 @@ import {
   articleAnswerFirstJsonLd,
   glossaryTermQaJsonLd,
   comparisonPageItemListJsonLd,
+  howToJsonLd,
 } from "@/lib/schema-markup";
 
 describe("articleJsonLd", () => {
@@ -807,5 +808,216 @@ describe("comparisonPageItemListJsonLd", () => {
     const items = out.itemListElement as Bag[];
     expect(items[0]?.position).toBe(1);
     expect(items[1]?.position).toBe(2);
+  });
+});
+
+// ─── howToJsonLd ──────────────────────────────────────────────
+
+describe("howToJsonLd", () => {
+  const BASE = {
+    slug: "open-brokerage-account",
+    h1: "How to Open a Brokerage Account in Australia",
+    intro:
+      "Opening a brokerage account in Australia takes less than 15 minutes. This guide walks you through every step.",
+    steps: [
+      {
+        heading: "Choose a Broker",
+        body: "Compare fees, CHESS sponsorship, and market access before choosing a platform.",
+      },
+      {
+        heading: "Verify Your Identity",
+        body: "You need your full name, date of birth, residential address, TFN, and a photo ID.",
+      },
+      {
+        heading: "Fund Your Account",
+        body: "Transfer funds via bank transfer, PayID, or BPAY. Most platforms clear funds within one business day.",
+      },
+    ],
+  };
+
+  it("emits @context and @type HowTo", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    expect(out["@context"]).toBe("https://schema.org");
+    expect(out["@type"]).toBe("HowTo");
+  });
+
+  it("name matches the h1", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    expect(out.name).toBe(BASE.h1);
+  });
+
+  it("description matches the intro", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    expect(out.description).toBe(BASE.intro);
+  });
+
+  it("emits one HowToStep per step", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    const steps = out.step as Bag[];
+    expect(steps).toHaveLength(3);
+  });
+
+  it("each step has @type HowToStep", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    const steps = out.step as Bag[];
+    for (const step of steps) {
+      expect(step["@type"]).toBe("HowToStep");
+    }
+  });
+
+  it("step names match the headings", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    const steps = out.step as Bag[];
+    expect(steps[0]?.name).toBe("Choose a Broker");
+    expect(steps[1]?.name).toBe("Verify Your Identity");
+    expect(steps[2]?.name).toBe("Fund Your Account");
+  });
+
+  it("step positions are 1-indexed", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    const steps = out.step as Bag[];
+    expect(steps[0]?.position).toBe(1);
+    expect(steps[1]?.position).toBe(2);
+    expect(steps[2]?.position).toBe(3);
+  });
+
+  it("step url resolves to /how-to/[slug]#step-N", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    const steps = out.step as Bag[];
+    expect(String(steps[0]?.url)).toContain(
+      "/how-to/open-brokerage-account#step-1",
+    );
+    expect(String(steps[2]?.url)).toContain(
+      "/how-to/open-brokerage-account#step-3",
+    );
+  });
+
+  it("mainEntityOfPage points to the guide URL", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    const mep = out.mainEntityOfPage as Bag;
+    expect(mep["@type"]).toBe("WebPage");
+    expect(String(mep["@id"])).toContain(
+      "/how-to/open-brokerage-account",
+    );
+  });
+
+  it("author and publisher are the site Organisation", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    expect((out.author as Bag)["@type"]).toBe("Organization");
+    expect((out.publisher as Bag)["@type"]).toBe("Organization");
+  });
+
+  it("totalTime is PT10M", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    expect(out.totalTime).toBe("PT10M");
+  });
+
+  it("estimatedCost is a free AUD MonetaryAmount", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    const cost = out.estimatedCost as Bag;
+    expect(cost["@type"]).toBe("MonetaryAmount");
+    expect(cost.currency).toBe("AUD");
+    expect(cost.value).toBe("0");
+  });
+
+  it("includes dateModified when provided", () => {
+    const out = howToJsonLd({ ...BASE, dateModified: "2026-03-15" }) as Bag;
+    expect(out.dateModified).toBe("2026-03-15");
+  });
+
+  it("omits dateModified when not provided", () => {
+    const out = howToJsonLd(BASE) as Bag;
+    expect(out.dateModified).toBeUndefined();
+  });
+
+  it("includes datePublished when provided", () => {
+    const out = howToJsonLd({ ...BASE, datePublished: "2025-01-10" }) as Bag;
+    expect(out.datePublished).toBe("2025-01-10");
+  });
+
+  it("truncates step body to 500 characters", () => {
+    const longBody = "a".repeat(600);
+    const out = howToJsonLd({
+      ...BASE,
+      steps: [{ heading: "Step", body: longBody }],
+    }) as Bag;
+    const steps = out.step as Bag[];
+    expect((steps[0]?.text as string).length).toBe(500);
+  });
+
+  it("handles a single step", () => {
+    const out = howToJsonLd({
+      ...BASE,
+      steps: [{ heading: "Only step", body: "Do this one thing." }],
+    }) as Bag;
+    const steps = out.step as Bag[];
+    expect(steps).toHaveLength(1);
+    expect(steps[0]?.position).toBe(1);
+  });
+});
+
+// ─── definedTermJsonLd — dateModified ────────────────────────
+
+describe("definedTermJsonLd — dateModified", () => {
+  const BASE = {
+    term: "ETF",
+    slug: "etf",
+    definition: "Exchange-traded fund — a basket of securities traded on an exchange like a single share.",
+  };
+
+  it("includes dateModified when provided", () => {
+    const out = definedTermJsonLd({ ...BASE, dateModified: "2026-04-01" }) as Bag;
+    expect(out.dateModified).toBe("2026-04-01");
+  });
+
+  it("omits dateModified when not provided", () => {
+    const out = definedTermJsonLd(BASE) as Bag;
+    expect(out.dateModified).toBeUndefined();
+  });
+
+  it("still emits @type DefinedTerm and core fields", () => {
+    const out = definedTermJsonLd({ ...BASE, dateModified: "2026-04-01" }) as Bag;
+    expect(out["@type"]).toBe("DefinedTerm");
+    expect(out.name).toBe("ETF");
+    expect(out.termCode).toBe("etf");
+  });
+});
+
+// ─── definedTermPageJsonLd — dateModified ─────────────────────
+
+describe("definedTermPageJsonLd — dateModified", () => {
+  const BASE = {
+    term: "Super",
+    slug: "super",
+    definition: "Superannuation — compulsory long-term savings for retirement in Australia.",
+  };
+
+  it("propagates dateModified to the WebPage wrapper", () => {
+    const out = definedTermPageJsonLd({ ...BASE, dateModified: "2026-05-01" }) as Bag;
+    expect(out.dateModified).toBe("2026-05-01");
+  });
+
+  it("propagates dateModified to the nested DefinedTerm mainEntity", () => {
+    const out = definedTermPageJsonLd({ ...BASE, dateModified: "2026-05-01" }) as Bag;
+    const entity = out.mainEntity as Bag;
+    expect(entity.dateModified).toBe("2026-05-01");
+  });
+
+  it("omits dateModified on both WebPage and mainEntity when not provided", () => {
+    const out = definedTermPageJsonLd(BASE) as Bag;
+    expect(out.dateModified).toBeUndefined();
+    expect((out.mainEntity as Bag).dateModified).toBeUndefined();
+  });
+
+  it("still emits @type WebPage with speakable and mainEntity", () => {
+    const out = definedTermPageJsonLd({ ...BASE, dateModified: "2026-05-01" }) as Bag;
+    expect(out["@type"]).toBe("WebPage");
+    expect((out.speakable as Bag)["@type"]).toBe("SpeakableSpecification");
+    expect((out.mainEntity as Bag)["@type"]).toBe("DefinedTerm");
+  });
+
+  it("dateModified null is treated as omitted (compact strips it)", () => {
+    const out = definedTermPageJsonLd({ ...BASE, dateModified: null }) as Bag;
+    expect(out.dateModified).toBeUndefined();
   });
 });
