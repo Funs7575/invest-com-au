@@ -79,6 +79,7 @@ function currentPortalPath(kind: WorkspaceKind): string {
     case "broker_partner": return "/broker-portal";
     case "business_owner": return "/business-portal";
     case "listing_owner": return "/invest/my-listings";
+    case "startup": return "/startup-portal";
     case "investor": return "/account";
   }
 }

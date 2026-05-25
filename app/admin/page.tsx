@@ -34,6 +34,7 @@ interface Stats {
   proSubscribers: number;
   advisors: number;
   advisorLeads: number;
+  startups: number;
 }
 
 interface RevenueByBroker {
@@ -124,7 +125,7 @@ export default function AdminDashboard() {
     async function load() {
       // Build date range for last 14 days
       const fourteenDaysAgo = new Date(Date.now() - 14 * 86400000).toISOString();
-      const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+      const _sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
 
       const [
         brokers, articles, scenarios, clicks, clicksToday, emails,
@@ -268,6 +269,10 @@ export default function AdminDashboard() {
         (sum: number, e: { cost_cents: number }) => sum + (e.cost_cents || 0), 0
       ) / 100;
 
+      const { count: startupsCount } = await supabase
+        .from("startup_profiles")
+        .select("id", { count: "exact", head: true });
+
       setStats({
         brokers: brokers.count || 0,
         articles: articles.count || 0,
@@ -280,6 +285,7 @@ export default function AdminDashboard() {
         proSubscribers: typeof proSubs.data === "number" ? proSubs.data : 0,
         advisors: advisorsCount.count || 0,
         advisorLeads: advisorLeadsCount.count || 0,
+        startups: startupsCount || 0,
       });
 
       // Health checks
@@ -541,6 +547,7 @@ export default function AdminDashboard() {
     { label: "Active Campaigns", value: stats?.activeMarketplaceCampaigns || 0, href: "/admin/marketplace/campaigns", color: "indigo", icon: "📣" },
     { label: "Advisors", value: stats?.advisors || 0, href: "/admin/advisors", color: "violet", icon: "👤" },
     { label: "Advisor Leads", value: stats?.advisorLeads || 0, href: "/admin/advisors", color: "fuchsia", icon: "📨" },
+    { label: "Startups", value: stats?.startups || 0, href: "/admin/startups", color: "amber", icon: "🚀" },
   ];
 
   return (

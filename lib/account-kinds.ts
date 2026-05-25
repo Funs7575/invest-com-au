@@ -19,6 +19,7 @@
  */
 
 import { cookies } from "next/headers";
+// eslint-disable-next-line no-restricted-imports -- cross-user membership view; account_kind_membership UNIONs across all *_accounts tables, not scopeable to auth.uid() (CLAUDE.md §"Two Supabase clients")
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import type { AccountKind } from "@/lib/account-types";
@@ -121,6 +122,7 @@ const KNOWN_WORKSPACE_KINDS = new Set<WorkspaceKind>([
   "investor",
   "business_owner",
   "listing_owner",
+  "startup",
 ]);
 
 export function isWorkspaceKind(value: string): value is WorkspaceKind {
@@ -163,6 +165,7 @@ export function portalForKind(kind: WorkspaceKind, fallback = "/account"): strin
     case "broker_partner": return "/broker-portal";
     case "business_owner": return "/business-portal";
     case "listing_owner": return "/invest/my-listings";
+    case "startup": return "/startup-portal";
     case "investor": return fallback;
     default: return fallback;
   }

@@ -89,6 +89,11 @@ const EXEMPT_PATTERNS = [
   // OG image generator is static-deterministic and pooled by Vercel;
   // a per-IP throttle would cost cache hits without a threat model.
   { match: /\/api\/og(\/|$)/, reason: "static OG cache — provider pooled" },
+  // Startup portal endpoints require startup session auth (requireStartupSession).
+  // Equivalent protection level to advisor-portal session-auth exemptions above.
+  { match: /\/api\/startups\//, reason: "startup session auth (requireStartupSession)" },
+  // Wholesale cert verify is admin-only (requireAdmin + audit log) — same as /api/admin/*.
+  { match: /\/api\/wholesale-investor-cert\/verify(\/|$)/, reason: "admin session + audit log gate" },
   // Health endpoint must always respond quickly for uptime probes.
   { match: /\/api\/health(\/|$)/, reason: "uptime probe — must respond" },
   // Push notifications server → registered client push subscriptions;

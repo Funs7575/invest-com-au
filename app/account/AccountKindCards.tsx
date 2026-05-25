@@ -49,6 +49,12 @@ const KIND_META: Record<
     icon: "🏷️",
     tone: "bg-rose-50 border-rose-200 hover:border-rose-400",
   },
+  startup: {
+    label: "Startup founder",
+    description: "Raise capital, manage data room, track investors.",
+    icon: "🚀",
+    tone: "bg-orange-50 border-orange-200 hover:border-orange-400",
+  },
 };
 
 interface Props {
