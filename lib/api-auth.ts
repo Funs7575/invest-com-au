@@ -3,11 +3,20 @@
  *
  * Keys follow the format `ica_<32-hex-chars>` and are stored as SHA-256
  * hashes — the plain-text key is shown exactly once at creation time.
+ *
+ * Tier enforcement:
+ *  - Rate limits (per-minute, per-day) are read from the `api_keys` row,
+ *    which is kept in sync with the Stripe subscription tier by the webhook
+ *    handler in `lib/stripe-webhook/handlers/api-key-subscription.ts`.
+ *  - Endpoint access is gated via `allowed_endpoints` on the row.
+ *  - Named-constant defaults per tier live in `lib/api-tiers.ts`.
  */
 
+// eslint-disable-next-line no-restricted-imports -- API-key validation queries the service_role-only api_keys table with no user JWT (cross-user); admin client required
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { NextRequest } from "next/server";
+import { isEndpointAllowed } from "@/lib/api-tiers";
 
 const log = logger("api-auth");
 
@@ -35,6 +44,8 @@ export interface ApiKeyValidation {
   valid: boolean;
   apiKey?: ApiKeyRow;
   error?: string;
+  /** HTTP status code to use when valid is false (defaults to 401/403/429 as appropriate). */
+  statusCode?: number;
 }
 
 /**
@@ -60,14 +71,18 @@ async function sha256(input: string): Promise<string> {
  *  2. Key hash exists in the database
  *  3. Key is active
  *  4. Key has not expired
- *  5. Per-minute rate limit (approximated via requests_today + timing)
- *  6. Per-day rate limit
+ *  5. Endpoint is permitted for the key's tier
+ *  6. Per-day rate limit (branched by tier from the DB row)
  *
- * Side-effects: increments `requests_today`, `requests_total`, and
- * updates `last_used_at`.
+ * Side-effects: increments `requests_today`, `requests_total`,
+ * `requests_this_month`, and updates `last_used_at`.
+ *
+ * The `endpoint` parameter is optional for backwards-compatibility with
+ * call-sites that don't yet pass it. When provided, step 5 fires.
  */
 export async function validateApiKey(
-  request: NextRequest
+  request: NextRequest,
+  endpoint?: string,
 ): Promise<ApiKeyValidation> {
   try {
     // ── 1. Extract key from header ──
@@ -116,21 +131,36 @@ export async function validateApiKey(
       return { valid: false, error: "API key has expired" };
     }
 
-    // ── 5. Daily rate limit ──
+    // ── 5. Endpoint gate (tier-based allowlist) ──
+    if (endpoint) {
+      const allowed = row.allowed_endpoints;
+      if (allowed && allowed.length > 0 && !isEndpointAllowed(endpoint, allowed)) {
+        return {
+          valid: false,
+          statusCode: 403,
+          error: `Endpoint ${endpoint} is not available on your current API tier (${row.tier}). Upgrade at invest.com.au/api-docs.`,
+        };
+      }
+    }
+
+    // ── 6. Daily rate limit (per-tier limit stored on the row) ──
     if (row.requests_today >= row.rate_limit_per_day) {
       return {
         valid: false,
+        statusCode: 429,
         error: `Daily rate limit exceeded (${row.rate_limit_per_day}/day). Resets at midnight UTC.`,
       };
     }
 
-    // ── 6. Increment counters ──
+    // ── 7. Increment counters ──
     const now = new Date().toISOString();
     const { error: updateError } = await supabase
       .from("api_keys")
       .update({
         requests_today: row.requests_today + 1,
         requests_total: (row.requests_total || 0) + 1,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- requests_this_month added in 20260825030000 migration; not yet in generated types
+        requests_this_month: ((row as any).requests_this_month ?? 0) + 1,
         last_used_at: now,
         updated_at: now,
       })
