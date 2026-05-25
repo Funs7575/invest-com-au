@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 
 // ─── Hoisted mocks ────────────────────────────────────────────────────────────
@@ -105,9 +105,16 @@ function setupServerFrom({
 describe("POST /api/startups/data-room/grant", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Capital-raising is gated OFF by default; these tests cover the
+    // post-gate grant logic, so enable the flag for the suite.
+    vi.stubEnv("STARTUP_RAISES_ENABLED", "true");
     mockRequireStartupSession.mockResolvedValue(STARTUP_ID);
     mockGetUser.mockResolvedValue({ data: { user: { id: GRANTED_BY_USER_ID } } });
     setupServerFrom();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("returns 401 when no startup session", async () => {

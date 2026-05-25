@@ -3,6 +3,10 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import {
+  startupRaisesEnabled,
+  STARTUP_RAISES_DISABLED_MESSAGE,
+} from "@/lib/compliance-gates";
 
 const log = logger("startups-round");
 
@@ -41,6 +45,13 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
 
+    if (!startupRaisesEnabled()) {
+      return NextResponse.json(
+        { error: STARTUP_RAISES_DISABLED_MESSAGE },
+        { status: 403 },
+      );
+    }
+
     const body: unknown = await request.json();
     const parsed = BaseRoundSchema.safeParse(body);
     if (!parsed.success) {
@@ -50,6 +61,16 @@ export async function POST(request: NextRequest) {
 
     const fieldError = validateInstrumentFields(parsed.data);
     if (fieldError) return NextResponse.json({ error: fieldError }, { status: 400 });
+
+    // Defence-in-depth: only wholesale-investor (s708) rounds are ever
+    // permitted under the planned licence; reject retail rounds server-side
+    // regardless of the client payload.
+    if (!parsed.data.wholesale_only) {
+      return NextResponse.json(
+        { error: "Only wholesale-investor (s708) rounds are permitted." },
+        { status: 403 },
+      );
+    }
 
     // Resolve startup profile via RLS-aware client
     const { data: profile } = await supabase

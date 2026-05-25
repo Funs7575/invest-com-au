@@ -3,6 +3,10 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { requireStartupSession } from "@/lib/require-startup-session";
 import { logger } from "@/lib/logger";
+import {
+  startupRaisesEnabled,
+  STARTUP_RAISES_DISABLED_MESSAGE,
+} from "@/lib/compliance-gates";
 
 const log = logger("startups-data-room-grant");
 
@@ -14,6 +18,13 @@ const GrantSchema = z.object({
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const startupId = await requireStartupSession(request);
   if (!startupId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  if (!startupRaisesEnabled()) {
+    return NextResponse.json(
+      { error: STARTUP_RAISES_DISABLED_MESSAGE },
+      { status: 403 },
+    );
+  }
 
   let body: unknown;
   try {

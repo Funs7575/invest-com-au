@@ -3,16 +3,13 @@ import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 
-// noindex while the forum is still pre-launch and seeded with zero
-// user threads. The forum_categories / forum_threads tables exist and
-// the page reads real data (migration 20260518030000); flip robots.index
-// to true once each category has ≥3 seeded threads — empty forums look
-// like a dead community in Google's eyes and bounce hard.
+// Each category now has ≥3 seeded threads (migration
+// 20260802000000_seed_forum_threads.sql) — safe to index.
 export const metadata = {
   title: "Community Forum",
   description:
     "Join thousands of Australian investors discussing share trading, ETFs, crypto, super, property, tax strategy, and broker reviews. Ask questions and share insights.",
-  robots: { index: false, follow: true },
+  robots: { index: true, follow: true },
   openGraph: {
     title: "Community Forum",
     description:

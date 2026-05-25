@@ -21,6 +21,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getKindsForUser, type WorkspaceKind } from "@/lib/account-kinds";
+import InvestorProCheckout from "./InvestorProCheckout";
 
 export const dynamic = "force-dynamic";
 
@@ -172,6 +173,16 @@ export default async function AccountUpgradeHubPage() {
             </p>
           )}
         </header>
+
+        {/* Investor Pro subscription — surfaced here because it's the most
+            common upgrade path from the dashboard. Renders a client component
+            that handles plan-toggle + Stripe checkout redirect. */}
+        <section className="mb-10">
+          <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3">
+            Investor Pro membership
+          </h2>
+          <InvestorProCheckout />
+        </section>
 
         {available.length > 0 && (
           <section className="mb-10">

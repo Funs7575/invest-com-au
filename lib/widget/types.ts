@@ -9,6 +9,10 @@
  * `?widget=` is OPTIONAL — when omitted, the route falls back to the
  * existing behaviour (top brokers by rating, optionally filtered by
  * `?brokers=`).
+ *
+ * Calculator widgets are served by the separate /api/widget/calculator
+ * route (same Shadow DOM / CORS / ISR approach), configured via
+ * CALCULATOR_WIDGET_CATALOGUE below.
  */
 
 export type WidgetFilter = "all" | "asx" | "us" | "crypto" | "savings" | "term-deposits";
@@ -68,4 +72,55 @@ export function getWidgetCatalogueEntry(slug: string): WidgetCatalogueEntry | un
 
 export function listWidgetSlugs(): string[] {
   return WIDGET_CATALOGUE.map((w) => w.slug);
+}
+
+// ─── Calculator Widget types ──────────────────────────────────────────────────
+
+/**
+ * A calculator widget preset — a suggested configuration for the
+ * /api/widget/calculator embed that publishers can copy as-is.
+ */
+export interface CalcWidgetPreset {
+  slug: string;
+  label: string;
+  description: string;
+  /** Default market shown in the rendered widget. */
+  market: "asx" | "us";
+  /** Default trade amount pre-filled in the widget input. */
+  amount: number;
+  /** Human-readable snippet hint shown in the embed builder. */
+  snippetHint: string;
+}
+
+export const CALCULATOR_WIDGET_CATALOGUE: ReadonlyArray<CalcWidgetPreset> = [
+  {
+    slug: "asx-fees",
+    label: "ASX Brokerage Comparison",
+    description: "Live per-trade cost across every major AU broker — ASX shares.",
+    market: "asx",
+    amount: 5000,
+    snippetHint: "Ideal for articles about ASX investing, stock brokers, or cost comparisons.",
+  },
+  {
+    slug: "us-fees",
+    label: "US Share Cost Comparison",
+    description: "True per-trade cost including FX margin for US shares.",
+    market: "us",
+    amount: 5000,
+    snippetHint: "Ideal for articles about US investing, international shares, or FX costs.",
+  },
+  {
+    slug: "large-trade",
+    label: "Large Trade Cost ($25k)",
+    description: "Shows how percentage-based brokerage stings on larger trades.",
+    market: "asx",
+    amount: 25000,
+    snippetHint: "Ideal for articles about high-value trades, ETFs, or wholesale investing.",
+  },
+];
+
+const CALC_BY_SLUG = new Map(CALCULATOR_WIDGET_CATALOGUE.map((p) => [p.slug, p]));
+
+export function getCalcWidgetPreset(slug: string): CalcWidgetPreset | undefined {
+  return CALC_BY_SLUG.get(slug);
 }

@@ -13,9 +13,68 @@ import { buildMatchExplainer } from "@/lib/getmatched/explainer";
 import { logEvent } from "@/lib/getmatched/events";
 import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
 import { logger } from "@/lib/logger";
+import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  rankByOutcomes,
+  fetchAdvisorOutcomeStats,
+  type MatchRequestContext,
+} from "@/lib/advisor-match-ranking";
 import type { ActionPlan, ActionPlanAnswers } from "@/lib/getmatched/types";
 
 const log = logger("get-matched:resolve");
+
+type ProviderRef = { kind: "individual" | "firm" | "expert_team"; id: number };
+
+/**
+ * Apply outcomes-weighted ranking to the `individual` providers in the list.
+ *
+ * Non-individual providers (firms, expert teams) are not covered by the
+ * `professional_leads` outcomes data and pass through unchanged. Individual
+ * providers are re-ordered by their blended match + historical-engagement
+ * score, then spliced back in at their original position tier.
+ *
+ * Falls back silently (original order preserved) when:
+ *   - outcomesStats is empty (fresh install / DB error)
+ *   - no individual providers in the list
+ */
+function applyOutcomesRanking(
+  providers: ProviderRef[],
+  outcomesStats: Awaited<ReturnType<typeof fetchAdvisorOutcomeStats>>,
+): ProviderRef[] {
+  const individuals = providers.filter((p) => p.kind === "individual");
+  if (individuals.length === 0 || outcomesStats.length === 0) return providers;
+
+  // Use a uniform baseline matchScore — the routing engine assigned equal
+  // static scores to all active individuals, so outcomes is the only
+  // differentiator within this tier.
+  const candidates = individuals.map((p) => ({ ...p, matchScore: 70 }));
+  const ranked = rankByOutcomes(candidates, outcomesStats);
+
+  // Re-build full list: non-individuals keep their original positions,
+  // individuals are replaced in ranked order.
+  const rankedIds = ranked.map((r) => r.id);
+  const others = providers.filter((p) => p.kind !== "individual");
+  const reorderedIndividuals: ProviderRef[] = rankedIds
+    .map((id) => individuals.find((p) => p.id === id))
+    .filter((p): p is ProviderRef => p !== undefined);
+
+  // Merge: preserve original interleaving of kinds up to the list length
+  const out: ProviderRef[] = [];
+  let iIdx = 0;
+  for (const p of providers) {
+    if (p.kind === "individual") {
+      const next = reorderedIndividuals[iIdx++];
+      if (next) out.push(next);
+    } else {
+      out.push(p);
+    }
+  }
+  // Append any others not yet included (safety — shouldn't happen)
+  for (const o of others) {
+    if (!out.find((x) => x.kind === o.kind && x.id === o.id)) out.push(o);
+  }
+  return out;
+}
 
 /**
  * Build a synthetic ephemeral plan payload that matches the shape of
@@ -86,7 +145,12 @@ export async function POST(request: NextRequest) {
     if (plan_id === 0) {
       const answers = (clientAnswers ?? {}) as ActionPlanAnswers;
       const resolved = await resolveActionPlan({ answers, intents });
-      const [providers, topMatch] = await Promise.all([
+      const ctx: MatchRequestContext = {
+        intentSlug: resolved.intent,
+        budgetBand: resolved.budgetBand,
+        locationState: resolved.locationState,
+      };
+      const [rawProviders, topMatch, outcomesStats] = await Promise.all([
         recommendedProviders({
           intent: resolved.intent,
           route: resolved.route,
@@ -99,7 +163,9 @@ export async function POST(request: NextRequest) {
         resolved.route === "compare"
           ? computeTopMatches(answers, resolved.vertical, 3)
           : Promise.resolve([]),
+        fetchAdvisorOutcomeStats(createAdminClient(), ctx),
       ]);
+      const providers = applyOutcomesRanking(rawProviders, outcomesStats);
       return NextResponse.json({
         plan: buildEphemeralPlan(answers, resolved),
         template: resolved.template,
@@ -138,7 +204,12 @@ export async function POST(request: NextRequest) {
         });
         const answers = (clientAnswers ?? {}) as ActionPlanAnswers;
         const resolved = await resolveActionPlan({ answers, intents });
-        const [providers, topMatch] = await Promise.all([
+        const ctx2: MatchRequestContext = {
+          intentSlug: resolved.intent,
+          budgetBand: resolved.budgetBand,
+          locationState: resolved.locationState,
+        };
+        const [rawProviders2, topMatch2, outcomesStats2] = await Promise.all([
           recommendedProviders({
             intent: resolved.intent,
             route: resolved.route,
@@ -149,14 +220,16 @@ export async function POST(request: NextRequest) {
           resolved.route === "compare"
             ? computeTopMatches(answers, resolved.vertical, 3)
             : Promise.resolve([]),
+          fetchAdvisorOutcomeStats(createAdminClient(), ctx2),
         ]);
+        const providers2 = applyOutcomesRanking(rawProviders2, outcomesStats2);
         return NextResponse.json({
           plan: buildEphemeralPlan(answers, resolved),
           template: resolved.template,
           recommended_brief_template: resolved.recommendedBriefTemplate,
           accept_credits_cost: resolved.acceptCreditsCost,
-          recommended_providers: providers,
-          top_matches: topMatch,
+          recommended_providers: providers2,
+          top_matches: topMatch2,
           primary_href: resolved.primaryHref,
           vertical: resolved.vertical,
           advisor_type: resolved.advisorType,
@@ -191,7 +264,12 @@ export async function POST(request: NextRequest) {
       status: plan.status === "draft" ? "draft" : plan.status,
     });
 
-    const [providers, topMatch] = await Promise.all([
+    const ctx3: MatchRequestContext = {
+      intentSlug: resolved.intent,
+      budgetBand: resolved.budgetBand,
+      locationState: resolved.locationState,
+    };
+    const [rawProviders3, topMatch, outcomesStats3] = await Promise.all([
       recommendedProviders({
         intent: resolved.intent,
         route: resolved.route,
@@ -202,7 +280,9 @@ export async function POST(request: NextRequest) {
       resolved.route === "compare"
         ? computeTopMatches(plan.answers, resolved.vertical, 3)
         : Promise.resolve([]),
+      fetchAdvisorOutcomeStats(createAdminClient(), ctx3),
     ]);
+    const providers = applyOutcomesRanking(rawProviders3, outcomesStats3);
 
     void logEvent({
       sessionId: plan.session_id,
