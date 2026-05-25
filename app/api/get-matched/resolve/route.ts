@@ -13,7 +13,6 @@ import { buildMatchExplainer } from "@/lib/getmatched/explainer";
 import { logEvent } from "@/lib/getmatched/events";
 import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
 import { logger } from "@/lib/logger";
-// eslint-disable-next-line no-restricted-imports -- cross-user outcomes aggregation; service-role legitimate per CLAUDE.md (cross-user query can't be scoped to auth.uid()).
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   rankByOutcomes,
