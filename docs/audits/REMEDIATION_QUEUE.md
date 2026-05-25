@@ -253,6 +253,39 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 570 — 2026-05-25 — STATUS: ALL-BLOCKED · stream=all · founder-pause-intent(#1197)
+
+- **Phase:** 0+0.5+1+2+3+7 — lock + sentinel + sync + CI check + item assessment + queue update
+- **Phase 0.5:** No LOOP_PAUSE file on main — proceeding. Main HEAD `8d60aee`.
+- **Phase 1 (Sync):** `git pull --ff-only origin/main` clean. Read queue end-to-end.
+- **Phase 1.7 (Main CI preflight):** Main HEAD `8d60aee` — recent CI not evaluated (no recent main push to trigger a run; last main commit was `chore(ops): loop spend snapshot`). Inferred healthy from all in-flight PRs building successfully off current main.
+- **Phase 2 (CI rescue check — all in-flight PRs):**
+  - **PR #1191** (`fix-auto-merge-noise-checks`, Tier C): `Lint · Type-check · Test · Build` ✅ SUCCESS (05:46Z 2026-05-24). All required checks green. `needs-human-review` label (workflow path). **Not yet merged.** CI green — ready for founder merge.
+  - **#1182** (`disc-jobs-tests`): `Lint · Type-check · Test · Build` ✅ SUCCESS. `auto-merge-safe` ✅. No rescue needed.
+  - **#1183** (`disc-jobs-tests-2`): `Lint · Type-check · Test · Build` ✅ SUCCESS. `auto-merge-safe` ✅. No rescue needed.
+  - **#1184** (`disc-portal-routes-tests`): `Lint · Type-check · Test · Build` ✅ (per iter 569 — head SHA unchanged). `auto-merge-safe` ✅.
+  - **#1185** (`disc-afsl-notif-reviews-tests`): `Lint · Type-check · Test · Build` ✅. `auto-merge-safe` ✅.
+  - **#1186** (`disc-admin-kyc-comments`): `Lint · Type-check · Test · Build` ✅. `auto-merge-safe` ✅.
+  - **#1187** (`disc-admin-content-notif-tests`): `Lint · Type-check · Test · Build` ✅. `auto-merge-safe` ✅.
+  - **#1188** (`disc-admin-revalidate-objection`): `Lint · Type-check · Test · Build` ✅. `auto-merge-safe` ✅.
+  - **NF #1176/#1177/#1178/#1180**: All required CI green (iter 549 confirmed). Awaiting founder merge. No rescue needed.
+  - All PRs: `Preview smoke test` ❌ + `Supabase types drift` ❌ — confirmed non-required pre-existing noise. No action.
+- **Phase 3 (Item selection):** No pending engineering items in any non-blocked stream. All DISC-20260524 work complete (7 PRs). All NF work complete (4 PRs). All other streams done or blocked.
+- **FOUNDER PAUSE INTENT DETECTED:** PR #1197 ("chore(ci): pause loop / auto-merge automations (founder request)") was opened at 00:49Z 2026-05-25 by founder. The PR disables `auto-merge`, `auto-rebase-loop-prs`, and related workflows (manual-only via `workflow_dispatch`). LOOP_PAUSE file does not exist on main yet — this iteration followed the spec (Phase 0.5 passed). However, the founder's intent is explicit: **no new PRs should be generated**.
+- **Recommended backlog-clearance sequence for founder:**
+  1. **Merge #1191** (`fix(ci): exclude infrastructure-noise checks from auto-merge gate`) — Tier C, announced iter 569. CI green. Once merged, the auto-merge cron will evaluate all 7 DISC PRs with the fixed gate logic. All 7 will auto-merge on the next 15-min sweep (assuming #1197 is not merged before the sweep fires).
+  2. **If #1197 merged before DISC sweep:** Manually merge #1182 → #1183 → #1184 → #1185 → #1186 → #1187 → #1188 (all Tier A, CI green, safe to admin-merge).
+  3. **Merge #1177** (feat(nf): noindex 4 empty listing verticals — Tier A, CI green).
+  4. **Merge #1178** (feat(nf): autopilot DB-backed toggles — Tier B, 15-min obs window passed, >24h since push, CI green).
+  5. **Merge #1176** (fix(nf): admin MFA env guard — Tier C, announced iter 542, no STOP received, CI green).
+  6. **Merge #1180** (feat(nf): SMS consent on leads — Tier C, announced iter 546, no STOP received, CI green).
+  7. **Merge #1197** — pauses all automation workflows.
+  8. **Create LOOP_PAUSE file** on main to stop RemoteTrigger routines (the PR body notes these are outside git and must be paused in the RemoteTrigger console separately).
+- **No engineering work performed this iteration.** Batch stops here per spec (ALL-BLOCKED stop condition; founder pause intent).
+- **STATUS: ALL-BLOCKED · stream=all · founder-pause-intent(#1197)**
+
+---
+
 ### iter 569 — 2026-05-24 — STATUS: PROGRESS · stream=CI-infra · item=auto-merge-noise-fix · pr=#1191
 
 - **Phase:** 0+0.5+1+1.7+2+3+5+6+7 — lock + sentinel + sync + main-CI + in-flight CI audit + root-cause + fix + PR + queue
