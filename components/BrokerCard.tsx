@@ -43,14 +43,14 @@ export default memo(function BrokerCard({
   const isShareOrCFD = broker.platform_type === 'share_broker' || broker.platform_type === 'cfd_forex';
 
   return (
-    <div className={`group relative rounded-xl border bg-white transition-all duration-200 hover:shadow-md ${
+    <div className={`group relative rounded-xl border bg-white dark:bg-slate-800 transition-all duration-200 hover:shadow-md ${
       isSelected
-        ? 'border-slate-700 ring-2 ring-slate-700/30'
+        ? 'border-slate-700 dark:border-slate-500 ring-2 ring-slate-700/30 dark:ring-slate-500/30'
         : isSponsoredBroker
-        ? 'border-blue-400 ring-1 ring-blue-400/30 bg-blue-50/20'
+        ? 'border-blue-400 dark:border-blue-500 ring-1 ring-blue-400/30 dark:ring-blue-500/30 bg-blue-50/20 dark:bg-blue-900/10'
         : badge
-        ? 'border-slate-700 ring-1 ring-slate-700/30'
-        : 'border-slate-200'
+        ? 'border-slate-700 dark:border-slate-500 ring-1 ring-slate-700/30 dark:ring-slate-500/30'
+        : 'border-slate-200 dark:border-slate-700'
     }`}>
       {/* Selection checkbox */}
       {onToggleSelect && (
