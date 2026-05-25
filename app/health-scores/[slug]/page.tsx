@@ -4,7 +4,12 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { absoluteUrl, breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import type { Broker, BrokerHealthScore } from "@/lib/types";
+import type { Broker, BrokerHealthScore, BrokerHealthScoreHistory } from "@/lib/types";
+import {
+  summariseTrend,
+  normaliseSparklinePoints,
+  formatDelta,
+} from "@/lib/health-score-trends";
 
 export const revalidate = 3600;
 
@@ -112,6 +117,70 @@ function ScoreGauge({ score, size = 120 }: { score: number; size?: number }) {
   );
 }
 
+/* ─── SVG sparkline (server-renderable, no client deps) ─── */
+
+function ScoreSparkline({
+  history,
+  width = 200,
+  height = 48,
+}: {
+  history: readonly BrokerHealthScoreHistory[];
+  width?: number;
+  height?: number;
+}) {
+  const points = normaliseSparklinePoints(history);
+  if (points.length < 2) return null;
+
+  const pad = 4;
+  const plotW = width - pad * 2;
+  const plotH = height - pad * 2;
+
+  const coords = points.map((y, i) => {
+    const x = pad + (i / (points.length - 1)) * plotW;
+    // y=0 is bottom, SVG y=0 is top → invert
+    const svgY = pad + (1 - y) * plotH;
+    return `${x},${svgY}`;
+  });
+
+  const polyline = coords.join(" ");
+  const summary = summariseTrend(history);
+  const trendColor =
+    !summary || summary.direction === "flat"
+      ? "#94a3b8"
+      : summary.direction === "up"
+        ? "#22c55e"
+        : "#ef4444";
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+      role="img"
+      aria-label="Overall score trend"
+      className="overflow-visible"
+    >
+      <polyline
+        points={polyline}
+        fill="none"
+        stroke={trendColor}
+        strokeWidth="2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+      {/* Dot at the most recent point */}
+      {(() => {
+        const lastCoord = coords[coords.length - 1];
+        if (!lastCoord) return null;
+        const parts = lastCoord.split(",");
+        const cx = Number(parts[0] ?? "0");
+        const cy = Number(parts[1] ?? "0");
+        return <circle cx={cx} cy={cy} r="3" fill={trendColor} />;
+      })()}
+    </svg>
+  );
+}
+
 /* ─── Rating label helper ─── */
 
 function ratingLabel(score: number): string {
@@ -211,23 +280,34 @@ export default async function HealthScoreDetailPage({
   const { slug } = await params;
   const supabase = await createClient();
 
-  const [{ data: score }, { data: broker }] = await Promise.all([
-    supabase
-      .from("broker_health_scores")
-      .select("*")
-      .eq("broker_slug", slug)
-      .single(),
-    supabase
-      .from("brokers")
-      .select("id, name, slug, color, icon, logo_url, rating, status")
-      .eq("slug", slug)
-      .single(),
-  ]);
+  const [{ data: score }, { data: broker }, { data: historyRows }] =
+    await Promise.all([
+      supabase
+        .from("broker_health_scores")
+        .select("*")
+        .eq("broker_slug", slug)
+        .single(),
+      supabase
+        .from("brokers")
+        .select("id, name, slug, color, icon, logo_url, rating, status")
+        .eq("slug", slug)
+        .single(),
+      supabase
+        .from("broker_health_score_history")
+        .select(
+          "id, broker_slug, overall_score, regulatory_score, client_money_score, financial_stability_score, platform_reliability_score, insurance_score, captured_at",
+        )
+        .eq("broker_slug", slug)
+        .order("captured_at", { ascending: true })
+        .limit(90),
+    ]);
 
   if (!score || !broker) notFound();
 
   const typedScore = score as BrokerHealthScore;
   const typedBroker = broker as Broker;
+  const history = (historyRows ?? []) as BrokerHealthScoreHistory[];
+  const trendSummary = summariseTrend(history);
 
   /* ─── JSON-LD ─── */
 
@@ -329,6 +409,27 @@ export default async function HealthScoreDetailPage({
                 <p className="text-xs text-slate-400 mt-1">
                   Last reviewed: {lastReviewed}
                 </p>
+              )}
+
+              {/* ── Trend sparkline ── */}
+              {history.length >= 2 && trendSummary && (
+                <div className="mt-3 flex items-center gap-3">
+                  <ScoreSparkline history={history} width={120} height={36} />
+                  <span
+                    className={`text-xs font-semibold tabular-nums ${
+                      trendSummary.direction === "up"
+                        ? "text-emerald-600"
+                        : trendSummary.direction === "down"
+                          ? "text-red-500"
+                          : "text-slate-400"
+                    }`}
+                  >
+                    {formatDelta(trendSummary.delta)} pts
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    over {trendSummary.count} snapshots
+                  </span>
+                </div>
               )}
             </div>
           </div>
@@ -450,6 +551,73 @@ export default async function HealthScoreDetailPage({
             </table>
           </div>
         </section>
+
+        {/* Score history table */}
+        {history.length >= 2 && (
+          <section>
+            <h2 className="text-lg font-bold text-slate-900 mb-3">
+              Score History
+            </h2>
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600">
+                      Date
+                    </th>
+                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
+                      Overall
+                    </th>
+                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden sm:table-cell">
+                      Regulatory
+                    </th>
+                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden md:table-cell">
+                      Client Money
+                    </th>
+                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden md:table-cell">
+                      Stability
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...history]
+                    .sort(
+                      (a, b) =>
+                        new Date(b.captured_at).getTime() -
+                        new Date(a.captured_at).getTime(),
+                    )
+                    .slice(0, 20)
+                    .map((h, i) => (
+                      <tr
+                        key={h.id}
+                        className={`border-b border-slate-50 ${i % 2 === 1 ? "bg-slate-50/50" : ""}`}
+                      >
+                        <td className="px-4 py-2.5 text-slate-500 text-xs tabular-nums">
+                          {new Date(h.captured_at).toLocaleDateString("en-AU", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </td>
+                        <td className="px-4 py-2.5 text-right font-semibold text-slate-900 tabular-nums">
+                          {h.overall_score}
+                        </td>
+                        <td className="px-4 py-2.5 text-right text-slate-600 tabular-nums hidden sm:table-cell">
+                          {h.regulatory_score ?? "—"}
+                        </td>
+                        <td className="px-4 py-2.5 text-right text-slate-600 tabular-nums hidden md:table-cell">
+                          {h.client_money_score ?? "—"}
+                        </td>
+                        <td className="px-4 py-2.5 text-right text-slate-600 tabular-nums hidden md:table-cell">
+                          {h.financial_stability_score ?? "—"}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
 
         {/* Methodology */}
         <section>
