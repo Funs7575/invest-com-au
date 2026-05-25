@@ -1,11 +1,30 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { isRateLimited } from '@/lib/rate-limit';
 import { isValidEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
 import { extractUtm, utmForInsert } from '@/lib/utm';
 
 const log = logger('email-capture');
+
+/**
+ * Body schema. Fields are typed but optional — `isValidEmail` below stays the
+ * required-field gatekeeper so the existing 400 messages/ordering are
+ * unchanged. `.passthrough()` keeps UTM/tracking extras visible to
+ * `extractUtm()`, which reads the raw body object. The schema's job here is to
+ * reject hard type mismatches (e.g. `email: 123`, `context: "x"`) before they
+ * reach the DB insert, replacing the previous `body as { ... }` cast.
+ */
+const EmailCaptureSchema = z
+  .object({
+    email: z.string().optional(),
+    source: z.string().optional(),
+    name: z.string().optional(),
+    context: z.record(z.string(), z.unknown()).optional(),
+    session_id: z.string().optional(),
+  })
+  .passthrough();
 
 interface BrokerRow {
   name: string;
@@ -182,20 +201,23 @@ async function sendFeeComparisonEmail(toEmail: string, brokers: BrokerRow[]): Pr
 
 export async function POST(request: NextRequest) {
   // Parse body with error handling
-  let body: Record<string, unknown>;
+  let raw: unknown;
   try {
-    body = await request.json();
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { email, source, name, context, session_id } = body as {
-    email?: string;
-    source?: string;
-    name?: string;
-    context?: Record<string, unknown>;
-    session_id?: string;
-  };
+  const parsed = EmailCaptureSchema.safeParse(raw);
+  if (!parsed.success) {
+    // Hard type mismatch (e.g. `email: 123`). Surface the same generic 400 the
+    // email gate below would produce so client error rendering is unchanged.
+    return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+  }
+  const body = parsed.data;
+  const { email, source, name, context, session_id } = body;
+  // `body` retains UTM/tracking extras via `.passthrough()`, so extractUtm
+  // still sees the same raw object it did before.
   const utm = extractUtm(body as Record<string, unknown>);
 
   // Validate email properly
