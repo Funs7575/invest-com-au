@@ -21,6 +21,22 @@ import CountryRuleAlerts from "@/components/CountryRuleAlerts";
 
 type Intent = "buy_property" | "grow_wealth" | "protect_assets" | "business_tax";
 
+interface HandoffHolding {
+  ticker: string;
+  exchange: string;
+  shares: number;
+  cost_basis_per_share_cents: number;
+  acquired_at: string;
+  broker_slug: string | null;
+  notes: string | null;
+}
+
+interface HandoffData {
+  intent: string;
+  holdings: HandoffHolding[];
+  created_at: string;
+}
+
 interface MatchedAdvisor {
   id: number;
   slug: string;
@@ -259,6 +275,118 @@ function getMatchmakerIntent(): Intent | null {
   } catch { return null; }
 }
 
+// ─── Handoff Banner ───────────────────────────────────────────────────────────
+
+/**
+ * Renders a read-only "Shared by the investor" summary card when the page
+ * is opened with a ?handoff=<token> query param.
+ *
+ * Fetches the token from the public API endpoint (GET /api/account/holdings/
+ * handoff/[token]). The token is single-use and expires in 14 days.
+ */
+function HandoffBanner({ token }: { token: string }) {
+  const [data, setData] = useState<HandoffData | null>(null);
+  const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
+
+  useEffect(() => {
+    if (!token) return;
+    void fetch(`/api/account/holdings/handoff/${encodeURIComponent(token)}`, {
+      credentials: "same-origin",
+    })
+      .then(async (res) => {
+        if (!res.ok) { setStatus("error"); return; }
+        const json = await res.json() as HandoffData;
+        setData(json);
+        setStatus("ok");
+      })
+      .catch(() => setStatus("error"));
+  }, [token]);
+
+  if (status === "loading") {
+    return (
+      <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 animate-pulse">
+        Loading shared portfolio summary…
+      </div>
+    );
+  }
+
+  if (status === "error" || !data) {
+    return (
+      <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        The shared portfolio link has expired or was already viewed. Ask the investor to generate a new one from their Holdings page.
+      </div>
+    );
+  }
+
+  const totalCostCents = data.holdings.reduce(
+    (acc, h) => acc + Math.round(h.shares * h.cost_basis_per_share_cents),
+    0,
+  );
+
+  function fmtAUD(cents: number) {
+    return new Intl.NumberFormat("en-AU", {
+      style: "currency", currency: "AUD", maximumFractionDigits: 0,
+    }).format(cents / 100);
+  }
+
+  return (
+    <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm">
+      <div className="flex items-start gap-2 mb-3">
+        <svg className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        </svg>
+        <div>
+          <p className="font-semibold text-emerald-900">Shared portfolio summary</p>
+          <p className="text-xs text-emerald-700 mt-0.5">
+            This investor shared their holdings with you on{" "}
+            {new Date(data.created_at).toLocaleDateString("en-AU")}.
+            For their tax-year review.
+          </p>
+        </div>
+      </div>
+
+      {data.holdings.length === 0 ? (
+        <p className="text-xs text-emerald-700">No holdings in snapshot.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-slate-700 border-collapse">
+            <thead>
+              <tr className="border-b border-emerald-200 text-emerald-800">
+                <th className="text-left pb-1 font-semibold">Ticker</th>
+                <th className="text-left pb-1 font-semibold">Exchange</th>
+                <th className="text-right pb-1 font-semibold">Shares</th>
+                <th className="text-right pb-1 font-semibold">Cost basis</th>
+                <th className="text-right pb-1 font-semibold">Acquired</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.holdings.map((h, i) => (
+                <tr key={i} className="border-b border-emerald-100 last:border-0">
+                  <td className="py-1 font-semibold">{h.ticker}</td>
+                  <td className="py-1 text-slate-500">{h.exchange}</td>
+                  <td className="py-1 text-right">{h.shares.toLocaleString("en-AU")}</td>
+                  <td className="py-1 text-right">{fmtAUD(Math.round(h.shares * h.cost_basis_per_share_cents))}</td>
+                  <td className="py-1 text-right text-slate-500">{h.acquired_at}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {totalCostCents > 0 && (
+        <p className="mt-2 text-xs text-emerald-800 font-semibold text-right">
+          Total cost basis: {fmtAUD(totalCostCents)}
+        </p>
+      )}
+
+      <p className="mt-3 text-[0.65rem] text-emerald-600">
+        General information only — cost basis figures are investor-reported. Always verify against brokerage statements before preparing a tax return.
+      </p>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function FindAdvisorPage() {
@@ -272,6 +400,7 @@ export default function FindAdvisorPage() {
 function FindAdvisorQuiz() {
   const searchParams = useSearchParams();
   const needParam = searchParams.get("need");
+  const handoffToken = searchParams.get("handoff");
   const prefilledIntent = needParam ? NEED_TO_INTENT[needParam] || null : null;
 
   // LX-04 — pre-filled form params from hub CTAs, calculators, onboarding results.
@@ -631,6 +760,9 @@ function FindAdvisorQuiz() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white py-8 md:py-16">
       <div className="max-w-xl mx-auto px-4">
+
+        {/* Handoff banner — rendered when investor shares holdings from the holdings page */}
+        {handoffToken && <HandoffBanner token={handoffToken} />}
 
         {/* Breadcrumb */}
         <nav className="text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
