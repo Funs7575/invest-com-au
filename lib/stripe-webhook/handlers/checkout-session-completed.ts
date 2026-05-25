@@ -656,7 +656,173 @@ export const handleCheckoutSessionCompleted: WebhookHandler = async (
     }
   }
 
-  // ── 7. Pro subscription tier upgrade (mm31) ──────────────────────
+  // ── 7. Session booking confirmation (DD-03) ─────────────────────
+  // Idempotency: stripe_checkout_session_id is UNIQUE on booking_payments;
+  // a duplicate webhook delivery gets a 23505 unique_violation and silently
+  // succeeds (same slot state, same payment record).
+  if (
+    session.metadata?.type === "session_booking" &&
+    session.mode === "payment" &&
+    session.payment_status === "paid"
+  ) {
+    const md = session.metadata;
+    const slotId = parseInt(md.slot_id ?? "0");
+    const professionalId = parseInt(md.professional_id ?? "0");
+    const consumerUserId = md.consumer_user_id || null;
+    const platformFeeCents = parseInt(md.platform_fee_cents ?? "0");
+    const amountCents = session.amount_total ?? 0;
+    const consumerEmail =
+      session.customer_email ?? session.customer_details?.email ?? "";
+    const pi =
+      typeof session.payment_intent === "string"
+        ? session.payment_intent
+        : (session.payment_intent as { id?: string } | null)?.id ?? null;
+
+    if (!slotId || !professionalId || !consumerEmail) {
+      log.error("session_booking metadata incomplete", { session_id: session.id, md });
+    } else {
+      // Claim the slot (conditional update — races safely)
+      const { data: claimedSlot, error: claimError } = await supabase
+        .from("advisor_booking_appointments")
+        .update({
+          status: "taken",
+          booked_by_email: consumerEmail.toLowerCase().trim(),
+          booked_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", slotId)
+        .eq("status", "open")
+        .select("starts_at, ends_at, professional_id")
+        .maybeSingle();
+
+      if (claimError) {
+        log.error("session_booking slot claim failed", {
+          slot_id: slotId,
+          error: claimError.message,
+        });
+      }
+
+      // Record payment row (idempotent via unique stripe_checkout_session_id)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- booking_payments not yet in Database types; regenerated after migration deploys
+      const { error: paymentError } = await (supabase as any)
+        .from("booking_payments")
+        .insert({
+          slot_id: slotId,
+          professional_id: professionalId,
+          consumer_email: consumerEmail.toLowerCase().trim(),
+          consumer_user_id: consumerUserId || null,
+          amount_cents: amountCents,
+          platform_fee_cents: platformFeeCents,
+          currency: (session.currency ?? "aud").toLowerCase(),
+          stripe_checkout_session_id: session.id,
+          stripe_payment_intent_id: pi,
+          status: "paid",
+          description: `Session booking — slot #${slotId}`,
+          metadata: { take_rate_bps: md.take_rate_bps },
+        });
+
+      if (paymentError) {
+        if (paymentError.code === "23505") {
+          log.info("session_booking payment already recorded (duplicate webhook)", {
+            session_id: session.id,
+          });
+        } else {
+          log.error("session_booking payment insert failed", {
+            session_id: session.id,
+            error: paymentError.message,
+          });
+        }
+      }
+
+      // Send confirmation emails (best-effort)
+      if (claimedSlot) {
+        const slotDate = new Date(
+          (claimedSlot as { starts_at: string }).starts_at,
+        ).toLocaleDateString("en-AU", { dateStyle: "full" });
+        const slotTime = new Date(
+          (claimedSlot as { starts_at: string }).starts_at,
+        ).toLocaleTimeString("en-AU", { hour: "2-digit", minute: "2-digit", timeZone: "Australia/Sydney" });
+
+        const { data: advisor } = await supabase
+          .from("professionals")
+          .select("name, email, slug")
+          .eq("id", professionalId)
+          .maybeSingle();
+
+        const amount = (amountCents / 100).toFixed(2);
+        const advisorName = (advisor as { name?: string } | null)?.name ?? "Your advisor";
+        const advisorSlug = (advisor as { slug?: string } | null)?.slug ?? "";
+        const advisorEmail = (advisor as { email?: string } | null)?.email;
+
+        // Consumer confirmation
+        sendTransactionalEmail(
+          consumerEmail,
+          `Session Booked: ${advisorName} — ${slotDate}`,
+          emailWrapper(
+            "Session Confirmed ✅",
+            "#059669",
+            `
+            <h2 style="margin:0 0 12px;font-size:18px;color:#0f172a;">Your consultation is confirmed</h2>
+            <p style="color:#475569;font-size:14px;line-height:1.6;margin:0 0 16px;">
+              You've booked a paid session with <strong>${escapeHtml(advisorName)}</strong>.
+            </p>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:0 0 20px;">
+              <p style="margin:0;font-size:13px;color:#334155;"><strong>Date:</strong> ${escapeHtml(slotDate)}</p>
+              <p style="margin:4px 0 0;font-size:13px;color:#334155;"><strong>Time:</strong> ${escapeHtml(slotTime)} AEST</p>
+              <p style="margin:4px 0 0;font-size:13px;color:#334155;"><strong>Amount paid:</strong> A$${amount}</p>
+            </div>
+            <p style="color:#64748b;font-size:12px;">
+              ${escapeHtml(advisorName)} will contact you to confirm meeting details. Check your email for any follow-up.
+            </p>
+            <div style="text-align:center;margin:20px 0;">
+              <a href="${getSiteUrl()}/advisor/${advisorSlug}" style="display:inline-block;padding:12px 28px;background:#059669;color:#fff;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;">View Profile →</a>
+            </div>
+          `,
+          ),
+        ).catch((err) =>
+          log.error("session_booking consumer email failed", {
+            err: err instanceof Error ? err.message : String(err),
+          }),
+        );
+
+        // Advisor notification
+        if (advisorEmail) {
+          sendTransactionalEmail(
+            advisorEmail,
+            `New paid booking: ${slotDate} at ${slotTime}`,
+            emailWrapper(
+              "New Booking 📅",
+              "#0f172a",
+              `
+              <h2 style="margin:0 0 12px;font-size:18px;color:#0f172a;">You have a new paid booking</h2>
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:0 0 20px;">
+                <p style="margin:0;font-size:13px;color:#334155;"><strong>Date:</strong> ${escapeHtml(slotDate)}</p>
+                <p style="margin:4px 0 0;font-size:13px;color:#334155;"><strong>Time:</strong> ${escapeHtml(slotTime)} AEST</p>
+                <p style="margin:4px 0 0;font-size:13px;color:#334155;"><strong>Session fee:</strong> A$${amount} (platform fee deducted)</p>
+                <p style="margin:4px 0 0;font-size:13px;color:#334155;"><strong>Client email:</strong> ${escapeHtml(consumerEmail)}</p>
+              </div>
+              <div style="text-align:center;margin:20px 0;">
+                <a href="${getSiteUrl()}/advisor-portal" style="display:inline-block;padding:12px 28px;background:#0f172a;color:#fff;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;">Advisor Portal →</a>
+              </div>
+            `,
+            ),
+          ).catch((err) =>
+            log.error("session_booking advisor email failed", {
+              err: err instanceof Error ? err.message : String(err),
+            }),
+          );
+        }
+
+        log.info("session_booking confirmed", {
+          slot_id: slotId,
+          professional_id: professionalId,
+          amount_cents: amountCents,
+        });
+      }
+    }
+  }
+
+  // ── 8. Pro subscription tier upgrade (mm31) ──────────────────────
   // Subscription-mode Checkout completions flip the calling pro to the
   // matching tier via `lib/pro-subscription/billing.ts`. Idempotent —
   // the webhook route already dedupes by event.id, and the handler
