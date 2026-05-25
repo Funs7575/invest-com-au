@@ -30,6 +30,7 @@ import LinkifiedText from "@/components/LinkifiedText";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { pillarPathForCategory, linkDensityForCategory } from "@/lib/keyword-linking";
+import NextActions from "@/components/NextActions";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -860,6 +861,10 @@ export default async function ArticlePage({
           </div>
         </div>
       </div>
+      {/* Personalised next-action strip — surfaces after article content */}
+      <Suspense fallback={null}>
+        <NextActions surface="article" />
+      </Suspense>
       <FloatingRightCTA
         href="/compare"
         label="Compare brokers"

@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import NewsletterCta from "./NewsletterCta";
 import { LEARNING_PATHS, sumEstimatedMinutes } from "@/lib/learning-paths";
+import { Suspense } from "react";
+import NextActions from "@/components/NextActions";
 
 export const revalidate = 3600;
 
@@ -215,6 +217,11 @@ export default async function LearnHubPage() {
             <NewsletterCta />
           </div>
         </section>
+
+        {/* Personalised next-action strip — learn surface suppresses duplicate learn hub CTA */}
+        <Suspense fallback={null}>
+          <NextActions surface="learn" />
+        </Suspense>
       </div>
     </>
   );
