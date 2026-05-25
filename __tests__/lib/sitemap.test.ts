@@ -11,7 +11,7 @@
  * so URL counts are deterministic.
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -106,7 +106,12 @@ describe("generateSitemaps()", () => {
 // ── Per-shard non-empty checks ────────────────────────────────────────────────
 
 describe("each shard is non-empty", () => {
-  for (let id = 0; id <= 7; id++) {
+  // DB-driven shards (2, 3) can be legitimately empty under the empty-DB test mock
+  // (shard 3 is purely articles/scenarios/reports/alerts). Their functions are
+  // validated by the union + category tests below; here we assert the statically
+  // seeded shards always emit URLs. Matches `staticShards` in the coverage test.
+  const staticShards = [0, 1, 4, 5, 6, 7];
+  for (const id of staticShards) {
     it(`shard ${id} emits at least 1 URL`, async () => {
       const urls = await getShardUrls(id);
       expect(urls.length).toBeGreaterThan(0);
@@ -320,7 +325,7 @@ describe("union of all shards", () => {
     const dupes = Object.entries(dupeMap)
       .filter(([, count]) => count > 1)
       .map(([url]) => url);
-    expect(dupes).toEqual([]);
+    expect(dupes, `duplicate URLs across shards: ${JSON.stringify(dupes)}`).toEqual([]);
     expect(urls.length).toBe(urlSet.size);
   });
 
