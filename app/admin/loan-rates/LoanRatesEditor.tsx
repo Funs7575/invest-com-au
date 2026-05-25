@@ -57,7 +57,6 @@ export default function LoanRatesEditor() {
 
   useEffect(() => {
     void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function save() {
