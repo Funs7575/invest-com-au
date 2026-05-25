@@ -10,6 +10,7 @@ import {
   CURRENT_YEAR,
   SITE_NAME,
 } from "@/lib/seo";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -44,6 +45,13 @@ const breadcrumbLd = breadcrumbJsonLd([
     url: absoluteUrl("/tools/smsf-setup"),
   },
 ]);
+
+const toolLd = calculatorJsonLd({
+  name: "SMSF Setup Decision Tool",
+  description:
+    "Free interactive tool that weighs your super balance, cost breakeven, business real property plans, and fund performance to show whether setting up a self-managed super fund makes sense. No sign-up required.",
+  path: "/tools/smsf-setup",
+});
 
 const faqLd = {
   "@context": "https://schema.org",
@@ -89,7 +97,7 @@ const FAQS = faqLd.mainEntity;
 export default function SmsfSetupPage() {
   return (
     <>
-      <JsonLd data={[breadcrumbLd, faqLd]} testId="smsf-setup-jsonld" />
+      <JsonLd data={[breadcrumbLd, toolLd, faqLd]} testId="smsf-setup-jsonld" />
       <div className="py-8 md:py-12">
         <div className="container-custom max-w-2xl">
           <p className="text-xs uppercase tracking-wider font-extrabold text-amber-600 mb-3">
