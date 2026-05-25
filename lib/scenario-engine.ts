@@ -1,9 +1,10 @@
 /**
  * Scenario Planning Engine — pure, composed projection model.
  *
- * Chains the retirement projection, super-contributions tax logic, and
- * investment-income-tax estimator into a single typed result so the planner
- * page can drive all three from one input form without duplicating any formulas.
+ * Chains the retirement projection, super-contributions tax logic,
+ * investment-income-tax estimator, and property/CGT projection into a single
+ * typed result so the planner page can drive all four from one input form
+ * without duplicating any formulas.
  *
  * Design decisions
  * ----------------
@@ -11,6 +12,7 @@
  *   Trivially testable and sharable between server (RSC) and client.
  * - Calls the EXISTING pure helpers:
  *     `computeInvestmentIncomeTax`  (lib/calculators/investment-income-tax.ts)
+ *     `computeCgt`                  (lib/calculators/cgt.ts)
  *   Retirement and super-contributions maths are extracted verbatim from the
  *   existing inline component maths (RetirementCalculatorClient.tsx,
  *   SuperContributionsClient.tsx) into this module so they can be tested
@@ -31,6 +33,7 @@
  */
 
 import { computeInvestmentIncomeTax } from "@/lib/calculators/investment-income-tax";
+import { computeCgt, type CgtResult } from "@/lib/calculators/cgt";
 
 // ─── FY2026 super constants (keep in sync with SuperContributionsClient.tsx) ──
 export const CONCESSIONAL_CAP = 30_000;
@@ -101,6 +104,36 @@ export interface ScenarioInput {
   annualCapitalGain?: number;
   /** Whether the capital-gain assets were held > 12 months (CGT discount eligible). Defaults to false. */
   capitalGainDiscountEligible?: boolean;
+
+  // ── Property / CGT projection (optional) ─────────────────────────────────
+  /**
+   * Purchase price of an investment property (AUD). When provided (> 0),
+   * `computeScenario` projects the property value at retirement and
+   * estimates the CGT liability on a hypothetical sale using `computeCgt`.
+   * Defaults to 0 (no property dimension modelled).
+   */
+  propertyPurchasePrice?: number;
+  /**
+   * Expected annual property price growth rate as a percentage (e.g. 4 for 4%).
+   * Defaults to 4 when `propertyPurchasePrice` > 0.
+   */
+  propertyGrowthRatePct?: number;
+  /**
+   * Annual gross rental yield as a percentage of purchase price (e.g. 3 for 3%).
+   * Used to estimate gross rental income each year. Defaults to 3.
+   */
+  propertyRentalYieldPct?: number;
+  /**
+   * Annual property holding costs as a percentage of purchase price
+   * (rates, insurance, maintenance — not including mortgage, interest, or depreciation).
+   * Defaults to 1.5%.
+   */
+  propertyHoldingCostsPct?: number;
+  /**
+   * Whether the property qualifies for the 50% individual CGT discount on sale.
+   * True when held > 12 months. Defaults to true when a purchase price is set.
+   */
+  propertyHeld12Months?: boolean;
 }
 
 // ─── Sub-result types ──────────────────────────────────────────────────────────
@@ -151,6 +184,59 @@ export interface SuperContributionsSummary {
   nonConcessionalExcess: number;
 }
 
+// ─── Property projection ──────────────────────────────────────────────────────
+
+/**
+ * Optional property / CGT dimension.
+ *
+ * Factual projection only — models a single investment property held from now
+ * to the retirement age, then sold. Uses `computeCgt` (lib/calculators/cgt.ts)
+ * for the CGT estimate so the result is identical to the standalone CGT calc.
+ *
+ * This is a general-information model. It does NOT model:
+ *   - mortgage / interest deductibility
+ *   - depreciation schedules
+ *   - stamp duty / transaction costs
+ *   - land tax
+ *   - negative gearing or carry-forward losses
+ *   - PPOR main-residence exemption
+ * Callers MUST display `GENERAL_ADVICE_WARNING`.
+ */
+export interface PropertyProjection {
+  /** Whether a property was provided (false when purchasePrice = 0). */
+  hasProperty: boolean;
+  /** Original purchase price echoed back (AUD). */
+  purchasePrice: number;
+  /** Projected property value at retirement age (AUD). */
+  projectedPropertyValue: number;
+  /** Gross capital gain on a hypothetical sale at retirement (AUD). */
+  grossGain: number;
+  /** CGT result — includes taxWithDiscount, taxSaved, effectiveRateWithDiscount. */
+  cgt: CgtResult;
+  /**
+   * Estimated annual gross rental income (purchasePrice × rentalYieldPct / 100).
+   * This is gross — tenancy vacancies, agent fees, and repair costs are not
+   * deducted. For general-information purposes only.
+   */
+  estimatedAnnualRentalIncome: number;
+  /**
+   * Estimated annual holding costs (purchasePrice × holdingCostsPct / 100).
+   * Covers rates, insurance, and basic maintenance — not mortgage repayments.
+   */
+  estimatedAnnualHoldingCosts: number;
+  /**
+   * Net equity at retirement AFTER the estimated CGT liability:
+   * projectedPropertyValue − cgt.taxWithDiscount.
+   */
+  netEquityAfterCgt: number;
+  /** Growth rate p.a. used for the projection (%). */
+  growthRatePct: number;
+  /** Rental yield p.a. used (%). */
+  rentalYieldPct: number;
+  /** Holding costs p.a. used (%). */
+  holdingCostsPct: number;
+}
+
 /** Annual investment-income tax estimate — thin wrapper re-exporting the existing result. */
 export type InvestmentTaxSummary = {
   /** Total tax attributable to investment income (marginal, net of franking offsets). */
@@ -178,6 +264,11 @@ export interface ScenarioResult {
   superContributions: SuperContributionsSummary;
   /** Annual investment income tax estimate. */
   investmentTax: InvestmentTaxSummary;
+  /**
+   * Property / CGT projection. Present when `inputs.propertyPurchasePrice > 0`;
+   * `hasProperty` is false otherwise.
+   */
+  property: PropertyProjection;
   /**
    * Scenario label — optional name for display and compare UX.
    * Set by the caller; `computeScenario` does not generate one.
@@ -341,6 +432,7 @@ export function computeSuperContributions(
  *   1. `computeSuperContributions` — contribution tax and caps.
  *   2. `computeRetirementProjection` — balance at retirement + drawdown.
  *   3. `computeInvestmentIncomeTax` — annual investment income tax.
+ *   4. `computeCgt` — property CGT on hypothetical sale at retirement (optional).
  *
  * Pure function. No I/O, no state. Safe to call on every render.
  *
@@ -355,6 +447,7 @@ export function computeSuperContributions(
  */
 export function computeScenario(raw: ScenarioInput): ScenarioResult {
   // ── Resolve defaults ──────────────────────────────────────────────
+  const rawPropertyPrice = Math.max(0, raw.propertyPurchasePrice ?? 0);
   const inputs: Required<ScenarioInput> = {
     currentAge: Math.max(18, Math.min(75, Math.round(raw.currentAge))),
     retirementAge: Math.max(raw.currentAge + 1, Math.min(85, Math.round(raw.retirementAge))),
@@ -373,6 +466,11 @@ export function computeScenario(raw: ScenarioInput): ScenarioResult {
     frankingPct: raw.frankingPct ?? 100,
     annualCapitalGain: Math.max(0, raw.annualCapitalGain ?? 0),
     capitalGainDiscountEligible: raw.capitalGainDiscountEligible ?? false,
+    propertyPurchasePrice: rawPropertyPrice,
+    propertyGrowthRatePct: raw.propertyGrowthRatePct ?? (rawPropertyPrice > 0 ? 4 : 0),
+    propertyRentalYieldPct: raw.propertyRentalYieldPct ?? 3,
+    propertyHoldingCostsPct: raw.propertyHoldingCostsPct ?? 1.5,
+    propertyHeld12Months: raw.propertyHeld12Months ?? true,
   };
 
   // ── 1. Super contributions ────────────────────────────────────────
@@ -427,11 +525,74 @@ export function computeScenario(raw: ScenarioInput): ScenarioResult {
     totalAssessableIncome: rawTax.totalAssessableIncome,
   };
 
+  // ── 4. Property / CGT projection ──────────────────────────────────
+  const hasProperty = inputs.propertyPurchasePrice > 0;
+  let property: PropertyProjection;
+
+  if (hasProperty) {
+    const yearsToRetirement = Math.max(0, inputs.retirementAge - inputs.currentAge);
+    const growthFraction = inputs.propertyGrowthRatePct / 100;
+    const projectedPropertyValue =
+      inputs.propertyPurchasePrice * Math.pow(1 + growthFraction, yearsToRetirement);
+    const grossGain = Math.max(0, projectedPropertyValue - inputs.propertyPurchasePrice);
+
+    // Use the marginal rate on the combined income + CGT gain to match the
+    // investment-income-tax model's bracket-progression approach. For the CGT
+    // calc we use the simple marginalRateIncludingMedicare helper (same as the
+    // super contributions saving — consistent across the engine).
+    const marginalRate = marginalRateIncludingMedicare(inputs.annualSalary);
+
+    const cgt = computeCgt({
+      gain: grossGain,
+      marginalRate,
+      held12Months: inputs.propertyHeld12Months,
+      holder: "individual",
+    });
+
+    const estimatedAnnualRentalIncome =
+      (inputs.propertyPurchasePrice * inputs.propertyRentalYieldPct) / 100;
+    const estimatedAnnualHoldingCosts =
+      (inputs.propertyPurchasePrice * inputs.propertyHoldingCostsPct) / 100;
+    const netEquityAfterCgt = projectedPropertyValue - cgt.taxWithDiscount;
+
+    property = {
+      hasProperty: true,
+      purchasePrice: inputs.propertyPurchasePrice,
+      projectedPropertyValue,
+      grossGain,
+      cgt,
+      estimatedAnnualRentalIncome,
+      estimatedAnnualHoldingCosts,
+      netEquityAfterCgt,
+      growthRatePct: inputs.propertyGrowthRatePct,
+      rentalYieldPct: inputs.propertyRentalYieldPct,
+      holdingCostsPct: inputs.propertyHoldingCostsPct,
+    };
+  } else {
+    // No property — return a zeroed-out placeholder so callers can
+    // unconditionally access result.property without null-checks.
+    const zeroCgt = computeCgt({ gain: 0, marginalRate: 0, held12Months: true });
+    property = {
+      hasProperty: false,
+      purchasePrice: 0,
+      projectedPropertyValue: 0,
+      grossGain: 0,
+      cgt: zeroCgt,
+      estimatedAnnualRentalIncome: 0,
+      estimatedAnnualHoldingCosts: 0,
+      netEquityAfterCgt: 0,
+      growthRatePct: 0,
+      rentalYieldPct: 0,
+      holdingCostsPct: 0,
+    };
+  }
+
   return {
     inputs,
     retirement,
     superContributions,
     investmentTax,
+    property,
   };
 }
 
