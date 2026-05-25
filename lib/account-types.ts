@@ -2,7 +2,7 @@
  * Account-kind registry — single import surface for code that needs to
  * branch on the kind of account a Supabase `auth.users` row is acting as.
  *
- * Five kinds exist in production. Each lives in its own entity table,
+ * Seven kinds exist in production. Each lives in its own entity table,
  * each links to `auth.users` via a unique-indexed `auth_user_id` column,
  * and each owns its own RLS policies. A single `auth.users` row can hold
  * at most one row per kind (enforced by the unique indexes); no central
@@ -26,7 +26,8 @@ export type AccountKind =
   | "investor"        // investor_profiles.auth_user_id (end-user dashboard)
   | "business_owner"  // business_accounts.auth_user_id (grants / R&D / sell-prep)
   | "listing_owner"   // listing_owner_accounts.auth_user_id (claimed-listing owners)
-  | "startup";        // startup_profiles.owner_user_id (startup founders — SP stream)
+  | "startup"         // startup_profiles.owner_user_id (startup founders — SP stream)
+  | "org_admin";      // organisations.admin_user_id (CPD providers, training companies)
 
 /**
  * Reserved future kinds (uncomment when the corresponding entity table
@@ -43,6 +44,7 @@ export const ACTIVE_ACCOUNT_KINDS: readonly AccountKind[] = [
   "business_owner",
   "listing_owner",
   "startup",
+  "org_admin",
 ];
 
 export function isAccountKind(value: unknown): value is AccountKind {

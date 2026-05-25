@@ -15,11 +15,20 @@ import type { BillingSummary } from "./billing/types";
 const DashboardTab = dynamic(() => import("./DashboardTab"));
 const LeadsTab = dynamic(() => import("./LeadsTab"));
 const AnalyticsTab = dynamic(() => import("./AnalyticsTab"));
+const CPDTab = dynamic(() => import("./CPDTab"));
 const ProfileTab = dynamic(() => import("./ProfileTab"));
+const ProfileDetailsTab = dynamic(() => import("./ProfileDetailsTab"));
 const BillingTab = dynamic(() => import("./BillingTab"));
 const SettingsTab = dynamic(() => import("./SettingsTab"));
 const TeamTab = dynamic(() => import("./TeamTab"));
 const WidgetBuilderTab = dynamic(() => import("./WidgetBuilderTab"));
+const CourseBuilderTab = dynamic(() => import("./CourseBuilderTab"));
+const EventsTab = dynamic(() => import("./EventsTab"));
+const BadgesTab = dynamic(() => import("./BadgesTab"));
+const FeedTab = dynamic(() => import("./FeedTab"));
+const CaseStudiesTab = dynamic(() => import("./CaseStudiesTab"));
+const ReviewsTab = dynamic(() => import("./ReviewsTab"));
+const EarnTab = dynamic(() => import("./EarnTab"));
 
 export default function AdvisorPortalPage() {
   const [view, setView] = useState<ViewType>("login");
@@ -194,9 +203,18 @@ export default function AdvisorPortalPage() {
     { key: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
     { key: "leads", label: "Leads", icon: "inbox" },
     { key: "analytics", label: "Analytics", icon: "bar-chart" },
+    { key: "cpd", label: "CPD", icon: "award" },
+    { key: "feed", label: "Feed", icon: "activity" },
     { key: "articles", label: "Articles", icon: "file-text" },
+    { key: "case-studies", label: "Case Studies", icon: "briefcase" },
+    { key: "reviews", label: "Reviews", icon: "star" },
+    { key: "courses", label: "Courses", icon: "book-open" },
+    { key: "events", label: "Events", icon: "calendar" },
+    { key: "badges", label: "Badges", icon: "award" },
     { key: "profile", label: "Profile", icon: "user" },
+    { key: "profile-details", label: "Profile Details", icon: "layers" },
     { key: "billing", label: "Billing", icon: "credit-card" },
+    { key: "earn", label: "Earn", icon: "gift" },
     ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
     { key: "widgets", label: "Widgets", icon: "code-2" },
     { key: "settings", label: "Settings", icon: "settings" },
@@ -307,6 +325,11 @@ export default function AdvisorPortalPage() {
           />
         )}
 
+        {/* ─── PROFILE DETAILS ─── */}
+        {view === "profile-details" && (
+          <ProfileDetailsTab advisor={advisor} />
+        )}
+
         {/* ─── BILLING ─── */}
         {view === "billing" && (
           <BillingTab
@@ -331,9 +354,41 @@ export default function AdvisorPortalPage() {
 
         {view === "articles" && <AdvisorArticlesSection advisorId={advisor?.id} />}
 
+        {/* ─── CASE STUDIES ─── */}
+        {view === "case-studies" && <CaseStudiesTab advisor={advisor} />}
+
+        {/* ─── REVIEWS ─── */}
+        {view === "reviews" && <ReviewsTab advisor={advisor} />}
+
+        {/* ─── FEED ─── */}
+        {view === "feed" && (
+          <FeedTab advisor={advisor} />
+        )}
+
+        {/* ─── CPD TRACKER ─── */}
+        {view === "cpd" && <CPDTab />}
+
+        {/* ─── BADGES ─── */}
+        {view === "badges" && <BadgesTab advisor={advisor} />}
+
+        {/* ─── COURSES ─── */}
+        {view === "courses" && (
+          <CourseBuilderTab advisor={advisor} />
+        )}
+
+        {/* ─── EVENTS ─── */}
+        {view === "events" && (
+          <EventsTab advisor={advisor} />
+        )}
+
         {/* ─── SETTINGS ─── */}
         {view === "settings" && (
           <SettingsTab advisor={advisor} />
+        )}
+
+        {/* ─── EARN / REFERRALS ─── */}
+        {view === "earn" && (
+          <EarnTab advisor={advisor} />
         )}
 
         {/* ─── TEAM (firm admins only) ─── */}

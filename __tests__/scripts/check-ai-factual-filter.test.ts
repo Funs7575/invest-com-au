@@ -19,6 +19,7 @@ function runOn(workdir: string): { exitCode: number; output: string } {
   try {
     const output = execSync(`node ${SCRIPT} --json --root=${workdir}`, {
       encoding: "utf8",
+      timeout: 15000,
     });
     return { exitCode: 0, output };
   } catch (err) {
@@ -122,7 +123,7 @@ describe("scripts/check-ai-factual-filter.mjs", () => {
   it("honours the in-repo EXEMPT allowlist (real allowlisted file passes)", () => {
     // Run the actual gate against the real repo — should be green with the
     // wiring this PR ships. Catches accidental EXEMPT removal too.
-    const result = execSync(`node ${SCRIPT} --json`, { encoding: "utf8" });
+    const result = execSync(`node ${SCRIPT} --json`, { encoding: "utf8", timeout: 30000 });
     const parsed = JSON.parse(result) as {
       ok: boolean;
       offenders: string[];
@@ -133,5 +134,5 @@ describe("scripts/check-ai-factual-filter.mjs", () => {
     // Allowlist has the four documented entries; if a new one is added,
     // bump this assertion deliberately rather than letting it silently grow.
     expect(parsed.exempt.length).toBeGreaterThanOrEqual(4);
-  });
+  }, 30000);
 });

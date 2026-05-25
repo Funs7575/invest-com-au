@@ -49,6 +49,13 @@ jobs:
       STRIPE_WEBHOOK_SECRET: placeholder
       NEXT_PUBLIC_SITE_URL: https://invest.com.au
       CRON_SECRET: placeholder
+      # Heap headroom for the whole job. The v8-coverage run over the full
+      # suite (12.5k tests, pool: forks) can exhaust the default Node heap on
+      # the runner — a worker dies before writing its coverage/.tmp/*.json and
+      # the merge step throws ENOENT, failing the Test step non-deterministically.
+      # tsc + the Next build are also heap-heavy here. Mirrors the
+      # --max-old-space-size=5120 guidance in CLAUDE.md for the pre-push tsc OOM.
+      NODE_OPTIONS: "--max-old-space-size=6144"
 
     steps:
       - uses: actions/checkout@v6
@@ -96,11 +103,14 @@ jobs:
         # not exceed the budget. scripts/bundle-size-budget.mjs excludes
         # page-specific lazy splits, prints a top-10 chunk table, and
         # exits 1 on overage.
-        # Budget: 13000 kB (~12.7 MB raw uncompressed). Raised from 12000 kB
-        # after audit-remediation PRs pushed the baseline to ~12001 kB
-        # (calculator, careers, firm-portal, compliance pages). The advisory
-        # bundle-size PR comment shows current totals; tighten once the
-        # post-merge baseline stabilises — see scripts/bundle-size-budget.mjs.
+        # Budget: 13000 kB (~12.7 MB raw uncompressed). Raised from 12000 kB.
+        # Two pressures converged: audit-remediation PRs pushed the baseline
+        # to ~12001 kB (calculator, careers, firm-portal, compliance pages),
+        # and this PR added ~2900 kB (questions-data.ts Q&A content imported
+        # by client quiz/scoring components + advisor course-creation, CPD,
+        # and certificate feature code). 13000 gives ~4% headroom; tighten
+        # once the post-merge baseline stabilises — see
+        # scripts/bundle-size-budget.mjs for the metric definition.
         run: node scripts/bundle-size-budget.mjs --budget-kb 13000
 
       # Upload .next so dependent jobs (e2e, a11y, lighthouse*) can

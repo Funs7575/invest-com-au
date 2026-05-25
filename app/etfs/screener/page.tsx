@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import ETFScreenerClient from "./ETFScreenerClient";
 
@@ -18,6 +20,29 @@ export const metadata: Metadata = {
   },
 };
 
+const ETF_SCREENER_FAQS = faqJsonLd([
+  {
+    q: "How do I use the ETF screener?",
+    a: "Use the filters at the top of the screener to narrow ETFs by asset class (Australian shares, international shares, bonds, property, etc.), maximum MER, and whether you require franking credits. Click any column header to sort the results. Click 'View →' on any ETF row for a full profile including benchmark index, fee impact table, and comparison with similar ETFs.",
+  },
+  {
+    q: "What does MER (Management Expense Ratio) mean for ETFs?",
+    a: "The MER (Management Expense Ratio) is the annual fee an ETF issuer deducts from the fund's assets, expressed as a percentage. For example, a 0.07% MER on a $100,000 investment costs $70 per year. The MER is already reflected in the ETF's unit price — you don't pay it separately. Lower MERs compound favourably over long time horizons.",
+  },
+  {
+    q: "What is the difference between an ETF and a managed fund?",
+    a: "An ETF (Exchange Traded Fund) trades on the ASX throughout the day like a share, typically tracks a passive index, and usually has lower fees (MERs often 0.04%–0.50%). A managed fund is priced once daily after market close, may be actively managed, and generally has higher fees (MERs often 0.50%–1.50%+). Both hold a diversified basket of assets. ETFs are generally better suited to self-directed investors; managed funds are often accessed via financial advisers.",
+  },
+  {
+    q: "How do I compare ETF performance in Australia?",
+    a: "Compare ETFs tracking the same benchmark index — for example, two Australian share ETFs both tracking the ASX 200. Once you have like-for-like benchmarks, the main differentiators are MER (lower is better), tracking error (how closely returns match the index), AUM (larger funds tend to have tighter bid-ask spreads), and distribution yield. Past performance is not a reliable indicator of future returns.",
+  },
+  {
+    q: "What is a good MER for an Australian ETF?",
+    a: "For broad-market Australian share ETFs, MERs range from 0.04% to 0.20% — anything under 0.10% is competitive. For international share ETFs, 0.07%–0.25% is typical. Thematic, sector-specific, or actively managed ETFs often charge 0.40%–0.75%. As a general rule, index ETFs with MERs above 0.50% are expensive and worth scrutinising carefully against lower-cost alternatives.",
+  },
+]);
+
 export default function ETFScreenerPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
@@ -31,14 +56,18 @@ export default function ETFScreenerPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ETF_SCREENER_FAQS) }}
+      />
 
       {/* Hero */}
       <section className="bg-white border-b border-slate-100 py-8 md:py-10">
         <div className="container-custom">
           <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
-            <a href="/" className="hover:text-slate-900">Home</a>
+            <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
-            <a href="/etfs" className="hover:text-slate-900">ETFs</a>
+            <Link href="/etfs" className="hover:text-slate-900">ETFs</Link>
             <span>/</span>
             <span className="text-slate-900 font-medium">ETF Screener</span>
           </nav>
@@ -96,12 +125,12 @@ export default function ETFScreenerPage() {
           <p className="text-sm text-slate-300 mb-6">
             An AFSL-licensed adviser can build a personalised ETF portfolio based on your tax situation, time horizon, and income needs.
           </p>
-          <a
+          <Link
             href="/find/financial-advisor"
             className="inline-flex items-center px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm rounded-xl transition-colors"
           >
-            Find an ETF Adviser →
-          </a>
+            Find an ETF Adviser &rarr;
+          </Link>
         </div>
       </section>
 

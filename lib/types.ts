@@ -1149,6 +1149,8 @@ export interface Professional {
   firb_specialist?: boolean;
   migration_agent?: boolean;
   migration_agent_marn?: string;
+  /** Self-reported availability: 'open' | 'waitlist' | 'closed'. Default 'open'. */
+  availability_status?: 'open' | 'waitlist' | 'closed';
   // ── Stockbroker firm fields ────────────────────────────────────────
   // Populated only for type='stockbroker_firm' or 'private_wealth_manager'.
   // NULL for all other ProfessionalType values. See

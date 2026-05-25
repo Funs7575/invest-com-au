@@ -654,6 +654,10 @@ const icons: Record<string, string[]> = {
     "M9 3v18",
     "M15 3v18",
   ],
+  columns: [
+    "rect:3,3,8,18,2",
+    "rect:13,3,8,18,2",
+  ],
   map: [
     "M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z",
     "M9 4v16",
@@ -662,6 +666,16 @@ const icons: Record<string, string[]> = {
   "bookmark-check": [
     "M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z",
     "m9 10 2 2 4-4",
+  ],
+  // Brand icons for social sharing
+  linkedin: [
+    "rect:2,2,20,20,2",
+    "M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z",
+    "M2 9h4v12H2z",
+    "circle:4,4,2",
+  ],
+  twitter: [
+    "M4 4l7 7-7 9h2.5l5.5-7 5.5 7H22L15 13l7-9h-2.5L14 11 8.5 4z",
   ],
 };
 

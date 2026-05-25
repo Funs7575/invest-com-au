@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { issueCertificate } from "@/lib/course-certificates";
 
 const log = logger("course");
 
@@ -16,6 +17,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- fields are validated individually below (lesson_id: number, course_slug: string)
     const body = await request.json();
     const lessonId = body.lesson_id;
     const courseSlug = body.course_slug;
@@ -72,7 +74,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true });
+    // Check if all lessons for this course are now complete → issue certificate
+    let certificateIssued = false;
+    try {
+      const cert = await issueCertificate(user.id, courseSlug, (purchase as { id: number }).id ?? null);
+      certificateIssued = cert !== null;
+      if (certificateIssued) {
+        log.info("Certificate issued on course completion", {
+          userId: user.id,
+          courseSlug,
+          certificateNumber: cert?.certificate_number,
+        });
+      }
+    } catch (certErr) {
+      // Non-fatal: progress was saved; certificate issuance failure is logged only
+      log.error("Certificate issuance error", {
+        error: certErr instanceof Error ? certErr.message : String(certErr),
+        userId: user.id,
+        courseSlug,
+      });
+    }
+
+    return NextResponse.json({ success: true, certificateIssued });
   } catch (err) {
     log.error("Course progress error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(

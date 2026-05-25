@@ -254,6 +254,8 @@ const mobileSections = [
       { name: "International Tax Specialists", href: "/advisors/international-tax-specialists" },
       { name: "FIRB Specialists", href: "/advisors/firb-specialists" },
       { name: "Migration Agents", href: "/advisors/migration-agents" },
+      { name: "List Your Practice →", href: "/for-advisors" },
+      { name: "List Your Courses →", href: "/for-providers" },
     ],
   },
   {

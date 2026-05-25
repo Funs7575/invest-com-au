@@ -9,6 +9,8 @@ import ResumeBanner from "@/components/get-matched/ResumeBanner";
 import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
 import HomeSquadOfTheMonth from "@/components/HomeSquadOfTheMonth";
+import HomeUpcomingEvents from "@/components/HomeUpcomingEvents";
+import HomeCPDCourses from "@/components/HomeCPDCourses";
 import HomePostAJob from "@/components/HomePostAJob";
 import HomeCompareDeepDive, { type CompareBroker } from "@/components/HomeCompareDeepDive";
 import HomeCrossBorder from "@/components/HomeCrossBorder";
@@ -20,6 +22,7 @@ import CountryPopularLinks from "@/components/country-mode/CountryPopularLinks";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import HomeActivitySection from "@/components/HomeActivitySection";
+import HomeHowItWorks from "@/components/HomeHowItWorks";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 
 export const metadata = {
@@ -298,10 +301,22 @@ export default async function HomePage() {
         <HomeListingsTeaser listings={listingList} totalCount={totalListingCount} />
       </ScrollFadeIn>
 
+      <ScrollFadeIn>
+        <HomeHowItWorks />
+      </ScrollFadeIn>
+
       <CountryExpertsPreview />
 
       <ScrollFadeIn>
         <HomeAdvisorsTeaser advisors={advisorList} totalCount={totalProfessionalCount} />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
+        <HomeUpcomingEvents />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
+        <HomeCPDCourses />
       </ScrollFadeIn>
 
       {/* Pro Squad of the Month — rotating verified-team spotlight ranked

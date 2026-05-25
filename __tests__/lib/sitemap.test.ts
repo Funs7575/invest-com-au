@@ -31,6 +31,7 @@ vi.mock("@/lib/supabase/server", () => ({
         "eq",
         "in",
         "not",
+        "gte",
         "order",
         "limit",
       ];

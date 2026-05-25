@@ -3,12 +3,21 @@ export type ViewType =
   | "dashboard"
   | "leads"
   | "analytics"
+  | "cpd"
   | "profile"
+  | "profile-details"
   | "billing"
   | "articles"
+  | "courses"
+  | "events"
+  | "badges"
   | "team"
   | "settings"
-  | "widgets";
+  | "widgets"
+  | "feed"
+  | "case-studies"
+  | "reviews"
+  | "earn";
 
 export type Advisor = {
   id: number; name: string; slug: string; firm_name?: string; email?: string;
@@ -30,6 +39,13 @@ export type Advisor = {
    */
   available_in_countries?: string[];
   slack_webhook_url?: string | null;
+  /** Self-reported availability: 'open' | 'waitlist' | 'closed'. Default 'open'. */
+  availability_status?: 'open' | 'waitlist' | 'closed';
+  /** Whether Stripe Connect payouts are enabled for this advisor. Used to gate course creation. */
+  stripe_connect_payouts_enabled?: boolean;
+  languages_spoken?: string[];
+  min_client_assets_band?: string | null;
+  specializations?: string[];
 };
 
 export type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string; role?: string; is_firm_admin?: boolean };

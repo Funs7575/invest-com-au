@@ -20,3 +20,41 @@
 - [Calculators](https://invest.com.au/calculators): Free Australian finance calculators (franking credits, CGT, super, retirement, compound interest, and more).
 - [Guides & Articles](https://invest.com.au/articles): Educational guides for Australian investors.
 - [Find a Financial Advisor](https://invest.com.au/find-advisor): Match with Australian financial advisers by location and need.
+
+## Financial advisors
+- [Advisor Directory](https://invest.com.au/advisors): Search licensed Australian financial advisers by location, specialty, and fee model.
+- [Advisor Leaderboard](https://invest.com.au/advisors/leaderboard): Top-rated financial advisers ranked by client feedback and engagement.
+- [Compare Advisors](https://invest.com.au/advisors/compare): Side-by-side comparison of up to 3 Australian financial advisers on fee structure, rating, specialties, and availability.
+- [Submit an Advice Brief](https://invest.com.au/briefs/new): Describe your situation; matched advisers respond with proposals.
+- [FIRB Specialists](https://invest.com.au/advisors/firb-specialists): Directory of Australian advisers specialising in Foreign Investment Review Board (FIRB) guidance.
+- [Migration Agents](https://invest.com.au/advisors/migration-agents): Licensed migration agents registered with the Office of the Migration Agents Registration Authority (OMARA).
+
+## CPD & professional development
+- [Academy](https://invest.com.au/academy): Accredited CPD courses and professional development for Australian financial advisers and planners.
+- [Certificate Verification](https://invest.com.au/certificate): Verify a CPD certificate issued by Invest.com.au Academy.
+- [Training Providers](https://invest.com.au/providers): Directory of ASIC-recognised CPD providers and course publishers.
+- [Upcoming Events](https://invest.com.au/events): Webinars, workshops and seminars hosted by Australian financial professionals.
+
+## Foreign & cross-border investing
+- [Foreign Investment Guide](https://invest.com.au/foreign-investment): FIRB rules, DASP, non-resident CGT, and how to invest in Australia from overseas.
+- [Non-Resident CGT Checker](https://invest.com.au/non-resident-cgt-checker): Interactive decision tool for Section 855-10 CGT exemption eligibility for non-resident Australian investors.
+- [Non-Resident Dividend Calculator](https://invest.com.au/non-resident-dividend-calculator): Calculate Australian dividend withholding tax obligations for non-residents under DTA treaties.
+- [Withholding Tax Calculator](https://invest.com.au/tools/withholding-tax-calculator): Calculate Australian withholding tax on dividends, interest, and royalties for non-residents.
+- [Visa Investment Calculator](https://invest.com.au/tools/visa-investment-calculator): Calculate minimum investment requirements for Australian Significant Investor Visa (SIV) and Business Innovation streams.
+
+## Rates & market data
+- [Term Deposits](https://invest.com.au/term-deposits): Current Australian term deposit rates by bank and term.
+- [Savings Rates](https://invest.com.au/savings): Best high-interest savings account rates in Australia.
+- [Rate Alerts](https://invest.com.au/rate-alerts): Free email alerts when Australian savings, term deposit, or investment rates change.
+
+## Calculators
+- [CGT Calculator](https://invest.com.au/cgt-calculator): Capital gains tax calculator for Australian investors, including 50% CGT discount for long-term holdings.
+- [Compound Interest Calculator](https://invest.com.au/compound-interest-calculator): Calculate compound growth on investments with regular contributions.
+- [Savings Calculator](https://invest.com.au/savings-calculator): Project savings account balance growth with contributions and interest rates.
+- [SMSF Calculator](https://invest.com.au/smsf-calculator): Estimate whether an SMSF is cost-effective vs a retail super fund.
+- [Debt Repayment Calculator](https://invest.com.au/debt-calculator): Calculate credit card and personal loan repayment time and interest cost.
+- [Negative Gearing Calculator](https://invest.com.au/negative-gearing/calculator): Calculate annual rental loss, tax benefit, and net out-of-pocket cost for negatively geared property.
+- [Property Yield Calculator](https://invest.com.au/property-yield-calculator): Calculate gross and net rental yield on Australian investment properties.
+- [Lump-Sum Investing Calculator](https://invest.com.au/lump-sum-investing/calculator): Project compound growth of a lump sum over 1–30 years with monthly contributions.
+- [Franking Credits Calculator](https://invest.com.au/dividends/calculator): Calculate after-tax dividend income including franking credits at your marginal rate or SMSF rate.
+- [FIRB Fee Estimator](https://invest.com.au/firb-fee-estimator): Estimate Foreign Investment Review Board (FIRB) application fees for Australian residential property purchases by non-residents.
