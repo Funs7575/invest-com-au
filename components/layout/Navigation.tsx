@@ -369,6 +369,13 @@ export function Navigation() {
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
+  // Listen for Cmd/Ctrl+K event dispatched by SearchOverlay when it's not yet open
+  useEffect(() => {
+    const handler = () => setSearchOpen(true);
+    window.addEventListener("invest:search:open", handler);
+    return () => window.removeEventListener("invest:search:open", handler);
+  }, []);
+
   const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/broker"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
