@@ -6,7 +6,7 @@ import { PLATFORM_TYPE_LABELS_LOWER } from "@/lib/types";
 import type { Metadata } from "next";
 import VersusClient from "../VersusClient";
 import { CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
-import { versusComparisonJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
+import { versusComparisonJsonLd, speakableWebPageJsonLd, comparisonPageItemListJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import { getVersusEditorial } from "@/lib/cached-versus";
 import { generateVersusPairs, getRelatedVersusPairs } from "@/lib/versus-pairs";
@@ -279,6 +279,20 @@ async function VersusData({ brokerSlugs, slugs }: { brokerSlugs: string[]; slugs
       : ["#versus-title"],
   });
 
+  // GEO: ItemList — ranked comparison list for AI-answer "which is better" queries.
+  // Additive to Article + FinancialProduct schemas. Position 1 = first broker in URL.
+  const itemListLd = comparisonPageItemListJsonLd({
+    slugs,
+    title: versusTitle,
+    brokers: orderedBrokers.map((b, i) => ({
+      position: i + 1,
+      name: b.name,
+      slug: b.slug,
+      description: b.tagline ?? null,
+      rating: b.rating ?? null,
+    })),
+  });
+
   return (
     <>
       <script
@@ -288,6 +302,11 @@ async function VersusData({ brokerSlugs, slugs }: { brokerSlugs: string[]; slugs
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
+      />
+      {/* GEO: ranked ItemList for "X vs Y" AI-answer extraction */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
       />
       {financialProductLds.map((fp) => (
         <script

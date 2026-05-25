@@ -1,0 +1,312 @@
+# Invest.com.au — Full Content Index
+
+> Machine-readable index of invest.com.au for AI language models and automated agents.
+> Canonical site: https://invest.com.au
+> General information only. Not personal financial advice. AFSL-regulated content.
+> For a concise overview see: https://invest.com.au/llms.txt
+
+---
+
+## About
+
+Invest.com.au is Australia's independent investment comparison platform. We provide:
+- Plain-English comparisons of Australian investing platforms (brokers, super, savings, crypto, robo-advisors)
+- Verified financial adviser directory (AFSL-licensed professionals)
+- Free calculators for CGT, compound interest, franking credits, super, SMSF, negative gearing, FIRB fees
+- A 200+ term Australian investing glossary
+- Educational guides and answer-first Q&A pages
+- Foreign and cross-border investing guides (FIRB, non-resident CGT, withholding tax, visa investment)
+- CPD courses and professional development for Australian financial advisers
+
+Content is general information under Australia's financial services laws. We do not provide personal financial advice.
+AFSL holder: Invest.com.au Pty Ltd.
+
+---
+
+## Broker / Platform Reviews & Comparisons
+
+Each broker page: https://invest.com.au/broker/{slug}
+
+### Share Trading Platforms
+- [CommSec Review](https://invest.com.au/broker/commsec): Australia's largest retail broker. CHESS-sponsored, owned by Commonwealth Bank.
+- [Stake Review](https://invest.com.au/broker/stake): Low-cost broker with $0 brokerage on US shares. Good for US market exposure.
+- [moomoo Review](https://invest.com.au/broker/moomoo): Feature-rich platform with advanced charting. Competitive brokerage.
+- [Selfwealth Review](https://invest.com.au/broker/selfwealth): Flat $9.50 brokerage per trade. CHESS-sponsored. ASX-listed company.
+- [CMC Markets Review](https://invest.com.au/broker/cmc-markets): Zero-brokerage for up to $1000/day on ASX shares. Feature-rich platform.
+- [Interactive Brokers Review](https://invest.com.au/broker/interactive-brokers): Low-cost global broker with broad market access.
+- [nabtrade Review](https://invest.com.au/broker/nabtrade): NAB's broker. Strong research, CHESS-sponsored.
+- [Superhero Review](https://invest.com.au/broker/superhero): $2 flat brokerage on ASX. Commission-free US shares. ETF investing from $100.
+- [Pearler Review](https://invest.com.au/broker/pearler): Long-term investing focus. Auto-invest, CHESS-sponsored, $6.50 brokerage.
+- [Saxo Review](https://invest.com.au/broker/saxo): Premium global broker. Broad asset coverage, advanced tools.
+- [eToro Review](https://invest.com.au/broker/etoro): Social trading platform. Copy trading, crypto, shares. Not CHESS-sponsored.
+- [Tiger Brokers Review](https://invest.com.au/broker/tiger-brokers): Competitive fees for ASX and US shares. Margin lending available.
+- [Webull Review](https://invest.com.au/broker/webull): Commission-free trading with strong mobile app.
+- [IG Review](https://invest.com.au/broker/ig): CFD and share trading. Wide range of markets.
+- [Opentrader Review](https://invest.com.au/broker/opentrader): Bell Direct platform. $15 flat brokerage, CHESS-sponsored.
+- [Sharesies Review](https://invest.com.au/broker/sharesies): Fractional share investing. Low minimums, NZ-based platform.
+
+### Crypto Exchanges
+- [CoinSpot Review](https://invest.com.au/broker/coinspot): Australia's most popular crypto exchange. 400+ coins, AUSTRAC-registered.
+- [Swyftx Review](https://invest.com.au/broker/swyftx): Competitive fees, AUD pairs, 300+ assets. AUSTRAC-registered.
+- [Independent Reserve Review](https://invest.com.au/broker/independent-reserve): Institutional-grade, OTC desk. AUSTRAC-registered since 2013.
+- [CoinJar Review](https://invest.com.au/broker/coinjar): Australian crypto exchange, UK-regulated. Fixed-fee pricing.
+- [Kraken Review](https://invest.com.au/broker/kraken): Global exchange, low fees, staking. AUSTRAC-registered.
+- [Digital Surge Review](https://invest.com.au/broker/digital-surge): Australian-owned. Simple interface, 300+ coins.
+- [Crypto.com Review](https://invest.com.au/broker/crypto-com): Global platform. Visa card, DeFi, staking. AUSTRAC-registered.
+
+### Robo-Advisors
+- [Stockspot Review](https://invest.com.au/broker/stockspot): Australia's oldest robo-advisor. Low-cost ETF portfolios, CHESS-sponsored.
+- [Raiz Review](https://invest.com.au/broker/raiz): Round-up micro-investing. Managed portfolios from $5.
+- [Spaceship Review](https://invest.com.au/broker/spaceship): Millennial-focused. Three portfolio options including tech-heavy "Universe".
+- [Vanguard Personal Investor Review](https://invest.com.au/broker/vanguard-personal-investor): Direct ETF investing from Vanguard at cost.
+- [Betashares Direct Review](https://invest.com.au/broker/betashares-direct): Commission-free ETF investing from Betashares.
+- [SixPark Review](https://invest.com.au/broker/sixpark): Goals-based robo. Human adviser oversight.
+- [InvestSMART Review](https://invest.com.au/broker/investsmart): Capped-fee portfolios. ETF and LIC exposure.
+
+### CFD & Forex Brokers
+- [Pepperstone Review](https://invest.com.au/broker/pepperstone): Low spreads, MT4/MT5/cTrader. Award-winning Australian CFD broker.
+- [IC Markets Review](https://invest.com.au/broker/ic-markets): Raw spreads, ECN execution. Popular for scalping and algo trading.
+- [FP Markets Review](https://invest.com.au/broker/fp-markets): Australian CFD broker. Raw spreads from 0.0 pips.
+- [Axi Review](https://invest.com.au/broker/axi): Australian CFD broker. FCA/ASIC-regulated. Strong copy trading.
+- [Fusion Markets Review](https://invest.com.au/broker/fusion-markets): Ultra-low commissions. Raw spreads from 0.0 pips.
+- [Eightcap Review](https://invest.com.au/broker/eightcap): Australian broker. MT4/MT5 access. Low spreads.
+- [IG Markets Review](https://invest.com.au/broker/ig-markets): Global CFD leader. 17,000+ markets including shares.
+- [ThinkMarkets Review](https://invest.com.au/broker/thinkmarkets): Australian CFD broker. ThinkTrader platform.
+
+### Super Funds
+- [AustralianSuper Review](https://invest.com.au/broker/australiansuper): Australia's largest super fund. Industry fund with strong long-term returns.
+- [Hostplus Review](https://invest.com.au/broker/hostplus): Low-fee industry fund. Popular Indexed Balanced option.
+- [Australian Retirement Trust Review](https://invest.com.au/broker/australian-retirement-trust): QSuper + Sunsuper merger. $260bn+ fund.
+- [UniSuper Review](https://invest.com.au/broker/unisuper): University sector fund. Defined benefit and accumulation options.
+- [HESTA Review](https://invest.com.au/broker/hesta): Health and community sector fund. Strong ESG focus.
+- [Cbus Review](https://invest.com.au/broker/cbus): Construction industry fund. Insurance-focused.
+- [Aware Super Review](https://invest.com.au/broker/aware-super): Public sector NSW fund. Low fees, 1.1M+ members.
+
+### Savings Accounts
+- [ING Savings Maximiser Review](https://invest.com.au/broker/ing-savings-maximiser): High conditional rate with linked transaction account.
+- [Ubank Save Review](https://invest.com.au/broker/ubank-save): NAB-backed neobank. Competitive ongoing rate.
+- [Macquarie Savings Review](https://invest.com.au/broker/macquarie-savings): High base rate. No conditions for bonus rate.
+- [ANZ Plus Save Review](https://invest.com.au/broker/anz-plus-save): ANZ neobank product. Simple conditions for bonus rate.
+
+---
+
+## Platform Comparisons (Versus Pages)
+
+Format: https://invest.com.au/versus/{broker-a}-vs-{broker-b}
+
+### Top Share Broker Comparisons
+- [Stake vs CommSec](https://invest.com.au/versus/stake-vs-commsec): Low-cost US-focused broker vs Australia's most established broker.
+- [CMC Markets vs CommSec](https://invest.com.au/versus/cmc-markets-vs-commsec): Zero-brokerage challenger vs full-service retail broker.
+- [Stake vs moomoo](https://invest.com.au/versus/stake-vs-moomoo): Two tech-focused low-cost US-share platforms.
+- [Selfwealth vs CommSec](https://invest.com.au/versus/selfwealth-vs-commsec): Flat-fee CHESS broker vs CommSec.
+- [Interactive Brokers vs CommSec](https://invest.com.au/versus/interactive-brokers-vs-commsec): Global low-cost broker vs Australia's most popular.
+- [CommSec vs nabtrade](https://invest.com.au/versus/commsec-vs-nabtrade): CBA's broker vs NAB's broker.
+- [moomoo vs CommSec](https://invest.com.au/versus/moomoo-vs-commsec): Advanced-tools platform vs legacy retail broker.
+
+### Top Crypto Exchange Comparisons
+- [CoinSpot vs Swyftx](https://invest.com.au/versus/coinspot-vs-swyftx): Australia's two largest crypto exchanges head to head.
+- [Swyftx vs Kraken](https://invest.com.au/versus/swyftx-vs-kraken): Australian-focused vs global exchange.
+- [CoinJar vs CoinSpot](https://invest.com.au/versus/coinjar-vs-coinspot): Two Australian crypto exchanges compared.
+
+### Super Fund Comparisons
+- [AustralianSuper vs Hostplus](https://invest.com.au/versus/australiansuper-vs-hostplus): Australia's largest industry funds compared.
+- [AustralianSuper vs Australian Retirement Trust](https://invest.com.au/versus/australiansuper-vs-australian-retirement-trust): Mega-fund comparison.
+
+### Compare Hub
+- [All Platform Comparisons](https://invest.com.au/compare): Side-by-side comparison tool for all platforms.
+- [Versus Hub](https://invest.com.au/versus): Browse all head-to-head broker comparison pages.
+
+---
+
+## Investing Glossary (203 Terms)
+
+Glossary index: https://invest.com.au/glossary
+Each term: https://invest.com.au/glossary/{slug}
+
+### Core Investing Terms
+- [ASX](https://invest.com.au/glossary/asx): Australian Securities Exchange — Australia's primary stock exchange.
+- [ETF](https://invest.com.au/glossary/etf): Exchange-traded fund — a basket of securities trading on-exchange like a share.
+- [Brokerage](https://invest.com.au/glossary/brokerage): The fee charged by a broker to execute a buy or sell trade.
+- [CHESS](https://invest.com.au/glossary/chess): Clearing House Electronic Subregister System — ASX's share registry ensuring you own shares in your name.
+- [Dividend](https://invest.com.au/glossary/dividend): A share of company profit paid to shareholders.
+- [Franking Credit](https://invest.com.au/glossary/franking-credit): A tax credit attached to Australian dividends for company tax already paid.
+- [P/E Ratio](https://invest.com.au/glossary/pe-ratio): Price-to-earnings ratio — a measure of how expensive a share is relative to earnings.
+- [Market Capitalisation](https://invest.com.au/glossary/market-capitalisation): Total market value of a company's outstanding shares.
+- [Index Fund](https://invest.com.au/glossary/index-fund): A fund that passively tracks a market index like the ASX 200.
+- [Managed Fund](https://invest.com.au/glossary/managed-fund): A pooled investment vehicle managed by a professional fund manager.
+
+### Super & Retirement
+- [Superannuation](https://invest.com.au/glossary/superannuation): Australia's compulsory retirement savings system funded by employer contributions.
+- [SMSF](https://invest.com.au/glossary/smsf): Self-managed super fund — a privately run super fund with up to 6 members.
+- [Concessional Contribution](https://invest.com.au/glossary/concessional-contribution): Pre-tax super contributions taxed at 15% — includes employer and salary-sacrifice contributions.
+- [Non-Concessional Contribution](https://invest.com.au/glossary/non-concessional-contribution): After-tax super contributions not taxed on the way in.
+- [Super Guarantee](https://invest.com.au/glossary/super-guarantee): The compulsory employer contribution rate (currently 11.5% FY2025, rising to 12% FY2026).
+- [Preservation Age](https://invest.com.au/glossary/preservation-age): The minimum age to access super (60 for anyone born after 30 June 1964).
+- [Transition to Retirement](https://invest.com.au/glossary/transition-to-retirement): A strategy allowing those at preservation age to draw a pension while still working.
+
+### Tax
+- [Capital Gains Tax](https://invest.com.au/glossary/capital-gains-tax): Tax on the profit from selling a capital asset. 50% discount for assets held 12+ months.
+- [CGT Discount](https://invest.com.au/glossary/cgt-discount): 50% reduction in taxable capital gain for individuals holding assets 12+ months.
+- [Tax-Loss Harvesting](https://invest.com.au/glossary/tax-loss-harvesting): Selling loss-making investments to offset capital gains tax.
+- [Negative Gearing](https://invest.com.au/glossary/negative-gearing): An investment strategy where expenses exceed income, producing a tax-deductible loss.
+- [Positive Gearing](https://invest.com.au/glossary/positive-gearing): When investment income exceeds costs — the investment is cash-flow positive.
+- [Depreciation](https://invest.com.au/glossary/depreciation): Tax deduction for the wear and tear of income-producing assets (property, equipment).
+- [PAYG Withholding](https://invest.com.au/glossary/payg-withholding): Tax withheld from wages or investment income before it reaches you.
+
+### Property
+- [Stamp Duty](https://invest.com.au/glossary/stamp-duty): State government tax on property purchases. Varies by state and purchase price.
+- [LVR](https://invest.com.au/glossary/lvr): Loan-to-value ratio — your loan amount as a percentage of the property value.
+- [LMI](https://invest.com.au/glossary/lmi): Lenders Mortgage Insurance — required when LVR exceeds 80%. Protects the lender.
+- [Rental Yield](https://invest.com.au/glossary/rental-yield): Annual rental income as a percentage of the property's purchase price.
+- [FIRB](https://invest.com.au/glossary/firb): Foreign Investment Review Board — regulates foreign purchases of Australian property and businesses.
+
+### Crypto
+- [Bitcoin](https://invest.com.au/glossary/bitcoin): The first and largest cryptocurrency by market capitalisation.
+- [Ethereum](https://invest.com.au/glossary/ethereum): Second-largest cryptocurrency. Powers smart contracts and DeFi.
+- [DeFi](https://invest.com.au/glossary/defi): Decentralised Finance — financial services on blockchain without intermediaries.
+- [Staking](https://invest.com.au/glossary/staking): Locking up crypto to support a network and earn rewards.
+- [Hot Wallet](https://invest.com.au/glossary/hot-wallet): An internet-connected crypto wallet. Convenient but vulnerable to online attacks.
+- [Cold Wallet](https://invest.com.au/glossary/cold-wallet): Offline crypto storage (hardware or paper wallet). Secure against remote attacks.
+
+### CFD & Forex
+- [CFD](https://invest.com.au/glossary/cfd): Contract for Difference — a derivative that tracks an asset's price without owning it.
+- [Leverage](https://invest.com.au/glossary/leverage): Borrowing to amplify investment exposure. Magnifies gains and losses.
+- [Spread](https://invest.com.au/glossary/spread): The difference between the buy and sell price — a broker's primary revenue source.
+- [Margin](https://invest.com.au/glossary/margin): The deposit required to open and maintain a leveraged position.
+- [Stop-Loss](https://invest.com.au/glossary/stop-loss): An order to automatically close a position at a specified loss level.
+
+### Regulatory & AFSL
+- [AFSL](https://invest.com.au/glossary/afsl): Australian Financial Services Licence — required to give financial advice or deal in financial products.
+- [ASIC](https://invest.com.au/glossary/asic): Australian Securities and Investments Commission — the financial markets regulator.
+- [RBA](https://invest.com.au/glossary/rba): Reserve Bank of Australia — sets monetary policy and the cash rate.
+- [Best Interests Duty](https://invest.com.au/glossary/best-interests-duty): Legal obligation on licensed advisers to act in the client's best interests.
+- [General Advice](https://invest.com.au/glossary/general-advice): Financial information not tailored to your personal circumstances. Does not require AFSL authorisation for personal advice.
+- [Personal Advice](https://invest.com.au/glossary/personal-advice): Advice based on your personal objectives, financial situation, and needs. Requires an AFSL.
+
+---
+
+## Questions & Answers (Q&A Pages)
+
+Each question: https://invest.com.au/questions/{slug}
+
+### Tax & Strategy Questions
+- [How does negative gearing work in Australia?](https://invest.com.au/questions/how-does-negative-gearing-work): Negative gearing occurs when investment expenses exceed income; the net loss is tax-deductible.
+- [How do franking credits work in Australia?](https://invest.com.au/questions/how-does-franking-credit-work): Franking credits are tax credits attached to Australian dividends that reduce your tax bill.
+- [What is the CGT discount in Australia?](https://invest.com.au/questions/what-is-capital-gains-tax-discount): Individuals and trusts get a 50% CGT discount on assets held more than 12 months.
+- [How does tax-loss harvesting work in Australia?](https://invest.com.au/questions/how-does-tax-loss-harvesting-work): Selling investments at a loss to offset capital gains reduces your overall CGT bill.
+- [How does depreciation work for investment property?](https://invest.com.au/questions/how-does-depreciation-work-for-investment-property): Depreciation of building and plant/equipment creates tax deductions for property investors.
+
+### Super & Retirement Questions
+- [What is salary sacrifice into super?](https://invest.com.au/questions/what-is-salary-sacrifice-super): Directing pre-tax salary into super reduces taxable income and is taxed at only 15% inside super.
+- [What is a concessional super contribution?](https://invest.com.au/questions/what-is-concessional-contribution): Pre-tax contributions (employer + salary sacrifice) capped at $30,000/year (FY2026).
+- [What is an SMSF and is it worth it?](https://invest.com.au/questions/what-is-smsf-and-is-it-worth-it): An SMSF is cost-effective above roughly $200,000–$250,000 in combined member balances.
+- [What is the super guarantee rate for FY2026?](https://invest.com.au/questions/what-is-the-super-guarantee-rate-fy2026): The employer SG rate is 11.5% for FY2026, rising to 12% from 1 July 2026.
+- [What is the super preservation age?](https://invest.com.au/questions/what-is-the-super-preservation-age): Anyone born after 30 June 1964 can access super from age 60.
+- [How does the FHSS scheme work?](https://invest.com.au/questions/how-does-the-first-home-super-saver-scheme-work): First home buyers can withdraw up to $50,000 of eligible voluntary super contributions for a deposit.
+
+### Investing & Wealth Questions
+- [Should I pay off my mortgage or invest?](https://invest.com.au/questions/should-i-pay-off-mortgage-or-invest): Depends on your mortgage rate vs expected investment return and your risk tolerance.
+- [How does compound interest work?](https://invest.com.au/questions/how-does-compound-interest-work): Compound interest earns returns on previous returns, exponentially growing wealth over time.
+- [How does dollar-cost averaging work?](https://invest.com.au/questions/how-does-dollar-cost-averaging-work): Investing a fixed amount regularly removes the need to time the market.
+- [What is the difference between an ETF and a managed fund?](https://invest.com.au/questions/what-is-the-difference-between-etf-and-managed-fund): ETFs trade on an exchange with lower fees; managed funds are priced once daily and may be actively managed.
+- [Should I pay off HECS-HELP debt or invest?](https://invest.com.au/questions/should-i-pay-off-hecs-hep-debt-or-invest): HECS indexation tracks CPI; if your investment return exceeds CPI, investing may win.
+- [What is the PPR CGT exemption?](https://invest.com.au/questions/what-is-the-principal-place-of-residence-cgt-exemption): Your main residence is exempt from CGT when sold, subject to conditions.
+
+### Property Questions
+- [How does franking credits work inside super?](https://invest.com.au/questions/how-do-franking-credits-work-in-super): Franking credits flow through to super funds; SMSFs in pension phase receive them as cash refunds.
+
+---
+
+## Best-Of Lists & Rankings
+
+- [Best Share Trading Platforms](https://invest.com.au/best/share-trading): Ranked platforms for Australian share investing by fee, features, and safety.
+- [Best Crypto Exchanges Australia](https://invest.com.au/best/crypto): Top AUSTRAC-registered Australian crypto exchanges.
+- [Best Robo-Advisors](https://invest.com.au/best/robo-advisors): Top automated investing platforms for Australians.
+- [Best Super Funds](https://invest.com.au/best/super): Top-performing super funds by net returns and fees.
+- [Best Savings Accounts](https://invest.com.au/best/savings): Highest-rate savings accounts in Australia.
+- [Best CFD Brokers](https://invest.com.au/best/cfd): Top ASIC-regulated CFD brokers by spread, platform, and regulation.
+- [Best International Brokers](https://invest.com.au/best/international): Top platforms for trading US and global shares from Australia.
+- [Best Zero-Brokerage Brokers](https://invest.com.au/best/zero-brokerage): Platforms with $0 commission on ASX or US share trades.
+- [Best CHESS-Sponsored Brokers](https://invest.com.au/best/chess-sponsored): Platforms where you directly own shares under CHESS.
+- [Best ETF Brokers](https://invest.com.au/best/etf): Top platforms for buying Australian and global ETFs.
+
+---
+
+## Educational Guides & Articles
+
+- [Investing for Beginners Australia](https://invest.com.au/article/investing-for-beginners-australia): A complete beginner's guide to investing in Australia.
+- [How to Buy Shares in Australia](https://invest.com.au/article/how-to-buy-shares-australia): Step-by-step guide to buying your first Australian shares.
+- [ETF Investing Australia](https://invest.com.au/article/etf-investing-australia): How to invest in ETFs as an Australian retail investor.
+- [Negative Gearing Explained](https://invest.com.au/article/negative-gearing-australia): Full guide to negative gearing for Australian property investors.
+- [Super Contribution Guide](https://invest.com.au/article/super-contribution-guide): Concessional, non-concessional, catch-up, and spouse contributions explained.
+- [CGT Australia Guide](https://invest.com.au/article/cgt-australia): Complete guide to capital gains tax for Australian investors.
+- [Franking Credits Guide](https://invest.com.au/article/franking-credits-australia): How franking credits work and how to claim them at tax time.
+- [Articles Hub](https://invest.com.au/articles): All educational guides and articles for Australian investors.
+
+---
+
+## Calculators
+
+- [CGT Calculator](https://invest.com.au/cgt-calculator): Capital gains tax with 50% discount for long-term holdings.
+- [Compound Interest Calculator](https://invest.com.au/compound-interest-calculator): Project investment growth with regular contributions.
+- [Franking Credits Calculator](https://invest.com.au/dividends/calculator): After-tax dividend income including franking credits at your marginal rate.
+- [Negative Gearing Calculator](https://invest.com.au/negative-gearing/calculator): Annual rental loss, tax benefit, and net out-of-pocket cost.
+- [SMSF Calculator](https://invest.com.au/smsf-calculator): Cost-effectiveness of SMSF vs retail super.
+- [FIRB Fee Estimator](https://invest.com.au/firb-fee-estimator): Foreign Investment Review Board application fee estimate.
+- [Savings Calculator](https://invest.com.au/savings-calculator): Savings account balance growth projection.
+- [Property Yield Calculator](https://invest.com.au/property-yield-calculator): Gross and net rental yield on Australian investment property.
+- [Lump-Sum Investing Calculator](https://invest.com.au/lump-sum-investing/calculator): Compound growth of a lump sum over 1–30 years.
+- [Non-Resident Dividend Calculator](https://invest.com.au/non-resident-dividend-calculator): Withholding tax on dividends for non-residents under DTA treaties.
+- [Withholding Tax Calculator](https://invest.com.au/tools/withholding-tax-calculator): Withholding tax on dividends, interest, and royalties for non-residents.
+- [Visa Investment Calculator](https://invest.com.au/tools/visa-investment-calculator): Minimum investment for SIV and Business Innovation visa streams.
+- [Non-Resident CGT Checker](https://invest.com.au/non-resident-cgt-checker): Section 855-10 CGT exemption eligibility for non-resident investors.
+- [Debt Repayment Calculator](https://invest.com.au/debt-calculator): Credit card and personal loan repayment time and interest cost.
+
+---
+
+## Financial Advisers
+
+- [Adviser Directory](https://invest.com.au/advisors): Search 1,500+ AFSL-licensed advisers by location, specialty, and fee model.
+- [Find a Financial Planner](https://invest.com.au/advisors/financial-planners): Licensed financial planners Australia-wide.
+- [Find a Mortgage Broker](https://invest.com.au/advisors/mortgage-brokers): Accredited mortgage brokers across Australia.
+- [Find a Tax Agent](https://invest.com.au/advisors/tax-agents): Registered tax agents and accountants.
+- [Find an SMSF Accountant](https://invest.com.au/advisors/smsf-accountants): Accountants specialising in SMSF establishment and administration.
+- [Find a Buyer's Agent](https://invest.com.au/advisors/buyers-agents): Licensed buyer's agents for residential and investment property.
+- [FIRB Specialists](https://invest.com.au/advisors/firb-specialists): Advisers specialising in FIRB applications and foreign investment compliance.
+- [Migration Agents](https://invest.com.au/advisors/migration-agents): OMARA-registered migration agents.
+- [Adviser Leaderboard](https://invest.com.au/advisors/leaderboard): Top-rated advisers by client feedback.
+- [Submit an Advice Brief](https://invest.com.au/briefs/new): Describe your situation; matched advisers respond with proposals.
+- [Compare Advisers](https://invest.com.au/advisors/compare): Side-by-side comparison of up to 3 advisers.
+
+---
+
+## Foreign & Cross-Border Investing
+
+- [Foreign Investment Guide](https://invest.com.au/foreign-investment): FIRB rules, DASP, non-resident CGT, and cross-border investing overview.
+- [Country Guides](https://invest.com.au/foreign-investment#countries): FIRB and tax treatment for investors from UK, US, China, New Zealand, India, and more.
+  - [UK Investors in Australia](https://invest.com.au/foreign-investment/united-kingdom)
+  - [US Investors in Australia](https://invest.com.au/foreign-investment/united-states)
+  - [Chinese Investors in Australia](https://invest.com.au/foreign-investment/china)
+  - [NZ Investors in Australia](https://invest.com.au/foreign-investment/new-zealand)
+- [DASP — Departing Australia Super Payment](https://invest.com.au/foreign-investment#dasp): Rules for non-residents withdrawing Australian super on departure.
+- [Non-Resident CGT](https://invest.com.au/foreign-investment#cgt): How Australian CGT applies to non-residents on Australian assets.
+
+---
+
+## Methodology & Trust
+
+- [Our Methodology](https://invest.com.au/methodology): How platforms are rated — fees, regulation, features, user experience, and safety.
+- [How We Earn Money](https://invest.com.au/how-we-earn): Advertiser disclosure — we earn affiliate commissions from some links.
+- [How We Verify](https://invest.com.au/how-we-verify): Editorial standards, fact-checking process, and review schedule.
+- [About Us](https://invest.com.au/about): About Invest.com.au and our team.
+
+---
+
+## Sitemap & Discovery
+
+- [XML Sitemap](https://invest.com.au/sitemap.xml): Full sitemap for crawlers.
+- [llms.txt](https://invest.com.au/llms.txt): Concise AI-readable overview (Markdown Links spec).
+
+---
+
+*Last updated: 2026-05-25. General information only — not personal financial advice.*

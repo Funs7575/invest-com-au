@@ -16,7 +16,8 @@ import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 import AuthorByline from "@/components/AuthorByline";
 import OnThisPage from "@/components/OnThisPage";
 import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, CURRENT_MONTH_YEAR, ORGANIZATION_JSONLD } from "@/lib/seo";
-import { speakableWebPageJsonLd } from "@/lib/schema-markup";
+import { speakableWebPageJsonLd, articleAnswerFirstJsonLd } from "@/lib/schema-markup";
+import { ArticleKeyTakeaways } from "@/components/ArticleKeyTakeaways";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CATEGORY_COLORS, getBestPagesForArticle, getClusterLinksForArticle } from "@/lib/internal-links";
 import ClusterNav from "@/components/ClusterNav";
@@ -243,6 +244,31 @@ export default async function ArticlePage({
       : ["#article-title"],
   });
 
+  // GEO answer-first: enhanced Article schema with `abstract` + `speakable`
+  // selectors that point at the answer-first takeaways block. Only emitted when
+  // the article has an excerpt (the source for answer-first content).
+  const answerFirstLd = a.excerpt
+    ? articleAnswerFirstJsonLd({
+        title: a.title,
+        slug: a.slug,
+        excerpt: a.excerpt,
+        keyTakeaways: [], // auto-derived from excerpt inside the builder
+        authorName:
+          articleAuthor?.full_name ??
+          (a.author_name !== "Market Research Team" ? (a.author_name ?? null) : null),
+        authorUrl: articleAuthor
+          ? absoluteUrl(`/authors/${articleAuthor.slug}`)
+          : (a.author_linkedin ?? null),
+        publishedAt: a.published_at
+          ? new Date(a.published_at).toISOString().split("T")[0]
+          : null,
+        updatedAt: a.updated_at
+          ? new Date(a.updated_at).toISOString().split("T")[0]
+          : null,
+        category: a.category ?? null,
+      })
+    : null;
+
   return (
     <div>
       {/* Schema.org JSON-LD */}
@@ -259,6 +285,19 @@ export default async function ArticlePage({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
         />
+      )}
+      {/* GEO: answer-first Article + speakable — emits only when excerpt present */}
+      {answerFirstLd && (
+        <>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(answerFirstLd.article) }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(answerFirstLd.speakable) }}
+          />
+        </>
       )}
       <script
         type="application/ld+json"
@@ -393,6 +432,15 @@ export default async function ArticlePage({
           >
             {/* Article Column */}
             <div className="flex-1 min-w-0">
+              {/* GEO answer-first: key takeaways block derived from the
+                  article excerpt. Appears immediately above the body so AI
+                  and voice systems extract the direct answer without scanning
+                  full prose. id="article-key-takeaways" is referenced by the
+                  speakable schema in articleAnswerFirstJsonLd. */}
+              {a.excerpt && (
+                <ArticleKeyTakeaways excerpt={a.excerpt} />
+              )}
+
               {/* Sticky "On this page" jump nav */}
               {a.sections && a.sections.length > 1 && (
                 <OnThisPage

@@ -14,6 +14,9 @@ import {
   speakableSpecification,
   speakableWebPageJsonLd,
   qaPageJsonLd,
+  articleAnswerFirstJsonLd,
+  glossaryTermQaJsonLd,
+  comparisonPageItemListJsonLd,
 } from "@/lib/schema-markup";
 
 describe("articleJsonLd", () => {
@@ -512,5 +515,297 @@ describe("qaPageJsonLd", () => {
     const out = qaPageJsonLd({ ...BASE, authorName: "Jane Smith" }) as Bag;
     const author = out.author as Bag;
     expect(author.url).toBeUndefined();
+  });
+});
+
+// ─── articleAnswerFirstJsonLd ─────────────────────────────────
+
+describe("articleAnswerFirstJsonLd", () => {
+  const BASE = {
+    title: "How to invest in ETFs in Australia",
+    slug: "how-to-invest-in-etfs-australia",
+    excerpt: "ETFs are low-cost baskets of securities. You buy them on the ASX through any broker. They suit passive, long-term investors.",
+    keyTakeaways: [] as string[],
+  };
+
+  it("returns both article and speakable blocks", () => {
+    const { article, speakable } = articleAnswerFirstJsonLd(BASE);
+    expect(article).toBeDefined();
+    expect(speakable).toBeDefined();
+  });
+
+  it("article @type is Article with correct @context", () => {
+    const { article } = articleAnswerFirstJsonLd(BASE);
+    expect((article as Bag)["@context"]).toBe("https://schema.org");
+    expect((article as Bag)["@type"]).toBe("Article");
+  });
+
+  it("article headline matches title", () => {
+    const { article } = articleAnswerFirstJsonLd(BASE);
+    expect((article as Bag).headline).toBe(BASE.title);
+  });
+
+  it("article abstract and description match excerpt", () => {
+    const { article } = articleAnswerFirstJsonLd(BASE);
+    expect((article as Bag).abstract).toBe(BASE.excerpt);
+    expect((article as Bag).description).toBe(BASE.excerpt);
+  });
+
+  it("article url points to /article/{slug}", () => {
+    const { article } = articleAnswerFirstJsonLd(BASE);
+    expect(String((article as Bag).url)).toContain(`/article/${BASE.slug}`);
+  });
+
+  it("article speakable targets #article-title and #article-summary", () => {
+    const { article } = articleAnswerFirstJsonLd(BASE);
+    const speakable = (article as Bag).speakable as Bag;
+    expect(speakable["@type"]).toBe("SpeakableSpecification");
+    const selectors = speakable.cssSelector as string[];
+    expect(selectors).toContain("#article-title");
+    expect(selectors).toContain("#article-summary");
+  });
+
+  it("article mainEntityOfPage points to the article URL", () => {
+    const { article } = articleAnswerFirstJsonLd(BASE);
+    const mainEntity = (article as Bag).mainEntityOfPage as Bag;
+    expect(mainEntity["@type"]).toBe("WebPage");
+    expect(String(mainEntity["@id"])).toContain(`/article/${BASE.slug}`);
+  });
+
+  it("defaults to ORG author when authorName is absent", () => {
+    const { article } = articleAnswerFirstJsonLd(BASE);
+    const author = (article as Bag).author as Bag;
+    expect(author["@type"]).toBe("Organization");
+  });
+
+  it("uses Person author when authorName is provided", () => {
+    const { article } = articleAnswerFirstJsonLd({
+      ...BASE,
+      authorName: "Jane Smith",
+      authorUrl: "https://invest.com.au/authors/jane-smith",
+    });
+    const author = (article as Bag).author as Bag;
+    expect(author["@type"]).toBe("Person");
+    expect(author.name).toBe("Jane Smith");
+    expect(String(author.url)).toContain("jane-smith");
+  });
+
+  it("carries articleSection when category is provided", () => {
+    const { article } = articleAnswerFirstJsonLd({ ...BASE, category: "ETFs" });
+    expect((article as Bag).articleSection).toBe("ETFs");
+  });
+
+  it("omits articleSection when category is absent", () => {
+    const { article } = articleAnswerFirstJsonLd(BASE);
+    expect((article as Bag).articleSection).toBeUndefined();
+  });
+
+  it("includes datePublished and dateModified when provided", () => {
+    const { article } = articleAnswerFirstJsonLd({
+      ...BASE,
+      publishedAt: "2026-01-15",
+      updatedAt: "2026-05-01",
+    });
+    expect((article as Bag).datePublished).toBe("2026-01-15");
+    expect((article as Bag).dateModified).toBe("2026-05-01");
+  });
+
+  it("speakable block is a WebPage pointing at the article path", () => {
+    const { speakable } = articleAnswerFirstJsonLd(BASE);
+    expect((speakable as Bag)["@type"]).toBe("WebPage");
+    expect(String((speakable as Bag).url)).toContain(`/article/${BASE.slug}`);
+  });
+
+  it("speakable block includes #article-key-takeaways selector", () => {
+    const { speakable } = articleAnswerFirstJsonLd(BASE);
+    const s = (speakable as Bag).speakable as Bag;
+    expect((s.cssSelector as string[])).toContain("#article-key-takeaways");
+  });
+});
+
+// ─── glossaryTermQaJsonLd ─────────────────────────────────────
+
+describe("glossaryTermQaJsonLd", () => {
+  const BASE = {
+    term: "Franking Credit",
+    slug: "franking-credit",
+    definition: "A tax credit attached to Australian dividends representing company tax already paid. Reduces or eliminates your personal tax on that income.",
+  };
+
+  it("emits @context and @type QAPage", () => {
+    const out = glossaryTermQaJsonLd(BASE) as Bag;
+    expect(out["@context"]).toBe("https://schema.org");
+    expect(out["@type"]).toBe("QAPage");
+  });
+
+  it("name is the 'What is [term]?' question", () => {
+    const out = glossaryTermQaJsonLd(BASE) as Bag;
+    expect(out.name).toBe("What is Franking Credit?");
+  });
+
+  it("url resolves to /glossary/{slug}", () => {
+    const out = glossaryTermQaJsonLd(BASE) as Bag;
+    expect(String(out.url)).toContain("/glossary/franking-credit");
+  });
+
+  it("mainEntity is a Question with the correct name", () => {
+    const out = glossaryTermQaJsonLd(BASE) as Bag;
+    const entity = out.mainEntity as Bag;
+    expect(entity["@type"]).toBe("Question");
+    expect(entity.name).toBe("What is Franking Credit?");
+  });
+
+  it("acceptedAnswer text is the definition", () => {
+    const out = glossaryTermQaJsonLd(BASE) as Bag;
+    const entity = out.mainEntity as Bag;
+    const accepted = entity.acceptedAnswer as Bag;
+    expect(accepted["@type"]).toBe("Answer");
+    expect(accepted.text).toBe(BASE.definition);
+  });
+
+  it("acceptedAnswer url points to the glossary term page", () => {
+    const out = glossaryTermQaJsonLd(BASE) as Bag;
+    const entity = out.mainEntity as Bag;
+    const accepted = entity.acceptedAnswer as Bag;
+    expect(String(accepted.url)).toContain("/glossary/franking-credit");
+  });
+
+  it("acceptedAnswer author is the site Organisation", () => {
+    const out = glossaryTermQaJsonLd(BASE) as Bag;
+    const entity = out.mainEntity as Bag;
+    const accepted = entity.acceptedAnswer as Bag;
+    expect((accepted.author as Bag)["@type"]).toBe("Organization");
+  });
+
+  it("omits suggestedAnswer when additionalFacts is not provided", () => {
+    const out = glossaryTermQaJsonLd(BASE) as Bag;
+    const entity = out.mainEntity as Bag;
+    expect(entity.suggestedAnswer).toBeUndefined();
+  });
+
+  it("includes up to 3 suggestedAnswer nodes when additionalFacts are provided", () => {
+    const out = glossaryTermQaJsonLd({
+      ...BASE,
+      additionalFacts: ["Fact 1.", "Fact 2.", "Fact 3.", "Fact 4."],
+    }) as Bag;
+    const entity = out.mainEntity as Bag;
+    const suggested = entity.suggestedAnswer as Bag[];
+    expect(suggested).toHaveLength(3); // capped at 3
+    expect(suggested[0]?.["@type"]).toBe("Answer");
+    expect(suggested[0]?.text).toBe("Fact 1.");
+  });
+
+  it("suggestedAnswer author is the site Organisation", () => {
+    const out = glossaryTermQaJsonLd({
+      ...BASE,
+      additionalFacts: ["Some fact."],
+    }) as Bag;
+    const entity = out.mainEntity as Bag;
+    const suggested = (entity.suggestedAnswer as Bag[])[0]!;
+    expect((suggested.author as Bag)["@type"]).toBe("Organization");
+  });
+
+  it("omits suggestedAnswer for an empty additionalFacts array", () => {
+    const out = glossaryTermQaJsonLd({ ...BASE, additionalFacts: [] }) as Bag;
+    const entity = out.mainEntity as Bag;
+    expect(entity.suggestedAnswer).toBeUndefined();
+  });
+});
+
+// ─── comparisonPageItemListJsonLd ─────────────────────────────
+
+describe("comparisonPageItemListJsonLd", () => {
+  const BASE = {
+    slugs: "stake-vs-commsec",
+    title: "Stake vs CommSec — Side-by-Side Comparison (2026)",
+    brokers: [
+      { position: 1, name: "Stake", slug: "stake", description: "Low-cost US-shares broker", rating: 4.5 },
+      { position: 2, name: "CommSec", slug: "commsec", description: "Australia's most established broker", rating: 4.2 },
+    ],
+  };
+
+  it("emits @context and @type ItemList", () => {
+    const out = comparisonPageItemListJsonLd(BASE) as Bag;
+    expect(out["@context"]).toBe("https://schema.org");
+    expect(out["@type"]).toBe("ItemList");
+  });
+
+  it("name matches the provided title", () => {
+    const out = comparisonPageItemListJsonLd(BASE) as Bag;
+    expect(out.name).toBe(BASE.title);
+  });
+
+  it("url points to /versus/{slugs}", () => {
+    const out = comparisonPageItemListJsonLd(BASE) as Bag;
+    expect(String(out.url)).toContain("/versus/stake-vs-commsec");
+  });
+
+  it("numberOfItems equals the broker count", () => {
+    const out = comparisonPageItemListJsonLd(BASE) as Bag;
+    expect(out.numberOfItems).toBe(2);
+  });
+
+  it("itemListElement has correct length", () => {
+    const out = comparisonPageItemListJsonLd(BASE) as Bag;
+    expect((out.itemListElement as Bag[]).length).toBe(2);
+  });
+
+  it("each ListItem carries position, name, and url", () => {
+    const out = comparisonPageItemListJsonLd(BASE) as Bag;
+    const items = out.itemListElement as Bag[];
+    expect(items[0]?.["@type"]).toBe("ListItem");
+    expect(items[0]?.position).toBe(1);
+    expect(items[0]?.name).toBe("Stake");
+    expect(String(items[0]?.url)).toContain("/broker/stake");
+  });
+
+  it("ListItem description comes from description field", () => {
+    const out = comparisonPageItemListJsonLd(BASE) as Bag;
+    const items = out.itemListElement as Bag[];
+    expect(items[0]?.description).toBe("Low-cost US-shares broker");
+  });
+
+  it("ListItem description uses bestFor when provided", () => {
+    const out = comparisonPageItemListJsonLd({
+      ...BASE,
+      brokers: [
+        { position: 1, name: "Stake", slug: "stake", bestFor: "Best for US shares", rating: 4.5 },
+        { position: 2, name: "CommSec", slug: "commsec", bestFor: "Best for ASX shares", rating: 4.2 },
+      ],
+    }) as Bag;
+    const items = out.itemListElement as Bag[];
+    expect(items[0]?.description).toBe("Best for US shares");
+    expect(items[1]?.description).toBe("Best for ASX shares");
+  });
+
+  it("omits description when neither bestFor nor description is provided", () => {
+    const out = comparisonPageItemListJsonLd({
+      ...BASE,
+      brokers: [
+        { position: 1, name: "Stake", slug: "stake", rating: 4.5 },
+      ],
+    }) as Bag;
+    const items = out.itemListElement as Bag[];
+    expect(items[0]?.description).toBeUndefined();
+  });
+
+  it("handles three-broker comparison", () => {
+    const out = comparisonPageItemListJsonLd({
+      ...BASE,
+      slugs: "stake-vs-commsec-vs-moomoo",
+      brokers: [
+        ...BASE.brokers,
+        { position: 3, name: "moomoo", slug: "moomoo", rating: 4.3 },
+      ],
+    }) as Bag;
+    expect((out.itemListElement as Bag[]).length).toBe(3);
+    expect(out.numberOfItems).toBe(3);
+  });
+
+  it("positions are preserved in order", () => {
+    const out = comparisonPageItemListJsonLd(BASE) as Bag;
+    const items = out.itemListElement as Bag[];
+    expect(items[0]?.position).toBe(1);
+    expect(items[1]?.position).toBe(2);
   });
 });
