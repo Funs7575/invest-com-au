@@ -374,12 +374,12 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           is tab-scoped. This rail sits below the main review so both
           surfaces are visible without duplication. */}
       {(() => {
-        const { brokers: relBrokers, articles: relArts } = getRelatedForBroker(
+        const { brokers: relBrokers, articles: relArts, guides: relGuides } = getRelatedForBroker(
           b,
           allOtherBrokers,
           (brokerArticles || []) as { id: number; slug: string; title: string; category?: string; read_time?: number }[],
         );
-        if (relBrokers.length === 0 && relArts.length === 0) return null;
+        if (relBrokers.length === 0 && relArts.length === 0 && relGuides.length === 0) return null;
         const listItems = [
           ...relBrokers.map((item, i) => ({
             position: i + 1,
@@ -400,10 +400,12 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
                 jsonLd={jsonLd}
               />
             )}
-            {relArts.length > 0 && (
+            {(relArts.length > 0 || relGuides.length > 0) && (
               <RelatedRail
                 heading="Related Guides"
                 items={relArts}
+                secondaryItems={relGuides.length > 0 ? relGuides : undefined}
+                secondaryHeading={relGuides.length > 0 ? "Helpful guide" : undefined}
                 className="mt-6"
               />
             )}

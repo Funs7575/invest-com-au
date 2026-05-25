@@ -203,9 +203,9 @@ describe("getRelatedForArticle", () => {
   describe("articles — empty cases", () => {
     it("returns empty arrays when pool is empty", () => {
       const current = makeArticle({ id: 1, slug: "c", category: "ETFs" });
-      const { articles, tools } = getRelatedForArticle(current, []);
+      const { articles } = getRelatedForArticle(current, []);
       expect(articles).toEqual([]);
-      // tools may still have calculator hints from category
+      // tools may still have calculator hints from category, so not asserted here
     });
 
     it("returns empty articles when no article shares category or tags", () => {
@@ -365,6 +365,22 @@ describe("getRelatedForBroker", () => {
 
       const { brokers } = getRelatedForBroker(current, pool, []);
       expect(brokers.length).toBeLessThanOrEqual(4);
+    });
+  });
+
+  describe("brokers — guides", () => {
+    it("returns a platform-type guide hint", () => {
+      const current = makeBroker({ id: 1, slug: "c", platform_type: "share_broker" });
+      const { guides } = getRelatedForBroker(current, [], []);
+      expect(guides.length).toBe(1);
+      expect(guides[0]?.title).toBe("How to Choose a Share Broker");
+      expect(guides[0]?.badgeText).toBe("Guide");
+    });
+
+    it("returns no guide for an unknown platform type", () => {
+      const current = makeBroker({ id: 1, slug: "c", platform_type: "unknown_xyz" as never });
+      const { guides } = getRelatedForBroker(current, [], []);
+      expect(guides).toEqual([]);
     });
   });
 

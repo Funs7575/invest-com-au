@@ -42,6 +42,7 @@ export interface ArticleRelatedResult {
 export interface BrokerRelatedResult {
   brokers: RelatedItem[];
   articles: RelatedItem[];
+  guides: RelatedItem[];
 }
 
 /** Structured result for the advisor-page rail. */
@@ -366,7 +367,23 @@ export function getRelatedForBroker(
     meta: a.read_time ? `${a.read_time} min read` : undefined,
   }));
 
-  return { brokers, articles };
+  // --- Guides --- (platform-type → relevant guide; mirrors the advisor rail)
+  const guides: RelatedItem[] = [];
+  const guideHint = current.platform_type
+    ? PLATFORM_GUIDE_HINTS[current.platform_type]
+    : undefined;
+  if (guideHint) {
+    guides.push({
+      id: `guide:${guideHint.href}`,
+      href: guideHint.href,
+      title: guideHint.name,
+      badgeText: "Guide",
+      badgeClass: "bg-violet-100 text-violet-700",
+      meta: "Free guide",
+    });
+  }
+
+  return { brokers, articles, guides };
 }
 
 // ─── Advisor rail ───────────────────────────────────────────────
