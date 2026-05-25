@@ -237,7 +237,7 @@ export default async function ProDashboardPage() {
     ? "/account/upgrade"
     : "/auth/login?next=/pro/dashboard";
 
-  if (!isPro) {
+  if (!isPro || !user) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-12">
         <script
