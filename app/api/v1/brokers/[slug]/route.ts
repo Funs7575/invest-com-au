@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { validateApiKey, logApiRequest, API_CORS_HEADERS } from "@/lib/api-auth";
 import { escapeHtml } from "@/lib/html-escape";
@@ -132,7 +132,11 @@ export async function GET(
   }
 
   try {
-    const supabase = createAdminClient();
+    // Public read: `brokers` (anon policy: status = 'active') and
+    // `broker_data_changes` (anon SELECT policy per 20260705 migration) are
+    // both anon-readable, so the RLS-scoped server client suffices here —
+    // no need for the service-role key on this public API path.
+    const supabase = await createClient();
 
     // Fetch broker
     const { data: broker, error: brokerError } = await supabase

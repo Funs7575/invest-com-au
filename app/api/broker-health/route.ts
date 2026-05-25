@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { CURRENT_YEAR } from "@/lib/seo";
@@ -140,9 +140,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const admin = createAdminClient();
+    // Public read of a single active broker (public columns only). The anon
+    // RLS policy ("Public read for active brokers": status = 'active') covers
+    // this, so the RLS-scoped server client is used instead of the
+    // service-role key on this public endpoint.
+    const supabase = await createClient();
 
-    const { data: broker, error: dbError } = await admin
+    const { data: broker, error: dbError } = await supabase
       .from("brokers")
       .select(
         "slug, name, rating, regulated_by, year_founded, headquarters, chess_sponsored, is_crypto, platform_type"

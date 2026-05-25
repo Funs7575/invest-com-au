@@ -5,8 +5,8 @@ import { NextRequest } from "next/server";
 
 const mockAdminFrom = vi.fn();
 
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+vi.mock("@/lib/supabase/server", () => ({
+  createClient: vi.fn(async () => ({ from: mockAdminFrom })),
 }));
 
 vi.mock("@/lib/logger", () => ({
