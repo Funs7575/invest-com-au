@@ -314,7 +314,7 @@ describe("GET /api/widget/badge — broker badge", () => {
     mockFrom.mockReturnValue(makeSingleChain(BROKER_ROW));
     const res = await GET(makeReq({ type: "broker", slug: "stake" }));
     const body = await res.text();
-    expect(body).toContain("health-scores/methodology");
+    expect(body).toContain('"methodologyUrl":"https://invest.com.au/health-scores"');
     expect(body).toContain("methodology");
   });
 
@@ -325,7 +325,7 @@ describe("GET /api/widget/badge — broker badge", () => {
     expect(body).toContain("Broker Health Score");
   });
 
-  it("embeds correct score for Stake (ASIC+AFSL+CHESS+AU+9yr+rating = 80 → Strong)", async () => {
+  it("embeds correct score for Stake (ASIC+AFSL+CHESS+AU+9yr+rating+share_broker = 85 → Strong)", async () => {
     mockFrom.mockReturnValue(makeSingleChain(BROKER_ROW));
     const res = await GET(makeReq({ type: "broker", slug: "stake" }));
     const body = await res.text();
@@ -337,8 +337,8 @@ describe("GET /api/widget/badge — broker badge", () => {
       body.indexOf(";\n", start + badgePrefix.length),
     );
     const badge = JSON.parse(jsonStr) as { score: number; label: string; scoreType: string };
-    // Stake: ASIC(25)+AFSL(10)+CHESS(20)+AU HQ(5)+9yr(10)+rating(10) = 80 → Strong
-    expect(badge.score).toBe(80);
+    // Stake: ASIC(25)+AFSL(10)+CHESS(20)+AU HQ(5)+9yr(10)+rating(10)+share_broker(5) = 85 → Strong
+    expect(badge.score).toBe(85);
     expect(badge.label).toBe("Strong");
     expect(badge.scoreType).toBe("Broker Health Score");
   });

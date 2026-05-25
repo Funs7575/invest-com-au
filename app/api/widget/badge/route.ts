@@ -29,7 +29,7 @@ export const revalidate = 3600;
  *   of objective, publicly-checkable data points for THAT entity alone.
  *   The general-advice disclaimer is always included.
  *   A methodology link (/advisor/trust-score-methodology or
- *   /health-scores/methodology) is included so consumers can audit the
+ *   /health-scores) is included so consumers can audit the
  *   scoring algorithm.
  *
  * Query params:
@@ -268,7 +268,7 @@ export async function GET(request: NextRequest) {
     labelColor: brokerLabelColor,
     scoreType: "Broker Health Score",
     profileUrl: `https://invest.com.au/health-scores/${broker.slug}`,
-    methodologyUrl: "https://invest.com.au/health-scores/methodology",
+    methodologyUrl: "https://invest.com.au/health-scores",
   };
 
   const js = buildBadgeJs({
