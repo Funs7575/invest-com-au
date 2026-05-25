@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { resolveAdvisorBadges } from "@/lib/forum-author-badges";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
@@ -192,20 +193,14 @@ export default async function ThreadPage({
     }
   }
 
-  // Overlay verified advisor data where professionals have linked their auth account
+  // Overlay verified advisor data where professionals have linked their auth account.
+  // Uses the dedicated cross-user helper which holds the admin client behind the
+  // documented service-role exception (see lib/forum-author-badges.ts for rationale).
   const authorIdList = Array.from(authorIds);
-  const { data: linkedProfessionals } = await supabase
-    .from("professionals")
-    .select("auth_user_id, slug, type")
-    .in("auth_user_id", authorIdList)
-    .eq("status", "active");
-
-  if (linkedProfessionals) {
-    for (const pro of linkedProfessionals) {
-      const uid = pro.auth_user_id as string;
-      if (profileMap[uid]) {
-        profileMap[uid].verified_advisor = { slug: pro.slug as string, type: pro.type as string };
-      }
+  const advisorBadges = await resolveAdvisorBadges(authorIdList);
+  for (const [uid, badge] of advisorBadges) {
+    if (profileMap[uid]) {
+      profileMap[uid].verified_advisor = badge;
     }
   }
 
