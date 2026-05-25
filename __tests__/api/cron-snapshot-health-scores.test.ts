@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type MockInstance } from "vitest";
 import { NextRequest, NextResponse } from "next/server";
 
 /* ─── Hoisted mocks (vi.mock is hoisted; use vi.hoisted for shared fns) ────── */
@@ -6,14 +6,22 @@ import { NextRequest, NextResponse } from "next/server";
 const { mockAdminFrom, mockRequireCronAuth, mockWrapCronHandler } =
   vi.hoisted(() => ({
     mockAdminFrom: vi.fn(),
-    mockRequireCronAuth: vi.fn(() => null), // null = authorised
+    // Typed to return NextResponse | null so .mockReturnValue accepts both
+    // the null (authorised) and NextResponse (rejected) cases.
+    mockRequireCronAuth: vi.fn(
+      (): NextResponse | null => null,
+    ),
     mockWrapCronHandler: vi.fn(
       (
         _name: string,
         handler: (req: NextRequest) => Promise<Response>,
       ) => handler,
     ),
-  }));
+  })) as {
+    mockAdminFrom: MockInstance;
+    mockRequireCronAuth: MockInstance<() => NextResponse | null>;
+    mockWrapCronHandler: MockInstance;
+  };
 
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => ({ from: mockAdminFrom }),
