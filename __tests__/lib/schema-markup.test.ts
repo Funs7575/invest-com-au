@@ -19,6 +19,7 @@ import {
   comparisonPageItemListJsonLd,
   howToJsonLd,
   personCredentialJsonLd,
+  personJsonLd,
 } from "@/lib/schema-markup";
 
 describe("articleJsonLd", () => {
@@ -1156,5 +1157,259 @@ describe("personCredentialJsonLd", () => {
     const json = JSON.stringify(person);
     expect(json).not.toContain("email");
     expect(json).not.toContain("user_id");
+  });
+});
+
+// ─── personJsonLd ─────────────────────────────────────────────
+
+describe("personJsonLd", () => {
+  const BASE = {
+    name: "Sarah Chen",
+    profileUrl: "/reviewers/sarah-chen",
+  };
+
+  it("emits @context https://schema.org and @type Person", () => {
+    const out = personJsonLd(BASE) as Bag;
+    expect(out["@context"]).toBe("https://schema.org");
+    expect(out["@type"]).toBe("Person");
+  });
+
+  it("name matches the provided name", () => {
+    const out = personJsonLd(BASE) as Bag;
+    expect(out.name).toBe("Sarah Chen");
+  });
+
+  it("url resolves to the absolute profile URL", () => {
+    const out = personJsonLd(BASE) as Bag;
+    expect(String(out.url)).toContain("/reviewers/sarah-chen");
+  });
+
+  it("worksFor is the site Organisation", () => {
+    const out = personJsonLd(BASE) as Bag;
+    const wf = out.worksFor as Bag;
+    expect(wf["@type"]).toBe("Organization");
+    expect(wf.name).toBeDefined();
+  });
+
+  it("includes jobTitle when provided", () => {
+    const out = personJsonLd({ ...BASE, jobTitle: "Expert Reviewer" }) as Bag;
+    expect(out.jobTitle).toBe("Expert Reviewer");
+  });
+
+  it("omits jobTitle when not provided", () => {
+    const out = personJsonLd(BASE) as Bag;
+    expect(out.jobTitle).toBeUndefined();
+  });
+
+  it("includes description when provided", () => {
+    const out = personJsonLd({
+      ...BASE,
+      description: "Finance writer with 10 years experience.",
+    }) as Bag;
+    expect(out.description).toBe("Finance writer with 10 years experience.");
+  });
+
+  it("omits description when null", () => {
+    const out = personJsonLd({ ...BASE, description: null }) as Bag;
+    expect(out.description).toBeUndefined();
+  });
+
+  it("includes image when imageUrl is provided", () => {
+    const out = personJsonLd({
+      ...BASE,
+      imageUrl: "https://invest.com.au/avatars/sarah.jpg",
+    }) as Bag;
+    expect(out.image).toBe("https://invest.com.au/avatars/sarah.jpg");
+  });
+
+  it("omits image when imageUrl is null", () => {
+    const out = personJsonLd({ ...BASE, imageUrl: null }) as Bag;
+    expect(out.image).toBeUndefined();
+  });
+
+  // ─── sameAs filtering ──────────────────────────────────────
+
+  it("includes sameAs with linkedin and twitter when both provided", () => {
+    const out = personJsonLd({
+      ...BASE,
+      linkedinUrl: "https://linkedin.com/in/sarah-chen",
+      twitterUrl: "https://twitter.com/sarahchen",
+    }) as Bag;
+    const sameAs = out.sameAs as string[];
+    expect(sameAs).toContain("https://linkedin.com/in/sarah-chen");
+    expect(sameAs).toContain("https://twitter.com/sarahchen");
+  });
+
+  it("omits sameAs when neither linkedin nor twitter is provided", () => {
+    const out = personJsonLd(BASE) as Bag;
+    expect(out.sameAs).toBeUndefined();
+  });
+
+  it("omits null/empty strings from sameAs", () => {
+    const out = personJsonLd({
+      ...BASE,
+      linkedinUrl: "https://linkedin.com/in/sarah-chen",
+      twitterUrl: null,
+      additionalSameAs: ["", undefined, null],
+    }) as Bag;
+    const sameAs = out.sameAs as string[];
+    expect(sameAs).toEqual(["https://linkedin.com/in/sarah-chen"]);
+  });
+
+  it("includes additionalSameAs entries in the sameAs array", () => {
+    const out = personJsonLd({
+      ...BASE,
+      linkedinUrl: "https://linkedin.com/in/sarah-chen",
+      additionalSameAs: [
+        "https://example.com/pub1",
+        "https://example.com/pub2",
+      ],
+    }) as Bag;
+    const sameAs = out.sameAs as string[];
+    expect(sameAs).toContain("https://example.com/pub1");
+    expect(sameAs).toContain("https://example.com/pub2");
+    expect(sameAs).toContain("https://linkedin.com/in/sarah-chen");
+    expect(sameAs).toHaveLength(3);
+  });
+
+  it("sameAs is omitted when additionalSameAs contains only nulls/empties", () => {
+    const out = personJsonLd({
+      ...BASE,
+      additionalSameAs: [null, "", undefined],
+    }) as Bag;
+    expect(out.sameAs).toBeUndefined();
+  });
+
+  // ─── credentials / knowsAbout ──────────────────────────────
+
+  it("includes knowsAbout when credentials are provided", () => {
+    const out = personJsonLd({
+      ...BASE,
+      credentials: ["CFP", "AFA Member", "10+ years in financial journalism"],
+    }) as Bag;
+    expect(out.knowsAbout).toEqual([
+      "CFP",
+      "AFA Member",
+      "10+ years in financial journalism",
+    ]);
+  });
+
+  it("omits knowsAbout when credentials array is empty", () => {
+    const out = personJsonLd({ ...BASE, credentials: [] }) as Bag;
+    expect(out.knowsAbout).toBeUndefined();
+  });
+
+  it("omits knowsAbout when credentials is null", () => {
+    const out = personJsonLd({ ...BASE, credentials: null }) as Bag;
+    expect(out.knowsAbout).toBeUndefined();
+  });
+
+  // ─── InteractionStatistic — review activity ────────────────
+
+  it("includes article InteractionCounter when articlesReviewedCount > 0", () => {
+    const out = personJsonLd({
+      ...BASE,
+      articlesReviewedCount: 42,
+    }) as Bag;
+    const stats = out.interactionStatistic as Bag[];
+    expect(stats).toBeDefined();
+    expect(stats).toHaveLength(1);
+    expect(stats[0]?.["@type"]).toBe("InteractionCounter");
+    expect(stats[0]?.userInteractionCount).toBe(42);
+  });
+
+  it("includes product review InteractionCounter when productReviewsCount > 0", () => {
+    const out = personJsonLd({
+      ...BASE,
+      productReviewsCount: 7,
+    }) as Bag;
+    const stats = out.interactionStatistic as Bag[];
+    expect(stats).toHaveLength(1);
+    expect(stats[0]?.userInteractionCount).toBe(7);
+  });
+
+  it("includes both InteractionCounters when both counts are > 0", () => {
+    const out = personJsonLd({
+      ...BASE,
+      articlesReviewedCount: 12,
+      productReviewsCount: 5,
+    }) as Bag;
+    const stats = out.interactionStatistic as Bag[];
+    expect(stats).toHaveLength(2);
+  });
+
+  it("omits interactionStatistic when both counts are 0", () => {
+    const out = personJsonLd({
+      ...BASE,
+      articlesReviewedCount: 0,
+      productReviewsCount: 0,
+    }) as Bag;
+    expect(out.interactionStatistic).toBeUndefined();
+  });
+
+  it("omits interactionStatistic when counts are null", () => {
+    const out = personJsonLd({
+      ...BASE,
+      articlesReviewedCount: null,
+      productReviewsCount: null,
+    }) as Bag;
+    expect(out.interactionStatistic).toBeUndefined();
+  });
+
+  it("omits interactionStatistic when counts are not provided", () => {
+    const out = personJsonLd(BASE) as Bag;
+    expect(out.interactionStatistic).toBeUndefined();
+  });
+
+  it("article counter description uses singular 'article' for count of 1", () => {
+    const out = personJsonLd({ ...BASE, articlesReviewedCount: 1 }) as Bag;
+    const stats = out.interactionStatistic as Bag[];
+    expect(String(stats[0]?.description)).toContain("1 article reviewed");
+  });
+
+  it("article counter description uses plural 'articles' for count > 1", () => {
+    const out = personJsonLd({ ...BASE, articlesReviewedCount: 3 }) as Bag;
+    const stats = out.interactionStatistic as Bag[];
+    expect(String(stats[0]?.description)).toContain("3 articles reviewed");
+  });
+
+  it("product counter description uses singular 'product review' for count of 1", () => {
+    const out = personJsonLd({ ...BASE, productReviewsCount: 1 }) as Bag;
+    const stats = out.interactionStatistic as Bag[];
+    expect(String(stats[0]?.description)).toContain("1 product review");
+    expect(String(stats[0]?.description)).not.toContain("product reviews");
+  });
+
+  it("product counter description uses plural 'product reviews' for count > 1", () => {
+    const out = personJsonLd({ ...BASE, productReviewsCount: 4 }) as Bag;
+    const stats = out.interactionStatistic as Bag[];
+    expect(String(stats[0]?.description)).toContain("4 product reviews");
+  });
+
+  // ─── Full payload ──────────────────────────────────────────
+
+  it("full payload includes all non-null fields", () => {
+    const out = personJsonLd({
+      name: "Alex Smith",
+      profileUrl: "/reviewers/alex-smith",
+      description: "Senior editor with a background in SMSF compliance.",
+      jobTitle: "Expert Reviewer",
+      imageUrl: "https://invest.com.au/avatars/alex.jpg",
+      linkedinUrl: "https://linkedin.com/in/alex-smith",
+      twitterUrl: "https://twitter.com/alexsmith",
+      credentials: ["CPA Australia", "SMSF Association Member"],
+      articlesReviewedCount: 30,
+      productReviewsCount: 8,
+    }) as Bag;
+
+    expect(out["@type"]).toBe("Person");
+    expect(out.name).toBe("Alex Smith");
+    expect(out.jobTitle).toBe("Expert Reviewer");
+    expect(out.description).toBeDefined();
+    expect(out.image).toBe("https://invest.com.au/avatars/alex.jpg");
+    expect(out.sameAs).toBeDefined();
+    expect(out.knowsAbout).toBeDefined();
+    expect(out.interactionStatistic).toBeDefined();
+    expect((out.interactionStatistic as Bag[])).toHaveLength(2);
   });
 });

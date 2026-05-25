@@ -916,6 +916,143 @@ export function comparisonPageItemListJsonLd(
   };
 }
 
+// ─── Person — reviewer / author profile pages ─────────────────────────────────
+//
+// E-E-A-T note: A standalone `Person` block on reviewer/author profile pages
+// carries richer structured-data signals than the `ProfilePage > mainEntity`
+// pattern already emitted by `profilePageJsonLd()` in lib/seo.ts. The key
+// additions are:
+//
+//   - `sameAs` — LinkedIn, X/Twitter, and external publication URLs. These are
+//     the most powerful E-E-A-T signals in the spec: they let search and AI
+//     engines corroborate identity across authoritative third-party sources.
+//
+//   - `jobTitle` / `description` — already in profilePageJsonLd but we repeat
+//     them here at the top-level Person so they appear on the root block, not
+//     buried in a mainEntity subtree.
+//
+//   - `knowsAbout` — credentials list maps directly to schema.org `knowsAbout`.
+//
+//   - `numberOfItems` for review activity — surfaced via `performerIn` /
+//     `interactionStatistic`; we use `description` additions here since
+//     `performerIn` requires separately typed entities.
+//
+// Emit this block as an _additional_ <script> block alongside the existing
+// ProfilePage + BreadcrumbList blocks — they are complementary, not
+// replacements.
+
+export interface PersonJsonLdInput {
+  /** Full display name. */
+  name: string;
+  /** Site-relative profile URL — must match the page's canonical. */
+  profileUrl: string;
+  /** Short bio / description. */
+  description?: string | null;
+  /** Job title / role label (e.g. "Expert Reviewer"). */
+  jobTitle?: string | null;
+  /** Absolute URL to avatar / headshot. */
+  imageUrl?: string | null;
+  /** LinkedIn profile URL. Filtered if empty. */
+  linkedinUrl?: string | null;
+  /** Twitter / X profile URL. Filtered if empty. */
+  twitterUrl?: string | null;
+  /**
+   * Additional sameAs URLs — external publications, ASIC register links,
+   * or other authoritative third-party profile pages.
+   * Each entry is filtered for non-empty strings before inclusion.
+   */
+  additionalSameAs?: (string | null | undefined)[];
+  /**
+   * Credential / expertise strings — map to schema.org `knowsAbout`.
+   * Mirrors the `credentials[]` column on team_members.
+   */
+  credentials?: string[] | null;
+  /**
+   * Total number of articles reviewed. Included in an InteractionCounter
+   * when > 0. Zero / null omits the counter entirely.
+   */
+  articlesReviewedCount?: number | null;
+  /**
+   * Total number of broker/product reviews. Included in a second
+   * InteractionCounter when > 0.
+   */
+  productReviewsCount?: number | null;
+  /**
+   * ISO-8601 date when the reviewer first became active.
+   * Used to derive a "years active" figure for voice/AI extraction.
+   */
+  activeFrom?: string | null;
+}
+
+/**
+ * Standalone `Person` JSON-LD block for reviewer and author profile pages.
+ *
+ * Includes `sameAs` social/professional URLs (LinkedIn, Twitter/X, and any
+ * additional URLs), filtered to non-empty strings. Empty or null values
+ * degrade gracefully — the block is still valid without them.
+ *
+ * Emits as a separate `<script type="application/ld+json">` block alongside
+ * the existing `ProfilePage` and `BreadcrumbList` blocks.
+ */
+export function personJsonLd(input: PersonJsonLdInput) {
+  // Build sameAs: filter nulls/empties from all social + additional URLs
+  const rawSameAs = [
+    input.linkedinUrl,
+    input.twitterUrl,
+    ...(input.additionalSameAs ?? []),
+  ];
+  const sameAs = rawSameAs.filter(
+    (url): url is string => typeof url === "string" && url.trim().length > 0,
+  );
+
+  // Build InteractionStatistic nodes for review activity
+  const interactionStatistic: Array<Record<string, unknown>> = [];
+  if (
+    typeof input.articlesReviewedCount === "number" &&
+    input.articlesReviewedCount > 0
+  ) {
+    interactionStatistic.push({
+      "@type": "InteractionCounter",
+      interactionType: "https://schema.org/ReviewAction",
+      userInteractionCount: input.articlesReviewedCount,
+      description: `${input.articlesReviewedCount} article${input.articlesReviewedCount === 1 ? "" : "s"} reviewed`,
+    });
+  }
+  if (
+    typeof input.productReviewsCount === "number" &&
+    input.productReviewsCount > 0
+  ) {
+    interactionStatistic.push({
+      "@type": "InteractionCounter",
+      interactionType: "https://schema.org/ReviewAction",
+      userInteractionCount: input.productReviewsCount,
+      description: `${input.productReviewsCount} product review${input.productReviewsCount === 1 ? "" : "s"}`,
+    });
+  }
+
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: input.name,
+    url: absoluteUrl(input.profileUrl),
+    image: input.imageUrl ?? undefined,
+    jobTitle: input.jobTitle ?? undefined,
+    description: input.description ?? undefined,
+    worksFor: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    sameAs: sameAs.length > 0 ? sameAs : undefined,
+    knowsAbout:
+      input.credentials && input.credentials.length > 0
+        ? input.credentials
+        : undefined,
+    interactionStatistic:
+      interactionStatistic.length > 0 ? interactionStatistic : undefined,
+  });
+}
+
 // ─── Person + EducationalOccupationalCredential — certificate pages ──────────
 //
 // E-E-A-T note: A public, shareable certificate page carries two high-value

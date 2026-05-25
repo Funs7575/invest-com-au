@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import type { TeamMember, Article, Broker } from "@/lib/types";
+import type { TeamMember, Article, Broker, Professional } from "@/lib/types";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -10,7 +10,9 @@ import {
   formatRole,
   SITE_NAME,
 } from "@/lib/seo";
+import { personJsonLd } from "@/lib/schema-markup";
 import { NOINDEX_PERSONA_SLUGS } from "@/lib/compliance";
+import { computeAdvisorTrustScore } from "@/lib/advisor-trust-score";
 
 export const revalidate = 3600;
 
@@ -58,6 +60,13 @@ export async function generateMetadata({
   };
 }
 
+/** Compute "years active" from the team member's created_at date. */
+function yearsActive(createdAt: string): number {
+  const created = new Date(createdAt).getTime();
+  if (isNaN(created)) return 0;
+  return Math.floor((Date.now() - created) / (365.25 * 24 * 60 * 60 * 1000));
+}
+
 export default async function ReviewerPage({
   params,
 }: {
@@ -96,12 +105,71 @@ export default async function ReviewerPage({
   const articles = (reviewedArticles || []) as Article[];
   const brokers = (reviewedBrokers || []) as Broker[];
 
+  // Cross-link: if the reviewer is also a listed advisor, fetch their
+  // professional profile for the Trust Score badge.
+  let advisorProfile: Professional | null = null;
+  if (m.advisor_slug) {
+    const { data: prof } = await supabase
+      .from("professionals")
+      .select(
+        "id, slug, name, type, verified, afsl_number, registration_number, " +
+          "verified_at, created_at, years_experience, bio, photo_url, " +
+          "qualifications, education, memberships, fee_structure, fee_description, " +
+          "linkedin_url, website, languages, rating, review_count"
+      )
+      .eq("slug", m.advisor_slug)
+      .eq("status", "active")
+      .single();
+    if (prof) advisorProfile = prof as unknown as Professional;
+  }
+
+  // Compute trust score only when we have a linked advisor profile
+  const trustScore = advisorProfile
+    ? computeAdvisorTrustScore({
+        verified: advisorProfile.verified,
+        afsl_number: advisorProfile.afsl_number,
+        registration_number: advisorProfile.registration_number,
+        verified_at: advisorProfile.verified_at,
+        created_at: advisorProfile.created_at,
+        years_experience: advisorProfile.years_experience,
+        bio: advisorProfile.bio,
+        photo_url: advisorProfile.photo_url,
+        qualifications: advisorProfile.qualifications as unknown[],
+        education: advisorProfile.education as unknown[],
+        memberships: advisorProfile.memberships as unknown[],
+        fee_structure: advisorProfile.fee_structure,
+        fee_description: advisorProfile.fee_description,
+        linkedin_url: advisorProfile.linkedin_url,
+        website: advisorProfile.website,
+        languages: advisorProfile.languages as unknown[],
+        rating: advisorProfile.rating,
+        review_count: advisorProfile.review_count,
+      })
+    : null;
+
+  // JSON-LD
   const profileLd = profilePageJsonLd(m, "reviewers");
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Reviewers", url: absoluteUrl("/reviewers") },
     { name: m.full_name },
   ]);
+
+  // Richer Person block with sameAs + review activity counters
+  const personLd = personJsonLd({
+    name: m.full_name,
+    profileUrl: `/reviewers/${m.slug}`,
+    description: m.short_bio,
+    jobTitle: formatRole(m.role),
+    imageUrl: m.avatar_url,
+    linkedinUrl: m.linkedin_url,
+    twitterUrl: m.twitter_url,
+    additionalSameAs: m.publications?.map((p) => p.url),
+    credentials: m.credentials,
+    articlesReviewedCount: articles.length > 0 ? articles.length : null,
+    productReviewsCount: brokers.length > 0 ? brokers.length : null,
+    activeFrom: m.created_at,
+  });
 
   const initials = m.full_name
     .split(" ")
@@ -110,12 +178,20 @@ export default async function ReviewerPage({
     .slice(0, 2)
     .toUpperCase();
 
+  // Credential stats line
+  const activeYears = yearsActive(m.created_at);
+  const totalReviews = articles.length + brokers.length;
+
   return (
     <div>
       {/* JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(profileLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }}
       />
       <script
         type="application/ld+json"
@@ -130,6 +206,10 @@ export default async function ReviewerPage({
             <div className="text-sm text-slate-400 mb-8">
               <Link href="/" className="hover:text-white transition-colors">
                 Home
+              </Link>
+              <span className="mx-2">/</span>
+              <Link href="/reviewers" className="hover:text-white transition-colors">
+                Reviewers
               </Link>
               <span className="mx-2">/</span>
               <span className="text-slate-300">{m.full_name}</span>
@@ -159,6 +239,35 @@ export default async function ReviewerPage({
                 <span className="inline-block text-sm font-medium bg-white/10 text-slate-300 px-3 py-1 rounded-full">
                   {formatRole(m.role)}
                 </span>
+
+                {/* Credential stats line */}
+                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-400">
+                  {totalReviews > 0 && (
+                    <span>
+                      <span className="text-white font-semibold">{totalReviews}</span>{" "}
+                      {totalReviews === 1 ? "review" : "reviews"} published
+                    </span>
+                  )}
+                  {articles.length > 0 && (
+                    <span>
+                      <span className="text-white font-semibold">{articles.length}</span>{" "}
+                      {articles.length === 1 ? "article" : "articles"} reviewed
+                    </span>
+                  )}
+                  {brokers.length > 0 && (
+                    <span>
+                      <span className="text-white font-semibold">{brokers.length}</span>{" "}
+                      broker{brokers.length === 1 ? "" : "s"} reviewed
+                    </span>
+                  )}
+                  {activeYears > 0 && (
+                    <span>
+                      Active for{" "}
+                      <span className="text-white font-semibold">{activeYears}</span>{" "}
+                      {activeYears === 1 ? "year" : "years"}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -194,6 +303,48 @@ export default async function ReviewerPage({
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {/* Advisor profile cross-link + Trust Score badge */}
+            {advisorProfile && trustScore && (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-bold text-emerald-900 mb-1">
+                      Also listed as a Financial Advisor
+                    </h3>
+                    <p className="text-sm text-emerald-800/80 leading-relaxed mb-3">
+                      {m.full_name} is also listed in the Invest.com.au advisor
+                      directory. Their profile has been independently verified
+                      and carries a Trust Score of{" "}
+                      <span className={`font-bold ${trustScore.labelColor}`}>
+                        {trustScore.overall}/100
+                      </span>{" "}
+                      ({trustScore.label}).
+                    </p>
+                    <Link
+                      href={`/advisor/${advisorProfile.slug}`}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors"
+                    >
+                      View Advisor Profile
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                  {/* Mini Trust Score badge */}
+                  <div className="flex flex-col items-center shrink-0">
+                    <div className="w-14 h-14 rounded-full border-4 border-emerald-300 bg-white flex items-center justify-center">
+                      <span className={`text-lg font-extrabold ${trustScore.labelColor}`}>
+                        {trustScore.overall}
+                      </span>
+                    </div>
+                    <span className="text-xs text-emerald-700 font-medium mt-1">
+                      Trust Score
+                    </span>
+                  </div>
+                </div>
               </div>
             )}
 
