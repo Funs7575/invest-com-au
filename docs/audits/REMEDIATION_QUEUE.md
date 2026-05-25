@@ -253,6 +253,34 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 572 — 2026-05-25 — STATUS: ALL-BLOCKED · stream=all · no-change-since-571
+
+- **Phase:** 0+0.5+1+1.5+1.7+2+3+7 — lock + sentinel + sync + migration-precondition + main-CI + in-flight CI audit + item assessment + queue update
+- **Phase 0.5:** No LOOP_PAUSE file on main — proceeding. Main HEAD `53664a5`.
+- **Phase 1 (Sync):** `git pull --ff-only origin/main` advanced 3 commits (two workflow-only updates from #1197 merge: `rotate-iteration-log.yml` + `stale-pr-sweeper.yml`). Main at `53664a5`.
+- **Phase 1.5 (Types drift precondition):** 0 migration SQL files added in last 24h. Skip regen.
+- **Phase 1.7 (Main CI preflight):** No new main push since iter 571 queue commit. All in-flight PRs build cleanly off current main. Main inferred healthy.
+- **Phase 2 (CI rescue check — all in-flight PRs):**
+  - **#1191** (`fix-auto-merge-noise-checks`, Tier C): `Lint · Type-check · Test · Build` ✅ SUCCESS (05:46Z 2026-05-24). `Preview smoke test` ❌ + `Supabase types drift` ❌ — confirmed infra noise. `needs-human-review` label. Awaiting founder merge.
+  - **#1182** (`disc-jobs-tests`): `Lint · Type-check · Test · Build` ✅ SUCCESS. `auto-merge-safe` ✅. No rescue needed.
+  - **#1183** (`disc-jobs-tests-2`): `Lint · Type-check · Test · Build` ✅ SUCCESS. `auto-merge-safe` ✅. No rescue needed.
+  - **#1184** (`disc-portal-routes-tests`): `Lint · Type-check · Test · Build` ✅ SUCCESS. `auto-merge-safe` ✅. No rescue needed.
+  - **#1185** (`disc-afsl-notif-reviews-tests`): `Lint · Type-check · Test · Build` ✅. `auto-merge-safe` ✅. No rescue needed.
+  - **#1186** (`disc-admin-kyc-comments`): `Lint · Type-check · Test · Build` ✅. `auto-merge-safe` ✅. No rescue needed.
+  - **#1187** (`disc-admin-content-notif-tests`): `Lint · Type-check · Test · Build` ✅. `auto-merge-safe` ✅. No rescue needed.
+  - **#1188** (`disc-admin-revalidate-objection`): `Lint · Type-check · Test · Build` ✅. `auto-merge-safe` ✅. No rescue needed.
+  - **#1176** (NF admin MFA env guard, Tier C): CI green (head `2cc8f25` unchanged). Awaiting founder merge.
+  - **#1177** (NF noindex empty verticals, Tier A): CI was green on `ac9528b`. No labels currently (label automation removes `auto-merge-safe` on page files — documented iter 568). Awaiting founder merge.
+  - **#1178** (NF autopilot DB toggles, Tier B): CI green (head `0f1fe60` unchanged). Awaiting founder merge.
+  - **#1180** (NF SMS consent, Tier C): CI green (head `9ba341c` unchanged). Awaiting founder merge.
+  - New Dependabot PRs observed (#1192–#1196): dep bumps for eslint, vitest, @vitest/coverage-v8, dev-patch-minor group, prod-minor group. Not in scope for the audit remediation loop. Note: `dependabot.yml` was deleted in #1197 but these PRs predate the deletion.
+- **Phase 3 (Item selection):** No pending engineering items in any non-blocked stream. 0 new route files created since last queue update. 0 new migration files in last 24h. No new discovery items. No override conditions met. All other streams done or blocked.
+- **Status unchanged from iter 571.** Automation paused (#1197 merged 2026-05-25 01:09Z). All 11 open PRs must be manually merged by founder. Engineering queue exhausted.
+- **No engineering work performed this iteration.** Batch stops here per spec (ALL-BLOCKED stop condition).
+- **STATUS: ALL-BLOCKED · stream=all · no-change-since-571**
+
+---
+
 ### iter 571 — 2026-05-25 — STATUS: ALL-BLOCKED · stream=all · automation-pause-confirmed(#1197-merged)
 
 - **Phase:** 0+0.5+1+1.7+2+3+7 — lock + sentinel + sync + main-CI + in-flight CI audit + item assessment + queue update
