@@ -8,6 +8,7 @@ import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { logger } from "@/lib/logger";
+import NextActions from "@/components/NextActions";
 
 const log = logger("advisors-page");
 
@@ -112,6 +113,10 @@ export default function AdvisorsPage() {
       </div>
       <Suspense fallback={<AdvisorsLoading />}>
         <AdvisorsData />
+      </Suspense>
+      {/* Personalised next-action strip — advisor surface suppresses duplicate advisor CTAs */}
+      <Suspense fallback={null}>
+        <NextActions surface="advisors" />
       </Suspense>
       <HomeToolsStrip />
     </>
