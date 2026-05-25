@@ -234,7 +234,7 @@ export const LEARNING_PATHS: LearningPath[] = [
       "Master superannuation contributions, the SMSF decision, preservation age, and planning your retirement income.",
     audience: "Working Australians planning for retirement",
     colorClass: "amber",
-    estimatedMinutes: 72,
+    estimatedMinutes: 67,
     steps: [
       {
         title: "What is superannuation?",
