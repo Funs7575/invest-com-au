@@ -34,7 +34,11 @@ export default function PushOptIn({ initialEnabled }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Detect browser push support and current permission state
+  // Detect browser push support + current permission post-mount. PushManager /
+  // Notification are browser-only (absent during SSR), so this can't run in render;
+  // the "loading" initial state keeps server + client markup in sync until it does.
+  // The one-shot setState is intentional (single detection, not a render loop).
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (
       typeof window === "undefined" ||
@@ -46,6 +50,7 @@ export default function PushOptIn({ initialEnabled }: Props) {
     }
     setPermission(Notification.permission as PermissionState);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleEnable = async () => {
     setBusy(true);

@@ -28,6 +28,7 @@
  *   handles transport; it applies no compliance filtering.
  */
 
+// eslint-disable-next-line no-restricted-imports -- runs from the alert crons (no user JWT), dispatching to a specific user's push_subscriptions rows; service-role required for this cross-user/cron context
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 

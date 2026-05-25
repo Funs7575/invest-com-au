@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
     if (!(await isAllowed("push_subscribe", ipKey(request), { max: 5, refillPerSec: 5 / 3600 }))) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- subscription shape is hand-validated immediately below (endpoint + keys.p256dh + keys.auth required)
     const body = (await request.json()) as SubscribeBody;
 
     // Validate subscription shape
