@@ -955,6 +955,93 @@ const VERTICALS: VerticalConfig[] = [
     ],
     advisorTypes: [{ type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" }],
   },
+  /* ─── 10. Alternative Assets ─── */
+  {
+    slug: "alternatives",
+    platformTypes: ["property_platform"] as PlatformType[], // platform DB is not used — listing DB via fund/physical_asset
+    expertTags: ["alternatives", "wine", "art", "collectibles", "whisky", "watches"],
+    title: `Best Alternative Investment Platforms in Australia (${yr}) — Wine, Art & Collectibles`,
+    h1: "Compare Alternative Investment Platforms in Australia",
+    metaDescription: `Compare the best alternative investment platforms available to Australians in ${yr}. Wine, art, watches, classic cars, coins, whisky — fees, minimums, and AU access verified ${CURRENT_MONTH_YEAR}.`,
+    heroHeadline: "Compare Australia's Alternative Investment Platforms",
+    heroSubtext: `Side-by-side comparison of fees, minimum investments, asset classes, and Australian access for wine, art, watches, and collectibles platforms. Verified ${CURRENT_MONTH_YEAR}.`,
+    color: {
+      bg: "bg-rose-50",
+      border: "border-rose-200",
+      text: "text-rose-700",
+      accent: "bg-rose-600",
+      gradient: "from-rose-50 to-white",
+    },
+    stats: [
+      { label: "Platforms Compared", value: "6+" },
+      { label: "Lowest Entry Point", value: "$10" },
+      { label: "Asset Classes", value: "7+" },
+      { label: "Fees Verified", value: FEES_VERIFIED_LABEL },
+    ],
+    subcategories: [
+      { label: "Wine Investing", href: "/invest/alternatives/listings/wine", description: "Fine wine investment platforms and portfolios" },
+      { label: "Art Investing", href: "/invest/alternatives/listings/art", description: "Fractional art investment with blue-chip artists" },
+      { label: "Watches", href: "/invest/alternatives/listings/watches", description: "Investment-grade luxury watch platforms" },
+      { label: "Classic Cars", href: "/invest/alternatives/listings/cars", description: "Fractional classic and exotic car platforms" },
+      { label: "Whisky", href: "/invest/alternatives/listings/whisky", description: "Rare whisky cask and bottle investment" },
+      { label: "Coins & Numismatics", href: "/invest/alternatives/listings/coins", description: "Rare coins and numismatic investment" },
+      { label: "Sports Memorabilia", href: "/invest/alternatives/listings/sports-memorabilia", description: "Signed jerseys, match-worn items, and sports collectibles" },
+    ],
+    tools: [
+      { label: "Compare Platforms", href: "/invest/alternatives/platforms", icon: "bar-chart" },
+      { label: "Browse Listings", href: "/invest/alternatives/listings", icon: "list" },
+      { label: "Investment Guides", href: "/invest/alternatives/guides", icon: "book-open" },
+    ],
+    advisorTypes: [
+      { type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" },
+      { type: "smsf_accountant", label: "SMSF Accountants", href: "/advisors/smsf-accountants" },
+    ],
+    sections: [
+      {
+        heading: "What Are Alternative Investments?",
+        body: "Alternative investments are asset classes outside traditional shares, bonds, and cash. In Australia, the most sought-after alternatives include fine wine, contemporary art, luxury watches, classic cars, rare coins, and premium whisky. These tangible assets have attracted growing interest from investors seeking portfolio diversification and returns less correlated with the ASX. Historically, fine wine has delivered annualised returns of approximately 13–14% over 20 years per the Liv-ex Fine Wine 1000 index, while the Artprice Global Index shows art returning a similar figure over the same period.",
+      },
+      {
+        heading: "Fractional Ownership — Lowering the Entry Bar",
+        body: "The alternative investment landscape has been transformed by fractional ownership platforms. Where buying a case of investment-grade Burgundy once required $10,000–$50,000, platforms like Vinovest and Cult Wines allow entry from $1,000. Art platforms like Masterworks have securitised blue-chip paintings into SEC-qualified share offerings with a $500 USD minimum. Australian platform Maverix offers exposure across multiple asset classes from just $50. This democratisation has opened alternatives to a much broader investor base, though it also introduces platform-specific risks (liquidity, custody, fee drag) that vary significantly between providers.",
+      },
+      {
+        heading: "Key Risks to Understand",
+        body: "Alternative investments carry risks that differ materially from shares: illiquidity (secondary markets exist but are thinner than the ASX), storage and insurance costs that reduce net returns, authenticity and provenance verification requirements, and limited regulatory protection from ASIC for most structures. Most wine, art, and collectible platforms are not regulated as financial products under the Corporations Act, meaning you do not have access to the same investor protections as ASIC-regulated products. Always check a platform's regulatory status, custody arrangements, and insurance before investing.",
+      },
+      {
+        heading: "Tax Treatment of Alternative Investments in Australia",
+        body: `Profits from selling alternative investments are subject to Capital Gains Tax (CGT) in Australia. Personal use assets acquired for under $10,000 may be exempt, but investment-grade items held as investments are clearly subject to CGT. The 50% CGT discount applies to assets held for more than 12 months. SMSF trustees face additional ATO requirements — collectibles in an SMSF must be stored appropriately, insured, not used personally by members, and must meet strict storage and dealings rules. Penalties for non-compliance are significant.`,
+      },
+    ],
+    faqs: [
+      {
+        question: "Can Australians invest in alternative asset platforms?",
+        answer: "Yes. Australians can access platforms directly (e.g. Vinovest for wine, Australian-based Maverix) or via overseas accounts (Masterworks for art, Rally for collectibles). Australian-based platforms offer AUD deposits and no currency risk. Some overseas platforms require US-account setup which adds friction.",
+      },
+      {
+        question: "Are alternative investment platforms regulated by ASIC?",
+        answer: "Most wine, art, and collectibles platforms are NOT regulated by ASIC as financial products. Physical wine and art are generally not financial products under the Corporations Act. Some fractional or tokenised offerings may fall under regulation. Always verify a platform's regulatory status and read their terms before investing. Australian platform Maverix operates under Australian business regulations; US platforms like Masterworks are SEC-regulated in the US.",
+      },
+      {
+        question: "How much should I allocate to alternative investments?",
+        answer: "Most financial advisers suggest limiting alternatives to 5–15% of a total portfolio. Alternatives are typically less liquid than shares, may have higher transaction costs, and carry platform risk that shares do not. Start small, diversify across asset classes, and only invest money you will not need in the short to medium term.",
+      },
+      {
+        question: "Can I hold alternative investments in my SMSF?",
+        answer: "Yes, but with strict ATO requirements. Collectibles in an SMSF (wine, art, coins, cars, etc.) must: be insured in the fund's name, not be displayed in a member's private residence or business, not be personally used by members or related parties, and must be stored at arm's length under a documented storage arrangement reviewed annually by trustees.",
+      },
+      {
+        question: "How liquid are alternative investments?",
+        answer: "Most alternatives are significantly less liquid than listed shares. Fine wine and art can take weeks to months to sell at fair value through an auction house or specialist broker. Platform-based secondary markets exist but are thinner — there is no guarantee of finding a buyer at your desired price within a short timeframe. Plan for hold periods of 2–7 years for most alternative asset classes.",
+      },
+      {
+        question: "What fees do alternative investment platforms charge?",
+        answer: `Fees vary widely. Annual management fees range from 0% (Rally) to 2.85% (Vinovest). Some platforms charge performance fees — Masterworks takes 20% of profits. Transaction fees on buy/sell, storage fees, and insurance costs may also apply. Always model the total cost of ownership including all fees before comparing net returns.`,
+      },
+    ],
+  },
+
   {
     slug: "business-finance",
     platformTypes: ["business_lender"],
@@ -1051,6 +1138,8 @@ const PILLAR_SHORT_LABELS: Record<string, string> = {
   "robo-advisors": "Robo-Advisors",
   "property-platforms": "Property Platforms",
   "research-tools": "Research Tools",
+  alternatives: "Alternative Assets",
+  "business-finance": "Business Finance",
 };
 
 export interface RelatedVertical {

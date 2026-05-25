@@ -584,6 +584,20 @@ export interface BrokerHealthScore {
   updated_at: string;
 }
 
+// ─── Health score history (time-series for sparkline) ───
+
+export interface BrokerHealthScoreHistory {
+  id: number;
+  broker_slug: string;
+  overall_score: number;
+  regulatory_score: number | null;
+  client_money_score: number | null;
+  financial_stability_score: number | null;
+  platform_reliability_score: number | null;
+  insurance_score: number | null;
+  captured_at: string;
+}
+
 // ─── Feature 9: Regulatory & Tax Change Alerts ───
 
 export interface RegulatoryAlert {
