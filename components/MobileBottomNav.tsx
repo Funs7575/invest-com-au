@@ -75,7 +75,7 @@ export default function MobileBottomNav() {
   return (
     <nav
       aria-label="Mobile primary navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] safe-area-inset-bottom"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-t border-slate-200 dark:border-slate-700 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.4)] safe-area-inset-bottom"
     >
       <ul className="grid grid-cols-4 m-0 p-0 list-none">
         {TABS.map((tab) => {
@@ -86,7 +86,7 @@ export default function MobileBottomNav() {
               <Link
                 href={tab.href}
                 className={`flex flex-col items-center justify-center gap-1 py-2 min-h-14 text-[0.65rem] font-bold transition-colors ${
-                  active ? "text-amber-600" : "text-slate-600 hover:text-slate-900"
+                  active ? "text-amber-600 dark:text-amber-400" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
                 }`}
               >
                 <span aria-hidden>{tab.icon}</span>

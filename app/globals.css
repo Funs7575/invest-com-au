@@ -1334,6 +1334,7 @@ html.dark .bg-white\/50  { background-color: rgba(30, 41, 59, 0.92) !important; 
 html.dark .bg-white\/60  { background-color: rgba(30, 41, 59, 0.94) !important; }
 html.dark .bg-white\/80  { background-color: rgba(30, 41, 59, 0.96) !important; }
 html.dark .bg-white\/90  { background-color: rgba(30, 41, 59, 0.98) !important; }
+html.dark .bg-white\/95  { background-color: rgba(15, 23, 42, 0.97) !important; }
 
 /* Images occasionally look too bright on dark pages — subtly
    dim raw <img> tags outside the prose container. Opt-out with
@@ -1391,6 +1392,24 @@ html.dark details summary { color: #e2e8f0 !important; }
 html.dark .text-muted-foreground { color: #94a3b8 !important; }
 html.dark .bg-muted               { background-color: #1e293b !important; }
 html.dark .bg-card                { background-color: #1e293b !important; }
+
+/* ── Design v2 custom CSS class dark-mode overrides ──────────────
+   These classes use raw CSS `background: white` which can't be
+   caught by the Tailwind-class override approach above. */
+html.dark .iv2-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+html.dark .iv2-cta-ghost {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-color: #475569;
+}
+html.dark .iv2-cta-ghost:hover { border-color: #94a3b8; }
+html.dark .glass-card {
+  background: rgba(30, 41, 59, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
+}
 
 /* ── Unified card styles for admin & portal ──────────── */
 .card-base {

@@ -13,7 +13,7 @@ const Navigation = dynamic(
   {
     ssr: true,
     loading: () => (
-      <div className="h-16 md:h-20 bg-white border-b border-slate-100" aria-hidden="true" />
+      <div className="h-16 md:h-20 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-700" aria-hidden="true" />
     ),
   }
 );

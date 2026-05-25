@@ -8,6 +8,7 @@ import { SHOW_BEST_PICKS, SHOW_MATCH_LANGUAGE, PRIMARY_CTA_TEXT, PRIMARY_CTA_HRE
 import dynamic from "next/dynamic";
 import AccountButton from "@/components/layout/AccountButton";
 import { useUser } from "@/lib/hooks/useUser";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const SearchOverlay = dynamic(() => import("@/components/SearchOverlay"), { ssr: false });
 const LocationFlagButton = dynamic(() => import("@/components/layout/LocationFlagButton"), { ssr: false });
@@ -187,15 +188,15 @@ function MegaMenuDropdown({
         // ~30px across the 6-item row on narrow screens.
         className={`flex items-center gap-1 px-2.5 py-2 text-[0.8125rem] font-semibold rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 whitespace-nowrap
           ${isActive
-            ? "text-slate-900 bg-slate-50"
-            : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+            ? "text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-800"
+            : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800"
           }`}
         aria-expanded={open}
         aria-haspopup="menu"
       >
         {label}
         <svg
-          className={`w-3 h-3 text-slate-500 transition-transform duration-200 shrink-0 ${open ? "rotate-180" : ""}`}
+          className={`w-3 h-3 text-slate-500 dark:text-slate-400 transition-transform duration-200 shrink-0 ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -207,7 +208,7 @@ function MegaMenuDropdown({
 
       {open && (
         <div className={`absolute left-0 top-full pt-2 z-50 ${menuWidth}`}>
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/60 dark:shadow-slate-900/80 overflow-hidden">
             {children}
           </div>
         </div>
@@ -399,7 +400,7 @@ export function Navigation() {
 
   return (
     <>
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-slate-900/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 lg:h-[68px] items-center justify-between gap-4">
 
@@ -713,9 +714,10 @@ export function Navigation() {
           {/* Desktop CTA area */}
           <div className="hidden lg:flex items-center gap-2">
             <LocationFlagButton />
+            <ThemeToggle />
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              className="p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               aria-label="Search"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -736,9 +738,10 @@ export function Navigation() {
 
           {/* Mobile buttons */}
           <div className="lg:hidden flex items-center gap-1.5">
+            <ThemeToggle />
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-500 rounded-lg hover:bg-slate-100 transition-colors"
+              className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-500 dark:text-slate-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               aria-label="Search"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -753,7 +756,7 @@ export function Navigation() {
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}
-              className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-700 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
@@ -776,13 +779,13 @@ export function Navigation() {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="lg:hidden border-t border-slate-100 bg-white max-h-[85vh] overflow-y-auto"
+          className="lg:hidden border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[85vh] overflow-y-auto"
           aria-label="Mobile navigation"
         >
           <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-0.5">
             {currentMobileSections.map((section, si) => (
-              <div key={section.title} className={si > 0 ? "border-t border-slate-100 pt-3 mt-1" : ""}>
-                <p className="px-3 pb-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500">
+              <div key={section.title} className={si > 0 ? "border-t border-slate-100 dark:border-slate-700 pt-3 mt-1" : ""}>
+                <p className="px-3 pb-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   {section.title}
                 </p>
                 {section.items.map((item) => {
@@ -794,13 +797,13 @@ export function Navigation() {
                       onClick={() => setMobileOpen(false)}
                       className={`flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium transition-colors ${
                         active
-                          ? "bg-amber-50 text-amber-800 font-bold"
-                          : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                          ? "bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 font-bold"
+                          : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
                       }`}
                       {...(active ? { "aria-current": "page" as const } : {})}
                     >
                       {item.name}
-                      <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <svg className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>
@@ -812,8 +815,8 @@ export function Navigation() {
             {/* Account section — previously desktop-only, now mirrored for
                 mobile so logged-in users can reach /account, /shortlist etc
                 and logged-out users can reach sign-in/sign-up from any page. */}
-            <div className="border-t border-slate-100 pt-3 mt-1">
-              <p className="px-3 pb-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500">
+            <div className="border-t border-slate-100 dark:border-slate-700 pt-3 mt-1">
+              <p className="px-3 pb-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                 Account
               </p>
               {user ? (
@@ -821,40 +824,40 @@ export function Navigation() {
                   <Link
                     href="/account"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                   >
                     My Account
-                    <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
                   <Link
                     href="/shortlist"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                   >
                     My Shortlist
-                    <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
                   <Link
                     href="/account/saved"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                   >
                     Saved Comparisons
-                    <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
                   <Link
                     href="/fee-alerts"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                   >
                     Fee Alerts
-                    <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
@@ -864,14 +867,14 @@ export function Navigation() {
                   <Link
                     href="/auth/login"
                     onClick={() => setMobileOpen(false)}
-                    className="flex-1 flex items-center justify-center py-3 min-h-12 rounded-xl text-sm font-semibold text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors"
+                    className="flex-1 flex items-center justify-center py-3 min-h-12 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/auth/signup"
                     onClick={() => setMobileOpen(false)}
-                    className="flex-1 flex items-center justify-center py-3 min-h-12 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 transition-colors"
+                    className="flex-1 flex items-center justify-center py-3 min-h-12 rounded-xl text-sm font-semibold text-white bg-slate-900 dark:bg-slate-100 dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors"
                   >
                     Sign Up
                   </Link>
@@ -880,7 +883,7 @@ export function Navigation() {
             </div>
 
             {/* Single full-width CTA */}
-            <div className="border-t border-slate-100 pt-4 mt-2 pb-2">
+            <div className="border-t border-slate-100 dark:border-slate-700 pt-4 mt-2 pb-2">
               <Link
                 href={PRIMARY_CTA_HREF}
                 onClick={() => setMobileOpen(false)}

@@ -56,7 +56,7 @@ export default function CalculatorShell({
   return (
     <div
       data-testid="calculator-shell"
-      className={`rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden${className ? ` ${className}` : ""}`}
+      className={`rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm overflow-hidden${className ? ` ${className}` : ""}`}
     >
       <div className="bg-slate-900 px-6 py-4 text-white flex items-center gap-3">
         <Icon name={iconName} size={20} className="text-amber-400" />
@@ -70,7 +70,7 @@ export default function CalculatorShell({
           <button
             onClick={handleShare}
             data-testid="share-button"
-            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 border border-slate-200 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
           >
             <Icon name="share-2" size={12} />
             {copied ? "Copied!" : "Share Results"}
