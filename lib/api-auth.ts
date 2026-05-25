@@ -12,6 +12,7 @@
  *  - Named-constant defaults per tier live in `lib/api-tiers.ts`.
  */
 
+// eslint-disable-next-line no-restricted-imports -- API-key validation queries the service_role-only api_keys table with no user JWT (cross-user); admin client required
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { NextRequest } from "next/server";

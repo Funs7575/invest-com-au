@@ -58,7 +58,6 @@ import { API_TIER_CONFIGS } from "@/lib/api-tiers";
 // Capture DB calls
 type UpdateCall = { table: string; payload: Record<string, unknown>; filters: Record<string, unknown> };
 type UpsertCall = { table: string; payload: Record<string, unknown> };
-type SelectCall = { table: string; filter?: Record<string, unknown> };
 
 let updateCalls: UpdateCall[] = [];
 let upsertCalls: UpsertCall[] = [];

@@ -29,7 +29,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { validateApiKey, API_CORS_HEADERS } from "@/lib/api-auth";
 import { logger } from "@/lib/logger";
 import { randomBytes, createHash } from "crypto";
-import { isEndpointAllowed } from "@/lib/api-tiers";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -44,7 +43,6 @@ const SUPPORTED_EVENTS = [
   "advisor.updated",
   "savings.updated",
 ] as const;
-type SupportedEvent = (typeof SUPPORTED_EVENTS)[number];
 
 const CreateWebhookBody = z.object({
   url: z

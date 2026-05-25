@@ -105,8 +105,8 @@ function defaultKey(overrides: Partial<KeyRow> = {}): KeyRow {
 const mockFrom = vi.fn((table: string) => {
   if (table === "api_keys") {
     return {
-      select: (cols: string) => ({
-        eq: (col: string, val: unknown) => ({
+      select: (_cols: string) => ({
+        eq: (_col: string, _val: unknown) => ({
           // For validateApiKey (key_hash lookup)
           single: async () =>
             selectedKey ? { data: selectedKey, error: null } : { data: null, error: { message: "not found" } },

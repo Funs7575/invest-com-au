@@ -161,6 +161,9 @@ describe("GET /api/v1/usage", () => {
     expect(body.key.name).toBe("Usage Test Key");
     expect(body.key.prefix).toBe("ica_usag");
     expect(body.key.created_at).toBe("2026-01-15T00:00:00Z");
+
+    // validateApiKey meters the request — the api_keys row is updated (counter increment)
+    expect(updateCalled).toBe(true);
   });
 
   it("returns 0 for requests_this_month when column is absent (old row)", async () => {

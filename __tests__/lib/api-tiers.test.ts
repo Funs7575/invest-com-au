@@ -2,7 +2,7 @@
  * Tests for lib/api-tiers.ts — tier config, endpoint gating, price-ID lookup.
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 
 import {
   API_TIER_CONFIGS,
