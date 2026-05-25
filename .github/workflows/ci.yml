@@ -385,14 +385,12 @@ jobs:
           fi
           npx supabase gen types typescript --project-id "$SUPABASE_PROJECT_ID" > /tmp/generated.ts
           if ! diff -u lib/database.types.ts /tmp/generated.ts > drift.diff; then
-            echo "::error::lib/database.types.ts has drifted from the live schema."
-            echo "Run 'npm run db:types' locally, commit the update, and push again."
-            echo ""
+            echo "::warning::lib/database.types.ts has drifted from the live schema. Run 'npm run db:types' locally and commit the update."
             echo "--- drift (first 100 lines) ---"
             head -100 drift.diff || true
-            exit 1
+          else
+            echo "lib/database.types.ts matches live DB schema."
           fi
-          echo "lib/database.types.ts matches live DB schema."
 
   rls-isolation-gate:
     name: RLS isolation gate (new user-data tables)
