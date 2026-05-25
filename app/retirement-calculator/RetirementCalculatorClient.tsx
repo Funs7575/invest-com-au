@@ -11,6 +11,8 @@ import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { formatCurrency } from "@/lib/utils";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useUrlSync } from "@/app/calculators/_components/CalcShared";
+import ShareResult from "@/components/ShareResult";
 
 export default function RetirementCalculatorClient() {
   const [currentAge, setCurrentAge] = useState(35);
@@ -80,6 +82,31 @@ export default function RetirementCalculatorClient() {
       desired_income: desiredIncome,
     });
   }, [currentAge, retirementAge, currentSuper, annualSalary, employerRate, additionalContributions, expectedReturn, inflationRate, desiredIncome, setPersistedInputs]);
+
+  // Auto-show results when the page is loaded from a shared link.
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof window === "undefined") return;
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.has("retirement_calculator_current_age")) setShowResults(true);
+  }, [persistHydrated]);
+
+  // Keep URL in sync with current inputs so shared links reproduce results.
+  useUrlSync(
+    showResults
+      ? {
+          retirement_calculator_current_age: String(currentAge),
+          retirement_calculator_retirement_age: String(retirementAge),
+          retirement_calculator_current_super: String(currentSuper),
+          retirement_calculator_annual_salary: String(annualSalary),
+          retirement_calculator_employer_rate: String(employerRate),
+          retirement_calculator_additional_contributions: String(additionalContributions),
+          retirement_calculator_expected_return: String(expectedReturn),
+          retirement_calculator_inflation_rate: String(inflationRate),
+          retirement_calculator_desired_income: String(desiredIncome),
+        }
+      : {}
+  );
 
   useEffect(() => { trackPageDuration("/retirement-calculator"); }, []);
 
@@ -409,6 +436,18 @@ export default function RetirementCalculatorClient() {
                   );
                 })}
               </div>
+            </div>
+
+            {/* Share result */}
+            <div className="mb-6">
+              <ShareResult
+                calculatorKey="retirement_calculator"
+                resultLabel={formatCurrency(projectedSuper)}
+                calcTitle="Retirement Calculator"
+                calcSlug="retirement"
+                state={{ current_age: currentAge, retirement_age: retirementAge, current_super: currentSuper, annual_salary: annualSalary, employer_rate: employerRate, additional_contributions: additionalContributions, expected_return: expectedReturn, inflation_rate: inflationRate, desired_income: desiredIncome }}
+                showDisclaimer={false}
+              />
             </div>
 
             {/* Email capture gate */}

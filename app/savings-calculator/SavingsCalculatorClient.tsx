@@ -6,7 +6,9 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
-import { useCalculatorState, buildShareableUrl } from "@/hooks/use-calculator-state";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useUrlSync } from "@/app/calculators/_components/CalcShared";
+import ShareResult from "@/components/ShareResult";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
@@ -53,6 +55,24 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
     setPersistedInputs({ balance, current_rate: currentRate });
   }, [balance, currentRate, setPersistedInputs]);
 
+  // Auto-show results when loaded from a shared link.
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof window === "undefined") return;
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.has("savings_calculator_balance")) setShowResults(true);
+  }, [persistHydrated]);
+
+  // Keep URL in sync so shared links reproduce results.
+  useUrlSync(
+    showResults
+      ? {
+          savings_calculator_balance: String(balance),
+          savings_calculator_current_rate: String(currentRate),
+        }
+      : {}
+  );
+
   useEffect(() => { trackPageDuration("/savings-calculator"); }, []);
 
   const ranked = accounts
@@ -96,16 +116,6 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
     setEmailSubmitted(true);
     setEmailGated(false);
     trackEvent("savings_calc_email", { email: email.trim() }, "/savings-calculator");
-  };
-
-  const handleShare = () => {
-    const deepLink = buildShareableUrl(window.location.pathname, "savings_calculator", { balance, current_rate: currentRate });
-    const text = `I could earn ${formatCurrency(maxExtra)} more per year just by switching savings accounts. See my calculation: ${deepLink}`;
-    if (navigator.share) {
-      navigator.share({ title: "Savings Calculator", text, url: deepLink }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(deepLink).catch(() => {});
-    }
   };
 
   const visibleAccounts = emailGated ? ranked.slice(0, 3) : ranked;
@@ -184,7 +194,14 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                   <p className="text-3xl md:text-5xl font-black text-emerald-700">{formatCurrency(maxExtra)}<span className="text-lg md:text-2xl">/year</span></p>
                   <p className="text-sm text-slate-600 mt-2">by switching from {currentRate}% to {topAccount.name} at {topAccount.rate}%</p>
                   <div className="flex items-center justify-center gap-2 mt-4">
-                    <button onClick={handleShare} className="text-xs px-3 py-1.5 bg-white border border-slate-200 rounded-full hover:bg-slate-50 font-semibold text-slate-600">Share Result</button>
+                    <ShareResult
+                      calculatorKey="savings_calculator"
+                      resultLabel={`${formatCurrency(maxExtra)}/yr extra`}
+                      calcTitle="Savings Calculator"
+                      calcSlug="savings"
+                      state={{ balance, current_rate: currentRate }}
+                      showDisclaimer={false}
+                    />
                   </div>
                 </>
               ) : (
