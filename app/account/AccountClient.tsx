@@ -290,6 +290,63 @@ export default function AccountClient() {
           </div>
         )}
 
+        {/* First-visit "where to start" panel — shown when account is brand new (no saves + onboarding incomplete) */}
+        {!onboardingDone && savedComparisonsCount === 0 && (
+          <div className="mb-4 bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div className="bg-gradient-to-r from-slate-900 to-slate-700 px-5 py-4">
+              <h2 className="text-base font-bold text-white">Get the most out of Invest.com.au</h2>
+              <p className="text-xs text-slate-400 mt-0.5">Three things worth doing first</p>
+            </div>
+            <div className="divide-y divide-slate-100">
+              <div className="flex items-start gap-4 px-5 py-4">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-xs font-extrabold text-emerald-700">1</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-slate-900">Take the Platform Quiz</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Answer 5 questions and we&apos;ll match you with the right broker for your style and goals.</p>
+                </div>
+                <Link
+                  href="/quiz"
+                  className="shrink-0 px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-colors"
+                >
+                  Start quiz
+                </Link>
+              </div>
+              <div className="flex items-start gap-4 px-5 py-4">
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-xs font-extrabold text-amber-700">2</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-slate-900">Compare brokers side by side</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Pick up to five brokers, compare fees and features, and save your shortlist.</p>
+                </div>
+                <Link
+                  href="/compare"
+                  className="shrink-0 px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
+                >
+                  Compare
+                </Link>
+              </div>
+              <div className="flex items-start gap-4 px-5 py-4">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-xs font-extrabold text-blue-700">3</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-slate-900">Set a rate alert</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Get notified when a savings rate, term deposit or brokerage fee hits your target.</p>
+                </div>
+                <Link
+                  href="/rate-alerts"
+                  className="shrink-0 px-3 py-1.5 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+                >
+                  Set alert
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Profile */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
           <div className="flex items-center justify-between">
@@ -517,18 +574,20 @@ export default function AccountClient() {
 
         {/* My Saves hub — prominent card linking to the aggregated saves view */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-0">
             <div>
               <h2 className="text-base font-bold text-slate-900">My Saves</h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Reading list, watchlist, comparisons, searches &amp; alerts
+                {savedComparisonsCount === 0
+                  ? "Nothing saved yet — bookmark articles, brokers and advisors as you browse"
+                  : "Reading list, watchlist, comparisons, searches & alerts"}
               </p>
             </div>
             <Link
               href="/account/my-saves"
               className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-700 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors"
             >
-              View all
+              {savedComparisonsCount === 0 ? "Explore" : "View all"}
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
