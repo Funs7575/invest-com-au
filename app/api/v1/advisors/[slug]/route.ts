@@ -183,7 +183,7 @@ export async function GET(
       .select(
         "id, rating, headline, body, reviewer_name, created_at",
       )
-      .eq("professional_id", (advisor as Record<string, unknown>).id)
+      .eq("professional_id", (advisor as unknown as Record<string, unknown>).id)
       .eq("status", "approved")
       .order("created_at", { ascending: false })
       .limit(10);

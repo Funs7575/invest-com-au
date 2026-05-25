@@ -607,7 +607,7 @@ for adv in advisors["data"]:
 # Get the latest AU brokerage fee index
 fee = requests.get(f"{BASE}/fee-index", headers=HEADERS).json()
 latest = fee["data"]["latest"]
-print(f"Market avg ASX fee: ${latest['avg_asx_fee']}")
+print(f"Market avg ASX fee: \${latest['avg_asx_fee']}")
 trend = fee["data"]["trend"]
 if trend and trend["quarter"]:
     print(f"QoQ change: {trend['quarter']['avgAsxFee']['changePct']}%")`}
