@@ -62,15 +62,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/private-credit/listings", "/invest/infrastructure/listings",
     "/invest/digital-infrastructure/listings",
     "/invest/public-social-infrastructure/listings",
-    // carbon/aquaculture/livestock /listings de-indexed pending compliance
-    // review (s708 / MIS classification) — guide hubs stay, listing pages omitted.
-    "/invest/royalties/listings",
+    // carbon/aquaculture/livestock/royalties/VC/litigation-funding/ILS /listings
+    // de-indexed (no live listings yet — thin pages hurt crawl budget).
+    // Guide hubs stay; listing pages omitted until supply threshold is met.
     "/invest/aquaculture",
     "/invest/livestock",
     "/invest/private-equity/listings",
-    "/invest/venture-capital", "/invest/venture-capital/listings",
-    "/invest/litigation-funding", "/invest/litigation-funding/listings",
-    "/invest/insurance-linked-securities", "/invest/insurance-linked-securities/listings",
+    "/invest/venture-capital",
+    "/invest/litigation-funding",
+    "/invest/insurance-linked-securities",
     "/foreign-investment/united-states", "/foreign-investment/japan", "/foreign-investment/india",
     "/foreign-investment/malaysia", "/foreign-investment/new-zealand", "/foreign-investment/south-korea",
     "/foreign-investment/saudi-arabia",

@@ -18,6 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Browse Australian litigation funding investment opportunities for wholesale investors. Class actions, commercial disputes and international arbitration funding. Compare expected returns, case portfolios and funding structures.",
     alternates: { canonical: `${SITE_URL}/invest/litigation-funding/listings` },
+    // No live listings yet — de-indexed until supply threshold is met.
+    // Remove when countListingsByVertical("litigation-funding") > 0 in prod.
+    robots: { index: false, follow: false },
     openGraph: {
       title: `Litigation Funding Investment Opportunities — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/litigation-funding/listings`,

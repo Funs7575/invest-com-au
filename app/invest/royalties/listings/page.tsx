@@ -18,6 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Browse Australian royalty and intellectual property investment opportunities. Mining royalties, music catalogue royalties, patent royalties, film residuals and pharmaceutical royalties available for investment.",
     alternates: { canonical: `${SITE_URL}/invest/royalties/listings` },
+    // No live listings yet — de-indexed until supply threshold is met.
+    // Remove when countListingsByVertical("royalties") > 0 in prod.
+    robots: { index: false, follow: false },
     openGraph: {
       title: `Royalty & IP Investment Opportunities Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/royalties/listings`,
