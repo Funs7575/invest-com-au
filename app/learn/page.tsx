@@ -4,17 +4,18 @@ import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import NewsletterCta from "./NewsletterCta";
+import { LEARNING_PATHS, sumEstimatedMinutes } from "@/lib/learning-paths";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: `Learn to Invest: Australian Beginner's Guide ${CURRENT_YEAR} | Invest.com.au`,
+  title: `Learning Paths & Guides: Learn to Invest in Australia ${CURRENT_YEAR} | Invest.com.au`,
   description:
-    "266 guides for Australian investors. Start here. Beginner pathways for shares, super, property, tax — plus the most-read evergreen articles.",
+    "Structured learning paths for Australian investors — new investor starter kit, choosing a broker, retirement & super, tax-smart investing, and foreign investor guide. Track your progress.",
   alternates: { canonical: `${SITE_URL}/learn` },
   openGraph: {
-    title: `Learn to Invest: Australian Beginner's Guide ${CURRENT_YEAR}`,
-    description: "266 guides. Start here.",
+    title: `Learning Paths: Learn to Invest in Australia ${CURRENT_YEAR}`,
+    description: "Structured paths with progress tracking. New investor, broker choice, super & retirement, tax, and foreign investor.",
     url: `${SITE_URL}/learn`,
     type: "website",
   },
@@ -69,6 +70,15 @@ const FALLBACK_ARTICLES = [
   { slug: "smsf-setup-cost-australia-2026", title: "SMSF Setup Cost Australia 2026", excerpt: "Real 2026 SMSF setup costs — full breakdown." },
 ];
 
+// ─── Path card accent colours (Tailwind complete strings for purge safety) ────
+const PATH_ACCENTS: Record<string, { border: string; text: string; bg: string; badge: string }> = {
+  teal:   { border: "border-teal-200",   text: "text-teal-700",   bg: "bg-teal-50",   badge: "bg-teal-100 text-teal-700" },
+  blue:   { border: "border-blue-200",   text: "text-blue-700",   bg: "bg-blue-50",   badge: "bg-blue-100 text-blue-700" },
+  amber:  { border: "border-amber-200",  text: "text-amber-700",  bg: "bg-amber-50",  badge: "bg-amber-100 text-amber-700" },
+  purple: { border: "border-purple-200", text: "text-purple-700", bg: "bg-purple-50", badge: "bg-purple-100 text-purple-700" },
+  rose:   { border: "border-rose-200",   text: "text-rose-700",   bg: "bg-rose-50",   badge: "bg-rose-100 text-rose-700" },
+};
+
 export default async function LearnHubPage() {
   const articles = await fetchBeginnerArticles();
   const showArticles = articles.length > 0 ? articles : FALLBACK_ARTICLES.map((a) => ({ ...a, category: "beginners" as string | null }));
@@ -77,9 +87,30 @@ export default async function LearnHubPage() {
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Learn", url: absoluteUrl("/learn") },
   ]);
+
+  // ItemList JSON-LD for the learning paths hub
+  const hubItemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Investing Learning Paths",
+    description: "Structured learning paths for Australian investors.",
+    numberOfItems: LEARNING_PATHS.length,
+    itemListElement: LEARNING_PATHS.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Course",
+        name: p.title,
+        description: p.description,
+        url: absoluteUrl(`/learn/${p.slug}`),
+      },
+    })),
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(hubItemListLd) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
@@ -89,21 +120,65 @@ export default async function LearnHubPage() {
               <span className="text-white font-medium">Learn</span>
             </nav>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-3 max-w-3xl">
-              Learn to Invest: Australian Beginner&rsquo;s Guide
+              Learning Paths for Australian Investors
             </h1>
             <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-3xl">
-              266 guides covering shares, ETFs, super, SMSF, property, tax and grants. Start with one of the four pathways below.
+              Structured paths through our guides, calculators, and Q&amp;A — from first investment to tax-smart retirement. Tick off steps as you go; progress saves automatically.
             </p>
           </div>
         </section>
 
-        <section className="py-12 bg-white">
+        {/* ── Learning Paths grid ── */}
+        <section className="py-12 bg-white" aria-labelledby="paths-heading">
+          <div className="container-custom max-w-6xl">
+            <h2 id="paths-heading" className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
+              Choose a learning path
+            </h2>
+            <p className="text-sm text-slate-600 mb-8">
+              Pick the path closest to where you are now. Progress is saved per path so you can pause and come back.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {LEARNING_PATHS.map((path) => {
+                const accent = PATH_ACCENTS[path.colorClass] ?? PATH_ACCENTS["teal"]!;
+                const totalMins = sumEstimatedMinutes(path);
+                const hoursDisplay = totalMins < 60 ? `${totalMins} min` : `${(totalMins / 60).toFixed(1)} hrs`;
+                return (
+                  <Link
+                    key={path.slug}
+                    href={`/learn/${path.slug}`}
+                    className={`group flex flex-col rounded-2xl border bg-white p-5 transition-all duration-150 hover:shadow-md hover:${accent.border} ${accent.border}`}
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <h3 className={`font-extrabold text-slate-900 leading-snug group-hover:${accent.text} transition-colors text-base`}>
+                        {path.title}
+                      </h3>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed mb-4 flex-1">
+                      {path.description}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2 mt-auto pt-3 border-t border-slate-100">
+                      <span className={`text-[0.65rem] px-2 py-0.5 rounded-full font-semibold ${accent.badge}`}>
+                        {path.audience}
+                      </span>
+                      <span className="text-[0.65rem] text-slate-400">
+                        {path.steps.length} steps · ~{hoursDisplay}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Quick-start pathways (kept from original) ── */}
+        <section className="py-12 bg-slate-50 border-y border-slate-200" aria-labelledby="pathways-heading">
           <div className="container-custom max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Four learning pathways</h2>
-            <p className="text-sm text-slate-600 mb-6">Pick the one closest to where you are — you can always switch.</p>
+            <h2 id="pathways-heading" className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Quick-start pathways</h2>
+            <p className="text-sm text-slate-600 mb-6">Jump to a topic area directly — no sign-in required.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {PATHWAYS.map((p) => (
-                <Link key={p.title} href={p.href} className="group rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 p-5 transition-colors flex items-start gap-4">
+                <Link key={p.title} href={p.href} className="group rounded-xl border border-slate-200 bg-white hover:bg-slate-50 p-5 transition-colors flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0"><Icon name={p.icon} size={20} className="text-amber-700" /></div>
                   <div>
                     <h3 className="font-extrabold text-slate-900 group-hover:text-amber-700 mb-1">{p.title}</h3>
@@ -115,9 +190,9 @@ export default async function LearnHubPage() {
           </div>
         </section>
 
-        <section className="py-12 bg-slate-50 border-y border-slate-200">
+        <section className="py-12 bg-white" aria-labelledby="articles-heading">
           <div className="container-custom max-w-6xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Recent beginner articles</h2>
+            <h2 id="articles-heading" className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Recent beginner articles</h2>
             <p className="text-sm text-slate-600 mb-6">The 12 most recent guides in our beginners category.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {showArticles.map((a) => (
@@ -135,7 +210,7 @@ export default async function LearnHubPage() {
           </div>
         </section>
 
-        <section className="py-12 bg-white">
+        <section className="py-12 bg-slate-50 border-t border-slate-200">
           <div className="container-custom max-w-3xl">
             <NewsletterCta />
           </div>
