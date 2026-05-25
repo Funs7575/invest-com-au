@@ -52,3 +52,7 @@ index copy*.html
 supabase/.temp/
 .claude/worktrees/
 .claude/settings.local.json
+
+# Visual screenshot pipeline (e2e/visual)
+/e2e/visual/snapshots/
+/e2e/visual/.auth/
