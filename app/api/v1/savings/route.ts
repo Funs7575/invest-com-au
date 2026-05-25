@@ -177,10 +177,10 @@ export async function GET(request: NextRequest) {
     const filteredKind = validKinds.find((k) => k === productKindFilter) ?? null;
 
     const platformIds = platformRows
-      .map((p) => (p as Record<string, unknown>).id as number)
+      .map((p) => (p as unknown as Record<string, unknown>).id as number)
       .filter(Boolean);
 
-    let ratesMap: Record<number, Record<string, unknown>[]> = {};
+    const ratesMap: Record<number, Record<string, unknown>[]> = {};
 
     if (platformIds.length > 0) {
       let ratesQuery = supabase
@@ -225,7 +225,7 @@ export async function GET(request: NextRequest) {
 
     const latestUpdate =
       sanitized.reduce((latest: string, p) => {
-        const u = (p.updated_at as string) || "";
+        const u = ((p as Record<string, unknown>).updated_at as string) || "";
         return u > latest ? u : latest;
       }, "") || new Date().toISOString();
 

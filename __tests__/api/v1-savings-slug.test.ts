@@ -35,10 +35,6 @@ import { GET, OPTIONS } from "@/app/api/v1/savings/[slug]/route";
 
 const VALID_KEY = { id: "key-savings-slug", name: "Test", key_prefix: "ica_test" };
 
-function makeValidAuth() {
-  return { valid: true, apiKey: VALID_KEY };
-}
-
 function makeInvalidAuth(msg = "Invalid API key") {
   return { valid: false, error: msg };
 }
