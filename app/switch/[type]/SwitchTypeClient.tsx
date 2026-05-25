@@ -169,7 +169,7 @@ function SuperEstimateForm() {
         Annual fee saving estimate
       </h2>
       <p className="text-xs text-slate-500 mb-3">
-        Enter your super balance and both funds' total annual fee percentages (admin + investment fees, found in each fund's PDS or the ATO YourSuper tool).
+        Enter your super balance and both funds&apos; total annual fee percentages (admin + investment fees, found in each fund&apos;s PDS or the ATO YourSuper tool).
       </p>
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div className="col-span-2">
@@ -277,7 +277,7 @@ function SavingsEstimateForm() {
         Annual interest gain estimate
       </h2>
       <p className="text-xs text-slate-500 mb-3">
-        Enter your savings balance and both accounts' ongoing interest rates (not the introductory rate).
+        Enter your savings balance and both accounts&apos; ongoing interest rates (not the introductory rate).
       </p>
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div className="col-span-2">
