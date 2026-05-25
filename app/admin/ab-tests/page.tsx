@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import TableSkeleton from "@/components/TableSkeleton";
 
@@ -110,7 +109,6 @@ function normalCDF(x: number): number {
 }
 
 export default function ABTestsPage() {
-  const supabase = createClient();
   const { toast } = useToast();
   const [tests, setTests] = useState<ABTest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -127,19 +125,21 @@ export default function ABTestsPage() {
 
   useEffect(() => {
     fetchTests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchTests() {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("site_ab_tests")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      toast("Error loading A/B tests: " + error.message, "error");
-    } else {
-      setTests((data as ABTest[]) || []);
+    try {
+      const res = await fetch("/api/admin/ab-tests");
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast("Error loading A/B tests: " + (body.error || res.statusText), "error");
+      } else {
+        setTests((body.tests as ABTest[]) || []);
+      }
+    } catch (e) {
+      toast("Error loading A/B tests: " + (e instanceof Error ? e.message : "network error"), "error");
     }
     setLoading(false);
   }
@@ -162,18 +162,17 @@ export default function ABTestsPage() {
     }
 
     setSaving(true);
-    const { error } = await supabase.from("site_ab_tests").insert({
+    const error = await postUpdate("POST", {
       name: formName.trim(),
       test_type: formType,
       page: formPage,
       variant_a: variantA,
       variant_b: variantB,
       traffic_split: formSplit,
-      status: "draft",
     });
 
     if (error) {
-      toast("Error creating test: " + error.message, "error");
+      toast("Error creating test: " + error, "error");
     } else {
       toast("A/B test created", "success");
       setShowForm(false);
@@ -198,13 +197,10 @@ export default function ABTestsPage() {
       updateData.end_date = new Date().toISOString();
     }
 
-    const { error } = await supabase
-      .from("site_ab_tests")
-      .update(updateData)
-      .eq("id", testId);
+    const error = await postUpdate("PATCH", { id: testId, ...updateData });
 
     if (error) {
-      toast("Error updating status: " + error.message, "error");
+      toast("Error updating status: " + error, "error");
     } else {
       toast(`Test ${newStatus}`, "success");
       fetchTests();
@@ -214,23 +210,46 @@ export default function ABTestsPage() {
 
   async function declareWinner(testId: number, winner: "a" | "b") {
     setSaving(true);
-    const { error } = await supabase
-      .from("site_ab_tests")
-      .update({
-        winner,
-        status: "completed",
-        end_date: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", testId);
+    const error = await postUpdate("PATCH", {
+      id: testId,
+      winner,
+      status: "completed",
+      end_date: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
 
     if (error) {
-      toast("Error declaring winner: " + error.message, "error");
+      toast("Error declaring winner: " + error, "error");
     } else {
       toast(`Variant ${winner.toUpperCase()} declared winner`, "success");
       fetchTests();
     }
     setSaving(false);
+  }
+
+  /**
+   * POST/PATCH a body to /api/admin/ab-tests. Returns null on success or an
+   * error string to surface in a toast — mirroring the previous supabase
+   * `{ error }` flow so the call sites read the same.
+   */
+  async function postUpdate(
+    method: "POST" | "PATCH",
+    payload: Record<string, unknown>,
+  ): Promise<string | null> {
+    try {
+      const res = await fetch("/api/admin/ab-tests", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        return body.error || res.statusText || "Request failed";
+      }
+      return null;
+    } catch (e) {
+      return e instanceof Error ? e.message : "network error";
+    }
   }
 
   return (
