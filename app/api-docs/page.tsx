@@ -6,12 +6,12 @@ export const revalidate = 86400;
 export const metadata = {
   title: "API Documentation | Invest.com.au",
   description:
-    "API documentation for financial planners and developers. Access Australian broker fee data, comparisons, and fee change history via a RESTful JSON API.",
+    "API documentation for financial planners and developers. Access Australian broker and advisor data, fee comparisons, and the AU brokerage fee index via a RESTful JSON API.",
   alternates: { canonical: "/api-docs" },
   openGraph: {
     title: "API Documentation | Invest.com.au",
     description:
-      "Access Australian broker data via our REST API. Built for financial planners, advisors, and fintech developers.",
+      "Access Australian broker and advisor data via our REST API. Built for financial planners, advisors, and fintech developers.",
   },
 };
 
@@ -99,12 +99,13 @@ export default function ApiDocsPage() {
 
           {/* Header */}
           <h1 className="text-2xl md:text-4xl font-extrabold mb-3">
-            Broker Data API
+            Financial Data API
           </h1>
           <p className="text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl">
-            Access verified Australian broker fee data, comparisons, and fee
-            change history via a RESTful JSON API. Built for financial planners,
-            advisors, and fintech developers.
+            Access verified Australian broker fee data, advisor directory
+            information, the AU brokerage fee index, and fee change history via
+            a RESTful JSON API. Built for financial planners, advisors, and
+            fintech developers.
           </p>
 
           {/* Getting Started */}
@@ -344,6 +345,106 @@ export default function ApiDocsPage() {
                 </div>
               </EndpointCard>
 
+              {/* List Advisors */}
+              <EndpointCard
+                method="GET"
+                path="/api/v1/advisors"
+                auth={true}
+                description="List active financial advisors and professionals. Returns public profile fields only — no PII, no billing data. Supports filtering and pagination."
+              >
+                <div>
+                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                    Query Parameters
+                  </h4>
+                  <div className="text-sm space-y-1 text-slate-600">
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        type
+                      </code>{" "}
+                      &mdash; financial_planner, smsf_accountant,
+                      property_advisor, tax_agent, mortgage_broker,
+                      wealth_manager, etc.
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        location_state
+                      </code>{" "}
+                      &mdash; NSW, VIC, QLD, WA, SA, TAS, ACT, NT
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        verified
+                      </code>{" "}
+                      &mdash; true / false
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        accepts_new_clients
+                      </code>{" "}
+                      &mdash; true / false
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        limit
+                      </code>{" "}
+                      &mdash; Results per page (default 20, max 100)
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        offset
+                      </code>{" "}
+                      &mdash; Pagination offset (default 0)
+                    </p>
+                  </div>
+                </div>
+              </EndpointCard>
+
+              {/* Single Advisor */}
+              <EndpointCard
+                method="GET"
+                path="/api/v1/advisors/:slug"
+                auth={true}
+                description="Get a single advisor's full public profile by slug. Includes qualifications, education, FAQs, services metadata, and the last 10 approved reviews."
+              >
+                <div>
+                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                    Path Parameters
+                  </h4>
+                  <p className="text-sm text-slate-600">
+                    <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                      slug
+                    </code>{" "}
+                    &mdash; The advisor&apos;s URL slug (e.g.
+                    &quot;jane-smith-cfp&quot;)
+                  </p>
+                </div>
+              </EndpointCard>
+
+              {/* Fee Index */}
+              <EndpointCard
+                method="GET"
+                path="/api/v1/fee-index"
+                auth={true}
+                description="AU brokerage fee index: market-wide average and median ASX per-trade fee, US share fee, and FX spread across all tracked active brokers. Updated daily. Includes QoQ and YoY trend deltas. Factual aggregate data — not financial advice."
+              >
+                <div>
+                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                    Query Parameters
+                  </h4>
+                  <p className="text-sm text-slate-600">
+                    <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                      history
+                    </code>{" "}
+                    &mdash; Number of prior daily snapshots to include (default
+                    90, max 400). Pass{" "}
+                    <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                      0
+                    </code>{" "}
+                    for latest snapshot only.
+                  </p>
+                </div>
+              </EndpointCard>
+
               {/* Request API Key */}
               <EndpointCard
                 method="POST"
@@ -418,7 +519,19 @@ curl -H "Authorization: Bearer ica_your_key_here" \\
 
 # Compare brokers
 curl -H "Authorization: Bearer ica_your_key_here" \\
-  "https://invest.com.au/api/v1/compare?slugs=stake,selfwealth,commsec"`}
+  "https://invest.com.au/api/v1/compare?slugs=stake,selfwealth,commsec"
+
+# List verified financial planners in NSW
+curl -H "Authorization: Bearer ica_your_key_here" \\
+  "https://invest.com.au/api/v1/advisors?type=financial_planner&location_state=NSW&verified=true"
+
+# Get a single advisor profile (includes reviews, FAQs)
+curl -H "Authorization: Bearer ica_your_key_here" \\
+  "https://invest.com.au/api/v1/advisors/jane-smith-cfp"
+
+# Get the current AU brokerage fee index with 30-day history
+curl -H "Authorization: Bearer ica_your_key_here" \\
+  "https://invest.com.au/api/v1/fee-index?history=30"`}
                 </CodeBlock>
               </div>
 
@@ -440,11 +553,22 @@ async function getBrokers() {
   return data;
 }
 
-async function compareBrokers(slugs) {
-  const res = await fetch(\`\${BASE}/compare?slugs=\${slugs.join(",")}\`, {
+async function getAdvisors(type, state) {
+  const res = await fetch(
+    \`\${BASE}/advisors?type=\${type}&location_state=\${state}&verified=true\`,
+    { headers: { Authorization: \`Bearer \${API_KEY}\` } }
+  );
+  return (await res.json()).data;
+}
+
+async function getFeeIndex() {
+  const res = await fetch(\`\${BASE}/fee-index?history=90\`, {
     headers: { Authorization: \`Bearer \${API_KEY}\` },
   });
-  return (await res.json()).data;
+  const { data } = await res.json();
+  const { latest, trend } = data;
+  console.log(\`Avg ASX fee: $\${latest.avg_asx_fee}\`); // console-allow: code-example
+  return { latest, trend };
 }`}
                 </CodeBlock>
               </div>
@@ -471,10 +595,22 @@ data = response.json()
 for broker in data["data"]:
     print(f"{broker['name']}: ASX fee {broker['asx_fee']}")
 
-# Get a single broker with fee history
-broker = requests.get(f"{BASE}/brokers/commsec", headers=HEADERS).json()
-for change in broker["data"]["fee_changelog"]:
-    print(f"{change['field_name']}: {change['old_value']} -> {change['new_value']}")`}
+# List SMSF accountants in Victoria
+advisors = requests.get(
+    f"{BASE}/advisors",
+    headers=HEADERS,
+    params={"type": "smsf_accountant", "location_state": "VIC", "verified": "true"}
+).json()
+for adv in advisors["data"]:
+    print(f"{adv['name']} — {adv['firm_name']} — rating {adv['rating']}")
+
+# Get the latest AU brokerage fee index
+fee = requests.get(f"{BASE}/fee-index", headers=HEADERS).json()
+latest = fee["data"]["latest"]
+print(f"Market avg ASX fee: ${latest['avg_asx_fee']}")
+trend = fee["data"]["trend"]
+if trend and trend["quarter"]:
+    print(f"QoQ change: {trend['quarter']['avgAsxFee']['changePct']}%")`}
                 </CodeBlock>
               </div>
             </div>
@@ -553,11 +689,17 @@ for change in broker["data"]["fee_changelog"]:
               Available Data Fields
             </h2>
             <p className="text-sm text-slate-600 mb-3">
-              The API exposes only public, non-sensitive broker data. Sensitive
+              The API exposes only public, non-sensitive data. Sensitive
               commercial fields (affiliate URLs, commission rates, CPA values,
-              sponsorship details) are never included in API responses.
+              sponsorship details, advisor billing data, PII) are never included
+              in API responses.
             </p>
-            <div className="overflow-x-auto">
+
+            {/* Broker fields */}
+            <h3 className="text-sm font-semibold text-slate-800 mt-6 mb-2">
+              Broker fields ({"/api/v1/brokers"})
+            </h3>
+            <div className="overflow-x-auto mb-6">
               <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
                 <thead>
                   <tr className="bg-slate-50">
@@ -593,6 +735,115 @@ for change in broker["data"]["fee_changelog"]:
                     ["year_founded", "number", "Year the broker was founded"],
                     ["fee_verified_date", "string", "When fees were last verified"],
                     ["fee_changelog", "array", "Last 10 fee changes (single broker only)"],
+                  ].map(([field, type, desc]) => (
+                    <tr key={field} className="border-b border-slate-100">
+                      <td className="px-4 py-2">
+                        <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                          {field}
+                        </code>
+                      </td>
+                      <td className="px-4 py-2 text-xs">{type}</td>
+                      <td className="px-4 py-2">{desc}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Advisor fields */}
+            <h3 className="text-sm font-semibold text-slate-800 mt-6 mb-2">
+              Advisor fields ({"/api/v1/advisors"})
+            </h3>
+            <div className="overflow-x-auto mb-6">
+              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+                <thead>
+                  <tr className="bg-slate-50">
+                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                      Field
+                    </th>
+                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                      Type
+                    </th>
+                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                      Description
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="text-slate-600">
+                  {[
+                    ["slug", "string", "URL-safe identifier"],
+                    ["name", "string", "Advisor display name"],
+                    ["firm_name", "string", "Firm or practice name"],
+                    ["type", "string", "Professional type (financial_planner, smsf_accountant, etc.)"],
+                    ["specialties", "array", "List of specialty areas"],
+                    ["location_state", "string", "Australian state code"],
+                    ["location_display", "string", "Human-readable location"],
+                    ["afsl_number", "string", "AFSL licence number (if applicable)"],
+                    ["bio", "string", "Public professional biography"],
+                    ["website", "string", "Public website URL"],
+                    ["fee_description", "string", "Fee structure description"],
+                    ["hourly_rate_cents", "number", "Hourly rate in cents (AUD)"],
+                    ["flat_fee_cents", "number", "Flat engagement fee in cents (AUD)"],
+                    ["aum_percentage", "number", "AUM-based fee percentage"],
+                    ["initial_consultation_free", "boolean", "Whether first meeting is free"],
+                    ["rating", "number", "Aggregate review rating (0-5)"],
+                    ["review_count", "number", "Number of approved reviews"],
+                    ["verified", "boolean", "Whether AFSL / credentials are verified"],
+                    ["accepts_new_clients", "boolean", "Currently accepting new clients"],
+                    ["availability_status", "string", "open | waitlist | closed"],
+                    ["languages", "array", "Languages spoken (single-advisor endpoint)"],
+                    ["qualifications", "array", "Professional qualifications (single-advisor endpoint)"],
+                    ["education", "array", "Education history (single-advisor endpoint)"],
+                    ["faqs", "array", "Public FAQ items (single-advisor endpoint)"],
+                    ["reviews", "array", "Last 10 approved reviews (single-advisor endpoint)"],
+                  ].map(([field, type, desc]) => (
+                    <tr key={field} className="border-b border-slate-100">
+                      <td className="px-4 py-2">
+                        <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                          {field}
+                        </code>
+                      </td>
+                      <td className="px-4 py-2 text-xs">{type}</td>
+                      <td className="px-4 py-2">{desc}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Fee index fields */}
+            <h3 className="text-sm font-semibold text-slate-800 mt-6 mb-2">
+              Fee Index fields ({"/api/v1/fee-index"})
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+                <thead>
+                  <tr className="bg-slate-50">
+                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                      Field
+                    </th>
+                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                      Type
+                    </th>
+                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                      Description
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="text-slate-600">
+                  {[
+                    ["period", "string", "UTC calendar day this snapshot covers (YYYY-MM-DD)"],
+                    ["computed_at", "string", "When this snapshot was computed"],
+                    ["broker_count", "number", "Distinct active brokers that contributed data"],
+                    ["avg_asx_fee", "number", "Mean ASX per-trade fee across tracked brokers (AUD)"],
+                    ["median_asx_fee", "number", "Median ASX per-trade fee"],
+                    ["avg_us_fee", "number", "Mean US share per-trade fee (AUD)"],
+                    ["median_us_fee", "number", "Median US share per-trade fee"],
+                    ["avg_fx_spread", "number", "Mean FX spread markup (%)"],
+                    ["median_fx_spread", "number", "Median FX spread markup (%)"],
+                    ["trend.quarter", "object", "QoQ deltas vs ~90 days prior (change, changePct per metric)"],
+                    ["trend.year", "object", "YoY deltas vs ~365 days prior (null if < 1 year of history)"],
+                    ["history", "array", "Prior daily snapshots, DESC by period"],
                   ].map(([field, type, desc]) => (
                     <tr key={field} className="border-b border-slate-100">
                       <td className="px-4 py-2">
