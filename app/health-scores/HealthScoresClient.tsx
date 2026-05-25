@@ -14,7 +14,7 @@ const DIMENSIONS = [
   { key: "insurance_score" as const, label: "Insurance", weight: 0.15, noteKey: "insurance_notes" as const },
 ];
 
-function ScoreGauge({ score, color, size = 140 }: { score: number; color: string; size?: number }) {
+function ScoreGauge({ score, size = 140 }: { score: number; size?: number }) {
   const r = (size - 16) / 2;
   const circumference = 2 * Math.PI * r;
   const progress = (score / 100) * circumference;
@@ -175,7 +175,7 @@ export default function HealthScoresClient({
             {/* Gauge + summary */}
             <div className="bg-white border border-slate-200 rounded-2xl p-6">
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <ScoreGauge score={selectedScore.overall_score} color={selectedBroker.color} />
+                <ScoreGauge score={selectedScore.overall_score} />
                 <div className="flex-1 text-center sm:text-left">
                   <h2 className="text-2xl font-extrabold">{selectedBroker.name}</h2>
                   <p className={`text-lg font-bold mt-1 ${
