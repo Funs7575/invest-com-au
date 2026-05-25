@@ -14,7 +14,7 @@ describe("/api/v1/docs", () => {
     const res = await GET();
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json).toHaveProperty("name", "Invest.com.au Broker API");
+    expect(json).toHaveProperty("name", "Invest.com.au Financial Data API");
     expect(json).toHaveProperty("version", "1.0");
     expect(json).toHaveProperty("endpoints");
     expect(Array.isArray(json.endpoints)).toBe(true);
