@@ -3,6 +3,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { wrapCronHandler } from "@/lib/cron-run-log";
+import {
+  validateLoanRateRows,
+  buildFreshnessReport,
+  LOAN_RATE_STALE_DAYS,
+} from "@/lib/rate-ingest";
+import { selectLoanRateAdapter } from "@/lib/rate-ingest-adapters";
 
 const log = logger("cron:refresh-loan-rates");
 
@@ -12,53 +18,125 @@ export const maxDuration = 60;
 /**
  * GET /api/cron/refresh-loan-rates
  *
- * Refreshes investment loan rates from an external rate provider.
+ * Real rate-ingest pipeline for investment_loan_rates.
  *
- * Current state: stub — touches updated_at on all rows so the UI's
- * "rates as of" timestamp stays current and the heartbeat check can
- * surface stale jobs. The actual rate-fetch logic lives in the TODO
- * below; the stub is intentional so the cron is wired up and observable
- * before a rate-provider contract is in place.
+ * Behaviour (graceful, idempotent):
+ *   1. requireCronAuth — fail-closed on missing/short CRON_SECRET.
+ *   2. Build a freshness report: query the most-recently updated row to
+ *      determine how stale the table is.
+ *   3. Select the adapter:
+ *        - LOAN_RATE_FEED_URL + LOAN_RATE_FEED_API_KEY set → partner_feed
+ *        - Otherwise → admin_db (re-reads existing admin-imported rows;
+ *          re-stamps updated_at so staleness clocks reset, works TODAY)
+ *   4. Fetch rows from the adapter (never throws — returns [] on failure).
+ *   5. Validate each row (sane bounds, required fields).
+ *   6. Upsert valid rows into investment_loan_rates keyed on lender_slug.
+ *   7. Return structured stats for the cron-run-log heartbeat checker.
  *
- * TODO: integrate a real rate source. Candidates:
- *   - Canstar / RateCity data-feed API (requires commercial agreement)
- *   - Lender public rate pages scraped via Browserbase (needs legal review)
- *   - Manual editorial update via /admin/loan-rates when no feed is available
- *
- * When a real source is added, replace the UPDATE below with a full
- * upsert loop that syncs each lender's rate_pct, comparison_rate_pct,
- * max_lvr, and any changed fields.
+ * AFSL: factual data operation only. No ranking, recommendation, or advice.
  */
 async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
   const supabase = createAdminClient();
-  const now = new Date().toISOString();
+  const now = new Date();
 
-  // Stub: bump updated_at on all rows. This keeps the ISR-cached page's
-  // "rates as of" label current and proves the cron is reaching the DB.
-  const { data, error } = await supabase
+  // ── 1. Freshness check ──────────────────────────────────────────────────────
+  const { data: latestRow } = await supabase
     .from("investment_loan_rates")
-    .update({ updated_at: now })
-    .neq("id", "00000000-0000-0000-0000-000000000000") // touch all rows
-    .select("id");
+    .select("updated_at")
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
-  if (error) {
-    log.error("Failed to update loan rates timestamp", { error: error.message });
-    return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+  const lastUpdatedAt = (latestRow?.updated_at as string | null | undefined) ?? null;
+  const { adapter, credentialed } = selectLoanRateAdapter();
+  const freshness = buildFreshnessReport(lastUpdatedAt, LOAN_RATE_STALE_DAYS, credentialed ? "partner_feed" : "admin_db", now);
+
+  log.info("loan-rates freshness", {
+    lastUpdatedAt,
+    daysSince: freshness.daysSince,
+    isStale: freshness.isStale,
+    source: freshness.source,
+    credentialed,
+  });
+
+  // ── 2. Fetch from adapter ───────────────────────────────────────────────────
+  const { rows: rawRows, source } = await adapter.fetch();
+
+  if (rawRows.length === 0) {
+    // No rows from the adapter (DB empty or feed unreachable). This is
+    // non-fatal — log it and return. The cron-health-alert cron will surface
+    // repeated empty runs separately.
+    log.warn("loan-rates: adapter returned no rows", { source, credentialed });
+    return NextResponse.json({
+      ok: true,
+      upserted: 0,
+      invalid: 0,
+      source,
+      credentialed,
+      freshness,
+      note: "adapter returned no rows — DB may be empty or feed unreachable",
+    });
   }
 
-  const updated = (data ?? []).length;
+  // ── 3. Validate ─────────────────────────────────────────────────────────────
+  const { valid, invalid } = validateLoanRateRows(rawRows);
 
-  log.info("Loan rates refresh completed (stub)", { updated, timestamp: now });
+  if (valid.length === 0) {
+    log.error("loan-rates: all rows failed validation", { totalRows: rawRows.length, source });
+    return NextResponse.json(
+      {
+        ok: false,
+        upserted: 0,
+        invalid: invalid.length,
+        source,
+        failures: invalid,
+        note: "all adapter rows failed validation",
+      },
+      { status: 500 },
+    );
+  }
+
+  // ── 4. Upsert ───────────────────────────────────────────────────────────────
+  // Upsert on lender_slug (unique key). updated_at is set to now() so the
+  // freshness check on the next run sees this cron's timestamp, not the
+  // original admin-import timestamp.
+  const upsertRows = valid.map((r) => ({
+    ...r,
+    updated_at: now.toISOString(),
+  }));
+
+  const { error: upsertError } = await supabase
+    .from("investment_loan_rates")
+    .upsert(upsertRows, { onConflict: "lender_slug", ignoreDuplicates: false });
+
+  if (upsertError) {
+    log.error("loan-rates: upsert failed", { error: upsertError.message, rows: valid.length });
+    return NextResponse.json(
+      { ok: false, error: upsertError.message },
+      { status: 500 },
+    );
+  }
+
+  log.info("loan-rates refresh complete", {
+    upserted: valid.length,
+    invalid: invalid.length,
+    source,
+    credentialed,
+    daysSince: freshness.daysSince,
+  });
 
   return NextResponse.json({
     ok: true,
-    updated,
-    mode: "stub",
-    timestamp: now,
-    note: "Rate values unchanged — stub until a rate-provider feed is integrated. See TODO in route.ts.",
+    upserted: valid.length,
+    invalid: invalid.length,
+    source,
+    credentialed,
+    freshness,
+    timestamp: now.toISOString(),
+    ...(invalid.length > 0 && { validationFailures: invalid }),
   });
 }
 
