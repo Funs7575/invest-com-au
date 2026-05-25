@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CURRENT_YEAR, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { calculatorJsonLd, faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
+import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import BorrowingPowerClient from "./BorrowingPowerClient";
 
 export const revalidate = 3600;
@@ -34,32 +34,22 @@ const calcLd = calculatorJsonLd({
 
 const faqLd = faqJsonLd([
   {
-    q: "How do banks calculate borrowing power?",
-    a: "Lenders calculate borrowing capacity by taking your gross income, deducting a living expenses benchmark (HEM or actual expenses, whichever is higher), deducting existing debt repayments (at stressed rates), then dividing the remaining net income by the stressed mortgage repayment rate (current + 3% APRA buffer). The result is the maximum loan amount at which net income covers all commitments.",
+    q: "How is borrowing power calculated in Australia?",
+    a: "Australian lenders calculate borrowing power by first working out your net monthly income after tax. They then subtract estimated living expenses (based on the Household Expenditure Measure or HEM), monthly credit card commitments (typically 3–3.8% of your combined card limits), and any existing loan repayments. The remaining surplus is your maximum monthly repayment. Lenders then work backwards from that repayment figure at an assessment rate (your actual rate + a buffer of 2.5–3%) to determine the maximum loan principal.",
   },
   {
-    q: "What reduces your borrowing power in Australia?",
-    a: "Key factors that reduce borrowing capacity: HECS/HELP debt (typically 1-3% per year is treated as a repayment obligation), existing home loans or investment loans, personal loans, credit card limits (often 3.8% per month of total limit is used regardless of actual balance), car loans, childcare costs, private school fees, and declared living expenses above HEM benchmarks.",
+    q: "What is the APRA assessment rate buffer?",
+    a: "APRA requires all authorised deposit-taking institutions (banks, credit unions) to assess borrowers at at least 3 percentage points above the loan's interest rate. For a loan at 6.2%, the assessment rate would be at least 9.2%. This is a serviceability buffer to ensure borrowers can still repay if rates rise significantly. Some non-bank lenders not regulated by APRA may apply a smaller buffer (e.g. 2.5%).",
   },
   {
-    q: "How does a bigger deposit increase borrowing power?",
-    a: "A larger deposit reduces the loan amount needed, which reduces the required repayments. It also removes the LMI requirement above 80% LVR (saving $5,000-$20,000+ depending on loan size). More importantly, a lower LVR gives access to better interest rates (often 0.1-0.5% lower), which further increases your serviceable loan amount at the same income.",
+    q: "Why does my credit card limit reduce borrowing power even if I don't carry a balance?",
+    a: "Lenders assume you could draw your full credit card limit at any time and then struggle to repay the loan. Standard practice is to treat 3–3.8% of your total credit card limits as a monthly commitment regardless of your actual spending. If you have unused credit cards, cancelling them before applying for a home loan can materially increase your borrowing power.",
   },
   {
-    q: "Does HECS debt affect mortgage borrowing power?",
-    a: "Yes, significantly. Lenders use HECS/HELP repayment obligations as a commitment deducted from assessable income. The compulsory repayment rate rises with income (from 1% at $51k to 10% above $137k in 2024-25). On a $50,000 HELP debt and $100,000 income, the lender might deduct $7,500/yr from your assessable income — reducing your borrowing capacity by approximately $120,000-$160,000 depending on the rate.",
-  },
-  {
-    q: "What's the difference between pre-approval and formal approval?",
-    a: "A pre-approval (or conditional approval) is an in-principle assessment based on the information you provide; it's not a binding commitment from the lender. Formal (unconditional) approval comes after the lender verifies all documents, values the specific property, and confirms no material change in your financial situation. Always make your offer or bid subject to formal finance approval — pre-approvals lapse (typically 90 days) and can be withdrawn if circumstances change.",
+    q: "Does having a guarantor increase borrowing power?",
+    a: "A guarantor (typically a parent) provides additional security against their own property, which removes the need for LMI when your deposit is below 20%. This doesn't directly increase borrowing power — that's still determined by your income and expenses — but it can allow you to borrow up to 80% or more of a more expensive property without saving a larger deposit. Check with a mortgage broker whether a family guarantee suits your situation.",
   },
 ]);
-
-const speakableLd = speakableWebPageJsonLd({
-  name: "Borrowing Power Calculator — How Much Can I Borrow?",
-  path: "/tools/borrowing-power-calculator",
-  selectors: ["h1"],
-});
 
 export default function BorrowingPowerPage() {
   return (
@@ -75,10 +65,6 @@ export default function BorrowingPowerPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
       />
       <Suspense>
         <BorrowingPowerClient />

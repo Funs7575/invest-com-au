@@ -8,7 +8,6 @@ import {
   CURRENT_YEAR,
   SITE_URL,
 } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import FullServiceBrokerCard from "@/components/full-service-brokers/FullServiceBrokerCard";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import Icon from "@/components/Icon";
@@ -68,29 +67,6 @@ export default async function FullServiceBrokersPage() {
     { name: "Full-Service Stockbrokers" },
   ]);
 
-  const faqLd = faqJsonLd([
-    {
-      q: "What is a full-service stockbroker in Australia?",
-      a: "A full-service stockbroker provides managed account services, licensed personal advice and trade execution under one roof. Unlike discount platforms, full-service firms assign you a dedicated broker who gives buy/sell recommendations, provides in-house equity research and can access IPOs and capital raisings on your behalf — all under an Australian Financial Services Licence (AFSL).",
-    },
-    {
-      q: "How much does a full-service stockbroker cost compared to a discount broker?",
-      a: "Full-service brokers in Australia typically charge 0.5%–1.5% of portfolio value per year (or per-trade commissions of 0.5%–1.1% with a minimum of $50–$200). Discount online brokers charge flat fees of $0–$30 per trade with no ongoing advice fee. The full-service premium is justified when the value of advice, research and IPO access exceeds the cost difference — generally at $250k+ portfolios.",
-    },
-    {
-      q: "When does a full-service stockbroker make sense for an Australian investor?",
-      a: "A full-service broker makes financial sense for investors with complex portfolios of $250k or more, those managing SMSFs who want equity advice integrated with their fund strategy, estate planning situations involving large share parcels, or investors who want access to pre-IPO placements and equity capital raisings not available on retail platforms.",
-    },
-    {
-      q: "How do I check a full-service broker is properly licensed in Australia?",
-      a: "All legitimate full-service stockbrokers must hold an Australian Financial Services Licence (AFSL) issued by ASIC. You can verify any firm's AFSL number on ASIC's Financial Advisers Register at moneysmart.gov.au. Every firm listed on this page displays its AFSL number — cross-check it on the register before engaging.",
-    },
-    {
-      q: "What minimum portfolio size do full-service brokers in Australia require?",
-      a: "Most full-service stockbrokers and private wealth managers in Australia require a minimum portfolio of $250,000–$500,000 to open an account. Some boutique full-service firms accept clients from $100,000 upwards, while the larger private banking divisions (e.g. JBWere, Morgan Stanley Private Wealth) typically require $1 million or more.",
-    },
-  ]);
-
   // ItemList schema for SEO — each firm becomes an ordered list entry
   const itemListLd = {
     "@context": "https://schema.org",
@@ -115,12 +91,6 @@ export default async function FullServiceBrokersPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
       />
-      {faqLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
-        />
-      )}
 
       <div className="py-6 md:py-12">
         <div className="container-custom max-w-5xl">

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 
 export const revalidate = 86400;
@@ -28,47 +27,15 @@ const DTA_RATES = [
   { country: "China",          rate: "0% / 15%", note: "PRC residents — 0% on franked, 15% on unfranked." },
 ];
 
-const breadcrumbLd = breadcrumbJsonLd([
-  { name: "Home", url: `${SITE_URL}/` },
-  { name: "Dividends", url: absoluteUrl("/dividends") },
-  { name: "Franking Credits", url: absoluteUrl("/dividends/franking-credits") },
-]);
-
-const faqLd = faqJsonLd([
-  {
-    q: "What is a franking credit?",
-    a: "A franking credit (also called an imputation credit) represents the corporate tax already paid — at 30% for standard companies, or 25% for base-rate entities — on the profit from which a dividend was paid. Australian resident shareholders attach the franking credit to the grossed-up dividend, calculate tax at their marginal rate on the total, then subtract the credit as an offset. The result is that dividends are effectively taxed at the difference between the shareholder's marginal rate and the corporate rate paid.",
-  },
-  {
-    q: "How do I calculate the franking credit on a dividend?",
-    a: "Franking credit = Dividend × (corporate tax rate ÷ (1 − corporate tax rate)). For a $70 fully-franked dividend from a 30%-tax company: $70 × (0.30 ÷ 0.70) = $30 franking credit, giving a grossed-up dividend of $100. For a base-rate entity (25% tax) paying a $75 fully-franked dividend: $75 × (0.25 ÷ 0.75) = $25 franking credit, grossed-up total $100.",
-  },
-  {
-    q: "Can I get a cash refund of franking credits?",
-    a: "Yes. If your total income tax payable for the year is less than the value of the franking credits attached to your dividends, the ATO will refund the difference in cash. This is particularly valuable for SMSF members in the pension phase (0% tax rate) and for low-income investors whose taxable income is below the effective tax-free threshold. The refundability of franking credits is a distinctive feature of the Australian imputation system.",
-  },
-  {
-    q: "What is the 45-day rule for franking credits?",
-    a: "To be entitled to use a franking credit, you must hold the shares 'at risk' (with substantially undiminished risks of both gain and loss) for at least 45 continuous days (90 days for preference shares) during the qualification period — the period beginning the day after acquisition and ending 45 days after the ex-dividend date, not counting the purchase and sale dates themselves. Investors who buy shortly before the ex-dividend date and sell shortly after — often called dividend stripping — will have their franking credit entitlement cancelled.",
-  },
-  {
-    q: "Do non-residents receive franking credits?",
-    a: "No. Non-resident shareholders cannot use Australian franking credits because they do not pay Australian personal income tax against which the credits could be offset. Instead, under the Conduit Foreign Income rules, the fully-franked component of a dividend paid to a non-resident is exempt from dividend withholding tax. Withholding tax applies only to the unfranked component at the applicable treaty rate (typically 15% under a Double Tax Agreement, or 30% without a treaty).",
-  },
-]);
-
-const speakableLd = speakableWebPageJsonLd({
-  name: "Franking Credits — Australian Dividend Tax",
-  path: "/dividends/franking-credits",
-  selectors: ["h1"],
-});
-
 export default function FrankingCreditsPage() {
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: `${SITE_URL}/` },
+    { name: "Dividends", url: absoluteUrl("/dividends") },
+    { name: "Franking Credits", url: absoluteUrl("/dividends/franking-credits") },
+  ]);
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">

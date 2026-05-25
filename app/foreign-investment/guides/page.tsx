@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 
 export const metadata: Metadata = {
@@ -108,25 +107,6 @@ const TOPIC_GUIDES = [
   },
 ];
 
-const firbGuidesFaqLd = faqJsonLd([
-  {
-    q: "Do I need FIRB approval to buy property in Australia as a foreigner?",
-    a: "Almost all foreign non-residents and temporary visa holders need FIRB (Foreign Investment Review Board) approval before purchasing property in Australia. From 1 April 2025 to 31 March 2027, there is also a ban on foreign persons (including temporary residents) purchasing established dwellings. Permitted purchases include new dwellings, off-the-plan apartments, and vacant land for development. FIRB application fees range from $14,100 to over $1 million depending on property value. Always seek legal advice specific to your visa status before making an offer.",
-  },
-  {
-    q: "What are the FIRB fees for foreign property buyers?",
-    a: "FIRB fees for residential property are: $14,100 for properties up to $1 million; $28,200 for $1–2M; $56,400 for $2–3M; up to $1.12M for properties over $40M. Commercial property fees vary by threshold and use case. Fees increased significantly in 2021 and are non-refundable whether the application is approved or rejected. Application fees are paid upfront when lodging via the ATO's online FIRB portal. Always verify current fees at ATO.gov.au before applying — they are indexed annually.",
-  },
-  {
-    q: "What foreign buyer stamp duty surcharges apply in Australia?",
-    a: "Most Australian states charge foreign buyers an additional stamp duty surcharge on top of standard stamp duty: NSW and VIC charge 8%, QLD and WA charge 7%, SA charges 7%, and TAS charges 8%. ACT and NT have no foreign surcharge. On a $1M purchase in NSW, the surcharge alone is $80,000. Most states also charge an ongoing land tax surcharge (1.5–5% annually) on land owned by foreign persons. These are separate from and in addition to standard state stamp duty and land tax.",
-  },
-  {
-    q: "Can a foreign investor buy commercial property in Australia?",
-    a: "Yes. Foreign investment in commercial real estate has higher thresholds and fewer restrictions than residential. Foreign persons can generally buy commercial property below FIRB notification thresholds without approval. The thresholds vary by property type and investor nationality — standard thresholds apply for most countries, while investors from countries with free trade agreements (USA, NZ, Chile, Singapore, Korea, Japan) benefit from higher thresholds. Strategic sectors (agriculture, media, telecommunications, infrastructure) have lower thresholds and stricter scrutiny.",
-  },
-]);
-
 export default function ForeignInvestmentGuidesPage() {
   return (
     <div className="bg-white min-h-screen">
@@ -141,10 +121,6 @@ export default function ForeignInvestmentGuidesPage() {
             ])
           ),
         }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(firbGuidesFaqLd) }}
       />
 
       {/* ── Hero ── */}

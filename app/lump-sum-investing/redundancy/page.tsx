@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 3600;
@@ -19,29 +18,6 @@ export const metadata: Metadata = {
   },
 };
 
-const REDUNDANCY_FAQS = faqJsonLd([
-  {
-    q: "Is a redundancy payout taxable in Australia?",
-    a: "Partly. A genuine redundancy payment receives a tax-free threshold: for 2025–26 it is $12,524 plus $6,264 for each completed year of service. Amounts above the threshold are taxed concessionally at 32% up to $235,000 and at 47% above that. Unused annual leave is taxed at your marginal rate, while unused long-service leave accrued before August 1978 may attract a discount. Verify your classification with a tax agent before signing the redundancy deed.",
-  },
-  {
-    q: "Can I put my redundancy payment into superannuation?",
-    a: "You can contribute after-tax redundancy money to super as a non-concessional contribution, subject to the annual cap ($120,000 in 2025–26, or up to $360,000 under the bring-forward rule). You can also make a concessional (before-tax) contribution from other income to reduce your taxable income in the redundancy year. If your total super balance was under $500,000 on 30 June of the prior year, you may be able to use unused carry-forward concessional cap from the previous five years, potentially allowing a much larger deductible contribution.",
-  },
-  {
-    q: "What is the tax-free redundancy component in Australia?",
-    a: "For 2025–26 the tax-free component of a genuine redundancy payment is $12,524 base amount plus $6,264 for each completed year of service with that employer. The amounts are indexed annually. Only payments from a genuine redundancy qualify — if the ATO reclassifies your termination as non-genuine (for example, a resignation or fixed-term contract expiry), the entire payment is taxed at marginal rates.",
-  },
-  {
-    q: "What is the best way to invest a redundancy payment?",
-    a: "The right sequence: (1) Verify the tax classification and set aside the correct tax provision before spending anything; (2) Build a 9–12 month cash buffer for the job-search period in a high-interest savings account; (3) Assess whether a concessional super contribution before 30 June makes sense for your income year; (4) Only then consider longer-term investments with the remainder. Investing in volatile assets in month one and being forced to sell in a market drawdown four months later is the most common and most costly redundancy mistake.",
-  },
-  {
-    q: "How does redundancy affect Centrelink payments?",
-    a: "If you receive a redundancy payout, Centrelink applies an Income Maintenance Period (IMP) — a waiting period before you can receive income support payments such as JobSeeker. The IMP is calculated by dividing the redundancy amount (minus the tax-free threshold) by the maximum fortnightly rate of the relevant Centrelink payment. Unused annual leave also extends the IMP. You should still apply as soon as possible, as the IMP clock only starts once you lodge your claim.",
-  },
-]);
-
 export default function RedundancyPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -51,7 +27,6 @@ export default function RedundancyPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(REDUNDANCY_FAQS) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">

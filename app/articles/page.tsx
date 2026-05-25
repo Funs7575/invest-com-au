@@ -9,30 +9,6 @@ import LeadMagnet from "@/components/LeadMagnet";
 import Icon from "@/components/Icon";
 import JsonLd from "@/components/JsonLd";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
-
-const ARTICLES_FAQ = faqJsonLd([
-  {
-    q: "What investing topics does Invest.com.au cover?",
-    a: "Invest.com.au covers a broad range of investing topics for Australian investors, including shares, ETFs, cryptocurrency, superannuation, SMSFs, property investing, robo-advisors, CFD and forex trading, tax strategies, and step-by-step how-to guides.",
-  },
-  {
-    q: "Are the articles written by licensed financial advisors?",
-    a: "Our guides and articles are produced by an editorial team with deep investing knowledge. They are general information only and are not personal financial advice. Consult an AFSL-authorised financial adviser before making investment decisions.",
-  },
-  {
-    q: "How often are the investing guides updated?",
-    a: "Evergreen guides are reviewed and updated regularly — typically whenever regulatory changes, fee structures, or market conditions affect the accuracy of the content. Each article displays whether it is an evergreen guide or a news piece.",
-  },
-  {
-    q: "Are the articles suitable for beginner investors?",
-    a: "Yes. The Getting Started cluster is specifically designed for beginner investors and covers topics such as how to buy shares, how to open a brokerage account, and common investing mistakes to avoid. More advanced clusters cover tax, SMSF, and leveraged trading.",
-  },
-  {
-    q: "Can I search for articles on a specific investment topic?",
-    a: "Yes. Use the search bar at the top of the Guides & Articles page to find articles by keyword, or use the category filter to browse by topic — including ETFs, crypto, tax, super, property, robo-advisors, and more.",
-  },
-]);
 
 export const metadata = {
   title: "Investing Guides & Articles",
@@ -332,12 +308,6 @@ export default async function ArticlesPage({
   return (
     <div className="pt-5 pb-8 md:py-12">
       <JsonLd data={breadcrumb} testId="articles-jsonld" />
-      {ARTICLES_FAQ && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLES_FAQ) }}
-        />
-      )}
       <div className="container-custom">
         <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
           <Link href="/" className="hover:text-slate-900">Home</Link>

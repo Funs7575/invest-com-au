@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getAllCategories } from "@/lib/best-broker-categories";
 import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import { SHOW_BEST_PICKS } from "@/lib/compliance-config";
 import ComplianceFooter from "@/components/ComplianceFooter";
@@ -60,29 +59,6 @@ const categoryIcons: Record<string, string> = {
   "low-minimum-deposit": "piggy-bank",
 };
 
-const BEST_PLATFORMS_FAQS = faqJsonLd([
-  {
-    q: "How are the best investing platforms ranked on Invest.com.au?",
-    a: "Platforms are ranked using a verified methodology that compares brokerage fees, account fees, available markets, platform features, and CHESS sponsorship status. Fee data is checked directly against official platform pricing pages and updated regularly. Editorial scores are assigned independently of any commercial relationships.",
-  },
-  {
-    q: "Are “best broker” recommendations personalised?",
-    a: "The category guides on this page are not personalised — they reflect the best platforms for a typical investor in each category. For a personalised recommendation based on your experience level, portfolio size, and goals, take the 60-second quiz on this page.",
-  },
-  {
-    q: "What is the difference between a full-service broker and a discount broker?",
-    a: "A full-service broker provides advice, research, and portfolio management alongside trade execution, typically charging higher fees or a percentage of assets. A discount (or online) broker executes trades at a flat brokerage fee without personalised advice. Most guides on Invest.com.au cover discount brokers suited to self-directed investors.",
-  },
-  {
-    q: "Do beginner investors need a financial advisor?",
-    a: "Not necessarily. Beginners with straightforward goals — such as building a diversified ETF portfolio — can often start investing using a low-cost online platform without advice. A licensed financial advisor adds value when your situation involves complex tax, super, insurance, or estate-planning needs.",
-  },
-  {
-    q: "How often are the best platform rankings updated?",
-    a: "Rankings are reviewed at least every 12 months, with fee data verified more frequently when platforms announce pricing changes. Each guide displays the date it was last reviewed so you can assess how current the information is.",
-  },
-]);
-
 export default function BestBrokersHub() {
   const categories = getAllCategories();
 
@@ -96,10 +72,6 @@ export default function BestBrokersHub() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(BEST_PLATFORMS_FAQS) }}
       />
 
       <div className="py-5 md:py-12">

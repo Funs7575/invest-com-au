@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
-import { calculatorJsonLd, faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
+import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import CompoundInterestClient from "./CompoundInterestClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import RelatedCalculators from "@/components/RelatedCalculators";
@@ -57,21 +57,7 @@ const faqLd = faqJsonLd([
     q: "How do regular contributions affect compound growth?",
     a: "Regular contributions dramatically accelerate compound growth. Even small monthly additions — say $200/month — can add hundreds of thousands of dollars to your final balance over a 30-year period, because each contribution also compounds over time.",
   },
-  {
-    q: "Is compound interest taxable in Australia?",
-    a: "Yes. Interest and investment returns that compound within a taxable account are assessable income in the year they are earned or realised. Returns inside superannuation are taxed at a concessional 15% (accumulation phase) or 0% (pension phase), which is why compounding inside super is so powerful over a long investment horizon.",
-  },
-  {
-    q: "How does inflation affect compound interest returns in Australia?",
-    a: "Inflation erodes the real value of compound returns. If your investment returns 8% p.a. and inflation runs at 3%, your real return is approximately 5%. The RBA targets an inflation band of 2–3% over the medium term. For long-term planning, subtract the expected inflation rate from your nominal return to estimate real purchasing-power growth.",
-  },
 ]);
-
-const speakableLd = speakableWebPageJsonLd({
-  name: "Compound Interest Calculator Australia — Investment Growth",
-  path: "/compound-interest-calculator",
-  selectors: ["h1", ".calculator-result-summary"],
-});
 
 export default function CompoundInterestCalculatorPage() {
   return (
@@ -79,7 +65,6 @@ export default function CompoundInterestCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }} />
       <CompoundInterestClient />
       <div className="container-custom pb-8">
         <RelatedCalculators

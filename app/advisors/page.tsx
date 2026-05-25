@@ -7,7 +7,6 @@ import AdvisorsClient, { type ExpertTeamCard } from "./AdvisorsClient";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisors-page");
@@ -99,35 +98,6 @@ async function AdvisorsData() {
   );
 }
 
-const advisorFaqLd = faqJsonLd([
-  {
-    q: "How do I find a financial advisor in Australia?",
-    a: "Search Invest.com.au's directory of verified Australian financial advisers by location, specialty (financial planner, SMSF accountant, tax agent, mortgage broker), and fee model. Every listed professional holds an active AFSL licence or is authorised under one. Filter by state, rating, and whether they offer a free initial consultation.",
-  },
-  {
-    q: "How much does a financial advisor cost in Australia?",
-    a: "Fees vary widely by service. Ongoing financial planning advice typically costs $3,000–$6,000 per year for a comprehensive plan with regular reviews. One-off advice (e.g. a superannuation strategy review) may cost $1,500–$3,500. Some advisers charge hourly rates of $250–$550/hr. FOFA reforms (2013) banned conflicted remuneration — advisers must now charge transparent fees, not commissions on investment products.",
-  },
-  {
-    q: "What is the difference between a financial planner and a financial adviser?",
-    a: "In Australia the terms are interchangeable and refer to the same regulated profession. Both require an AFSL licence or authorisation, completion of the Financial Adviser Standards and Ethics Authority (FASEA) education standards (degree + ethics exam), and ongoing CPD. 'Wealth manager' and 'investment adviser' are informal titles used by some firms but carry the same regulatory obligations.",
-  },
-  {
-    q: "Do I need a financial advisor?",
-    a: "You may benefit from advice if you have a complex situation: approaching retirement, managing an inheritance, running an SMSF, crossing the super contribution caps, restructuring after divorce, or investing through a family trust. For straightforward investing (regular ETF contributions via a low-cost broker), a good-quality comparison site and a tax accountant is often sufficient without ongoing advice fees.",
-  },
-  {
-    q: "How do I check if a financial advisor is licensed in Australia?",
-    a: "Use ASIC's Financial Advisers Register at moneysmart.gov.au to confirm an adviser's licence, qualifications, and any disciplinary history. All advisers on Invest.com.au are pre-checked against the register. AFSL licence numbers are publicly searchable via ASIC Connect.",
-  },
-]);
-
-const advisorSpeakableLd = speakableWebPageJsonLd({
-  name: `Find a Financial Advisor in Australia (${CURRENT_YEAR})`,
-  path: "/advisors",
-  selectors: ["h1", ".advisor-directory-summary"],
-});
-
 export default function AdvisorsPage() {
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -137,8 +107,6 @@ export default function AdvisorsPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(advisorFaqLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(advisorSpeakableLd) }} />
       <div className="container-custom pt-4">
         <DirectoryBanners surface="advisors" />
       </div>

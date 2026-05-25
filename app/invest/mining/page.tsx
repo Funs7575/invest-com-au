@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
@@ -21,29 +20,6 @@ export const metadata: Metadata = {
   },
 };
 
-const miningFaqLd = faqJsonLd([
-  {
-    q: "How do I invest in Australian mining companies?",
-    a: "The most accessible route is buying shares in ASX-listed miners through any online broker — large caps like BHP, Rio Tinto, Fortescue, and Newmont can be purchased from $500. Mining ETFs such as QRE (BetaShares Resources Sector ETF) or MNRS (VanEck Gold Miners ETF) offer diversified exposure. Wholesale investors can access direct project investment through unlisted joint ventures or private placements, and royalty streams are available via listed royalty vehicles.",
-  },
-  {
-    q: "What is the difference between investing in miners vs commodity ETFs?",
-    a: "ASX-listed mining companies provide leveraged exposure to commodity prices — when iron ore or gold rises, miner profits and share prices typically rise by a larger percentage. However, they also carry company-specific risks (operational failures, debt, management). Commodity ETFs track the commodity price directly (or an index of producers), offering broader diversification. Miners carry higher upside and downside; commodity ETFs are more correlated to the underlying resource price.",
-  },
-  {
-    q: "Are ASX mining stocks high risk?",
-    a: "Risk varies significantly by stage. Junior explorers are very high risk — they have no revenue and rely entirely on discoveries that may never materialise. Mid-tier developers are high risk as they face construction cost and financing risk. Established producers like BHP or Rio Tinto carry medium risk, with revenue largely hedged by diversified commodity exposure and strong balance sheets. Royalty streamers are generally lower risk as they receive a percentage of production without operating a mine.",
-  },
-  {
-    q: "What taxes apply to mining royalties and dividends in Australia?",
-    a: "Mining royalties paid to state governments (e.g., Western Australia's iron ore royalty of 7.5%) are a deductible business expense for miners, not an investor tax. For investors, dividends from ASX-listed miners are subject to Australian income tax and are often franked (carrying imputation credits that reduce tax for Australian residents). Australian-resident investors holding shares for 12+ months qualify for the 50% CGT discount on capital gains. Non-residents are subject to dividend withholding tax (typically 15–30% depending on applicable tax treaties) but are generally not taxed on ASX share gains unless the company is land-rich.",
-  },
-  {
-    q: "What are the major Australian mining companies listed on the ASX?",
-    a: "The largest Australian miners by market capitalisation include BHP (diversified: iron ore, copper, coal, nickel), Rio Tinto (iron ore, aluminium, copper, diamonds), Fortescue Metals Group (iron ore, green energy), Newmont (gold, after acquiring Newcrest), Northern Star Resources (gold), Evolution Mining (gold, copper), Pilbara Minerals (lithium), Lynas Rare Earths (rare earth elements), and South32 (alumina, manganese, zinc). These cover the full range from bulk commodities to critical minerals.",
-  },
-]);
-
 export default function MiningPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -56,10 +32,6 @@ export default function MiningPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(miningFaqLd) }}
       />
 
       {/* Hero */}

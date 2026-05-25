@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import { STATE_SURCHARGES } from "@/lib/firb-data";
 import { FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
@@ -38,29 +37,6 @@ function calcSurcharge(percent: number, purchasePrice: number) {
 
 const PRICE_EXAMPLES = [500_000, 750_000, 1_000_000, 1_500_000, 2_000_000];
 
-const stampDutyFaqLd = faqJsonLd([
-  {
-    q: "How much stamp duty does a foreign buyer pay in Australia?",
-    a: "Foreign buyers pay standard stamp duty plus a surcharge. NSW and VIC charge an 8% foreign buyer surcharge; QLD, WA, and SA charge 7%. The ACT and NT have no foreign surcharge. On a $1M purchase in NSW, standard stamp duty is ~$40,835 plus the 8% ($80,000) surcharge = ~$120,835 total. Always verify current rates with a local conveyancer as surcharges change.",
-  },
-  {
-    q: "Do temporary residents pay the same stamp duty surcharge as non-residents?",
-    a: "In most states, yes — the stamp duty surcharge applies to all 'foreign persons' including temporary visa holders. NSW, VIC, and QLD define 'foreign person' broadly to include temporary residents. Some states exempt New Zealand citizens under the trans-Tasman agreement. The 2025–2027 established dwelling ban also applies to temporary residents.",
-  },
-  {
-    q: "Is there a land tax surcharge for foreign property owners in Australia?",
-    a: "Yes. Most states charge an ongoing annual land tax surcharge on land owned by foreign persons. VIC charges 4% p.a., NSW charges 5% p.a. (from 2023), QLD charges 3% p.a., SA charges 2% p.a., and WA charges 1.5% p.a. on residential land. This is in addition to standard land tax. Foreign-owned investment properties face a higher total holding cost than domestically-owned equivalents.",
-  },
-  {
-    q: "Can I get an exemption from the foreign buyer stamp duty surcharge?" ,
-    a: "Exemptions are limited. Australian permanent residents are generally exempt (not treated as foreign persons). Some states exempt New Zealand citizens. Certain commercial property purchases may be exempt from residential surcharges. There is no general exemption for properties used as a principal place of residence — the surcharge applies regardless of intended use for most foreign visa holders.",
-  },
-  {
-    q: "What is the cheapest Australian state for foreign buyers by stamp duty?",
-    a: "ACT has no foreign buyer stamp duty surcharge, but has different general stamp duty rates (called conveyancing duty). Among mainland states, Queensland and WA have the lowest surcharge at 7%. However, the surcharge is only one component of total purchase cost — location, property market fundamentals, and rental yields are typically far more important factors for investment selection.",
-  },
-]);
-
 export default function StampDutyForeignBuyersPage() {
   return (
     <div className="bg-white min-h-screen">
@@ -76,10 +52,6 @@ export default function StampDutyForeignBuyersPage() {
             ])
           ),
         }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(stampDutyFaqLd) }}
       />
 
       {/* ── Hero ── */}

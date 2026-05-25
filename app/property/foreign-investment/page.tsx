@@ -11,7 +11,6 @@ import {
 } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER, FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import CostCalculator from "./CostCalculator";
 import FaqAccordion from "./FaqAccordion";
 import SectionHeading from "@/components/SectionHeading";
@@ -65,16 +64,6 @@ export default function ForeignInvestmentPage() {
               { name: "Property", url: `${SITE_URL}/property` },
               { name: "Foreign Investment Guide" },
             ])
-          ),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
-            faqJsonLd(
-              FIRB_FAQS.map((f) => ({ q: f.question, a: f.answer }))
-            )
           ),
         }}
       />

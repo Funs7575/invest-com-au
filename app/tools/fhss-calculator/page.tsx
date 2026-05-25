@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CURRENT_YEAR, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { calculatorJsonLd, faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
+import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import FHSSCalculatorClient from "./FHSSCalculatorClient";
 
 export const revalidate = 3600;
@@ -34,32 +34,14 @@ const calcLd = calculatorJsonLd({
 
 const faqLd = faqJsonLd([
   {
-    q: "What is the First Home Super Saver Scheme?",
-    a: "The FHSS scheme allows eligible Australians to save for a first home deposit inside superannuation. Voluntary contributions (concessional up to $15k/yr, non-concessional) made since 1 July 2017 can later be withdrawn for a home purchase, taking advantage of the lower tax rate inside super (15% vs marginal rate on concessional contributions).",
+    q: "What is the First Home Super Saver Scheme (FHSS)?",
+    a: "The FHSS scheme lets first home buyers save for a deposit inside their superannuation fund, taking advantage of the lower 15% contributions tax. You can contribute up to $15,000 per year (max $50,000 total) and withdraw those savings as your home deposit.",
   },
   {
-    q: "How much can I save under the FHSS scheme?",
-    a: "From 1 July 2022, the maximum releasable amount is $50,000 of voluntary contributions (plus earnings). You can contribute up to $15,000 per year into the scheme (from 2024-25; was $15,000 before). You must apply to the ATO for a FHSS determination before signing a sale contract.",
-  },
-  {
-    q: "Who is eligible for the FHSS?",
-    a: "You must be 18+ at the time of release, never previously owned property in Australia (or qualify for the hardship exemption), have not previously requested an FHSS release, and intend to live in the property for at least 6 months within the first 12 months of owning it.",
-  },
-  {
-    q: "How is the FHSS withdrawal taxed?",
-    a: "The FHSS release amount is included in your assessable income in the year of withdrawal, but you receive a 30% tax offset on the taxable component. Concessional contributions and their earnings are taxed at marginal rate minus 30% offset; non-concessional contributions are tax-free on withdrawal.",
-  },
-  {
-    q: "Can I use the FHSS with the First Home Guarantee?",
-    a: "Yes. The FHSS scheme and the First Home Guarantee (5% deposit, no LMI) can be used together. The FHSS gives you tax-effective savings; the Guarantee removes the LMI requirement at the low deposit level. Both require the buyer to be a first home buyer and to occupy the property.",
+    q: "How much can I release from FHSS?",
+    a: "You can release a maximum of $50,000 in total across all years of contributions (plus associated earnings). Up to $15,000 per financial year counts toward the limit.",
   },
 ]);
-
-const speakableLd = speakableWebPageJsonLd({
-  name: "FHSS Calculator — First Home Super Saver Deposit Estimator",
-  path: "/tools/fhss-calculator",
-  selectors: ["h1"],
-});
 
 export default function FHSSCalculatorPage() {
   return (
@@ -75,10 +57,6 @@ export default function FHSSCalculatorPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
       />
       <Suspense>
         <FHSSCalculatorClient />

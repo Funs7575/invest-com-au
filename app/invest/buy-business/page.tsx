@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -20,29 +19,6 @@ export const metadata: Metadata = {
   },
 };
 
-const BUY_BUSINESS_FAQS = faqJsonLd([
-  {
-    q: "How do I value a business when buying in Australia?",
-    a: "Australian businesses are most commonly valued using an earnings-based method — a multiple of EBITDA (Earnings Before Interest, Tax, Depreciation, and Amortisation) or SDE (Seller's Discretionary Earnings). Small businesses typically sell at 1.5x–2.5x SDE; mid-market businesses at 3x–6x EBITDA; and larger businesses at 5x–10x or more. Asset-based valuations apply to businesses with significant tangible assets, while SaaS and online businesses are often valued on 2x–5x annual recurring revenue.",
-  },
-  {
-    q: "What are the common deal structures for buying an Australian business?",
-    a: "The most common structures are: (1) Asset purchase — the buyer acquires specified assets and liabilities, not the legal entity, giving more flexibility on what is included; (2) Share purchase — the buyer acquires the shares in the company, taking on all existing obligations; (3) Earn-out — part of the purchase price is deferred and contingent on future performance, often used to bridge valuation gaps; (4) Vendor finance — the seller accepts a portion of the purchase price as a structured payment over time. Each has different tax, stamp duty, and liability implications.",
-  },
-  {
-    q: "What due diligence is required when buying a business in Australia?",
-    a: "Key due diligence areas include: financial (3 years of P&L statements, BAS/GST returns, balance sheets, ATO tax returns, and 6 months of bank statements); operational (employee contracts and entitlements, supplier agreements, customer contracts, equipment condition, and lease terms); and legal (business licences, intellectual property, outstanding debts, legal proceedings, and environmental obligations). Engage both a business accountant and a commercial lawyer — 30–60 days is typical for a thorough process.",
-  },
-  {
-    q: "Can I use my SMSF to buy a business?",
-    a: "An SMSF can acquire business real property (commercial premises used wholly and exclusively in a business) under a limited recourse borrowing arrangement (LRBA), including from a related party at market value. However, an SMSF cannot acquire a business as an operating entity — it cannot own shares in a private operating company controlled by a related party unless it meets the in-house asset rules (limited to 5% of fund assets). Always seek specialist SMSF legal and financial advice before proceeding.",
-  },
-  {
-    q: "What taxes apply when buying a business in Australia?",
-    a: "Key taxes when buying an Australian business include: stamp duty (on asset purchases, calculated on the dutiable value of assets by state); GST (the sale may be GST-free as a going concern if certain conditions are met — get written agreement with the vendor); capital gains tax for the seller (which can affect negotiated price); and payroll tax implications if staff are transferred. In a share purchase, stamp duty may apply to the transfer of shares in certain states. Obtain tax advice specific to your deal structure from a qualified tax adviser.",
-  },
-]);
-
 export default function BuyBusinessPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -56,12 +32,6 @@ export default function BuyBusinessPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      {BUY_BUSINESS_FAQS && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(BUY_BUSINESS_FAQS) }}
-        />
-      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -191,7 +161,7 @@ export default function BuyBusinessPage() {
           <div className="prose prose-slate max-w-none mb-10">
             <h3>Earnings-Based Valuation (Most Common)</h3>
             <p>
-              Australian businesses are typically valued as a multiple of EBITDA (Earnings Before Interest, Tax, Depreciation, and Amortisation) or SDE (Seller&apos;s Discretionary Earnings). Multiples range from 1.5x–3x for small businesses to 5x–10x+ for larger, established businesses.
+              Australian businesses are typically valued as a multiple of EBITDA (Earnings Before Interest, Tax, Depreciation, and Amortisation) or SDE (Seller's Discretionary Earnings). Multiples range from 1.5x–3x for small businesses to 5x–10x+ for larger, established businesses.
             </p>
             <ul>
               <li><strong>Small business (&lt;$500K revenue)</strong> — 1.5x–2.5x SDE</li>

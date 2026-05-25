@@ -15,7 +15,6 @@ import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarket
 import EnergyPriceWidget from "@/components/commodities/EnergyPriceWidget";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 1800;
 
@@ -70,29 +69,6 @@ const WAYS_TO_INVEST = [
   },
 ];
 
-const OIL_GAS_FAQS = faqJsonLd([
-  {
-    q: "How can I invest in oil and gas in Australia?",
-    a: "Australians can invest in oil and gas through ASX-listed shares (such as Woodside WDS and Santos STO), sector ETFs (such as BetaShares OOO for crude exposure), wholesale actively managed energy funds, direct project equity, or petroleum royalty streams. Each route differs in liquidity, minimum investment, and tax treatment.",
-  },
-  {
-    q: "What ASX-listed oil and gas companies are available?",
-    a: "The main ASX-listed oil and gas producers include Woodside Energy (WDS) and Santos (STO) in the large-cap space, plus mid-caps such as Beach Energy (BPT) and Karoon Energy (KAR). Refining exposure is available via Viva Energy (VEA) and Ampol (ALD). All are CHESS-sponsored and tradeable through any Australian broker.",
-  },
-  {
-    q: "What is the tax treatment of oil and gas investments in Australia?",
-    a: "Dividends from ASX-listed oil and gas companies may carry franking credits that reduce the effective tax rate for Australian residents. Capital gains on shares held longer than 12 months attract the 50% CGT discount. Petroleum royalty income is treated as ordinary income, not a capital gain, and interacts with the Petroleum Resource Rent Tax (PRRT). Non-residents holding less than 10% of a listed company are generally exempt from Australian CGT under Section 855-10 ITAA 1997.",
-  },
-  {
-    q: "Are oil and gas investments suitable for SMSFs?",
-    a: "Yes, ASX-listed oil and gas shares and sector ETFs are commonly held in self-managed super funds (SMSFs). ETF wrappers simplify SMSF record-keeping. However, SMSFs must satisfy the sole-purpose test, and any concentration in a single sector should be considered in the context of the fund's overall investment strategy. Direct project equity or royalty investments may require a more complex structure and specialist SMSF advice.",
-  },
-  {
-    q: "What are the risks of investing in oil and gas?",
-    a: "Key risks include commodity price volatility driven by global supply and demand, energy-transition policy risk as Australia targets net zero, ESG and reputational risk for institutional holders, geopolitical disruption to LNG supply chains, FIRB and regulatory approval risk for direct asset acquisitions, and concentration risk if a portfolio is heavily weighted to a single producer or sub-sector.",
-  },
-]);
-
 export default async function OilGasPage() {
   const sector = await getSector("oil-gas");
   if (!sector) notFound();
@@ -117,10 +93,6 @@ export default async function OilGasPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(OIL_GAS_FAQS) }}
       />
 
       <EnergyPriceWidget snapshots={priceSnapshots} />

@@ -1,34 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import HubLeadForm from "@/components/leads/HubLeadForm";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const revalidate = 3600;
-
-const smsfPropertyFaqLd = faqJsonLd([
-  {
-    q: "Can an SMSF buy residential property in Australia?",
-    a: "Yes, with strict restrictions. An SMSF can purchase residential investment property — but NOT from a related party (including fund members, their spouses, parents, children, or entities they control). No member or related party can live in or use the property in any way before retirement. The property must be a genuine investment managed at arm's length. LRBA (Limited Recourse Borrowing Arrangement) can be used to borrow to buy property inside an SMSF.",
-  },
-  {
-    q: "What is an LRBA and how does it work for SMSF property?",
-    a: "An LRBA (Limited Recourse Borrowing Arrangement) allows an SMSF to borrow to purchase a single asset (such as property). The property is held in a bare trust until the loan is fully repaid. If the SMSF defaults, the lender's recourse is limited to the single asset — other SMSF assets are protected. Interest rates for SMSF loans are typically 0.5–1.5% higher than standard investment loans. Most major banks no longer offer SMSF loans; specialist non-bank lenders (La Trobe, Liberty, Firstmac) are the main providers.",
-  },
-  {
-    q: "Can an SMSF buy commercial property from a related party?",
-    a: "Yes — this is the main exception to the related-party acquisition rule. Business real property (premises used wholly and exclusively in a business) can be purchased from a related party at market value and leased back to the business at market rent. This is a common strategy for small business owners to buy their business premises through their SMSF, building equity in the property while the business pays rent that goes into the super fund.",
-  },
-  {
-    q: "What is the minimum SMSF balance to buy property?",
-    a: "Most financial advisers recommend at least $300,000–$500,000 in the SMSF before buying direct property, and $500,000–$800,000+ if using an LRBA (borrowing). The property cannot be too large relative to the SMSF's total assets — in practice, most SMSF loans require a 20–30% deposit, and the loan repayments + property costs must not strain the fund's cash flow. The ATO also requires the investment strategy to remain diversified — owning a single property worth 90%+ of fund assets may fail the diversification test.",
-  },
-  {
-    q: "Are there CGT benefits for SMSF property sold in pension phase?",
-    a: "Yes — one of the most significant SMSF strategies. If you sell a property while the SMSF is in pension phase (paying retirement income to a member aged 60+), CGT on capital gains may be reduced or eliminated entirely. In accumulation phase, the CGT discount reduces the effective rate to 10% (15% minus 33.33% discount) for assets held over 12 months. In pension phase (full account-based pension), gains may be completely CGT-free on the proportion of the fund supporting the pension. This is a major advantage over personal property investment.",
-  },
-]);
 
 export const metadata: Metadata = {
   title: `SMSF Property Investment ${CURRENT_YEAR}: Rules, Borrowing & Strategy | Invest.com.au`,
@@ -52,7 +28,6 @@ export default function SmsfPropertyPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(smsfPropertyFaqLd) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">

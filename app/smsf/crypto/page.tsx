@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import HubLeadForm from "@/components/leads/HubLeadForm";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -23,29 +22,6 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
-
-const CRYPTO_FAQS = faqJsonLd([
-  {
-    q: "Can an SMSF invest in cryptocurrency?",
-    a: "Yes. An SMSF can legally invest in cryptocurrency provided the trust deed explicitly permits digital assets, the investment strategy references crypto, and a dedicated SMSF exchange account (separate from personal accounts) is used. Crypto must be held solely for retirement purposes — any personal use breaches the sole-purpose test.",
-  },
-  {
-    q: "How much of an SMSF can be invested in crypto?",
-    a: "There is no ATO-prescribed maximum percentage for crypto, but the investment strategy must address diversification, risk, liquidity, and the ability to meet member benefit payments. In practice, SMSF auditors and advisers typically flag crypto allocations above 20–25% as requiring explicit written justification in the strategy document.",
-  },
-  {
-    q: "What wallets or exchanges can an SMSF use for crypto?",
-    a: "The exchange or wallet account must be opened in the name of the SMSF (e.g. 'Smith Super Fund') and kept completely separate from personal accounts. Australian exchanges with dedicated SMSF onboarding include Swyftx, Coinstash, and Independent Reserve. Hardware cold storage (Ledger, Trezor) is permitted and recommended for holdings above $50,000.",
-  },
-  {
-    q: "How is crypto taxed inside an SMSF?",
-    a: "In the accumulation phase, crypto capital gains are taxed at 15%, reduced to an effective 10% if the asset is held for more than 12 months (one-third CGT discount). In pension phase, both income and capital gains are tax-free at 0%. This compares favourably to the personal rate of up to 47% (or 23.5% with the 50% CGT discount) outside super.",
-  },
-  {
-    q: "Does crypto in an SMSF need to be reported in the investment strategy?",
-    a: "Yes. The ATO requires SMSFs to hold a written investment strategy that explicitly references all asset classes held, including digital assets. A strategy that is silent on crypto while the fund holds it is a compliance breach. The strategy must also address the risk, liquidity, and diversification implications of the crypto allocation.",
-  },
-]);
 
 type CryptoExchange = Pick<Broker, "id" | "name" | "slug" | "color" | "affiliate_url" | "rating" | "tagline" | "cta_text" | "benefit_cta">;
 
@@ -70,7 +46,6 @@ function SmsfCryptoPageInner({ cryptoExchanges, breadcrumb }: { cryptoExchanges:
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      {CRYPTO_FAQS && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(CRYPTO_FAQS) }} />}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">

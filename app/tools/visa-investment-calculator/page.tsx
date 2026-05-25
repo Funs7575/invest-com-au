@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
-import { faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import VisaCalculatorClient from "./VisaCalculatorClient";
 
@@ -41,35 +40,6 @@ const breadcrumbLd = breadcrumbJsonLd([
   },
 ]);
 
-const faqLd = faqJsonLd([
-  {
-    q: "What is the minimum investment for an Australian Significant Investor Visa (SIV)?",
-    a: "The Subclass 188C Significant Investor stream requires a minimum investment of AUD$5 million in complying investments over at least 4 years. The investment must be made within 12 months of visa grant.",
-  },
-  {
-    q: "What are complying investments for the Australian SIV?",
-    a: "SIV holders must invest in a prescribed mix: at least 10% ($500k) in early-stage venture capital limited partnerships (ESVCLPs), at least 30% ($1.5m) in eligible venture capital or growth private equity funds, and the remaining balance in managed funds investing in ASX-listed securities, bonds, or real property (excluding direct residential property).",
-  },
-  {
-    q: "What is the Business Innovation stream investment requirement?",
-    a: "The Subclass 188A Business Innovation stream requires ownership of a business with an annual turnover of at least AUD$500,000 and a net asset value of at least AUD$500,000 in business and personal assets. Applicants must have a Expressions of Interest score of 65 or above, be nominated by a state/territory, and intend to own/manage an Australian business.",
-  },
-  {
-    q: "Do SIV investments need to be in Australian assets only?",
-    a: "Yes. All SIV complying investments must be in Australian assets. The investment framework (managed funds, ESVCLPs, venture capital funds) requires funds to be registered in Australia and primarily deployed into Australian companies and assets.",
-  },
-  {
-    q: "How long does an investor visa take to process in Australia?",
-    a: "Processing times vary by stream. The 188C (SIV) stream typically takes 12–24 months from nomination. The 188A (Business Innovation) stream is 12–24 months. Permanent residence (subclass 888) can be applied for after holding a provisional visa for at least 4 years and meeting complying investment obligations. An immigration lawyer should be consulted for current processing times.",
-  },
-]);
-
-const speakableLd = speakableWebPageJsonLd({
-  name: "Australian Investor Visa Calculator",
-  path: "/tools/visa-investment-calculator",
-  selectors: ["h1"],
-});
-
 function Loading() {
   return (
     <div className="py-12 animate-pulse">
@@ -95,14 +65,6 @@ export default function VisaInvestmentCalculatorPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
       />
       <Suspense fallback={<Loading />}>
         <VisaCalculatorClient />

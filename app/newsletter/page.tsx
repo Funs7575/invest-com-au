@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import LeadMagnet from "@/components/LeadMagnet";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -43,29 +42,6 @@ interface NewsletterEdition {
   created_at: string;
 }
 
-const NEWSLETTER_FAQ = faqJsonLd([
-  {
-    q: "What topics does the Invest.com.au newsletter cover?",
-    a: "Each edition covers broker fee changes, new investing articles published on the site, current broker deals and promotions, and broader Australian market insights. The focus is practical information for everyday Australian investors.",
-  },
-  {
-    q: "How often is the newsletter sent?",
-    a: "The Invest.com.au weekly digest is sent every Monday morning. It rounds up everything that changed in the Australian investing landscape over the previous week.",
-  },
-  {
-    q: "Is the newsletter free?",
-    a: "Yes, the newsletter is completely free to subscribe to. There is no paid tier — every subscriber receives the same weekly digest.",
-  },
-  {
-    q: "Does the newsletter provide financial advice?",
-    a: "No. The newsletter is general information only and does not constitute financial advice. It summarises fee changes, platform news, and published articles. Always consider your personal circumstances and consult a licensed financial adviser before making investment decisions.",
-  },
-  {
-    q: "How do I unsubscribe from the newsletter?",
-    a: "Every edition includes an unsubscribe link at the bottom of the email. Clicking it will immediately remove your address from the mailing list.",
-  },
-]);
-
 export default async function NewsletterArchivePage() {
   // Defensive fetch — the table is seeded but RLS could still deny,
   // or the migration might not have been applied to the current env.
@@ -95,12 +71,6 @@ export default async function NewsletterArchivePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
-      {NEWSLETTER_FAQ && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(NEWSLETTER_FAQ) }}
-        />
-      )}
       <div className="container-custom">
         {/* Breadcrumbs */}
         <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">

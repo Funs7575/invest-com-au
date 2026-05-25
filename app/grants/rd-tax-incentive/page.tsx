@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import RdTaxCalculator from "@/components/RdTaxCalculator";
 
@@ -36,29 +35,6 @@ const NOT_ELIGIBLE = [
   "Regulatory compliance testing",
 ];
 
-const rdTaxFaqLd = faqJsonLd([
-  {
-    q: "What is the R&D Tax Incentive and what does it pay?",
-    a: "The R&D Tax Incentive is an Australian federal program providing a tax offset for eligible R&D expenditure. Companies with aggregated turnover under $20M receive a 43.5% refundable tax offset — meaning if your company has no tax liability, you receive cash back. Larger companies receive a 38.5% non-refundable offset (credit against tax payable, no cash refund). The offset effectively means that for every $1 of eligible R&D spend, you receive 43.5 or 38.5 cents back. Registration with AusIndustry is mandatory before lodging your tax return.",
-  },
-  {
-    q: "What is an eligible R&D activity?",
-    a: "Eligible R&D activities must involve an experimental activity conducted for the purpose of generating new knowledge, with a technical hypothesis and genuine uncertainty about whether the experiment will work. Routine software development, standard quality control, market research, and pre-feasibility studies are NOT eligible. Core R&D activities require that the outcome was unknown beforehand and could not be established by applying known techniques. Supporting activities (production runs, patents filing, mathematical analysis) are eligible only if directly supporting a core R&D activity.",
-  },
-  {
-    q: "How do I register for the R&D Tax Incentive?",
-    a: "Registration is done via AusIndustry's portal (business.gov.au) within 10 months after the end of the income year (so by 30 April for a 30 June year-end company). Late registration is not accepted. You need to: create an AusBusiness account, complete the R&D registration form describing each R&D activity and estimated expenditure, and submit before the deadline. Your tax agent then claims the offset in your company tax return using the AusIndustry registration number.",
-  },
-  {
-    q: "Can a startup or pre-revenue company claim the R&D Tax Incentive?",
-    a: "Yes — this is one of the incentive's most valuable aspects. Pre-revenue companies with turnover under $20M receive a refundable offset, meaning they receive cash back from the ATO regardless of profitability. A startup that spends $500,000 on eligible R&D can receive $217,500 in cash (43.5%). The main requirement is that the entity is an incorporated company — sole traders, partnerships, and trusts cannot claim. Many early-stage tech companies use R&D refunds as a primary source of working capital.",
-  },
-  {
-    q: "Can SaaS and software companies claim the R&D Tax Incentive?",
-    a: "Yes, but the bar has tightened since 2021 ATO guidance. Software R&D claims are eligible when they involve genuine technical innovation with uncertainty — not just applying known programming techniques. Building a new algorithm, machine learning model, or genuinely novel technical architecture qualifies. Routine software development (CRUD apps, standard integrations, UI improvements) does not. Many SaaS companies over-claim and face ATO reviews; working with an R&D specialist consultant is strongly recommended to document technical uncertainty correctly.",
-  },
-]);
-
 export default function RdTaxIncentivePage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -69,7 +45,6 @@ export default function RdTaxIncentivePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rdTaxFaqLd) }} />
 
       <div className="bg-white min-h-screen">
         {/* Hero */}

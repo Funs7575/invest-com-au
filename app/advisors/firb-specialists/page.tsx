@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import type { Professional } from "@/lib/types";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import AdvisorsClient from "../AdvisorsClient";
 
 export const revalidate = 1800;
@@ -13,24 +12,28 @@ const PAGE_DESCRIPTION =
 
 const FAQS = [
   {
-    q: "What is FIRB and who needs approval to invest in Australia?",
-    a: "The Foreign Investment Review Board (FIRB) is the Australian government body that reviews proposed foreign investments in Australia. Generally, 'foreign persons' — including temporary residents, non-residents, and foreign entities — need FIRB approval to purchase residential property, acquire certain agricultural land, make significant business acquisitions above threshold values, and invest in sensitive sectors such as telecommunications, media, and defence-adjacent businesses.",
+    q: "What is the Foreign Investment Review Board (FIRB)?",
+    a: "The Foreign Investment Review Board (FIRB) is the Australian government body that reviews proposed foreign investments in Australia. FIRB advises the Treasurer on whether proposed investments comply with Australia's Foreign Acquisitions and Takeovers Act 1975 and national interest considerations.",
   },
   {
-    q: "What are the FIRB application fees for residential property?",
-    a: "FIRB application fees for residential property are set by legislation and scale with property value. As a guide, the fee for a property up to $1 million is $14,100. Fees increase in bands: $28,200 for properties $1M–$2M, $56,400 for $2M–$3M, and so on up to $1.1M+ for very high-value transactions. These fees are paid to the ATO at the time of application and are non-refundable. Specialist advisory fees are additional.",
+    q: "Who needs FIRB approval?",
+    a: "Generally, 'foreign persons' — including temporary residents, non-residents, and foreign entities — need FIRB approval to: purchase residential property; acquire certain agricultural land; make significant business acquisitions above threshold values; and acquire interests in sensitive sectors (media, telecommunications, defence-adjacent businesses).",
   },
   {
-    q: "What types of investment require FIRB approval in Australia?",
-    a: "FIRB approval is required for: residential property purchases by most foreign persons and temporary residents (new dwellings require notification; established dwellings are generally prohibited for non-residents); agricultural land acquisitions above $15M cumulative; business acquisitions above relevant monetary thresholds ($330M for general business, lower for sensitive sectors and foreign government investors); and acquisitions of interests in sensitive sectors such as media, telecommunications, infrastructure, and defence-adjacent businesses.",
+    q: "What are the FIRB thresholds for residential property?",
+    a: "Temporary residents can purchase one established dwelling as a principal place of residence (with conditions) and new dwellings without limit. Foreign persons generally cannot purchase established residential dwellings. For new dwellings, no monetary threshold applies — FIRB notification is required. Residential land purchases also require notification regardless of price.",
   },
   {
-    q: "How long does a FIRB application take to process?",
-    a: "The statutory processing period is 30 days from receipt of the application, and straightforward residential property cases are often approved within this window. However, FIRB can extend the period up to 130 days for more complex transactions. Sensitive-sector business acquisitions and national security reviews can take 6–9 months. Always apply early — do not exchange contracts without FIRB approval (or a condition precedent covering FIRB approval).",
+    q: "How long does FIRB approval take?",
+    a: "The standard processing period is 30 days from the date of application, but FIRB can extend this period up to 130 days (and sometimes longer for complex or sensitive transactions). It is essential to apply early and not exchange contracts without approval (or a condition precedent).",
   },
   {
-    q: "Do Australian citizens living overseas need FIRB approval to buy property in Australia?",
-    a: "No. Australian citizens are not 'foreign persons' under the Foreign Acquisitions and Takeovers Act, regardless of where they live. They can purchase property in Australia — including established dwellings — without FIRB approval. Australian permanent residents are also exempt. However, temporary visa holders and non-resident foreign nationals do require approval and face restrictions on purchasing established dwellings.",
+    q: "What does FIRB approval cost?",
+    a: "FIRB charges an application fee (paid to the ATO) based on the investment value. For residential property purchases, fees range from $4,200 to $105,000+. For business acquisitions, fees are calculated differently. Specialist advisory fees for FIRB applications are additional, typically $3,000–$15,000+.",
+  },
+  {
+    q: "What happens if I don't get FIRB approval when required?",
+    a: "Failure to obtain required FIRB approval is a serious offence. Penalties include substantial fines (up to $157,500 for individuals) and divestiture orders requiring you to sell the asset. The ATO actively audits foreign property ownership and has broad powers to investigate non-compliance.",
   },
 ];
 
@@ -75,7 +78,15 @@ export default async function FIRBSpecialistsPage() {
     { name: "FIRB Specialists" },
   ]);
 
-  const faqLd = faqJsonLd(FAQS);
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
 
   return (
     <>
@@ -83,12 +94,10 @@ export default async function FIRBSpecialistsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      {faqLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
       <AdvisorsClient
         professionals={(professionals as Professional[]) || []}
         pageTitle={PAGE_TITLE}

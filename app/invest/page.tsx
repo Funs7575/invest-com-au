@@ -8,7 +8,6 @@ import {
   ORGANIZATION_JSONLD,
   SITE_NAME,
 } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import { getOpportunityCategories } from "@/lib/invest-categories";
 import type { InvestCategory } from "@/lib/invest-categories";
 import {
@@ -134,25 +133,6 @@ const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   "private-equity": "Listed PE structures, wholesale s708 access, 7–10 year lockups.",
 };
 
-const investHubFaqLd = faqJsonLd([
-  {
-    q: "What are alternative investments in Australia?",
-    a: "Alternative investments are assets outside traditional shares, bonds, and cash. In Australia these include commercial property, farmland, private equity (unlisted company shares), private credit (direct lending), infrastructure, commodities (gold, oil), and collectables (art, wine, classic cars). Alternative assets often provide diversification benefits — lower correlation to share markets — but typically have higher entry minimums ($50,000–$500,000+), lower liquidity, and less regulatory oversight than listed securities. In Australia, many alternative investments are accessible only to wholesale or sophisticated investors.",
-  },
-  {
-    q: "What is private credit investing in Australia?",
-    a: "Private credit (also called direct lending) involves lending money directly to businesses rather than through a bank or bond market. Investors earn interest income, typically 8–14% per annum for senior secured debt. In Australia, private credit funds have grown rapidly as banks have reduced business lending since Basel III capital requirements tightened. Access is generally restricted to wholesale investors (net assets over $2.5M or gross income over $250,000). Key risks include illiquidity (no secondary market), borrower default, and manager concentration.",
-  },
-  {
-    q: "How do I invest in farmland in Australia?",
-    a: "Australian farmland investment is accessible through three main channels: direct purchase of agricultural land (requires significant capital, usually $500k+), unlisted agricultural funds (managed exposure via fund managers, wholesale investor minimum typically $10,000–$50,000), and ASX-listed agricultural trusts or companies (more liquid but less direct). Australian farmland has historically delivered 8–10% total returns (capital growth + lease income) over the long run. Risks include drought, commodity price cycles, and poor liquidity on direct holdings.",
-  },
-  {
-    q: "What is a pre-IPO investment and how do I access one?",
-    a: "A pre-IPO investment involves buying shares in a private company before it lists on a public stock exchange. Returns can be substantial if the company IPOs at a higher valuation, but risks are high: many pre-IPO companies never successfully list, the investment is highly illiquid (locked up for 12–24+ months), and valuations are subjective. In Australia, pre-IPO opportunities are generally restricted to wholesale investors. Platforms like Equitise, Birchal (equity crowdfunding), and specialist share registries facilitate access.",
-  },
-]);
-
 export default async function InvestMarketplacePage() {
   const listings = await fetchAllActiveListings();
 
@@ -227,7 +207,6 @@ export default async function InvestMarketplacePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(investHubFaqLd) }} />
 
       {/* ── Slim hero (was 40% of fold, now ~15%) ────────────────── */}
       <div className="container-custom max-w-6xl pt-5 md:pt-8 pb-3">

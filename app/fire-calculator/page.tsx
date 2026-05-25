@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import FireCalculatorClient from "./FireCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -53,32 +52,44 @@ const breadcrumbLd = {
   ],
 };
 
-const faqLd = faqJsonLd([
-  {
-    q: "What is the FIRE number?",
-    a: "Your FIRE number is the total investment portfolio value you need to retire early and live off investment returns indefinitely. It is calculated as your annual expenses divided by your safe withdrawal rate. Using the popular 4% rule, your FIRE number is 25× your annual expenses.",
-  },
-  {
-    q: "What is the 4% safe withdrawal rate?",
-    a: "The 4% rule suggests that if you withdraw 4% of your portfolio in year one of retirement and adjust for inflation each year, your portfolio has a historically high probability of lasting 30+ years. It was derived from the Trinity Study of US market data. Some Australian FIRE practitioners use 3.5% for retirements spanning 40+ years.",
-  },
-  {
-    q: "How do I calculate financial independence?",
-    a: "Divide your desired annual living expenses by your safe withdrawal rate. For example, if you need $60,000 per year and use the 4% rule, your FIRE number is $60,000 ÷ 0.04 = $1,500,000. Once your invested assets reach that figure, your portfolio should sustain your spending indefinitely.",
-  },
-  {
-    q: "How long does it take to reach FIRE?",
-    a: "Time to FIRE depends primarily on your savings rate — the percentage of take-home income you invest. A 10% savings rate may take 40+ years; a 50% savings rate can achieve FIRE in around 17 years; a 75% savings rate can get there in under 10 years. Investment returns also have a significant effect.",
-  },
-  {
-    q: "What is the difference between Lean FIRE and Fat FIRE?",
-    a: "Lean FIRE means retiring on a frugal budget, typically under $40,000 per year for a single person in Australia. Fat FIRE targets a more comfortable lifestyle, often $100,000+ per year. Barista FIRE combines a small portfolio with part-time work to cover the gap, and Coast FIRE means you have enough invested that growth alone will reach your FIRE number by traditional retirement age.",
-  },
-  {
-    q: "Does superannuation count towards my FIRE number?",
-    a: "Yes, but with an important caveat — you cannot access super until your preservation age (55–60 depending on birth year). Australian FIRE planners often split their strategy into two buckets: a taxable brokerage account to fund early retirement until preservation age, and super for the traditional retirement phase.",
-  },
-]);
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is the FIRE number?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Your FIRE number is the total investment portfolio value you need to retire early and live off investment returns indefinitely. It is calculated as your annual expenses divided by your safe withdrawal rate. Using the popular 4% rule, your FIRE number is 25× your annual expenses.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is the 4% rule?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The 4% rule (also called the safe withdrawal rate) suggests that if you withdraw 4% of your portfolio in year one of retirement and adjust for inflation each year, your portfolio has a historically high probability of lasting 30+ years. It was derived from the 'Trinity Study' of US market data.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is 4% a safe withdrawal rate for Australians?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Australian research suggests 3.5-4% may be appropriate for longer retirement periods (40+ years). Some Australian FIRE practitioners use 3.5% to be conservative, particularly given sequence-of-returns risk and Australia's different market conditions. Consider consulting a financial adviser to determine an appropriate rate for your situation.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What does FIRE stand for?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "FIRE stands for Financial Independence, Retire Early. It is a movement focused on extreme savings and investment to achieve financial independence earlier than the traditional retirement age. Common variants include Lean FIRE (minimal spending), Fat FIRE (comfortable spending), Barista FIRE (part-time work), and Coast FIRE (enough invested to grow to your FIRE number without further contributions).",
+      },
+    },
+  ],
+};
 
 export default function FireCalculatorPage() {
   return (

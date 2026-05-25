@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -20,29 +19,6 @@ export const metadata: Metadata = {
   },
 };
 
-const STARTUPS_FAQS = faqJsonLd([
-  {
-    q: "How can retail investors invest in Australian startups?",
-    a: "Retail investors can access Australian startups through ASIC-regulated equity crowdfunding platforms such as Birchal, OnMarket, Equitise, and VentureCrowd. These platforms allow investments from as little as $50 in ASIC-compliant fundraising rounds. Retail investors can also invest in ASX-listed technology companies or access VC fund products with retail tranches.",
-  },
-  {
-    q: "What is the minimum investment for startup investing in Australia?",
-    a: "Via equity crowdfunding platforms, retail investors can start from as little as $50 per deal. Angel investing directly into startups typically requires $10,000–$250,000 per deal. Venture capital funds generally require a minimum commitment of $250,000 or more. ASX-listed tech stocks can be bought from $500 through any standard brokerage account.",
-  },
-  {
-    q: "What are the tax benefits of investing in startups in Australia?",
-    a: "The primary tax incentive is the Early Stage Innovation Company (ESIC) regime, which provides a 20% non-refundable tax offset on qualifying investments (capped at $200,000 offset per investor per year) and a 10-year capital gains tax (CGT) exemption on shares held for 1–10 years. The R&D Tax Incentive also supports companies spending on eligible research and development activities.",
-  },
-  {
-    q: "What is ESIC (Early Stage Innovation Company) tax offset?",
-    a: "The ESIC tax offset is an Australian Government incentive for investors who acquire new shares in qualifying early-stage innovation companies. Investors receive a 20% non-refundable tax offset on the amount invested, up to a maximum offset of $200,000 per income year. Qualifying ESIC shares held for between 1 and 10 years are also exempt from capital gains tax. Companies qualify through either a 100-point innovation test or a principles-based ATO assessment.",
-  },
-  {
-    q: "What is the difference between equity crowdfunding and angel investing?",
-    a: "Equity crowdfunding is an ASIC-regulated mechanism where startups raise capital publicly from a large number of investors (often retail) via licensed intermediary platforms, with minimum investments typically starting at $50–$500. Angel investing involves high-net-worth individuals providing capital directly to startups, usually at an earlier stage and in larger amounts ($10,000–$250,000+), often in exchange for equity or convertible notes negotiated directly with the founder.",
-  },
-]);
-
 export default function StartupsPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -56,12 +32,6 @@ export default function StartupsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      {STARTUPS_FAQS && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(STARTUPS_FAQS) }}
-        />
-      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">

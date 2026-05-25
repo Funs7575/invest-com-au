@@ -86,14 +86,9 @@ describe("StartupGrantsHubPage", () => {
     expect(names).toContain("Grants");
   });
 
-  it("renders FAQPage JSON-LD because grantsHubConfig has faqs", async () => {
+  it("does NOT render FAQPage JSON-LD because grantsHubConfig has no faqs", async () => {
     render(await StartupGrantsHubPage());
-    const faqScript = screen.getByTestId("hub-page-faq-ld");
-    expect(faqScript).toBeInTheDocument();
-    const ld = JSON.parse(faqScript.innerHTML);
-    expect(ld["@type"]).toBe("FAQPage");
-    expect(Array.isArray(ld.mainEntity)).toBe(true);
-    expect(ld.mainEntity.length).toBeGreaterThan(0);
+    expect(screen.queryByTestId("hub-page-faq-ld")).not.toBeInTheDocument();
   });
 
   it("renders compliance block", async () => {

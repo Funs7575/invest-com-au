@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import HubLeadForm from "@/components/leads/HubLeadForm";
 
 export const revalidate = 3600;
@@ -19,29 +18,6 @@ export const metadata: Metadata = {
   },
 };
 
-const INHERITANCE_FAQS = faqJsonLd([
-  {
-    q: "Is there inheritance tax in Australia?",
-    a: "No. Australia does not have an inheritance tax or estate duty at the federal or state level. Assets inherited under a will are received tax-free by the beneficiary. However, income earned on those assets after you receive them is taxable, and capital gains tax may apply when you later sell inherited assets such as property or shares.",
-  },
-  {
-    q: "What taxes apply when you receive an inheritance in Australia?",
-    a: "Receiving an inheritance itself is not taxable in Australia. However, three tax consequences can arise later: (1) Capital gains tax when you sell inherited assets — the cost base depends on when the deceased acquired the asset; (2) Income tax on any income the inherited assets generate after you receive them; (3) Tax on inherited superannuation if you are not a tax dependant — non-dependants may pay up to 17% (including Medicare levy) on the taxable component of a superannuation death benefit.",
-  },
-  {
-    q: "What is the 90-day rule for inherited property in Australia?",
-    a: "The 90-day rule is not a formal ATO rule — it refers to the general advice to avoid making major investment decisions within the first 90 days of receiving an inheritance. The real legal deadline to know is the two-year main-residence exemption window: if you inherit a property that was the deceased's main residence, you generally have two years to sell it and still access the main-residence CGT exemption. Selling after two years can trigger significant CGT. Always get tax advice before selling inherited property.",
-  },
-  {
-    q: "Can I put an inheritance into superannuation?",
-    a: "Yes, but only up to the annual contribution caps. For the 2025–26 year the non-concessional (after-tax) cap is $120,000, or up to $360,000 under the bring-forward rule if you are under 75 and meet the work test. Your total super balance on 30 June of the prior year determines eligibility. There is no special exemption for inheritance money — it counts as a regular non-concessional contribution.",
-  },
-  {
-    q: "What is the best way to invest a $500,000 inheritance in Australia?",
-    a: "The right approach depends on your age, existing assets, tax position and income. A common framework: first, pay off high-interest debt; second, top up your emergency cash buffer; third, get tax advice on the inheritance itself (especially if it includes property or shares); fourth, consider a concessional super contribution to reduce taxable income; fifth, invest the remainder across a diversified portfolio aligned to your goals and timeline. For a sum of this size, a fee-for-service financial planner is worth engaging before making any investment decisions.",
-  },
-]);
-
 export default function InheritancePage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -51,7 +27,6 @@ export default function InheritancePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(INHERITANCE_FAQS) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">

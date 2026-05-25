@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
-import { calculatorJsonLd, faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
+import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import CgtClient from "./CgtClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -62,21 +62,7 @@ const faqLd = faqJsonLd([
     q: "Is my main residence CGT-exempt?",
     a: "Yes, generally. Your main residence is exempt provided it has been your principal place of residence, sits on land under 2 hectares, and hasn't been used to produce income. Partial exemptions apply in mixed-use cases.",
   },
-  {
-    q: "How do I calculate CGT on Australian shares?",
-    a: "Subtract your cost base (purchase price plus brokerage and any other acquisition costs) from the sale proceeds. If you held the shares for more than 12 months as an individual, apply the 50% CGT discount to the gross gain. Add the discounted gain to your other income and apply your marginal tax rate. Brokerage on sale is deducted from proceeds, reducing your gain.",
-  },
-  {
-    q: "What is the CGT small business concession in Australia?",
-    a: "The ATO provides four CGT small business concessions for assets used in a business with turnover under $2 million or net assets under $6 million: the 15-year exemption (full exemption after 15 years of continuous ownership), 50% active asset reduction, retirement exemption (up to $500,000 lifetime), and rollover concession. These concessions are separate from and can stack with the general 50% discount.",
-  },
 ]);
-
-const speakableLd = speakableWebPageJsonLd({
-  name: "Capital Gains Tax (CGT) Calculator — Australian Investors",
-  path: "/cgt-calculator",
-  selectors: ["h1", ".calculator-result-summary"],
-});
 
 function Loading() {
   return (
@@ -96,7 +82,6 @@ export default function CgtCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }} />
       <Suspense fallback={<Loading />}>
         <CgtClient />
       </Suspense>

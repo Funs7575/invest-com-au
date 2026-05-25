@@ -1,34 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 3600;
-
-const negGearFaqLd = faqJsonLd([
-  {
-    q: "What is negative gearing in Australia?",
-    a: "Negative gearing occurs when an investment's running costs (interest, fees, depreciation) exceed its income (rent, dividends). The net loss is deductible against all other assessable income including salary, reducing your tax. For example, a rental property generating $25,000 rent but costing $40,000 annually (mortgage interest + rates + repairs) creates a $15,000 loss. At a 37% marginal rate, this saves $5,550 in tax, reducing the actual out-of-pocket cost to $9,450. The investment only makes sense if expected capital growth exceeds this ongoing cost.",
-  },
-  {
-    q: "Is negative gearing on property worth it?",
-    a: "Negative gearing on property transfers some holding cost to the government (via reduced tax) but does not eliminate the loss. It is only financially rational if the expected after-tax capital gain exceeds the total cumulative after-tax losses over the holding period. In high-growth markets like Sydney and Melbourne inner suburbs, many investors have profited significantly using this strategy. However, it is a leveraged bet on capital appreciation — if prices stagnate or fall, investors face years of losses without compensating growth.",
-  },
-  {
-    q: "Can you negatively gear shares in Australia?",
-    a: "Yes. Any income-producing asset can be negatively geared, including shares purchased using a margin loan or investment loan. If your interest costs exceed dividends received, the net loss is deductible. Margin loans allow you to borrow against existing shares or cash to amplify your share portfolio. However, shares are more volatile than property and margin calls can force sales at the worst time. A margin call occurs when the portfolio value falls below the lender's loan-to-value ratio, requiring immediate equity injection or forced selling.",
-  },
-  {
-    q: "What expenses can you claim on a negatively geared property?",
-    a: "Deductible expenses include: loan interest and bank fees, property management fees (typically 7–10% of rent), insurance, council and water rates, repairs and maintenance (not capital improvements), stationery and postage for investment management, depreciation on chattels and building (for post-1985 construction), and pest control/cleaning. Capital improvements (additions, renovations that increase the property's value) are not immediately deductible — they are added to the property's cost base and affect the capital gain on eventual sale.",
-  },
-  {
-    q: "What is a depreciation schedule for investment property?",
-    a: "A depreciation schedule prepared by a quantity surveyor details the deductible depreciation allowances for an investment property. It covers two types: Division 40 (plant and equipment — appliances, carpets, blinds, air conditioners) and Division 43 (building write-off — structural elements of post-September 1985 buildings at 2.5% per year). For a new property, annual depreciation deductions often range from $5,000–$15,000, providing significant tax savings. The schedule must be prepared by a licensed quantity surveyor to be accepted by the ATO.",
-  },
-]);
 
 export const metadata: Metadata = {
   title: `Negative Gearing Australia ${CURRENT_YEAR}: How It Works, Tax Benefits & Risks | Invest.com.au`,
@@ -51,7 +27,6 @@ export default function NegativeGearingHubPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(negGearFaqLd) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">

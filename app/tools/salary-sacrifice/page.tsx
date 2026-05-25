@@ -10,7 +10,6 @@ import {
   CURRENT_YEAR,
   SITE_NAME,
 } from "@/lib/seo";
-import { faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -46,42 +45,51 @@ const breadcrumbLd = breadcrumbJsonLd([
   },
 ]);
 
-const FAQ_ITEMS = [
-  {
-    q: "What is salary sacrifice into super?",
-    a: "Salary sacrifice means redirecting part of your pre-tax salary directly into superannuation as concessional contributions. The redirected amount is taxed at 15% inside super rather than at your marginal rate (up to 47%). This reduces your taxable income and builds super faster.",
-  },
-  {
-    q: "How much can I salary sacrifice into super?",
-    a: "The concessional contribution cap for 2024-25 is $30,000 (includes employer SG contributions). If your employer pays 11.5% SG, you can salary sacrifice approximately $30,000 − (salary × 11.5%) before hitting the cap. Exceeding the cap triggers excess concessional contributions tax — the excess is included in your assessable income and taxed at marginal rate plus interest.",
-  },
-  {
-    q: "Is salary sacrifice worth it for low income earners?",
-    a: "Not always. The tax benefit of salary sacrificing reduces as your marginal rate approaches 15%. Earners below $37,000 already have their super taxed at an effective rate close to 15% (the low-income super tax offset refunds tax on contributions up to $500). For earners above $45,000 the benefit is clear; for lower earners, other savings strategies may be more tax-effective.",
-  },
-  {
-    q: "What is salary sacrifice for non-super benefits?",
-    a: "You can also salary sacrifice for a novated car lease (employer leases the car, salary package running costs), laptops, and other fringe benefits. The FBT implications vary by benefit type and employer FBT status — e.g. public hospitals and charities have FBT-exempt thresholds that greatly increase the value of this strategy.",
-  },
-  {
-    q: "Does salary sacrifice reduce my employer's super guarantee?",
-    a: "From 1 January 2020, employers must calculate the Superannuation Guarantee (SG) on ordinary time earnings (OTE) inclusive of salary-sacrifice amounts. This means salary sacrificing no longer reduces the employer SG base — employers must pay SG on your pre-sacrifice salary. Check your award/enterprise agreement if uncertain.",
-  },
-] as const;
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How does salary sacrifice into super work?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You ask your employer to redirect part of your pre-tax salary into your super fund instead of paying it to you as income. The contribution is taxed at 15% inside super rather than at your marginal income tax rate, which is usually higher — saving you the difference.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is the concessional contributions cap?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The concessional (before-tax) contributions cap is $30,000 per financial year in 2025–26. This includes your employer's Superannuation Guarantee (SG) contributions and any salary sacrifice amounts. Contributions over the cap are included in your taxable income and taxed at your marginal rate plus an interest charge.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can self-employed people salary sacrifice?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Not in the traditional sense. However, self-employed individuals and company directors can make personal concessional contributions and claim them as a tax deduction — achieving the same tax outcome. You need to lodge a Notice of Intent to Claim a Deduction with your fund before lodging your tax return.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is Division 293 tax?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Division 293 is an additional 15% tax on concessional super contributions for people with income above $250,000. It brings the effective tax rate on those contributions to 30%. Salary sacrifice is still beneficial for high earners — the top marginal rate is 47% including Medicare — but the saving per dollar is smaller than for middle-income earners.",
+      },
+    },
+  ],
+};
 
-const faqLd = faqJsonLd([...FAQ_ITEMS]);
-
-const speakableLd = speakableWebPageJsonLd({
-  name: "Should I Salary Sacrifice Into Super? Decision Tool",
-  path: "/tools/salary-sacrifice",
-  selectors: ["h1"],
-});
+const FAQS = faqLd.mainEntity;
 
 export default function SalarySacrificePage() {
   return (
     <>
       <JsonLd data={[breadcrumbLd, faqLd]} testId="salary-sacrifice-jsonld" />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }} />
       <div className="py-8 md:py-12">
         <div className="container-custom max-w-2xl">
           <p className="text-xs uppercase tracking-wider font-extrabold text-amber-600 mb-3">
@@ -115,13 +123,13 @@ export default function SalarySacrificePage() {
               Frequently asked questions
             </h2>
             <div className="space-y-6">
-              {FAQ_ITEMS.map((faq) => (
-                <div key={faq.q}>
+              {FAQS.map((faq) => (
+                <div key={faq.name}>
                   <h3 className="text-sm font-bold text-slate-900 mb-1">
-                    {faq.q}
+                    {faq.name}
                   </h3>
                   <p className="text-sm text-slate-600 leading-relaxed">
-                    {faq.a}
+                    {faq.acceptedAnswer.text}
                   </p>
                 </div>
               ))}

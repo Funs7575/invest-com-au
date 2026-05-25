@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import type { Professional } from "@/lib/types";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import AdvisorsClient from "../AdvisorsClient";
 
 export const revalidate = 1800;
@@ -13,24 +12,28 @@ const PAGE_DESCRIPTION =
 
 const FAQS = [
   {
-    q: "What does an Australian migration agent do, and how do they differ from an immigration lawyer?",
-    a: "A Registered Migration Agent (RMA) is authorised to provide immigration advice, prepare visa applications, and represent clients before the Administrative Review Tribunal. An immigration lawyer is a solicitor with immigration law expertise who can also handle judicial review and court appeals. For straightforward visa applications, an RMA is typically sufficient; for complex cases involving litigation or criminal character matters, an immigration lawyer with litigation experience may be preferable.",
+    q: "What is a Registered Migration Agent (RMA)?",
+    a: "A Registered Migration Agent (RMA) is a professional registered with the Migration Agents Registration Authority (MARA) who is legally authorised to provide immigration assistance and advice in Australia. Only RMAs, legal practitioners (solicitors/barristers), and members of parliament can charge for immigration advice in Australia.",
   },
   {
-    q: "What are the MARA registration requirements for Australian migration agents?",
-    a: "Migration agents must be registered with the Migration Agents Registration Authority (MARA) to legally charge for immigration advice in Australia. Registration requires a migration law qualification, a passing score on the MARA registration skills assessment, a clean police and character check, and professional indemnity insurance. MARA registration must be renewed annually. You can verify any agent's registration number at the MARA public register at mara.gov.au.",
+    q: "What is the Business Innovation and Investment Program (BIIP)?",
+    a: "The Business Innovation and Investment Program (BIIP) is a stream of the Business Talent Visa (subclass 188 and 888) designed for investors and business people who want to establish or manage a business in Australia. It includes the Significant Investor stream ($5M+ in complying investments), Premium Investor stream ($15M+), Business Innovation stream, Investor stream, and Entrepreneur stream.",
   },
   {
-    q: "What visa types do migration agents typically handle in Australia?",
-    a: "Australian migration agents handle a wide range of visas including: skilled migration (subclass 189, 190, 491); employer-sponsored visas (482 TSS, 186 ENS); business and investor visas (subclass 188/888 including the Significant Investor stream); partner and family visas; student visas; and permanent residency pathways. Specialist agents often focus on investor and skilled visas, which are more complex and carry higher financial stakes.",
+    q: "How much investment is required for an Australian investor visa?",
+    a: "The Significant Investor Visa (SIV, subclass 188C) requires a minimum $5 million invested in complying investments for at least 4 years. The Business Innovation stream requires a business with turnover of at least $750,000 and personal assets of $1.25M. Requirements vary significantly by stream.",
   },
   {
-    q: "How much do migration agents charge in Australia?",
-    a: "Migration agent fees vary widely by visa type and complexity. Skilled visa applications (subclass 189/190) typically cost $3,000–$5,000 in agent fees. Employer-sponsored visas run $3,500–$8,000. Investor and business visas (subclass 188/888) are the most complex, with agent fees ranging from $8,000–$20,000 or more, on top of the government visa application charge ($10,000–$14,000 for the 188 subclass). Always get a written fee agreement before engaging.",
+    q: "How long does a migration agent take to process an investor visa?",
+    a: "Processing times for investor visas (subclass 188/888) are typically 12–36 months depending on the stream and state nomination. State nomination rounds open periodically and have their own selection criteria. Working with an experienced agent significantly improves your chances of state nomination.",
   },
   {
-    q: "How do I verify a migration agent's MARA registration?",
-    a: "You can verify any migration agent's registration at the MARA public register at mara.gov.au — search by name, company, or registration number. A valid registration shows a current expiry date and no disciplinary findings. Be cautious of anyone who cannot provide a MARN (Migration Agent Registration Number) — providing paid immigration advice without MARA registration is a criminal offence in Australia carrying penalties of up to 10 years imprisonment.",
+    q: "What is the difference between a migration agent and an immigration lawyer?",
+    a: "In Australia, both can provide immigration advice and prepare visa applications. Migration agents must be MARA-registered; immigration lawyers are solicitors with immigration law expertise. For complex cases involving judicial review or appeals to the AAT, an immigration lawyer with litigation experience may be preferable.",
+  },
+  {
+    q: "Can a migration agent also advise on Australian tax and FIRB?",
+    a: "Migration agents specialise in visa law but typically do not provide tax or FIRB advice — those require a registered tax agent and potentially a FIRB specialist respectively. For investor visa applications, you'll often need a team: migration agent + international tax advisor + financial planner + potentially FIRB specialist.",
   },
 ];
 
@@ -75,7 +78,15 @@ export default async function MigrationAgentsPage() {
     { name: "Migration Agents" },
   ]);
 
-  const faqLd = faqJsonLd(FAQS);
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
 
   return (
     <>
@@ -83,12 +94,10 @@ export default async function MigrationAgentsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      {faqLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
       <AdvisorsClient
         professionals={(professionals as Professional[]) || []}
         pageTitle={PAGE_TITLE}

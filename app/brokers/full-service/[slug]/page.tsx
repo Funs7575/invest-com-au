@@ -11,7 +11,6 @@ import {
   CURRENT_YEAR,
   SITE_URL,
 } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import FullServiceBrokerEnquiryForm from "@/components/full-service-brokers/FullServiceBrokerEnquiryForm";
@@ -139,41 +138,6 @@ export default async function FullServiceBrokerDetailPage({
     areaServed: f.office_states || ["AU"],
   };
 
-  const faqLd = faqJsonLd([
-    {
-      q: `What is ${f.name}?`,
-      a: f.bio
-        ? f.bio
-        : `${f.name} is an Australian full-service stockbroker${f.firm_type ? ` (${f.firm_type})` : ""} that provides licensed personal advice, equity research and trade execution under an Australian Financial Services Licence (AFSL).`,
-    },
-    {
-      q: `Is ${f.name} licensed in Australia?`,
-      a: f.afsl_number
-        ? `Yes. ${f.name} holds Australian Financial Services Licence (AFSL) number ${f.afsl_number}, issued by ASIC. You can verify this on ASIC's Financial Advisers Register at moneysmart.gov.au.`
-        : `${f.name} operates under an Australian Financial Services Licence (AFSL) issued by ASIC. Verify the AFSL number on ASIC's Financial Advisers Register at moneysmart.gov.au before engaging.`,
-    },
-    {
-      q: `What is the minimum portfolio size for ${f.name}?`,
-      a: f.minimum_investment_cents
-        ? `${f.name} requires a minimum portfolio of ${formatMinimum(f.minimum_investment_cents)} to open an account. This threshold reflects the advisory and research services provided.`
-        : `${f.name} does not publish a fixed minimum portfolio. Contact the firm directly to discuss your situation — most full-service brokers in Australia require at least $100,000–$250,000 to engage.`,
-    },
-    {
-      q: `What fee model does ${f.name} use?`,
-      a: f.fee_description
-        ? f.fee_description
-        : f.fee_model
-          ? `${f.name} charges fees on a ${FEE_MODEL_LABELS[f.fee_model] ?? f.fee_model} basis. Contact the firm for a detailed fee schedule tailored to your portfolio size.`
-          : `${f.name}'s fee structure is not publicly disclosed. Request a fee schedule directly from the firm before committing — full-service brokers in Australia typically charge 0.5%–1.5% of portfolio value or per-trade commissions.`,
-    },
-    {
-      q: `What services does ${f.name} specialise in?`,
-      a: f.specialties && f.specialties.length > 0
-        ? `${f.name} specialises in ${f.specialties.join(", ")}. As a full-service firm, they also provide licensed personal advice and access to equity research and capital raisings under their AFSL.`
-        : `${f.name} offers the full range of services typical of an Australian full-service stockbroker: licensed personal advice, equity research, trade execution, and access to IPOs and capital raisings.`,
-    },
-  ]);
-
   return (
     <>
       <script
@@ -184,12 +148,6 @@ export default async function FullServiceBrokerDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
       />
-      {faqLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
-        />
-      )}
 
       <div className="py-6 md:py-12">
         <div className="container-custom max-w-4xl">

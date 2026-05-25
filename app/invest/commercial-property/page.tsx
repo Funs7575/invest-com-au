@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -20,29 +19,6 @@ export const metadata: Metadata = {
   },
 };
 
-const COMMERCIAL_PROPERTY_FAQS = faqJsonLd([
-  {
-    q: "What is the minimum investment for commercial property in Australia?",
-    a: "The minimum varies by investment pathway. ASX-listed A-REITs (e.g. Goodman Group, Dexus) can be purchased from the price of one share through any broker. Commercial property syndicates typically require $50,000–$200,000 per investor. Unlisted wholesale property funds usually require a minimum of $500,000. Direct ownership of a commercial property typically requires $1 million or more, depending on the asset class and location.",
-  },
-  {
-    q: "Can an SMSF buy commercial property?",
-    a: "Yes. SMSFs can purchase commercial property directly, including business real property that the SMSF trustees or related parties use for their business — this is a key advantage over residential property. The property must be purchased at market value, leased at market rent under a formal lease agreement, and be consistent with the SMSF's investment strategy. Borrowing to purchase via a Limited Recourse Borrowing Arrangement (LRBA) is permitted subject to strict rules.",
-  },
-  {
-    q: "What is the typical yield on Australian commercial property?",
-    a: "Prime commercial property yields vary by asset class: industrial and logistics assets currently yield approximately 4.5–5.5% at prime grade; CBD office yields range from 5.5–7%; neighbourhood retail centres yield 5.5–6.5%; hotels and hospitality assets yield 5–7%. Secondary assets in each category typically yield 1–3% higher than prime. Data centres are the newest major sector, with prime yields around 5–6%. Always verify current yields with a commercial property agent or valuer.",
-  },
-  {
-    q: "Do foreigners need FIRB approval to buy commercial property in Australia?",
-    a: "Yes, in most cases. Foreign persons generally require Foreign Investment Review Board (FIRB) approval before acquiring commercial property in Australia. The key thresholds are: developed commercial land — $268 million general threshold ($1.35 billion for investors from countries with an IFA with Australia, including the US, UK, Japan, Canada, and South Korea); vacant commercial land — FIRB approval required regardless of value. A-REIT investments below 5% of a listed trust are generally exempt.",
-  },
-  {
-    q: "What are the risks of commercial property investment in Australia?",
-    a: "Key risks include: vacancy risk (tenants vacating, particularly relevant for CBD office post-COVID with national vacancy rates of 12–17%); interest rate risk (higher rates increase borrowing costs and can compress asset values); illiquidity risk (direct property and unlisted funds cannot be quickly sold); sector-specific risk (retail facing structural headwinds from e-commerce); and concentration risk (owning a single asset in one location). Diversification through A-REITs or unlisted funds can mitigate some of these risks.",
-  },
-]);
-
 export default function CommercialPropertyPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -56,12 +32,6 @@ export default function CommercialPropertyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      {COMMERCIAL_PROPERTY_FAQS && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(COMMERCIAL_PROPERTY_FAQS) }}
-        />
-      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">

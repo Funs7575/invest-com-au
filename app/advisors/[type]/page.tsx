@@ -4,7 +4,6 @@ import type { Professional, ProfessionalType } from "@/lib/types";
 import type { Metadata } from "next";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import AdvisorsClient from "../AdvisorsClient";
 
 export const revalidate = 1800;
@@ -550,31 +549,6 @@ const TYPE_EDITORIAL: Record<string, { howToChoose: string[]; costGuide: string;
   },
 };
 
-function genericFaqs(label: string) {
-  return [
-    {
-      q: `How do I find a qualified ${label.toLowerCase()} in Australia?`,
-      a: `Search for ${label.toLowerCase()}s who are licensed or accredited with the relevant Australian professional body for their field. Check their credentials on the ASIC Financial Advisers Register, the Tax Practitioners Board register, or the relevant state licensing authority. Ask for references, confirm their experience with your specific needs, and obtain a written fee agreement before engaging.`,
-    },
-    {
-      q: `What qualifications should a ${label.toLowerCase()} have in Australia?`,
-      a: `Qualifications vary by specialty. Financial advisers must hold an AFSL or be an authorised representative and meet the FASEA education standards (a relevant degree, ethics exam, and continuing professional development). Tax agents must be registered with the Tax Practitioners Board. Other professionals — such as lawyers, conveyancers, and real estate agents — hold state-issued licences. Always verify credentials through the relevant regulator before engaging.`,
-    },
-    {
-      q: `How much do ${label.toLowerCase()}s charge in Australia?`,
-      a: `Fees vary widely by specialty, experience, and engagement complexity. Many professionals charge hourly rates ($200–$900/hour depending on the field) or fixed fees for defined scopes of work. Financial advisers often charge an initial Statement of Advice fee ($2,500–$5,500) plus an ongoing retainer. Always ask for a written fee disclosure before proceeding so you can compare advisors on a like-for-like basis.`,
-    },
-    {
-      q: `What's the difference between a ${label.toLowerCase()} and a general financial advisor?`,
-      a: `A general financial adviser can advise across a broad range of financial matters including investments, superannuation, insurance, and retirement planning. A specialist ${label.toLowerCase()} has deep expertise in a specific area and may hold additional qualifications, accreditations, or licences relevant to that field. For complex or niche matters, a specialist typically delivers better outcomes than a generalist who covers the same area as part of a broader practice.`,
-    },
-    {
-      q: `Are ${label.toLowerCase()}s regulated in Australia?`,
-      a: `Yes. Most financial professionals in Australia are regulated by ASIC (Australian Securities and Investments Commission), the Tax Practitioners Board, or a state-based licensing authority. Financial advisers must be authorised under an Australian Financial Services Licence (AFSL). Engaging an unregistered or unlicensed professional can expose you to significant financial and legal risk. Always verify credentials through the regulator's public register before engaging.`,
-    },
-  ];
-}
-
 export function generateStaticParams() {
   return Object.keys(SLUG_TO_TYPE).map((type) => ({ type }));
 }
@@ -612,7 +586,7 @@ export default async function AdvisorTypePage({ params }: { params: Promise<{ ty
     .order("rating", { ascending: false });
 
   const label = PROFESSIONAL_TYPE_LABELS[professionalType];
-  const faqs = TYPE_FAQS[typeSlug] ?? genericFaqs(label);
+  const faqs = TYPE_FAQS[typeSlug] || [];
 
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -620,7 +594,15 @@ export default async function AdvisorTypePage({ params }: { params: Promise<{ ty
     { name: `${label}s` },
   ]);
 
-  const faqLd = faqJsonLd(faqs);
+  const faqLd = faqs.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  } : null;
 
   return (
     <>

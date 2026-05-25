@@ -11,7 +11,6 @@ import {
   ORGANIZATION_JSONLD,
   REVIEW_AUTHOR,
 } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 
@@ -129,29 +128,6 @@ const CATEGORIES: {
   },
 ];
 
-const HOW_TO_FAQS = faqJsonLd([
-  {
-    q: "What how-to guides does Invest.com.au offer?",
-    a: "Invest.com.au publishes step-by-step guides covering the full range of Australian investing topics — buying shares and ETFs on the ASX, investing in Bitcoin and cryptocurrency, setting up an SMSF, claiming franking credits, building a share portfolio, investing in REITs and managed funds, dollar-cost averaging, tax-loss harvesting, negative gearing property, and more. All guides are written in plain English and reviewed by our editorial team.",
-  },
-  {
-    q: "How do I transfer shares from one broker to another in Australia?",
-    a: "To transfer shares between brokers in Australia, you initiate a CHESS-sponsored transfer through your new broker by providing your Holder Identification Number (HIN) and completing a broker-to-broker transfer form. The transfer is typically processed within 2–5 business days at no cost. If your shares are issuer-sponsored (on a SRN rather than HIN), you first need to move them to CHESS sponsorship with your new broker before they can be transferred.",
-  },
-  {
-    q: "How often are the how-to guides updated?",
-    a: "Our how-to guides are reviewed and updated regularly to reflect changes in Australian tax law, ASIC regulations, ASX rules, and broker offerings. Each guide displays its last-reviewed date. If you notice outdated information, use the feedback button at the bottom of any guide to flag it for editorial review.",
-  },
-  {
-    q: "Are the guides suitable for beginners?",
-    a: "Yes. The guides are written for investors at all levels, with a particular focus on making complex topics accessible to beginners. Each guide includes numbered steps, plain-English explanations of financial terms, and practical tips for Australians. More advanced guides (e.g. tax-loss harvesting, SMSF setup) include notes highlighting where professional advice may be warranted.",
-  },
-  {
-    q: "Do the guides cover SMSF investing?",
-    a: "Yes. Invest.com.au publishes guides on setting up an SMSF, investing within an SMSF, consolidating super, salary sacrificing into super, and choosing between super funds. The SMSF setup guide covers trustee structure, ATO registration, investment strategy documentation, and ongoing compliance obligations. As SMSF rules are complex, we recommend engaging a licensed SMSF adviser or accountant for personalised guidance.",
-  },
-]);
-
 export default function HowToHubPage() {
   const guides = getAllGuides();
 
@@ -201,12 +177,6 @@ export default function HowToHubPage() {
           __html: JSON.stringify([breadcrumbs, webPageJsonLd, itemListJsonLd]),
         }}
       />
-      {HOW_TO_FAQS && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(HOW_TO_FAQS) }}
-        />
-      )}
 
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-4xl">

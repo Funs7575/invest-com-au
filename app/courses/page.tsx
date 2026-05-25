@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import { getPublishedCourses } from "@/lib/course";
 import type { Course } from "@/lib/types";
 import CoursesGate from "./CoursesGate";
@@ -148,29 +147,6 @@ export default async function CoursesPage() {
     })),
   };
 
-  const courseFaqs = faqJsonLd([
-    {
-      q: "What investing courses are available on Invest.com.au?",
-      a: "Invest.com.au offers expert-led courses covering a range of investing topics for Australians, including shares, ETFs, property, superannuation, tax, and SMSF strategies. Courses are created by industry professionals and updated to reflect current Australian tax and regulatory conditions.",
-    },
-    {
-      q: "Are the courses suitable for complete beginners?",
-      a: "Yes. Beginner-level courses on Invest.com.au assume no prior investing knowledge and start with foundational concepts such as how financial markets work, what shares and ETFs are, and how to open a brokerage account. The course catalogue is tagged by difficulty level — beginner, intermediate, and advanced — so you can find content appropriate to your experience.",
-    },
-    {
-      q: "How long does it take to complete an investing course?",
-      a: "Course length varies by topic and depth. Most beginner and intermediate courses on Invest.com.au can be completed in 2–8 hours of self-paced study. Each course listing shows an estimated completion time so you can plan around your schedule. There are no deadlines — you retain lifetime access and can study at your own pace.",
-    },
-    {
-      q: "Do the courses cover tax and superannuation?",
-      a: "Yes. Several courses specifically address Australian tax considerations for investors, including capital gains tax (CGT), dividend imputation and franking credits, negative gearing, and the tax treatment of different investment structures. Superannuation and SMSF courses cover contribution rules, investment strategies within super, and the tax advantages of investing through a super fund.",
-    },
-    {
-      q: "Are the courses accredited?",
-      a: "The investing courses on Invest.com.au are educational resources designed to improve financial literacy and are not formal qualifications or ASIC-regulated financial advice. They do not lead to an AFSL authorisation or a recognised qualification under the Australian Qualifications Framework (AQF). For formal financial planning qualifications, look for FASEA-approved or university-accredited programmes.",
-    },
-  ]);
-
   // Separate featured from the rest
   const featured = courses.filter((c) => c.featured);
   const rest = courses.filter((c) => !c.featured);
@@ -184,10 +160,6 @@ export default async function CoursesPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseFaqs) }}
       />
 
       <Suspense>

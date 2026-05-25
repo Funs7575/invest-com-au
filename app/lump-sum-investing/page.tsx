@@ -1,29 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
-
-const lumpSumHubFaqLd = faqJsonLd([
-  {
-    q: "Should I invest a lump sum all at once or spread it out?",
-    a: "Research consistently shows lump sum investing outperforms dollar-cost averaging (DCA) about two-thirds of the time, because markets rise more often than they fall. Investing $100,000 all at once beats investing $10,000 per month over 10 months on average. However, DCA reduces regret risk — if markets fall immediately after a lump sum investment, the psychological impact can cause panic selling. For investors who are confident they won't sell in a downturn, lump sum is mathematically superior; for others, DCA is a reasonable compromise.",
-  },
-  {
-    q: "What should I do with a large inheritance or redundancy payment?",
-    a: "Common approaches: first, build an emergency fund (3–6 months expenses) in a high-interest savings account. Then, pay down high-interest debt (credit cards, personal loans). For the investment portion, decide between ETFs for diversification and simplicity, direct property for leverage and franking, or a mix. Time in market beats timing the market — delaying investment while 'waiting for the right time' typically underperforms immediate investment. Consider your tax position (income-splitting via a trust, tax-deductible super contributions) before acting.",
-  },
-  {
-    q: "What is dollar-cost averaging (DCA)?",
-    a: "Dollar-cost averaging is investing fixed amounts at regular intervals (e.g., $500 every month) regardless of market price. When prices are high, you buy fewer units; when prices are low, you buy more, resulting in a lower average cost per unit than the average price over the period. DCA is the default strategy for investors investing from salary (super contributions are inherently DCA). For a lump sum, DCA reduces the impact of investing at a market peak but also reduces the expected return compared to investing all at once.",
-  },
-  {
-    q: "What is the best investment for a lump sum in Australia?",
-    a: "For most investors, a globally diversified low-cost ETF portfolio (e.g. VGS for international shares + VAS for Australian shares + a small bond allocation) provides the best risk-adjusted return over long horizons. Property is appropriate for investors who want leverage and rental income but requires far more capital. Super (via voluntary concessional contributions up to the $30,000 annual cap) is tax-effective but locks up funds until retirement. The 'best' investment depends on your time horizon, liquidity needs, tax position, and risk tolerance — not a universal answer.",
-  },
-]);
 
 export const metadata: Metadata = {
   title: `What to Do With a Lump Sum in Australia ${CURRENT_YEAR}: Investment Guide | Invest.com.au`,
@@ -46,7 +26,6 @@ export default function LumpSumHubPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(lumpSumHubFaqLd) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">

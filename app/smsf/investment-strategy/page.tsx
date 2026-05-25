@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 import HubLeadForm from "@/components/leads/HubLeadForm";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { createClient } from "@/lib/supabase/server";
@@ -38,30 +37,9 @@ export default async function SmsfInvestmentStrategyPage() {
     { name: "SMSF", url: absoluteUrl("/smsf") },
     { name: "Investment Strategy", url: absoluteUrl("/smsf/investment-strategy") },
   ]);
-
-  const smsfStrategyFaqLd = faqJsonLd([
-    {
-      q: "What must an SMSF investment strategy include?",
-      a: "An SMSF investment strategy is a written document required by law (SISA s52B) that must consider: the risk profile and return objectives of each member given their age and circumstances; diversification across asset classes; liquidity to meet benefit payments, expenses, and insurance premiums; and whether to hold insurance for members. The strategy must be reviewed at least annually and whenever a member's circumstances change materially. There is no prescribed format, but the ATO provides a template. Trustees who can't demonstrate a written strategy face civil penalties.",
-    },
-    {
-      q: "How should an SMSF be invested?",
-      a: "SMSF investment strategies vary widely by member age and goals, but the ATO expects genuine consideration of diversification. A typical accumulation-phase SMSF for a 45-year-old might hold 60–70% growth assets (ASX shares, international ETFs, direct property) and 30–40% defensive assets (cash, bonds, fixed income). A fund approaching pension phase would typically reduce equity exposure and increase liquidity. The key is that the written strategy must genuinely reflect the fund's actual investment approach — a generic strategy template that doesn't match holdings can be flagged in the annual audit.",
-    },
-    {
-      q: "Can an SMSF invest in cryptocurrency?",
-      a: "Yes, but with strict compliance requirements. Cryptocurrency must be: valued at market value for annual reporting, held securely in the SMSF's name (not in a personal exchange account), included in the written investment strategy, and consistent with the sole purpose test. The ATO treats cryptocurrency as property for CGT purposes. Most auditors will flag issues if crypto is held in personal accounts, lacks a clear acquisition/valuation trail, or if the fund's strategy doesn't mention digital assets. A specialist SMSF auditor can advise on compliance documentation.",
-    },
-    {
-      q: "What is the sole purpose test for SMSF investments?",
-      a: "The sole purpose test (SISA s62) requires that an SMSF be maintained solely to provide retirement benefits to members (or death benefits to their dependants). An investment fails the test if it provides a financial or material benefit to a trustee or member before retirement — for example, a trustee living in a fund-owned holiday home, or a fund buying artwork that the trustee stores at home. Breaches can result in the fund losing its concessional tax treatment (taxed at 45% instead of 15%) and civil penalties of up to $315,000 per trustee.",
-    },
-  ]);
-
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(smsfStrategyFaqLd) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">

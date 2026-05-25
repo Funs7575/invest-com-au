@@ -3,7 +3,6 @@ import type { Broker } from "@/lib/types";
 import { Suspense } from "react";
 import XRayClient from "./XRayClient";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -75,29 +74,6 @@ export default async function PortfolioXRayPage() {
     { name: "Portfolio X-Ray" },
   ]);
 
-  const portfolioXRayFaq = faqJsonLd([
-    {
-      q: "What is portfolio X-Ray and what does it analyse?",
-      a: "Portfolio X-Ray is a free investment analysis tool for Australian investors. It analyses your holdings to generate a diversification score, sector and geographic breakdown, concentration risk alerts, estimated fee drag, and dividend yield estimates. Simply enter your stock and ETF holdings to get an instant snapshot of your portfolio's strengths and weaknesses.",
-    },
-    {
-      q: "How do I use the portfolio X-Ray tool?",
-      a: "Enter each of your investment holdings — including ASX stocks, ETFs, and US-listed securities — along with the quantity or value held. The tool will automatically calculate your portfolio's allocation across sectors and geographies, flag any concentration risks, and provide a diversification score. No account creation is required.",
-    },
-    {
-      q: "What is a good diversification score for an Australian portfolio?",
-      a: "A diversification score above 70 is generally considered well-diversified for an Australian investor. This typically means your portfolio spans multiple sectors (e.g. financials, resources, technology, healthcare), has some international exposure beyond the ASX, and avoids heavy concentration in any single stock or sector. Scores below 50 often indicate over-exposure to one or two holdings or sectors.",
-    },
-    {
-      q: "What is concentration risk in an investment portfolio?",
-      a: "Concentration risk occurs when a large portion of your portfolio is held in a single stock, sector, or geographic region. For example, if 40% of your portfolio is in one company, a sharp fall in that stock could significantly harm your overall returns. Portfolio X-Ray flags positions where any single holding exceeds recommended thresholds, helping you identify where rebalancing may reduce risk.",
-    },
-    {
-      q: "Is the portfolio X-Ray tool free to use?",
-      a: "Yes, the portfolio X-Ray tool on invest.com.au is completely free to use. There is no account required and no subscription fee. The tool is designed to help Australian investors quickly understand their portfolio's diversification and risk profile without needing expensive financial planning software.",
-    },
-  ]);
-
   return (
     <>
       <script
@@ -108,7 +84,6 @@ export default async function PortfolioXRayPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      {portfolioXRayFaq && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(portfolioXRayFaq) }} />}
       <Suspense fallback={<LoadingFallback />}>
         <XRayClient brokers={(brokers as Broker[]) || []} />
       </Suspense>
