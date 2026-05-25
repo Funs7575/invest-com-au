@@ -27,11 +27,9 @@ name: Auto-rebase audit-remediation loop PRs
 #     race against each other on the same PR.
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - "docs/audits/**"
-      - "LOOP_DONE"
+  # DISABLED 2026-05-25 (founder request: stop loop/auto-merge churn).
+  # Re-enable by restoring the original triggers (see git history).
+  workflow_dispatch: {}
 
 permissions:
   contents: write

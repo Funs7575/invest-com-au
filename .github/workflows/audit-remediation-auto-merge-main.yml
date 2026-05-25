@@ -11,8 +11,9 @@ name: Audit-remediation auto-merge main into stream branches
 # Idempotent: if main is already in the branch, `git merge` is a no-op.
 
 on:
-  push:
-    branches: [main]
+  # DISABLED 2026-05-25 (founder request: stop loop/auto-merge churn).
+  # Re-enable by restoring the original triggers (see git history).
+  workflow_dispatch: {}
 
 permissions:
   contents: write
