@@ -15,14 +15,16 @@ function StarRatingInput({ label, value, onChange }: { label: string; value: num
   return (
     <div>
       <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">{label}</label>
-      <div className="flex gap-0.5" onMouseLeave={() => setHovered(0)}>
+      <div className="flex gap-0.5" onMouseLeave={() => setHovered(0)} role="group" aria-label={label.replace(" *", "")}>
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
             type="button"
+            aria-label={`Rate ${star} out of 5`}
+            aria-pressed={value === star}
             onClick={() => onChange(star)}
             onMouseEnter={() => setHovered(star)}
-            className={`min-w-11 min-h-11 md:min-w-0 md:min-h-0 text-2xl md:text-lg flex items-center justify-center transition-colors ${
+            className={`min-w-11 min-h-11 md:min-w-0 md:min-h-0 text-2xl md:text-lg flex items-center justify-center transition-colors rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-1 ${
               star <= (hovered || value) ? "text-amber-400" : "text-slate-200 hover:text-amber-200"
             }`}
           >
@@ -204,7 +206,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
 
         {/* Error message */}
         {state === "error" && errorMsg && (
-          <p className="text-xs text-red-600 font-medium">{errorMsg}</p>
+          <p role="alert" className="text-xs text-red-600 font-medium">{errorMsg}</p>
         )}
 
         {/* Actions */}

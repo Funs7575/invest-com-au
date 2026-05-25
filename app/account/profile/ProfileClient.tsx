@@ -144,6 +144,7 @@ export default function ProfileClient() {
   const [investorMeta, setInvestorMeta] = useState<InvestorMeta>({ account_type: "individual" });
   const [fetching, setFetching] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{ display_name?: string }>({});
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -193,6 +194,12 @@ export default function ProfileClient() {
 
   // Save handler
   const handleSave = async () => {
+    // Client-side field validation
+    const errs: { display_name?: string } = {};
+    if (!form.display_name.trim()) errs.display_name = "Display name is required.";
+    setFieldErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+
     setSaving(true);
     try {
       const [profileRes, metaRes] = await Promise.all([
@@ -281,17 +288,31 @@ export default function ProfileClient() {
           <div className="space-y-4">
             <div>
               <label htmlFor="display_name" className="block text-sm font-medium text-slate-700 mb-1">
-                Display Name
+                Display Name <span className="text-red-600" aria-hidden="true">*</span>
               </label>
               <input
                 id="display_name"
                 type="text"
                 value={form.display_name}
-                onChange={(e) => setForm((p) => ({ ...p, display_name: e.target.value }))}
+                onChange={(e) => {
+                  setForm((p) => ({ ...p, display_name: e.target.value }));
+                  if (fieldErrors.display_name) setFieldErrors({});
+                }}
                 placeholder="How should we address you?"
-                className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                aria-invalid={fieldErrors.display_name ? true : undefined}
+                aria-describedby={fieldErrors.display_name ? "display-name-err" : undefined}
+                className={`w-full px-3 py-2.5 border rounded-xl text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 transition-colors ${
+                  fieldErrors.display_name
+                    ? "border-red-400 focus:ring-red-300 focus:border-red-400"
+                    : "border-slate-200 focus:ring-emerald-500 focus:border-emerald-500"
+                }`}
                 maxLength={100}
               />
+              {fieldErrors.display_name && (
+                <p id="display-name-err" role="alert" className="text-xs text-red-600 mt-1">
+                  {fieldErrors.display_name}
+                </p>
+              )}
             </div>
 
             <div>
@@ -396,11 +417,19 @@ export default function ProfileClient() {
 
         {/* Save */}
         <button
-          onClick={handleSave}
+          type="button"
+          onClick={() => void handleSave()}
           disabled={saving}
-          className="w-full py-3 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50"
+          aria-busy={saving}
+          className="w-full py-3 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2"
         >
-          {saving ? "Saving..." : "Save Profile"}
+          {saving && (
+            <svg aria-hidden="true" className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          )}
+          {saving ? "Saving…" : "Save Profile"}
         </button>
       </div>
     </div>

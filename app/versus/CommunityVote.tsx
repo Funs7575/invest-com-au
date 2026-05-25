@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Broker } from "@/lib/types";
 import BrokerLogo from "@/components/BrokerLogo";
+import { Skeleton } from "@/components/Skeletons";
 
 interface CommunityVoteProps {
   brokerA: Broker;
@@ -17,7 +18,12 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
   const [percentA, setPercentA] = useState(50);
   const [percentB, setPercentB] = useState(50);
   const [total, setTotal] = useState(0);
+  /** True only while casting a vote (POST). */
   const [loading, setLoading] = useState(false);
+  /** True while the initial GET fetch is in-flight. */
+  const [fetchLoading, setFetchLoading] = useState(true);
+  /** Non-null when the initial fetch fails. */
+  const [fetchError, setFetchError] = useState(false);
 
   const pairKey = `${LS_PREFIX}${[brokerA.slug, brokerB.slug].sort().join("_")}`;
 
@@ -30,6 +36,8 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
     }
 
     // Fetch current results
+    setFetchLoading(true);
+    setFetchError(false);
     fetch(`/api/versus/vote?a=${encodeURIComponent(brokerA.slug)}&b=${encodeURIComponent(brokerB.slug)}`)
       .then((res) => res.json())
       .then((data) => {
@@ -39,7 +47,12 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
           setTotal(data.total ?? 0);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        setFetchError(true);
+      })
+      .finally(() => {
+        setFetchLoading(false);
+      });
   }, [brokerA.slug, brokerB.slug, pairKey]);
 
   const castVote = useCallback(
@@ -86,70 +99,102 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
       <h2 className="text-base md:text-xl font-extrabold text-slate-900 mb-1">
         Community Vote
       </h2>
-      <p className="text-xs md:text-sm text-slate-500 mb-4">
-        {voted
-          ? `${total.toLocaleString()} vote${total !== 1 ? "s" : ""} so far`
-          : "Which broker would you choose?"}
-      </p>
 
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        {[brokerA, brokerB].map((broker) => {
-          const isChosen = chosenSlug === broker.slug;
-          const percent = broker.slug === brokerA.slug ? percentA : percentB;
+      {/* Loading skeleton — shown while the initial results fetch is in-flight */}
+      {fetchLoading && (
+        <div aria-busy="true" aria-label="Loading vote results">
+          <Skeleton className="h-3 w-40 mb-4" />
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {[0, 1].map((i) => (
+              <div key={i} className="rounded-xl border-2 border-slate-100 p-4 md:p-5 text-center space-y-2">
+                <Skeleton className="w-12 h-12 rounded-lg mx-auto" />
+                <Skeleton className="h-3 w-3/4 mx-auto" />
+                <Skeleton className="h-2 w-1/2 mx-auto" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-          return (
-            <button
-              key={broker.slug}
-              onClick={() => castVote(broker)}
-              disabled={voted || loading}
-              className={`relative rounded-xl border-2 p-4 md:p-5 text-center transition-all ${
-                voted
-                  ? isChosen
-                    ? "border-emerald-500 bg-emerald-50/50"
-                    : "border-slate-200 bg-slate-50/50"
-                  : "border-slate-200 hover:border-slate-400 hover:shadow-md cursor-pointer active:scale-[0.98]"
-              } ${loading ? "opacity-60" : ""}`}
-            >
-              <BrokerLogo broker={broker} size="lg" className="mx-auto mb-2" />
-              <p className="font-bold text-sm text-slate-900">{broker.name}</p>
-              {broker.rating && (
-                <p className="text-xs text-slate-500 mt-0.5">{broker.rating}/5</p>
-              )}
-
-              {/* Vote result overlay */}
-              {voted && (
-                <div className="mt-3">
-                  <p className="text-xl md:text-2xl font-extrabold" style={{ color: isChosen ? "#059669" : "#64748b" }}>
-                    {percent}%
-                  </p>
-                  <div className="h-2 bg-slate-200 rounded-full overflow-hidden mt-1.5">
-                    <div
-                      className="h-full rounded-full transition-all duration-700"
-                      style={{
-                        width: `${percent}%`,
-                        background: isChosen ? "#059669" : "#94a3b8",
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {isChosen && (
-                <div className="absolute -top-2 -right-2">
-                  <span className="px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-wider bg-emerald-500 text-white rounded-full">
-                    Your pick
-                  </span>
-                </div>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {!voted && (
-        <p className="text-[0.69rem] text-slate-400 text-center">
-          Click a broker card to cast your vote. One vote per comparison.
+      {/* Error state — shown when the fetch fails; user can still cast a vote */}
+      {!fetchLoading && fetchError && (
+        <p
+          className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4"
+          role="alert"
+        >
+          Couldn&apos;t load vote counts — results will appear after you vote.
         </p>
+      )}
+
+      {/* Main content — hidden while the initial fetch is pending */}
+      {!fetchLoading && (
+        <>
+          <p className="text-xs md:text-sm text-slate-500 mb-4" aria-live="polite">
+            {voted
+              ? `${total.toLocaleString()} vote${total !== 1 ? "s" : ""} so far`
+              : "Which broker would you choose?"}
+          </p>
+
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {[brokerA, brokerB].map((broker) => {
+              const isChosen = chosenSlug === broker.slug;
+              const percent = broker.slug === brokerA.slug ? percentA : percentB;
+
+              return (
+                <button
+                  key={broker.slug}
+                  onClick={() => castVote(broker)}
+                  disabled={voted || loading}
+                  className={`relative rounded-xl border-2 p-4 md:p-5 text-center transition-all ${
+                    voted
+                      ? isChosen
+                        ? "border-emerald-500 bg-emerald-50/50"
+                        : "border-slate-200 bg-slate-50/50"
+                      : "border-slate-200 hover:border-slate-400 hover:shadow-md cursor-pointer active:scale-[0.98]"
+                  } ${loading ? "opacity-60" : ""}`}
+                >
+                  <BrokerLogo broker={broker} size="lg" className="mx-auto mb-2" />
+                  <p className="font-bold text-sm text-slate-900">{broker.name}</p>
+                  {broker.rating && (
+                    <p className="text-xs text-slate-500 mt-0.5">{broker.rating}/5</p>
+                  )}
+
+                  {/* Vote result overlay */}
+                  {voted && (
+                    <div className="mt-3">
+                      <p className="text-xl md:text-2xl font-extrabold" style={{ color: isChosen ? "#059669" : "#64748b" }}>
+                        {percent}%
+                      </p>
+                      <div className="h-2 bg-slate-200 rounded-full overflow-hidden mt-1.5">
+                        <div
+                          className="h-full rounded-full transition-all duration-700"
+                          style={{
+                            width: `${percent}%`,
+                            background: isChosen ? "#059669" : "#94a3b8",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {isChosen && (
+                    <div className="absolute -top-2 -right-2">
+                      <span className="px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-wider bg-emerald-500 text-white rounded-full">
+                        Your pick
+                      </span>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {!voted && (
+            <p className="text-[0.69rem] text-slate-400 text-center">
+              Click a broker card to cast your vote. One vote per comparison.
+            </p>
+          )}
+        </>
       )}
     </div>
   );

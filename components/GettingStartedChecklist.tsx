@@ -11,60 +11,86 @@ interface ChecklistItem {
   done: boolean;
 }
 
-interface Props {
+/** Broker-portal usage — keep all existing broker props. */
+interface BrokerProps {
+  variant?: "floating";
   brokerSlug: string;
   hasAcceptedTerms: boolean;
   walletBalanceCents: number;
   campaignCount: number;
   hasCreatives: boolean;
   hasConversions: boolean;
+  /** Not used in floating mode. */
+  items?: never;
+  storageKey?: never;
+  heading?: never;
+  welcomeText?: never;
 }
 
-export default function GettingStartedChecklist({
-  brokerSlug: _brokerSlug,
-  hasAcceptedTerms,
-  walletBalanceCents,
-  campaignCount,
-  hasCreatives,
-  hasConversions,
-}: Props) {
-  const [dismissed, setDismissed] = useState(true);
+/** Inline usage — caller supplies items directly. */
+interface InlineProps {
+  variant: "inline";
+  items: ChecklistItem[];
+  storageKey: string;
+  heading?: string;
+  welcomeText?: string;
+  /** Not used in inline mode. */
+  brokerSlug?: never;
+  hasAcceptedTerms?: never;
+  walletBalanceCents?: never;
+  campaignCount?: never;
+  hasCreatives?: never;
+  hasConversions?: never;
+}
+
+type Props = BrokerProps | InlineProps;
+
+export default function GettingStartedChecklist(props: Props) {
+  const isInline = props.variant === "inline";
+
+  // Resolve items and storage key per variant
+  const resolvedStorageKey = isInline ? props.storageKey : STORAGE_KEY;
+  const resolvedItems: ChecklistItem[] = isInline
+    ? props.items
+    : [
+        {
+          label: "Accept Marketplace Terms",
+          href: "/broker-portal/settings",
+          done: props.hasAcceptedTerms,
+        },
+        {
+          label: "Add Funds to Wallet (min $50)",
+          href: "/broker-portal/wallet",
+          done: props.walletBalanceCents >= 5000,
+        },
+        {
+          label: "Upload Brand Assets",
+          href: "/broker-portal/creatives",
+          done: props.hasCreatives,
+        },
+        {
+          label: "Create Your First Campaign",
+          href: "/broker-portal/campaigns/new",
+          done: props.campaignCount > 0,
+        },
+        {
+          label: "Track Conversions",
+          href: "/broker-portal/webhooks",
+          done: props.hasConversions,
+        },
+      ];
+
+  const [dismissed, setDismissed] = useState(isInline ? false : true);
   const [expanded, setExpanded] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(resolvedStorageKey);
     setDismissed(stored === "true");
-  }, []);
+  }, [resolvedStorageKey]);
 
-  const items: ChecklistItem[] = [
-    {
-      label: "Accept Marketplace Terms",
-      href: "/broker-portal/settings",
-      done: hasAcceptedTerms,
-    },
-    {
-      label: "Add Funds to Wallet (min $50)",
-      href: "/broker-portal/wallet",
-      done: walletBalanceCents >= 5000,
-    },
-    {
-      label: "Upload Brand Assets",
-      href: "/broker-portal/creatives",
-      done: hasCreatives,
-    },
-    {
-      label: "Create Your First Campaign",
-      href: "/broker-portal/campaigns/new",
-      done: campaignCount > 0,
-    },
-    {
-      label: "Track Conversions",
-      href: "/broker-portal/webhooks",
-      done: hasConversions,
-    },
-  ];
+  const items = resolvedItems;
 
   const completedCount = items.filter((i) => i.done).length;
   const totalCount = items.length;
@@ -79,17 +105,17 @@ export default function GettingStartedChecklist({
         setShowComplete(false);
         setDismissed(true);
         if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, "true");
+          localStorage.setItem(resolvedStorageKey, "true");
         }
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [allComplete, dismissed]);
+  }, [allComplete, dismissed, resolvedStorageKey]);
 
   const dismiss = () => {
     setDismissed(true);
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, "true");
+      localStorage.setItem(resolvedStorageKey, "true");
     }
   };
 
@@ -97,12 +123,136 @@ export default function GettingStartedChecklist({
 
   // All-complete confetti message
   if (showComplete) {
+    if (isInline) {
+      return (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-4 text-center">
+          <p className="text-sm font-bold text-emerald-800">
+            {"\uD83C\uDF89"} All set! You&apos;re ready to go.
+          </p>
+        </div>
+      );
+    }
     return (
       <div className="fixed bottom-20 left-4 z-50">
         <div className="bg-white rounded-xl shadow-xl border border-slate-200 px-5 py-4 w-72">
           <p className="text-sm font-bold text-slate-800 text-center">
             {"\uD83C\uDF89"} All set! You&apos;re ready to go.
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Inline variant \u2014 renders as a static card within the page
+  if (isInline) {
+    const heading = props.heading ?? "Getting Started";
+    return (
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        {/* Header */}
+        <div className="px-5 pt-5 pb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-extrabold text-slate-900">{heading}</h3>
+            {props.welcomeText && (
+              <span className="text-xs text-slate-400">{completedCount}/{totalCount} complete</span>
+            )}
+          </div>
+          {props.welcomeText && (
+            <p className="text-xs text-slate-500 mb-3">{props.welcomeText}</p>
+          )}
+          {/* Progress bar */}
+          <div className="h-2 bg-slate-100 rounded-full overflow-hidden mb-1.5">
+            <div
+              className="h-full bg-amber-500 rounded-full transition-all duration-500"
+              style={{ width: `${progress * 100}%` }}
+            />
+          </div>
+          <p className="text-xs text-slate-400">
+            {completedCount} of {totalCount} complete
+          </p>
+        </div>
+
+        {/* Checklist items */}
+        <div className="px-5 pb-3">
+          {items.map((item) => (
+            <div
+              key={item.label}
+              className="flex items-center gap-2.5 py-2.5 border-t border-slate-100 first:border-t-0"
+            >
+              {/* Checkbox */}
+              <div
+                className={`w-4.5 h-4.5 rounded border-2 flex items-center justify-center shrink-0 ${
+                  item.done
+                    ? "bg-emerald-500 border-emerald-500"
+                    : "border-slate-200"
+                }`}
+              >
+                {item.done && (
+                  <svg
+                    className="w-2.5 h-2.5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </div>
+
+              {/* Label */}
+              {item.done ? (
+                <span className="text-sm text-slate-400 line-through flex-1">
+                  {item.label}
+                </span>
+              ) : (
+                <Link
+                  href={item.href}
+                  className="text-sm font-semibold text-slate-800 hover:text-amber-600 transition-colors flex-1"
+                >
+                  {item.label}
+                </Link>
+              )}
+
+              {/* Arrow link for incomplete items */}
+              {!item.done && (
+                <Link
+                  href={item.href}
+                  className="text-slate-300 hover:text-amber-500 transition-colors shrink-0"
+                  aria-label={`Go to ${item.label}`}
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </Link>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Dismiss */}
+        <div className="px-5 pb-4 pt-1 border-t border-slate-100">
+          <button
+            onClick={dismiss}
+            className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            Dismiss
+          </button>
         </div>
       </div>
     );

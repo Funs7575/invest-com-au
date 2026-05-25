@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 
 const STORAGE_KEY = "user_onboarding_seen";
+const HEADING_ID = "onboarding-dialog-title";
 
 export default function UserOnboarding() {
   const router = useRouter();
@@ -12,28 +13,102 @@ export default function UserOnboarding() {
   const [step, setStep] = useState(0);
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  // Holds the element that was focused before the modal opened so we can restore it on close.
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (localStorage.getItem(STORAGE_KEY) === "true") return;
     setVisible(true);
   }, []);
 
-  const dismissPermanent = () => {
-    localStorage.setItem(STORAGE_KEY, "true");
+  // Capture the previously-focused element and auto-focus the dialog on open.
+  useEffect(() => {
+    if (!visible) return;
+    previousFocusRef.current = document.activeElement as HTMLElement;
+    // Auto-focus the first interactive element inside the dialog.
+    setTimeout(() => {
+      const first = dialogRef.current?.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      first?.focus();
+    }, 50);
+  }, [visible]);
+
+  // Esc-to-close + focus trap (matches ConfirmDialog / BottomSheet pattern).
+  useEffect(() => {
+    if (!visible) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        dismiss();
+        return;
+      }
+      if (e.key === "Tab" && dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+    // `dismiss` is defined below but stable across renders — ESLint is satisfied
+    // because this effect only needs to re-run when `visible` changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
+
+  /** Close the modal and optionally persist the dismissal to localStorage. */
+  const close = (persist: boolean) => {
+    if (persist) {
+      localStorage.setItem(STORAGE_KEY, "true");
+    }
     setVisible(false);
+    // Restore focus to the element that was focused before the modal opened.
+    previousFocusRef.current?.focus();
   };
 
+  /**
+   * "Skip" and Esc use the current checkbox value to decide whether to persist.
+   * The final-step CTAs always navigate, so they always persist (user has acted).
+   */
+  const dismiss = () => close(dontShowAgain);
+
   const navigateAndClose = (href: string) => {
-    localStorage.setItem(STORAGE_KEY, "true");
-    setVisible(false);
+    // User explicitly chose a destination — always persist.
+    close(true);
     router.push(href);
   };
 
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" style={{ animation: "resultCardIn 0.3s ease-out" }}>
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      style={{ animation: "resultCardIn 0.3s ease-out" }}
+      // Clicking the backdrop dismisses (respects checkbox).
+      onClick={(e) => {
+        if (e.target === e.currentTarget) dismiss();
+      }}
+    >
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={HEADING_ID}
+        className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+        // Prevent backdrop click propagating into the panel.
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Progress dots */}
         <div className="flex items-center justify-center gap-2 pt-5">
           {[0, 1, 2].map((i) => (
@@ -48,7 +123,10 @@ export default function UserOnboarding() {
 
         {/* Skip */}
         <div className="flex justify-end px-5 pt-2">
-          <button onClick={dismissPermanent} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+          <button
+            onClick={dismiss}
+            className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+          >
             Skip
           </button>
         </div>
@@ -59,7 +137,9 @@ export default function UserOnboarding() {
               <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center mx-auto mb-4">
                 <Icon name="search" size={28} className="text-amber-600" />
               </div>
-              <h2 className="text-xl font-extrabold text-slate-900 mb-2">Find Your Perfect Broker</h2>
+              <h2 id={HEADING_ID} className="text-xl font-extrabold text-slate-900 mb-2">
+                Find Your Perfect Broker
+              </h2>
               <p className="text-sm text-slate-500 max-w-xs mx-auto leading-relaxed">
                 Compare fees, features, and safety across every major Australian investment platform -- independent, transparent, and free.
               </p>
@@ -74,7 +154,9 @@ export default function UserOnboarding() {
 
           {step === 1 && (
             <div className="py-6">
-              <h2 className="text-lg font-extrabold text-slate-900 text-center mb-6">How It Works</h2>
+              <h2 id={HEADING_ID} className="text-lg font-extrabold text-slate-900 text-center mb-6">
+                How It Works
+              </h2>
               <div className="flex items-start gap-4">
                 {/* Step 1 */}
                 <div className="flex-1 text-center">
@@ -121,7 +203,9 @@ export default function UserOnboarding() {
               <div className="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center mx-auto mb-4">
                 <Icon name="zap" size={28} className="text-emerald-600" />
               </div>
-              <h2 className="text-xl font-extrabold text-slate-900 mb-2">Ready to Get Started?</h2>
+              <h2 id={HEADING_ID} className="text-xl font-extrabold text-slate-900 mb-2">
+                Ready to Get Started?
+              </h2>
               <p className="text-sm text-slate-500 max-w-xs mx-auto leading-relaxed mb-6">
                 Take our 60-second quiz for personalised results, or browse all brokers at your own pace.
               </p>
@@ -155,7 +239,10 @@ export default function UserOnboarding() {
         {/* Back navigation for steps > 0 */}
         {step > 0 && step < 2 && (
           <div className="px-6 pb-5">
-            <button onClick={() => setStep(step - 1)} className="text-sm text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1">
+            <button
+              onClick={() => setStep(step - 1)}
+              className="text-sm text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1"
+            >
               <Icon name="arrow-left" size={14} />
               Back
             </button>

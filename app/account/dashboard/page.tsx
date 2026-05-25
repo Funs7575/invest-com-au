@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { enforcePortalKind } from "@/lib/portal-gate";
 import { getInvestorProfile, type InvestorProfile } from "@/lib/investor-profiles";
 import { getInvestorAccountType, type InvestorAccountType } from "@/lib/account-types";
+import GettingStartedChecklist from "@/components/GettingStartedChecklist";
 
 export const dynamic = "force-dynamic";
 
@@ -421,15 +422,79 @@ export default async function PersonalDashboardPage() {
   };
   const accountTypeHub = investorAccountType !== "individual" ? ACCOUNT_TYPE_HUBS[investorAccountType] ?? null : null;
 
+  // Investor getting-started checklist items (statically derived from server data)
+  const investorChecklistItems = [
+    {
+      label: "Set an investment goal",
+      href: "/account/goals",
+      done: goals.length > 0,
+    },
+    {
+      label: "Add a holding to track",
+      href: "/account/holdings",
+      done: holdingsCount > 0,
+    },
+    {
+      label: "Build your watchlist",
+      href: "/account/watchlist",
+      done: watchlistCount > 0,
+    },
+    {
+      label: "Take the investor quiz",
+      href: "/quiz",
+      done: !!(investorProfile?.meta && Object.keys(investorProfile.meta).length > 0),
+    },
+    {
+      label: "Complete your investor profile",
+      href: "/account/investor-profile",
+      done: completeness >= 100,
+    },
+  ];
+
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
       {/* Header */}
       <header className="mb-8">
         <h1 className="text-2xl font-extrabold text-slate-900">
-          {firstName ? `Welcome back, ${firstName}` : "My Dashboard"}
+          {completeness === 0
+            ? firstName
+              ? `Welcome, ${firstName}`
+              : "Welcome to Invest.com.au"
+            : firstName
+              ? `Welcome back, ${firstName}`
+              : "My Dashboard"}
         </h1>
         <p className="text-sm text-slate-500 mt-1">{user.email}</p>
       </header>
+
+      {/* First-run zero-state — shown only for brand-new investors with
+          zero profile completeness. Replaces empty section clutter with
+          a single warm welcome + actionable checklist. */}
+      {completeness === 0 && (
+        <section aria-labelledby="first-run-heading" className="mb-10">
+          <div className="bg-gradient-to-br from-violet-50 via-white to-amber-50 border border-violet-100 rounded-2xl p-6 sm:p-8">
+            <div className="mb-6">
+              <h2
+                id="first-run-heading"
+                className="text-lg font-extrabold text-slate-900 mb-2"
+              >
+                Here&apos;s where to start
+              </h2>
+              <p className="text-sm text-slate-600 max-w-lg">
+                Complete a few quick steps to unlock personalised goal tracking,
+                advisor matches, and investment insights tailored to you.
+              </p>
+            </div>
+            <GettingStartedChecklist
+              variant="inline"
+              storageKey="investor_getting_started_dismissed"
+              heading="Your first steps"
+              welcomeText="Tick these off to personalise your dashboard and get the most from Invest.com.au."
+              items={investorChecklistItems}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Financial snapshot */}
       <section aria-labelledby="snapshot-heading" className="mb-8">

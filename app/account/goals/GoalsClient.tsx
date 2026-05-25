@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useId, useState } from "react";
 import { projectGoal } from "@/lib/goals/project";
 
 export interface GoalRow {
@@ -35,22 +35,45 @@ const fmt = (cents: number) =>
     maximumFractionDigits: 0,
   });
 
+interface FieldErrors {
+  label?: string;
+  target?: string;
+  target_date?: string;
+}
+
 export default function GoalsClient({ initialItems }: Props) {
   const [items, setItems] = useState<GoalRow[]>(initialItems);
   const [adding, setAdding] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [defaultGoalType, setDefaultGoalType] = useState<typeof GOAL_TYPES[number]["value"]>("house_deposit");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const formId = useId();
 
-  const handleAdd = async (form: FormData) => {
+  const handleAdd = async (form: FormData): Promise<boolean> => {
+    // Client-side field validation
+    const labelVal = String(form.get("label") ?? "").trim();
+    const targetVal = Number(form.get("target") ?? 0);
+    const targetDateVal = String(form.get("target_date") ?? "");
+
+    const errs: FieldErrors = {};
+    if (!labelVal) errs.label = "Goal name is required.";
+    if (!targetVal || targetVal <= 0) errs.target = "Enter a target amount greater than $0.";
+    if (!targetDateVal) errs.target_date = "Target date is required.";
+
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      return false;
+    }
+    setFieldErrors({});
     setError(null);
     setAdding(true);
     const goalType = String(form.get("goal_type") ?? "generic") as GoalRow["goalType"];
     const body = {
-      label: String(form.get("label") ?? "").trim(),
+      label: labelVal,
       goal_type: goalType,
-      target_cents: Math.round(Number(form.get("target") ?? 0) * 100),
-      target_date: String(form.get("target_date") ?? ""),
+      target_cents: Math.round(targetVal * 100),
+      target_date: targetDateVal,
       current_balance_cents: Math.round(Number(form.get("current_balance") ?? 0) * 100),
       monthly_contribution_cents: Math.round(Number(form.get("monthly_contribution") ?? 0) * 100),
       expected_return_pct: Number(form.get("expected_return") ?? 6.5),
@@ -77,8 +100,10 @@ export default function GoalsClient({ initialItems }: Props) {
         notes: (r.notes as string | null) ?? null,
       };
       setItems((prev) => [...prev, newRow].sort((a, b) => a.targetDate.localeCompare(b.targetDate)));
+      return true;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not add goal.");
+      return false;
     } finally {
       setAdding(false);
     }
@@ -114,8 +139,10 @@ export default function GoalsClient({ initialItems }: Props) {
           onSubmit={(e) => {
             e.preventDefault();
             const fd = new FormData(e.currentTarget);
-            void handleAdd(fd);
-            e.currentTarget.reset();
+            const target = e.currentTarget;
+            void handleAdd(fd).then((ok) => {
+              if (ok) target.reset();
+            });
           }}
         >
           <Field label="Goal type" cols="sm:col-span-2">
@@ -128,18 +155,24 @@ export default function GoalsClient({ initialItems }: Props) {
               {GOAL_TYPES.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
             </select>
           </Field>
-          <Field label="Goal name" required cols="sm:col-span-4">
+          <Field label="Goal name" required cols="sm:col-span-4" error={fieldErrors.label} errorId={`${formId}-label-err`}>
             <input type="text" name="label" required maxLength={120}
               placeholder="e.g. House deposit by 2030"
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+              aria-invalid={fieldErrors.label ? true : undefined}
+              aria-describedby={fieldErrors.label ? `${formId}-label-err` : undefined}
+              className={`w-full border rounded-lg px-3 py-2 text-sm ${fieldErrors.label ? "border-red-500 focus:ring-red-400" : "border-slate-300"}`} />
           </Field>
-          <Field label="Target $ (AUD)" required cols="sm:col-span-2">
+          <Field label="Target $ (AUD)" required cols="sm:col-span-2" error={fieldErrors.target} errorId={`${formId}-target-err`}>
             <input type="number" name="target" required min={0} step={1}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+              aria-invalid={fieldErrors.target ? true : undefined}
+              aria-describedby={fieldErrors.target ? `${formId}-target-err` : undefined}
+              className={`w-full border rounded-lg px-3 py-2 text-sm ${fieldErrors.target ? "border-red-500 focus:ring-red-400" : "border-slate-300"}`} />
           </Field>
-          <Field label="Target date" required cols="sm:col-span-2">
+          <Field label="Target date" required cols="sm:col-span-2" error={fieldErrors.target_date} errorId={`${formId}-date-err`}>
             <input type="date" name="target_date" required
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+              aria-invalid={fieldErrors.target_date ? true : undefined}
+              aria-describedby={fieldErrors.target_date ? `${formId}-date-err` : undefined}
+              className={`w-full border rounded-lg px-3 py-2 text-sm ${fieldErrors.target_date ? "border-red-500 focus:ring-red-400" : "border-slate-300"}`} />
           </Field>
           <Field label="Expected return %/yr" cols="sm:col-span-2">
             <input type="number" name="expected_return" min={-10} max={30} step={0.1}
@@ -166,8 +199,14 @@ export default function GoalsClient({ initialItems }: Props) {
               </a>{" "}
               to upload bank or super statements as a reference for current balances.
             </p>
-            <button type="submit" disabled={adding}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 shrink-0">
+            <button type="submit" disabled={adding} aria-busy={adding}
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 shrink-0 inline-flex items-center gap-2">
+              {adding && (
+                <svg aria-hidden="true" className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              )}
               {adding ? "Adding…" : "Add goal"}
             </button>
           </div>
@@ -298,18 +337,29 @@ function Field({
   required,
   children,
   cols,
+  error,
+  errorId,
 }: {
   label: string;
   required?: boolean;
   children: React.ReactNode;
   cols?: string;
+  error?: string;
+  errorId?: string;
 }) {
   return (
-    <label className={`block ${cols ?? ""}`}>
-      <span className="block text-xs font-medium text-slate-700 mb-1">
-        {label} {required && <span className="text-red-600">*</span>}
-      </span>
-      {children}
-    </label>
+    <div className={`block ${cols ?? ""}`}>
+      <label className="block">
+        <span className="block text-xs font-medium text-slate-700 mb-1">
+          {label} {required && <span className="text-red-600" aria-hidden="true">*</span>}
+        </span>
+        {children}
+      </label>
+      {error && (
+        <p id={errorId} role="alert" className="text-xs text-red-600 mt-1">
+          {error}
+        </p>
+      )}
+    </div>
   );
 }
