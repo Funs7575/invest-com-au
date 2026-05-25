@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { buildVapidAuthHeader } from "@/lib/vapid-jwt";
 
 const log = logger("push:send");
 
@@ -25,6 +26,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- admin-gated internal push-send route (ADMIN_API_KEY checked above); fields destructured + validated below
     const body = await request.json();
     const { topic, title, body: notifBody, url, icon } = body as {
       topic: string;
@@ -94,20 +96,25 @@ export async function POST(request: NextRequest) {
       topic,
     });
 
-    // Send notifications via Web Push protocol
-    // Uses VAPID for authentication (RFC 8292)
+    // Send notifications via Web Push protocol (RFC 8292 — ES256 VAPID JWT)
     let sent = 0;
     let failed = 0;
     const staleEndpoints: string[] = [];
 
     const results = await Promise.allSettled(
       subscriptions.map(async (sub) => {
+        // Build a per-endpoint VAPID JWT (aud = scheme+host of the endpoint)
+        const authHeader = await buildVapidAuthHeader(
+          sub.endpoint,
+          vapidPrivate,
+          vapidPublic,
+        );
         const res = await fetch(sub.endpoint, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "TTL": "86400",
-            ...(vapidPublic ? { "Authorization": `vapid t=${vapidPublic}` } : {}),
+            Authorization: authHeader,
           },
           body: payload,
         });
