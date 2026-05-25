@@ -93,12 +93,63 @@ export async function proxy(request: NextRequest) {
   response.headers.set('X-Frame-Options', 'DENY')
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  // W2-SEC: Permissions-Policy hardening.
+  //   - geolocation=(self): preserved — property/postcode features need it (K-05).
+  //   - fullscreen: was previously omitted (relied on the spec default
+  //     allowlist of `self`, which does NOT delegate to the cross-origin
+  //     YouTube/Vimeo embeds in components/VideoEmbed.tsx). Now an explicit
+  //     allowlist of self + the two video origins (matches frame-src) so
+  //     `allowFullScreen` on those iframes keeps working AND the policy is
+  //     no longer implicit.
+  //   - autoplay / encrypted-media: scoped to the same two video origins
+  //     (not just self) because the YouTube/Vimeo embeds request both in
+  //     their iframe `allow` attribute; a bare `()` would silently break
+  //     autoplaying / DRM video while still denying these to every other
+  //     context including same-origin.
+  //   - Added denials for powerful APIs the app never calls (verified via
+  //     grep: no getDisplayMedia/navigator.serial/.hid/.bluetooth/.xr usage):
+  //     display-capture, serial, hid, bluetooth, xr-spatial-tracking,
+  //     accelerometer, web-share, document-domain,
+  //     publickey-credentials-get, local-fonts.
+  //   - interest-cohort/browsing-topics: opt out of Google FLoC / Topics API
+  //     so the browser excludes our pages from interest-cohort computation.
+  const videoOrigins = '"https://www.youtube-nocookie.com" "https://player.vimeo.com"'
   response.headers.set(
     'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=(self), payment=(), usb=(), gyroscope=(), magnetometer=(), midi=(), ambient-light-sensor=(), battery=(), screen-wake-lock=()'
+    [
+      'accelerometer=()',
+      'ambient-light-sensor=()',
+      `autoplay=(self ${videoOrigins})`,
+      'battery=()',
+      'bluetooth=()',
+      'browsing-topics=()',
+      'camera=()',
+      'display-capture=()',
+      'document-domain=()',
+      `encrypted-media=(self ${videoOrigins})`,
+      `fullscreen=(self ${videoOrigins})`,
+      'geolocation=(self)',
+      'gyroscope=()',
+      'hid=()',
+      'interest-cohort=()',
+      'local-fonts=()',
+      'magnetometer=()',
+      'microphone=()',
+      'midi=()',
+      'payment=()',
+      'publickey-credentials-get=()',
+      'screen-wake-lock=()',
+      'serial=()',
+      'usb=()',
+      'web-share=()',
+      'xr-spatial-tracking=()',
+    ].join(', ')
   )
   // Spectre/side-channel isolation: allow popups so Supabase OAuth flows work.
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups')
+  // Block legacy Adobe (Flash/PDF) cross-domain policy files — no .swf/PDF
+  // reader cross-domain access is ever legitimate here. Cheap defence-in-depth.
+  response.headers.set('X-Permitted-Cross-Domain-Policies', 'none')
   response.headers.set('X-DNS-Prefetch-Control', 'on')
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
 
@@ -155,7 +206,13 @@ export async function proxy(request: NextRequest) {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
-    "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://www.googletagmanager.com https://api.stripe.com https://cal.com https://app.cal.com https://*.sentry.io https://*.ingest.sentry.io https://eu.i.posthog.com https://us.i.posthog.com https://plausible.io",
+    // W2-SEC: added the analytics fetch/beacon origins that gated scripts
+    // (components/TrackingPixels.tsx) call once consent is granted —
+    // Google Ads/gtag beacons hit www.google-analytics.com, the Meta Pixel
+    // POSTs to connect.facebook.net + www.facebook.com. Without these,
+    // strict-dynamic still lets the *scripts* load (they propagate trust),
+    // but their XHR/sendBeacon connections were blocked by connect-src.
+    "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://www.facebook.com https://api.stripe.com https://cal.com https://app.cal.com https://*.sentry.io https://*.ingest.sentry.io https://eu.i.posthog.com https://us.i.posthog.com https://plausible.io",
     "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://www.youtube-nocookie.com https://player.vimeo.com https://cal.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
