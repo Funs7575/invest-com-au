@@ -317,6 +317,27 @@ export default async function ExpatJourneyPage({
         </div>
       </section>
 
+      {/* ── Planner CTA strip ─────────────────────────────────────────── */}
+      <div className="container-custom pt-6 pb-0">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+          <div>
+            <p className="text-sm font-extrabold text-emerald-900 leading-tight">
+              Ready to track your progress?
+            </p>
+            <p className="text-xs text-emerald-700 mt-0.5">
+              Open the interactive planner — tick off steps as you go. Progress
+              saves to your browser (or account if signed in).
+            </p>
+          </div>
+          <Link
+            href={`/foreign-investment/journey/${config.slug}/plan`}
+            className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-lg transition-colors shrink-0"
+          >
+            Open Planner
+          </Link>
+        </div>
+      </div>
+
       {/* ── Progress rail + steps ─────────────────────────────────────── */}
       <div className="container-custom py-10 md:py-14">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -340,8 +361,21 @@ export default async function ExpatJourneyPage({
               ))}
             </nav>
 
+            {/* Track progress — planner link */}
+            <div className="mt-6 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <p className="text-[0.65rem] font-bold uppercase tracking-wide text-emerald-700 mb-1">
+                Track your progress
+              </p>
+              <Link
+                href={`/foreign-investment/journey/${config.slug}/plan`}
+                className="text-xs font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                Open interactive planner →
+              </Link>
+            </div>
+
             {/* Country guide link */}
-            <div className="mt-6 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+            <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
               <p className="text-[0.65rem] font-bold uppercase tracking-wide text-amber-700 mb-1">
                 Full country guide
               </p>
