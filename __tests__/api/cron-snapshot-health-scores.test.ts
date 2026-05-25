@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 /* ─── Hoisted mocks (vi.mock is hoisted; use vi.hoisted for shared fns) ────── */
 
@@ -107,7 +107,10 @@ describe("GET /api/cron/snapshot-health-scores", () => {
   });
 
   it("returns 401 when requireCronAuth rejects", async () => {
-    const unauthorisedResponse = new Response(null, { status: 401 });
+    const unauthorisedResponse = NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 },
+    );
     mockRequireCronAuth.mockReturnValue(unauthorisedResponse);
     // Since wrapCronHandler is mocked to call through, GET is the handler itself.
     const res = await GET(makeRequest());
