@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { GlossaryEntry } from "@/lib/glossary";
 import { getGlossaryBySlug, getGlossaryEntries } from "@/lib/glossary-db";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
-import { definedTermPageJsonLd } from "@/lib/schema-markup";
+import { definedTermPageJsonLd, glossaryTermQaJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
 
@@ -73,6 +73,16 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
     definition: entry.definition,
   });
 
+  // GEO: QAPage for the "What is [term]?" question. Adds an AI-citation signal
+  // that's separate from the DefinedTerm corpus — DefinedTerm drives corpus-level
+  // citation, QAPage drives per-question citation (e.g. "What is franking credit?").
+  // Both are needed for full coverage. Emit in a separate <script> block.
+  const qaLd = glossaryTermQaJsonLd({
+    term: entry.term,
+    slug: entry.slug,
+    definition: entry.definition,
+  });
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Glossary", url: absoluteUrl("/glossary") },
@@ -82,6 +92,8 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {/* GEO: QAPage — "What is [term]?" canonical answer for AI-answer engines */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(qaLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
 
       <div className="min-h-screen bg-slate-50">
