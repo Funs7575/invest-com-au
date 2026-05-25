@@ -555,3 +555,53 @@ export function governmentServiceJsonLd(input: GovernmentSchemeSchemaInput) {
     audience: { "@type": "Audience", audienceType: "Cross-border investor" },
   });
 }
+
+// ─── Image gallery (broker app screenshots) ───────────────────
+
+export interface GalleryImageInput {
+  url: string;
+  /** Doubles as the ImageObject caption — keep it descriptive. */
+  caption?: string | null;
+  width?: number | null;
+  height?: number | null;
+}
+
+export interface ImageGallerySchemaInput {
+  /** Canonical URL of the page the gallery lives on. */
+  pageUrl: string;
+  /** Gallery heading, e.g. "CommSec app screenshots". */
+  name: string;
+  images: GalleryImageInput[];
+}
+
+/**
+ * ImageGallery containing one ImageObject per screenshot. Lets Google
+ * associate the app screenshots with the page entity and surface them in
+ * image results. Returns null when there are no images so callers can skip
+ * rendering the <script> entirely.
+ *
+ * Screenshot URLs are typically already-absolute storage URLs, so we only
+ * run them through `absoluteUrl()` when they're site-relative paths —
+ * otherwise `absoluteUrl` would prepend the origin to an `https://` URL and
+ * emit a malformed `contentUrl`.
+ */
+export function imageGalleryJsonLd(input: ImageGallerySchemaInput) {
+  if (input.images.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    name: input.name,
+    url: input.pageUrl,
+    associatedMedia: input.images.map((img) =>
+      compact({
+        "@type": "ImageObject",
+        contentUrl: /^https?:\/\//i.test(img.url)
+          ? img.url
+          : absoluteUrl(img.url),
+        caption: img.caption ?? undefined,
+        width: img.width ?? undefined,
+        height: img.height ?? undefined,
+      }),
+    ),
+  };
+}

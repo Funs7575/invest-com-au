@@ -8,6 +8,7 @@ import {
   listingProductJsonLd,
   calculatorJsonLd,
   versusComparisonJsonLd,
+  imageGalleryJsonLd,
 } from "@/lib/schema-markup";
 
 describe("articleJsonLd", () => {
@@ -285,5 +286,74 @@ describe("versusComparisonJsonLd", () => {
       ],
     });
     expect(financialProducts).toHaveLength(3);
+  });
+});
+
+describe("imageGalleryJsonLd", () => {
+  const PAGE = "https://invest.com.au/broker/commsec";
+
+  it("returns null when there are no images", () => {
+    expect(
+      imageGalleryJsonLd({ pageUrl: PAGE, name: "CommSec app", images: [] }),
+    ).toBeNull();
+  });
+
+  it("emits an ImageGallery with one ImageObject per image", () => {
+    const out = imageGalleryJsonLd({
+      pageUrl: PAGE,
+      name: "CommSec app screenshots",
+      images: [
+        { url: "/shots/a.png", caption: "Dashboard" },
+        { url: "/shots/b.png" },
+      ],
+    });
+    expect(out).not.toBeNull();
+    expect(out?.["@context"]).toBe("https://schema.org");
+    expect(out?.["@type"]).toBe("ImageGallery");
+    expect(out?.name).toBe("CommSec app screenshots");
+    expect(out?.url).toBe(PAGE);
+    expect(out?.associatedMedia).toHaveLength(2);
+    expect((out?.associatedMedia[0] as Bag)["@type"]).toBe("ImageObject");
+  });
+
+  it("absolutises site-relative image paths", () => {
+    const out = imageGalleryJsonLd({
+      pageUrl: PAGE,
+      name: "CommSec app",
+      images: [{ url: "/shots/a.png" }],
+    });
+    const media = out?.associatedMedia[0] as Bag;
+    expect(String(media.contentUrl)).toContain("/shots/a.png");
+    expect(String(media.contentUrl).startsWith("http")).toBe(true);
+  });
+
+  it("leaves already-absolute (storage) URLs untouched", () => {
+    const remote =
+      "https://guggzyqceattncjwvgyc.supabase.co/storage/v1/object/public/shots/a.png";
+    const out = imageGalleryJsonLd({
+      pageUrl: PAGE,
+      name: "CommSec app",
+      images: [{ url: remote }],
+    });
+    const media = out?.associatedMedia[0] as Bag;
+    expect(media.contentUrl).toBe(remote);
+  });
+
+  it("carries caption + dimensions through and drops nullish fields", () => {
+    const out = imageGalleryJsonLd({
+      pageUrl: PAGE,
+      name: "CommSec app",
+      images: [
+        { url: "/a.png", caption: "Portfolio", width: 1080, height: 1920 },
+        { url: "/b.png", caption: null, width: null, height: null },
+      ],
+    });
+    const first = out?.associatedMedia[0] as Bag;
+    expect(first.caption).toBe("Portfolio");
+    expect(first.width).toBe(1080);
+    expect(first.height).toBe(1920);
+    const second = out?.associatedMedia[1] as Bag;
+    expect("caption" in second).toBe(false);
+    expect("width" in second).toBe(false);
   });
 });

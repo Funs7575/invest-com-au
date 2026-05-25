@@ -121,6 +121,25 @@ export interface Broker {
   accepts_temporary_residents?: boolean | null;
   requires_australian_address?: boolean | null;
   foreign_investor_notes?: string | null;
+  /**
+   * Optional app/platform screenshots rendered as an accessible gallery on
+   * the broker detail page. Absent for most brokers — the gallery only
+   * renders when at least one entry is present, so existing data is
+   * unaffected.
+   */
+  screenshots?: BrokerScreenshot[];
+}
+
+/**
+ * A single platform screenshot for the broker detail gallery.
+ * `caption` doubles as the descriptive alt text — keep it meaningful for
+ * screen-reader users (e.g. "CommSec mobile dashboard showing portfolio").
+ */
+export interface BrokerScreenshot {
+  url: string;
+  caption?: string;
+  width?: number;
+  height?: number;
 }
 
 export interface Article {
