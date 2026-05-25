@@ -22,12 +22,24 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
-export default async function ScenarioPlannerPage() {
+export default async function ScenarioPlannerPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const bcLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Scenarios", url: absoluteUrl("/scenarios") },
     { name: "Scenario Planner" },
   ]);
+
+  // Resolve the `?scenario=` param so the client component can deep-link
+  // into a saved scenario after hydration. We accept both numeric index and
+  // human-readable label (matching is done client-side in resolveScenarioParam).
+  const resolved = searchParams ? await searchParams : {};
+  const scenarioParam = typeof resolved["scenario"] === "string"
+    ? resolved["scenario"]
+    : null;
 
   return (
     <>
@@ -35,7 +47,7 @@ export default async function ScenarioPlannerPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bcLd) }}
       />
-      <ScenarioPlannerClient />
+      <ScenarioPlannerClient initialScenarioParam={scenarioParam} />
     </>
   );
 }
