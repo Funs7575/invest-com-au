@@ -7,7 +7,6 @@ import {
   type BrokerRow,
 } from "@/lib/price-snapshots";
 import { logger } from "@/lib/logger";
-import { fireConsumerWebhook } from "@/lib/consumer-webhook-dispatch";
 
 const log = logger("cron-broker-snapshot");
 
@@ -51,24 +50,6 @@ async function handler(req: NextRequest): Promise<NextResponse> {
   const result = await captureBrokerSnapshotsBatch(brokers, "cron");
 
   log.info("broker snapshot cron complete", result);
-
-  // Fire consumer webhooks for each broker that was successfully snapshotted,
-  // carrying the current fee/deal data observed. Fire-and-forget.
-  if (result.succeeded > 0) {
-    for (const b of brokers) {
-      void fireConsumerWebhook("broker.updated", {
-        broker_id: b.id,
-        broker_slug: b.slug,
-        asx_fee: b.asx_fee ?? null,
-        us_fee: b.us_fee ?? null,
-        fx_rate: b.fx_rate ?? null,
-        inactivity_fee: b.inactivity_fee ?? null,
-        min_deposit: b.min_deposit ?? null,
-        deal: b.deal ?? null,
-        deal_expiry: b.deal_expiry ?? null,
-      });
-    }
-  }
 
   return NextResponse.json({
     ok: true,
