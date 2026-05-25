@@ -29,9 +29,9 @@ export default async function AccountAlertsPage() {
   const { data: rows } = await admin
     .from("rate_alert_subscriptions")
     .select(
-      "id, product_kind, threshold_bps, frequency, verified, last_notified_at, notification_count, created_at, unsubscribe_token",
+      "id, metric_kind, product_kind, threshold_bps, direction, frequency, broker_slug, lender_slug, verified, last_notified_at, notification_count, created_at, unsubscribe_token",
     )
-    .eq("email", email.toLowerCase())
+    .or(`user_id.eq.${user.id},email.eq.${email.toLowerCase()}`)
     .order("created_at", { ascending: false });
 
   const alerts = rows ?? [];

@@ -9,6 +9,7 @@ import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { getCurrentPricesBatch } from "@/lib/holdings/value";
 import { listBookmarks } from "@/lib/bookmarks";
+import { metricKindLabel, metricKindPath } from "@/lib/alert-thresholds";
 
 export const dynamic = "force-dynamic";
 
@@ -166,6 +167,20 @@ interface HoldingForValue {
   cost_basis_per_share_cents: number | null;
 }
 
+interface AlertFeedRow {
+  id: string;
+  metric_kind: string | null;
+  product_kind: string;
+  threshold_bps: number;
+  direction: string;
+  last_notified_at: string | null;
+  last_fired_value_bps: number | null;
+  notification_count: number;
+  broker_slug: string | null;
+  lender_slug: string | null;
+  verified: boolean;
+}
+
 /**
  * Assembles the dashboard summary data from pre-fetched rows.
  * Exported so tests can exercise the logic without JSX rendering.
@@ -300,11 +315,16 @@ export default async function ProDashboardPage() {
       .eq("status", "active"),
   ]);
 
-  // rate_alert_subscriptions — service-role required (email-keyed, no auth RLS policy)
+  // rate_alert_subscriptions — fetch full rows for the alert feed section.
+  // User-owned (user_id match) + legacy email-keyed rows.
   const alertsRes = await admin
     .from("rate_alert_subscriptions")
-    .select("last_notified_at")
-    .eq("email", email.toLowerCase());
+    .select(
+      "id, metric_kind, product_kind, threshold_bps, direction, last_notified_at, last_fired_value_bps, notification_count, broker_slug, lender_slug, verified",
+    )
+    .or(`user_id.eq.${userId},email.eq.${email.toLowerCase()}`)
+    .order("last_notified_at", { ascending: false, nullsFirst: false })
+    .limit(20);
 
   // Bookmarks — uses listBookmarks which already uses admin client internally
   const bookmarks = await listBookmarks(userId);
@@ -330,12 +350,14 @@ export default async function ProDashboardPage() {
 
   const priceMap = await getCurrentPricesBatch(pricePairs);
 
+  const alertRows = (alertsRes.data ?? []) as AlertFeedRow[];
+
   const summary = assembleDashboardSummary({
     holdings,
     priceMap,
     manualBalanceTotalCents,
     goalBalanceCents,
-    alerts: (alertsRes.data ?? []) as { last_notified_at: string | null }[],
+    alerts: alertRows.map((a) => ({ last_notified_at: a.last_notified_at })),
     watchlistCount: watchlistRes.count ?? 0,
     savedScenariosCount: savedScenariosRes.count ?? 0,
     activeDealsCount: activeDealsRes.count ?? 0,
@@ -485,6 +507,100 @@ export default async function ProDashboardPage() {
         />
 
       </div>
+
+      {/* Alert feed — triggered alerts + active monitoring */}
+      {alertRows.length > 0 && (
+        <section className="mt-10 pt-8 border-t border-slate-100">
+          <div className="flex items-baseline justify-between mb-4 gap-2 flex-wrap">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
+              Rate &amp; Fee Alerts
+            </h2>
+            <Link
+              href="/account/alerts"
+              className="text-xs font-medium text-violet-700 hover:text-violet-900"
+            >
+              Manage alerts →
+            </Link>
+          </div>
+
+          <div className="space-y-2">
+            {alertRows.map((alert) => {
+              const kind = (alert.metric_kind ?? alert.product_kind) as Parameters<typeof metricKindLabel>[0];
+              const label = metricKindLabel(kind);
+              const path = metricKindPath(kind);
+              const thresholdPct = (alert.threshold_bps / 100).toFixed(2);
+              const isFee = kind === "broker_fee";
+              const hasFired = alert.last_notified_at !== null;
+              const directionText = alert.direction === "above" ? "≥" : "≤";
+              const firedValuePct =
+                alert.last_fired_value_bps !== null
+                  ? (alert.last_fired_value_bps / 100).toFixed(2)
+                  : null;
+
+              return (
+                <Link
+                  key={alert.id}
+                  href={path}
+                  className="flex items-start justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 hover:border-violet-300 hover:shadow-sm transition-all"
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={`mt-0.5 h-8 w-8 shrink-0 flex items-center justify-center rounded-xl ${
+                        hasFired ? "bg-amber-50" : "bg-slate-50"
+                      }`}
+                    >
+                      <svg
+                        className={`w-4 h-4 ${hasFired ? "text-amber-500" : "text-slate-400"}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.8}
+                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">
+                        {label}{" "}
+                        <span className="text-slate-500">
+                          {directionText} {isFee ? `$${thresholdPct}` : `${thresholdPct}%`}
+                        </span>
+                      </p>
+                      {hasFired ? (
+                        <p className="mt-0.5 text-xs text-amber-700 font-medium">
+                          Fired
+                          {firedValuePct && (
+                            <>
+                              {" "}at{" "}
+                              {isFee ? `$${firedValuePct}` : `${firedValuePct}%`}
+                            </>
+                          )}
+                          {" "}·{" "}
+                          {new Date(alert.last_notified_at!).toLocaleDateString("en-AU")}
+                          {alert.notification_count > 1 && (
+                            <> · {alert.notification_count}×</>
+                          )}
+                        </p>
+                      ) : (
+                        <p className="mt-0.5 text-xs text-slate-400">
+                          Monitoring — threshold not yet reached
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <span className="shrink-0 text-[0.65rem] font-semibold text-violet-700 mt-0.5">
+                    Compare →
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Quick links to Pro tools */}
       <section className="mt-10 pt-8 border-t border-slate-100">
