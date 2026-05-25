@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from "react";
 
-import { WIDGET_CATALOGUE } from "@/lib/widget/types";
+import { WIDGET_CATALOGUE, CALCULATOR_WIDGET_CATALOGUE } from "@/lib/widget/types";
 
 const POPULAR_BROKERS = [
   { slug: "stake", name: "Stake" },
@@ -17,27 +17,52 @@ const POPULAR_BROKERS = [
   { slug: "webull", name: "Webull" },
 ];
 
+type BuilderTab = "broker" | "calculator";
+
 export default function EmbedBuilder() {
+  // ─── Tab ─────────────────────────────────────────────────────────────────
+  const [tab, setTab] = useState<BuilderTab>("broker");
+
+  // ─── Broker widget state ─────────────────────────────────────────────────
   const [selectedSlugs, setSelectedSlugs] = useState<string[]>([]);
   const [widgetType, setWidgetType] = useState<"table" | "compact">("table");
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [brokerTheme, setBrokerTheme] = useState<"light" | "dark">("light");
   const [limit, setLimit] = useState(5);
   const [widgetCatalogueSlug, setWidgetCatalogueSlug] = useState<string>("");
+
+  // ─── Calculator widget state ─────────────────────────────────────────────
+  const [calcMarket, setCalcMarket] = useState<"asx" | "us">("asx");
+  const [calcTheme, setCalcTheme] = useState<"light" | "dark">("light");
+  const [calcLimit, setCalcLimit] = useState(5);
+  const [calcAmount, setCalcAmount] = useState(5000);
+
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const embedUrl = useMemo(() => {
+  // ─── Snippet generation ──────────────────────────────────────────────────
+  const brokerEmbedUrl = useMemo(() => {
     const params = new URLSearchParams();
     if (widgetCatalogueSlug) params.set("widget", widgetCatalogueSlug);
     if (selectedSlugs.length > 0) params.set("brokers", selectedSlugs.join(","));
     if (widgetType !== "table") params.set("type", widgetType);
-    if (theme !== "light") params.set("theme", theme);
+    if (brokerTheme !== "light") params.set("theme", brokerTheme);
     if (limit !== 5) params.set("limit", String(limit));
     const qs = params.toString();
     return `https://invest.com.au/api/widget${qs ? `?${qs}` : ""}`;
-  }, [selectedSlugs, widgetType, theme, limit, widgetCatalogueSlug]);
+  }, [selectedSlugs, widgetType, brokerTheme, limit, widgetCatalogueSlug]);
 
-  const snippet = `<script src="${embedUrl}"></script>`;
+  const calcEmbedUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    if (calcMarket !== "asx") params.set("market", calcMarket);
+    if (calcTheme !== "light") params.set("theme", calcTheme);
+    if (calcLimit !== 5) params.set("limit", String(calcLimit));
+    if (calcAmount !== 5000) params.set("amount", String(calcAmount));
+    const qs = params.toString();
+    return `https://invest.com.au/api/widget/calculator${qs ? `?${qs}` : ""}`;
+  }, [calcMarket, calcTheme, calcLimit, calcAmount]);
+
+  const activeUrl = tab === "broker" ? brokerEmbedUrl : calcEmbedUrl;
+  const snippet = `<script src="${activeUrl}"></script>`;
 
   function toggleBroker(slug: string) {
     setSelectedSlugs((prev) =>
@@ -100,94 +125,207 @@ export default function EmbedBuilder() {
     };
   }, [snippet]);
 
+  const activeTheme = tab === "broker" ? brokerTheme : calcTheme;
+
   return (
     <div className="border border-slate-200 rounded-xl overflow-hidden">
+      {/* Tab bar */}
+      <div className="flex border-b border-slate-200">
+        <button
+          onClick={() => setTab("broker")}
+          className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider transition-colors ${
+            tab === "broker"
+              ? "bg-white text-emerald-700 border-b-2 border-emerald-600"
+              : "bg-slate-50 text-slate-500 hover:text-slate-700"
+          }`}
+        >
+          Broker Comparison
+        </button>
+        <button
+          onClick={() => setTab("calculator")}
+          className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider transition-colors ${
+            tab === "calculator"
+              ? "bg-white text-emerald-700 border-b-2 border-emerald-600"
+              : "bg-slate-50 text-slate-500 hover:text-slate-700"
+          }`}
+        >
+          Fee Calculator
+        </button>
+      </div>
+
       <div className="p-5 md:p-6 space-y-5">
-        {/* Curated widget filter */}
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-            Widget type
-          </label>
-          <select
-            value={widgetCatalogueSlug}
-            onChange={(e) => setWidgetCatalogueSlug(e.target.value)}
-            className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
-          >
-            <option value="">Top brokers (default)</option>
-            {WIDGET_CATALOGUE.map((w) => (
-              <option key={w.slug} value={w.slug}>{w.label}</option>
-            ))}
-          </select>
-          <p className="mt-1 text-[11px] text-slate-500">
-            Pick a curated list (e.g. crypto exchanges) or leave default for top-rated overall.
-          </p>
-        </div>
+        {/* ── BROKER WIDGET CONTROLS ── */}
+        {tab === "broker" && (
+          <>
+            {/* Curated widget filter */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                Widget type
+              </label>
+              <select
+                value={widgetCatalogueSlug}
+                onChange={(e) => setWidgetCatalogueSlug(e.target.value)}
+                className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+              >
+                <option value="">Top brokers (default)</option>
+                {WIDGET_CATALOGUE.map((w) => (
+                  <option key={w.slug} value={w.slug}>{w.label}</option>
+                ))}
+              </select>
+              <p className="mt-1 text-[11px] text-slate-500">
+                Pick a curated list (e.g. crypto exchanges) or leave default for top-rated overall.
+              </p>
+            </div>
 
-        {/* Broker selection */}
-        <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-            Select Brokers (optional)
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {POPULAR_BROKERS.map((b) => {
-              const active = selectedSlugs.includes(b.slug);
-              return (
-                <button
-                  key={b.slug}
-                  onClick={() => toggleBroker(b.slug)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                    active
-                      ? "bg-emerald-50 border-emerald-300 text-emerald-700"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
-                  }`}
+            {/* Broker selection */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                Select Brokers (optional)
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {POPULAR_BROKERS.map((b) => {
+                  const active = selectedSlugs.includes(b.slug);
+                  return (
+                    <button
+                      key={b.slug}
+                      onClick={() => toggleBroker(b.slug)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                        active
+                          ? "bg-emerald-50 border-emerald-300 text-emerald-700"
+                          : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+                      }`}
+                    >
+                      {active && <span className="mr-1">&#10003;</span>}
+                      {b.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Layout + Theme */}
+            <div className="grid sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Layout</label>
+                <select
+                  value={widgetType}
+                  onChange={(e) => setWidgetType(e.target.value as "table" | "compact")}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
                 >
-                  {active && <span className="mr-1">&#10003;</span>}
-                  {b.name}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+                  <option value="table">Table</option>
+                  <option value="compact">Compact Cards</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+                <select
+                  value={brokerTheme}
+                  onChange={(e) => setBrokerTheme(e.target.value as "light" | "dark")}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+                >
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
+                <select
+                  value={limit}
+                  onChange={(e) => setLimit(parseInt(e.target.value, 10))}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+                >
+                  {[3, 5, 8, 10].map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </>
+        )}
 
-        {/* Layout + Theme */}
-        <div className="grid sm:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Layout</label>
-            <select
-              value={widgetType}
-              onChange={(e) => setWidgetType(e.target.value as "table" | "compact")}
-              className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
-            >
-              <option value="table">Table</option>
-              <option value="compact">Compact Cards</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
-            <select
-              value={theme}
-              onChange={(e) => setTheme(e.target.value as "light" | "dark")}
-              className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
-            >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
-            <select
-              value={limit}
-              onChange={(e) => setLimit(parseInt(e.target.value, 10))}
-              className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
-            >
-              {[3, 5, 8, 10].map((n) => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-        </div>
+        {/* ── CALCULATOR WIDGET CONTROLS ── */}
+        {tab === "calculator" && (
+          <>
+            {/* Preset picker */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                Preset
+              </label>
+              <div className="grid sm:grid-cols-3 gap-3">
+                {CALCULATOR_WIDGET_CATALOGUE.map((preset) => (
+                  <button
+                    key={preset.slug}
+                    onClick={() => {
+                      setCalcMarket(preset.market);
+                      setCalcAmount(preset.amount);
+                    }}
+                    className="text-left border border-slate-200 rounded-lg p-3 hover:border-emerald-300 hover:bg-emerald-50/40 transition-all"
+                  >
+                    <p className="text-xs font-bold text-slate-800 mb-0.5">{preset.label}</p>
+                    <p className="text-[11px] text-slate-500 leading-snug">{preset.snippetHint}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        {/* Code output */}
+            {/* Market + Amount + Theme + Limit */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Market</label>
+                <select
+                  value={calcMarket}
+                  onChange={(e) => setCalcMarket(e.target.value as "asx" | "us")}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+                >
+                  <option value="asx">ASX (Australian shares)</option>
+                  <option value="us">US shares (includes FX cost)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Default Amount (AUD)</label>
+                <select
+                  value={calcAmount}
+                  onChange={(e) => setCalcAmount(parseInt(e.target.value, 10))}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+                >
+                  {[500, 1000, 2000, 5000, 10000, 25000, 50000].map((n) => (
+                    <option key={n} value={n}>${n.toLocaleString()}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+                <select
+                  value={calcTheme}
+                  onChange={(e) => setCalcTheme(e.target.value as "light" | "dark")}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+                >
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
+                <select
+                  value={calcLimit}
+                  onChange={(e) => setCalcLimit(parseInt(e.target.value, 10))}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+                >
+                  {[3, 5, 8, 10].map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-500">
+              The calculator is interactive — visitors can change the trade amount and market directly in the widget.
+              General-advice disclaimer is included automatically.
+            </p>
+          </>
+        )}
+
+        {/* Code output — shared */}
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Your Embed Code</label>
           <div className="relative">
@@ -203,13 +341,13 @@ export default function EmbedBuilder() {
           </div>
         </div>
 
-        {/* Live Preview */}
+        {/* Live Preview — shared */}
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Live Preview</label>
           <div
             ref={previewRef}
             className={`rounded-lg border border-slate-200 overflow-hidden min-h-50 ${
-              theme === "dark" ? "bg-slate-800" : "bg-white"
+              activeTheme === "dark" ? "bg-slate-800" : "bg-white"
             }`}
           />
         </div>
