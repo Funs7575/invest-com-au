@@ -79,7 +79,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/review-sentiment-refresh",
     "/api/cron/versus-editorial-backfill",
   ],
-  "daily-6": ["/api/cron/check-fees", "/api/cron/tmd-audit"],
+  "daily-6": ["/api/cron/check-fees", "/api/cron/tmd-audit", "/api/cron/refresh-loan-rates"],
   "daily-7": [
     "/api/cron/portfolio-alerts",
     "/api/cron/price-drop-alerts",
