@@ -12877,7 +12877,9 @@ export type Database = {
           used_services: boolean | null
           value_for_money_rating: number | null
           verified: boolean | null
+          verified_at: string | null
           verified_client_at: string | null
+          verified_engagement: boolean
         }
         Insert: {
           admin_overridden_at?: string | null
@@ -12903,7 +12905,9 @@ export type Database = {
           used_services?: boolean | null
           value_for_money_rating?: number | null
           verified?: boolean | null
+          verified_at?: string | null
           verified_client_at?: string | null
+          verified_engagement?: boolean
         }
         Update: {
           admin_overridden_at?: string | null
@@ -12929,7 +12933,9 @@ export type Database = {
           used_services?: boolean | null
           value_for_money_rating?: number | null
           verified?: boolean | null
+          verified_at?: string | null
           verified_client_at?: string | null
+          verified_engagement?: boolean
         }
         Relationships: [
           {

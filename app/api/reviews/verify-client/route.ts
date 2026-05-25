@@ -155,12 +155,16 @@ export async function POST(request: NextRequest) {
         .limit(1);
 
       if (leadMatch && leadMatch.length > 0) {
+        const now = new Date().toISOString();
         const { error: updateError } = await supabase
           .from("professional_reviews")
           .update({
             is_verified_client: true,
-            verified_client_at: new Date().toISOString(),
-            lead_id: leadMatch[0].id,
+            verified_client_at: now,
+            lead_id: leadMatch[0]?.id,
+            // Keep verified_engagement in sync with is_verified_client
+            verified_engagement: true,
+            verified_at: now,
           })
           .eq("id", review_id);
 
