@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { itemListJsonLd } from "@/lib/schema-markup";
 import FeedPageClient from "./FeedPageClient";
+import CheckinTrigger from "@/components/streak/CheckinTrigger";
 
 export const revalidate = 300;
 
@@ -106,6 +107,7 @@ export default async function FeedPage() {
 
           {/* Tabbed feed (All / Following) */}
           <FeedPageClient initialPosts={posts} />
+          <CheckinTrigger source="feed_view" />
 
           {/* Footer CTA */}
           {posts.length > 0 && (

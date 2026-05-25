@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
 import { createClient } from "@/lib/supabase/client";
+import StreakBadge from "@/components/streak/StreakBadge";
 
 /**
  * Top-right account button for the main navigation.
@@ -128,6 +129,7 @@ export default function AccountButton() {
         <span className="text-sm font-semibold text-slate-700 max-w-30 truncate">
           {displayName}
         </span>
+        <StreakBadge />
         <svg
           className={`w-3.5 h-3.5 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`}
           fill="none"

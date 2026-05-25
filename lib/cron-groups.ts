@@ -91,6 +91,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/complaints-sla",
     "/api/cron/dated-stats-check",
     "/api/cron/abandoned-shortlist-drip",
+    "/api/cron/streak-at-risk",
   ],
   "daily-9": [
     "/api/cron/investor-drip",

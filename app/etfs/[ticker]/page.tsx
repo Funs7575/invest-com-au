@@ -5,6 +5,7 @@ import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { getETFByTicker, ALL_TICKERS, type ETF } from "@/lib/etf-data";
 import DividendProjectionWidget from "@/components/etf/DividendProjectionWidget";
+import CheckinTrigger from "@/components/streak/CheckinTrigger";
 
 export const revalidate = 3600;
 
@@ -94,6 +95,7 @@ export default async function ETFTickerPage({
 
   return (
     <div className="bg-white min-h-screen">
+      <CheckinTrigger source="etf_view" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
