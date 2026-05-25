@@ -17,6 +17,18 @@ export const maxDuration = 30;
  * 3. New deals on their brokers
  *
  * Sends email alerts and creates portfolio_alerts records.
+ *
+ * NOTE — browser push gap:
+ *   user_portfolios stores `email` (the portfolio owner's address) but
+ *   no `user_id` column. The push delivery stack (dispatchPushToUser)
+ *   requires a Supabase auth user UUID, and resolving one from an email
+ *   address on the Edge runtime is deliberately avoided (it would require
+ *   auth.admin.listUsers pagination across potentially many pages).
+ *
+ *   Browser push will be wired here once the table carries a user_id
+ *   column — tracked in FIN_NOTEBOOK. Until then, email is the sole
+ *   delivery channel for portfolio alerts. The rate-alerts and watchlist
+ *   crons already cover push delivery for their own alert types.
  */
 export async function GET(req: Request) {
   const unauth = requireCronAuth(req);

@@ -14,6 +14,16 @@ vi.mock("@/lib/cron-auth", () => ({
   requireCronAuth: vi.fn(() => null),
 }));
 
+const dispatchPushMock = vi.fn(async () => ({
+  sent: 1,
+  failed: 0,
+  skipped_no_sub: false,
+  stale_removed: 0,
+}));
+vi.mock("@/lib/push-dispatch", () => ({
+  dispatchPushToUser: (userId: string, payload: unknown) => dispatchPushMock(userId, payload),
+}));
+
 interface SendArgs {
   to: string;
   subject: string;
@@ -140,6 +150,7 @@ describe("cron/watchlist-alerts", () => {
     state.authUsers = [];
     sendEmailMock.mockClear();
     mockListUsers.mockClear();
+    dispatchPushMock.mockClear();
   });
 
   it("returns 500 when RESEND_API_KEY is unset", async () => {
@@ -198,5 +209,65 @@ describe("cron/watchlist-alerts", () => {
     expect(body.sent).toBe(0);
     expect(body.skipped_no_email).toBe(1);
     expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
+  // ── Push dispatch wiring ──────────────────────────────────────────────────
+
+  it("calls dispatchPushToUser for each successfully emailed user", async () => {
+    const now = new Date();
+    state.prefs = [{ user_id: "u-1", last_digest_window_start: null }];
+    state.items = [{ user_id: "u-1", id: 1, item_type: "broker", item_slug: "commsec", display_name: "CommSec" }];
+    state.brokers = [{ slug: "commsec", name: "CommSec", updated_at: now.toISOString() }];
+    state.authUsers = [{ id: "u-1", email: "alice@x.com", user_metadata: {} }];
+    await GET(makeReq());
+    expect(dispatchPushMock).toHaveBeenCalledOnce();
+    const [userId, payload] = dispatchPushMock.mock.calls[0] as [string, { title: string; body: string; url: string; tag: string }];
+    expect(userId).toBe("u-1");
+    expect(payload.title).toBe("Your watchlist this week");
+    expect(payload.tag).toBe("watchlist_digest:u-1");
+  });
+
+  it("reports push_dispatched count in the response", async () => {
+    const now = new Date();
+    state.prefs = [{ user_id: "u-1", last_digest_window_start: null }];
+    state.items = [{ user_id: "u-1", id: 1, item_type: "broker", item_slug: "commsec", display_name: "CommSec" }];
+    state.brokers = [{ slug: "commsec", name: "CommSec", updated_at: now.toISOString() }];
+    state.authUsers = [{ id: "u-1", email: "alice@x.com", user_metadata: {} }];
+    const res = await GET(makeReq());
+    const body = await res.json();
+    expect(body.push_dispatched).toBe(1);
+  });
+
+  it("does not call dispatchPushToUser for users with no email (skipped before email)", async () => {
+    state.prefs = [{ user_id: "u-1", last_digest_window_start: null }];
+    state.items = [{ user_id: "u-1", id: 1, item_type: "broker", item_slug: "commsec", display_name: "CommSec" }];
+    state.brokers = [{ slug: "commsec", name: "CommSec", updated_at: new Date().toISOString() }];
+    state.authUsers = [{ id: "u-1", email: null, user_metadata: {} }];
+    await GET(makeReq());
+    expect(dispatchPushMock).not.toHaveBeenCalled();
+  });
+
+  it("does not call dispatchPushToUser when digest has no changes", async () => {
+    state.prefs = [{ user_id: "u-1", last_digest_window_start: null }];
+    state.items = [{ user_id: "u-1", id: 1, item_type: "broker", item_slug: "commsec", display_name: "CommSec" }];
+    state.brokers = []; // nothing changed
+    state.authUsers = [{ id: "u-1", email: "alice@x.com", user_metadata: {} }];
+    await GET(makeReq());
+    expect(dispatchPushMock).not.toHaveBeenCalled();
+  });
+
+  it("push dispatch failure does not fail the cron run (fire-and-forget)", async () => {
+    const now = new Date();
+    state.prefs = [{ user_id: "u-1", last_digest_window_start: null }];
+    state.items = [{ user_id: "u-1", id: 1, item_type: "broker", item_slug: "commsec", display_name: "CommSec" }];
+    state.brokers = [{ slug: "commsec", name: "CommSec", updated_at: now.toISOString() }];
+    state.authUsers = [{ id: "u-1", email: "alice@x.com", user_metadata: {} }];
+    // dispatchPushToUser resolves with sent:0 (e.g. VAPID keys unset) — should not throw
+    dispatchPushMock.mockResolvedValueOnce({ sent: 0, failed: 0, skipped_no_sub: true, stale_removed: 0 });
+    const res = await GET(makeReq());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.sent).toBe(1);
+    expect(body.push_dispatched).toBe(0);
   });
 });

@@ -31,6 +31,7 @@
 // eslint-disable-next-line no-restricted-imports -- runs from the alert crons (no user JWT), dispatching to a specific user's push_subscriptions rows; service-role required for this cross-user/cron context
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { buildVapidAuthHeader } from "@/lib/vapid-jwt";
 
 const log = logger("push-dispatch");
 
@@ -152,22 +153,20 @@ export async function dispatchPushToUser(
 
     const results = await Promise.allSettled(
       (subs as PushSubscriptionRow[]).map(async (sub) => {
-        // The /api/push/send route uses a simplified VAPID header construction.
-        // We follow the same approach for consistency — a full RFC 8292
-        // implementation (with JWT + crypto signing) requires the `web-push`
-        // npm package which is not installed. The VAPID public key is sent as
-        // an audience hint; real VAPID signing is a server-side concern that
-        // most push services also accept without the JWT when the endpoint is
-        // from their own infrastructure (FCM, APNS-web).
-        //
-        // TODO: if full RFC 8292 compliance is needed, install `web-push` and
-        // replace the Authorization header construction here. Track in FIN_NOTEBOOK.
+        // RFC 8292 — ES256 JWT signed with the VAPID private key.
+        // buildVapidAuthHeader returns: `vapid t=<jwt>, k=<publicKey>`
+        const authHeader = await buildVapidAuthHeader(
+          sub.endpoint,
+          vapidPrivate,
+          vapidPublic,
+        );
+
         const res = await sender(sub.endpoint, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "TTL": "86400",
-            Authorization: `vapid t=${vapidPublic}`,
+            Authorization: authHeader,
           },
           body: payloadJson,
         });

@@ -7,6 +7,11 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
 
+// Mock the VAPID JWT builder — push-send tests verify request routing, not JWT signing.
+vi.mock("@/lib/vapid-jwt", () => ({
+  buildVapidAuthHeader: vi.fn(async () => "vapid t=mock.jwt.sig, k=mock-pub"),
+}));
+
 const mockAdminFrom = vi.fn();
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
