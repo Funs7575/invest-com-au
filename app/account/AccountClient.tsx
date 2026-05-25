@@ -515,6 +515,27 @@ export default function AccountClient() {
           <NotificationPreferences isPro={isPro} />
         </div>
 
+        {/* My Saves hub — prominent card linking to the aggregated saves view */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">My Saves</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Reading list, watchlist, comparisons, searches &amp; alerts
+              </p>
+            </div>
+            <Link
+              href="/account/my-saves"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-700 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors"
+            >
+              View all
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+
         {/* Quick Links */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
           <h2 className="text-base font-bold text-slate-900 mb-3">Quick Links</h2>
@@ -537,8 +558,8 @@ export default function AccountClient() {
             <Link href="/account/notifications" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
               <span>🔔</span> Notifications
             </Link>
-            <Link href="/account/bookmarks" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-              <span>🔖</span> Reading List
+            <Link href="/account/my-saves" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+              <span>🔖</span> My Saves
             </Link>
             <Link href="/account/quizzes" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
               <span>📝</span> Quiz History
