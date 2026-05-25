@@ -774,6 +774,7 @@ export default function ScenarioPlannerClient({
     const idx = resolveScenarioParam(initialScenarioParam, persisted.scenarios);
     if (idx !== -1) {
       hasDeepLinkedRef.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot deep-link load after hydration (guarded by hasDeepLinkedRef); depends on hydrated saved state, so it cannot run during render
       handleLoad(idx);
     }
   }, [initialScenarioParam, isHydrated, persisted.scenarios, handleLoad]);
