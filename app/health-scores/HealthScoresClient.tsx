@@ -293,7 +293,15 @@ export default function HealthScoresClient({
                       }}
                     >
                       <td className="px-4 py-3 font-bold text-slate-400">{i + 1}</td>
-                      <td className="px-4 py-3 font-medium">{broker?.name || s.broker_slug}</td>
+                      <td className="px-4 py-3 font-medium">
+                        <Link
+                          href={`/health-scores/${s.broker_slug}`}
+                          className="hover:text-brand hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {broker?.name || s.broker_slug}
+                        </Link>
+                      </td>
                       <td className="px-3 py-3 text-center">
                         <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${
                           s.overall_score >= 80 ? "bg-emerald-100 text-emerald-700" :
