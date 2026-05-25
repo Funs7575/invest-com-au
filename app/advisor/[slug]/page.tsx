@@ -20,6 +20,8 @@ import { computeAdvisorReputation } from "@/lib/advisor-reputation";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import AdvisorTrustScoreSection from "./components/AdvisorTrustScoreSection";
 import AdvisorReputationSummary from "./components/AdvisorReputationSummary";
+import { getRelatedForAdvisor } from "@/lib/related-content";
+import RelatedRail from "@/components/RelatedRail";
 
 export const revalidate = 1800;
 
@@ -547,6 +549,44 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
           isLoggedIn={!!sessionUser}
         />
       </div>
+      {/* Related advisors + guide rail — factual discovery, not advice.
+          Uses the same-type advisors already fetched above; no extra DB call. */}
+      {(() => {
+        const { advisors: relAdvisors, guides: relGuides } = getRelatedForAdvisor(
+          { id: pro.id, slug: pro.slug, type: pro.type, specialties: pro.specialties ?? [], location_state: pro.location_state },
+          similar.map((s) => ({
+            id: s.id,
+            slug: s.slug,
+            name: s.name,
+            type: s.type,
+            specialties: s.specialties ?? [],
+            location_state: s.location_state,
+            location_display: s.location_display,
+            rating: s.rating,
+            verified: s.verified,
+            firm_name: s.firm_name,
+          })),
+        );
+        if (relAdvisors.length === 0 && relGuides.length === 0) return null;
+        return (
+          <div className="container-custom max-w-4xl mt-6">
+            {relAdvisors.length > 0 && (
+              <RelatedRail
+                heading={`Similar ${PROFESSIONAL_TYPE_LABELS[pro.type as keyof typeof PROFESSIONAL_TYPE_LABELS] ?? "Advisors"}`}
+                items={relAdvisors}
+              />
+            )}
+            {relGuides.length > 0 && (
+              <RelatedRail
+                heading="Useful Guides"
+                items={[]}
+                secondaryItems={relGuides}
+                className="mt-4"
+              />
+            )}
+          </div>
+        );
+      })()}
       <ClaimListingButton
         claimType="advisor"
         targetSlug={pro.slug}
