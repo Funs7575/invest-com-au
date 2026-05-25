@@ -60,7 +60,6 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/referral-payouts",
     "/api/cron/data-integrity-audit",
     "/api/cron/observability-retention",
-    "/api/cron/prune-rate-history",
     "/api/cron/advisor-credit-expiry",
     "/api/cron/advisor-auto-topup",
     "/api/cron/annual-mot",
