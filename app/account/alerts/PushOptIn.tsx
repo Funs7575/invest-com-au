@@ -4,7 +4,7 @@
  * PushOptIn — browser push notification opt-in widget.
  *
  * Rendered on /account/alerts. When the user clicks "Enable", we:
- *   1. Register the service worker (sw-push.js).
+ *   1. Register the service worker (sw.js — the unified caching + push worker).
  *   2. Subscribe via PushManager.subscribe with the site's VAPID public key.
  *   3. POST the subscription to /api/push/subscribe with topic "fee_changes".
  *   4. POST { browser_push: true } to /api/notification-preferences so the
@@ -57,7 +57,7 @@ export default function PushOptIn({ initialEnabled }: Props) {
     setError(null);
     try {
       // 1. Register / retrieve service worker
-      const reg = await navigator.serviceWorker.register("/sw-push.js");
+      const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
       await navigator.serviceWorker.ready;
 
       // 2. Request browser permission + subscribe
