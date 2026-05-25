@@ -1,10 +1,11 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Link from "next/link";
 import Icon from "@/components/Icon";
 
 /**
- * Canonical empty-state for directory pages.
+ * Canonical empty-state for directory pages and account surfaces.
  *
  * Renders a centered message + optional smart-suggestion list when
  * filtering returns zero results. The suggestions are the difference
@@ -12,20 +13,19 @@ import Icon from "@/components/Icon";
  * give users a concrete next click instead of just "no results, try
  * something else".
  *
- * Three slots:
+ * Slots:
  *   1. `icon` (optional) — defaults to the search icon
  *   2. `title` — short headline ("No advisors found", "No
  *      opportunities match your filters")
  *   3. `body` — one-sentence explanation ("Try removing some filters
  *      or expanding the radius.")
  *   4. `suggestions` (optional) — array of one-click recovery
- *      actions ("Remove the SIV filter (+12 results)", "Expand to
- *      'Any distance' (+48 results)"). Each suggestion has a label
- *      and an onClick; the count delta is part of the label
- *      because rendering it separately required a tighter layout
- *      contract we don't need yet.
- *   5. `children` (optional) — slot for a custom action, e.g. an
- *      alert-capture email form. Renders below suggestions.
+ *      actions (button/onClick, used by directory filter resets).
+ *   5. `ctas` (optional) — array of link-based CTAs ({label, href,
+ *      variant}) for account surfaces where navigation is the
+ *      next step rather than filter mutation.
+ *   6. `children` (optional) — slot for a custom action, e.g. an
+ *      alert-capture email form. Renders below suggestions/CTAs.
  *
  * Use inline (inside the result feed where listings would be) rather
  * than as a modal — empty-state modals interrupt flow and aren't
@@ -36,12 +36,22 @@ export interface EmptyStateSuggestion {
   onClick: () => void;
 }
 
+/** A link-based CTA for surfaces where the next step is navigation. */
+export interface EmptyStateCta {
+  label: string;
+  href: string;
+  /** "primary" = dark filled button; "secondary" = outlined. Default: "primary". */
+  variant?: "primary" | "secondary";
+}
+
 export interface EmptyStateProps {
   title: string;
   body?: string;
   icon?: string;
   suggestions?: ReadonlyArray<EmptyStateSuggestion>;
-  /** Optional custom slot (e.g. alert-capture form). Renders below suggestions. */
+  /** Link-based CTAs (account surfaces). Renders in place of / after suggestions. */
+  ctas?: ReadonlyArray<EmptyStateCta>;
+  /** Optional custom slot (e.g. alert-capture form). Renders below suggestions/CTAs. */
   children?: ReactNode;
   className?: string;
 }
@@ -51,6 +61,7 @@ export default function EmptyState({
   body,
   icon = "search",
   suggestions,
+  ctas,
   children,
   className = "",
 }: EmptyStateProps) {
@@ -86,6 +97,23 @@ export default function EmptyState({
             </li>
           ))}
         </ul>
+      )}
+      {ctas && ctas.length > 0 && (
+        <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+          {ctas.map((cta, i) => (
+            <Link
+              key={i}
+              href={cta.href}
+              className={
+                (cta.variant ?? "primary") === "primary"
+                  ? "inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-colors"
+                  : "inline-block px-5 py-2.5 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors"
+              }
+            >
+              {cta.label}
+            </Link>
+          ))}
+        </div>
       )}
       {children}
     </div>

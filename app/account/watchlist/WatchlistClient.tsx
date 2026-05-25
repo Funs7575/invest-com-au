@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import EmptyState from "@/components/directory/EmptyState";
 
 export interface WatchlistItem {
   id: number;
@@ -77,20 +78,15 @@ export default function WatchlistClient({ initialItems }: Props) {
 
   if (items.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
-        <p className="text-slate-500 text-sm">Your watchlist is empty.</p>
-        <p className="text-slate-400 text-xs mt-1">
-          Browse{" "}
-          <Link href="/brokers" className="underline hover:text-slate-600">
-            brokers
-          </Link>
-          {" or "}
-          <Link href="/etfs" className="underline hover:text-slate-600">
-            ETFs
-          </Link>{" "}
-          and add items to track them here.
-        </p>
-      </div>
+      <EmptyState
+        icon="eye"
+        title="Your watchlist is empty"
+        body="Add brokers, ETFs, stocks and savings accounts to your watchlist to track them in one place."
+        ctas={[
+          { label: "Browse brokers", href: "/brokers" },
+          { label: "Explore ETFs", href: "/etfs", variant: "secondary" },
+        ]}
+      />
     );
   }
 

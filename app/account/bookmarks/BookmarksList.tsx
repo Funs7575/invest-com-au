@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import EmptyState from "@/components/directory/EmptyState";
 
 interface BookmarkItem {
   id: number;
@@ -58,21 +59,15 @@ export default function BookmarksList({ initialItems }: Props) {
 
   if (items.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
-        <div className="text-4xl mb-2" aria-hidden>
-          🔖
-        </div>
-        <p className="text-sm text-slate-600">
-          Nothing saved yet — tap the bookmark icon on any article,
-          broker or advisor to save it here.
-        </p>
-        <Link
-          href="/compare"
-          className="mt-4 inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
-        >
-          Start comparing →
-        </Link>
-      </div>
+      <EmptyState
+        icon="file-text"
+        title="Your reading list is empty"
+        body="Tap the bookmark icon on any article, broker or advisor page to save it here for later."
+        ctas={[
+          { label: "Browse brokers", href: "/compare" },
+          { label: "Explore guides", href: "/learn", variant: "secondary" },
+        ]}
+      />
     );
   }
 
