@@ -98,15 +98,9 @@ describe("evaluateThreshold — direction:below", () => {
 
 describe("evaluateThreshold — cooldown", () => {
   it("suppresses within the instant (24h) cooldown window", () => {
-    // Fired 12 hours ago.
-    const sub = makeSub({
-      last_notified_at: new Date(NOW_MS - 12 * HOUR_MS).toISOString(),
-      last_fired_value_bps: 520,
-    });
-    // last_fired_value_bps=520 means it previously fired above 500.
-    // Re-arm check: for "above", re-arm when last_fired <= (threshold - hysteresis).
-    // 520 > 500 - 10 = 490 → has NOT re-armed → hysteresis suppresses first.
-    // Let's use a sub where last_fired_value_bps is low enough to pass hysteresis.
+    // Fired 12 hours ago, with last_fired_value_bps low enough to clear the
+    // re-arm/hysteresis gate (for "above", re-arm when last_fired <= threshold - hysteresis,
+    // i.e. <= 500 - 10 = 490) so the cooldown window is what's under test.
     const subReArmed = makeSub({
       last_notified_at: new Date(NOW_MS - 12 * HOUR_MS).toISOString(),
       last_fired_value_bps: 480, // below threshold - hysteresis (490) → re-armed

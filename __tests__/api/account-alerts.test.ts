@@ -10,7 +10,7 @@
  *   - DELETE: removes own subscription; 401 when not signed in
  */
 
-import { beforeEach, afterEach, describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, it, expect, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
