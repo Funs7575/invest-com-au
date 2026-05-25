@@ -5,6 +5,8 @@ import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import { formatPercent } from "@/lib/tracking";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useUrlSync } from "@/app/calculators/_components/CalcShared";
+import ShareResult from "@/components/ShareResult";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 /* ── constants (FY2026) ── */
@@ -81,6 +83,17 @@ export default function SuperContributionsClient() {
       unused_carry_forward: unusedCarryForward,
     });
   }, [income, currentConcessional, extraConcessional, nonConcessional, superBalance, unusedCarryForward, setPersistedInputs]);
+
+  // Keep URL in sync so shared links reproduce results (super shows results live,
+  // so always write params rather than gating on a showResults flag).
+  useUrlSync({
+    super_contributions_calculator_income: String(income),
+    super_contributions_calculator_current_concessional: String(currentConcessional),
+    super_contributions_calculator_extra_concessional: String(extraConcessional),
+    super_contributions_calculator_non_concessional: String(nonConcessional),
+    super_contributions_calculator_super_balance: String(superBalance),
+    super_contributions_calculator_unused_carry_forward: String(unusedCarryForward),
+  });
 
   const result = useMemo(() => {
     const totalConcessional = currentConcessional + extraConcessional;
@@ -476,6 +489,24 @@ export default function SuperContributionsClient() {
               </Link>
             </div>
           </div>
+        </div>
+
+        <div className="mt-4">
+          <ShareResult
+            calculatorKey="super_contributions_calculator"
+            resultLabel={formatCurrency(result.totalGoingIntoSuper)}
+            calcTitle="Super Contributions Calculator"
+            calcSlug="super-contributions"
+            state={{
+              income,
+              current_concessional: currentConcessional,
+              extra_concessional: extraConcessional,
+              non_concessional: nonConcessional,
+              super_balance: superBalance,
+              unused_carry_forward: unusedCarryForward,
+            }}
+            showDisclaimer
+          />
         </div>
 
         <CalculatorLeadCapture

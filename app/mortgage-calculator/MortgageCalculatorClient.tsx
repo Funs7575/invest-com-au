@@ -7,7 +7,9 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
-import { useCalculatorState, buildShareableUrl } from "@/hooks/use-calculator-state";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useUrlSync } from "@/app/calculators/_components/CalcShared";
+import ShareResult from "@/components/ShareResult";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 /* ── helpers ─────────────────────────────────────────── */
@@ -92,6 +94,26 @@ export default function MortgageCalculatorClient() {
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
 
+  // Auto-show results when loaded from a shared link.
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof window === "undefined") return;
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.has("mortgage_calculator_loan_amount")) setShowResults(true);
+  }, [persistHydrated]);
+
+  // Keep URL in sync so shared links reproduce results.
+  useUrlSync(
+    showResults
+      ? {
+          mortgage_calculator_loan_amount: String(loanAmount),
+          mortgage_calculator_interest_rate: String(interestRate),
+          mortgage_calculator_loan_term: String(loanTerm),
+          mortgage_calculator_repayment_type: repaymentType,
+        }
+      : {}
+  );
+
   useEffect(() => { trackPageDuration("/mortgage-calculator"); }, []);
 
   /* ── derived calculations ─────────────────────────── */
@@ -174,16 +196,6 @@ export default function MortgageCalculatorClient() {
     setEmailSubmitted(true);
     setEmailGated(false);
     trackEvent("mortgage_calc_email", { email: email.trim() }, "/mortgage-calculator");
-  };
-
-  const handleShare = () => {
-    const deepLink = buildShareableUrl(window.location.pathname, "mortgage_calculator", { loanAmount, interestRate, loanTerm, repaymentType });
-    const text = `My ${loanTerm}-year mortgage at ${interestRate}% on ${formatCurrency(loanAmount)} = ${formatCurrencyExact(monthly)}/month. Check the calculation: ${deepLink}`;
-    if (navigator.share) {
-      navigator.share({ title: "Mortgage Repayment Calculator", text, url: deepLink }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(deepLink).catch(() => {});
-    }
   };
 
   /* ── render ────────────────────────────────────────── */
@@ -312,9 +324,14 @@ export default function MortgageCalculatorClient() {
                 </div>
               </div>
               <div className="flex items-center justify-center gap-2 mt-4">
-                <button onClick={handleShare} className="text-xs px-3 py-1.5 bg-white border border-slate-200 rounded-full hover:bg-slate-50 font-semibold text-slate-600">
-                  <Icon name="share" className="inline w-3 h-3 mr-1" />Share Result
-                </button>
+                <ShareResult
+                  calculatorKey="mortgage_calculator"
+                  resultLabel={`${formatCurrencyExact(monthly)}/mo`}
+                  calcTitle="Mortgage Repayment Calculator"
+                  calcSlug="mortgage"
+                  state={{ loanAmount, interestRate, loanTerm, repaymentType }}
+                  showDisclaimer={false}
+                />
               </div>
             </div>
 
