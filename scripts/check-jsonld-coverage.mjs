@@ -86,6 +86,8 @@ const SCHEMA_HELPER_NAMES = [
   "howToJsonLd",
   "ORGANIZATION_JSONLD",
   "organizationLd",
+  "personJsonLd",
+  "profilePageJsonLd",
 ];
 
 /**

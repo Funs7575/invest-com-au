@@ -10,6 +10,12 @@ export interface TeamMember {
   twitter_url?: string;
   publications?: { name: string; url: string }[];
   avatar_url?: string;
+  /**
+   * Optional slug of a corresponding `professionals` row.
+   * When set, the reviewer profile can cross-link to the advisor directory
+   * page and display the Trust Score badge. Degrade gracefully when absent.
+   */
+  advisor_slug?: string;
   status: string;
   created_at: string;
   updated_at: string;
