@@ -3,8 +3,20 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import RelatedContentGrid from "@/components/RelatedContentGrid";
 
 export const revalidate = 86400;
+
+// Topic-cluster cross-links (wave3b SEO). Routes verified against app/ — these
+// mirror the /tax supporting/cluster entries in lib/content/topic-clusters.ts.
+const RELATED_LINKS = [
+  { id: "cgt-calc", href: "/cgt-calculator", title: "Capital Gains Tax Calculator", meta: "Tool" },
+  { id: "franking-calc", href: "/franking-credits-calculator", title: "Franking Credits Calculator", meta: "Tool" },
+  { id: "neg-gearing", href: "/tax/negative-gearing", title: "Negative Gearing Explained", meta: "Guide" },
+  { id: "crypto-tax", href: "/tax/crypto", title: "Crypto Tax in Australia", meta: "Guide" },
+  { id: "nr-cgt", href: "/non-resident-cgt-checker", title: "Non-Resident CGT Checker", meta: "Tool" },
+  { id: "intl-tax", href: "/advisors/international-tax-specialists", title: "International Tax Specialists", meta: "Find experts" },
+];
 
 export const metadata: Metadata = {
   title: `Australian Investor Tax Guide (${CURRENT_YEAR}) — CGT, Franking Credits & Strategies`,
@@ -352,6 +364,13 @@ export default function TaxHubPage() {
               Find a Financial Planner →
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Related content — topic-cluster internal links (wave3b SEO) */}
+      <section className="py-10 md:py-12 border-t border-slate-200">
+        <div className="container-custom max-w-6xl">
+          <RelatedContentGrid heading="Related tax tools & guides" items={RELATED_LINKS} />
         </div>
       </section>
 
