@@ -8,6 +8,11 @@ import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { advisorFirmJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
+import {
+  BrandedHero,
+  FeaturedSpecialties,
+  BookingEmbed,
+} from "@/components/firm/BrandedProfileEnhancements";
 
 export const revalidate = 1800;
 
@@ -83,6 +88,11 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
   if (!firm) notFound();
 
   const typedFirm = firm as AdvisorFirm;
+
+  // B2 branded-profile entitlement gate. Enhanced components (custom hero,
+  // featured specialties, booking embed) render only when the firm has an
+  // active branded-profile subscription. Free firms are unchanged.
+  const brandedActive = typedFirm.branded_profile_active === true;
 
   const { data: membersRaw } = await supabase
     .from("professionals")
@@ -165,6 +175,15 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
         </div>
 
         <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+          {/* ── Branded hero (paid tier) ── */}
+          {brandedActive && (
+            <BrandedHero
+              firmName={typedFirm.name}
+              tagline={typedFirm.hero_tagline}
+              imageUrl={typedFirm.hero_image_url}
+            />
+          )}
+
           {/* ── Firm Header Card ── */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="bg-gradient-to-r from-violet-600 to-violet-500 h-24 sm:h-28" />
@@ -246,6 +265,11 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
               <p className="text-xs text-slate-500">Years Active</p>
             </div>
           </div>
+
+          {/* ── Featured specialties (paid tier) ── */}
+          {brandedActive && (
+            <FeaturedSpecialties specialties={typedFirm.featured_specialties} />
+          )}
 
           {/* ── Services We Offer ── */}
           {members.length > 0 && (() => {
@@ -449,6 +473,14 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                 })}
               </div>
             </section>
+          )}
+
+          {/* ── Booking embed (paid tier) ── */}
+          {brandedActive && (
+            <BookingEmbed
+              firmName={typedFirm.name}
+              embedUrl={typedFirm.booking_embed_url}
+            />
           )}
 
           {/* ── Request a Consultation CTA ── */}
