@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- body is hand-validated below (required fields, rating bounds, profanity/spam filters, HTML-escaped)
     const body = await request.json();
     const {
       professional_id,

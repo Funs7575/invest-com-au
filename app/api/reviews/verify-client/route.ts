@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
   // Parse body
   let body: Record<string, unknown>;
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- admin-gated route (auth check above); review_id/review_type validated below
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
