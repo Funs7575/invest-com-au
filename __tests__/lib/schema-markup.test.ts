@@ -13,6 +13,7 @@ import {
   definedTermPageJsonLd,
   speakableSpecification,
   speakableWebPageJsonLd,
+  qaPageJsonLd,
 } from "@/lib/schema-markup";
 
 describe("articleJsonLd", () => {
@@ -406,5 +407,110 @@ describe("speakableWebPageJsonLd", () => {
   it("resolves the path to an absolute URL", () => {
     const out = speakableWebPageJsonLd(BASE) as Bag;
     expect(String(out.url)).toContain("/questions/how-much-super-to-retire");
+  });
+});
+
+describe("qaPageJsonLd", () => {
+  const BASE = {
+    question: "How does negative gearing work in Australia?",
+    acceptedAnswer:
+      "Negative gearing occurs when your investment expenses exceed the income it produces. The net loss is deductible against your other taxable income.",
+    path: "/questions/how-does-negative-gearing-work",
+  };
+
+  it("emits @context and @type QAPage", () => {
+    const out = qaPageJsonLd(BASE) as Bag;
+    expect(out["@context"]).toBe("https://schema.org");
+    expect(out["@type"]).toBe("QAPage");
+  });
+
+  it("name matches the question text", () => {
+    const out = qaPageJsonLd(BASE) as Bag;
+    expect(out.name).toBe(BASE.question);
+  });
+
+  it("resolves path to an absolute URL", () => {
+    const out = qaPageJsonLd(BASE) as Bag;
+    expect(String(out.url)).toContain("/questions/how-does-negative-gearing-work");
+  });
+
+  it("mainEntity is a Question with the correct name", () => {
+    const out = qaPageJsonLd(BASE) as Bag;
+    const entity = out.mainEntity as Bag;
+    expect(entity["@type"]).toBe("Question");
+    expect(entity.name).toBe(BASE.question);
+  });
+
+  it("acceptedAnswer text matches the provided answer", () => {
+    const out = qaPageJsonLd(BASE) as Bag;
+    const entity = out.mainEntity as Bag;
+    const accepted = entity.acceptedAnswer as Bag;
+    expect(accepted["@type"]).toBe("Answer");
+    expect(accepted.text).toBe(BASE.acceptedAnswer);
+  });
+
+  it("acceptedAnswer url points to the canonical question page", () => {
+    const out = qaPageJsonLd(BASE) as Bag;
+    const entity = out.mainEntity as Bag;
+    const accepted = entity.acceptedAnswer as Bag;
+    expect(String(accepted.url)).toContain(
+      "/questions/how-does-negative-gearing-work",
+    );
+  });
+
+  it("defaults author to the site Organisation when authorName is absent", () => {
+    const out = qaPageJsonLd(BASE) as Bag;
+    const author = out.author as Bag;
+    expect(author["@type"]).toBe("Organization");
+  });
+
+  it("uses a Person author when authorName is provided", () => {
+    const out = qaPageJsonLd({
+      ...BASE,
+      authorName: "Jane Smith",
+      authorUrl: "https://invest.com.au/authors/jane-smith",
+    }) as Bag;
+    const author = out.author as Bag;
+    expect(author["@type"]).toBe("Person");
+    expect(author.name).toBe("Jane Smith");
+    expect(String(author.url)).toContain("jane-smith");
+  });
+
+  it("omits suggestedAnswer when no suggestedAnswers are provided", () => {
+    const out = qaPageJsonLd(BASE) as Bag;
+    const entity = out.mainEntity as Bag;
+    expect(entity.suggestedAnswer).toBeUndefined();
+  });
+
+  it("includes suggestedAnswer nodes for each provided FAQ answer", () => {
+    const faqs = ["Answer one.", "Answer two.", "Answer three."];
+    const out = qaPageJsonLd({ ...BASE, suggestedAnswers: faqs }) as Bag;
+    const entity = out.mainEntity as Bag;
+    const suggested = entity.suggestedAnswer as Bag[];
+    expect(suggested).toHaveLength(3);
+    expect(suggested[0]?.["@type"]).toBe("Answer");
+    expect(suggested[0]?.text).toBe("Answer one.");
+  });
+
+  it("includes datePublished on the QAPage and acceptedAnswer when provided", () => {
+    const out = qaPageJsonLd({
+      ...BASE,
+      datePublished: "2026-05-25",
+    }) as Bag;
+    expect(out.datePublished).toBe("2026-05-25");
+    const entity = out.mainEntity as Bag;
+    const accepted = entity.acceptedAnswer as Bag;
+    expect(accepted.datePublished).toBe("2026-05-25");
+  });
+
+  it("omits datePublished when not provided", () => {
+    const out = qaPageJsonLd(BASE) as Bag;
+    expect(out.datePublished).toBeUndefined();
+  });
+
+  it("omits authorUrl when not provided on a Person author", () => {
+    const out = qaPageJsonLd({ ...BASE, authorName: "Jane Smith" }) as Bag;
+    const author = out.author as Bag;
+    expect(author.url).toBeUndefined();
   });
 });

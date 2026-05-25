@@ -478,6 +478,89 @@ export function definedTermSetJsonLd(input: DefinedTermSetInput) {
   });
 }
 
+// ─── QAPage — question-detail pages ──────────────────────────
+//
+// GEO note: QAPage is the highest-signal schema type for AI-answer citation.
+// It tells crawlers "this page is the canonical answer to a specific question"
+// and makes the acceptedAnswer directly extractable. The speakable complement
+// (below) marks the exact DOM region so voice/AI pipelines surface the answer
+// without parsing the full page. Attach one QAPage per question-detail page;
+// combine with speakableWebPageJsonLd in a separate <script> block.
+
+export interface QaPageInput {
+  /** The question text (becomes schema Question `name`). */
+  question: string;
+  /** The direct/accepted answer (the `shortAnswer` field or first section). */
+  acceptedAnswer: string;
+  /** Site-relative path, e.g. "/questions/how-does-negative-gearing-work". */
+  path: string;
+  /** ISO-8601 date the answer was published or last substantively updated. */
+  datePublished?: string | null;
+  /** Author name. Defaults to the site organisation. */
+  authorName?: string | null;
+  /** Absolute author profile URL. */
+  authorUrl?: string | null;
+  /**
+   * Optional additional answers (suggestedAnswer) — FAQs related to the main
+   * question. These are surfaced in rich-result panels alongside the accepted
+   * answer. Only include if the additional answers are directly related.
+   */
+  suggestedAnswers?: string[];
+}
+
+/**
+ * QAPage JSON-LD for a question-detail page.
+ *
+ * Emits a `QAPage` with one `acceptedAnswer` and optional `suggestedAnswer`
+ * nodes. The accepted answer carries the canonical short answer; the
+ * suggested answers map to related FAQ entries.
+ *
+ * Per schema.org spec, `QAPage` must have exactly one `mainEntity` of type
+ * `Question`. The `Question` carries the answers as nested `Answer` objects.
+ */
+export function qaPageJsonLd(input: QaPageInput) {
+  const pageUrl = absoluteUrl(input.path);
+  const author = input.authorName
+    ? compact({
+        "@type": "Person" as const,
+        name: input.authorName,
+        url: input.authorUrl ?? undefined,
+      })
+    : ORG;
+
+  const suggestedAnswers =
+    input.suggestedAnswers && input.suggestedAnswers.length > 0
+      ? input.suggestedAnswers.map((a) => ({
+          "@type": "Answer",
+          text: a,
+          author,
+        }))
+      : undefined;
+
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "QAPage",
+    name: input.question,
+    url: pageUrl,
+    datePublished: input.datePublished ?? undefined,
+    author,
+    mainEntity: compact({
+      "@type": "Question",
+      name: input.question,
+      datePublished: input.datePublished ?? undefined,
+      author,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: input.acceptedAnswer,
+        author,
+        datePublished: input.datePublished ?? undefined,
+        url: pageUrl,
+      },
+      suggestedAnswer: suggestedAnswers,
+    }),
+  });
+}
+
 // ─── Speakable — voice / answer-first extraction ──────────────
 //
 // GEO note: `speakable` marks the exact DOM nodes that hold the answer-first
