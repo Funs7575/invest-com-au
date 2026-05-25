@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AlertsClient from "./AlertsClient";
+import PushOptIn from "./PushOptIn";
 
 export const dynamic = "force-dynamic";
 
@@ -26,15 +27,23 @@ export default async function AccountAlertsPage() {
   const email = user.email ?? "";
   const admin = createAdminClient();
 
-  const { data: rows } = await admin
-    .from("rate_alert_subscriptions")
-    .select(
-      "id, metric_kind, product_kind, threshold_bps, direction, frequency, broker_slug, lender_slug, verified, last_notified_at, notification_count, created_at, unsubscribe_token",
-    )
-    .or(`user_id.eq.${user.id},email.eq.${email.toLowerCase()}`)
-    .order("created_at", { ascending: false });
+  const [rowsRes, prefsRes] = await Promise.all([
+    admin
+      .from("rate_alert_subscriptions")
+      .select(
+        "id, metric_kind, product_kind, threshold_bps, direction, frequency, broker_slug, lender_slug, verified, last_notified_at, notification_count, created_at, unsubscribe_token",
+      )
+      .or(`user_id.eq.${user.id},email.eq.${email.toLowerCase()}`)
+      .order("created_at", { ascending: false }),
+    admin
+      .from("notification_preferences")
+      .select("browser_push")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+  ]);
 
-  const alerts = rows ?? [];
+  const alerts = rowsRes.data ?? [];
+  const browserPushEnabled = prefsRes.data?.browser_push === true;
 
   return (
     <div className="py-6 md:py-10">
@@ -60,6 +69,12 @@ export default async function AccountAlertsPage() {
           >
             + New alert
           </Link>
+        </div>
+
+        {/* Browser push opt-in — shown above the alert list so users can
+            enable push before (or after) setting up their first alert. */}
+        <div className="mb-5">
+          <PushOptIn initialEnabled={browserPushEnabled} />
         </div>
 
         <AlertsClient alerts={alerts} userEmail={email} />
