@@ -161,6 +161,9 @@ describe("GET /api/cron/snapshot-health-scores", () => {
     expect(body.succeeded).toBe(2);
     expect(body.failed).toBe(0);
 
+    // broker_health_scores is read exactly once per run
+    expect(callCount).toBe(1);
+
     expect(inserted).toHaveLength(2);
     const first = inserted[0] as Record<string, unknown>;
     expect(first.broker_slug).toBe("commsec");
