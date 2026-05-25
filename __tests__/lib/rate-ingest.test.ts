@@ -5,7 +5,7 @@
  * No DB or network access. All functions under test are pure.
  */
 
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   validateSavingsRateRow,
   validateLoanRateRow,
