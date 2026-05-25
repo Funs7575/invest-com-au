@@ -6,7 +6,7 @@ import { trackEvent } from "@/lib/tracking";
 import { trackEvent as phTrack } from "@/lib/posthog/events";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
-import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey } from "@/lib/quiz-scoring";
+import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey, buildStackResults, type StackQuizInputs, type VerticalScoredResult } from "@/lib/quiz-scoring";
 import { intentCountryFromSlug, quizKeyForIntentCode } from "@/lib/intent-context";
 
 import QuizQuestionScreen from "./_components/QuizQuestionScreen";
@@ -15,7 +15,7 @@ import QuizResultsScreen from "./_components/QuizResultsScreen";
 import AdvisorResultsScreen from "./_components/AdvisorResultsScreen";
 
 /* ─── Types ─── */
-type QuestionId = "location" | "goal" | "mode" | "experience" | "complexity" | "amount" | "priority" | "advisor_type" | "property_sub" | "investor_country" | "visa_status" | "investor_goal_intl";
+type QuestionId = "location" | "goal" | "mode" | "experience" | "complexity" | "amount" | "priority" | "advisor_type" | "property_sub" | "investor_country" | "visa_status" | "investor_goal_intl" | "stack_risk" | "stack_super" | "stack_savings";
 type QuizTrack = "diy" | "advisor" | "international";
 // "email-gate" phase removed — capture is now inline in the results screen
 // so users see the value before being asked. Was a 20-40% drop-off tax.
@@ -34,6 +34,10 @@ interface UnifiedAnswers {
   investor_country?: string;
   visa_status?: string;
   investor_goal_intl?: string;
+  // Wealth-stack questions (optional, appended to DIY track)
+  stack_risk?: string;
+  stack_super?: string;
+  stack_savings?: string;
 }
 
 interface QuizWeight {
@@ -173,6 +177,32 @@ const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: stri
       { key: "property-super", label: "Use super for property (SMSF)", sub: "Self-managed super fund property strategy" },
     ],
   },
+  // ─── Wealth-stack supplementary questions (DIY track only) ───────────
+  // Three quick optional questions appended after `priority` for DIY users.
+  // They feed the vertical scoring engine (super, savings, robo) without
+  // extending the main quiz flow for advisor/international users.
+  stack_risk: {
+    text: "How would you describe your risk tolerance?",
+    options: [
+      { key: "conservative", label: "Conservative",   sub: "I prefer stability — lower returns are fine to avoid big swings", emoji: "🛡️" },
+      { key: "balanced",     label: "Balanced",       sub: "Comfortable with some ups and downs over the medium term",        emoji: "⚖️" },
+      { key: "growth",       label: "Growth",         sub: "Happy to ride volatility for higher long-term returns",           emoji: "🚀" },
+    ],
+  },
+  stack_super: {
+    text: "Do you want a super fund recommendation in your results?",
+    options: [
+      { key: "super_yes",    label: "Yes — show me a top fund",       sub: "We'll match a super fund to your risk profile and balance",   emoji: "🏦" },
+      { key: "super_no",     label: "Not right now",                  sub: "Skip super — focus on investing platforms",                  emoji: "➡️" },
+    ],
+  },
+  stack_savings: {
+    text: "Want a high-interest savings account in your stack?",
+    options: [
+      { key: "savings_yes",  label: "Yes — park my cash somewhere smart", sub: "Match a high-rate savings account to your time horizon",    emoji: "💰" },
+      { key: "savings_no",   label: "Not needed",                         sub: "Skip savings — I'm happy with my current setup",            emoji: "➡️" },
+    ],
+  },
 };
 
 /* ─── Navigation logic ─── */
@@ -220,9 +250,21 @@ function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null {
     case "amount":
       return track === "advisor" ? "advisor_type" : "priority";
     case "priority":
+      if (a.goal === "property") return "property_sub";
+      // DIY track: optional wealth-stack questions for relevant goals
+      if (shouldShowStackQuestions(a)) return "stack_risk";
+      return null;
     case "advisor_type":
       return a.goal === "property" ? "property_sub" : null;
     case "property_sub":
+      // After property sub, offer stack questions for REITs/super paths
+      if (a.property_sub !== "physical" && shouldShowStackQuestions(a)) return "stack_risk";
+      return null;
+    case "stack_risk":
+      return "stack_super";
+    case "stack_super":
+      return "stack_savings";
+    case "stack_savings":
       return null;
     // International-only questions that shouldn't appear on domestic track
     case "investor_country":
@@ -232,11 +274,24 @@ function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null {
   }
 }
 
+/**
+ * Decide whether to show the supplementary wealth-stack questions.
+ * Only shown on the DIY track for goals where a multi-product stack
+ * adds genuine value (not crypto-only, not active trading).
+ */
+function shouldShowStackQuestions(a: UnifiedAnswers): boolean {
+  if (a.mode === "help") return false; // advisor path
+  const stackGoals = ["grow", "income", "automate", "property", "super", "property-reit", "property-super"];
+  return a.goal ? stackGoals.includes(a.goal) : false;
+}
+
 function getTotalSteps(a: UnifiedAnswers): number {
   if (isInternational(a)) return 6; // location + country + visa + goal + amount + advisor_type
   const skipMode = a.goal === "help" || a.goal === "home";
   const hasPropertySub = a.goal === "property";
-  return 1 + (skipMode ? 4 : 5) + (hasPropertySub ? 1 : 0); // +1 for location
+  const hasStackQuestions = shouldShowStackQuestions(a) && a.mode !== "help";
+  const stackExtra = hasStackQuestions ? 3 : 0; // stack_risk + stack_super + stack_savings
+  return 1 + (skipMode ? 4 : 5) + (hasPropertySub ? 1 : 0) + stackExtra; // +1 for location
 }
 
 function inferAdvisorType(a: UnifiedAnswers): string {
@@ -424,6 +479,8 @@ export default function QuizPage() {
   const [brokers, setBrokers] = useState<Broker[]>([]);
   const [weights, setWeights] = useState<Record<string, QuizWeights>>(fallbackScores);
   const [quizCampaignWinners, setQuizCampaignWinners] = useState<PlacementWinner[]>([]);
+  // Wealth-stack per-vertical scored results (populated after DIY results phase)
+  const [stackResults, setStackResults] = useState<Partial<Record<"super_fund" | "savings_account" | "robo_advisor", VerticalScoredResult[]>>>({});
 
   const mountedRef = useRef(true);
   const questionHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -535,6 +592,84 @@ export default function QuizPage() {
 
   const hasCryptoResult = useMemo(() => results.some(r => r.broker?.is_crypto), [results]);
 
+  // Build wealth-stack vertical inputs from quiz answers
+  const stackInputs = useMemo((): StackQuizInputs => {
+    const riskMap: Record<string, StackQuizInputs["riskBand"]> = {
+      conservative: "conservative",
+      balanced: "balanced",
+      growth: "growth",
+    };
+    const horizonMap: Record<string, StackQuizInputs["horizon"]> = {
+      small: "short",
+      medium: "mid",
+      large: "long",
+      xlarge: "long",
+      whale: "long",
+    };
+    return {
+      amount: answers.amount as AmountKey | undefined,
+      riskBand: answers.stack_risk ? riskMap[answers.stack_risk] : undefined,
+      horizon: answers.amount ? horizonMap[answers.amount] : undefined,
+      superInterest: answers.stack_super === "super_yes" || answers.goal === "super",
+      roboInterest: answers.goal === "automate",
+      savingsInterest: answers.stack_savings === "savings_yes",
+      goal: answers.goal,
+    };
+  }, [answers]);
+
+  // Compute wealth-stack vertical results (memoised)
+  useEffect(() => {
+    if (phase !== "diy-results" && phase !== "analyzing") return;
+    const superInterest = stackInputs.superInterest ?? false;
+    const savingsInterest = stackInputs.savingsInterest ?? false;
+    const roboInterest = stackInputs.roboInterest ?? (answers.goal === "automate");
+
+    // Build per-kind slices from the same broker + weights data
+    const perKind: Parameters<typeof buildStackResults>[0]["perKind"] = {};
+
+    if (superInterest || answers.goal === "super" || answers.goal === "grow") {
+      const superBrokers = brokers.filter(b => b.platform_type === "super_fund");
+      if (superBrokers.length > 0) {
+        const superWeights: Record<string, QuizWeights> = {};
+        for (const b of superBrokers) {
+          superWeights[b.slug] = weights[b.slug] ?? fallbackScores[b.slug] ?? {
+            beginner: 5, low_fee: 5, us_shares: 0, smsf: 7, crypto: 0, advanced: 3, property: 3, robo: 7,
+          };
+        }
+        perKind["super_fund"] = { brokers: superBrokers, weights: superWeights };
+      }
+    }
+
+    if (savingsInterest || answers.amount === "small" || answers.goal === "property") {
+      const savingsBrokers = brokers.filter(b => b.platform_type === "savings_account" || b.platform_type === "term_deposit");
+      if (savingsBrokers.length > 0) {
+        const savingsWeights: Record<string, QuizWeights> = {};
+        for (const b of savingsBrokers) {
+          savingsWeights[b.slug] = weights[b.slug] ?? fallbackScores[b.slug] ?? {
+            beginner: 6, low_fee: 8, us_shares: 0, smsf: 3, crypto: 0, advanced: 2, property: 0, robo: 3,
+          };
+        }
+        perKind["savings_account"] = { brokers: savingsBrokers, weights: savingsWeights };
+      }
+    }
+
+    if (roboInterest || answers.goal === "automate") {
+      const roboBrokers = brokers.filter(b => b.platform_type === "robo_advisor");
+      if (roboBrokers.length > 0) {
+        const roboWeights: Record<string, QuizWeights> = {};
+        for (const b of roboBrokers) {
+          roboWeights[b.slug] = weights[b.slug] ?? fallbackScores[b.slug] ?? {
+            beginner: 8, low_fee: 6, us_shares: 3, smsf: 3, crypto: 0, advanced: 2, property: 2, robo: 9,
+          };
+        }
+        perKind["robo_advisor"] = { brokers: roboBrokers, weights: roboWeights };
+      }
+    }
+
+    const built = buildStackResults({ inputs: stackInputs, perKind, limit: 1 });
+    setStackResults(built);
+  }, [phase, stackInputs, brokers, weights, answers.goal, answers.amount, answers.stack_super, answers.stack_savings]);
+
   // Track completion + persist results
   useEffect(() => {
     if ((phase === "diy-results" || phase === "advisor-results") && brokers.length > 0) {
@@ -566,7 +701,7 @@ export default function QuizPage() {
         });
       } catch { /* quota exceeded */ }
     }
-  }, [phase, brokers.length, results, scoringAnswers, answers.advisor_type, answers.amount, answers.experience]);
+  }, [phase, brokers.length, results, scoringAnswers, answers.advisor_type, answers.amount, answers.experience, answers.investor_country]);
 
   /* ─── Handlers ─── */
 
@@ -782,6 +917,8 @@ export default function QuizPage() {
         getMatchReasons={getMatchReasons}
         onEmailCaptureSubmit={handleInlineEmailSubmit}
         emailCaptureStatus={emailCaptureStatus}
+        stackResults={stackResults}
+        stackInputs={stackInputs}
       />
     );
   }
