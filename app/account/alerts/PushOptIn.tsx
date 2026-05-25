@@ -65,7 +65,9 @@ export default function PushOptIn({ initialEnabled }: Props) {
 
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublic),
+        // applicationServerKey accepts BufferSource; we pass the ArrayBuffer
+        // extracted from the Uint8Array to satisfy the stricter TS type.
+        applicationServerKey: urlBase64ToUint8Array(vapidPublic).buffer as ArrayBuffer,
       });
 
       setPermission("granted");
