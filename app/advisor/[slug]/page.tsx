@@ -15,6 +15,9 @@ import {
   getProviderOutcomeBadge,
   getPublicTestimonials,
 } from "@/lib/outcomes/profile-display";
+import { computeAdvisorTrustScore } from "@/lib/advisor-trust-score";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import AdvisorTrustScoreSection from "./components/AdvisorTrustScoreSection";
 
 export const revalidate = 1800;
 
@@ -286,6 +289,28 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     return "Contact for pricing";
   }
 
+  // ── Advisor Trust Score (computed on-read from existing profile data) ──
+  const trustScore = computeAdvisorTrustScore({
+    verified: pro.verified,
+    afsl_number: pro.afsl_number,
+    registration_number: pro.registration_number,
+    verified_at: pro.verified_at,
+    created_at: pro.created_at,
+    years_experience: pro.years_experience,
+    bio: pro.bio,
+    photo_url: pro.photo_url,
+    qualifications: pro.qualifications as unknown[] | null,
+    education: pro.education as unknown[] | null,
+    memberships: pro.memberships as unknown[] | null,
+    fee_structure: pro.fee_structure,
+    fee_description: pro.fee_description,
+    linkedin_url: pro.linkedin_url,
+    website: pro.website,
+    languages: pro.languages as unknown[] | null,
+    rating: pro.rating,
+    review_count: pro.review_count,
+  });
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
@@ -467,6 +492,15 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
 
         </div>
       )}
+
+      {/* ── Advisor Trust Score section ── */}
+      <div className="container-custom max-w-4xl mt-6">
+        <AdvisorTrustScoreSection
+          trustScore={trustScore}
+          advisorName={pro.name}
+          generalAdviceWarning={GENERAL_ADVICE_WARNING}
+        />
+      </div>
 
       {/* Outcome-flywheel badge + verified testimonials — fetched in
           parallel above. Renders below the main profile so it
