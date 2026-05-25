@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { fireConsumerWebhook } from "@/lib/consumer-webhook-dispatch";
 
 export const maxDuration = 60;
 
@@ -60,6 +61,14 @@ export async function GET(req: NextRequest) {
         });
 
         results.push({ check: "profile_gate", action: gateStatus, detail: `${a.name}: ${passed ? "passed" : missing.join(", ")}` });
+
+        // Notify API consumers that this advisor's profile quality changed.
+        void fireConsumerWebhook("advisor.updated", {
+          professional_id: a.id,
+          change_type: "profile_gate",
+          profile_quality_gate: gateStatus,
+          profile_complete: passed,
+        });
       }
     }
   } catch (e) {
@@ -193,6 +202,14 @@ export async function GET(req: NextRequest) {
           });
 
           results.push({ check: "response_sla", action: "auto_paused", detail: `${advisor.name}: ${unresponded} unresponded leads` });
+
+          // Notify API consumers that this advisor's status changed.
+          void fireConsumerWebhook("advisor.updated", {
+            professional_id: advisor.id,
+            change_type: "status_change",
+            new_status: "paused",
+            reason: "auto_paused_unresponded_leads",
+          });
         }
       }
     }
@@ -237,7 +254,7 @@ export async function GET(req: NextRequest) {
           const html = await response.text();
           // Check if the page contains the AFSL number and "Current" status
           const hasAfsl = html.includes(afslClean);
-          const isCurrent = html.toLowerCase().includes("current") || html.toLowerCase().includes("registered");
+          const _isCurrent = html.toLowerCase().includes("current") || html.toLowerCase().includes("registered");
 
           if (hasAfsl) {
             // AFSL found on register
@@ -257,6 +274,13 @@ export async function GET(req: NextRequest) {
             });
 
             results.push({ check: "asic_verify", action: "verified", detail: `${advisor.name}: AFSL ${afslClean} confirmed` });
+
+            void fireConsumerWebhook("advisor.updated", {
+              professional_id: advisor.id,
+              change_type: "verification",
+              verified: true,
+              afsl_number: afslClean,
+            });
           } else {
             // AFSL not found — increment failure count
             const failures = (advisor.verification_failures || 0) + 1;
@@ -287,6 +311,14 @@ export async function GET(req: NextRequest) {
               });
 
               results.push({ check: "asic_verify", action: "revoked", detail: `${advisor.name}: AFSL ${afslClean} not found after ${failures} attempts` });
+
+              void fireConsumerWebhook("advisor.updated", {
+                professional_id: advisor.id,
+                change_type: "verification",
+                verified: false,
+                afsl_number: afslClean,
+                reason: "asic_register_not_found",
+              });
             } else {
               results.push({ check: "asic_verify", action: "failed", detail: `${advisor.name}: AFSL ${afslClean} not found (attempt ${failures})` });
             }

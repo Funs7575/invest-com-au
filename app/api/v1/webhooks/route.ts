@@ -181,6 +181,10 @@ export const POST = withValidatedBody(
         events: body.events,
         secret_hash: secretHash,
         secret_prefix: secretPrefix,
+        // signing_secret stored plaintext (service-role / deny-all-anon RLS).
+        // Required by the dispatch worker to sign outbound payloads; the
+        // hash alone cannot be reversed.
+        signing_secret: plainSecret,
         is_active: true,
       })
       .select("id, url, events, secret_prefix, is_active, created_at")
