@@ -35,11 +35,14 @@ export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const market = params.get("market") === "us" ? "us" : "asx";
   const theme = params.get("theme") === "dark" ? "dark" : "light";
-  const limit = Math.min(Math.max(parseInt(params.get("limit") || "5", 10) || 5, 1), 10);
-  const defaultAmount = Math.min(
-    Math.max(parseFloat(params.get("amount") || "5000") || 5000, 1),
-    1_000_000,
-  );
+  const parsedLimit = parseInt(params.get("limit") ?? "", 10);
+  const limit = Number.isNaN(parsedLimit)
+    ? 5
+    : Math.min(Math.max(parsedLimit, 1), 10);
+  const parsedAmount = parseFloat(params.get("amount") ?? "");
+  const defaultAmount = Number.isNaN(parsedAmount)
+    ? 5000
+    : Math.min(Math.max(parsedAmount, 1), 1_000_000);
 
   // Anon-key client: RLS enforces active-only broker rows. See header comment.
   const supabase = createStaticClient();
