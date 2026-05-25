@@ -21,6 +21,22 @@
       "purpose": "any maskable"
     }
   ],
+  "screenshots": [
+    {
+      "src": "/screenshots/narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Compare Australia's best investing platforms on mobile"
+    },
+    {
+      "src": "/screenshots/wide.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Compare Australia's best investing platforms on desktop"
+    }
+  ],
   "categories": ["finance", "business"],
   "lang": "en-AU",
   "scope": "/"

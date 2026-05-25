@@ -71,7 +71,7 @@ export default function PushNotificationPrompt() {
       }
 
       // Register service worker
-      const registration = await navigator.serviceWorker.register("/sw-push.js");
+      const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
       await navigator.serviceWorker.ready;
 
       // Get VAPID public key from meta tag or hardcoded
