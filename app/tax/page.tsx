@@ -73,6 +73,13 @@ const TAX_TOPICS = [
     icon: "🏛️",
     keyFact: "0% tax in pension phase",
   },
+  {
+    title: "Tax Return Hub",
+    description: "Step-by-step lodgement checklist for investors — deadlines, what records you need, myTax vs tax agent, and common investor mistakes.",
+    href: "/tax-return",
+    icon: "🗓️",
+    keyFact: "Deadline: 31 Oct (28 Feb with agent)",
+  },
 ];
 
 const TAX_RATES = [

@@ -242,6 +242,49 @@ export default function InsuranceHubPage() {
             </div>
           </div>
         </section>
+
+        {/* Cross-links to life-event checklists and financial health score */}
+        <section className="py-8 bg-slate-50 border-t border-slate-200">
+          <div className="container-custom">
+            <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-4">Related tools</p>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Link
+                href="/just"
+                className="group flex items-start gap-4 p-5 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-sm transition-all"
+              >
+                <div>
+                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-700 transition-colors">
+                    Life-Event Checklists
+                  </p>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Just retired, inherited, made redundant, or had a baby? Get a
+                    personalised financial checklist for your situation — insurance review included.
+                  </p>
+                </div>
+                <svg className="w-4 h-4 text-slate-300 shrink-0 mt-0.5 group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+              <Link
+                href="/score"
+                className="group flex items-start gap-4 p-5 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-sm transition-all"
+              >
+                <div>
+                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-700 transition-colors">
+                    Financial Health Score
+                  </p>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    60-second portfolio check-up — see whether your insurance cover, super, and
+                    investments are aligned with your goals.
+                  </p>
+                </div>
+                <svg className="w-4 h-4 text-slate-300 shrink-0 mt-0.5 group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
       </HubPage>
 
       <HubExitIntent segmentSlug="insurance-hub" hubName="Insurance" />

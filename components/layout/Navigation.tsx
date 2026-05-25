@@ -119,6 +119,51 @@ const listingsMenu = {
   ],
 };
 
+// Tax & insurance hubs — previously unlinked from primary nav. Added in
+// Phase-2 surfacing pass so visitors who know what they need don't have to
+// search. Tax sub-pages (/capital-gains, /negative-gearing, /franking-credits,
+// /crypto) and insurance sub-pages (/life, /income-protection, /health,
+// /home-contents, /tpd, /trauma) are all live routes.
+const taxInsuranceMenu = {
+  tax: [
+    { label: "Tax Hub", href: "/tax", desc: "CGT, franking credits & strategies" },
+    { label: "Capital Gains Tax", href: "/tax/capital-gains", desc: "50% discount & cost base rules" },
+    { label: "Franking Credits", href: "/tax/franking-credits", desc: "Dividend imputation & refunds" },
+    { label: "Negative Gearing", href: "/tax/negative-gearing", desc: "Property & shares tax benefits" },
+    { label: "Crypto Tax", href: "/tax/crypto", desc: "ATO rules for BTC, DeFi & NFTs" },
+    { label: "Tax Return Hub", href: "/tax-return", desc: "Lodgement checklist & deadlines" },
+  ],
+  insurance: [
+    { label: "Insurance Hub", href: "/insurance", desc: "Life, IP, health & home compared" },
+    { label: "Life Insurance", href: "/insurance/life", desc: "Lump-sum cover for your family" },
+    { label: "Income Protection", href: "/insurance/income-protection", desc: "Replace up to 70% of income" },
+    { label: "Health Insurance", href: "/insurance/health", desc: "Hospital & extras cover" },
+    { label: "Home & Contents", href: "/insurance/home-contents", desc: "Building & contents cover" },
+    { label: "TPD Insurance", href: "/insurance/tpd", desc: "Permanent disability lump sum" },
+    { label: "Trauma Insurance", href: "/insurance/trauma", desc: "Critical illness cover" },
+  ],
+  lifeEvents: [
+    { label: "Life-Event Checklists", href: "/just", desc: "8 life events — what to do financially" },
+    { label: "Just Retired", href: "/just/retired", desc: "Drawdown, pension & estate steps" },
+    { label: "Just Inherited", href: "/just/inherited", desc: "Unexpected windfall checklist" },
+    { label: "Just Made Redundant", href: "/just/made-redundant", desc: "ETP, super & next steps" },
+    { label: "Just Got Married", href: "/just/got-married", desc: "Combining finances & insurance" },
+    { label: "Just Had a Baby", href: "/just/had-a-baby", desc: "Super, insurance & savings" },
+    { label: "Just Sold a Business", href: "/just/sold-a-business", desc: "CGT concessions & reinvestment" },
+    { label: "Financial Health Score", href: "/score", desc: "60-second portfolio check-up" },
+  ],
+  occupations: [
+    { label: "Investing by Occupation", href: "/investing-for", desc: "25+ profession-specific guides" },
+    { label: "Doctors", href: "/investing-for/doctor", desc: "SMSF, income protection, practice" },
+    { label: "Teachers", href: "/investing-for/teacher", desc: "Govt super, salary packaging" },
+    { label: "Tradies", href: "/investing-for/tradesperson", desc: "ABN super, income protection" },
+    { label: "Small Business Owners", href: "/investing-for/small-business-owner", desc: "CGT concessions, succession" },
+    { label: "Lawyers", href: "/investing-for/lawyer", desc: "Salary sacrifice, partnership income" },
+    { label: "Public Servants", href: "/investing-for/public-servant", desc: "CSS/PSS/PSSap, 15.4% SG" },
+    { label: "All Occupations →", href: "/investing-for", desc: "25+ guides by profession" },
+  ],
+};
+
 const learnMenu = {
   guides: [
     { label: "Best Platforms for Beginners", href: "/article/best-share-trading-platforms-australia" },
@@ -316,6 +361,27 @@ const mobileSections = [
     ],
   },
   {
+    title: "Tax, Insurance & Life Events",
+    items: [
+      { name: "Tax Hub", href: "/tax" },
+      { name: "Capital Gains Tax", href: "/tax/capital-gains" },
+      { name: "Franking Credits", href: "/tax/franking-credits" },
+      { name: "Negative Gearing", href: "/tax/negative-gearing" },
+      { name: "Crypto Tax", href: "/tax/crypto" },
+      { name: "Tax Return Hub", href: "/tax-return" },
+      { name: "Insurance Hub", href: "/insurance" },
+      { name: "Life Insurance", href: "/insurance/life" },
+      { name: "Income Protection", href: "/insurance/income-protection" },
+      { name: "Health Insurance", href: "/insurance/health" },
+      { name: "Life-Event Checklists", href: "/just" },
+      { name: "Just Retired", href: "/just/retired" },
+      { name: "Just Inherited", href: "/just/inherited" },
+      { name: "Just Made Redundant", href: "/just/made-redundant" },
+      { name: "Financial Health Score", href: "/score" },
+      { name: "Investing by Occupation", href: "/investing-for" },
+    ],
+  },
+  {
     title: "Learn & Community",
     items: [
       { name: "Articles & Guides", href: "/articles" },
@@ -387,6 +453,9 @@ export function Navigation() {
   // dissolved as a top-level; listings half lives here, professionals half
   // moved to Find an advisor).
   const isListingsActive = pathname.startsWith("/invest") || pathname.startsWith("/property");
+  const isTaxLifeActive = ["/tax", "/insurance", "/just", "/score", "/investing-for", "/tax-return"].some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
 
   return (
     <>
@@ -651,6 +720,78 @@ export function Navigation() {
                 Learn. Calculators and tools remain accessible via /calculators
                 directly and via in-context links from comparison + sector
                 pillar pages. */}
+
+            {/* ─── Tax, Insurance & Life Events ────────────────────────────── */}
+            {/* Phase-2 surfacing: /tax and /insurance hubs existed but had no
+                nav entry. Combined into a single 4-column mega-menu alongside
+                life-event checklists (/just) and occupation guides so a user
+                who knows their need can land directly. */}
+            <MegaMenuDropdown label="Tax & Life" isActive={isTaxLifeActive} menuWidth="min-w-[820px]">
+              <div className="p-5">
+                <div className="grid grid-cols-4 gap-5">
+                  <div>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Tax</p>
+                    <div className="space-y-0.5">
+                      {taxInsuranceMenu.tax.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="text-[0.8rem] font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-500 leading-tight">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Insurance</p>
+                    <div className="space-y-0.5">
+                      {taxInsuranceMenu.insurance.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="text-[0.8rem] font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-500 leading-tight">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Life events</p>
+                    <div className="space-y-0.5">
+                      {taxInsuranceMenu.lifeEvents.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="text-[0.8rem] font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-500 leading-tight">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-l border-slate-100 pl-4">
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">By occupation</p>
+                    <div className="space-y-0.5">
+                      {taxInsuranceMenu.occupations.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="text-[0.8rem] font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-500 leading-tight">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </MegaMenuDropdown>
 
             {/* Learn Mega-Menu */}
             <MegaMenuDropdown label="Learn" isActive={isLearnActive} menuWidth="min-w-[540px]">

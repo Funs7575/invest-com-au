@@ -32,6 +32,9 @@ export function SiteFooter() {
             { label: "ETFs", href: "/etfs" },
             { label: "Crypto", href: "/crypto" },
             { label: "Super Funds", href: "/super" },
+            { label: "Super Contributions", href: "/super/contributions" },
+            { label: "Super Consolidation", href: "/super/consolidation" },
+            { label: "Leaving Australia (Super)", href: "/super/leaving-australia" },
             { label: "Savings Accounts", href: "/savings" },
             { label: "Insurance", href: "/insurance" },
             { label: "Current Deals", href: "/deals" },
@@ -74,15 +77,20 @@ export function SiteFooter() {
             { label: "All Advisors", href: "/advisors" },
           ]} />
 
-          {/* Column 5 — Learn & Community */}
-          <FooterColumn title="Learn & Community" items={[
-            { label: "All Articles", href: "/articles" },
-            { label: "How-To Guides", href: "/how-to" },
-            { label: "Glossary", href: "/glossary" },
+          {/* Column 5 — Tax, Life & Learn */}
+          <FooterColumn title="Tax, Life & Learn" items={[
+            { label: "Tax Hub", href: "/tax" },
+            { label: "Tax Return", href: "/tax-return" },
+            { label: "Capital Gains Tax", href: "/tax/capital-gains" },
+            { label: "Franking Credits", href: "/tax/franking-credits" },
+            { label: "Life-Event Checklists", href: "/just" },
+            { label: "Financial Health Score", href: "/score" },
+            { label: "Investing by Occupation", href: "/investing-for" },
+            { label: "Marketplace", href: "/marketplace" },
+            { label: "Global Investing", href: "/global-investing" },
             { label: "Community Forum", href: "/community" },
-            { label: "Annual Report", href: "/reports/annual" },
-            { label: "Write a Review", href: "/reviews/write" },
-            { label: "Foreign Investors", href: "/foreign-investment" },
+            { label: "All Articles", href: "/articles" },
+            { label: "Glossary", href: "/glossary" },
             { label: "Get Matched", href: "/quiz" },
             { label: "Post a Request", href: "/quotes/post" },
           ]} />
