@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
@@ -22,6 +23,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- body is hand-validated below (required fields, rating bounds, profanity/spam filters, HTML-escaped)
     const body = await request.json();
     const {
       professional_id,
@@ -111,6 +113,33 @@ export async function POST(request: NextRequest) {
     // Auto-reject if flagged, otherwise pending
     const status = autoFlagged ? "flagged" : "pending";
 
+    // ── Engagement verification (set at submit time if a matching lead exists) ──
+    // Uses admin client because professional_leads may have deny-all anon RLS.
+    // The check is best-effort: a failure here doesn't block review submission.
+    let verifiedEngagement = false;
+    let verifiedAt: string | null = null;
+
+    if (reviewer_email?.trim()) {
+      try {
+        const adminSupabase = createAdminClient();
+        const { data: leadMatch } = await adminSupabase
+          .from("professional_leads")
+          .select("id")
+          .eq("professional_id", professional_id)
+          .eq("user_email", reviewer_email.trim().toLowerCase())
+          .limit(1);
+
+        if (leadMatch && leadMatch.length > 0) {
+          verifiedEngagement = true;
+          verifiedAt = new Date().toISOString();
+        }
+      } catch (engErr) {
+        log.warn("Engagement verification check failed (non-fatal)", {
+          error: engErr instanceof Error ? engErr.message : String(engErr),
+        });
+      }
+    }
+
     const { error: insertError } = await supabase
       .from("professional_reviews")
       .insert({
@@ -125,6 +154,8 @@ export async function POST(request: NextRequest) {
         title: title?.trim() || null,
         body: reviewBody.trim(),
         status,
+        verified_engagement: verifiedEngagement,
+        ...(verifiedAt ? { verified_at: verifiedAt } : {}),
       });
 
     if (insertError) {

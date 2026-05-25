@@ -944,6 +944,19 @@ export default function AdvisorProfileClient({
                               {r.verified && (
                                 <span className="text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">Verified</span>
                               )}
+                              {r.verified_engagement && (
+                                <span
+                                  className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 bg-teal-50 text-teal-700 rounded-full border border-teal-200"
+                                  title="This reviewer had a recorded engagement (lead or booking) with this advisor on the platform."
+                                >
+                                  {/* Checkmark shield icon */}
+                                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    <polyline points="9 12 11 14 15 10"/>
+                                  </svg>
+                                  Verified Engagement
+                                </span>
+                              )}
                               <VerifiedClientBadge
                                 isVerified={!!r.is_verified_client}
                               />

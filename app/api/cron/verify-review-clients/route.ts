@@ -125,12 +125,16 @@ export async function GET(req: NextRequest) {
         );
         if (!leadId) continue;
 
+        const now = new Date().toISOString();
         const { error } = await supabase
           .from("professional_reviews")
           .update({
             is_verified_client: true,
-            verified_client_at: new Date().toISOString(),
+            verified_client_at: now,
             lead_id: leadId,
+            // Keep verified_engagement in sync with is_verified_client
+            verified_engagement: true,
+            verified_at: now,
           })
           .eq("id", review.id);
 
