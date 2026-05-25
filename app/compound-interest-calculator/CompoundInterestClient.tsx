@@ -6,6 +6,7 @@ import { useCalculatorState } from "@/hooks/use-calculator-state";
 import { useCalculatorHistory } from "@/hooks/use-calculator-history";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import CalculatorShareButton from "@/components/CalculatorShareButton";
+import ShareResult from "@/components/ShareResult";
 import CalculatorHistory from "@/components/CalculatorHistory";
 
 const FREQ_OPTIONS = [
@@ -306,6 +307,17 @@ export default function CompoundInterestClient() {
               </Link>
             </div>
           </div>
+        </div>
+
+        <div className="mt-4">
+          <ShareResult
+            calculatorKey="compound_interest_calculator"
+            resultLabel={fmt(result.finalAmount)}
+            calcTitle="Compound Interest Calculator"
+            calcSlug="compound-interest"
+            state={{ principal, rate, years, monthly, freq }}
+            showDisclaimer
+          />
         </div>
 
         <CalculatorHistory
