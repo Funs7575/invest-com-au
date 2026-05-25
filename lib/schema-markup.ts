@@ -436,6 +436,11 @@ export interface DefinedTermInput {
   term: string;
   slug: string;
   definition: string;
+  /**
+   * ISO-8601 date the term definition was last substantively updated.
+   * Informs AI engines about freshness; omit when unknown.
+   */
+  dateModified?: string | null;
 }
 
 /** Inner DefinedTerm node (no @context) — for nesting as mainEntity or in a set. */
@@ -452,7 +457,7 @@ function definedTermNode(input: DefinedTermInput) {
 
 /** Standalone DefinedTerm document. */
 export function definedTermJsonLd(input: DefinedTermInput) {
-  return { "@context": "https://schema.org", ...definedTermNode(input) };
+  return compact({ "@context": "https://schema.org", dateModified: input.dateModified ?? undefined, ...definedTermNode(input) });
 }
 
 export interface DefinedTermSetInput {
@@ -616,6 +621,10 @@ export interface DefinedTermPageInput extends DefinedTermInput {
  * `speakable` answer region and the `DefinedTerm` as its `mainEntity`. Emit
  * as the single primary JSON-LD block on `/glossary/[term]` (breadcrumb stays
  * separate). Replaces the previously hand-rolled inline DefinedTerm.
+ *
+ * When `dateModified` is provided it propagates to both the WebPage wrapper
+ * and the nested DefinedTerm, giving AI engines a freshness signal at both
+ * levels.
  */
 export function definedTermPageJsonLd(input: DefinedTermPageInput) {
   const selectors =
@@ -627,8 +636,9 @@ export function definedTermPageJsonLd(input: DefinedTermPageInput) {
     "@type": "WebPage",
     name: `What Is ${input.term}?`,
     url: absoluteUrl(`${GLOSSARY_PATH}/${input.slug}`),
+    dateModified: input.dateModified ?? undefined,
     speakable: speakableSpecification(selectors),
-    mainEntity: definedTermNode(input),
+    mainEntity: compact({ ...definedTermNode(input), dateModified: input.dateModified ?? undefined }),
   });
 }
 
@@ -769,6 +779,83 @@ export function glossaryTermQaJsonLd(input: GlossaryTermQaInput) {
       },
       suggestedAnswer: suggestedAnswers,
     }),
+  });
+}
+
+// ─── HowTo — step-by-step procedural guides ─────────────────────
+//
+// GEO note: HowTo schema is a high-signal type for AI-answer citation on
+// procedural queries ("how to open a brokerage account", "how to choose a
+// financial advisor"). Google surfaces step-by-step rich results; AI engines
+// extract the ordered step list as a structured process. Steps come exclusively
+// from the real guide content — no fabricated steps. Apply to /how-to/[slug]
+// pages and any page whose primary purpose is to walk a user through a
+// numbered sequence. Each HowToStep carries an anchor URL so AI systems can
+// deep-link directly to the step.
+
+export interface HowToStepInput {
+  /** Short label shown as the step heading. */
+  heading: string;
+  /** Body text for the step (first 500 chars used). */
+  body: string;
+}
+
+export interface HowToInput {
+  /** URL slug for the guide, e.g. "open-brokerage-account". */
+  slug: string;
+  /** The H1 / schema name of the guide. */
+  h1: string;
+  /** Intro paragraph — used as the HowTo `description`. */
+  intro: string;
+  /** Ordered steps derived from the guide content. */
+  steps: HowToStepInput[];
+  /**
+   * ISO-8601 date the guide was last substantively updated.
+   * Defaults to the canonical UPDATED_LABEL date if omitted.
+   */
+  dateModified?: string | null;
+  /** ISO-8601 publication date. */
+  datePublished?: string | null;
+}
+
+/**
+ * HowTo JSON-LD for a step-by-step guide page.
+ *
+ * Emits a `HowTo` with ordered `HowToStep` nodes. Steps come exclusively from
+ * the real guide content; no fabricated steps are permitted. Conforms to
+ * Google's HowTo rich-result guidelines and schema.org spec.
+ *
+ * The builder is the canonical source in `lib/schema-markup.ts`. The
+ * identically-named helper in `lib/seo.ts` remains for backwards-compatibility
+ * with the `/how-to/[slug]` page import — both emit valid HowTo blocks.
+ */
+export function howToJsonLd(input: HowToInput) {
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: input.h1,
+    description: input.intro,
+    totalTime: "PT10M",
+    estimatedCost: {
+      "@type": "MonetaryAmount",
+      currency: "AUD",
+      value: "0",
+    },
+    datePublished: input.datePublished ?? undefined,
+    dateModified: input.dateModified ?? undefined,
+    step: input.steps.map((step, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      name: step.heading,
+      text: step.body.slice(0, 500),
+      url: absoluteUrl(`/how-to/${input.slug}#step-${i + 1}`),
+    })),
+    author: ORG,
+    publisher: ORG,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl(`/how-to/${input.slug}`),
+    },
   });
 }
 
