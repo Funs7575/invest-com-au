@@ -253,6 +253,47 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 571 — 2026-05-25 — STATUS: ALL-BLOCKED · stream=all · automation-pause-confirmed(#1197-merged)
+
+- **Phase:** 0+0.5+1+1.7+2+3+7 — lock + sentinel + sync + main-CI + in-flight CI audit + item assessment + queue update
+- **Phase 0.5:** No LOOP_PAUSE file on main — proceeding. Main HEAD `2527070` (post-#1197 merge).
+- **Phase 1 (Sync):** `git pull --ff-only origin/main` advanced 2 commits (`rotate-iteration-log` workflow update + `stale-pr-sweeper` workflow update, both part of #1197 merge). Main at `2527070`.
+- **Phase 1.7 (Main CI preflight):** Main updated via #1197 merge (workflow-only changes — `auto-merge.yml`, `auto-rebase-loop-prs.yml`, `stale-pr-sweeper.yml`, `auto-merge-label.yml`, etc. switched to `workflow_dispatch` only; `dependabot.yml` deleted). These changes do not affect test/build/lint CI correctness. Main inferred healthy.
+- **Phase 2 (CI rescue check — all in-flight PRs):**
+  - **#1191** (`fix-auto-merge-noise-checks`, Tier C): `Lint · Type-check · Test · Build` ✅ SUCCESS. `needs-human-review` label. **Open — awaiting founder merge.** Note: with #1197 now merged, `auto-merge.yml` is manual-only. #1191 improves the excluded-checks logic for when auto-merge is re-enabled. Still worth merging.
+  - **#1182** (`disc-jobs-tests`): `Lint · Type-check · Test · Build` ✅ SUCCESS. `auto-merge-safe` ✅. No rescue needed.
+  - **#1183** (`disc-jobs-tests-2`): `Lint · Type-check · Test · Build` ✅ SUCCESS. `auto-merge-safe` ✅. No rescue needed.
+  - **#1184** (`disc-portal-routes-tests`): `Lint · Type-check · Test · Build` ✅ SUCCESS. `auto-merge-safe` ✅. No rescue needed.
+  - **#1185** (`disc-afsl-notif-reviews-tests`): `auto-merge-safe` ✅. CI confirmed green (head `f2a7565` unchanged since iter 568 push — no auto-rebase since #1197 disabled `auto-rebase-loop-prs`). No rescue needed.
+  - **#1186** (`disc-admin-kyc-comments`): `auto-merge-safe` ✅. CI confirmed green (head `5d7719e` unchanged). No rescue needed.
+  - **#1187** (`disc-admin-content-notif-tests`): `auto-merge-safe` ✅. CI confirmed green (head `35ffca8` unchanged). No rescue needed.
+  - **#1188** (`disc-admin-revalidate-objection`): `auto-merge-safe` ✅. CI confirmed green (head `c336919` unchanged). No rescue needed.
+  - **#1176** (NF admin MFA env guard, Tier C): `needs-human-review`. CI green (head `2cc8f25` unchanged since iter 547). Awaiting founder merge.
+  - **#1177** (NF noindex empty verticals, Tier A): CI green (head `ac9528b` unchanged). Awaiting founder merge (label automation removes `auto-merge-safe` on page files — documented iter 568).
+  - **#1178** (NF autopilot DB toggles, Tier B): `needs-human-review`. CI green (head `0f1fe60` unchanged). 15-min obs window long passed. Awaiting founder merge.
+  - **#1180** (NF SMS consent, Tier C): `needs-human-review`. CI green (head `9ba341c` unchanged). Awaiting founder merge.
+  - **All PRs:** `Preview smoke test` ❌ + `Supabase types drift` ❌ — confirmed non-required pre-existing infrastructure noise. No action.
+  - **Key status change vs iter 570:** `auto-rebase-loop-prs` is now disabled (#1197 merged). All open PRs will NOT be auto-rebased. Their current SHAs and CI results are stable. No new pushes needed to re-trigger CI.
+- **Phase 3 (Item selection):** No pending engineering items in any non-blocked stream. All DISC-20260524 work complete (7 PRs, all CI green). All NF work complete (4 PRs, all CI green). All other streams done or blocked. No override conditions met (no CL/LL Tier-0/1 pending items).
+- **Automation pause confirmed:** PR #1197 was merged by founder at 01:09Z 2026-05-25. Effect: `auto-merge.yml`, `auto-rebase-loop-prs.yml`, `stale-pr-sweeper.yml`, `auto-merge-label.yml`, `auto-merge-size-cap.yml`, `auto-merge-stats.yml`, `rotate-iteration-log.yml`, `loop-spend-tracker.yml` all switched to `workflow_dispatch` only. `dependabot.yml` removed. The 11 open PRs must now be manually merged by the founder.
+- **Manual merge checklist for founder (per MERGE_AUTHORIZATION.md tier policy):**
+  1. **#1191** `fix(ci): exclude infrastructure-noise checks from auto-merge gate` — Tier C, CI green, announced iter 569, no STOP received. Merge re-enables a better auto-merge gate when automation is resumed.
+  2. **#1182** `test(disc): careers/jobs + firm-portal/jobs` — Tier A, CI green, `auto-merge-safe`. 21 test cases.
+  3. **#1183** `test(disc): apply/[id]/applications/fee-index` — Tier A, CI green. 27 test cases.
+  4. **#1184** `test(disc): listings-route + advisor-portal-marketplace` — Tier A, CI green. 24 test cases.
+  5. **#1185** `test(disc): admin article-preview-tokens + scorecard/save` — Tier A, CI green. 21 test cases.
+  6. **#1186** `test(disc): admin/advisor-kyc + admin/article-comments` — Tier A, CI green. 19 test cases.
+  7. **#1187** `test(disc): 4 admin/cron/notif routes` — Tier A, CI green. 23 test cases.
+  8. **#1188** `test(disc): admin-afsl-register-upload + admin-qa-id` — Tier A, CI green. 16 test cases.
+  9. **#1177** `feat(nf): noindex 4 empty listing verticals` — Tier A, CI green. SEO metadata only.
+  10. **#1178** `feat(nf): autopilot DB toggles` — Tier B, CI green, 15-min obs window long passed.
+  11. **#1176** `fix(nf): admin MFA env guard` — Tier C, CI green, announced iter 542, no STOP received.
+  12. **#1180** `feat(nf): SMS consent on leads` — Tier C, CI green, announced iter 546, no STOP received.
+- **No engineering work performed this iteration.** Batch stops here per spec (ALL-BLOCKED stop condition).
+- **STATUS: ALL-BLOCKED · stream=all · automation-pause-confirmed(#1197-merged)**
+
+---
+
 ### iter 570 — 2026-05-25 — STATUS: ALL-BLOCKED · stream=all · founder-pause-intent(#1197)
 
 - **Phase:** 0+0.5+1+2+3+7 — lock + sentinel + sync + CI check + item assessment + queue update
