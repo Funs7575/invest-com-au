@@ -78,10 +78,6 @@ export default function AdminConsultationsPage() {
 
   const [form, setForm] = useState(emptyForm);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     const supabase = createClient();
 
@@ -126,6 +122,11 @@ export default function AdminConsultationsPage() {
     setLoading(false);
   };
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- on-mount data load; fetchData only setState()s after its first await
+    fetchData();
+  }, []);
+
   const autoSlug = (title: string) =>
     title
       .toLowerCase()
@@ -137,8 +138,8 @@ export default function AdminConsultationsPage() {
     if (!form.title.trim() || !form.cal_link.trim()) return;
     setSaving(true);
 
-    const supabase = createClient();
     const payload = {
+      ...(editingId ? { id: editingId } : {}),
       title: form.title.trim(),
       slug: form.slug || autoSlug(form.title),
       description: form.description || null,
@@ -155,23 +156,24 @@ export default function AdminConsultationsPage() {
       status: form.status,
       featured: form.featured,
       sort_order: parseInt(form.sort_order) || 0,
-      updated_at: new Date().toISOString(),
     };
 
-    let error;
-    if (editingId) {
-      ({ error } = await supabase
-        .from("consultations")
-        .update(payload)
-        .eq("id", editingId));
-    } else {
-      ({ error } = await supabase.from("consultations").insert(payload));
-    }
+    const res = await fetch("/api/admin/consultations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-    if (error) {
-      showToast(`Error: ${error.message}`, "error");
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+      showToast(`Error: ${body?.error || res.statusText}`, "error");
     } else {
-      showToast(editingId ? "Consultation updated!" : "Consultation created!", "success");
+      showToast(
+        editingId ? "Consultation updated!" : "Consultation created!",
+        "success",
+      );
       setShowCreate(false);
       setEditingId(null);
       setForm(emptyForm);
@@ -225,10 +227,16 @@ export default function AdminConsultationsPage() {
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
-    const supabase = createClient();
-    const { error } = await supabase.from("consultations").delete().eq("id", deleteTarget.id);
-    if (error) {
-      showToast(`Error: ${error.message}`, "error");
+    const res = await fetch("/api/admin/consultations", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: deleteTarget.id }),
+    });
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+      showToast(`Error: ${body?.error || res.statusText}`, "error");
     } else {
       showToast("Consultation deleted", "success");
       fetchData();
