@@ -9,6 +9,7 @@ import {
   SAVINGS_RATE_STALE_DAYS,
 } from "@/lib/rate-ingest";
 import { selectSavingsRateAdapter } from "@/lib/rate-ingest-adapters";
+import { fireConsumerWebhook } from "@/lib/consumer-webhook-dispatch";
 
 const log = logger("cron:refresh-savings-rates");
 
@@ -141,6 +142,21 @@ async function handler(req: NextRequest): Promise<NextResponse> {
     credentialed,
     daysSince: freshness.daysSince,
   });
+
+  // Fire consumer webhooks for each broker whose savings rates were refreshed.
+  // Group by broker_id so we send one event per broker (not per product_kind row).
+  // Fire-and-forget — never await, never let this break the cron.
+  const brokerIdsSeen = new Set<number>();
+  for (const r of insertRows) {
+    if (!brokerIdsSeen.has(r.broker_id)) {
+      brokerIdsSeen.add(r.broker_id);
+      void fireConsumerWebhook("savings.updated", {
+        broker_id: r.broker_id,
+        source: r.source,
+        captured_at: r.captured_at,
+      });
+    }
+  }
 
   return NextResponse.json({
     ok: true,

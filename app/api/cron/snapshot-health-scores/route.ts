@@ -3,6 +3,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { wrapCronHandler } from "@/lib/cron-run-log";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { fireConsumerWebhook } from "@/lib/consumer-webhook-dispatch";
 
 const log = logger("cron-snapshot-health-scores");
 
@@ -78,6 +79,23 @@ async function handler(req: NextRequest): Promise<NextResponse> {
     succeeded,
     failed,
   });
+
+  // Fire consumer webhooks for each broker whose score was successfully
+  // snapshotted. Fire-and-forget — never await, never let this break the cron.
+  if (succeeded > 0) {
+    for (const s of rows) {
+      void fireConsumerWebhook("health_score.updated", {
+        broker_slug: s.broker_slug,
+        overall_score: s.overall_score,
+        regulatory_score: s.regulatory_score ?? null,
+        client_money_score: s.client_money_score ?? null,
+        financial_stability_score: s.financial_stability_score ?? null,
+        platform_reliability_score: s.platform_reliability_score ?? null,
+        insurance_score: s.insurance_score ?? null,
+        captured_at: now,
+      });
+    }
+  }
 
   return NextResponse.json({ ok: true, total: rows.length, succeeded, failed });
 }
