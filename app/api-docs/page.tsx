@@ -445,6 +445,206 @@ export default function ApiDocsPage() {
                 </div>
               </EndpointCard>
 
+              {/* Savings */}
+              <EndpointCard
+                method="GET"
+                path="/api/v1/savings"
+                auth={true}
+                description="List savings account and term deposit platforms with the latest rate snapshot for each. Rate fields use basis points (bps): 525 bps = 5.25% p.a. Includes government-guaranteed ADI data."
+              >
+                <div>
+                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                    Query Parameters
+                  </h4>
+                  <div className="text-sm space-y-1 text-slate-600">
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        product_kind
+                      </code>{" "}
+                      &mdash; savings_account | term_deposit
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        limit
+                      </code>{" "}
+                      &mdash; Results per page (default 20, max 100)
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        offset
+                      </code>{" "}
+                      &mdash; Pagination offset (default 0)
+                    </p>
+                  </div>
+                </div>
+              </EndpointCard>
+
+              {/* Single Savings Platform */}
+              <EndpointCard
+                method="GET"
+                path="/api/v1/savings/:slug"
+                auth={true}
+                description="Get a single savings platform's full public profile by slug. Includes all current rate snapshots and rate history (last 30 per product_kind)."
+              >
+                <div>
+                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                    Path Parameters
+                  </h4>
+                  <p className="text-sm text-slate-600">
+                    <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                      slug
+                    </code>{" "}
+                    &mdash; The platform&apos;s URL slug (e.g.
+                    &quot;ing-savings-maximiser&quot;)
+                  </p>
+                </div>
+              </EndpointCard>
+
+              {/* Robo-Advisors */}
+              <EndpointCard
+                method="GET"
+                path="/api/v1/robo-advisors"
+                auth={true}
+                description="List active robo-advisor platforms (Stockspot, InvestSMART, Raiz, Spaceship, Six Park, etc.). Automated investment services backed by ASIC-regulated platforms."
+              >
+                <div>
+                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                    Query Parameters
+                  </h4>
+                  <div className="text-sm space-y-1 text-slate-600">
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        smsf_support
+                      </code>{" "}
+                      &mdash; true / false
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        limit
+                      </code>{" "}
+                      &mdash; Results per page (default 20, max 100)
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        offset
+                      </code>{" "}
+                      &mdash; Pagination offset (default 0)
+                    </p>
+                  </div>
+                </div>
+              </EndpointCard>
+
+              {/* Single Robo-Advisor */}
+              <EndpointCard
+                method="GET"
+                path="/api/v1/robo-advisors/:slug"
+                auth={true}
+                description="Get a single robo-advisor's full public profile by slug. Includes fee changelog (last 10 changes)."
+              >
+                <div>
+                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                    Path Parameters
+                  </h4>
+                  <p className="text-sm text-slate-600">
+                    <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                      slug
+                    </code>{" "}
+                    &mdash; The robo-advisor&apos;s URL slug (e.g.
+                    &quot;stockspot&quot;, &quot;raiz&quot;)
+                  </p>
+                </div>
+              </EndpointCard>
+
+              {/* Health Scores */}
+              <EndpointCard
+                method="GET"
+                path="/api/v1/health-scores"
+                auth={true}
+                description="Current broker health scores across five dimensions: regulatory, financial stability, client money, insurance, and platform reliability. Scores 0–100. Informational data — not financial advice."
+              >
+                <div>
+                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                    Query Parameters
+                  </h4>
+                  <div className="text-sm space-y-1 text-slate-600">
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        broker_slug
+                      </code>{" "}
+                      &mdash; Filter to a specific broker by slug
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        min_score
+                      </code>{" "}
+                      &mdash; Only return brokers with overall_score &ge; this
+                      value
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        limit
+                      </code>{" "}
+                      &mdash; Results per page (default 20, max 100)
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        offset
+                      </code>{" "}
+                      &mdash; Pagination offset (default 0)
+                    </p>
+                  </div>
+                </div>
+              </EndpointCard>
+
+              {/* Health Score History */}
+              <EndpointCard
+                method="GET"
+                path="/api/v1/health-scores/history"
+                auth={true}
+                description="Time-series history of broker health scores (append-only snapshot table, populated by cron). broker_slug is required. Returns scores DESC by captured_at."
+              >
+                <div>
+                  <h4 className="text-xs font-semibold uppercase text-slate-400 mb-2">
+                    Query Parameters
+                  </h4>
+                  <div className="text-sm space-y-1 text-slate-600">
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        broker_slug
+                      </code>{" "}
+                      <span className="text-red-500 text-xs">required</span>{" "}
+                      &mdash; Broker slug (e.g. &quot;stake&quot;)
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        days
+                      </code>{" "}
+                      &mdash; Days of history (default 90, max 400)
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        limit
+                      </code>{" "}
+                      &mdash; Max rows (default 100, max 400)
+                    </p>
+                    <p>
+                      <code className="text-xs bg-slate-100 px-1 py-0.5 rounded">
+                        offset
+                      </code>{" "}
+                      &mdash; Pagination offset (default 0)
+                    </p>
+                  </div>
+                </div>
+              </EndpointCard>
+
+              {/* OpenAPI */}
+              <EndpointCard
+                method="GET"
+                path="/api/v1/openapi.json"
+                auth={false}
+                description="Returns a valid OpenAPI 3.1 specification describing every v1 endpoint, parameters, schemas, and security requirements. Suitable for client SDK generation via openapi-generator or similar tools."
+              />
+
               {/* Request API Key */}
               <EndpointCard
                 method="POST"

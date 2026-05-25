@@ -18,6 +18,8 @@ export function OPTIONS() {
  *
  * Public API documentation endpoint. No authentication required.
  * Returns a JSON description of all available endpoints.
+ *
+ * For a machine-readable OpenAPI 3.1 specification, see GET /api/v1/openapi.json.
  */
 export function GET() {
   const docs = {
@@ -383,6 +385,279 @@ export function GET() {
             history_days: 30,
           },
         },
+      },
+      {
+        path: "/api/v1/savings",
+        method: "GET",
+        auth_required: true,
+        description:
+          "List savings account and term deposit platforms with the latest rate snapshot for each. Rate fields use basis points (bps): 525 bps = 5.25% p.a.",
+        parameters: [
+          {
+            name: "product_kind",
+            type: "string",
+            required: false,
+            description: "Filter by kind: savings_account | term_deposit",
+          },
+          {
+            name: "limit",
+            type: "integer",
+            required: false,
+            description: "Results per page (default: 20, max: 100)",
+          },
+          {
+            name: "offset",
+            type: "integer",
+            required: false,
+            description: "Pagination offset (default: 0)",
+          },
+        ],
+        example_request: "GET /api/v1/savings?product_kind=savings_account&limit=10",
+        example_response: {
+          data: [
+            {
+              id: 5,
+              name: "ING Savings Maximiser",
+              slug: "ing-savings-maximiser",
+              platform_type: "savings",
+              rating: 4.6,
+              latest_rates: [
+                {
+                  product_kind: "savings_account",
+                  rate_bps: 550,
+                  intro_rate_bps: null,
+                  min_balance_cents: 0,
+                  captured_at: "2026-05-24T02:00:00Z",
+                  notes: "Requires $1,000+ deposit per month to earn bonus rate",
+                },
+              ],
+            },
+          ],
+          meta: {
+            total: 8,
+            limit: 10,
+            offset: 0,
+            updated_at: "2026-05-24T02:00:00Z",
+            rate_note: "rate_bps: integer basis points — 525 bps = 5.25% p.a. Intro rates are time-limited bonus rates.",
+          },
+        },
+      },
+      {
+        path: "/api/v1/savings/:slug",
+        method: "GET",
+        auth_required: true,
+        description:
+          "Get a single savings platform's full public profile by slug. Includes all current rate snapshots and rate history (last 30 per product_kind).",
+        parameters: [
+          {
+            name: "slug",
+            type: "string",
+            required: true,
+            in: "path",
+            description: "The platform's URL slug (e.g. 'ing-savings-maximiser')",
+          },
+        ],
+        example_request: "GET /api/v1/savings/ing-savings-maximiser",
+        example_response: {
+          data: {
+            id: 5,
+            name: "ING Savings Maximiser",
+            slug: "ing-savings-maximiser",
+            rates_by_kind: {
+              savings_account: [
+                {
+                  rate_bps: 550,
+                  captured_at: "2026-05-24T02:00:00Z",
+                  notes: "Requires $1,000+ deposit per month",
+                },
+              ],
+            },
+          },
+        },
+      },
+      {
+        path: "/api/v1/robo-advisors",
+        method: "GET",
+        auth_required: true,
+        description:
+          "List active robo-advisor platforms (Stockspot, InvestSMART, Raiz, Spaceship, Six Park, etc.). Returns public profile data.",
+        parameters: [
+          {
+            name: "smsf_support",
+            type: "boolean",
+            required: false,
+            description: "Filter by SMSF support (true/false)",
+          },
+          {
+            name: "limit",
+            type: "integer",
+            required: false,
+            description: "Results per page (default: 20, max: 100)",
+          },
+          {
+            name: "offset",
+            type: "integer",
+            required: false,
+            description: "Pagination offset (default: 0)",
+          },
+        ],
+        example_request: "GET /api/v1/robo-advisors?limit=10",
+        example_response: {
+          data: [
+            {
+              id: 20,
+              name: "Stockspot",
+              slug: "stockspot",
+              platform_type: "robo_advisor",
+              rating: 4.7,
+              min_deposit: "$2,000",
+              regulated_by: "ASIC",
+            },
+          ],
+          meta: { total: 8, limit: 10, offset: 0, updated_at: "2026-05-24T00:00:00Z" },
+        },
+      },
+      {
+        path: "/api/v1/robo-advisors/:slug",
+        method: "GET",
+        auth_required: true,
+        description:
+          "Get a single robo-advisor's full public profile by slug. Includes fee changelog (last 10 changes).",
+        parameters: [
+          {
+            name: "slug",
+            type: "string",
+            required: true,
+            in: "path",
+            description: "The robo-advisor's URL slug (e.g. 'stockspot')",
+          },
+        ],
+        example_request: "GET /api/v1/robo-advisors/stockspot",
+        example_response: {
+          data: {
+            id: 20,
+            name: "Stockspot",
+            slug: "stockspot",
+            platform_type: "robo_advisor",
+            rating: 4.7,
+            fee_changelog: [],
+          },
+        },
+      },
+      {
+        path: "/api/v1/health-scores",
+        method: "GET",
+        auth_required: true,
+        description:
+          "Current broker health scores across five dimensions: regulatory, financial stability, client money, insurance, platform reliability. Scores are 0–100. Informational data — not financial advice.",
+        parameters: [
+          {
+            name: "broker_slug",
+            type: "string",
+            required: false,
+            description: "Filter to a specific broker by slug",
+          },
+          {
+            name: "min_score",
+            type: "number",
+            required: false,
+            description: "Only return brokers with overall_score >= this value",
+          },
+          {
+            name: "limit",
+            type: "integer",
+            required: false,
+            description: "Results per page (default: 20, max: 100)",
+          },
+          {
+            name: "offset",
+            type: "integer",
+            required: false,
+            description: "Pagination offset (default: 0)",
+          },
+        ],
+        example_request: "GET /api/v1/health-scores?min_score=70",
+        example_response: {
+          data: [
+            {
+              broker_slug: "stake",
+              overall_score: 82.5,
+              regulatory_score: 90,
+              financial_stability_score: 78,
+              client_money_score: 85,
+              insurance_score: 80,
+              platform_reliability_score: 79,
+              last_reviewed_at: "2026-05-01T00:00:00Z",
+            },
+          ],
+          meta: {
+            total: 15,
+            limit: 20,
+            offset: 0,
+            updated_at: "2026-05-01T00:00:00Z",
+            disclaimer: "Health scores are informational only. Not financial advice.",
+          },
+        },
+      },
+      {
+        path: "/api/v1/health-scores/history",
+        method: "GET",
+        auth_required: true,
+        description:
+          "Time-series history of broker health scores from broker_health_score_history (populated by snapshot cron). broker_slug is required. Returns scores DESC by captured_at.",
+        parameters: [
+          {
+            name: "broker_slug",
+            type: "string",
+            required: true,
+            description: "Broker slug (e.g. 'stake'). Required.",
+          },
+          {
+            name: "days",
+            type: "integer",
+            required: false,
+            description: "Days of history (default: 90, max: 400)",
+          },
+          {
+            name: "limit",
+            type: "integer",
+            required: false,
+            description: "Max rows (default: 100, max: 400)",
+          },
+          {
+            name: "offset",
+            type: "integer",
+            required: false,
+            description: "Pagination offset (default: 0)",
+          },
+        ],
+        example_request: "GET /api/v1/health-scores/history?broker_slug=stake&days=30",
+        example_response: {
+          data: [
+            {
+              broker_slug: "stake",
+              overall_score: 82.5,
+              regulatory_score: 90,
+              captured_at: "2026-05-24T02:00:00Z",
+            },
+          ],
+          meta: {
+            broker_slug: "stake",
+            total: 30,
+            limit: 100,
+            offset: 0,
+            days: 30,
+            updated_at: "2026-05-24T02:00:00Z",
+          },
+        },
+      },
+      {
+        path: "/api/v1/openapi.json",
+        method: "GET",
+        auth_required: false,
+        description:
+          "Returns a valid OpenAPI 3.1 specification describing every v1 endpoint, parameters, schemas, and security. Suitable for client SDK generation. Generated from lib/openapi-spec.ts.",
+        example_request: "GET /api/v1/openapi.json",
       },
       {
         path: "/api/v1/docs",
