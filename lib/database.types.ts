@@ -15590,6 +15590,315 @@ export type Database = {
         }
         Relationships: []
       }
+      startup_data_room_access: {
+        Row: {
+          file_id: string
+          granted_at: string
+          granted_by_user_id: string
+          granted_to_user_id: string
+          id: string
+          revoked_at: string | null
+        }
+        Insert: {
+          file_id: string
+          granted_at?: string
+          granted_by_user_id: string
+          granted_to_user_id: string
+          id?: string
+          revoked_at?: string | null
+        }
+        Update: {
+          file_id?: string
+          granted_at?: string
+          granted_by_user_id?: string
+          granted_to_user_id?: string
+          id?: string
+          revoked_at?: string | null
+        }
+        Relationships: []
+      }
+      startup_data_room_files: {
+        Row: {
+          category: string
+          filename: string
+          id: string
+          requires_wholesale_cert: boolean
+          round_id: string | null
+          startup_id: string
+          storage_path: string
+          uploaded_at: string
+        }
+        Insert: {
+          category: string
+          filename: string
+          id?: string
+          requires_wholesale_cert?: boolean
+          round_id?: string | null
+          startup_id: string
+          storage_path: string
+          uploaded_at?: string
+        }
+        Update: {
+          category?: string
+          filename?: string
+          id?: string
+          requires_wholesale_cert?: boolean
+          round_id?: string | null
+          startup_id?: string
+          storage_path?: string
+          uploaded_at?: string
+        }
+        Relationships: []
+      }
+      startup_investor_inquiries: {
+        Row: {
+          created_at: string
+          data_room_access_granted_at: string | null
+          id: string
+          inquiry_message: string
+          investor_user_id: string
+          round_id: string
+          status: string
+          wholesale_cert_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_room_access_granted_at?: string | null
+          id?: string
+          inquiry_message: string
+          investor_user_id: string
+          round_id: string
+          status?: string
+          wholesale_cert_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_room_access_granted_at?: string | null
+          id?: string
+          inquiry_message?: string
+          investor_user_id?: string
+          round_id?: string
+          status?: string
+          wholesale_cert_id?: string | null
+        }
+        Relationships: []
+      }
+      startup_profiles: {
+        Row: {
+          abn: string | null
+          company_name: string
+          created_at: string
+          esic_eligible_self_attested: boolean
+          esic_verified_at: string | null
+          esic_verified_by: string | null
+          founded_at: string | null
+          id: string
+          linkedin_url: string | null
+          owner_user_id: string
+          pitch_deck_url: string | null
+          sector: string[]
+          slug: string
+          stage: string
+          status: string
+          team: Json
+          updated_at: string
+        }
+        Insert: {
+          abn?: string | null
+          company_name: string
+          created_at?: string
+          esic_eligible_self_attested?: boolean
+          esic_verified_at?: string | null
+          esic_verified_by?: string | null
+          founded_at?: string | null
+          id?: string
+          linkedin_url?: string | null
+          owner_user_id: string
+          pitch_deck_url?: string | null
+          sector?: string[]
+          slug: string
+          stage: string
+          status?: string
+          team?: Json
+          updated_at?: string
+        }
+        Update: {
+          abn?: string | null
+          company_name?: string
+          created_at?: string
+          esic_eligible_self_attested?: boolean
+          esic_verified_at?: string | null
+          esic_verified_by?: string | null
+          founded_at?: string | null
+          id?: string
+          linkedin_url?: string | null
+          owner_user_id?: string
+          pitch_deck_url?: string | null
+          sector?: string[]
+          slug?: string
+          stage?: string
+          status?: string
+          team?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      startup_rounds: {
+        Row: {
+          closes_at: string | null
+          created_at: string
+          discount_pct: number | null
+          id: string
+          instrument: string
+          interest_rate_pct: number | null
+          lead_investor_name: string | null
+          maturity_months: number | null
+          min_ticket_aud_cents: number
+          raised_aud_cents: number
+          startup_id: string
+          status: string
+          target_aud_cents: number
+          updated_at: string
+          valuation_cap_aud_cents: number | null
+          wholesale_only: boolean
+        }
+        Insert: {
+          closes_at?: string | null
+          created_at?: string
+          discount_pct?: number | null
+          id?: string
+          instrument: string
+          interest_rate_pct?: number | null
+          lead_investor_name?: string | null
+          maturity_months?: number | null
+          min_ticket_aud_cents?: number
+          raised_aud_cents?: number
+          startup_id: string
+          status?: string
+          target_aud_cents: number
+          updated_at?: string
+          valuation_cap_aud_cents?: number | null
+          wholesale_only?: boolean
+        }
+        Update: {
+          closes_at?: string | null
+          created_at?: string
+          discount_pct?: number | null
+          id?: string
+          instrument?: string
+          interest_rate_pct?: number | null
+          lead_investor_name?: string | null
+          maturity_months?: number | null
+          min_ticket_aud_cents?: number
+          raised_aud_cents?: number
+          startup_id?: string
+          status?: string
+          target_aud_cents?: number
+          updated_at?: string
+          valuation_cap_aud_cents?: number | null
+          wholesale_only?: boolean
+        }
+        Relationships: []
+      }
+      startup_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          session_token: string
+          startup_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          session_token?: string
+          startup_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          session_token?: string
+          startup_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      esic_verifications: {
+        Row: {
+          ato_register_check: Json | null
+          created_at: string
+          evidence_doc_path: string
+          id: string
+          notes: string | null
+          outcome: string
+          reviewed_at: string | null
+          reviewed_by_user_id: string | null
+          startup_id: string
+        }
+        Insert: {
+          ato_register_check?: Json | null
+          created_at?: string
+          evidence_doc_path: string
+          id?: string
+          notes?: string | null
+          outcome?: string
+          reviewed_at?: string | null
+          reviewed_by_user_id?: string | null
+          startup_id: string
+        }
+        Update: {
+          ato_register_check?: Json | null
+          created_at?: string
+          evidence_doc_path?: string
+          id?: string
+          notes?: string | null
+          outcome?: string
+          reviewed_at?: string | null
+          reviewed_by_user_id?: string | null
+          startup_id?: string
+        }
+        Relationships: []
+      }
+      wholesale_investor_certifications: {
+        Row: {
+          certification_type: string
+          created_at: string
+          evidence_doc_path: string
+          expires_at: string
+          id: string
+          status: string
+          user_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          certification_type: string
+          created_at?: string
+          evidence_doc_path: string
+          expires_at: string
+          id?: string
+          status?: string
+          user_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          certification_type?: string
+          created_at?: string
+          evidence_doc_path?: string
+          expires_at?: string
+          id?: string
+          status?: string
+          user_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
       stripe_webhook_events: {
         Row: {
           completed_at: string | null
