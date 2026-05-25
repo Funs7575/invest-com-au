@@ -1165,6 +1165,8 @@ export interface Professional {
   migration_agent_marn?: string;
   /** Self-reported availability: 'open' | 'waitlist' | 'closed'. Default 'open'. */
   availability_status?: 'open' | 'waitlist' | 'closed';
+  /** Denormalized count maintained by advisor_follows insert/delete triggers. */
+  follower_count?: number;
   // ── Stockbroker firm fields ────────────────────────────────────────
   // Populated only for type='stockbroker_firm' or 'private_wealth_manager'.
   // NULL for all other ProfessionalType values. See

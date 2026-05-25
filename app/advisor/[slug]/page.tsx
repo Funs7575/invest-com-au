@@ -20,6 +20,7 @@ import { computeAdvisorReputation } from "@/lib/advisor-reputation";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import AdvisorTrustScoreSection from "./components/AdvisorTrustScoreSection";
 import AdvisorReputationSummary from "./components/AdvisorReputationSummary";
+import FollowAdvisorButton from "@/components/FollowAdvisorButton";
 
 export const revalidate = 1800;
 
@@ -226,6 +227,18 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   const endorsementRows: { skill: string; user_id: string }[] = endorsementsResult.data ?? [];
   const sessionUser = sessionResult.data.user;
 
+  // Pre-fetch the logged-in user's follow state for this advisor
+  let initialFollowing = false;
+  if (sessionUser) {
+    const { data: followRow } = await supabase
+      .from("advisor_follows")
+      .select("id")
+      .eq("follower_user_id", sessionUser.id)
+      .eq("following_professional_id", pro.id)
+      .maybeSingle();
+    initialFollowing = !!followRow;
+  }
+
   const endorsementCounts: Record<string, number> = {};
   for (const row of endorsementRows) {
     endorsementCounts[row.skill] = (endorsementCounts[row.skill] ?? 0) + 1;
@@ -344,6 +357,17 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         }) }} />
       )}
       <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} teamMembers={teamMembers} firm={firm} expertArticles={expertArticles} />
+
+      {/* Follow strip — visible below the profile header */}
+      <div className="container-custom max-w-4xl mt-4">
+        <div className="flex items-center gap-3 py-2">
+          <FollowAdvisorButton
+            professionalId={pro.id}
+            initialFollowing={initialFollowing}
+            followerCount={pro.follower_count ?? 0}
+          />
+        </div>
+      </div>
 
       {/* ── Social proof: Services, Certifications, Case Studies ───────── */}
       {(advisorServices.length > 0 || advisorCertifications.length > 0 || advisorCaseStudies.length > 0) && (
