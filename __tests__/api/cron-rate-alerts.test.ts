@@ -53,7 +53,7 @@ describe("GET /api/cron/rate-alerts", () => {
 
   it("exports config", () => {
     expect(runtime).toBe("nodejs");
-    expect(maxDuration).toBe(60);
+    expect(maxDuration).toBe(120);
   });
 
   it("returns 500 when CRON_SECRET is unset", async () => {
@@ -67,13 +67,13 @@ describe("GET /api/cron/rate-alerts", () => {
     expect(res.status).toBe(401);
   });
 
-  it("returns 200 with awaiting_rate_snapshot_ingestion when no snapshots", async () => {
-    // Both queries return empty arrays
+  it("returns 200 with no_subscriptions when there are no subscriptions", async () => {
+    // All queries return empty arrays — no snapshots, no loan rates, no subscriptions
     mockFrom.mockImplementation(() => makeBuilder({ data: [], error: null }));
     const res = await GET(req({ authorization: `Bearer ${SECRET}` }));
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.status).toBe("awaiting_rate_snapshot_ingestion");
+    expect(body.status).toBe("no_subscriptions");
     expect(body.notified).toBe(0);
   });
 

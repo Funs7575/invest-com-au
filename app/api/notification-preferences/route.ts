@@ -24,6 +24,8 @@ const NotificationPreferencesSchema = z
     deal_alerts: z.boolean().optional().catch(undefined),
     campaign_updates: z.boolean().optional().catch(undefined),
     marketing: z.boolean().optional().catch(undefined),
+    /** Browser push opt-in. True = dispatch push for this user's alerts. */
+    browser_push: z.boolean().optional().catch(undefined),
   })
   .passthrough()
   .catch({});
@@ -44,7 +46,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from("notification_preferences")
-    .select("fee_alerts, weekly_digest, deal_alerts, campaign_updates, marketing")
+    .select("fee_alerts, weekly_digest, deal_alerts, campaign_updates, marketing, browser_push")
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -62,6 +64,7 @@ export async function GET() {
     deal_alerts: true,
     campaign_updates: true,
     marketing: false,
+    browser_push: false,
   };
 
   return NextResponse.json({ preferences });
@@ -95,7 +98,7 @@ export async function POST(req: NextRequest) {
 
   // Only allow known preference keys (booleans only — non-bool drops out
   // because the schema marks each key `boolean | undefined`).
-  const allowedKeys = ["fee_alerts", "weekly_digest", "deal_alerts", "campaign_updates", "marketing"] as const;
+  const allowedKeys = ["fee_alerts", "weekly_digest", "deal_alerts", "campaign_updates", "marketing", "browser_push"] as const;
   const updates: Record<string, boolean> = {};
 
   for (const key of allowedKeys) {
@@ -123,7 +126,7 @@ export async function POST(req: NextRequest) {
       },
       { onConflict: "user_id" }
     )
-    .select("fee_alerts, weekly_digest, deal_alerts, campaign_updates, marketing")
+    .select("fee_alerts, weekly_digest, deal_alerts, campaign_updates, marketing, browser_push")
     .single();
 
   if (error) {

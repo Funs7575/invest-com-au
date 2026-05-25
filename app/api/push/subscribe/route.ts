@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
@@ -32,6 +33,7 @@ export async function POST(request: NextRequest) {
     if (!(await isAllowed("push_subscribe", ipKey(request), { max: 5, refillPerSec: 5 / 3600 }))) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- subscription shape is hand-validated immediately below (endpoint + keys.p256dh + keys.auth required)
     const body = (await request.json()) as SubscribeBody;
 
     // Validate subscription shape
@@ -59,7 +61,17 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient();
 
-    // Upsert based on endpoint (unique per browser)
+    // Resolve the calling user's ID if they're signed in. Auth is optional —
+    // anonymous subscriptions remain supported but won't be linked to an account,
+    // so the push-dispatch helper will never find them for user-targeted alerts.
+    const userClient = await createClient();
+    const {
+      data: { user },
+    } = await userClient.auth.getUser();
+    const userId = user?.id ?? null;
+
+    // Upsert based on endpoint (unique per browser). Include user_id so the
+    // dispatch helper can look up subscriptions by user when an alert fires.
     const { error } = await supabase
       .from("push_subscriptions")
       .upsert(
@@ -68,6 +80,7 @@ export async function POST(request: NextRequest) {
           keys_p256dh: body.subscription.keys.p256dh,
           keys_auth: body.subscription.keys.auth,
           topics,
+          user_id: userId,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "endpoint" }
