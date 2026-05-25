@@ -19,7 +19,11 @@ import {
   type DisputeRow,
 } from "@/lib/disputes";
 
+import { listMessagesForBrief, type BriefMessageRow } from "@/lib/brief-messages";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+
 import BookConsultationPanel from "./BookConsultationPanel";
+import BriefChatPanel from "./BriefChatPanel";
 import DisputePanel from "./DisputePanel";
 
 export const dynamic = "force-dynamic";
@@ -241,6 +245,47 @@ export default async function BriefTrackerPage({
 
   const stepIndex = STATUS_ORDER.indexOf(brief.tracker_status);
 
+  // Load chat messages when the brief is accepted and the viewer is one
+  // of the two parties: the consumer (emailMatches) or the accepted pro.
+  // We determine "is accepted pro" server-side by checking whether the
+  // session user's id matches accepted_by_professional_id.  Because the
+  // brief page also serves unauthenticated consumers (email-link flow),
+  // we guard with a try/catch so a missing session never breaks the page.
+  let chatMessages: BriefMessageRow[] = [];
+  let viewerIsAdvisor = false;
+  if (brief.accepted_at) {
+    if (emailMatches) {
+      // Consumer side — always load when accepted + email verified.
+      try {
+        chatMessages = await listMessagesForBrief(brief.id);
+      } catch {
+        /* non-critical — panel just renders empty */
+      }
+    } else {
+      // Check if the authenticated user is the accepted professional.
+      try {
+        const sessionClient = await createClient();
+        const { data: session } = await sessionClient.auth.getUser();
+        if (session?.user?.id && brief.accepted_by_professional_id) {
+          const proCheck = await sessionClient
+            .from("professionals")
+            .select("id")
+            .eq("id", brief.accepted_by_professional_id)
+            .eq("auth_user_id", session.user.id)
+            .maybeSingle();
+          if (proCheck.data) {
+            viewerIsAdvisor = true;
+            chatMessages = await listMessagesForBrief(brief.id);
+          }
+        }
+      } catch {
+        /* non-critical */
+      }
+    }
+  }
+
+  const showChat = brief.accepted_at !== null && (emailMatches || viewerIsAdvisor);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Match Requests", url: `${SITE_URL}/briefs` },
@@ -427,6 +472,38 @@ export default async function BriefTrackerPage({
                 contactEmail={emailMatches ? email : null}
                 existingBooking={existingBooking}
                 existingSlot={existingSlot}
+              />
+            </div>
+          )}
+
+          {/* Chat — visible to the brief owner and the accepted advisor only.
+               A general-advice compliance notice is shown above the panel per
+               AFSL obligations: messages may contain general information but
+               no personal advice is given via this channel. */}
+          {showChat && (
+            <div className="mb-6">
+              <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 mb-3 text-xs text-amber-900">
+                <strong>General information only.</strong>{" "}
+                {GENERAL_ADVICE_WARNING} Messages sent here do not constitute
+                personal financial advice.
+              </div>
+              <BriefChatPanel
+                slug={brief.slug}
+                briefId={brief.id}
+                initialMessages={chatMessages}
+                viewerSide={viewerIsAdvisor ? "pro" : "consumer"}
+                viewerName={
+                  viewerIsAdvisor
+                    ? (accepted.professional?.name ?? "You")
+                    : "You"
+                }
+                counterpartyName={
+                  viewerIsAdvisor
+                    ? "Client"
+                    : (accepted.professional?.name ??
+                      accepted.team?.name ??
+                      "Your advisor")
+                }
               />
             </div>
           )}
