@@ -151,12 +151,17 @@ export async function issueCertificate(
   // ── 4. Look up if user is a licensed advisor ─────────────────────────────
   const { data: professional } = await admin
     .from("professionals")
-    .select("id")
+    .select("id, name")
     .eq("auth_user_id", userId)
     .in("status", ["active", "pending"])
     .maybeSingle();
 
   const professionalId = (professional as { id: number } | null)?.id ?? null;
+  // Shown on the public certificate page; sourced from the (already-public)
+  // professional profile name. Non-advisor learners have none here → the page
+  // falls back to a generic label.
+  const holderDisplayName =
+    (professional as { name: string | null } | null)?.name ?? null;
 
   // ── 5. Generate certificate number and insert ────────────────────────────
   const certificateNumber = await nextCertificateNumber();
@@ -173,6 +178,7 @@ export async function issueCertificate(
       issued_at: now.toISOString(),
       cpd_hours: course.is_cpd_eligible ? (course.cpd_hours ?? null) : null,
       cpd_category: course.is_cpd_eligible ? (course.cpd_category ?? null) : null,
+      holder_display_name: holderDisplayName,
       completion_score: null,
     })
     .select("*")

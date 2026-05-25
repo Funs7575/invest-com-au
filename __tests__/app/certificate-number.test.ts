@@ -93,7 +93,7 @@ describe("getCertificate", () => {
     makeQueryChain({ data: CERT_ROW, error: null });
     const result = await getCertificate(CERT_NUMBER);
     expect(result).not.toBeNull();
-    expect((result as typeof CERT_ROW).certificate_number).toBe(CERT_NUMBER);
+    expect((result as unknown as typeof CERT_ROW).certificate_number).toBe(CERT_NUMBER);
   });
 
   it("returns null when the certificate number is not found", async () => {
@@ -139,7 +139,7 @@ describe("getCertificate", () => {
 
   it("returned certificate row contains holder_display_name (not email)", async () => {
     makeQueryChain({ data: CERT_ROW, error: null });
-    const result = await getCertificate(CERT_NUMBER) as typeof CERT_ROW;
+    const result = await getCertificate(CERT_NUMBER) as unknown as typeof CERT_ROW;
     expect(result.holder_display_name).toBe("Jane Doe");
     // Verify no email field leaks through
     expect((result as Record<string, unknown>).email).toBeUndefined();
@@ -147,7 +147,7 @@ describe("getCertificate", () => {
 
   it("returned certificate row contains joined course data", async () => {
     makeQueryChain({ data: CERT_ROW, error: null });
-    const result = await getCertificate(CERT_NUMBER) as typeof CERT_ROW;
+    const result = await getCertificate(CERT_NUMBER) as unknown as typeof CERT_ROW;
     expect(result.course?.title).toBe("Australian Tax Fundamentals");
     expect(result.course?.cpd_hours).toBe(3);
   });
