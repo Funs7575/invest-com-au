@@ -14,7 +14,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
-import { DASP_WARNING, GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { faqJsonLd, type FaqItem } from "@/lib/schema-markup";
 import DaspCalculatorClient from "./DaspCalculatorClient";
 
