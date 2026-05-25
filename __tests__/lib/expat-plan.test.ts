@@ -104,10 +104,8 @@ describe("buildExpatPlan — structural invariants", () => {
 // ─── buildExpatPlan — UK full-featured ──────────────────────────────────────
 
 describe("buildExpatPlan — UK (full-featured config)", () => {
-  let plan: ExpatPlan;
-
   // Build once for the suite — avoids re-running the full build per test
-  plan = buildExpatPlan(UK_CONFIG);
+  const plan: ExpatPlan = buildExpatPlan(UK_CONFIG);
 
   it("includes a firb item", () => {
     const item = plan.items.find((i) => i.id === "firb");
