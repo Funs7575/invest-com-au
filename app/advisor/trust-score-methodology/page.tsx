@@ -149,7 +149,7 @@ export default function TrustScoreMethodologyPage() {
             The Trust Score is a{" "}
             <strong>factual composite of credential and compliance signals</strong>{" "}
             drawn from publicly available and platform-verifiable data. It is not a
-            recommendation, personal advice, or a "best advisor" ranking. It is a
+            recommendation, personal advice, or a &ldquo;best advisor&rdquo; ranking. It is a
             transparency tool to help consumers understand an advisor&rsquo;s verifiable standing.
           </p>
         </div>
