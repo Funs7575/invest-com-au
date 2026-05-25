@@ -153,6 +153,9 @@ export default function AccountButton() {
             <MenuLink href="/account" onClick={() => setOpen(false)} icon="dashboard">
               My Account
             </MenuLink>
+            <MenuLink href="/account/health" onClick={() => setOpen(false)} icon="dashboard">
+              Health Score
+            </MenuLink>
             <MenuLink href="/account/saved" onClick={() => setOpen(false)} icon="bookmark">
               Saved Comparisons
             </MenuLink>
