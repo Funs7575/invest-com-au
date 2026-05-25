@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { personCredentialJsonLd } from "@/lib/schema-markup";
 import ShareCertificateActions from "./ShareCertificateActions";
 
+// Public-by-design: ISR 24h — certificate content is immutable after issue.
 export const revalidate = 86400;
 
 // ── Types ──────────────────────────────────────────────────────────────────────
-
-interface Professional {
-  id: number;
-  name: string;
-  slug: string;
-  photo_url: string | null;
-}
 
 interface Course {
   id: string;
@@ -31,19 +24,35 @@ interface CertRow {
   issued_at: string;
   cpd_hours: number | null;
   cpd_category: string | null;
-  completion_score: number | null;
-  professional: Professional | null;
+  /**
+   * Display name sourced from the user's profile at certificate-issue time,
+   * stored on the certificate row so the public page never touches auth tables.
+   * Falls back to "Certificate Holder" when null (older rows).
+   */
+  holder_display_name: string | null;
   course: Course | null;
 }
 
 // ── Data fetch ─────────────────────────────────────────────────────────────────
+//
+// Privacy justification (CLAUDE.md § "Two Supabase clients"):
+//   `course_certificates` has per-user RLS — anonymous visitors have no JWT so
+//   the regular `createClient()` would return zero rows. A public verification
+//   page is the correct use of the service-role escape hatch: the lookup key is
+//   a random, unguessable `certificate_number` (never enumerable), and only the
+//   holder's chosen display name + credential title are exposed — no email,
+//   user_id, or PII. This matches the "lib/* helpers serving anonymous paths
+//   with deny-all-anon RLS" allowed scope documented in CLAUDE.md.
 
 async function getCertificate(number: string): Promise<CertRow | null> {
-  const supabase = await createClient();
+  // Dynamically import admin client — service-role bypasses per-user RLS.
+  const { createAdminClient } = await import("@/lib/supabase/admin");
+  const supabase = createAdminClient();
+
   const { data, error } = await supabase
     .from("course_certificates")
     .select(
-      "id, certificate_number, issued_at, cpd_hours, cpd_category, completion_score, professional:professionals(id, name, slug, photo_url), course:courses(id, title, slug, cpd_hours, cpd_category)",
+      "id, certificate_number, issued_at, cpd_hours, cpd_category, holder_display_name, course:courses(id, title, slug, cpd_hours, cpd_category)",
     )
     .eq("certificate_number", number)
     .maybeSingle();
@@ -69,7 +78,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const holderName = cert.professional?.name ?? "Unknown";
+  const holderName = cert.holder_display_name ?? "Certificate Holder";
   const courseTitle = cert.course?.title ?? "Course";
 
   return {
@@ -109,70 +118,50 @@ export default async function CertificateVerificationPage({ params }: PageProps)
 
   if (!cert) notFound();
 
-  const holderName = cert.professional?.name ?? "Certificate Holder";
+  const holderName = cert.holder_display_name ?? "Certificate Holder";
   const courseTitle = cert.course?.title ?? "Course";
   const cpd_hours = cert.cpd_hours ?? cert.course?.cpd_hours ?? null;
   const cpd_category = cert.cpd_category ?? cert.course?.cpd_category ?? null;
   const issueDate = formatIssueDate(cert.issued_at);
-  const isValid = true; // A found certificate is always valid
 
+  // ── JSON-LD ────────────────────────────────────────────────────────────────
+  // breadcrumb: Home → Academy → this certificate
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Academy", url: absoluteUrl("/academy") },
     { name: "Certificate Verification", url: absoluteUrl(`/certificate/${number}`) },
   ]);
 
-  const certJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "EducationalOccupationalCredential",
-    name: `Certificate of Completion — ${courseTitle}`,
-    description: `${holderName} has successfully completed ${courseTitle} and earned this CPD certificate from ${SITE_NAME} Academy.`,
-    url: absoluteUrl(`/certificate/${number}`),
-    identifier: cert.certificate_number,
-    dateCreated: cert.issued_at,
-    credentialCategory: "Certificate",
-    recognizedBy: {
-      "@type": "Organization",
-      name: `${SITE_NAME} Academy`,
-      url: absoluteUrl("/academy"),
-    },
-    educationalLevel: "Professional Development",
-    about: {
-      "@type": "Course",
-      name: courseTitle,
-      url: cert.course?.slug ? absoluteUrl(`/academy/${cert.course.slug}`) : absoluteUrl("/academy"),
-      provider: {
-        "@type": "Organization",
-        name: `${SITE_NAME} Academy`,
-        url: SITE_URL,
-      },
-    },
-    ...(cert.professional
-      ? {
-          validFor: {
-            "@type": "Person",
-            name: holderName,
-            url: absoluteUrl(`/advisor/${cert.professional.slug}`),
-          },
-        }
-      : {}),
-  };
+  // Use the shared personCredentialJsonLd builder so the JSON-LD gate stays green
+  // and the schema pattern is consistent across all credential pages.
+  const { credential: credentialJsonLd, person: personJsonLd } = personCredentialJsonLd({
+    holderName,
+    credentialTitle: courseTitle,
+    certificateNumber: cert.certificate_number,
+    issuedAt: cert.issued_at,
+    cpdHours: cpd_hours,
+  });
 
   return (
     <>
+      {/* Structured data — breadcrumb + credential + person */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(certJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(credentialJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
 
       <div className="min-h-screen bg-slate-50 py-8 px-4 print:bg-white print:py-0">
         <div className="max-w-3xl mx-auto">
 
-          {/* Breadcrumb — hidden on print */}
+          {/* Breadcrumb */}
           <nav
             aria-label="Breadcrumb"
             className="text-sm text-slate-500 mb-6 print:hidden"
@@ -184,7 +173,7 @@ export default async function CertificateVerificationPage({ params }: PageProps)
             <span className="text-slate-700">Certificate Verification</span>
           </nav>
 
-          {/* Page heading — hidden on print */}
+          {/* Page heading */}
           <div className="mb-6 print:hidden">
             <h1 className="text-2xl font-bold text-slate-900 mb-1">Certificate Verification</h1>
             <p className="text-slate-500 text-sm">
@@ -192,41 +181,23 @@ export default async function CertificateVerificationPage({ params }: PageProps)
             </p>
           </div>
 
-          {/* Status badge — hidden on print */}
+          {/* Valid badge */}
           <div className="mb-6 print:hidden">
-            {isValid ? (
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold text-sm">
-                <svg
-                  className="w-4 h-4 text-emerald-500"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Valid certificate
-              </div>
-            ) : (
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-200 text-red-800 font-semibold text-sm">
-                <svg
-                  className="w-4 h-4 text-red-500"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Invalid certificate
-              </div>
-            )}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold text-sm">
+              <svg
+                className="w-4 h-4 text-emerald-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Valid certificate
+            </div>
           </div>
 
           {/* Certificate card */}
@@ -301,20 +272,6 @@ export default async function CertificateVerificationPage({ params }: PageProps)
 
               {/* Body */}
               <div className="text-center mb-8">
-                {cert.professional?.photo_url && (
-                  <div className="flex justify-center mb-4">
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden ring-4 ring-teal-100">
-                      <Image
-                        src={cert.professional.photo_url}
-                        alt={holderName}
-                        width={64}
-                        height={64}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                  </div>
-                )}
-
                 <p className="text-base text-slate-500 mb-2">This certifies that</p>
                 <p className="text-2xl md:text-3xl font-bold text-teal-700 mb-2">
                   {holderName}
@@ -419,38 +376,23 @@ export default async function CertificateVerificationPage({ params }: PageProps)
             </div>
           </div>
 
-          {/* Actions */}
+          {/* Share / print actions */}
           <div className="mt-6 flex flex-col items-center gap-4 print:hidden">
-            <ShareCertificateActions certificateNumber={cert.certificate_number} />
+            <ShareCertificateActions
+              certificateNumber={cert.certificate_number}
+              credentialTitle={courseTitle}
+              holderName={holderName}
+              issuedAt={cert.issued_at}
+            />
 
-            {cert.professional && (
-              <p className="text-xs text-slate-400 text-center">
-                View{" "}
-                <Link
-                  href={`/advisor/${cert.professional.slug}`}
-                  className="text-teal-600 hover:underline"
-                >
-                  {holderName}&apos;s advisor profile
-                </Link>
-                {" "}or{" "}
-                <Link
-                  href="/certificate"
-                  className="text-teal-600 hover:underline"
-                >
-                  verify another certificate
-                </Link>
-              </p>
-            )}
-            {!cert.professional && (
-              <p className="text-xs text-slate-400 text-center">
-                <Link
-                  href="/certificate"
-                  className="text-teal-600 hover:underline"
-                >
-                  Verify another certificate
-                </Link>
-              </p>
-            )}
+            <p className="text-xs text-slate-400 text-center">
+              <Link
+                href="/certificate"
+                className="text-teal-600 hover:underline"
+              >
+                Verify another certificate
+              </Link>
+            </p>
           </div>
         </div>
       </div>

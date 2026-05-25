@@ -18,6 +18,7 @@ import {
   glossaryTermQaJsonLd,
   comparisonPageItemListJsonLd,
   howToJsonLd,
+  personCredentialJsonLd,
 } from "@/lib/schema-markup";
 
 describe("articleJsonLd", () => {
@@ -1019,5 +1020,141 @@ describe("definedTermPageJsonLd — dateModified", () => {
   it("dateModified null is treated as omitted (compact strips it)", () => {
     const out = definedTermPageJsonLd({ ...BASE, dateModified: null }) as Bag;
     expect(out.dateModified).toBeUndefined();
+  });
+});
+
+// ─── personCredentialJsonLd ───────────────────────────────────
+
+describe("personCredentialJsonLd", () => {
+  const BASE = {
+    holderName: "Jane Doe",
+    credentialTitle: "Australian Tax Fundamentals",
+    certificateNumber: "INV-2026-00042",
+    issuedAt: "2026-04-15T00:00:00.000Z",
+  };
+
+  it("returns both credential and person blocks", () => {
+    const { credential, person } = personCredentialJsonLd(BASE);
+    expect(credential).toBeDefined();
+    expect(person).toBeDefined();
+  });
+
+  it("credential @context is https://schema.org", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    expect((credential as Bag)["@context"]).toBe("https://schema.org");
+  });
+
+  it("credential @type is EducationalOccupationalCredential", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    expect((credential as Bag)["@type"]).toBe("EducationalOccupationalCredential");
+  });
+
+  it("credential identifier is the certificate number", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    expect((credential as Bag).identifier).toBe("INV-2026-00042");
+  });
+
+  it("credential url points to /certificate/[number]", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    expect(String((credential as Bag).url)).toContain("/certificate/INV-2026-00042");
+  });
+
+  it("credential dateCreated matches issuedAt", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    expect((credential as Bag).dateCreated).toBe(BASE.issuedAt);
+  });
+
+  it("credential name includes the course title", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    expect(String((credential as Bag).name)).toContain("Australian Tax Fundamentals");
+  });
+
+  it("credential recognizedBy is an Organization pointing at /academy", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    const rb = (credential as Bag).recognizedBy as Bag;
+    expect(rb["@type"]).toBe("Organization");
+    expect(String(rb.url)).toContain("/academy");
+  });
+
+  it("credential recognizedBy defaults to Invest.com.au Academy", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    const rb = (credential as Bag).recognizedBy as Bag;
+    expect(rb.name).toBe("Invest.com.au Academy");
+  });
+
+  it("credential recognizedBy uses custom issuerName when provided", () => {
+    const { credential } = personCredentialJsonLd({ ...BASE, issuerName: "Acme Academy" });
+    const rb = (credential as Bag).recognizedBy as Bag;
+    expect(rb.name).toBe("Acme Academy");
+  });
+
+  it("credential about is a Course with the credential title", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    const about = (credential as Bag).about as Bag;
+    expect(about["@type"]).toBe("Course");
+    expect(about.name).toBe("Australian Tax Fundamentals");
+  });
+
+  it("credential validFor is a Person with the holder name", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    const vf = (credential as Bag).validFor as Bag;
+    expect(vf["@type"]).toBe("Person");
+    expect(vf.name).toBe("Jane Doe");
+  });
+
+  it("credential competencyRequired includes CPD hours when provided", () => {
+    const { credential } = personCredentialJsonLd({ ...BASE, cpdHours: 3 });
+    expect(String((credential as Bag).competencyRequired)).toContain("3 CPD hours");
+  });
+
+  it("credential competencyRequired is singular for 1 CPD hour", () => {
+    const { credential } = personCredentialJsonLd({ ...BASE, cpdHours: 1 });
+    expect(String((credential as Bag).competencyRequired)).toContain("1 CPD hour");
+    expect(String((credential as Bag).competencyRequired)).not.toContain("1 CPD hours");
+  });
+
+  it("credential omits competencyRequired when cpdHours is null", () => {
+    const { credential } = personCredentialJsonLd({ ...BASE, cpdHours: null });
+    expect((credential as Bag).competencyRequired).toBeUndefined();
+  });
+
+  it("credential omits competencyRequired when cpdHours is not provided", () => {
+    const { credential } = personCredentialJsonLd(BASE);
+    expect((credential as Bag).competencyRequired).toBeUndefined();
+  });
+
+  it("person @type is Person", () => {
+    const { person } = personCredentialJsonLd(BASE);
+    expect((person as Bag)["@type"]).toBe("Person");
+  });
+
+  it("person name is the holder display name", () => {
+    const { person } = personCredentialJsonLd(BASE);
+    expect((person as Bag).name).toBe("Jane Doe");
+  });
+
+  it("person hasCredential is an EducationalOccupationalCredential", () => {
+    const { person } = personCredentialJsonLd(BASE);
+    const cred = (person as Bag).hasCredential as Bag;
+    expect(cred["@type"]).toBe("EducationalOccupationalCredential");
+  });
+
+  it("person hasCredential url matches the certificate URL", () => {
+    const { person } = personCredentialJsonLd(BASE);
+    const cred = (person as Bag).hasCredential as Bag;
+    expect(String(cred.url)).toContain("/certificate/INV-2026-00042");
+  });
+
+  it("person hasCredential includes dateCreated", () => {
+    const { person } = personCredentialJsonLd(BASE);
+    const cred = (person as Bag).hasCredential as Bag;
+    expect(cred.dateCreated).toBe(BASE.issuedAt);
+  });
+
+  it("person block does not contain email or user_id", () => {
+    const { person } = personCredentialJsonLd(BASE);
+    const json = JSON.stringify(person);
+    expect(json).not.toContain("email");
+    expect(json).not.toContain("user_id");
   });
 });
