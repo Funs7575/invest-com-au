@@ -83,6 +83,7 @@ const SCHEMA_HELPER_NAMES = [
   "calculatorJsonLd",
   "versusComparisonJsonLd",
   "governmentServiceJsonLd",
+  "howToJsonLd",
   "ORGANIZATION_JSONLD",
   "organizationLd",
 ];
