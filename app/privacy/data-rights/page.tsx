@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import DataRightsForm from "./DataRightsForm";
 
+// Static Privacy Act / GDPR landing shell — the request form is a client island.
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Your data rights — export or delete your data — Invest.com.au",
   description:
