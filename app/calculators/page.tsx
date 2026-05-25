@@ -7,6 +7,7 @@ import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 1800;
 
@@ -72,6 +73,29 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   };
 }
 
+const calcFaqLd = faqJsonLd([
+  {
+    q: "What is a brokerage fee calculator?",
+    a: "A brokerage fee calculator estimates how much you'll pay per trade at different Australian brokers. Enter your trade size and frequency to compare the annual cost across platforms like Commsec, SelfWealth, Pearler, Moomoo, and others. Because broker fees are flat, percentage-based, or hybrid, the cheapest broker depends entirely on your trade size and how often you trade.",
+  },
+  {
+    q: "How is CGT calculated in Australia?",
+    a: "Capital Gains Tax is calculated on the net capital gain — your proceeds minus the cost base (including brokerage). If you've held the asset for more than 12 months, a 50% discount applies for individuals. The discounted gain is added to your taxable income and taxed at your marginal rate. The calculator shows an estimate only — always use your actual cost base records and consult a tax adviser.",
+  },
+  {
+    q: "What is an FX fee on international shares?",
+    a: "Most Australian brokers charge a currency conversion fee (FX margin) when you buy US or UK shares. This fee — typically 0.5%–1.0% of the trade value — is charged on top of brokerage. A $10,000 US trade at a 0.6% FX margin costs $60 in conversion, which can exceed your brokerage. Use the FX calculator to see the true cost across brokers including Interactive Brokers, CommSec, Stake, and CMC.",
+  },
+  {
+    q: "What is CHESS sponsorship and how do I check it?",
+    a: "CHESS (Clearing House Electronic Subregister System) is the ASX's settlement system. A CHESS-sponsored broker registers your shares in your name with a Holder Identification Number (HIN), so they're legally yours even if the broker fails. Custodian brokers (like Stake, eToro) hold shares in an omnibus account — you have a beneficial interest but face counterparty risk. Use the CHESS lookup tool to check whether a specific broker is CHESS-sponsored.",
+  },
+  {
+    q: "What is the compound interest calculator?",
+    a: "The compound interest calculator projects how a lump sum or regular contributions grow over time when returns are reinvested. It applies a chosen annual return rate (net of fees and tax) and shows the effect of compounding — earning returns on returns. Over 30 years at 7%, $10,000 grows to $76,000. Over 40 years, the same amount reaches $150,000. Starting early dramatically outweighs the benefit of higher returns or larger contributions later.",
+  },
+]);
+
 export default async function CalculatorsPage() {
   // Defensive fetch — the hub is just navigation tiles, so failing
   // the broker query should not take the page down. Degrade to an
@@ -103,6 +127,7 @@ export default async function CalculatorsPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calcJsonLd) }} />
+      {calcFaqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calcFaqLd) }} />}
       <Suspense fallback={<CalculatorsLoading />}>
         <CalculatorsClient brokers={brokers} />
       </Suspense>

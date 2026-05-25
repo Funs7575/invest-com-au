@@ -8,8 +8,6 @@ import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import Icon from "@/components/Icon";
 import BookingWidget from "@/components/BookingWidget";
 import AdvisorAppointmentsWidget from "@/components/AdvisorAppointmentsWidget";
-import AdvisorCalendarEmbed from "@/components/AdvisorCalendarEmbed";
-import AdvisorVideoIntro from "@/components/AdvisorVideoIntro";
 import AdvisorReviewForm from "@/components/AdvisorReviewForm";
 import VerifiedClientBadge from "@/components/VerifiedClientBadge";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -20,6 +18,7 @@ import { getVerificationConfig, getVerificationLinks } from "@/lib/advisor-verif
 import { getQualificationData } from "@/lib/qualification-store";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 import { isValidEmail } from "@/lib/validate-email";
+import SocialShareButtons from "@/components/SocialShareButtons";
 
 const TYPE_TO_PLATFORMS: Record<string, { label: string; href: string }[]> = {
   smsf_accountant: [
@@ -295,7 +294,6 @@ export default function AdvisorProfileClient({
                     method={pro.verification_method ?? null}
                     abn={pro.abn ?? null}
                     afsl={pro.afsl_number ?? null}
-                    lastVerifiedAt={pro.last_verified_at ?? null}
                     compact
                   />
                   {pro.accepts_international_clients && (
@@ -313,9 +311,22 @@ export default function AdvisorProfileClient({
                       Cross-Border Tax
                     </span>
                   )}
-                  {pro.accepting_new_clients === false && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-bold shrink-0">
-                      Not accepting clients
+                  {(pro.availability_status === 'open' || !pro.availability_status) && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 border border-green-200 text-xs font-bold shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+                      Accepting Clients
+                    </span>
+                  )}
+                  {pro.availability_status === 'waitlist' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-700 border border-amber-200 text-xs font-bold shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                      Waitlist Open
+                    </span>
+                  )}
+                  {pro.availability_status === 'closed' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-700 border border-red-200 text-xs font-bold shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                      Not Taking New Clients
                     </span>
                   )}
                 </div>
@@ -330,6 +341,15 @@ export default function AdvisorProfileClient({
                     </>
                   )}
                 </p>
+
+                {/* Social share */}
+                <div className="mb-3">
+                  <SocialShareButtons
+                    url={`https://invest.com.au/advisor/${pro.slug}`}
+                    title={`${pro.name} — ${typeLabel} | Invest.com.au`}
+                    compact
+                  />
+                </div>
 
                 {/* Meta row */}
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-500 mb-4">
@@ -768,14 +788,18 @@ export default function AdvisorProfileClient({
               </SectionCard>
             )}
 
-            {/* Intro Video — MK-02: lazy-load with poster overlay + Vimeo support */}
+            {/* Intro Video */}
             {pro.intro_video_url && (
               <SectionCard title="Introduction Video" icon="video">
-                <AdvisorVideoIntro
-                  videoUrl={pro.intro_video_url!}
-                  posterUrl={pro.intro_video_poster_url}
-                  advisorName={pro.name}
-                />
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-100">
+                  <iframe
+                    src={(pro.intro_video_url!).replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")}
+                    className="absolute inset-0 w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                </div>
               </SectionCard>
             )}
 
@@ -843,20 +867,6 @@ export default function AdvisorProfileClient({
                 </div>
               </SectionCard>
             ) : null}
-
-            {/* MK-01: Calendly/Cal.com inline embed — shows when booking_link is
-                a supported calendar platform. Eliminates the new-tab context
-                switch that hurts conversion on mobile. Falls back to link for
-                other booking URLs. */}
-            {pro.booking_link && (
-              <SectionCard title="Book a Time" icon="calendar">
-                <AdvisorCalendarEmbed
-                  bookingLink={pro.booking_link}
-                  advisorName={pro.name}
-                  consultationLabel={pro.initial_consultation_free ? "free consultation" : "consultation"}
-                />
-              </SectionCard>
-            )}
 
             {/* Wave 17 first-party concrete-slot booking.
                 Renders nothing if the advisor has no open slots in

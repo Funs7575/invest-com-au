@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import SmsfAuditorsClient, {
   type AuditorRow,
@@ -48,11 +49,34 @@ export default async function SmsfAuditorsPage() {
     { name: "SMSF Auditors" },
   ]);
 
+  const smsfAuditorFaqLd = faqJsonLd([
+    {
+      q: "What is an SMSF auditor and do they need to be registered?",
+      a: "An SMSF auditor is an independent professional who conducts the mandatory annual audit of your fund — checking both the financial statements (audit of accounts) and compliance with superannuation law (compliance audit). All SMSF auditors must be registered with ASIC and hold an SMSF Auditor Number (SAN). You can verify an auditor's registration at ASIC's professional registers. Trustees cannot use a fund member, a member's relative, or anyone closely connected to the fund as auditor — independence is mandatory.",
+    },
+    {
+      q: "How do I find a registered SMSF auditor in Australia?",
+      a: "You can find SMSF auditors through: ASIC's SMSF Auditor Register (search by name or registration number); the SMSF Association's member directory; referral from your SMSF administrator or accountant; or platforms like this directory. When selecting an auditor, check their SAN, years of experience, whether they use electronic working papers, their turn-around time, and their fee structure. Cost matters less than reliability — late audits delay your annual return and trigger ATO penalties.",
+    },
+    {
+      q: "What does an SMSF auditor check?",
+      a: "The financial audit verifies that financial statements accurately represent the fund's assets and transactions, and that all figures are supported by evidence (bank statements, share registry certificates, property valuations). The compliance audit checks adherence to SIS Act and regulations — including sole purpose test, related-party transactions, in-house asset limits, LRBA compliance, and investment strategy documentation. Auditors issue findings that the trustee must respond to; serious or repeated breaches are reported to the ATO on an Auditor Contravention Report (ACR).",
+    },
+    {
+      q: "Can my accountant also be my SMSF auditor?",
+      a: "No. Under SIS Act requirements and ASIC independence guidelines, your SMSF's auditor must be independent from the trustee and anyone who provides other services to the fund — including the fund's accountant or administrator. You need a separate, unrelated, ASIC-registered auditor. Some accounting firms have separate audit divisions, but the individual auditor must not have been involved in preparing the fund's accounts for the year being audited. A 'same firm' audit is only permissible if the auditor had no involvement in the accounts preparation.",
+    },
+  ]);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(smsfAuditorFaqLd) }}
       />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-12">

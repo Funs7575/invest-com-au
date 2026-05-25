@@ -123,6 +123,7 @@ const KNOWN_WORKSPACE_KINDS = new Set<WorkspaceKind>([
   "business_owner",
   "listing_owner",
   "startup",
+  "org_admin",
 ]);
 
 export function isWorkspaceKind(value: string): value is WorkspaceKind {
@@ -166,6 +167,7 @@ export function portalForKind(kind: WorkspaceKind, fallback = "/account"): strin
     case "business_owner": return "/business-portal";
     case "listing_owner": return "/invest/my-listings";
     case "startup": return "/startup-portal";
+    case "org_admin": return "/org-portal";
     case "investor": return fallback;
     default: return fallback;
   }

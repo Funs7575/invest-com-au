@@ -99,7 +99,8 @@ export interface WorkspaceContext {
     | "investor"
     | "business_owner"
     | "listing_owner"
-    | "startup";
+    | "startup"
+    | "org_admin";
   label: string;
   prefillName: string | null;
   prefillEmail: string | null;

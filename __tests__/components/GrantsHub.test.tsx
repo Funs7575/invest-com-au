@@ -154,10 +154,13 @@ describe("GrantsHub migration — <HubPage> with grantsHubConfig", () => {
     expect(screen.getByTestId("rd-calculator")).toBeInTheDocument();
   });
 
-  it("does not render FAQPage JSON-LD (grants config has empty faqs)", () => {
-    render(<HubPage config={grantsHubConfig} />);
-    expect(
-      screen.queryByTestId("hub-page-faq-ld")
-    ).not.toBeInTheDocument();
+  it("renders FAQPage JSON-LD because grantsHubConfig has faqs", () => {
+    const { container } = render(<HubPage config={grantsHubConfig} />);
+    const faqScript = container.querySelector('[data-testid="hub-page-faq-ld"]');
+    expect(faqScript).not.toBeNull();
+    const ld = JSON.parse(faqScript?.innerHTML ?? "{}");
+    expect(ld["@type"]).toBe("FAQPage");
+    expect(Array.isArray(ld.mainEntity)).toBe(true);
+    expect(ld.mainEntity.length).toBeGreaterThan(0);
   });
 });

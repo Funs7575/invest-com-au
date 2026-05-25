@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -19,6 +20,29 @@ export const metadata: Metadata = {
   },
 };
 
+const FRANCHISE_FAQS = faqJsonLd([
+  {
+    q: "What is the minimum investment to buy a franchise in Australia?",
+    a: "The minimum investment varies widely by sector. Entry-level service franchises (cleaning, lawn mowing, mobile services) typically start from $20,000–$50,000 all-in. Mid-range franchises such as cafes, fitness studios, and specialty retail require $100,000–$500,000. Premium food and beverage or large-format retail franchises can require $500,000 to $2 million or more including fit-out, equipment, and working capital.",
+  },
+  {
+    q: "How do franchise royalties work in Australia?",
+    a: "Franchise royalties are ongoing fees paid by franchisees to the franchisor, typically calculated as a percentage of gross revenue. In Australia, royalty rates commonly range from 4–8% of gross sales. Most franchisors also charge a separate marketing levy of 1–3% of gross revenue that is pooled into a national or regional advertising fund. These fees are payable regardless of whether the franchisee is profitable.",
+  },
+  {
+    q: "What due diligence should I do before buying a franchise in Australia?",
+    a: "Key due diligence steps include: reviewing the Franchise Disclosure Document (which franchisors must provide at least 14 days before signing); speaking to current and former franchisees (list is provided in the FDD); engaging a specialist franchise lawyer to review the franchise agreement; having an accountant assess the financial model and projected returns; reviewing the franchisor's audited financial accounts; researching the brand's market position, competitor landscape, and any ACCC enforcement history.",
+  },
+  {
+    q: "Are franchise fees deductible in Australia?",
+    a: "Ongoing royalty payments and marketing levies are generally deductible as business expenses under the Income Tax Assessment Act 1997. The initial franchise fee (paid for the right to operate under the system) may be treated as a capital expense and deductible over the effective life of the franchise agreement. GST applies to most franchise fees — franchisees can claim GST input tax credits if registered. Seek specific tax advice from an accountant familiar with franchising.",
+  },
+  {
+    q: "What is the Franchising Code of Conduct?",
+    a: "The Franchising Code of Conduct is a mandatory industry code under the Competition and Consumer Act 2010, administered and enforced by the ACCC. It governs all franchise agreements in Australia and provides franchisees with protections including: the right to a Franchise Disclosure Document at least 14 days before signing; a 14-day cooling-off period after signing; access to a low-cost mediation process for disputes; restrictions on termination without reasonable grounds; and requirements for franchisors to act in good faith.",
+  },
+]);
+
 export default function FranchisePage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -32,6 +56,12 @@ export default function FranchisePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {FRANCHISE_FAQS && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(FRANCHISE_FAQS) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -139,7 +169,7 @@ export default function FranchisePage() {
           <div className="prose prose-slate max-w-none mb-12">
             <h3>The Franchise Disclosure Document (FDD)</h3>
             <p>
-              All Australian franchisors must provide a Franchise Disclosure Document at least 14 days before signing. The FDD includes: franchisor's financial history, litigation history, list of existing franchisees, marketing fund details, territory rights, and renewal terms.
+              All Australian franchisors must provide a Franchise Disclosure Document at least 14 days before signing. The FDD includes: franchisor&apos;s financial history, litigation history, list of existing franchisees, marketing fund details, territory rights, and renewal terms.
             </p>
 
             <h3>Franchise Agreement Key Terms</h3>
@@ -157,8 +187,8 @@ export default function FranchisePage() {
               <li>Talk to existing and former franchisees (list provided in FDD)</li>
               <li>Have a franchise lawyer review the agreement</li>
               <li>Have an accountant review the financial model</li>
-              <li>Review the franchisor's own financial accounts</li>
-              <li>Research the brand's reputation and competitive position</li>
+              <li>Review the franchisor&apos;s own financial accounts</li>
+              <li>Research the brand&apos;s reputation and competitive position</li>
               <li>Understand the support, training, and ongoing assistance provided</li>
             </ul>
 

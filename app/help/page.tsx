@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { HELP_CATEGORIES } from "@/lib/help-content";
 
 export const revalidate = 86400;
@@ -21,6 +22,14 @@ const breadcrumb = breadcrumbJsonLd([
   { name: "Help Centre", url: absoluteUrl("/help") },
 ]);
 
+const helpFaqs = faqJsonLd([
+  { q: "How do I compare investment platforms on Invest.com.au?", a: "Use the Compare page at invest.com.au/compare to select up to 5 platforms side-by-side. Filter by brokerage fees, available markets, account types and features to find the best match for your investing style." },
+  { q: "How are brokers rated on Invest.com.au?", a: "Platforms are scored across fees, features, research tools, customer service, and regulatory standing. Sponsored placements are clearly labelled. The full methodology is at invest.com.au/methodology." },
+  { q: "Is Invest.com.au advice or information?", a: "Invest.com.au provides general financial information only, not personal financial advice. Content does not take into account your individual objectives, financial situation or needs. Always read the relevant PDS or seek professional advice before investing." },
+  { q: "How do I contact Invest.com.au support?", a: "Email help@invest.com.au — we respond within 1 business day. For data corrections or broken links please include the page URL." },
+  { q: "Can I request my personal data be deleted?", a: "Yes. Visit invest.com.au/privacy/data-rights to submit a deletion, access or correction request. We process all requests within 30 days in accordance with the Australian Privacy Act 1988." },
+]);
+
 const CATEGORY_ICONS: Record<string, string> = {
   "getting-started": "🚀",
   "brokers": "📊",
@@ -35,6 +44,12 @@ export default function HelpIndexPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {helpFaqs && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(helpFaqs) }}
+        />
+      )}
 
       <div className="bg-gradient-to-b from-slate-50 to-white min-h-screen">
         {/* Header */}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -16,6 +17,29 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/invest/ipos`,
   },
 };
+
+const IPO_FAQS = faqJsonLd([
+  {
+    q: "How do I participate in an Australian IPO?",
+    a: "To participate in an ASX IPO, read the prospectus lodged with ASIC, then apply either directly via the online application form linked in the prospectus or through a broker platform that facilitates IPO applications (e.g. CommSec, Bell Direct, NAB Trade). You pay the offer price upfront and receive an allocation once the offer closes.",
+  },
+  {
+    q: "Do retail investors get access to ASX IPOs?",
+    a: "Yes. Most ASX IPOs include a retail (public) offer tranche alongside an institutional tranche. Retail investors apply through broker platforms or directly via the offer's application form. Access is first-come-first-served or scaled back if the offer is oversubscribed. Some IPOs are wholesale-only, in which case a minimum investment threshold (typically $500,000) applies.",
+  },
+  {
+    q: "How are IPO shares allocated in Australia?",
+    a: "If an IPO is oversubscribed (more applications than shares available), a scale-back is applied — applicants receive fewer shares than requested. Exact scale-back methodology varies by offer but commonly prioritises smaller retail applications or applies a flat percentage cut. The final allocation is notified a few days after the offer closes.",
+  },
+  {
+    q: "What is the typical IPO lockup period?",
+    a: "Founders, pre-IPO shareholders, and key management typically face a 6–12 month escrow (lockup) period after ASX listing, as mandated by ASX Listing Rules. During this period they cannot sell their shares without ASX approval. Retail IPO applicants who receive an allocation through the public offer are not subject to lockup.",
+  },
+  {
+    q: "Should I buy shares at IPO or wait for secondary market trading?",
+    a: "Both approaches carry risk. Buying at IPO gives you the offer price but you may receive fewer shares than requested and face post-listing volatility. Waiting for secondary market trading allows you to see how the stock performs but you may pay above the offer price in a hot IPO. Consider the company's fundamentals, prospectus risk factors, and your investment horizon before deciding.",
+  },
+]);
 
 export default function IposPage() {
   const breadcrumb = breadcrumbJsonLd([
@@ -42,6 +66,12 @@ export default function IposPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
       />
+      {IPO_FAQS && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(IPO_FAQS) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">

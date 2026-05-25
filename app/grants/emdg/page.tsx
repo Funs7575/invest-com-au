@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
@@ -19,6 +20,25 @@ export const metadata: Metadata = {
   },
 };
 
+const emdgFaqLd = faqJsonLd([
+  {
+    q: "What is the EMDG and who can apply?",
+    a: "The Export Market Development Grant (EMDG) reimburses small and medium Australian businesses for eligible overseas marketing expenses. Eligible applicants must: have an ABN, export Australian goods or services, have annual Australian income under $50M, and have export income under $500K in the grant year (for first-time applicants). The scheme runs in annual rounds with applications typically opening in July. It reimburses up to 50% of eligible overseas marketing expenditure, with a maximum reimbursement of $80,000 per year.",
+  },
+  {
+    q: "What expenses qualify for EMDG reimbursement?",
+    a: "Eligible expenses include: overseas marketing representative costs (salary, retainer, commissions), trade show and exhibition fees (booth costs, travel), overseas advertising (digital, print, media in target markets), foreign-language marketing materials (translation, production), overseas visits for marketing purposes (travel, accommodation up to daily caps), and foreign market research. Excluded: domestic marketing costs, product development, manufacturing, regulatory compliance, and general business travel not directly related to export marketing.",
+  },
+  {
+    q: "How much can I receive from the EMDG?",
+    a: "Up to 50% of eligible overseas marketing expenses, capped at $80,000 per year per entity. The reimbursement starts from the first dollar of eligible expenses — there is no minimum spend threshold. In practice, applicants typically receive $5,000–$50,000. The scheme is administered by Austrade, which verifies eligibility and calculates the payment. Historically, high application volumes have sometimes led to pro-rata reductions if the funding pool is exhausted.",
+  },
+  {
+    q: "How do I apply for the EMDG?",
+    a: "EMDG applications are lodged via the Austrade online portal. You need: a valid ABN, Austrade account, documentation of all claimed expenses (invoices, contracts, receipts), evidence that expenses relate to overseas marketing of Australian goods or services, and confirmation of export income. A new round typically opens annually in July, and applications must be lodged within a few months of the round opening. Austrade assessors may contact you for supporting documentation. Consider working with an EMDG consultant for the first application.",
+  },
+]);
+
 export default function EmdgPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -29,6 +49,7 @@ export default function EmdgPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(emdgFaqLd) }} />
 
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">

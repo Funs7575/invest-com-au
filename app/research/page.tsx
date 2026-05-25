@@ -1,8 +1,32 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
+
+const RESEARCH_FAQ = faqJsonLd([
+  {
+    q: "What types of research reports are available on Invest.com.au?",
+    a: "Invest.com.au publishes editorial research reports covering key Australian investment sectors, including energy, SMSF property, foreign investment, critical minerals, hydrogen, and uranium. Reports combine quantitative data with editorial analysis.",
+  },
+  {
+    q: "Are the research reports free to download?",
+    a: "Yes, all reports are free. Some reports are ungated and available as a direct download, while others require a free email registration before access is granted. The access type is clearly labelled on every report card and report page.",
+  },
+  {
+    q: "Who writes the investment research?",
+    a: "Reports are produced by the Invest.com.au editorial team. Some reports are sponsored by institutional partners — sponsor attribution is displayed prominently on the report page and in the report card. All sponsored content is clearly identified.",
+  },
+  {
+    q: "How often is new research published?",
+    a: "New reports are typically published quarterly. The research hub is updated as new sector reports are released. Check back regularly or sign up to receive notifications when new reports become available.",
+  },
+  {
+    q: "Are the research reports suitable for professional investors?",
+    a: "The reports are designed to be useful to both retail and professional investors seeking an overview of Australian investment sectors. They are general information and editorial in nature — they are not personal financial advice and do not constitute a recommendation to buy or sell any security.",
+  },
+]);
 
 export const revalidate = 3600;
 
@@ -70,6 +94,12 @@ export default async function ResearchPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {RESEARCH_FAQ && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(RESEARCH_FAQ) }}
+        />
+      )}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">

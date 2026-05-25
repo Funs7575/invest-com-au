@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { absoluteUrl, breadcrumbJsonLd, dealsHubJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { sortWithSponsorship } from "@/lib/sponsorship";
 import DealsClient from "./DealsClient";
@@ -34,6 +35,29 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 1800; // ISR: revalidate every 30 minutes (deals change frequently)
+
+const DEALS_FAQ = faqJsonLd([
+  {
+    q: "What broker deals are available for Australian investors?",
+    a: "Australian investors can access sign-up bonuses, brokerage fee waivers, and cash-back promotions from share trading platforms, robo-advisors, and crypto exchanges. Current verified offers are listed on this page and updated regularly.",
+  },
+  {
+    q: "How are broker sign-up offers verified on Invest.com.au?",
+    a: "Each deal is manually checked against the broker's official terms and conditions page. We record the verification date and expiry date so you can see how recently the offer was confirmed.",
+  },
+  {
+    q: "Are broker promotions available to existing customers?",
+    a: "Most sign-up bonuses are only available to new customers opening their first account with that broker. Some platforms run separate promotions for existing customers — check the individual deal terms for eligibility details.",
+  },
+  {
+    q: "Can I claim multiple broker sign-up bonuses?",
+    a: "Yes — each bonus is tied to a specific platform, so you can open accounts with multiple brokers and claim their respective offers, provided you meet each platform's individual eligibility criteria.",
+  },
+  {
+    q: "How do I compare broker brokerage fees vs sign-up bonuses?",
+    a: "Use the fee benchmarking tool at invest.com.au/benchmark to see each platform's ongoing brokerage and FX fees. Weigh a one-time sign-up bonus against the long-term cost difference to find the best value for your trading frequency.",
+  },
+]);
 
 export default async function DealsPage() {
   // Defensive fetch — both queries are independent. A broken advisors
@@ -103,6 +127,12 @@ export default async function DealsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
       />
+      {DEALS_FAQ && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(DEALS_FAQ) }}
+        />
+      )}
 
       <div className="pt-5 pb-8 md:py-12">
         <div className="container-custom max-w-5xl">

@@ -114,11 +114,14 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "dashboard", category: "PORTAL" },
   { prefix: "advisor-portal", category: "PORTAL" },
   { prefix: "startup-portal", category: "PORTAL" }, // auth-gated founder portal; robots noindex
+  { prefix: "org-portal", category: "PORTAL" }, // auth-gated CPD-provider portal; robots noindex
   { prefix: "broker-portal", category: "PORTAL" },
   { prefix: "firm-portal", category: "PORTAL" },
   { prefix: "marketplace-portal", category: "PORTAL" },
   { prefix: "shortlist", category: "PORTAL" },
   { prefix: "invest/my-listings", category: "PORTAL" },
+  { prefix: "my-briefs", category: "PORTAL" },
+  { prefix: "my-learning", category: "PORTAL" }, // authenticated learner dashboard — private user page, no SEO surface
   { prefix: "teams", category: "PORTAL" }, // /teams/[slug]/* sub-pages are auth-gated advisor portals; /teams/[slug] public profile already has JSON-LD
   // FORM
   { prefix: "advisor-signup", category: "FORM" },
@@ -135,6 +138,7 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "find-advisor", category: "FORM" }, // interactive quiz; OG/metadata cover SERP
   { prefix: "quick-audit", category: "FORM" },
   { prefix: "quiz", category: "FORM" },
+  { prefix: "certificate", category: "FORM" }, // /certificate is a lookup-form entry point; /certificate/[number] is the public content page that carries JSON-LD
   // UTILITY
   { prefix: "newsletter/confirm", category: "UTILITY" },
   { prefix: "newsletter/unsubscribe", category: "UTILITY" },
@@ -149,8 +153,11 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "legal", category: "LEGAL" },
   { prefix: "privacy/data-rights", category: "LEGAL" },
   { prefix: "accessibility", category: "LEGAL" },
+  // FORM — provider application forms
+  { prefix: "provider-apply", category: "FORM" },
   // SALES — B2B advisor-facing, low consumer search demand
   { prefix: "for-advisors", category: "SALES" },
+  { prefix: "for-providers", category: "SALES" },
   { prefix: "advertise", category: "SALES" },
 ];
 
@@ -159,7 +166,11 @@ const EXEMPT_ROUTE_PATTERNS = [
  * keep as escape hatch for future false positives where a SALES/etc. prefix
  * does have rich-snippet value.
  */
-const EXEMPT_OVERRIDE_PATTERNS = [];
+const EXEMPT_OVERRIDE_PATTERNS = [
+  // /certificate/[number] is the public verification page (carries JSON-LD);
+  // only the /certificate index (lookup form) should be exempt as a FORM.
+  { prefix: "certificate/[number]" },
+];
 
 /* ────────────────────────────────────────────────────────────────────────── */
 /*  Helpers — exported for unit tests                                         */

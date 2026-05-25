@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CURRENT_YEAR, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
+import { calculatorJsonLd, faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
 import MortgageStressTestClient from "./MortgageStressTestClient";
 
 export const revalidate = 3600;
@@ -34,22 +34,32 @@ const calcLd = calculatorJsonLd({
 
 const faqLd = faqJsonLd([
   {
-    q: "What is housing stress?",
-    a: "Housing stress is a commonly used benchmark defined as spending more than 30% of gross household income on housing costs. Research from the Reserve Bank of Australia and AHURI (Australian Housing and Urban Research Institute) uses this threshold to identify households under mortgage or rental pressure. Spending above 40% is often classified as severe housing stress.",
+    q: "What is a mortgage stress test?",
+    a: "A mortgage stress test calculates whether you could afford repayments if interest rates rose by a buffer above your current rate. APRA requires Australian lenders to assess borrowers at a minimum 3% serviceability buffer above the loan rate (or a floor of 4.5%, whichever is higher). The test simulates higher repayments to ensure borrowers can absorb rate rises.",
   },
   {
-    q: "What is the APRA serviceability buffer?",
-    a: "APRA requires authorised deposit-taking institutions to assess mortgage applications at the borrower's actual loan rate plus a minimum 3 percentage point buffer. This ensures you can continue servicing the loan even if rates rise significantly after settlement. Non-bank lenders not regulated by APRA may apply a lower buffer (typically 2.5%), though many use the same 3% standard.",
+    q: "How much of income is considered mortgage stress?",
+    a: "The commonly-used threshold is spending more than 30% of gross household income on housing costs (mortgage principal + interest + rates + insurance). Some economists use 30% of pre-tax income for any household; others use 30% of after-tax income to reflect actual cash-flow stress. Households spending 50%+ of gross income on housing are considered severely stressed.",
   },
   {
-    q: "Does this calculator include all housing costs?",
-    a: "No — this calculator covers principal and interest repayments only. Full housing costs include council rates, building insurance, strata levies (for units and townhouses), and maintenance or repair costs. A more complete stress test adds 1–2% of property value per year for these ongoing costs. If you include them, your effective stress threshold will be reached at a lower interest rate.",
+    q: "What happens if I fail a lender's stress test?",
+    a: "Your loan application may be declined, or the maximum loan amount offered will be lower than requested. You can respond by: increasing the deposit, reducing the loan term, choosing a lower-priced property, waiting to pay down other debts first, or applying jointly with a higher-income co-borrower. You cannot 'pass' a stress test by picking a lender who doesn't apply the buffer — APRA prudential rules apply to all authorised deposit-taking institutions.",
   },
   {
-    q: "What should I do if I am in housing stress?",
-    a: "If your repayments already exceed 30% of gross income, or would do so at the current APRA buffer rate, consider: refinancing to a lower rate (a mortgage broker can compare 30+ lenders for free), extending the loan term to reduce monthly repayments, making a lump-sum principal reduction using savings or an offset account, or contacting your lender about a hardship arrangement. Early action preserves more options than waiting until repayments become unmanageable.",
+    q: "Has the APRA serviceability buffer changed?",
+    a: "APRA increased the serviceability buffer from 2.5% to 3.0% in October 2021 as part of its macroprudential toolkit, as house prices and debt-to-income ratios were rising rapidly. As of mid-2026 the buffer remains at 3.0%. Some non-bank lenders apply a 2% buffer (below APRA supervision), but most major banks and credit unions use 3%.",
+  },
+  {
+    q: "What is debt-to-income (DTI) ratio and why do lenders care?",
+    a: "The DTI ratio divides total debt (mortgage + personal loans + credit cards × 3.8 monthly limit) by gross annual income. APRA has flagged concern when loans are originated at DTI > 6×. Borrowers with DTI > 7-8× may face automatic additional scrutiny or lender-imposed caps. Reducing outstanding consumer debt before applying improves your DTI materially.",
   },
 ]);
+
+const speakableLd = speakableWebPageJsonLd({
+  name: "Mortgage Stress Test Calculator",
+  path: "/tools/mortgage-stress-test",
+  selectors: ["h1"],
+});
 
 export default function MortgageStressTestPage() {
   return (
@@ -65,6 +75,10 @@ export default function MortgageStressTestPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
       />
       <Suspense>
         <MortgageStressTestClient />

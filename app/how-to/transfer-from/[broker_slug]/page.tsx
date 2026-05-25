@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
@@ -132,6 +133,25 @@ function formatRating(value: number | string | null): string {
   return `${num.toFixed(1)} / 5`;
 }
 
+const brokerTransferFaqLd = faqJsonLd([
+  {
+    q: "How do I transfer shares between Australian brokers?",
+    a: "To transfer ASX shares between CHESS-sponsored brokers: (1) Open an account with your new broker and get your new HIN. (2) Complete the new broker's 'transfer-in' or 'in-specie transfer' form — you'll need your current HIN, your SRN (Security Reference Number) for each stock, and the quantity to transfer. (3) Your new broker lodges the transfer request with ASX CHESS. Shares typically move within 3–5 business days. There is no CGT event on a CHESS transfer — your original cost base is preserved.",
+  },
+  {
+    q: "Is there a fee to transfer shares to another broker?",
+    a: "Most major Australian CHESS-sponsored brokers have dropped their CHESS transfer-out fees. Some brokers (particularly older platforms) still charge $55–$110 per transfer. Check your current broker's fee schedule before initiating. Receiving brokers almost never charge transfer-in fees. If you hold shares in a custodian structure (Stake, eToro, Superhero without CHESS), you must sell and rebuy, which incurs brokerage and a potential CGT event.",
+  },
+  {
+    q: "What is a CHESS HIN and where do I find it?",
+    a: "Your HIN (Holder Identification Number) is a 10-digit number beginning with X (e.g., X00012345678) assigned by the ASX to your CHESS-sponsored share account. You can find it on: your broker's portfolio page (usually under 'Account Details' or 'CHESS'), dividend statements, share registry correspondence, or by contacting your broker. Keep your HIN private — it's the key to your share holdings.",
+  },
+  {
+    q: "What happens to my dividend reinvestment plan (DRP) when I transfer?",
+    a: "Your DRP (Dividend Reinvestment Plan) with the share registry is held in your name — it's not broker-specific. When you transfer your shares to a new broker with the same HIN, your DRP settings typically continue unchanged. If you're moving to a new HIN (new broker), you need to re-enrol in DRP with the share registry using your new broker's HIN and your SRN for each stock.",
+  },
+]);
+
 export default async function TransferFromPage({
   params,
 }: {
@@ -161,6 +181,12 @@ export default async function TransferFromPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {brokerTransferFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(brokerTransferFaqLd) }}
+        />
+      )}
       <div className="bg-slate-50 min-h-screen">
         <section className="bg-white border-b border-slate-200 py-8 md:py-10">
           <div className="container-custom">

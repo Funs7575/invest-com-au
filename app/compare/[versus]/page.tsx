@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { SITE_URL, CURRENT_YEAR, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { getBrokerBySlug } from "@/lib/request-cache";
 import type { Broker } from "@/lib/types";
 import Icon from "@/components/Icon";
@@ -144,6 +145,25 @@ function feeHighlight(a: string | undefined, b: string | undefined): "a" | "b" |
   return na < nb ? "a" : "b";
 }
 
+const brokerCompareFaqLd = faqJsonLd([
+  {
+    q: "How do I compare Australian stock brokers?",
+    a: "Compare brokers on five dimensions: (1) brokerage fee per trade (flat fee vs percentage), (2) FX fee for international shares, (3) CHESS sponsorship vs custodian structure, (4) platform features (research, order types, mobile app), and (5) inactivity fees. The cheapest broker for $1,000 trades is rarely the cheapest for $20,000 trades. Always check the current fee schedule directly — brokers change fees without announcement. Run the fee calculator with your actual trade size and frequency for a personalised comparison.",
+  },
+  {
+    q: "What is CHESS sponsorship and why does it matter when choosing a broker?",
+    a: "CHESS-sponsored accounts register your shares in your name with a Holder Identification Number (HIN) under the ASX's Clearing House Electronic Subregister System. If the broker becomes insolvent, your shares are protected — they're yours, not the broker's assets. Custodian brokers hold all client shares in a single omnibus account; clients have a beneficial interest but face counterparty risk. For long-term holdings, CHESS sponsorship provides meaningful additional security. Most new low-cost platforms (Moomoo, Stake, eToro) use custodian structures.",
+  },
+  {
+    q: "Can I transfer my shares to a new broker without selling them?",
+    a: "Yes, via CHESS participant transfer — but only between CHESS-sponsored brokers. If both your current and new broker are CHESS-sponsored, you complete the receiving broker's transfer-in form with your HIN and SRN, and shares move in 3–5 business days at no tax cost (no CGT event). If you're moving to a custodian broker (Stake, eToro, Superhero HIN-less), you must sell your shares first, triggering a CGT event on any gains. Confirm CHESS status before switching.",
+  },
+  {
+    q: "Which broker is best for buying US shares from Australia?",
+    a: "For active US share traders, Interactive Brokers is usually cheapest: USD 0.0035 per share brokerage + 0.002% FX conversion (about $0.20 per $10,000 converted). For occasional US share purchases, moomoo ($1.99/trade + 0.05% FX) and Stake ($3 flat + 0.7% FX) are competitive for smaller trades. CommSec International charges $19.95 and 0.6% FX — far more expensive for active traders but acceptable for infrequent transactions. Factor in the FX margin — it dominates the cost for large US purchases.",
+  },
+]);
+
 export default async function BrokerVersusPage({
   params,
 }: {
@@ -178,6 +198,10 @@ export default async function BrokerVersusPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(brokerCompareFaqLd) }}
       />
       <div className="bg-slate-50 min-h-screen">
         {/* Header */}
@@ -216,6 +240,7 @@ export default async function BrokerVersusPage({
                   {([brokerA, brokerB] as Broker[]).map((broker) => (
                     <div key={broker.slug} className="p-5 flex flex-col items-center gap-3">
                       {broker.logo_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={broker.logo_url}
                           alt={`${broker.name} logo`}

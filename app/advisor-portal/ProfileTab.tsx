@@ -12,6 +12,12 @@ type Props = {
   onAdvisorChange: (a: Advisor) => void;
 };
 
+const AVAILABILITY_OPTIONS: { value: 'open' | 'waitlist' | 'closed'; label: string; description: string; dot: string }[] = [
+  { value: 'open', label: 'Accepting New Clients', description: 'Shown as a green badge on your profile', dot: 'bg-emerald-500' },
+  { value: 'waitlist', label: 'Waitlist', description: 'Clients can join a queue — shown as a yellow badge', dot: 'bg-amber-400' },
+  { value: 'closed', label: 'Not Taking New Clients', description: 'Shown as a grey badge; you still appear in search', dot: 'bg-slate-400' },
+];
+
 export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props) {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
@@ -35,6 +41,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
           offer_terms: advisor.offer_terms || null,
           offer_active: advisor.offer_active || false,
           available_in_countries: advisor.available_in_countries || [],
+          availability_status: advisor.availability_status || 'open',
         }),
       });
       setProfileSaved(true);
@@ -42,6 +49,8 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
     } catch { /* ignore */ }
     setSavingProfile(false);
   };
+
+  const currentStatus = advisor.availability_status ?? 'open';
 
   return (
     <>
@@ -64,6 +73,40 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
             advisorSlug={advisor.slug}
             onPhotoUpdated={(url) => onAdvisorChange({ ...advisor, photo_url: url })}
           />
+        </div>
+
+        {/* Availability Status */}
+        <div>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">Availability Status</label>
+          <p className="text-[0.62rem] text-slate-400 mb-2">
+            Shown as a badge on your profile and in the advisor directory.
+          </p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {AVAILABILITY_OPTIONS.map((opt) => {
+              const isSelected = currentStatus === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => onAdvisorChange({ ...advisor, availability_status: opt.value })}
+                  className={`flex items-start gap-2.5 px-3 py-2.5 rounded-lg border text-left transition-colors ${
+                    isSelected
+                      ? 'border-slate-900 bg-slate-50 ring-1 ring-slate-900'
+                      : 'border-slate-200 hover:border-slate-300 bg-white'
+                  }`}
+                  aria-pressed={isSelected}
+                >
+                  <span className={`mt-0.5 w-2.5 h-2.5 rounded-full shrink-0 ${opt.dot}`} />
+                  <div className="min-w-0">
+                    <p className={`text-xs font-semibold leading-tight ${isSelected ? 'text-slate-900' : 'text-slate-700'}`}>
+                      {opt.label}
+                    </p>
+                    <p className="text-[0.6rem] text-slate-400 mt-0.5 leading-tight">{opt.description}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div>

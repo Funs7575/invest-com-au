@@ -5,7 +5,7 @@ export const revalidate = 300;
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const slugs = searchParams.getAll("slugs").slice(0, 4); // max 4
+  const slugs = searchParams.getAll("slugs").slice(0, 3); // max 3
 
   if (slugs.length === 0) {
     return NextResponse.json({ advisors: [] });
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase
     .from("professionals")
     .select(
-      "id, slug, name, firm_name, type, photo_url, rating, review_count, verified, location_display, specialties, fee_structure, fee_description, hourly_rate_cents, flat_fee_cents, aum_percentage, initial_consultation_free, afsl_number, bio, booking_link",
+      "id, slug, name, firm_name, type, photo_url, rating, review_count, verified, location_display, specialties, fee_structure, fee_description, hourly_rate_cents, flat_fee_cents, aum_percentage, initial_consultation_free, afsl_number, bio, booking_link, languages, accepts_international_clients, firb_specialist, accepts_new_clients",
     )
     .in("slug", slugs)
     .eq("status", "active");

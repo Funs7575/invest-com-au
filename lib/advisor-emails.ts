@@ -80,10 +80,31 @@ export async function sendNewLeadNotification(
   leadState: string | null,
   need: string,
   context: string[],
+  opts?: {
+    /** True if the advisor has one or more upcoming published events */
+    hasUpcomingEvents?: boolean;
+    /** True if the advisor has one or more published courses */
+    hasCourses?: boolean;
+  },
 ): Promise<boolean> {
   const advisorFirst = advisorName.trim().split(" ")[0];
   const needLabel = need.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   const contextStr = context.length > 0 ? context.map(c => c.replace(/_/g, " ")).join(", ") : "Not specified";
+
+  const BASE = "https://invest.com.au";
+
+  // Optional footer section: surface events / courses links when the advisor
+  // has them, so leads can explore beyond the initial enquiry.
+  const extrasHtml =
+    opts?.hasUpcomingEvents || opts?.hasCourses
+      ? `<div style="margin-top:20px;padding:14px 16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px">
+          <p style="font-size:13px;font-weight:600;color:#166534;margin:0 0 8px">Grow your engagement with this lead:</p>
+          <table style="width:100%;border-collapse:collapse">
+            ${opts.hasUpcomingEvents ? `<tr><td style="padding:4px 0;font-size:13px;color:#15803d">Share your events with leads: <a href="${BASE}/events" style="color:#2563eb;text-decoration:underline">${BASE}/events</a></td></tr>` : ""}
+            ${opts.hasCourses ? `<tr><td style="padding:4px 0;font-size:13px;color:#15803d">Your courses: <a href="${BASE}/academy" style="color:#2563eb;text-decoration:underline">${BASE}/academy</a></td></tr>` : ""}
+          </table>
+        </div>`
+      : "";
 
   return send(advisorEmail, `New enquiry from ${leadName} — Invest.com.au`, emailWrapper(
     "🎉 New Client Enquiry",
@@ -101,6 +122,7 @@ export async function sendNewLeadNotification(
     </div>
     <p style="font-size:14px;color:#64748b"><strong>Please reach out within 24 hours.</strong> Quick response times improve your rating and lead quality.</p>
     <div style="text-align:center;margin:24px 0"><a href="mailto:${leadEmail}?subject=Your%20enquiry%20on%20Invest.com.au" style="display:inline-block;padding:12px 32px;background:#f59e0b;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600">Reply to ${leadName} →</a></div>
+    ${extrasHtml}
     <p style="font-size:12px;color:#94a3b8;margin-top:20px">Manage your leads in the <a href="https://invest.com.au/advisor-portal" style="color:#2563eb">advisor portal</a>.</p>`
   ));
 }

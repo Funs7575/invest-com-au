@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import type { GlossaryEntry } from "@/lib/glossary";
 import { getGlossaryEntries } from "@/lib/glossary-db";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
-import { definedTermSetJsonLd } from "@/lib/schema-markup";
+import { definedTermSetJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import GlossarySearch from "@/components/GlossarySearch";
 
 export const revalidate = 86400;
@@ -68,6 +68,29 @@ const CATEGORY_ICONS: Record<string, string> = {
   Property: "\uD83C\uDFE0",
 };
 
+const glossaryFaqLd = faqJsonLd([
+  {
+    q: "What is a HIN number in investing?",
+    a: "A HIN (Holder Identification Number) is the unique identifier assigned to a CHESS-sponsored share account. It begins with an X and is 10 digits long (e.g. X00012345678). Your HIN stays the same when you transfer between CHESS-sponsored brokers — your shares follow the HIN. You'll need your HIN and SRN (Security Reference Number) to initiate a CHESS transfer to a new broker.",
+  },
+  {
+    q: "What does ex-dividend mean?",
+    a: "Ex-dividend (or ex-div) is the date from which a buyer of a share is NOT entitled to the upcoming dividend. If you buy shares on or after the ex-dividend date, the seller receives the dividend. To receive a dividend, you must own the shares before the ex-dividend date (the record date is usually 1-2 days after). Share prices typically fall by approximately the dividend amount on the ex-dividend date.",
+  },
+  {
+    q: "What is a franked dividend?",
+    a: "A franked dividend carries franking credits (also called imputation credits) — a tax credit representing the company tax already paid on its profits. A fully franked $0.70 dividend from a company that paid 30% tax carries a $0.30 franking credit, making the grossed-up dividend $1.00. Investors use these credits to offset their own income tax liability, and if the credits exceed the tax owed, the excess may be refunded. This system prevents corporate profits from being taxed twice.",
+  },
+  {
+    q: "What is an ETF (exchange-traded fund)?",
+    a: "An ETF (Exchange-Traded Fund) is a pooled investment that trades on a stock exchange like a share. Most ETFs track an index (e.g. ASX 200, S&P 500) and hold all — or a representative sample of — the index's constituents. ETFs offer low fees (typically 0.04%–0.67% p.a.), instant diversification, intraday liquidity, and transparency of holdings. In Australia, popular ETFs include VAS (Vanguard ASX 300), VGS (Vanguard global shares), and NDQ (Nasdaq 100).",
+  },
+  {
+    q: "What is the difference between gross and net yield?",
+    a: "Gross yield is the annual rental income divided by the property purchase price, expressed as a percentage. Net yield deducts ongoing expenses — property management fees (typically 7–10%), council rates, insurance, maintenance, vacancy, and strata levies — before dividing by purchase price. A property with 5% gross yield typically delivers 3–3.5% net yield after costs. Net yield is the more meaningful measure for comparing investment properties.",
+  },
+]);
+
 export default async function GlossaryPage() {
   const entries = await getGlossaryEntries();
   const grouped = groupByLetter(entries);
@@ -96,6 +119,10 @@ export default async function GlossaryPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(glossaryJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(glossaryFaqLd) }}
       />
 
       <div className="py-6 md:py-12">

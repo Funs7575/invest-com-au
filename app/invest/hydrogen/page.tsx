@@ -12,6 +12,7 @@ import GeneralAdviceWarning from "@/components/commodities/GeneralAdviceWarning"
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 1800;
 
@@ -66,6 +67,29 @@ const WAYS_TO_INVEST = [
   },
 ];
 
+const HYDROGEN_FAQS = faqJsonLd([
+  {
+    q: "How can I invest in hydrogen in Australia?",
+    a: "Australian investors can gain hydrogen exposure through ASX-listed pure-plays such as Hazer Group (HZR), Province Resources (PRL), and Frontier Energy (FHE); through majors with hydrogen optionality like Fortescue (FMG) and Origin Energy (ORG); through Global X Hydrogen ETF (ASX: HGEN); or through unlisted project equity in named hydrogen-to-ammonia export projects. Portfolio share holdings below 10% of ASX-listed companies are generally exempt from FIRB notification; direct project-equity investment triggers both FIRB and Security of Critical Infrastructure Act review.",
+  },
+  {
+    q: "What ASX-listed hydrogen stocks are there?",
+    a: "ASX hydrogen equities span majors with indirect exposure — Fortescue (FMG) and Origin Energy (ORG) — and pure-play developers including Hazer Group (HZR, methane pyrolysis), Province Resources (PRL, HyEnergy project), Frontier Energy (FHE, Waroona), Pure Hydrogen (PH2, blue and turquoise hydrogen), Sparc Technologies (SPN, photocatalytic R&D), and ReNu Energy (RNE, fuel cells). Most pure-plays are small-cap and pre-Final Investment Decision.",
+  },
+  {
+    q: "What government support exists for hydrogen investment in Australia?",
+    a: "The Australian Government's $2 billion Hydrogen Headstart Production Credit provides a 10-year dollar-per-kilogram production subsidy to successful applicants, materially improving project economics. The 2024 National Hydrogen Strategy sets a framework for development hubs, export corridors, and domestic use targets. State governments including WA, SA, and Queensland offer additional incentives for hydrogen hubs. Projects awarded Headstart credit have meaningfully de-risked economics compared with those still seeking support.",
+  },
+  {
+    q: "Is green hydrogen a viable investment?",
+    a: "Green hydrogen — produced via electrolysis powered by renewable electricity — faces a cost gap relative to grey hydrogen (from natural gas) at current electrolyser prices and electricity costs. Viability depends on continued electrolyser cost reductions, scale, and policy support such as the Hydrogen Headstart Production Credit. Australia has strong renewable resource advantages (solar and wind) for export-oriented green hydrogen to Japan, Korea, and Europe. Most pure-play Australian developers remain pre-production — investment in this sector is policy-driven and execution-dependent. This is general information only, not financial advice.",
+  },
+  {
+    q: "What are the risks of investing in hydrogen?",
+    a: "Key risks include: technology and cost risk (electrolysers and fuel cells remain expensive at scale); project execution risk (most ASX pure-plays are pre-FID with binary outcomes); policy risk (government support can change); commodity price risk for grey/blue hydrogen linked to gas prices; competition from other clean-energy technologies; and regulatory risk including FIRB and Security of Critical Infrastructure Act review for project equity. The gap between announced project pipelines and actual Final Investment Decisions has been significant across the sector.",
+  },
+]);
+
 export default async function HydrogenPage() {
   const sector = await getSector("hydrogen");
   if (!sector) notFound();
@@ -89,6 +113,12 @@ export default async function HydrogenPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {HYDROGEN_FAQS && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(HYDROGEN_FAQS) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">

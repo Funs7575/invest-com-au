@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import SavedComparisonsClient from "./SavedComparisonsClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Saved Comparisons | My Account",
   robots: "noindex, nofollow",

@@ -1,7 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
 import type { Advisor, Stats, Lead, ProfileCompleteness, ViewType } from "./types";
+import type { BenchmarksResponse } from "@/app/api/advisor-auth/benchmarks/route";
+import type { ProfileScoreResponse } from "@/app/api/advisor-auth/profile-score/route";
 
 function formatResponseTime(minutes: number | null): string {
   if (minutes === null) return "—";
@@ -9,6 +12,53 @@ function formatResponseTime(minutes: number | null): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return m === 0 ? `${h}h` : `${h}h ${m}m`;
+}
+
+/** Render a single benchmark comparison row. */
+function BenchmarkRow({
+  label,
+  yours,
+  peerMedian,
+  peerTop25: _peerTop25,
+  format,
+  lowerIsBetter = false,
+}: {
+  label: string;
+  yours: number | null;
+  peerMedian: number | null;
+  peerTop25?: number | null;
+  format: (v: number | null) => string;
+  lowerIsBetter?: boolean;
+}) {
+  const compareToMedian = (a: number | null, b: number | null): "better" | "worse" | "equal" | "unknown" => {
+    if (a === null || b === null) return "unknown";
+    if (lowerIsBetter) return a < b ? "better" : a > b ? "worse" : "equal";
+    return a > b ? "better" : a < b ? "worse" : "equal";
+  };
+  const vsMedian = compareToMedian(yours, peerMedian);
+
+  const indicatorClass =
+    vsMedian === "better"
+      ? "text-emerald-600 bg-emerald-50"
+      : vsMedian === "worse"
+        ? "text-red-500 bg-red-50"
+        : "text-slate-500 bg-slate-100";
+
+  const indicatorLabel =
+    vsMedian === "better" ? (lowerIsBetter ? "Faster" : "Above avg") :
+    vsMedian === "worse"  ? (lowerIsBetter ? "Slower" : "Below avg") :
+    vsMedian === "equal"  ? "At avg" : "—";
+
+  return (
+    <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-center py-2 border-b border-slate-100 last:border-0 text-xs">
+      <span className="text-slate-700 font-medium">{label}</span>
+      <span className="font-bold text-slate-900 text-right">{format(yours)}</span>
+      <span className="text-slate-400 text-right">{format(peerMedian)}</span>
+      <span className={`text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full text-right ${indicatorClass}`}>
+        {indicatorLabel}
+      </span>
+    </div>
+  );
 }
 
 type Props = {
@@ -20,11 +70,104 @@ type Props = {
 };
 
 export default function AnalyticsTab({ stats, advisor, leads, profileCompleteness, onNavigate }: Props) {
+  const [benchmarks, setBenchmarks] = useState<BenchmarksResponse | null>(null);
+  const [benchmarkLoading, setBenchmarkLoading] = useState(true);
+  const [benchmarkError, setBenchmarkError] = useState(false);
+
+  const [profileScore, setProfileScore] = useState<ProfileScoreResponse | null>(null);
+  const [profileScoreLoading, setProfileScoreLoading] = useState(true);
+  const [profileScoreError, setProfileScoreError] = useState(false);
+
+  const [exportPeriod, setExportPeriod] = useState<"30d" | "90d" | "all">("30d");
+  const [exporting, setExporting] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const r = await fetch("/api/advisor-auth/benchmarks");
+        if (!r.ok) throw new Error("fetch failed");
+        const data = await r.json() as BenchmarksResponse;
+        if (!cancelled) { setBenchmarks(data); setBenchmarkLoading(false); }
+      } catch {
+        if (!cancelled) { setBenchmarkError(true); setBenchmarkLoading(false); }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const r = await fetch("/api/advisor-auth/profile-score");
+        if (!r.ok) throw new Error("fetch failed");
+        const data = await r.json() as ProfileScoreResponse;
+        if (!cancelled) { setProfileScore(data); setProfileScoreLoading(false); }
+      } catch {
+        if (!cancelled) { setProfileScoreError(true); setProfileScoreLoading(false); }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  async function handleExportCsv() {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const r = await fetch(`/api/advisor-auth/analytics/export?period=${exportPeriod}`);
+      if (!r.ok) {
+        const body = await r.json() as { error?: string };
+        alert(body.error ?? "Export failed. Please try again.");
+        return;
+      }
+      const blob = await r.blob();
+      const disposition = r.headers.get("Content-Disposition") ?? "";
+      const filenameMatch = /filename="([^"]+)"/.exec(disposition);
+      const filename = filenameMatch?.[1] ?? `leads-${exportPeriod}.csv`;
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      alert("Export failed. Please try again.");
+    } finally {
+      setExporting(false);
+    }
+  }
+
   return (
     <div className="space-y-4 md:space-y-6">
-      <div>
-        <h2 className="text-lg md:text-xl font-bold text-slate-900">Performance Analytics</h2>
-        <p className="text-xs text-slate-500 mt-0.5">How your profile and content are performing across invest.com.au</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h2 className="text-lg md:text-xl font-bold text-slate-900">Performance Analytics</h2>
+          <p className="text-xs text-slate-500 mt-0.5">How your profile and content are performing across invest.com.au</p>
+        </div>
+
+        {/* CSV Export */}
+        <div className="flex items-center gap-2 shrink-0">
+          <select
+            value={exportPeriod}
+            onChange={(e) => setExportPeriod(e.target.value as "30d" | "90d" | "all")}
+            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-400"
+          >
+            <option value="30d">Last 30 days</option>
+            <option value="90d">Last 90 days</option>
+            <option value="all">All time</option>
+          </select>
+          <button
+            onClick={() => void handleExportCsv()}
+            disabled={exporting}
+            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          >
+            <Icon name={exporting ? "loader" : "download"} size={13} className={exporting ? "animate-spin" : ""} />
+            {exporting ? "Exporting…" : "Export CSV"}
+          </button>
+        </div>
       </div>
 
       {/* Top-level metrics */}
@@ -222,6 +365,167 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
           )}
         </div>
       )}
+
+      {/* Peer Benchmarking — "How You Compare" */}
+      <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="text-sm font-bold text-slate-900">How You Compare</h3>
+          {benchmarks && benchmarks.cohortSize > 0 && (
+            <span className="text-[0.6rem] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+              vs {benchmarks.cohortSize} peer{benchmarks.cohortSize !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+        <p className="text-[0.6rem] text-slate-400 mb-3">
+          Anonymous comparison with advisors of the same type and state. Peer names are never shown.
+        </p>
+
+        {benchmarkLoading && (
+          <div className="flex items-center gap-2 py-4 text-xs text-slate-400">
+            <span className="w-4 h-4 border-2 border-slate-200 border-t-slate-400 rounded-full animate-spin shrink-0" />
+            Loading peer benchmarks...
+          </div>
+        )}
+
+        {benchmarkError && (
+          <p className="text-xs text-slate-400 py-2">Benchmarks unavailable — check back soon.</p>
+        )}
+
+        {!benchmarkLoading && !benchmarkError && benchmarks && benchmarks.cohortSize < 3 && (
+          <p className="text-xs text-slate-400 py-2">
+            Not enough peers in your cohort yet — benchmarks appear once there are at least 3 advisors with your type and state.
+          </p>
+        )}
+
+        {!benchmarkLoading && !benchmarkError && benchmarks && benchmarks.cohortSize >= 3 && (
+          <>
+            {/* Column headers */}
+            <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 px-0 mb-1">
+              <span>Metric</span>
+              <span className="text-right">You</span>
+              <span className="text-right">Peer avg</span>
+              <span className="text-right">Top 25%</span>
+            </div>
+
+            <BenchmarkRow
+              label="Avg response time"
+              yours={benchmarks.yours.avgResponseMinutes}
+              peerMedian={benchmarks.peerMedian.avgResponseMinutes}
+              peerTop25={benchmarks.peerTop25.avgResponseMinutes}
+              format={formatResponseTime}
+              lowerIsBetter
+            />
+            <BenchmarkRow
+              label="Accept rate"
+              yours={benchmarks.yours.acceptRate}
+              peerMedian={benchmarks.peerMedian.acceptRate}
+              peerTop25={benchmarks.peerTop25.acceptRate}
+              format={(v) => v !== null ? `${v}%` : "—"}
+            />
+            <BenchmarkRow
+              label="Rating"
+              yours={benchmarks.yours.rating}
+              peerMedian={benchmarks.peerMedian.rating}
+              peerTop25={benchmarks.peerTop25.rating}
+              format={(v) => v !== null ? v.toFixed(1) : "—"}
+            />
+            <BenchmarkRow
+              label="Reviews"
+              yours={benchmarks.yours.reviewCount}
+              peerMedian={benchmarks.peerMedian.reviewCount}
+              peerTop25={benchmarks.peerTop25.reviewCount}
+              format={(v) => v !== null ? String(Math.round(v)) : "—"}
+            />
+
+            <p className="text-[0.55rem] text-slate-300 mt-3">
+              &ldquo;Top 25%&rdquo; = best-performing quartile of your peer cohort. Benchmarks update nightly.
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Profile Performance Score */}
+      <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-sm font-bold text-slate-900">Profile Performance Score</h3>
+          {profileScore && (
+            <span
+              className={`text-sm font-bold px-2.5 py-0.5 rounded-full ${
+                profileScore.score >= 80
+                  ? "bg-emerald-100 text-emerald-700"
+                  : profileScore.score >= 50
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-red-100 text-red-700"
+              }`}
+            >
+              {profileScore.score} / {profileScore.maxScore}
+            </span>
+          )}
+        </div>
+        <p className="text-[0.6rem] text-slate-400 mb-3">
+          A higher score means more trust signals for investors browsing your profile.
+        </p>
+
+        {profileScoreLoading && (
+          <div className="flex items-center gap-2 py-4 text-xs text-slate-400">
+            <span className="w-4 h-4 border-2 border-slate-200 border-t-slate-400 rounded-full animate-spin shrink-0" />
+            Calculating score…
+          </div>
+        )}
+
+        {profileScoreError && (
+          <p className="text-xs text-slate-400 py-2">Score unavailable — check back soon.</p>
+        )}
+
+        {!profileScoreLoading && !profileScoreError && profileScore && (
+          <>
+            {/* Progress bar */}
+            <div className="w-full bg-slate-100 rounded-full h-2 mb-4">
+              <div
+                className={`h-2 rounded-full transition-all duration-500 ${
+                  profileScore.score >= 80
+                    ? "bg-emerald-500"
+                    : profileScore.score >= 50
+                      ? "bg-amber-400"
+                      : "bg-red-400"
+                }`}
+                style={{ width: `${profileScore.score}%` }}
+              />
+            </div>
+
+            {/* Breakdown rows */}
+            <div className="space-y-1.5">
+              {profileScore.breakdown.map((item, i) => (
+                <div key={i} className={`flex items-start gap-2.5 p-2 rounded-lg ${item.earned ? "bg-emerald-50" : "bg-slate-50"}`}>
+                  <span className={`mt-0.5 shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[0.55rem] font-bold ${item.earned ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-400"}`}>
+                    {item.earned ? "✓" : "–"}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={`text-xs font-medium ${item.earned ? "text-emerald-800" : "text-slate-700"}`}>
+                        {item.label}
+                      </span>
+                      <span className={`text-[0.6rem] font-bold shrink-0 ${item.earned ? "text-emerald-600" : "text-slate-400"}`}>
+                        {item.earned ? `+${item.points}` : `+0/${item.points}`}
+                      </span>
+                    </div>
+                    {!item.earned && (
+                      <p className="text-[0.6rem] text-slate-400 mt-0.5 leading-relaxed">{item.tip}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {profileScore.score === 100 && (
+              <div className="mt-3 text-center text-emerald-600 text-xs font-semibold py-1.5">
+                <Icon name="check-circle" size={14} className="inline mr-1" />
+                Perfect score! Your profile is fully optimised.
+              </div>
+            )}
+          </>
+        )}
+      </div>
 
       {/* Tips */}
       <div className="bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-200 rounded-xl p-4 md:p-5">

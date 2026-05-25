@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -16,6 +17,29 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/invest/private-equity`,
   },
 };
+
+const privateEquityFaqLd = faqJsonLd([
+  {
+    q: "What is private equity and how can Australians invest in it?",
+    a: "Private equity (PE) involves investing in privately held companies not listed on a public exchange. In Australia, direct PE is restricted to wholesale (sophisticated) investors who meet asset ($2.5M+) or income ($250K+ p.a.) thresholds. Retail investors can access PE-style returns through ASX-listed vehicles such as the Pengana Private Equity Trust (PE1) or WAM Alternatives (WAX), which have no wholesale requirement.",
+  },
+  {
+    q: "What is the minimum investment for private equity in Australia?",
+    a: "For direct PE funds, minimums typically range from $250,000 to $2,000,000. Fund-of-funds lower this to $100,000–$500,000 for wholesale investors. ASX-listed PE vehicles can be accessed from as little as $10,000 through a standard brokerage account, making them the most accessible option for retail investors.",
+  },
+  {
+    q: "How does private equity differ from venture capital?",
+    a: "Private equity typically targets established, cash-flow-positive companies that are acquired through leveraged buyouts, with the aim of improving operations and exiting profitably within 5–10 years. Venture capital (VC) focuses on early-stage or growth-stage companies with high risk and high potential. In Australia, VC investments registered under the ESVCLP program can qualify as SIV-complying investments for Significant Investor Visa applicants.",
+  },
+  {
+    q: "What are the fees for private equity funds in Australia?",
+    a: "Australian PE funds typically charge a management fee of 1.5–2% per annum on committed capital, plus a carried interest (performance fee) of 20% of profits above an 8% preferred return hurdle. Hedge funds generally use a '2 and 20' structure — 2% management fee and 20% performance fee. Fund-of-funds add an additional layer of fees (0.5–1%) on top of underlying manager fees.",
+  },
+  {
+    q: "Can an SMSF invest in private equity?",
+    a: "Yes. A self-managed super fund (SMSF) can invest in PE and hedge funds, provided the investment satisfies the sole purpose test (providing retirement benefits), passes the investment strategy requirements, and meets SMSF valuation obligations for unlisted assets. ASX-listed PE vehicles (e.g., PE1) are the simplest route. Direct PE fund investments require the fund to accept SMSF trustees and often require a minimum balance well above $500,000.",
+  },
+]);
 
 export default function PrivateEquityPage() {
   const breadcrumb = breadcrumbJsonLd([
@@ -41,6 +65,10 @@ export default function PrivateEquityPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(privateEquityFaqLd) }}
       />
 
       {/* Hero */}
