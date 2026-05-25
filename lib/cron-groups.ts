@@ -53,6 +53,8 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/data-export-monitor",
     "/api/cron/process-data-exports",
     "/api/cron/account-deletion-reminder",
+    "/api/cron/redact-deleted-users",
+    "/api/cron/hard-delete-expired",
   ],
   "daily-3": [
     "/api/cron/referral-payouts",

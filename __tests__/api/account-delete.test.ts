@@ -48,6 +48,14 @@ const mockFrom = vi.fn(() => ({
       (chain.filters as { col: string; val: unknown }[]).push({ col, val });
       return chain;
     };
+    chain.is = (col: string, val: unknown) => {
+      (chain.filters as { col: string; val: unknown }[]).push({ col, val });
+      return chain;
+    };
+    chain.not = (col: string, _op: string, val: unknown) => {
+      (chain.filters as { col: string; val: unknown }[]).push({ col, val });
+      return chain;
+    };
     chain.then = (cb: (v: { data: null; error: { message: string } | null }) => void) => {
       updateCalls.push({
         payload,
@@ -210,18 +218,15 @@ describe("/api/account/delete", () => {
       });
       const res = await DELETE(makeReq("DELETE"));
       expect(res.status).toBe(200);
-      expect(updateCalls).toHaveLength(1);
-      expect(updateCalls[0]?.payload.status).toBe("cancelled");
-      expect(updateCalls[0]?.payload.cancelled_at).toEqual(expect.any(String));
+      // The cancel flips the user's scheduled row to cancelled. The GDPR
+      // soft-delete wiring also clears deleted_at markers on the entity
+      // tables, so updateCalls holds the cancel plus those clears.
+      const cancel = updateCalls.find((u) => u.payload.status === "cancelled");
+      expect(cancel).toBeDefined();
+      expect(cancel?.payload.cancelled_at).toEqual(expect.any(String));
       // Scoped to user + scheduled status (can't cancel someone else's)
-      expect(updateCalls[0]?.filters).toContainEqual({
-        col: "user_id",
-        val: "u1",
-      });
-      expect(updateCalls[0]?.filters).toContainEqual({
-        col: "status",
-        val: "scheduled",
-      });
+      expect(cancel?.filters).toContainEqual({ col: "user_id", val: "u1" });
+      expect(cancel?.filters).toContainEqual({ col: "status", val: "scheduled" });
     });
 
     it("returns 500 if the update errors", async () => {

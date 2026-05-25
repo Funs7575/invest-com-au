@@ -4,6 +4,10 @@ import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { sendEmail } from "@/lib/resend";
 import { isAllowed } from "@/lib/rate-limit-db";
+import {
+  markUserEntitiesDeleted,
+  clearUserEntitiesDeleted,
+} from "@/lib/gdpr-soft-delete";
 
 const log = logger("account-delete");
 
@@ -120,6 +124,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to schedule deletion" }, { status: 500 });
   }
 
+  // Soft-delete marker: stamp deleted_at on the user's own entity rows so the
+  // account disappears from soft-delete-aware reads immediately. Uses the
+  // RLS-scoped server client, so it only marks tables where the owner has an
+  // UPDATE policy (investor_profiles, business_accounts,
+  // listing_owner_accounts, professionals). broker_accounts has SELECT-only
+  // owner RLS, and cookie-session advisors have no auth.uid() — those rows are
+  // marked by the redact-deleted-users cron, which re-runs this with the
+  // service-role client before redacting. Best-effort: the
+  // account_deletion_requests row committed above is the authoritative
+  // timeline (the cron keys off scheduled_purge_at, not deleted_at), so a
+  // partial or failed mark here never blocks the eventual purge. PII is
+  // preserved until redaction so a within-grace cancel fully restores it.
+  const { failedTables } = await markUserEntitiesDeleted(supabase, user.id);
+  if (failedTables.length > 0) {
+    log.warn("account-delete soft-delete marker partial failure", {
+      userId: user.id,
+      failedTables,
+    });
+  }
+
   // K-07 (audit 2026-04-26 §7 SEC-07): send a confirmation email so
   // the user has a permanent record of the deadline + a cancel link
   // they can find later. Best-effort — failure to email does not roll
@@ -180,6 +204,19 @@ export async function DELETE(_request: NextRequest) {
   if (error) {
     log.error("account_deletion_requests cancel failed", error);
     return NextResponse.json({ error: "Failed to cancel deletion" }, { status: 500 });
+  }
+
+  // Restore the soft-delete marker set at request time so the cancelled
+  // account becomes fully visible again. Only rows not yet PII-redacted are
+  // touched (within the grace window nothing has been redacted, so this
+  // restores everything). Best-effort — the request status is already
+  // 'cancelled', which is what stops the redaction cron from acting.
+  const { failedTables } = await clearUserEntitiesDeleted(supabase, user.id);
+  if (failedTables.length > 0) {
+    log.warn("account-delete cancel soft-delete restore partial failure", {
+      userId: user.id,
+      failedTables,
+    });
   }
 
   return NextResponse.json({
