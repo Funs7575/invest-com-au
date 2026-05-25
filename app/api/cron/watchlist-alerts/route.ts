@@ -24,6 +24,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
+import { dispatchPushToUser } from "@/lib/push-dispatch";
 import {
   collectChangesForUser,
   renderWatchlistDigestHtml,
@@ -139,7 +140,7 @@ export async function GET(req: NextRequest) {
 
   // 3. Per-user: build the digest, send if non-empty, record state.
   const users = await fetchAuthUsers(supabase, userIds);
-  const stats = { sent: 0, skipped_empty: 0, skipped_no_email: 0, failed: 0 };
+  const stats = { sent: 0, skipped_empty: 0, skipped_no_email: 0, failed: 0, push_dispatched: 0 };
 
   for (const pref of optedIn) {
     const items = itemsByUser.get(pref.user_id) ?? [];
@@ -209,6 +210,19 @@ export async function GET(req: NextRequest) {
         userId: pref.user_id,
         error: updateErr.message,
       });
+    }
+
+    // Browser push — fire-and-forget alongside the email.
+    // dispatchPushToUser checks browser_push pref and skips silently when
+    // the user hasn't opted in, so this is always safe to call.
+    const pushResult = await dispatchPushToUser(pref.user_id, {
+      title: "Your watchlist this week",
+      body: `${changes.length} update${changes.length === 1 ? "" : "s"} on your watchlist.`,
+      url: MANAGE_HREF,
+      tag: `watchlist_digest:${pref.user_id}`,
+    });
+    if (pushResult.sent > 0) {
+      stats.push_dispatched += pushResult.sent;
     }
   }
 
