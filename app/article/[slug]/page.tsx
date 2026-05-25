@@ -24,6 +24,8 @@ import ClusterNav from "@/components/ClusterNav";
 import ArticleComments from "@/components/ArticleComments";
 import Icon from "@/components/Icon";
 import RelatedContentGrid from "@/components/RelatedContentGrid";
+import RelatedRail from "@/components/RelatedRail";
+import { getRelatedForArticle } from "@/lib/related-content";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LinkifiedText from "@/components/LinkifiedText";
@@ -708,6 +710,24 @@ export default async function ArticlePage({
                   meta: ra.read_time ? `${ra.read_time} min read` : undefined,
                 }))}
               />
+
+              {/* Calculators & Guides — derived from article category + tags.
+                  Pure: no extra DB fetch, computed from existing article fields. */}
+              {(() => {
+                const { tools } = getRelatedForArticle(
+                  { id: a.id, slug: a.slug, category: a.category, tags: a.tags, related_calc: a.related_calc },
+                  [], // articles already shown above; only need tools here
+                );
+                if (tools.length === 0) return null;
+                return (
+                  <RelatedRail
+                    heading="Calculators & Guides"
+                    items={[]}
+                    secondaryItems={tools}
+                    secondaryHeading="Free tools"
+                  />
+                );
+              })()}
 
               {/* Best Broker Guide Links */}
               {(() => {
