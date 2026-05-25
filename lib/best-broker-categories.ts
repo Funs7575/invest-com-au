@@ -2630,5 +2630,7 @@ export function getAllCategories(): BestBrokerCategory[] {
 }
 
 export function getAllCategorySlugs(): string[] {
-  return categories.map((c) => c.slug);
+  // Dedupe: two category entries can share a slug (one canonical /best/[slug] page),
+  // so the routable slug set must be unique (no duplicate sitemap URLs / static params).
+  return [...new Set(categories.map((c) => c.slug))];
 }
