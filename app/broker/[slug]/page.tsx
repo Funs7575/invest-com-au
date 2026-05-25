@@ -10,6 +10,7 @@ import BrokerReviewClient from "./BrokerReviewClient";
 import TmdBadge from "@/components/TmdBadge";
 import BrokerHistoryChart from "@/components/broker/BrokerHistoryChart";
 import SavingsRateHistoryChart from "@/components/savings/SavingsRateHistoryChart";
+import RateMemoryTracker from "@/components/savings/RateMemoryTracker";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -157,6 +158,20 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .or(`broker_a_slug.eq.${slug},broker_b_slug.eq.${slug}`)
       .limit(24),
   ]);
+
+  // Fetch current savings/TD rate for rate-memory tracker (savings/TD products only)
+  let currentSavingsRateBps: number | null = null;
+  if (b.platform_type === "savings_account" || b.platform_type === "term_deposit") {
+    const { data: rateSnap } = await supabase
+      .from("savings_rate_snapshots")
+      .select("rate_bps")
+      .eq("broker_id", b.id)
+      .eq("product_kind", b.platform_type)
+      .order("captured_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    currentSavingsRateBps = rateSnap?.rate_bps ?? null;
+  }
 
   // Filter related deals to same platform_type (or crypto match), take top 4
   const relatedDeals = ((relatedDealsRaw || []) as Broker[]).filter((d) => {
@@ -358,6 +373,18 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           pageSlug={b.slug}
         />
       </div>
+      {/* Rate memory tracker — shows delta since last visit for savings/TD */}
+      {(b.platform_type === "savings_account" || b.platform_type === "term_deposit") && currentSavingsRateBps !== null && (
+        <div className="container-custom max-w-4xl mt-4">
+          <RateMemoryTracker
+            brokerId={b.id}
+            productKind={b.platform_type}
+            currentRateBps={currentSavingsRateBps}
+            brokerName={b.name}
+          />
+        </div>
+      )}
+
       {/* Fee/rate history chart. Savings and TD products show rate
           history; all others show fee history. Renders nothing if
           fewer than 2 snapshots exist. */}
