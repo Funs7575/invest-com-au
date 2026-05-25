@@ -84,17 +84,6 @@ const SECOND: AdvisorCompareInput = {
   languages: [],
 };
 
-/** Third advisor for cap test. */
-const THIRD: AdvisorCompareInput = {
-  id: 4,
-  slug: "advisor-third",
-  name: "Third Advisor",
-  type: "tax_agent",
-  rating: 0,
-  review_count: 0,
-  verified: false,
-};
-
 /** Fourth advisor — should be dropped by the 3-cap. */
 const FOURTH: AdvisorCompareInput = {
   id: 5,

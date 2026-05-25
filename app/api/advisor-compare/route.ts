@@ -44,8 +44,11 @@ export async function GET(request: NextRequest) {
   }
 
   // Return in the same order as requested
+  const rows = (data ?? []) as unknown as Array<
+    Record<string, unknown> & { slug: string }
+  >;
   const ordered = slugs
-    .map((slug) => (data || []).find((a) => a.slug === slug))
+    .map((slug) => rows.find((a) => a.slug === slug))
     .filter(Boolean);
 
   return NextResponse.json({ advisors: ordered });
