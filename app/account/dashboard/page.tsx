@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { enforcePortalKind } from "@/lib/portal-gate";
 import { getInvestorProfile, type InvestorProfile } from "@/lib/investor-profiles";
 import { getInvestorAccountType, type InvestorAccountType } from "@/lib/account-types";
+import SmartRecommendationsStrip from "@/components/SmartRecommendationsStrip";
 
 export const dynamic = "force-dynamic";
 
@@ -602,6 +603,11 @@ export default async function PersonalDashboardPage() {
           ))}
         </div>
       </section>
+
+      {/* Smart personalised recommendations — brokers or advisors matched
+          to the user's quiz profile / investor profile / intent country.
+          Returns null when there is no signal or supply is too sparse. */}
+      <SmartRecommendationsStrip />
 
       {/* AT-02..04 — account-type-specific resource hub */}
       {accountTypeHub && (

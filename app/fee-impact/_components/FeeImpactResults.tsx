@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
@@ -354,15 +355,20 @@ export default function FeeImpactResults({
                     See the complete fee comparison and find the
                     cheapest broker for your trading style.
                   </p>
-                  <span
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-200 text-slate-500 font-bold text-sm rounded-lg cursor-default"
+                  <Link
+                    href="/account/upgrade"
+                    onClick={() =>
+                      trackEvent("pro_upsell_click", { source: "fee-impact-unlock", hidden_count: String(hiddenCount) }, "/fee-impact")
+                    }
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-lg transition-colors"
                   >
-                    Coming Soon
+                    Unlock {hiddenCount} more broker{hiddenCount !== 1 ? "s" : ""}
                     <svg
                       className="w-4 h-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      aria-hidden
                     >
                       <path
                         strokeLinecap="round"
@@ -371,7 +377,7 @@ export default function FeeImpactResults({
                         d="M9 5l7 7-7 7"
                       />
                     </svg>
-                  </span>
+                  </Link>
                 </div>
               </div>
             </div>
