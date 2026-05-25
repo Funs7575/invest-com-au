@@ -6,6 +6,7 @@ import AccountKindCards from "./AccountKindCards";
 import AccountActionPlansTiles from "./AccountActionPlansTiles";
 import AccountHero from "./_components/AccountHero";
 import AccountActivityFeed from "./_components/AccountActivityFeed";
+import AccountCohortWidget from "./_components/AccountCohortWidget";
 import PersonaCard from "@/components/persona/PersonaCard";
 import { createClient } from "@/lib/supabase/server";
 import { getKindsForUser, type KindMembership } from "@/lib/account-kinds";
@@ -33,6 +34,9 @@ export default async function AccountPage() {
   let reviewCount = 0;
   let dashboard: DashboardState | null = null;
   let persona: PersonaResult | null = null;
+  let cohortExperience: string | null = null;
+  let cohortBudget: string | null = null;
+  let cohortVertical: string | null = null;
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -71,6 +75,9 @@ export default async function AccountPage() {
           primaryVertical: profileData.primary_vertical ?? null,
         };
         persona = computePersona(personaInput);
+        cohortExperience = profileData.experience_level ?? null;
+        cohortBudget = profileData.budget_band ?? null;
+        cohortVertical = profileData.primary_vertical ?? null;
       }
     }
   } catch {
@@ -105,6 +112,15 @@ export default async function AccountPage() {
       {persona && (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4">
           <PersonaCard result={persona} showShare />
+        </div>
+      )}
+      {cohortExperience && cohortBudget && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-6">
+          <AccountCohortWidget
+            experienceLevel={cohortExperience}
+            budgetBand={cohortBudget}
+            primaryVertical={cohortVertical}
+          />
         </div>
       )}
       {plans.length > 0 && (
