@@ -18,6 +18,8 @@ import QuizNextBestActions from "./QuizNextBestActions";
 import QuizPrimaryActionHero from "./QuizPrimaryActionHero";
 import QuizInlineEmailCapture from "./QuizInlineEmailCapture";
 import { resolveBestOutcome } from "@/lib/quiz-outcome";
+import SocialProofCounter from "@/components/SocialProofCounter";
+import type { PlacementWinner } from "@/lib/sponsorship";
 
 interface ScoredResult {
   slug: string;
@@ -42,6 +44,9 @@ interface Props {
       the win first, then get nudged to capture (warm conversion). */
   onEmailCaptureSubmit: (email: string, name: string) => Promise<void> | void;
   emailCaptureStatus: "idle" | "loading" | "submitted" | "error";
+  /** CPC campaign winners for the quiz-boost placement — used to render
+      "Ad" chips on result cards whose slug is a paid winner (C1/RG 246). */
+  quizCampaignWinners?: PlacementWinner[];
 }
 
 export default function QuizResultsScreen({
@@ -58,12 +63,15 @@ export default function QuizResultsScreen({
   getMatchReasons,
   onEmailCaptureSubmit,
   emailCaptureStatus,
+  quizCampaignWinners = [],
 }: Props) {
   const topMatch = results[0];
   const runnerUps = results.slice(1);
   const allResults = results.filter(r => r.broker);
   const alternativesCount = Math.max(0, allResults.length - 1);
   const hasSponsoredResult = allResults.some(r => r.broker && isSponsored(r.broker));
+  const cpcWinnerSlugs = new Set(quizCampaignWinners.map(w => w.broker_slug));
+  const hasCpcWinner = allResults.some(r => cpcWinnerSlugs.has(r.slug));
 
   // Resolve the inferred best outcome — post-job, calculator-first,
   // bundle-stack, advisor-browse, education-first, advisor-match, or
@@ -142,6 +150,18 @@ export default function QuizResultsScreen({
             {headingText}
           </h1>
           <p className="text-[0.69rem] md:text-base text-slate-600">{subheadingText}</p>
+          {/* C3 — RG 234 clear & prominent: inline paid placement note shown
+              whenever any result card carries a CPC or sponsorship boost.
+              Full detail remains in the collapsible <details> below. */}
+          {(hasCpcWinner || hasSponsoredResult) && (
+            <p className="mt-1.5 md:mt-2 text-[0.62rem] md:text-xs text-blue-600 font-medium">
+              Includes paid placement &mdash; see &ldquo;How we work&rdquo; below for details.
+            </p>
+          )}
+          {/* F5 — social proof + cohort signal below the heading */}
+          <div className="flex items-center justify-center mt-2 md:mt-3">
+            <SocialProofCounter variant="badge" />
+          </div>
           <div className="flex items-center justify-center gap-2 md:gap-3 mt-2 md:mt-3 text-[0.62rem] md:text-xs text-slate-400">
             <span className="flex items-center gap-1">
               <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
@@ -169,7 +189,12 @@ export default function QuizResultsScreen({
             mortgage-home — where a broker pick isn't relevant). */}
         {showBrokerResults && topMatch?.broker && (
           <div id="top-match">
-            <QuizTopMatch topMatch={topMatch} answers={answers} getMatchReasons={getMatchReasons} />
+            <QuizTopMatch
+              topMatch={topMatch}
+              answers={answers}
+              getMatchReasons={getMatchReasons}
+              isCpcWinner={cpcWinnerSlugs.has(topMatch.slug)}
+            />
           </div>
         )}
 
@@ -393,7 +418,12 @@ export default function QuizResultsScreen({
             Outcomes like education-first / post-job / property-physical
             suppress this; the broker leaderboard is noise for those users. */}
         {showBrokerResults && showRunnerUps && (
-          <QuizRunnerUps runnerUps={runnerUps} answers={answers} getMatchReasons={getMatchReasons} />
+          <QuizRunnerUps
+            runnerUps={runnerUps}
+            answers={answers}
+            getMatchReasons={getMatchReasons}
+            cpcWinnerSlugs={cpcWinnerSlugs}
+          />
         )}
 
         {/* Inline email capture — warm-capture sweet spot. The user has

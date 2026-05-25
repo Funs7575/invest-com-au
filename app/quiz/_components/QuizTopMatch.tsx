@@ -17,9 +17,11 @@ interface Props {
   topMatch: ScoredResult;
   answers: string[];
   getMatchReasons: (answers: string[], broker: Broker) => string[];
+  /** True when this result is the CPC quiz-boost campaign winner — renders an "Ad" chip (RG 246). */
+  isCpcWinner?: boolean;
 }
 
-export default function QuizTopMatch({ topMatch, answers, getMatchReasons }: Props) {
+export default function QuizTopMatch({ topMatch, answers, getMatchReasons, isCpcWinner = false }: Props) {
   if (!topMatch.broker) return null;
   const broker = topMatch.broker;
 
@@ -64,6 +66,17 @@ export default function QuizTopMatch({ topMatch, answers, getMatchReasons }: Pro
           <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
             <h2 className="text-xl md:text-3xl font-extrabold">{broker.name}</h2>
             {isSponsored(broker) && <SponsorBadge broker={broker} />}
+            {/* C1 — RG 246: CPC paid placement must be labelled. "Ad" chip
+                is shown ONLY when this broker won the quiz-boost auction;
+                it is distinct from the editorial sponsorship_tier badge. */}
+            {isCpcWinner && (
+              <span
+                className="px-1.5 py-0.5 rounded text-[0.56rem] md:text-[0.62rem] font-bold uppercase tracking-wide bg-slate-200 text-slate-600 border border-slate-300"
+                aria-label="Paid advertisement"
+              >
+                Ad
+              </span>
+            )}
           </div>
           <div className="text-xs md:text-sm text-amber">{renderStars(broker.rating || 0)} <span className="text-slate-500">{broker.rating}/5</span></div>
         </div>

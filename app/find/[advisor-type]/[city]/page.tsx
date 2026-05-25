@@ -5,6 +5,8 @@ import { createStaticClient } from "@/lib/supabase/static";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import { logger } from "@/lib/logger";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import BookmarkButton from "@/components/BookmarkButton";
+import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
 
@@ -183,37 +185,62 @@ function AdvisorCard({ advisor }: { advisor: AdvisorRow }) {
 
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2 flex-wrap">
-          <div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <Link
+                href={`/advisors/${advisor.slug}`}
+                className="font-semibold text-slate-900 hover:text-blue-600 transition-colors"
+              >
+                {advisor.name}
+              </Link>
+              <VerifiedBadge
+                method={advisor.verification_method ?? null}
+                afsl={advisor.afsl_number ?? null}
+                abn={advisor.abn ?? null}
+                lastVerifiedAt={advisor.last_verified_at ?? null}
+                compact
+              />
+              {/* F8 — AFSL / ACL licence trust chip */}
+              {advisor.afsl_number && (
+                <span
+                  className="text-[0.65rem] font-semibold bg-sky-50 text-sky-700 border border-sky-200 px-1.5 py-0.5 rounded-full flex items-center gap-0.5"
+                  title={`Australian Financial Services Licence ${advisor.afsl_number}`}
+                >
+                  <Icon name="shield-check" size={10} className="text-sky-500" />
+                  AFSL&nbsp;{advisor.afsl_number}
+                </span>
+              )}
+              {/* C2 — Featured · Sponsored badge (RG 234 / ACL s18 compliance) */}
+              {advisor.is_sponsored && (
+                <span
+                  className="text-[0.65rem] font-semibold bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded-full"
+                  title="This advisor has a paid featured placement"
+                >
+                  Featured&nbsp;&middot;&nbsp;Sponsored
+                </span>
+              )}
+              {!advisor.is_sponsored && advisor.advisor_tier === "pro" && (
+                <span className="text-[0.65rem] font-semibold bg-violet-50 text-violet-700 border border-violet-200 px-1.5 py-0.5 rounded-full">
+                  Pro
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            {/* F1 — BookmarkButton */}
+            <BookmarkButton
+              type="advisor"
+              itemRef={advisor.slug}
+              label={advisor.name}
+              className="p-1.5 rounded-lg text-slate-300 hover:text-amber-500 hover:bg-amber-50 transition-colors"
+            />
             <Link
               href={`/advisors/${advisor.slug}`}
-              className="font-semibold text-slate-900 hover:text-blue-600 transition-colors"
+              className="text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              {advisor.name}
+              View Profile
             </Link>
-            <VerifiedBadge
-              method={advisor.verification_method ?? null}
-              afsl={advisor.afsl_number ?? null}
-              abn={advisor.abn ?? null}
-              lastVerifiedAt={advisor.last_verified_at ?? null}
-              compact
-            />
-            {advisor.is_sponsored && (
-              <span className="ml-2 text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium">
-                Featured
-              </span>
-            )}
-            {!advisor.is_sponsored && advisor.advisor_tier === "pro" && (
-              <span className="ml-2 text-xs bg-violet-50 text-violet-700 px-1.5 py-0.5 rounded font-medium">
-                Pro
-              </span>
-            )}
           </div>
-          <Link
-            href={`/advisors/${advisor.slug}`}
-            className="shrink-0 text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            View Profile
-          </Link>
         </div>
 
         {advisor.rating !== null && advisor.review_count !== null && advisor.review_count > 0 && (
@@ -311,6 +338,12 @@ export default async function FindAdvisorPage({ params }: Props) {
             {advisors.length} verified {typeInfo.description} in {city}. Compare profiles, ratings, and fees — free to browse.
           </p>
         </header>
+
+        {/* C2 — RG 234 / ACL s18 sponsored-placement disclosure */}
+        <p className="text-xs text-slate-500 mb-4 leading-relaxed" role="note">
+          <strong className="font-semibold text-slate-600">Featured · Sponsored</strong> advisors have a paid placement.
+          All other advisors are ranked by verification status and rating. Placement does not constitute a recommendation.
+        </p>
 
         <div className="space-y-3">
           {advisors.map((advisor) => (

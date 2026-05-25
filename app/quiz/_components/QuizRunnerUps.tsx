@@ -17,9 +17,11 @@ interface Props {
   runnerUps: ScoredResult[];
   answers: string[];
   getMatchReasons: (answers: string[], broker: Broker) => string[];
+  /** Set of broker slugs that won the CPC quiz-boost auction — renders "Ad" chip (RG 246). */
+  cpcWinnerSlugs?: Set<string>;
 }
 
-export default function QuizRunnerUps({ runnerUps, answers, getMatchReasons }: Props) {
+export default function QuizRunnerUps({ runnerUps, answers, getMatchReasons, cpcWinnerSlugs }: Props) {
   if (runnerUps.length === 0) return null;
 
   return (
@@ -47,6 +49,15 @@ export default function QuizRunnerUps({ runnerUps, answers, getMatchReasons }: P
                 <div className="flex items-center gap-1 md:gap-1.5 flex-wrap">
                   <h3 className="font-bold text-xs md:text-sm">{r.broker.name}</h3>
                   {isSponsored(r.broker) && <SponsorBadge broker={r.broker} />}
+                  {/* C1 — RG 246: CPC paid placement label on runner-up cards */}
+                  {cpcWinnerSlugs?.has(r.slug) && (
+                    <span
+                      className="px-1 py-px rounded text-[0.52rem] md:text-[0.56rem] font-bold uppercase tracking-wide bg-slate-200 text-slate-600 border border-slate-300"
+                      aria-label="Paid advertisement"
+                    >
+                      Ad
+                    </span>
+                  )}
                 </div>
                 <div className="text-[0.62rem] md:text-xs text-slate-500">
                   {(r.broker.platform_type === 'share_broker' || r.broker.platform_type === 'cfd_forex')

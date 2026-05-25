@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { renderStars } from "@/lib/tracking";
 import BrokerLogo from "@/components/BrokerLogo";
 import Icon from "@/components/Icon";
+import { useShortlist } from "@/lib/hooks/useShortlist";
 
 interface Props {
   brokers: Broker[];
@@ -12,6 +14,84 @@ interface Props {
   showMobileCompare: boolean;
   onToggleMobileCompare: () => void;
   onToggleSelected: (slug: string) => void;
+}
+
+/**
+ * F7: Inline email capture inside the sticky bar.
+ * Saves the shortlist via useShortlist and registers for broker fee-change
+ * alerts via /api/fee-alerts. Shown only on desktop (md:flex) to keep
+ * the mobile bar lean.
+ */
+function ShortlistFeeAlertInline({ selectedSlugs }: { selectedSlugs: string[] }) {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const { slugs: savedSlugs, toggle } = useShortlist();
+
+  const unsavedSlugs = selectedSlugs.filter(s => !savedSlugs.includes(s));
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email || !email.includes("@")) return;
+    setStatus("sending");
+    try {
+      // Save any unsaved slugs to the persistent shortlist
+      for (const slug of unsavedSlugs) toggle(slug);
+
+      // Register fee-change alerts for the selected brokers
+      const res = await fetch("/api/fee-alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, brokerSlugs: selectedSlugs }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error((data as { error?: string }).error ?? `HTTP ${res.status}`);
+      setStatus("done");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "done") {
+    return (
+      <p className="text-[0.62rem] text-emerald-300 font-medium whitespace-nowrap">
+        ✓ Shortlist saved — fee alerts set
+      </p>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <p className="text-[0.62rem] text-red-300 font-medium whitespace-nowrap">
+        Something went wrong — try again
+      </p>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="hidden md:flex items-center gap-1.5" aria-label="Save shortlist and get fee alerts">
+      <label className="sr-only" htmlFor="shortlist-alert-email">
+        Email for fee alerts
+      </label>
+      <input
+        id="shortlist-alert-email"
+        type="email"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        placeholder="Email — save shortlist + fee alerts"
+        required
+        autoComplete="email"
+        className="rounded-lg border border-slate-600 bg-slate-800 px-2.5 py-1.5 text-[0.62rem] text-white placeholder-slate-400 focus:border-amber-400 focus:outline-none w-52"
+        disabled={status === "sending"}
+      />
+      <button
+        type="submit"
+        disabled={status === "sending" || !email}
+        className="shrink-0 rounded-lg bg-amber-500 px-3 py-1.5 text-[0.62rem] font-bold text-white hover:bg-amber-600 disabled:opacity-50 transition-colors"
+      >
+        {status === "sending" ? "Saving…" : "Save + Alert"}
+      </button>
+    </form>
+  );
 }
 
 export default function CompareSelectionBar({
@@ -23,12 +103,14 @@ export default function CompareSelectionBar({
 }: Props) {
   if (selected.size < 2) return null;
 
+  const selectedSlugs = Array.from(selected);
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 text-white py-2.5 md:py-3 shadow-lg bounce-in-up" style={{ paddingBottom: 'max(0.625rem, env(safe-area-inset-bottom))' }}>
       <div className="container-custom flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <div className="flex -space-x-1.5 shrink-0 md:hidden">
-            {Array.from(selected).slice(0, 4).map(slug => {
+            {selectedSlugs.slice(0, 4).map(slug => {
               const br = brokers.find(b => b.slug === slug);
               if (!br) return null;
               return (
@@ -40,6 +122,10 @@ export default function CompareSelectionBar({
             {selected.size}/4 selected
           </span>
         </div>
+
+        {/* F7: Save shortlist + fee alerts prompt — desktop only */}
+        <ShortlistFeeAlertInline selectedSlugs={selectedSlugs} />
+
         <div className="flex items-center gap-2">
           {/* Mobile: Quick Compare inline */}
           <button
@@ -49,7 +135,7 @@ export default function CompareSelectionBar({
             {showMobileCompare ? "Close" : "Quick Compare"}
           </button>
           <Link
-            href={`/versus?vs=${Array.from(selected).join(',')}`}
+            href={`/versus?vs=${selectedSlugs.join(',')}`}
             className="shrink-0 px-4 py-2 min-h-11 inline-flex items-center md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
           >
             Full Compare →
@@ -62,7 +148,7 @@ export default function CompareSelectionBar({
         <div className="md:hidden mt-2 pb-1">
           <div className="container-custom">
             <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 flex gap-2 snap-x snap-mandatory">
-              {Array.from(selected).map(slug => {
+              {selectedSlugs.map(slug => {
                 const br = brokers.find(b => b.slug === slug);
                 if (!br) return null;
                 return (

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import WealthStackClient from "./WealthStackClient";
 
 // FIN_NOTEBOOK Revenue #1 (concierge wealth-stack) — the user-facing
@@ -38,7 +41,12 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
-export default function WealthStackPage() {
+export default async function WealthStackPage() {
+  // Kill-switch: flip `wealth_stack` off in /admin/automation/flags to hide
+  // this page without a deploy. Default-off until the flag row is created.
+  const enabled = await isFlagEnabled("wealth_stack");
+  if (!enabled) notFound();
+
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Your Wealth Stack" },
@@ -50,6 +58,17 @@ export default function WealthStackPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+
+      {/* Prominent general advice warning — required above named multi-product picks */}
+      <div
+        role="note"
+        aria-label="General advice warning"
+        className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800 leading-relaxed"
+      >
+        <p className="font-semibold mb-0.5">General information only</p>
+        <p>{GENERAL_ADVICE_WARNING}</p>
+      </div>
+
       <WealthStackClient />
     </div>
   );

@@ -6,7 +6,7 @@ import { trackEvent } from "@/lib/tracking";
 import { trackEvent as phTrack } from "@/lib/posthog/events";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
-import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey } from "@/lib/quiz-scoring";
+import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey, type ScoredResult } from "@/lib/quiz-scoring";
 import { intentCountryFromSlug, quizKeyForIntentCode } from "@/lib/intent-context";
 
 import QuizQuestionScreen from "./_components/QuizQuestionScreen";
@@ -375,6 +375,36 @@ const fallbackScores: Record<string, Record<WeightKey, number>> = {
 
 const QUIZ_STORAGE_KEY = "invest-quiz-v2-progress";
 
+/**
+ * Build a shareable /quiz URL that encodes the top-3 result slugs and key
+ * answer signals so a recipient lands directly on the results screen instead
+ * of restarting the quiz (F3).
+ *
+ * Params:
+ *   r  — comma-separated top-3 broker slugs (primary signal for recipient)
+ *   g  — goal answer (index 0 of scoring answers)
+ *   e  — experience answer
+ *   a  — amount answer
+ *   p  — priority answer
+ *
+ * On load the page reads `r` and, when present, jumps to diy-results with
+ * synthetic answers reconstructed from g/e/a/p.
+ */
+function buildShareUrl(slugs: string[], answers: UnifiedAnswers): string {
+  const params = new URLSearchParams();
+  if (slugs.length > 0) params.set("r", slugs.slice(0, 3).join(","));
+  if (answers.goal) params.set("g", answers.goal);
+  if (answers.experience) params.set("e", answers.experience);
+  if (answers.amount) params.set("a", answers.amount);
+  if (answers.priority) params.set("p", answers.priority);
+  const base =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/quiz`
+      : "https://invest.com.au/quiz";
+  const qs = params.toString();
+  return qs ? `${base}?${qs}` : base;
+}
+
 function loadSavedProgress(): { currentId: QuestionId; answers: UnifiedAnswers; history: QuestionId[] } | null {
   try {
     const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
@@ -429,6 +459,11 @@ export default function QuizPage() {
   const questionHeadingRef = useRef<HTMLHeadingElement>(null);
   const quizStartedAtRef = useRef<number | null>(null);
 
+  // Shared-result URL param (F3): when ?r= is present the page jumps
+  // straight to diy-results with the encoded answer signals reconstructed.
+  // We use a separate boolean so the jump only fires once on mount.
+  const [sharedResultSlugs, setSharedResultSlugs] = useState<string[]>([]);
+
   // Restore saved progress on mount
   useEffect(() => {
     const saved = loadSavedProgress();
@@ -472,6 +507,47 @@ export default function QuizPage() {
     // progress or in-flight user input.
     setAnswers((prev) => (Object.keys(prev).length === 0 ? { ...prev, ...seed } : prev));
   }, []);
+
+  // F3 — shared result URL: detect ?r=<slugs>&g=<goal>&e=<exp>&a=<amount>&p=<priority>
+  // and jump directly to the results screen, reconstructing answers from params.
+  // This runs ONCE on mount; saved-progress detection above is intentionally
+  // separate so the saved-progress banner doesn't fire on shared links.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const rParam = params.get("r");
+    if (!rParam) return;
+
+    // Parse slugs
+    const slugs = rParam.split(",").filter(Boolean).slice(0, 3);
+    if (slugs.length === 0) return;
+    setSharedResultSlugs(slugs);
+
+    // Reconstruct answers from URL signals — enough to reproduce scoring
+    const reconstructed: UnifiedAnswers = {};
+    const goal = params.get("g");
+    const exp = params.get("e");
+    const amount = params.get("a");
+    const priority = params.get("p");
+
+    const validGoals = ["grow", "income", "crypto", "trade", "automate", "super", "property", "home", "alt-assets", "royalties", "pre-ipo", "help", "other"];
+    const validExp = ["beginner", "intermediate", "pro"];
+    const validAmounts = ["small", "medium", "large", "whale"];
+    const validPriority = ["fees", "safety", "tools", "simple"];
+
+    if (goal && validGoals.includes(goal)) reconstructed.goal = goal;
+    if (exp && validExp.includes(exp)) reconstructed.experience = exp;
+    if (amount && validAmounts.includes(amount)) reconstructed.amount = amount;
+    if (priority && validPriority.includes(priority)) reconstructed.priority = priority;
+    // Default location so scoring functions that read it don't see undefined
+    reconstructed.location = "australia";
+
+    // Jump to results phase with seeded answers
+    setAnswers(reconstructed);
+    setPhase("diy-results");
+    // Suppress resume-prompt so saved progress banner doesn't overlay results
+    setResumePrompt(false);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- intentional mount-only
 
   useEffect(() => {
     mountedRef.current = true;
@@ -523,6 +599,31 @@ export default function QuizPage() {
   // Compute scored results (memoised)
   const scoringAnswers = useMemo(() => toScoringAnswers(answers), [answers]);
   const results = useMemo(() => {
+    // F3 — shared link: pin the encoded slugs as the result list so the
+    // recipient sees exactly what the sharer saw. We still run scoring for
+    // the answer-based signals (match reasons, scoring bar), but reorder
+    // the final list to match the sharer's ordering. Falls back to normal
+    // scoring when brokers haven't loaded yet (empty array).
+    if (sharedResultSlugs.length > 0 && brokers.length > 0) {
+      const allScored = scoreQuizResults(
+        scoringAnswers,
+        weights,
+        brokers,
+        quizCampaignWinners,
+        answers.amount as AmountKey | undefined,
+        answers.goal,
+      );
+      const bySlug = new Map(allScored.map(r => [r.slug, r]));
+      const pinnedRaw = sharedResultSlugs.map(slug => {
+        const scored = bySlug.get(slug);
+        if (scored) return scored;
+        const broker = brokers.find(b => b.slug === slug);
+        return broker ? { slug, total: 0, broker } : null;
+      });
+      const pinned = pinnedRaw.filter((r): r is ScoredResult => r !== null && r.broker !== undefined);
+      const rest = allScored.filter(r => !sharedResultSlugs.includes(r.slug));
+      return [...pinned, ...rest].slice(0, 3);
+    }
     return scoreQuizResults(
       scoringAnswers,
       weights,
@@ -531,7 +632,7 @@ export default function QuizPage() {
       answers.amount as AmountKey | undefined,
       answers.goal,
     );
-  }, [scoringAnswers, weights, brokers, quizCampaignWinners, answers.amount, answers.goal]);
+  }, [sharedResultSlugs, scoringAnswers, weights, brokers, quizCampaignWinners, answers.amount, answers.goal]);
 
   const hasCryptoResult = useMemo(() => results.some(r => r.broker?.is_crypto), [results]);
 
@@ -673,7 +774,10 @@ export default function QuizPage() {
   };
 
   const handleShareResult = async () => {
-    const shareUrl = window.location.href;
+    // F3 — encode top-3 slugs + key answer signals so the recipient lands
+    // directly on the results screen instead of restarting the quiz.
+    const topSlugs = results.filter(r => r.broker).slice(0, 3).map(r => r.slug);
+    const shareUrl = buildShareUrl(topSlugs, answers);
     const topBrokerName = results[0]?.broker?.name || "my top platform";
     const shareText = `I got matched on Invest.com.au and ${topBrokerName} ranked highest for my criteria! Try Get Matched:`;
     if (typeof navigator.share === "function") {
@@ -783,6 +887,7 @@ export default function QuizPage() {
         getMatchReasons={getMatchReasons}
         onEmailCaptureSubmit={handleInlineEmailSubmit}
         emailCaptureStatus={emailCaptureStatus}
+        quizCampaignWinners={quizCampaignWinners}
       />
     );
   }

@@ -6,7 +6,7 @@ import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/li
 import { ADVERTISER_DISCLOSURE_SHORT, RISK_WARNING_CTA } from "@/lib/compliance";
 import BrokerLogo from "@/components/BrokerLogo";
 
-export default function StickyCTABar({ broker, detail, context = 'review' }: { broker: Broker; detail: string; context?: 'review' | 'versus' | 'calculator' }) {
+export default function StickyCTABar({ broker, detail, context = 'review' }: { broker: Broker; detail: string; context?: 'review' | 'versus' | 'calculator' | 'compare' }) {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 

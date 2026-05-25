@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 import { useUser } from "@/lib/hooks/useUser";
+import NotificationPreferences from "@/components/NotificationPreferences";
 import {
   buildOnboardingProfilePayload,
   type OnboardingData,
@@ -11,7 +12,7 @@ import {
 
 /* ── Constants ── */
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 4;
 
 const INTEREST_OPTIONS = [
   { value: "shares", label: "Shares", icon: "trending-up" },
@@ -291,7 +292,7 @@ export default function OnboardingClient() {
     if (step === 1) return form.interested_in.length >= 1;
     if (step === 2)
       return form.investing_experience !== "" && form.investment_goals !== "";
-    return true; // Step 3 is all optional
+    return true; // Steps 3 & 4 are optional
   };
 
   const handleNext = () => {
@@ -468,7 +469,7 @@ export default function OnboardingClient() {
           {step === 3 && (
             <div>
               <h2 className="text-2xl font-extrabold text-slate-900 text-center mb-2">
-                Almost done — a few details
+                A few more details
               </h2>
               <p className="text-sm text-slate-500 text-center mb-8">
                 All fields are optional. You can update these later.
@@ -539,6 +540,21 @@ export default function OnboardingClient() {
                     ))}
                   </select>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Step 4: Notification preferences ── */}
+          {step === 4 && (
+            <div>
+              <h2 className="text-2xl font-extrabold text-slate-900 text-center mb-2">
+                Stay in the loop
+              </h2>
+              <p className="text-sm text-slate-500 text-center mb-8">
+                Choose what you want to hear about. You can change these anytime in account settings.
+              </p>
+              <div className="bg-white border border-slate-200 rounded-xl p-5">
+                <NotificationPreferences />
               </div>
             </div>
           )}
