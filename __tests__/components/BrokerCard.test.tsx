@@ -3,6 +3,11 @@ import { render, screen } from "./setup";
 import BrokerCard from "@/components/BrokerCard";
 import type { Broker } from "@/lib/types";
 
+// BookmarkButton (added to BrokerCard in #1132) creates a Supabase browser
+// client at render, which throws without env in jsdom. Mock to a no-op —
+// BrokerCard's own rendering is what's under test here.
+vi.mock("@/components/BookmarkButton", () => ({ default: () => null }));
+
 /**
  * Factory for creating test broker data with sensible defaults.
  * Override any field by passing a partial Broker.
