@@ -14326,47 +14326,65 @@ export type Database = {
       }
       rate_alert_subscriptions: {
         Row: {
+          broker_slug: string | null
           created_at: string
+          direction: string
           email: string
           frequency: string
           id: string
+          last_fired_value_bps: number | null
           last_notified_at: string | null
+          lender_slug: string | null
+          metric_kind: string | null
           notification_count: number
           product_filters: Json
           product_kind: string
           threshold_bps: number
           unsubscribe_token: string
           updated_at: string
+          user_id: string | null
           verified: boolean
           verify_token: string
         }
         Insert: {
+          broker_slug?: string | null
           created_at?: string
+          direction?: string
           email: string
           frequency?: string
           id?: string
+          last_fired_value_bps?: number | null
           last_notified_at?: string | null
+          lender_slug?: string | null
+          metric_kind?: string | null
           notification_count?: number
           product_filters?: Json
           product_kind: string
           threshold_bps: number
           unsubscribe_token: string
           updated_at?: string
+          user_id?: string | null
           verified?: boolean
           verify_token: string
         }
         Update: {
+          broker_slug?: string | null
           created_at?: string
+          direction?: string
           email?: string
           frequency?: string
           id?: string
+          last_fired_value_bps?: number | null
           last_notified_at?: string | null
+          lender_slug?: string | null
+          metric_kind?: string | null
           notification_count?: number
           product_filters?: Json
           product_kind?: string
           threshold_bps?: number
           unsubscribe_token?: string
           updated_at?: string
+          user_id?: string | null
           verified?: boolean
           verify_token?: string
         }

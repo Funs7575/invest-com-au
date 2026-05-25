@@ -3,64 +3,98 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
+import { notifyUser } from "@/lib/notifications";
 import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
+import {
+  evaluateThreshold,
+  metricKindLabel,
+  metricKindPath,
+  type AlertSubscription,
+  type MetricKind,
+} from "@/lib/alert-thresholds";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const log = logger("cron:rate-alerts");
 
-// FIN_NOTEBOOK Revenue #4: scan public.rate_alert_subscriptions for
-// verified subscribers whose threshold has been crossed by the current
-// best-rate snapshot, and send a notification.
+// FIN_NOTEBOOK Revenue #4: evaluate all rate_alert_subscriptions against
+// current market data and dispatch email + in-app notifications when
+// a threshold is crossed.
 //
-// Data flow:
-//   1. Pull the best (highest rate_bps) snapshot per product_kind from
-//      savings_rate_snapshots — that's the headline rate the alert is
-//      compared against.
-//   2. For each verified subscription, check whether the best rate for
-//      its product_kind meets-or-exceeds the threshold.
-//   3. Anti-spam: skip if last_notified_at is within 24h (instant) or
-//      the matching frequency window (daily / weekly).
-//   4. Dispatch via sendEmail (suppression-aware) and stamp
-//      last_notified_at + bump notification_count.
+// Metric sources:
+//   savings_rate / term_deposit → savings_rate_snapshots (best per product_kind)
+//   loan_rate                   → investment_loan_rates (per lender_slug or best)
+//   broker_fee                  → brokers.asx_fee_value (per broker_slug)
 //
-// Failure modes:
-//   - Empty snapshots → no-op heartbeat (logs count, returns
-//     awaiting_rate_snapshot_ingestion status).
-//   - Send failure for one subscriber → log + continue (don't block
-//     other dispatches).
-
-interface SnapshotRow {
-  product_kind: string;
-  rate_bps: number;
-  captured_at: string;
-}
+// Idempotent:
+//   - Records last_notified_at + last_fired_value_bps on fire.
+//   - lib/alert-thresholds.ts enforces cooldown + hysteresis before fire.
+//   - notifyUser() deduplicates in-app notifications via email_delivery_key.
 
 interface SubscriptionRow {
   id: string;
+  user_id: string | null;
   email: string;
+  metric_kind: string | null;
   product_kind: string;
   threshold_bps: number;
+  direction: string;
   frequency: string;
+  broker_slug: string | null;
+  lender_slug: string | null;
   last_notified_at: string | null;
+  last_fired_value_bps: number | null;
   notification_count: number;
 }
 
-function minMillisBetweenSends(frequency: string): number {
-  switch (frequency) {
-    case "daily":
-      return 24 * 60 * 60 * 1000;
-    case "weekly":
-      return 7 * 24 * 60 * 60 * 1000;
-    case "instant":
-    default:
-      // "instant" still rate-limits to once per 24h per user — the alert
-      // is about a rate crossing the threshold, not the rate changing
-      // by a cent every minute.
-      return 24 * 60 * 60 * 1000;
+// ── Market-data snapshot types ────────────────────────────────────────────────
+
+interface SavingsSnapshot {
+  product_kind: string;
+  rate_bps: number;
+}
+
+interface LoanRateRow {
+  lender_slug: string;
+  rate_pct: number; // percentage — convert to bps (* 100)
+}
+
+interface BrokerFeeRow {
+  slug: string;
+  asx_fee_value: number | null;
+}
+
+// ── Resolve current market value for a subscription ───────────────────────────
+
+function resolveCurrentValue(
+  sub: SubscriptionRow,
+  bestSavingsByKind: Map<string, number>,
+  loanRatesBySlug: Map<string, number>,
+  brokerFeesBySlug: Map<string, number>,
+): number | null {
+  const kind = (sub.metric_kind ?? sub.product_kind) as MetricKind | string;
+
+  if (kind === "savings_rate" || kind === "savings_account") {
+    return bestSavingsByKind.get("savings_account") ?? null;
   }
+  if (kind === "term_deposit") {
+    return bestSavingsByKind.get("term_deposit") ?? null;
+  }
+  if (kind === "loan_rate") {
+    if (sub.lender_slug) {
+      return loanRatesBySlug.get(sub.lender_slug) ?? null;
+    }
+    // No specific lender — use the best (lowest) rate available.
+    if (loanRatesBySlug.size === 0) return null;
+    return Math.min(...loanRatesBySlug.values());
+  }
+  if (kind === "broker_fee") {
+    if (!sub.broker_slug) return null;
+    return brokerFeesBySlug.get(sub.broker_slug) ?? null;
+  }
+  return null;
 }
 
 export async function GET(req: NextRequest) {
@@ -69,127 +103,211 @@ export async function GET(req: NextRequest) {
 
   const supabase = createAdminClient();
   const startedAt = new Date().toISOString();
+  const siteUrl = getSiteUrl();
+  const nowMs = Date.now();
 
-  // Pull the most-recent snapshot per (broker_id, product_kind) and
-  // pick the headline (highest rate_bps) per product_kind.
-  const { data: snapshots, error: snapErr } = await supabase
-    .from("savings_rate_snapshots")
-    .select("product_kind, rate_bps, captured_at")
-    .order("captured_at", { ascending: false })
-    .limit(500);
+  // ── 1. Load market data ────────────────────────────────────────────────────
 
-  if (snapErr) {
-    log.error("snapshot query failed", { err: snapErr.message });
-    return NextResponse.json({ error: snapErr.message }, { status: 500 });
+  const [savingsRes, loansRes, brokersRes] = await Promise.all([
+    supabase
+      .from("savings_rate_snapshots")
+      .select("product_kind, rate_bps, captured_at")
+      .order("captured_at", { ascending: false })
+      .limit(500),
+    supabase
+      .from("investment_loan_rates")
+      .select("lender_slug, rate_pct"),
+    supabase
+      .from("brokers")
+      .select("slug, asx_fee_value")
+      .eq("status", "active"),
+  ]);
+
+  if (savingsRes.error) {
+    log.error("savings snapshots query failed", { err: savingsRes.error.message });
+    return NextResponse.json({ error: savingsRes.error.message }, { status: 500 });
   }
 
-  const bestByKind = new Map<string, SnapshotRow>();
-  for (const snap of (snapshots ?? []) as SnapshotRow[]) {
-    const current = bestByKind.get(snap.product_kind);
-    if (!current || snap.rate_bps > current.rate_bps) {
-      bestByKind.set(snap.product_kind, snap);
+  // Build best (highest rate_bps) per product_kind for savings/td.
+  const bestSavingsByKind = new Map<string, number>();
+  for (const snap of (savingsRes.data ?? []) as SavingsSnapshot[]) {
+    const current = bestSavingsByKind.get(snap.product_kind);
+    if (current === undefined || snap.rate_bps > current) {
+      bestSavingsByKind.set(snap.product_kind, snap.rate_bps);
     }
   }
 
+  // Loan rates: rate_pct → bps.
+  const loanRatesBySlug = new Map<string, number>();
+  for (const row of (loansRes.data ?? []) as LoanRateRow[]) {
+    loanRatesBySlug.set(row.lender_slug, Math.round(row.rate_pct * 100));
+  }
+
+  // Broker fees: asx_fee_value is in cents; treat cents as bps units for
+  // comparison (1 cent = 1 bps unit). Threshold set by user in same unit.
+  const brokerFeesBySlug = new Map<string, number>();
+  for (const row of (brokersRes.data ?? []) as BrokerFeeRow[]) {
+    if (row.asx_fee_value !== null) {
+      brokerFeesBySlug.set(row.slug, Math.round(row.asx_fee_value));
+    }
+  }
+
+  // ── 2. Load verified subscriptions ────────────────────────────────────────
+
   const { data: subs, error: subsErr } = await supabase
     .from("rate_alert_subscriptions")
-    .select("id, email, product_kind, threshold_bps, frequency, last_notified_at, notification_count")
+    .select(
+      "id, user_id, email, metric_kind, product_kind, threshold_bps, direction, frequency, broker_slug, lender_slug, last_notified_at, last_fired_value_bps, notification_count",
+    )
     .eq("verified", true);
 
   if (subsErr) {
-    log.error("verified subscriptions query failed", { err: subsErr.message });
+    log.error("subscriptions query failed", { err: subsErr.message });
     return NextResponse.json({ error: subsErr.message }, { status: 500 });
   }
 
   const verified = subs?.length ?? 0;
-  if (bestByKind.size === 0) {
-    log.info("rate-alerts cron heartbeat — no snapshots yet", { verified });
-    return NextResponse.json({
-      startedAt,
-      verifiedSubscriptions: verified,
-      notified: 0,
-      status: "awaiting_rate_snapshot_ingestion",
-    });
+
+  if (verified === 0) {
+    log.info("rate-alerts cron heartbeat — no verified subscriptions", { verified });
+    return NextResponse.json({ startedAt, verified, notified: 0, status: "no_subscriptions" });
   }
 
-  const now = Date.now();
-  const siteUrl = getSiteUrl();
+  // ── 3. Evaluate thresholds and dispatch ───────────────────────────────────
+
   let notified = 0;
-  let skippedAntiSpam = 0;
-  let skippedBelowThreshold = 0;
+  let skippedNoData = 0;
+  let skippedNotCrossed = 0;
+  let skippedCooldown = 0;
+  let skippedHysteresis = 0;
   const failures: { id: string; err: string }[] = [];
 
-  for (const sub of (subs ?? []) as SubscriptionRow[]) {
-    const best = bestByKind.get(sub.product_kind);
-    if (!best) {
-      skippedBelowThreshold++;
+  for (const rawSub of (subs ?? []) as SubscriptionRow[]) {
+    const currentValue = resolveCurrentValue(
+      rawSub,
+      bestSavingsByKind,
+      loanRatesBySlug,
+      brokerFeesBySlug,
+    );
+
+    if (currentValue === null) {
+      skippedNoData++;
       continue;
     }
-    if (best.rate_bps < sub.threshold_bps) {
-      skippedBelowThreshold++;
+
+    const alertSub: AlertSubscription = {
+      id: rawSub.id,
+      metric_kind: (rawSub.metric_kind ?? rawSub.product_kind) as MetricKind,
+      threshold_bps: rawSub.threshold_bps,
+      direction: (rawSub.direction ?? "above") as "above" | "below",
+      frequency: (rawSub.frequency ?? "instant") as AlertSubscription["frequency"],
+      last_notified_at: rawSub.last_notified_at,
+      last_fired_value_bps: rawSub.last_fired_value_bps,
+    };
+
+    const result = evaluateThreshold(alertSub, currentValue, nowMs);
+
+    if (!result.shouldFire) {
+      if (result.suppressReason === "not_crossed") skippedNotCrossed++;
+      else if (result.suppressReason === "cooldown") skippedCooldown++;
+      else if (result.suppressReason === "hysteresis") skippedHysteresis++;
       continue;
     }
 
-    if (sub.last_notified_at) {
-      const lastMs = new Date(sub.last_notified_at).getTime();
-      if (now - lastMs < minMillisBetweenSends(sub.frequency)) {
-        skippedAntiSpam++;
-        continue;
-      }
-    }
+    const kind = alertSub.metric_kind;
+    const label = metricKindLabel(kind);
+    const path = metricKindPath(kind);
+    const valuePct = (currentValue / 100).toFixed(2);
+    const thresholdPct = (rawSub.threshold_bps / 100).toFixed(2);
+    const directionText = alertSub.direction === "above" ? "crossed above" : "dropped below";
+    const valueDisplay =
+      kind === "broker_fee"
+        ? `$${valuePct} (ASX fee)`
+        : `${valuePct}% p.a.`;
 
-    const productLabel = sub.product_kind === "savings_account" ? "savings account" : "term deposit";
-    const ratePct = (best.rate_bps / 100).toFixed(2);
-    const thresholdPct = (sub.threshold_bps / 100).toFixed(2);
-
-    const result = await sendEmail({
-      to: sub.email,
-      subject: `Rate alert: ${productLabel} now at ${ratePct}% p.a.`,
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;color:#334155">
-          <div style="background:#0f172a;padding:20px 24px;border-radius:12px 12px 0 0">
-            <h1 style="color:white;margin:0;font-size:18px">Rate Alert</h1>
-          </div>
-          <div style="background:#f8fafc;padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">
-            <p style="font-size:15px;margin-top:0">An Australian ${productLabel} just crossed your <strong>${thresholdPct}%</strong> target.</p>
-            <p style="font-size:14px;color:#64748b">Current headline rate: <strong>${ratePct}% p.a.</strong></p>
-            <div style="text-align:center;margin:20px 0">
-              <a href="${siteUrl}/${sub.product_kind === "savings_account" ? "savings" : "term-deposits"}"
-                 style="display:inline-block;padding:12px 32px;background:#0f172a;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600">
-                Compare ${productLabel}s &rarr;
-              </a>
-            </div>
-            <p style="font-size:12px;color:#94a3b8">Heads-up: bonus / intro rates may apply. Always check the fine print before switching.</p>
-          </div>
+    const emailHtml = `
+      <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;color:#334155">
+        <div style="background:#0f172a;padding:20px 24px;border-radius:12px 12px 0 0">
+          <h1 style="color:white;margin:0;font-size:18px">Rate Alert</h1>
         </div>
-      `,
+        <div style="background:#f8fafc;padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">
+          <p style="font-size:15px;margin-top:0">
+            The <strong>${label}</strong> just ${directionText} your
+            <strong>${kind === "broker_fee" ? `$${thresholdPct}` : `${thresholdPct}%`}</strong> threshold.
+          </p>
+          <p style="font-size:14px;color:#64748b">
+            Current value: <strong>${valueDisplay}</strong>
+          </p>
+          <div style="text-align:center;margin:20px 0">
+            <a href="${siteUrl}${path}"
+               style="display:inline-block;padding:12px 32px;background:#0f172a;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600">
+              Compare now &rarr;
+            </a>
+          </div>
+          <p style="font-size:12px;color:#94a3b8">
+            This is a factual market data alert — not personal financial advice.
+            Rates and fees may vary. Always read the product disclosure statement.
+          </p>
+        </div>
+      </div>
+    `;
+
+    const emailResult = await sendEmail({
+      to: rawSub.email,
+      subject: `Alert: ${label} ${directionText} ${kind === "broker_fee" ? `$${thresholdPct}` : `${thresholdPct}%`}`,
+      html: emailHtml,
     });
 
-    if (!result.ok) {
-      failures.push({ id: sub.id, err: result.error ?? "unknown" });
-      continue;
+    if (!emailResult.ok) {
+      failures.push({ id: rawSub.id, err: emailResult.error ?? "unknown" });
     }
 
+    // Always stamp the row (even if email failed) so we don't immediately retry.
     await supabase
       .from("rate_alert_subscriptions")
       .update({
         last_notified_at: new Date().toISOString(),
-        notification_count: sub.notification_count + 1,
+        last_fired_value_bps: currentValue,
+        notification_count: (rawSub.notification_count ?? 0) + 1,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", sub.id);
+      .eq("id", rawSub.id);
+
+    // Write in-app notification for user-linked subscriptions.
+    if (rawSub.user_id) {
+      // Dedup key: one in-app notification per subscription per calendar day.
+      const dayKey = Math.floor(nowMs / 86_400_000);
+      await notifyUser({
+        userId: rawSub.user_id,
+        type: "fee_change",
+        title: `${label.charAt(0).toUpperCase() + label.slice(1)} alert`,
+        body: `${label.charAt(0).toUpperCase() + label.slice(1)} (${valueDisplay}) ${directionText} your ${kind === "broker_fee" ? `$${thresholdPct}` : `${thresholdPct}%`} threshold.`,
+        linkUrl: path,
+        emailDeliveryKey: `rate_alert:${rawSub.id}:${dayKey}`,
+      });
+    }
 
     notified++;
   }
 
-  log.info("rate-alerts cron complete", { verified, notified, skippedAntiSpam, skippedBelowThreshold, failures: failures.length });
+  log.info("rate-alerts cron complete", {
+    verified,
+    notified,
+    skippedNoData,
+    skippedNotCrossed,
+    skippedCooldown,
+    skippedHysteresis,
+    failures: failures.length,
+  });
 
   return NextResponse.json({
     startedAt,
     verifiedSubscriptions: verified,
     notified,
-    skippedAntiSpam,
-    skippedBelowThreshold,
+    skippedNoData,
+    skippedNotCrossed,
+    skippedCooldown,
+    skippedHysteresis,
     failures: failures.length,
   });
 }
