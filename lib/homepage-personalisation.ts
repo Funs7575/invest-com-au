@@ -73,7 +73,7 @@ export function buildWelcomeGreeting(
 ): string | null {
   if (kind === "anonymous") return null;
   if (kind === "signed-in") {
-    const first = displayName?.split(" ")[0]?.trim() ?? null;
+    const first = displayName?.trim().split(/\s+/)[0] || null;
     return first ? `Welcome back, ${first}` : "Welcome back";
   }
   // "returning" — quiz-signal visitor without a session
