@@ -9,6 +9,7 @@ import { getActiveBrokersFull } from "@/lib/cached-data";
 import BrokerReviewClient from "./BrokerReviewClient";
 import TmdBadge from "@/components/TmdBadge";
 import BrokerHistoryChart from "@/components/broker/BrokerHistoryChart";
+import SavingsRateHistoryChart from "@/components/savings/SavingsRateHistoryChart";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -357,12 +358,21 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           pageSlug={b.slug}
         />
       </div>
-      {/* Wave 15 — Fee history chart. Renders nothing if there are
-          fewer than 2 snapshots, so a freshly-added broker doesn't
-          show an empty frame. */}
+      {/* Fee/rate history chart. Savings and TD products show rate
+          history; all others show fee history. Renders nothing if
+          fewer than 2 snapshots exist. */}
       <div className="container-custom max-w-4xl mt-10">
         <Suspense fallback={null}>
-          <BrokerHistoryChart slug={b.slug} metric="asx_fee_value" daysBack={30} />
+          {b.platform_type === "savings_account" || b.platform_type === "term_deposit" ? (
+            <SavingsRateHistoryChart
+              brokerId={b.id}
+              productKind={b.platform_type}
+              brokerName={b.name}
+              daysBack={90}
+            />
+          ) : (
+            <BrokerHistoryChart slug={b.slug} metric="asx_fee_value" daysBack={30} />
+          )}
         </Suspense>
       </div>
 
