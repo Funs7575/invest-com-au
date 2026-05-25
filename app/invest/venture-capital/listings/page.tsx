@@ -18,6 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Browse Australian venture capital investment opportunities for wholesale investors. Early-stage, Series A/B and growth equity fund mandates. Compare VC fund structures, sector focus and minimum commitments.",
     alternates: { canonical: `${SITE_URL}/invest/venture-capital/listings` },
+    // No live listings yet — de-indexed until supply threshold is met.
+    // Remove when countListingsByVertical("venture-capital") > 0 in prod.
+    robots: { index: false, follow: false },
     openGraph: {
       title: `Venture Capital Investment Opportunities — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/venture-capital/listings`,

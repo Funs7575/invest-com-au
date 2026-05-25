@@ -1,0 +1,8 @@
+{
+  "route": "/etfs/international",
+  "finalUrl": "https://invest-com-au.vercel.app/global-investing/etfs/global",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T23:06:18.429Z",
+  "viewport": "desktop"
+}

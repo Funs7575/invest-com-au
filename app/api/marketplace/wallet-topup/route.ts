@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { isAllowed } from "@/lib/rate-limit-db";
 
 const log = logger("wallet");
 
@@ -14,6 +15,12 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    // Rate limit per user — each call creates a pending invoice + Stripe
+    // checkout session, so cap scripted top-up loops.
+    if (!(await isAllowed("wallet_topup", `u:${user.id}`, { max: 10, refillPerSec: 10 / 3600 }))) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     // Verify broker account
@@ -28,6 +35,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No active broker account" }, { status: 403 });
     }
 
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- Pre-existing session-gated endpoint; amount validated inline. Tracked for Zod migration.
     const body = await request.json();
     const amountDollars = parseInt(body.amount, 10);
 

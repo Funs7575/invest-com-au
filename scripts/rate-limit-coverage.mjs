@@ -77,6 +77,10 @@ const EXEMPT_PATTERNS = [
   { match: /\/api\/stripe\//, reason: "session auth required" },
   // Public v1 API key authenticated — has its own quota system.
   { match: /\/api\/v1\//, reason: "API-key authenticated with per-key quota" },
+  // Internal service-to-service routes authenticated via INTERNAL_API_SECRET.
+  // Only callable from within the same Vercel project (e.g. fire-and-forget
+  // from edge routes that can't use Node-only libs directly).
+  { match: /\/api\/internal\//, reason: "INTERNAL_API_SECRET-authenticated; server-to-server only" },
   // Revalidate + seed are CRON_SECRET-authenticated (see handlers).
   { match: /\/api\/revalidate(\/|$)/, reason: "CRON_SECRET-authenticated" },
   { match: /\/api\/seed(\/|$)/, reason: "CRON_SECRET-authenticated" },
@@ -107,6 +111,10 @@ const EXEMPT_PATTERNS = [
   // absorbs repeats from the same IP. Per-IP throttle inside the
   // handler would cost cache hits with no real threat model.
   { match: /\/api\/country-rule-alerts(\/|$)/, reason: "public read w/ 5m CDN cache; provider-pooled" },
+  // Disabled pre-AFSL: these endpoints return 410 Gone unconditionally.
+  // A static error response cannot be abused; rate limiting adds nothing.
+  { match: /\/api\/portfolio-xray(\/|$)/, reason: "disabled pre-AFSL (410 Gone stub)" },
+  { match: /\/api\/tax-optimizer(\/|$)/, reason: "disabled pre-AFSL (410 Gone stub)" },
 ];
 
 async function findRouteFiles(dir) {

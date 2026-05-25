@@ -38,11 +38,8 @@ name: Stale-PR sweeper
 #   • Comments + labels via GITHUB_TOKEN — does not require a PAT.
 
 on:
-  schedule:
-    # 03:00 UTC daily — off-peak, after the 02:00 audit-remediation scout
-    # cron has finished, before the European morning when founder is most
-    # likely to be reviewing PRs.
-    - cron: "0 3 * * *"
+  # DISABLED 2026-05-25 (founder request: stop loop/auto-merge churn).
+  # Re-enable by restoring the original triggers (see git history).
   workflow_dispatch: {}
 
 permissions:

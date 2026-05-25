@@ -15,7 +15,7 @@ export interface TeamMember {
   updated_at: string;
 }
 
-export type PlatformType = 'share_broker' | 'crypto_exchange' | 'robo_advisor' | 'research_tool' | 'super_fund' | 'property_platform' | 'cfd_forex' | 'savings_account' | 'term_deposit' | 'fx_provider';
+export type PlatformType = 'share_broker' | 'crypto_exchange' | 'robo_advisor' | 'research_tool' | 'super_fund' | 'property_platform' | 'cfd_forex' | 'savings_account' | 'term_deposit' | 'fx_provider' | 'business_lender';
 
 /** Canonical display labels for each platform type — single source of truth */
 export const PLATFORM_TYPE_LABELS: Record<PlatformType, string> = {
@@ -29,6 +29,7 @@ export const PLATFORM_TYPE_LABELS: Record<PlatformType, string> = {
   savings_account: "Savings Account",
   term_deposit: "Term Deposit",
   fx_provider: "FX Provider",
+  business_lender: "Business Lender",
 };
 
 /** Lowercase labels for prose (e.g. "broker", "crypto exchange") */
@@ -43,6 +44,7 @@ export const PLATFORM_TYPE_LABELS_LOWER: Record<PlatformType, string> = {
   savings_account: "savings account",
   term_deposit: "term deposit",
   fx_provider: "FX provider",
+  business_lender: "business lender",
 };
 
 export interface Broker {

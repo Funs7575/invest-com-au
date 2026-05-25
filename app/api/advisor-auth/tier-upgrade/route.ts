@@ -8,6 +8,7 @@ import { enqueueJob } from "@/lib/job-queue";
 import { getSiteUrl } from "@/lib/url";
 import { escapeHtml } from "@/lib/html-escape";
 import { recordLedgerEntry } from "@/lib/advisor-credit-ledger";
+import { isAllowed } from "@/lib/rate-limit-db";
 
 const log = logger("advisor-tier-upgrade");
 
@@ -35,6 +36,12 @@ export const runtime = "nodejs";
 export async function POST(request: NextRequest) {
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+  // Rate limit per advisor — each call can create a Stripe checkout/
+  // subscription mutation, write a credit-ledger row, and enqueue an email.
+  if (!(await isAllowed("advisor_tier_upgrade", `a:${advisorId}`, { max: 10, refillPerSec: 10 / 3600 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
 
   // eslint-disable-next-line invest/no-unvalidated-req-json -- Pre-existing endpoint with inline narrow type-guards on each field; advisor-session-gated. Tracked for migration to withValidatedBody in a dedicated cleanup PR.
   const body = await request.json().catch(() => ({}));

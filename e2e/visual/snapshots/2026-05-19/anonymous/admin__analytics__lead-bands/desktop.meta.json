@@ -1,0 +1,8 @@
+{
+  "route": "/admin/analytics/lead-bands",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fanalytics%2Flead-bands",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:30:42.763Z",
+  "viewport": "desktop"
+}

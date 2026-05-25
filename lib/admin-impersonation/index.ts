@@ -71,6 +71,22 @@ export async function startImpersonation(
   return data as ImpersonationRow;
 }
 
+/**
+ * List recent impersonation audit rows (active first, then most recent) for the
+ * admin visibility view (audit §5 #13). admin_impersonations is deny-all-RLS,
+ * so this reads via the service-role client.
+ */
+export async function listImpersonations(limit = 100): Promise<ImpersonationRow[]> {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("admin_impersonations")
+    .select("*")
+    .order("ended_at", { ascending: true, nullsFirst: true })
+    .order("started_at", { ascending: false })
+    .limit(limit);
+  return (data as ImpersonationRow[]) ?? [];
+}
+
 export async function endImpersonation(rowId: number): Promise<void> {
   const admin = createAdminClient();
   await admin

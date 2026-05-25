@@ -1,0 +1,8 @@
+{
+  "route": "/broker-portal/deals",
+  "finalUrl": "https://invest-com-au.vercel.app/broker-portal/login?redirect=%2Fbroker-portal%2Fdeals",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:53:13.032Z",
+  "viewport": "desktop"
+}

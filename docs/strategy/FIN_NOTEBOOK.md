@@ -14,6 +14,129 @@
 
 ## Active strategic decisions log
 
+### 2026-05-21 — Platform Expansion (PX stream) shipped
+
+Seven features that turn the platform from comparison directory into practice management tool for advisors and financial dashboard for investors.
+
+**Shipped in one session (branch `claude/sweet-gates-izLBx`):**
+- **PX-01: Slack lead alerts** — `slack_webhook_url` column on professionals, Slack Block Kit formatter (`lib/slack-lead-notify.ts`), internal Node route (`/api/internal/lead-webhooks`), advisor Settings tab UI. Advisors paste a Slack Incoming Webhook URL → get a structured Slack ping on every matched lead.
+- **PX-02: CRM/Zapier webhook sync** — `lead.received` added to outbound webhook ALLOWED_EVENTS; `sendOutboundWebhook` now accepts optional owner filter (prevents cross-advisor event leakage); wired from `submit-lead` via fire-and-forget internal route (edge runtime compatibility).
+- **PX-03: Firm shared lead inbox** — `Mine/Team` toggle in LeadsTab when `is_firm_admin=true`; `/api/advisor-portal/firm-leads` (GET + PATCH) returns all firm member leads with assignment dropdown. Firm admins can now see and reassign all leads across their team.
+- **PX-04: Fee impact visualiser** — `components/FeeImpactVisualiser.tsx` (pure SVG, no deps, interactive amount/horizon selectors, animated area chart, AUD callout). Embedded in `/broker/[slug]/` Fee Audit section for ETF/managed fund contexts.
+- **PX-05: Referral programme migration** — `referral_codes` + `referral_claims` tables (with RLS) that wire up the already-built `/api/referrals` route and `/account/referrals` UI which were orphaned without a DB backing.
+- **PX-06: Calendar booking on advisor profile** — already done (booking_link + BookingWidget already on advisor/[slug] profile page). No work needed.
+- **PX-07: Annual Financial MOT email** — daily cron (`/api/cron/annual-mot`) finds users whose account anniversary is today, queries their bookmarks, sends personalised re-engagement email. `mot_sent_at` column on `investor_profiles` prevents duplicate sends. Uses `auth.admin.listUsers()` pagination pattern.
+
+**Key architectural decision:** outbound webhooks (CRM/Zapier) and Slack notifications share one internal Node runtime route (`/api/internal/lead-webhooks`) called fire-and-forget from the edge `submit-lead` route. This sidesteps the `node:crypto` / edge runtime incompatibility without breaking the edge performance budget.
+
+**Docs:** `docs/plans/PLATFORM_EXPANSION_BRIEF.md` has full spec for each item.
+
+**Revisit:** 2026-06-21 — check Slack adoption rate in settings (query `SELECT COUNT(*) FROM professionals WHERE slack_webhook_url IS NOT NULL`), lead response time improvement in LeadsTab analytics, fee visualiser engagement (PostHog).
+
+---
+
+### 2026-05-21 — GEO pivot: optimise to be *cited* by AI, not to *rank*
+
+**Trigger:** Google I/O 2026 (May 19–20) — the largest search overhaul in 25 years.
+Ten-blue-links increasingly replaced by AI-synthesised answers (Gemini 3.5 Flash).
+Founder's framing of the numbers: zero-click ~58.5% of queries; position-1 organic
+CTR on AI-impacted queries fell 27% → 11%; brands cited inside AI Overviews see ~35%
+more organic / ~91% more paid clicks than uncited competitors. *(I can't verify the
+exact I/O figures — knowledge cutoff Jan 2026 — but the direction, zero-click rising +
+AI Overviews reshaping CTR, was already the established trend; the strategy holds
+regardless of the precise percentages.)*
+
+**Decision: SEO → GEO (Generative Engine Optimization).** The goal shifts from ranking
+to *being the source Google's AI cites when Australians ask financial questions*. This
+is a lens applied to existing work, not a new build — most of the moats already exist.
+
+**Moats that matter in this world (all already real assets):**
+- 30-year domain (registered 1996) — strongest AU-finance authority signal for citation.
+  See [[project_invest_domain_lineage]].
+- `/quotes` reverse marketplace — transactional, not summarisable → structurally AI-proof.
+- Listing depth across 8+ verticals — AI prefers comprehensive structured sources.
+- Schema markup everywhere — `lib/schema-markup.ts` (single source of truth) is how AI
+  parses and surfaces us.
+
+**Grounded codebase state (checked 2026-05-21):**
+- **Glossary: 122 terms today** (`lib/glossary.ts` + DB-backed `lib/glossary-db.ts`,
+  migration `20260419_glossary_terms.sql`). Target 200 → **78 to add.** Definitional AU
+  finance content is prime citation material → this is the highest-leverage near-term GEO
+  lever and cheapest to ship.
+- **Schema gap:** `lib/schema-markup.ts` has article / FAQ / broker-FinancialProduct /
+  advisor / ItemList / listing-Product / versus / calculator / governmentService builders,
+  but **no `DefinedTerm` / `DefinedTermSet`** (the glossary-citation schema) and **no
+  `Speakable`**. Adding those two is the most direct "make us machine-citable" code change.
+- **AI Q&A capture (#7 / stream QQ)** is already in-flight and squarely on-strategy —
+  public Q&A landing pages with answer-first structure are exactly what GEO wants. Don't
+  treat GEO as greenfield; it largely re-prioritises QQ + glossary + schema.
+
+**Operating rules for all content work this session forward:**
+1. Schema markup non-negotiable on every listing, broker/advisor profile, and article.
+2. Every article/glossary term leads with a direct answer in the first 2–3 sentences
+   (extraction-ready), before any preamble.
+3. Glossary → 200 terms is now **high priority** (was untracked).
+4. Restructure informational content for AI extraction, not just keyword density.
+5. Competitive read: Finder/Canstar bleed *informational* traffic first → window to
+   become the cited AU-finance source on definitional/explanatory queries.
+
+**Concrete next actions (smallest-first):**
+- [x] **SHIPPED 2026-05-21** — `definedTermJsonLd` / `definedTermSetJsonLd` /
+  `definedTermPageJsonLd` / `speakableSpecification` added to `lib/schema-markup.ts`
+  (single source of truth; canonical `GLOSSARY_TERM_SET` shared so term page + index
+  can't drift). Glossary term page now emits a `WebPage` → `speakable` (answer-first
+  heading `#glossary-term-name` + lead definition `#glossary-term-definition`) →
+  `mainEntity: DefinedTerm`, replacing the hand-rolled inline node; index uses
+  `definedTermSetJsonLd`. 41 schema tests green, tsc clean. **This is the GEO schema floor.**
+- [ ] Audit existing articles/glossary entries for answer-first opening sentences.
+- [x] **Glossary "→200" was ALREADY met — corrected 2026-05-21.** The live glossary is
+  DB-backed (`public.glossary_terms`, seeded by migration `20260419` with **203 terms**);
+  `lib/glossary.ts` (122) is only the `JargonTooltip` source + build-time fallback and had
+  drifted behind. Real gap was static/DB parity, not new content. First attempt synced all
+  81 into `lib/glossary.ts` — but that file is **client-bundled** (JargonTooltip imports
+  `GLOSSARY`), so it tipped the shared client chunk +49.5 kB over the 12 MB bundle budget
+  (CI caught it). **Final shape (#1156):** keep `lib/glossary.ts` lean at 122 (client tooltip
+  set, == main, zero bundle change); put the 81 specialised terms in a **server-only**
+  `lib/glossary-extended.ts` (`FULL_GLOSSARY_ENTRIES` = 203) that powers the sitemap (was
+  missing 81 live term pages → now complete), internal-link targets, and the DB fallback.
+  Net: a GEO win (all 203 term pages in the sitemap + more internal-link targets) with no
+  client cost. Lesson (again): grep the runtime source before scoping from a tracker count,
+  and watch what's client- vs server-bundled. *Net-new terms beyond 203 = separate
+  new-content task; route through the content loop for accuracy.*
+- [ ] Confirm QQ public Q&A pages emit FAQ + (where apt) Speakable schema.
+
+**Deeper GEO dive (2026-05-21) — what else to add/adjust, grounded in the codebase:**
+1. **Schema is broad but split across two modules.** `lib/schema-markup.ts` AND `lib/seo.ts`
+   both emit Article/FAQ schema (`articleAuthorJsonLd`/`articleFaqJsonLd` live in seo.ts;
+   `/best/[slug]` uses schema-markup's `articleJsonLd`). Not a bug, but consolidate to one
+   so GEO changes (Speakable, dateModified discipline) land everywhere at once.
+2. **`Speakable` should extend beyond glossary** — add it to article TL;DRs, `/questions/[slug]`
+   answers, and the versus `tldr` (which already exists as answer-first copy in
+   `lib/versus-content.ts`). The answer copy is written; it just isn't marked machine-readable.
+3. **`dateModified` is the cheapest authority signal for AI** — AI engines prefer fresh,
+   dated sources. Ensure every Article/DefinedTerm emits a real `dateModified` (glossary
+   currently shows only `CURRENT_YEAR` in visible copy, no per-term date in schema).
+4. **FAQPage is on 27 pages — extend to listings + calculators** ("How much is FIRB fee for
+   a $2m property?" is exactly an AI-Overview query; calculator pages should emit the Q&A).
+5. **Author/E-E-A-T entities — already strong (verified 2026-05-21).** `articleAuthorJsonLd`
+   in `lib/seo.ts` already emits `Person` with `sameAs` (LinkedIn/Twitter), `jobTitle`,
+   `worksFor`, and `/authors/[slug]`, plus a separate reviewer Person block. Low-priority;
+   the win here is just ensuring every published article actually has an author assigned.
+6. **Citable stats/data**: AI cites concrete numbers. Fee tables, return figures, and
+   comparison data should sit in extractable `Table`/`Dataset`-friendly markup, not images.
+7. **Crawler policy — verified 2026-05-21.** AI crawlers (GPTBot/Google-Extended/Perplexity)
+   are currently **allowed** (only a `User-agent: *` block disallowing admin/api/auth/account
+   paths). Good for a citation strategy — don't add AI-bot disallows. TWO caveats: (a) there
+   are **two robots sources** — `app/robots.ts` AND `public/robots.txt` — and in Next.js the
+   static `public/robots.txt` wins, so `app/robots.ts` is dead/confusing → consolidate to one;
+   (b) **no `llms.txt`** exists — cheap, on-strategy add (curated map of our best citable pages).
+8. **Measurement is the hard part** — AI-Overview citations aren't in GSC cleanly. Proxy via
+   impressions-up/clicks-flat divergence + referrer strings from AI engines in PostHog.
+
+**Revisit:** 2026-06-21 — did cited-rate / referral mix actually move once QQ + the schema
+additions ship? (Hard to measure directly; proxy via GSC impressions-vs-clicks gap and any
+AI-Overview-attributed referrers PostHog can see.)
+
 ### 2026-05-20 — Cross-border #24 Phase A finished + Phase B engineering shipped
 
 Closed out the remaining cross-border engineering in one session. Most of it

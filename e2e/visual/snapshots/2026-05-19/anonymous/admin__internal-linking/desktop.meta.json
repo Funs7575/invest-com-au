@@ -1,0 +1,8 @@
+{
+  "route": "/admin/internal-linking",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Finternal-linking",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:37:05.461Z",
+  "viewport": "desktop"
+}

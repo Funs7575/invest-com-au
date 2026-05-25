@@ -19,7 +19,10 @@
  *                           React. Safer than dangerouslySetInnerHTML.
  */
 
-import { GLOSSARY_ENTRIES } from "@/lib/glossary";
+// Full live glossary (203 terms), server-only — keyword linking runs in
+// server-rendered article output, so the extended set adds internal-link
+// targets without touching the client bundle. See lib/glossary-extended.ts.
+import { FULL_GLOSSARY_ENTRIES as GLOSSARY_ENTRIES } from "@/lib/glossary-extended";
 import { getPillarForPath } from "@/lib/content/topic-clusters";
 
 export interface LinkTarget {

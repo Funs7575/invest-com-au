@@ -34,8 +34,9 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/lead-sla-check",
     "/api/cron/editorial-auto-publish",
   ],
-  "every-30m": ["/api/cron/heartbeat", "/api/cron/retry-webhooks", "/api/cron/auction-close"],
-  "every-6h": ["/api/admin/run-migration"],
+  "every-30m": ["/api/cron/heartbeat", "/api/cron/retry-webhooks", "/api/cron/retry-outbound-webhooks", "/api/cron/auction-close"],
+  // every-6h removed: its only member, /api/admin/run-migration, is now
+  // admin-session-only (audit §5 #12) and runs on demand, not on a schedule.
 
   "daily-0": ["/api/cron/auto-publish"],
   "daily-1": [
@@ -59,6 +60,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/observability-retention",
     "/api/cron/advisor-credit-expiry",
     "/api/cron/advisor-auto-topup",
+    "/api/cron/annual-mot",
   ],
   "daily-4": [
     "/api/cron/email-bounce-sweep",
@@ -91,6 +93,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/advisor-nudge",
     "/api/cron/subscription-dunning",
     "/api/cron/marketplace-stale-briefs",
+    "/api/cron/lead-followup-reminders",
   ],
   "daily-9-30": ["/api/cron/enforce-lead-sla"],
 

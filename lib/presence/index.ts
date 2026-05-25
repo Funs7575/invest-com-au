@@ -6,7 +6,7 @@
  * their tab disappears within 5 minutes of inactivity, which matches user
  * expectation without over-pinging.
  */
-// eslint-disable-next-line no-restricted-imports -- presence_pings is anon-readable but writes happen via service-role on the caller's behalf (API route verifies ownership).
+// eslint-disable-next-line no-restricted-imports -- presence_pings is deny-all to anon (audit §5 #9); all reads/writes happen here via service-role on the caller's behalf (API route verifies ownership) and expose only a coarse online boolean.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
