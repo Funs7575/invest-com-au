@@ -12,9 +12,14 @@
  * AFSL compliance: all outputs are factual projections with
  * GENERAL_ADVICE_WARNING displayed prominently. No personalised
  * recommendations are produced.
+ *
+ * Deep-link: when `initialScenarioParam` is provided (e.g. from
+ * `/scenarios/plan?scenario=0` or `?scenario=My+Scenario`) the component
+ * resolves the matching saved scenario and loads it into the form on mount,
+ * immediately after the persistence layer has hydrated.
  */
 
-import { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { formatCurrency } from "@/lib/utils";
@@ -28,6 +33,7 @@ import {
   type ScenarioPlannerSnapshot,
 } from "@/lib/scenario-engine";
 import { computeScenarioDelta, type DeltaRow } from "@/lib/scenario-delta";
+import { resolveScenarioParam } from "@/lib/scenario-deep-link";
 
 // ─── nanoid-lite (no dependency needed) ──────────────────────────────────────
 function nanoid(): string {
@@ -573,7 +579,17 @@ function ComparePanel({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function ScenarioPlannerClient() {
+export default function ScenarioPlannerClient({
+  initialScenarioParam,
+}: {
+  /**
+   * Raw value of the `?scenario=` query param (e.g. "0", "1", "My Scenario").
+   * Passed from the server page component so the client can resolve it after
+   * hydration without reading `window.location` directly.
+   * Undefined / null → no deep-link load.
+   */
+  initialScenarioParam?: string | null;
+}) {
   // ── Inputs ──────────────────────────────────────────────────────────────────
   const [currentAge, setCurrentAge] = useState(DEFAULT_INPUTS.currentAge);
   const [retirementAge, setRetirementAge] = useState(
@@ -628,6 +644,7 @@ export default function ScenarioPlannerClient() {
   const {
     value: persisted,
     setValue: setPersisted,
+    isHydrated,
   } = useCalculatorState<{ scenarios: ScenarioPlannerSnapshot["scenarios"] }>(
     SCENARIO_PLANNER_CALC_KEY,
     { scenarios: [] },
@@ -740,6 +757,26 @@ export default function ScenarioPlannerClient() {
     },
     [persisted.scenarios, setPersisted],
   );
+
+  // ── Deep-link: auto-load a scenario from the ?scenario= param ───────────────
+  //
+  // We wait for `isHydrated` so the saved scenarios are available. We only
+  // fire once (the effect is idempotent once `hasDeepLinkedRef.current` is set)
+  // to avoid fighting the user if they subsequently switch scenarios manually.
+  const hasDeepLinkedRef = React.useRef(false);
+  useEffect(() => {
+    if (
+      !initialScenarioParam ||
+      !isHydrated ||
+      hasDeepLinkedRef.current
+    ) return;
+
+    const idx = resolveScenarioParam(initialScenarioParam, persisted.scenarios);
+    if (idx !== -1) {
+      hasDeepLinkedRef.current = true;
+      handleLoad(idx);
+    }
+  }, [initialScenarioParam, isHydrated, persisted.scenarios, handleLoad]);
 
   // ── Compute saved-scenario results for compare ───────────────────────────────
   const savedResults = useMemo(
