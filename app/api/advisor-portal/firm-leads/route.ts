@@ -19,6 +19,8 @@ import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
+import { notifyUserByEmail } from "@/lib/notifications";
+import { sendEmail } from "@/lib/resend";
 
 const log = logger("api:advisor-portal:firm-leads");
 
@@ -163,6 +165,101 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
     log.error("lead reassign failed", { error: error.message });
     return NextResponse.json({ error: "Failed to reassign." }, { status: 500 });
   }
+
+  // ── Best-effort: notify the newly assigned advisor ───────────────────
+  // Fetch the target advisor details and the lead so we can send a useful
+  // notification. Errors here are caught and logged — they MUST NOT fail
+  // the reassignment response.
+  void (async () => {
+    try {
+      // Fetch target advisor name and email.
+      const { data: targetAdvisor } = await admin
+        .from("professionals")
+        .select("name, email")
+        .eq("id", parsed.data.professional_id)
+        .maybeSingle();
+
+      if (!targetAdvisor?.email) {
+        log.warn("lead reassign notify: no email for target advisor", {
+          professionalId: parsed.data.professional_id,
+        });
+        return;
+      }
+
+      // Fetch lead details for the notification body.
+      const { data: lead } = await admin
+        .from("professional_leads")
+        .select("user_name, user_email, user_phone, source_page, message, status")
+        .eq("id", parsed.data.lead_id)
+        .maybeSingle();
+
+      const leadName = lead?.user_name ?? "A new lead";
+      const portalUrl = "https://invest.com.au/advisor-portal";
+      const advisorFirst =
+        (targetAdvisor.name ?? "Advisor").trim().split(" ")[0] ?? "Advisor";
+
+      // In-app notification (fire-and-forget; deduped by delivery key).
+      const deliveryKey = `firm-lead-assign:${parsed.data.lead_id}:${parsed.data.professional_id}`;
+      await notifyUserByEmail(targetAdvisor.email, {
+        type: "deal",
+        title: `New lead assigned to you: ${leadName}`,
+        body: `A firm admin has assigned a lead from ${leadName} to your queue. Log in to the advisor portal to follow up.`,
+        linkUrl: portalUrl,
+        emailDeliveryKey: deliveryKey,
+      });
+
+      // Email notification.
+      const html = `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;color:#334155">
+        <div style="background:#0f172a;padding:20px 24px;border-radius:12px 12px 0 0">
+          <h1 style="color:white;margin:0;font-size:18px">Lead Assigned to You</h1>
+        </div>
+        <div style="background:#f8fafc;padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">
+          <p style="font-size:15px">Hi ${advisorFirst},</p>
+          <p style="font-size:14px;color:#64748b">A lead has been reassigned to you by your firm admin.</p>
+          <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:16px;margin:16px 0">
+            <table style="width:100%;font-size:14px;color:#334155;border-collapse:collapse">
+              <tr><td style="padding:4px 8px 4px 0;font-weight:600">Lead:</td><td style="padding:4px 0">${leadName}</td></tr>
+              ${lead?.user_email ? `<tr><td style="padding:4px 8px 4px 0;font-weight:600">Email:</td><td style="padding:4px 0"><a href="mailto:${lead.user_email}" style="color:#2563eb">${lead.user_email}</a></td></tr>` : ""}
+              ${lead?.user_phone ? `<tr><td style="padding:4px 8px 4px 0;font-weight:600">Phone:</td><td style="padding:4px 0"><a href="tel:${lead.user_phone}" style="color:#2563eb">${lead.user_phone}</a></td></tr>` : ""}
+              ${lead?.source_page ? `<tr><td style="padding:4px 8px 4px 0;font-weight:600">Source:</td><td style="padding:4px 0">${lead.source_page}</td></tr>` : ""}
+            </table>
+          </div>
+          <p style="font-size:14px;color:#64748b"><strong>Please follow up promptly.</strong></p>
+          <div style="text-align:center;margin:24px 0">
+            <a href="${portalUrl}" style="display:inline-block;padding:12px 32px;background:#f59e0b;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600">View in Portal →</a>
+          </div>
+          <p style="font-size:12px;color:#94a3b8;margin-top:20px">Manage your leads in the <a href="${portalUrl}" style="color:#2563eb">advisor portal</a>.</p>
+        </div>
+      </div>`;
+
+      const { ok: emailOk } = await sendEmail({
+        to: targetAdvisor.email,
+        subject: `Lead assigned to you: ${leadName} — Invest.com.au`,
+        html,
+        from: "Invest.com.au <hello@invest.com.au>",
+      });
+
+      if (!emailOk) {
+        log.warn("lead reassign notify: email send failed", {
+          to: targetAdvisor.email,
+          leadId: parsed.data.lead_id,
+        });
+      } else {
+        log.info("lead reassign notify: sent", {
+          to: targetAdvisor.email,
+          leadId: parsed.data.lead_id,
+          professionalId: parsed.data.professional_id,
+        });
+      }
+    } catch (notifyErr) {
+      // Best-effort: do NOT propagate — the reassignment already succeeded.
+      log.error("lead reassign notify: unexpected error", {
+        error: notifyErr instanceof Error ? notifyErr.message : String(notifyErr),
+        leadId: parsed.data.lead_id,
+        professionalId: parsed.data.professional_id,
+      });
+    }
+  })();
 
   return NextResponse.json({ ok: true });
 }

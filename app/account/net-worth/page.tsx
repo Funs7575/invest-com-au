@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentPricesBatch } from "@/lib/holdings/value";
+import ManualBalancesPanel, { type ManualBalance } from "./ManualBalancesPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -13,24 +14,12 @@ export const metadata: Metadata = {
 };
 
 // FIN_NOTEBOOK item 20 — unified net-worth view. Reads holdings,
-// investor_goals, and bookmarks to give a top-level number + the
-// allocation breakdown. Glues the per-product surfaces (holdings,
-// watchlist, FIRE goal) into one repeat-visit dashboard.
+// investor_goals, manual_balances, and bookmarks to give a top-level
+// number + the allocation breakdown. Glues the per-product surfaces
+// (holdings, watchlist, FIRE goal) into one repeat-visit dashboard.
 //
-// Why not a separate table: a net-worth tracker that maintains its own
-// state requires the user to dual-entry every time they buy a share /
-// open a savings account / change their super balance. Reading what
-// already exists keeps the data correct without manual maintenance.
-//
-// What this page DOESN'T do (deliberately):
-//   - Pull manual savings balances (no input surface yet — the saved
-//     calculator-state in investor_goals.current_balance_cents is the
-//     stand-in for users without Sharesight import).
-//   - Pull super balances (requires Sharesight OAuth completion — PR #885
-//     in draft).
-//
-// As those data sources land, this page reads them automatically — the
-// switch from "holdings + manual goals" to "holdings + super + savings"
+// As OAuth super/cash data sources land, this page reads them automatically —
+// the switch from "holdings + manual goals" to "holdings + super + savings"
 // is additive in the data fetch below, not a redesign.
 
 interface HoldingRow {
@@ -49,6 +38,21 @@ interface GoalRow {
   target_date: string;
 }
 
+interface ManualBalanceRow {
+  id: string;
+  label: string;
+  amount_cents: number;
+  category: "savings" | "super" | "property" | "other";
+  updated_at: string;
+}
+
+const CATEGORY_LABELS: Record<string, string> = {
+  savings: "Savings",
+  super: "Super",
+  property: "Property",
+  other: "Other",
+};
+
 export default async function NetWorthPage() {
   const supabase = await createClient();
   const {
@@ -56,7 +60,7 @@ export default async function NetWorthPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/account/login?redirect=/account/net-worth");
 
-  const [holdingsRes, goalsRes] = await Promise.all([
+  const [holdingsRes, goalsRes, manualBalancesRes] = await Promise.all([
     supabase
       .from("investor_holdings")
       .select("ticker, exchange, shares, cost_basis_per_share_cents")
@@ -66,10 +70,15 @@ export default async function NetWorthPage() {
       .select("id, label, goal_type, target_cents, current_balance_cents, target_date")
       .eq("auth_user_id", user.id)
       .order("target_date", { ascending: true }),
+    supabase
+      .from("manual_balances")
+      .select("id, label, amount_cents, category, updated_at")
+      .order("updated_at", { ascending: false }),
   ]);
 
   const holdings = (holdingsRes.data ?? []) as HoldingRow[];
   const goals = (goalsRes.data ?? []) as GoalRow[];
+  const manualBalances = (manualBalancesRes.data ?? []) as ManualBalanceRow[];
 
   // Fetch current prices for every (ticker, exchange) pair in one batch.
   const pricePairs = holdings
@@ -95,14 +104,28 @@ export default async function NetWorthPage() {
     }
   }
 
-  // Manual / calculator-state balances from goals — these stand in for
-  // savings + super until OAuth flows land.
-  const manualBalanceCents = goals.reduce(
+  // Manual / calculator-state balances from goals — stand-in for super/savings
+  // until OAuth flows land. These remain in the total for backward-compat with
+  // existing users.
+  const goalBalanceCents = goals.reduce(
     (acc, g) => acc + (g.current_balance_cents ?? 0),
     0,
   );
 
-  const netWorthCents = portfolioValueCents + manualBalanceCents;
+  // Purpose-built manual balances from manual_balances table.
+  const manualTotalCents = manualBalances.reduce(
+    (acc, b) => acc + (b.amount_cents ?? 0),
+    0,
+  );
+
+  // Group manual balances by category for breakdown.
+  const manualByCategory = manualBalances.reduce<Record<string, number>>((acc, b) => {
+    const cat = b.category ?? "other";
+    acc[cat] = (acc[cat] ?? 0) + b.amount_cents;
+    return acc;
+  }, {});
+
+  const netWorthCents = portfolioValueCents + goalBalanceCents + manualTotalCents;
 
   function fmt(cents: number): string {
     return new Intl.NumberFormat("en-AU", {
@@ -128,8 +151,7 @@ export default async function NetWorthPage() {
       <header className="mb-6">
         <h1 className="text-2xl font-extrabold text-slate-900">Net worth</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Pulled from your holdings + saved goals. Add a Sharesight import for super + cash
-          balances (coming soon).
+          Pulled from your holdings, goals, and manual balances.
         </p>
       </header>
 
@@ -140,7 +162,7 @@ export default async function NetWorthPage() {
         <p className="mt-2 text-4xl font-extrabold text-slate-900">{fmt(netWorthCents)}</p>
         {netWorthCents === 0 && (
           <p className="mt-2 text-sm text-slate-500">
-            Add holdings or save a goal and your net worth will populate here.
+            Add holdings, save a goal, or add manual balances and your net worth will populate here.
           </p>
         )}
       </section>
@@ -172,7 +194,7 @@ export default async function NetWorthPage() {
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
             Goal balances
           </p>
-          <p className="mt-1 text-2xl font-bold text-slate-900">{fmt(manualBalanceCents)}</p>
+          <p className="mt-1 text-2xl font-bold text-slate-900">{fmt(goalBalanceCents)}</p>
           <p className="mt-1 text-xs text-slate-500">
             {goals.length} goal{goals.length === 1 ? "" : "s"} saved
           </p>
@@ -183,6 +205,22 @@ export default async function NetWorthPage() {
             View goals &rarr;
           </Link>
         </div>
+
+        {manualTotalCents > 0 && (
+          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:col-span-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Manual balances
+            </p>
+            <p className="mt-1 text-2xl font-bold text-slate-900">{fmt(manualTotalCents)}</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {Object.entries(manualByCategory).map(([cat, cents]) => (
+                <span key={cat} className="text-xs text-slate-500">
+                  {CATEGORY_LABELS[cat] ?? cat}: {fmt(cents)}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {goals.length > 0 && (
@@ -217,6 +255,11 @@ export default async function NetWorthPage() {
           </ul>
         </section>
       )}
+
+      {/* Manual balances panel — client component for inline CRUD */}
+      <ManualBalancesPanel
+        initialBalances={manualBalances as ManualBalance[]}
+      />
 
       <p className="mt-10 text-xs text-slate-400">
         General information only — net worth here reflects what you&apos;ve told us about. Always

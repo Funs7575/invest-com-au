@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getCurrentAustralianTaxYear } from "@/lib/holdings/tax-summary";
 
 /**
@@ -27,9 +27,37 @@ export default function TaxSummaryButton() {
     [currentTaxYear],
   );
 
+  const router = useRouter();
   const [taxYear, setTaxYear] = useState<number>(currentTaxYear);
   const [busy, setBusy] = useState(false);
+  const [handoffBusy, setHandoffBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleSendToAdvisor = async () => {
+    setHandoffBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/account/holdings/handoff", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ intent: "tax-prep" }),
+      });
+      if (!res.ok) {
+        throw new Error(`handoff_failed_${res.status}`);
+      }
+      const { token } = await res.json() as { token: string };
+      router.push(`/find-advisor?need=tax&handoff=${encodeURIComponent(token)}`);
+    } catch (e) {
+      setError(
+        e instanceof Error && e.message.startsWith("handoff_failed")
+          ? "Could not create a handoff token. Try again or refresh the page."
+          : "Could not send to advisor. Try again.",
+      );
+    } finally {
+      setHandoffBusy(false);
+    }
+  };
 
   const handleDownload = async () => {
     setBusy(true);
@@ -101,12 +129,14 @@ export default function TaxSummaryButton() {
           {busy ? "Generating…" : "Download CSV"}
         </button>
 
-        <Link
-          href="/find-advisor?intent=tax-prep"
-          className="text-sm font-semibold text-emerald-700 hover:text-emerald-900 underline underline-offset-2"
+        <button
+          type="button"
+          onClick={() => void handleSendToAdvisor()}
+          disabled={handoffBusy}
+          className="text-sm font-semibold text-emerald-700 hover:text-emerald-900 underline underline-offset-2 disabled:opacity-50"
         >
-          Send to my advisor →
-        </Link>
+          {handoffBusy ? "Preparing…" : "Send to my advisor →"}
+        </button>
       </div>
 
       {error && (
