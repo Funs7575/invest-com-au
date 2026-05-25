@@ -52,3 +52,30 @@ export const PLANS = {
 } as const;
 
 export type PlanKey = keyof typeof PLANS;
+
+/**
+ * API data-access subscription plans (software/data licensing).
+ * Prices set via env vars; see lib/api-tiers.ts for the tier config.
+ *
+ * Required env vars before enabling billing:
+ *   STRIPE_API_BASIC_PRICE_ID   — Stripe Price ID for the Basic tier (A$49/mo)
+ *   STRIPE_API_PRO_PRICE_ID     — Stripe Price ID for the Pro tier   (A$149/mo)
+ */
+export const API_PLANS = {
+  api_basic: {
+    priceId: process.env.STRIPE_API_BASIC_PRICE_ID || "",
+    tier: "basic" as const,
+    label: "API Basic",
+    description: "120 req/min · 10,000 req/day · All endpoints",
+    monthlyAud: 49,
+  },
+  api_pro: {
+    priceId: process.env.STRIPE_API_PRO_PRICE_ID || "",
+    tier: "pro" as const,
+    label: "API Pro",
+    description: "600 req/min · 100,000 req/day · All endpoints",
+    monthlyAud: 149,
+  },
+} as const;
+
+export type ApiPlanKey = keyof typeof API_PLANS;
