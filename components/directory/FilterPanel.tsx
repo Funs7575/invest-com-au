@@ -176,10 +176,10 @@ function FilterPanelInline({
   return (
     <section
       aria-labelledby={headingId}
-      className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 mb-4 md:mb-6 space-y-4"
+      className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 md:p-5 mb-4 md:mb-6 space-y-4"
     >
       <header className="flex items-center justify-between">
-        <h2 id={headingId} className="text-sm font-extrabold text-slate-800">
+        <h2 id={headingId} className="text-sm font-extrabold text-slate-800 dark:text-slate-100">
           {heading}
           {activeCount > 0 && (
             <span className="ml-2 text-xs font-semibold text-amber-700">
@@ -231,9 +231,9 @@ function FilterPanelDrawer({
         className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
       />
       {/* Sheet — mobile bottom-sheet style for best touch ergonomics */}
-      <div className="relative mt-auto bg-white rounded-t-3xl border-t border-slate-200 max-h-[85vh] flex flex-col shadow-2xl">
-        <header className="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
-          <h2 id={headingId} className="text-base font-extrabold text-slate-900">
+      <div className="relative mt-auto bg-white dark:bg-slate-900 rounded-t-3xl border-t border-slate-200 dark:border-slate-700 max-h-[85vh] flex flex-col shadow-2xl">
+        <header className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700 shrink-0">
+          <h2 id={headingId} className="text-base font-extrabold text-slate-900 dark:text-slate-100">
             {heading}
             {activeCount > 0 && (
               <span className="ml-2 text-xs font-semibold text-amber-700">
@@ -245,7 +245,7 @@ function FilterPanelDrawer({
             type="button"
             onClick={onClose}
             aria-label="Close filters"
-            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center"
+            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 flex items-center justify-center"
           >
             ×
           </button>
@@ -253,7 +253,7 @@ function FilterPanelDrawer({
         <div className="overflow-y-auto px-5 py-4 space-y-4 flex-1">
           {children}
         </div>
-        <footer className="flex items-center justify-between gap-3 px-5 py-4 border-t border-slate-100 shrink-0 bg-white">
+        <footer className="flex items-center justify-between gap-3 px-5 py-4 border-t border-slate-100 dark:border-slate-700 shrink-0 bg-white dark:bg-slate-900">
           {onClearAll && (
             <button
               type="button"
