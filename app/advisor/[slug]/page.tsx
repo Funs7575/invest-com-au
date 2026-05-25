@@ -16,8 +16,10 @@ import {
   getPublicTestimonials,
 } from "@/lib/outcomes/profile-display";
 import { computeAdvisorTrustScore } from "@/lib/advisor-trust-score";
+import { computeAdvisorReputation } from "@/lib/advisor-reputation";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import AdvisorTrustScoreSection from "./components/AdvisorTrustScoreSection";
+import AdvisorReputationSummary from "./components/AdvisorReputationSummary";
 
 export const revalidate = 1800;
 
@@ -311,6 +313,20 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     review_count: pro.review_count,
   });
 
+  // ── Advisor Reputation Score (computed from approved reviews) ──
+  const verifiedReviewCount = reviews.filter((r) => r.verified_engagement).length;
+  const totalReviewCount = reviews.length;
+  const avgRating =
+    totalReviewCount > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviewCount
+      : null;
+
+  const reputationScore = computeAdvisorReputation({
+    total_reviews: totalReviewCount,
+    verified_reviews: verifiedReviewCount,
+    avg_rating: avgRating,
+  });
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
@@ -497,6 +513,15 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
       <div className="container-custom max-w-4xl mt-6">
         <AdvisorTrustScoreSection
           trustScore={trustScore}
+          advisorName={pro.name}
+          generalAdviceWarning={GENERAL_ADVICE_WARNING}
+        />
+      </div>
+
+      {/* ── Advisor Reputation Summary (review-side factual signals) ── */}
+      <div className="container-custom max-w-4xl mt-6">
+        <AdvisorReputationSummary
+          reputation={reputationScore}
           advisorName={pro.name}
           generalAdviceWarning={GENERAL_ADVICE_WARNING}
         />

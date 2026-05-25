@@ -1328,6 +1328,14 @@ export interface ProfessionalReview {
   is_verified_client?: boolean;
   verified_client_at?: string | null;
   lead_id?: number | null;
+  /**
+   * true when the reviewer had a recorded engagement (lead or booking)
+   * with this advisor on the platform. Set at submission time if a matching
+   * engagement exists; also backfilled by the migration for historical reviews.
+   */
+  verified_engagement?: boolean;
+  /** ISO-8601 timestamp when verified_engagement was set to true. */
+  verified_at?: string | null;
   created_at: string;
   updated_at: string;
   /** Official response from the advisor being reviewed. */
