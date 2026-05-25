@@ -104,12 +104,12 @@ export default function QuizResultsScreen({
             >
               Retake Quiz
             </button>
-            <a
+            <Link
               href="/compare"
               className="px-5 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
             >
               Browse All Platforms
-            </a>
+            </Link>
           </div>
         </div>
       </div>

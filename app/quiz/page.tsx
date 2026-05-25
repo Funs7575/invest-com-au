@@ -701,7 +701,7 @@ export default function QuizPage() {
         });
       } catch { /* quota exceeded */ }
     }
-  }, [phase, brokers.length, results, scoringAnswers, answers.advisor_type, answers.amount, answers.experience]);
+  }, [phase, brokers.length, results, scoringAnswers, answers.advisor_type, answers.amount, answers.experience, answers.investor_country]);
 
   /* ─── Handlers ─── */
 
