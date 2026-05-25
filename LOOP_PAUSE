@@ -1,0 +1,14 @@
+Audit-remediation loop PAUSED — 2026-05-25, founder request.
+
+WHY: Backlog cleanup + automation review. The in-repo auto-merge / auto-rebase /
+stale-sweeper / Dependabot / tracker workflows were switched to manual-only in
+PR #1197. This sentinel halts the RemoteTrigger audit-remediation routines
+(every ~7-8 min) and the daily scout so no new automated PRs are generated while
+the founder reviews the remaining big-feature PRs.
+
+TO RESUME:
+  1. Delete this file and commit.
+  2. Restore the original workflow triggers from #1197's git history (or
+     re-enable per-workflow in the GitHub Actions UI).
+  3. Re-enable Dependabot (weekly + grouped — see CLAUDE.md "Dependabot groups")
+     and, if wanted, a daily no-PR scout per the taming plan.

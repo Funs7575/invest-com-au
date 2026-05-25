@@ -13,7 +13,10 @@
 
 import { unstable_cache } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { GLOSSARY_ENTRIES, type GlossaryEntry } from "@/lib/glossary";
+import { type GlossaryEntry } from "@/lib/glossary";
+// Server-only full set (203) — complete fallback when the DB is unreachable
+// at build. Doesn't reach the client bundle. See lib/glossary-extended.ts.
+import { FULL_GLOSSARY_ENTRIES as GLOSSARY_ENTRIES } from "@/lib/glossary-extended";
 
 interface GlossaryRow {
   slug: string;

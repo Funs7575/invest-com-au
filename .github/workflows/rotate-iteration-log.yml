@@ -28,9 +28,8 @@ name: Rotate iteration log
 # Manual trigger via workflow_dispatch when needed.
 
 on:
-  schedule:
-    # Sunday 03:00 UTC — quiet hour relative to the loop's 4×/hr fires.
-    - cron: "0 3 * * 0"
+  # DISABLED 2026-05-25 (founder request: stop loop/auto-merge churn).
+  # Re-enable by restoring the original triggers (see git history).
   workflow_dispatch: {}
 
 permissions:

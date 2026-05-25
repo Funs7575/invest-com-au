@@ -10,7 +10,19 @@ type BookingSlot = {
   slot_duration_minutes: number;
 };
 
-export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlug: string; advisorName: string }) {
+export default function BookingWidget({
+  advisorSlug,
+  advisorName,
+  sessionPriceCents,
+  slotIdMap,
+}: {
+  advisorSlug: string;
+  advisorName: string;
+  /** Cents. Undefined / null = free booking (existing flow). */
+  sessionPriceCents?: number | null;
+  /** Optional map of "HH:MM:SS" time strings → slot IDs for paid flow. */
+  slotIdMap?: Record<string, number>;
+}) {
   const [schedule, setSchedule] = useState<BookingSlot[]>([]);
   const [bookingEnabled, setBookingEnabled] = useState(false);
   const [bookingIntro, setBookingIntro] = useState("");
@@ -22,6 +34,7 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
   const [form, setForm] = useState({ name: "", email: "", phone: "", topic: "" });
   const [submitting, setSubmitting] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
+  const isPaid = Boolean(sessionPriceCents && sessionPriceCents > 0);
 
   useEffect(() => {
     fetch(`/api/advisor-booking?advisor=${advisorSlug}`)
@@ -99,6 +112,35 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
     }
     setSubmitting(true);
     setBookingError(null);
+
+    // Paid booking: create Stripe Checkout session and redirect
+    if (isPaid && slotIdMap) {
+      const slotId = slotIdMap[selectedTime];
+      if (!slotId) {
+        setBookingError("Slot not found. Please refresh and try again.");
+        setSubmitting(false);
+        return;
+      }
+      try {
+        const res = await fetch(`/api/booking/${slotId}/checkout`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ consumerName: form.name, consumerEmail: form.email, topic: form.topic }),
+        });
+        const data = await res.json() as { checkoutUrl?: string; error?: string };
+        if (res.ok && data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+          return;
+        }
+        setBookingError(data.error ?? "Payment unavailable. Please try again.");
+      } catch {
+        setBookingError("Something went wrong. Please try again.");
+      }
+      setSubmitting(false);
+      return;
+    }
+
+    // Free booking: existing flow
     try {
       const res = await fetch("/api/advisor-booking", {
         method: "POST",
@@ -168,6 +210,10 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
     return null;
   }
 
+  const priceLabel = isPaid && sessionPriceCents
+    ? `A$${(sessionPriceCents / 100).toFixed(0)}`
+    : null;
+
   // ─── CONFIRMED ───
   if (step === "confirmed") {
     return (
@@ -187,9 +233,16 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
       <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
-        <div className="flex items-center gap-2">
-          <Icon name="calendar" size={18} className="text-slate-600" />
-          <h3 className="text-sm font-bold text-slate-900">Book a Consultation</h3>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Icon name="calendar" size={18} className="text-slate-600" />
+            <h3 className="text-sm font-bold text-slate-900">Book a Consultation</h3>
+          </div>
+          {priceLabel && (
+            <span className="text-xs font-semibold text-violet-700 bg-violet-50 border border-violet-200 rounded-full px-2 py-0.5">
+              {priceLabel} session
+            </span>
+          )}
         </div>
         {bookingIntro && <p className="text-xs text-slate-500 mt-0.5">{bookingIntro}</p>}
       </div>
@@ -283,12 +336,19 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
               {bookingError && (
                 <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{bookingError}</p>
               )}
+              {isPaid && priceLabel && (
+                <p className="text-xs text-violet-700 bg-violet-50 border border-violet-100 rounded-lg px-3 py-2">
+                  Session fee: <strong>{priceLabel}</strong> — you&apos;ll be redirected to Stripe to pay securely.
+                </p>
+              )}
               <button
                 onClick={submitBooking}
                 disabled={submitting || !form.name || !form.email}
                 className="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
               >
-                {submitting ? "Booking..." : "Confirm Booking"}
+                {submitting
+                  ? isPaid ? "Redirecting to payment..." : "Booking..."
+                  : isPaid && priceLabel ? `Pay ${priceLabel} & Confirm →` : "Confirm Booking"}
               </button>
             </div>
             <p className="text-[0.56rem] text-slate-400 mt-2 text-center">
