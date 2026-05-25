@@ -23,6 +23,7 @@ import ScrollFadeIn from "@/components/ScrollFadeIn";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import HomeActivitySection from "@/components/HomeActivitySection";
 import HomeHowItWorks from "@/components/HomeHowItWorks";
+import HomeRateOfTheDay from "@/components/HomeRateOfTheDay";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 
 export const metadata = {
@@ -258,6 +259,8 @@ export default async function HomePage() {
 
       {/* Temporarily hidden for the next few months. Keep the component intact
           so the homepage AI concierge entry can be restored without rebuilding it. */}
+
+      <HomeRateOfTheDay />
 
       <ScrollFadeIn>
         <HomeRouteCards
