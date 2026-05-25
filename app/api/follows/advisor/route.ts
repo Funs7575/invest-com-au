@@ -40,20 +40,15 @@ export const POST = withValidatedBody(FollowSchema, async (request, body) => {
   }
 
   // Increment follower_count (best-effort, read-modify-write)
-  await admin.rpc("increment_follower_count", { p_professional_id: body.professionalId }).catch(() => {
-    // RPC may not exist yet — fall back to manual increment
-    admin
-      .from("professionals")
-      .select("follower_count")
-      .eq("id", body.professionalId)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data !== null) {
-          const current = (data as { follower_count?: number } | null)?.follower_count ?? 0;
-          admin.from("professionals").update({ follower_count: current + 1 }).eq("id", body.professionalId);
-        }
-      });
-  });
+  const { data: proData } = await admin
+    .from("professionals")
+    .select("follower_count")
+    .eq("id", body.professionalId)
+    .maybeSingle();
+  if (proData !== null) {
+    const current = (proData as { follower_count?: number } | null)?.follower_count ?? 0;
+    await admin.from("professionals").update({ follower_count: current + 1 }).eq("id", body.professionalId);
+  }
 
   return NextResponse.json({ success: true });
 });
@@ -95,20 +90,16 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Failed to unfollow advisor." }, { status: 500 });
   }
 
-  // Decrement follower_count (best-effort)
-  await admin.rpc("decrement_follower_count", { p_professional_id: professionalId }).catch(() => {
-    admin
-      .from("professionals")
-      .select("follower_count")
-      .eq("id", professionalId)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data !== null) {
-          const current = (data as { follower_count?: number } | null)?.follower_count ?? 1;
-          admin.from("professionals").update({ follower_count: Math.max(0, current - 1) }).eq("id", professionalId);
-        }
-      });
-  });
+  // Decrement follower_count (best-effort, read-modify-write)
+  const { data: proData } = await admin
+    .from("professionals")
+    .select("follower_count")
+    .eq("id", professionalId)
+    .maybeSingle();
+  if (proData !== null) {
+    const current = (proData as { follower_count?: number } | null)?.follower_count ?? 1;
+    await admin.from("professionals").update({ follower_count: Math.max(0, current - 1) }).eq("id", professionalId);
+  }
 
   return NextResponse.json({ success: true });
 }

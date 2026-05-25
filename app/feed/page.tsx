@@ -59,7 +59,7 @@ export default async function FeedPage() {
     posts.map((p, i) => ({
       position: i + 1,
       name: p.professional?.name
-        ? `${p.professional.name} — ${POST_TYPE_CONFIG[p.post_type]?.label ?? p.post_type}`
+        ? `${p.professional.name} — ${p.post_type}`
         : `Post ${p.id}`,
       url: p.professional?.slug
         ? absoluteUrl(`/advisor/${p.professional.slug}`)
