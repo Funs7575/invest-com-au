@@ -1614,3 +1614,252 @@ export const FIRST_HOME_BUYER_ONBOARDING_CONFIG: HubOnboardingConfig = {
     };
   },
 };
+
+export const RETIREMENT_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "retirement",
+  hubName: "Retirement Planning",
+  heading: "Is your retirement plan on track?",
+  subheading:
+    "3 quick questions to get a personalised retirement income strategy — drawdown, Age Pension eligibility, and annuity options.",
+  questions: [
+    {
+      id: "stage",
+      question: "How close are you to retirement?",
+      options: [
+        { value: "more_than_10", label: "More than 10 years away — early planning" },
+        { value: "5_to_10", label: "5–10 years away — building toward it" },
+        { value: "within_5", label: "Within 5 years — transition planning underway" },
+        { value: "retired", label: "Already retired or semi-retired" },
+      ],
+    },
+    {
+      id: "super_balance",
+      question: "What is your approximate super balance today?",
+      options: [
+        { value: "under_200k", label: "Under $200,000" },
+        { value: "200k_500k", label: "$200,000 – $500,000" },
+        { value: "500k_1m", label: "$500,000 – $1 million" },
+        { value: "over_1m", label: "Over $1 million" },
+      ],
+    },
+    {
+      id: "concern",
+      question: "What is your main retirement planning concern?",
+      options: [
+        { value: "longevity", label: "Running out of money in my 80s or 90s" },
+        { value: "age_pension", label: "Maximising my Age Pension entitlement" },
+        { value: "drawdown", label: "How much I can safely draw each year" },
+        { value: "annuity", label: "Getting guaranteed income regardless of markets" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const stage = answers["stage"];
+    const superBalance = answers["super_balance"];
+    const concern = answers["concern"];
+
+    if (stage === "retired") {
+      if (concern === "longevity") {
+        return {
+          headline: "A lifetime annuity can protect against outliving your savings.",
+          summary:
+            "Australian women aged 65 have a median life expectancy of ~90; men ~87. A 30-year retirement is realistic. Challenger LifeTime annuities and similar products guarantee income for life, regardless of how long you live. Even a partial annuity covering essential living expenses (rent, groceries, utilities) removes the longevity risk on that slice of spending.",
+          primaryCta: { label: "Compare Annuities", href: "/retirement/annuities" },
+          secondaryCta: { label: "Find a Retirement Planner", href: "/retirement/quiz" },
+          advisorCta: { href: "/retirement/quiz", specialty: "retirement income specialist" },
+        };
+      }
+      if (concern === "age_pension") {
+        return {
+          headline: "A retirement planner can legitimately maximise your Age Pension entitlement.",
+          summary:
+            "The Age Pension assets test and income test interact in complex ways. Gifting rules, deeming rates on financial assets, and the family home exemption all affect entitlements. Structuring drawdown to reduce assessed assets (e.g. via prepaid funeral bonds, renovations, or annuities with favourable Centrelink treatment) is a specialised area requiring a licensed adviser.",
+          primaryCta: { label: "Age Pension Guide", href: "/retirement/age-pension" },
+          secondaryCta: { label: "Find a Retirement Planner", href: "/retirement/quiz" },
+          advisorCta: { href: "/retirement/quiz", specialty: "age pension specialist" },
+        };
+      }
+      return {
+        headline: "Safe drawdown in retirement is more complex than a percentage rule.",
+        summary:
+          "The '4% rule' was designed for a 30-year retirement with a specific asset allocation — not for today's lower interest rates, longer life expectancies, and the Australian Age Pension system. A dynamic drawdown strategy tailored to your balance, pension entitlement, and spending needs will almost certainly outperform a fixed percentage rule.",
+        primaryCta: { label: "Drawdown Strategies Guide", href: "/retirement/drawdown" },
+        secondaryCta: { label: "Find a Retirement Planner", href: "/retirement/quiz" },
+        advisorCta: { href: "/retirement/quiz", specialty: "retirement income specialist" },
+      };
+    }
+
+    if (stage === "within_5") {
+      if (superBalance === "over_1m" || superBalance === "500k_1m") {
+        return {
+          headline:
+            "With 5 years to go and a strong balance, your transition decisions now are the highest-impact ones you will make.",
+          summary:
+            "The Transition to Retirement (TTR) income stream, concessional contribution top-ups (up to $30,000/year), and the pension transfer balance cap ($1.9M) all require careful sequencing in the years before retirement. An adviser can model the optimal TTR start date, salary sacrifice level, and pension commencement to maximise tax-free income in retirement.",
+          primaryCta: { label: "Speak to a Retirement Planner", href: "/retirement/quiz" },
+          secondaryCta: {
+            label: "Account-Based Pension Guide",
+            href: "/retirement/account-based-pensions",
+          },
+          advisorCta: {
+            href: "/retirement/quiz",
+            specialty: "retirement and TTR specialist",
+          },
+        };
+      }
+      return {
+        headline: "The 5 years before retirement are critical — now is the time to accelerate.",
+        summary:
+          "Concessional contributions of $30,000/year reduce taxable income while building your retirement balance. The carry-forward rule lets you use unused cap space from the last 5 years (if your balance is under $500k). A super specialist can calculate the exact contribution strategy that maximises your balance at retirement.",
+        primaryCta: { label: "Super Contributions Guide", href: "/super/contributions" },
+        secondaryCta: { label: "Find a Retirement Planner", href: "/retirement/quiz" },
+        advisorCta: { href: "/retirement/quiz", specialty: "retirement planning specialist" },
+      };
+    }
+
+    if (superBalance === "over_1m") {
+      return {
+        headline: "At $1M+, the transfer balance cap and estate planning are key considerations.",
+        summary:
+          "The $1.9M transfer balance cap limits how much super can move into tax-free pension phase. If your projected balance exceeds this, the excess stays in accumulation (taxed at 15%). Strategies like withdrawal-and-reinvestment, spouse splitting, and BDBN nominations interact in complex ways — a retirement planner is well worth the fee.",
+        primaryCta: { label: "Find a Retirement Planner", href: "/retirement/quiz" },
+        secondaryCta: {
+          label: "Account-Based Pension Guide",
+          href: "/retirement/account-based-pensions",
+        },
+        advisorCta: { href: "/retirement/quiz", specialty: "retirement and estate planning specialist" },
+      };
+    }
+
+    return {
+      headline: "Start with the basics: how much super do you need and how do you get there?",
+      summary:
+        "ASFA's retirement standard estimates $595,000 for a comfortable single retirement. With 5–10+ years ahead, regular concessional contributions, low-fee fund selection, and an account-based pension strategy at retirement are the foundational moves. A retirement planner can build a personalised projection.",
+      primaryCta: { label: "Retirement Planning Guide", href: "/retirement" },
+      secondaryCta: { label: "Find a Retirement Planner", href: "/retirement/quiz" },
+      advisorCta: { href: "/retirement/quiz", specialty: "retirement planning specialist" },
+    };
+  },
+};
+
+export const AGED_CARE_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "aged-care",
+  hubName: "Aged Care",
+  heading: "How can we help with aged care funding?",
+  subheading:
+    "3 quick questions to understand your aged care situation and connect you with the right information or adviser.",
+  questions: [
+    {
+      id: "situation",
+      question: "What best describes your current situation?",
+      options: [
+        { value: "planning_ahead", label: "Planning ahead — no care needed yet but want to be prepared" },
+        { value: "home_care", label: "Currently receiving or applying for home care packages" },
+        { value: "residential", label: "Considering or arranging residential aged care" },
+        { value: "crisis", label: "Urgent — care needed now, help with costs and logistics" },
+      ],
+    },
+    {
+      id: "home_ownership",
+      question: "Does the person needing care own their home?",
+      options: [
+        { value: "yes_own", label: "Yes — owns the home outright (no mortgage)" },
+        { value: "yes_mortgage", label: "Yes — owns with a mortgage" },
+        { value: "no_rent", label: "No — renting" },
+        { value: "unsure", label: "Not sure / complicated situation" },
+      ],
+    },
+    {
+      id: "main_concern",
+      question: "What is the main concern right now?",
+      options: [
+        { value: "costs", label: "Understanding the costs and what we need to pay" },
+        { value: "pension", label: "How aged care will affect the Age Pension" },
+        { value: "home_equity", label: "Using home equity to fund care (reverse mortgage)" },
+        { value: "adviser", label: "Finding a specialist aged-care financial adviser" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const situation = answers["situation"];
+    const homeOwnership = answers["home_ownership"];
+    const concern = answers["main_concern"];
+
+    if (situation === "crisis") {
+      return {
+        headline: "For urgent aged care, start with My Aged Care on 1800 200 422.",
+        summary:
+          "My Aged Care is the government entry point for all aged care services. Call 1800 200 422 (Monday–Friday 8am–8pm, Saturday 10am–2pm) to register and request an ACAT assessment. Interim Commonwealth Home Support Programme services may be available while you wait. A certified aged-care adviser can handle the financial paperwork and means-test modelling in parallel — see below.",
+        primaryCta: { label: "Find an Aged-Care Adviser", href: "/aged-care/quiz" },
+        secondaryCta: { label: "Aged Care Costs Guide", href: "/aged-care/residential-care" },
+        advisorCta: { href: "/aged-care/quiz", specialty: "accredited aged-care specialist" },
+      };
+    }
+
+    if (situation === "residential") {
+      if (homeOwnership === "yes_own") {
+        return {
+          headline:
+            "Owning the home affects the means test — but the rules are more favourable than most people think.",
+          summary:
+            "The family home is exempt from the assets test for the first 28 days after entering residential care (extended indefinitely if a protected person — spouse, carer, or dependent — remains). After that, the home value is capped at $208,908 in the assets test (FY2026), not its full market value. The key question is whether to sell the home to pay the RAD or retain it and pay DAP — a decision with complex Age Pension and estate planning implications.",
+          primaryCta: { label: "RAD vs DAP Guide", href: "/aged-care/rad-dap" },
+          secondaryCta: { label: "Find an Aged-Care Adviser", href: "/aged-care/quiz" },
+          advisorCta: { href: "/aged-care/quiz", specialty: "accredited aged-care specialist" },
+        };
+      }
+      return {
+        headline: "Residential aged care costs are means-tested — here is what you will likely pay.",
+        summary:
+          "Everyone pays the basic daily fee ($63.57/day in FY2026 — 85% of the single Age Pension rate). Above that, a means-tested care fee applies based on your income and assets assessment. The accommodation payment (RAD or DAP) is set by the facility. A certified aged-care adviser can run a full means-test estimate and help negotiate with facilities.",
+        primaryCta: { label: "Residential Care Costs Guide", href: "/aged-care/residential-care" },
+        secondaryCta: { label: "Find an Aged-Care Adviser", href: "/aged-care/quiz" },
+        advisorCta: { href: "/aged-care/quiz", specialty: "accredited aged-care specialist" },
+      };
+    }
+
+    if (concern === "home_equity" && homeOwnership === "yes_own") {
+      return {
+        headline: "Home equity can fund aged care — but compound interest risk is real.",
+        summary:
+          "A reverse mortgage from Heartland Seniors Finance or similar lets you access home equity without selling. Loan proceeds can fund a RAD or top-up income. Interest compounds daily — a $200,000 loan at 9% p.a. becomes ~$473,000 in 10 years. The No Negative Equity Guarantee means you can never owe more than the sale value, but estate value can still be significantly eroded. A specialist adviser should model this before you proceed.",
+        primaryCta: { label: "Reverse Mortgage Guide", href: "/aged-care/reverse-mortgage" },
+        secondaryCta: { label: "Find an Aged-Care Adviser", href: "/aged-care/quiz" },
+        advisorCta: { href: "/aged-care/quiz", specialty: "aged-care and equity release specialist" },
+      };
+    }
+
+    if (concern === "pension") {
+      return {
+        headline: "Aged care entry can change your Age Pension entitlement significantly.",
+        summary:
+          "When a person enters residential aged care, the family home becomes an assessable asset (after 28 days, capped at $208,908). This can reduce or eliminate an Age Pension entitlement previously protected by the home exemption. Simultaneously, the care fees paid (means-tested care fee) reduce assessable income. A certified aged-care adviser can model the net pension impact before you commit to a care arrangement.",
+        primaryCta: { label: "Means Testing Guide", href: "/aged-care/means-testing" },
+        secondaryCta: { label: "Find an Aged-Care Adviser", href: "/aged-care/quiz" },
+        advisorCta: { href: "/aged-care/quiz", specialty: "aged-care and age pension specialist" },
+      };
+    }
+
+    if (situation === "planning_ahead") {
+      return {
+        headline: "Planning ahead is the single best thing you can do for aged care.",
+        summary:
+          "Early planning lets you structure assets to minimise means-tested fees, understand how care costs interact with the Age Pension, and make informed decisions about the family home. Structuring super drawdown and investment assets in the right way in the years before care is needed can save tens of thousands in means-tested fees.",
+        primaryCta: { label: "Aged Care Funding Guide", href: "/aged-care" },
+        secondaryCta: { label: "Find an Aged-Care Adviser", href: "/aged-care/quiz" },
+        advisorCta: { href: "/aged-care/quiz", specialty: "accredited aged-care specialist" },
+      };
+    }
+
+    return {
+      headline: "Aged care financial advice is specialist territory — a certified adviser can help.",
+      summary:
+        "The interaction between aged care costs, Age Pension means testing, home equity, and estate planning is complex. Only advisers with specialist aged-care accreditation (AIFC, FPA Aged Care Specialist) are equipped to give comprehensive advice. Our network includes accredited specialists who can provide a full financial assessment.",
+      primaryCta: { label: "Find an Aged-Care Adviser", href: "/aged-care/quiz" },
+      secondaryCta: { label: "Aged Care Costs Guide", href: "/aged-care" },
+      advisorCta: { href: "/aged-care/quiz", specialty: "accredited aged-care specialist" },
+    };
+  },
+};
