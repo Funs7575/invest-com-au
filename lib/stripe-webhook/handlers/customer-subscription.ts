@@ -27,6 +27,7 @@ import {
   sendTransactionalEmail,
 } from "../lib/email";
 import { handleSubscriptionWebhook } from "@/lib/pro-subscription/billing";
+import { dispatchDomainSubscriptions } from "./domain-subscriptions";
 
 export const handleCustomerSubscriptionCreated: WebhookHandler = async (event, ctx) => {
   const newSub = event.data.object as Stripe.Subscription;
@@ -131,6 +132,7 @@ export const handleCustomerSubscriptionUpdated: WebhookHandler = async (event, c
       err: err instanceof Error ? err.message : String(err),
     });
   }
+  await dispatchDomainSubscriptions(event, ctx);
   return { status: "done" };
 };
 
@@ -149,6 +151,8 @@ export const handleCustomerSubscriptionDeleted: WebhookHandler = async (event, c
       err: err instanceof Error ? err.message : String(err),
     });
   }
+
+  await dispatchDomainSubscriptions(event, ctx);
 
   // Deferred-downgrade flip: when the tier-upgrade route initiated a
   // downgrade with cancel_at_period_end + metadata.pending_tier, this

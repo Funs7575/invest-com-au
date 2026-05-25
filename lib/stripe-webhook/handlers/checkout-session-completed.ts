@@ -37,6 +37,7 @@ import { ADMIN_EMAIL } from "@/lib/admin";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { handleSubscriptionWebhook } from "@/lib/pro-subscription/billing";
+import { dispatchDomainSubscriptions } from "./domain-subscriptions";
 
 export const handleCheckoutSessionCompleted: WebhookHandler = async (
   event,
@@ -671,6 +672,10 @@ export const handleCheckoutSessionCompleted: WebhookHandler = async (
       });
     }
   }
+
+  // D3 Data-API tier + B2 firm branded-profile checkouts (subscription-mode,
+  // distinguished by their own metadata) observe this same event.
+  await dispatchDomainSubscriptions(event, ctx);
 
   return { status: "done" };
 };
