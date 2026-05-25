@@ -20,6 +20,9 @@ import {
   CURRENT_YEAR,
 } from "@/lib/seo";
 import { scoreBrokerSimilarity } from "@/lib/internal-links";
+import { getRelatedForBroker } from "@/lib/related-content";
+import { itemListJsonLd } from "@/lib/schema-markup";
+import RelatedRail from "@/components/RelatedRail";
 import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
 import ComplianceFooter from "@/components/ComplianceFooter";
@@ -365,6 +368,48 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           <BrokerHistoryChart slug={b.slug} metric="asx_fee_value" daysBack={30} />
         </Suspense>
       </div>
+
+      {/* Related content rail — similar brokers + related articles.
+          Complements the "vs Alternatives" tab (BrokerReviewClient) which
+          is tab-scoped. This rail sits below the main review so both
+          surfaces are visible without duplication. */}
+      {(() => {
+        const { brokers: relBrokers, articles: relArts } = getRelatedForBroker(
+          b,
+          allOtherBrokers,
+          (brokerArticles || []) as { id: number; slug: string; title: string; category?: string; read_time?: number }[],
+        );
+        if (relBrokers.length === 0 && relArts.length === 0) return null;
+        const listItems = [
+          ...relBrokers.map((item, i) => ({
+            position: i + 1,
+            name: item.title,
+            url: item.href,
+            description: item.badgeText,
+          })),
+        ];
+        const jsonLd = listItems.length > 0
+          ? itemListJsonLd(`Similar platforms to ${b.name}`, listItems)
+          : null;
+        return (
+          <div className="container-custom max-w-4xl mt-8">
+            {relBrokers.length > 0 && (
+              <RelatedRail
+                heading={`Similar to ${b.name}`}
+                items={relBrokers}
+                jsonLd={jsonLd}
+              />
+            )}
+            {relArts.length > 0 && (
+              <RelatedRail
+                heading="Related Guides"
+                items={relArts}
+                className="mt-6"
+              />
+            )}
+          </div>
+        );
+      })()}
 
       {/* DDO compliance — render the current TMD link prominently
           next to the product footer. DDO (Corporations Act s994A–C)
