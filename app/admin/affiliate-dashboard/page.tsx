@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { createClient } from "@/lib/supabase/client";
 import Icon from "@/components/Icon";
 
 type Period = "7d" | "30d" | "90d" | "all";
@@ -47,18 +46,23 @@ export default function AffiliateDashboardPage() {
   useEffect(() => {
     const load = async () => {
       setLoading(true);
-      const supabase = createClient();
-      const since = period === "all" ? "2020-01-01" : new Date(Date.now() - (period === "7d" ? 7 : period === "30d" ? 30 : 90) * 86400000).toISOString();
-
-      const [clicksRes, signupsRes, reportsRes] = await Promise.all([
-        supabase.from("affiliate_clicks").select("broker_slug, broker_name, created_at").gte("created_at", since).order("created_at", { ascending: false }).limit(5000),
-        supabase.from("broker_signups").select("id, broker_slug, click_id, signup_date, revenue_cents, status, source, external_ref, utm_source, utm_campaign").gte("signup_date", since).order("signup_date", { ascending: false }),
-        supabase.from("affiliate_monthly_reports").select("*").order("month", { ascending: false }).limit(50),
-      ]);
-
-      setClicks(clicksRes.data || []);
-      setSignups(signupsRes.data || []);
-      setMonthlyReports(reportsRes.data || []);
+      try {
+        const res = await fetch(`/api/admin/affiliate-dashboard?period=${period}`);
+        const body = await res.json().catch(() => ({}));
+        if (res.ok) {
+          setClicks(body.clicks || []);
+          setSignups(body.signups || []);
+          setMonthlyReports(body.monthlyReports || []);
+        } else {
+          setClicks([]);
+          setSignups([]);
+          setMonthlyReports([]);
+        }
+      } catch {
+        setClicks([]);
+        setSignups([]);
+        setMonthlyReports([]);
+      }
       setLoading(false);
     };
     load();
