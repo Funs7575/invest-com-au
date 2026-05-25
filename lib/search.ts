@@ -119,15 +119,17 @@ export function searchTools(query: string, cap = 4): ToolResult[] {
  * Term matches are weighted higher than definition matches.
  */
 export function searchGlossaryStatic(query: string, cap = 5): GlossaryResult[] {
-  const q = query.toLowerCase();
-  const termHits = FULL_GLOSSARY_ENTRIES.filter((e) =>
-    e.term.toLowerCase().includes(q)
-  );
-  const defHits = FULL_GLOSSARY_ENTRIES.filter(
-    (e) =>
-      !e.term.toLowerCase().includes(q) &&
-      e.definition.toLowerCase().includes(q)
-  );
+  // Tokenise so multi-word queries ("CGT calculator") still match a single-word
+  // term/definition. An entry matches if its term (weight A) or definition
+  // (weight B) contains ANY token; term hits always rank ahead of definition hits.
+  const tokens = query.toLowerCase().split(/\s+/).filter((t) => t.length > 0);
+  if (tokens.length === 0) return [];
+  const termMatch = (e: GlossaryEntry) =>
+    tokens.some((tok) => e.term.toLowerCase().includes(tok));
+  const defMatch = (e: GlossaryEntry) =>
+    tokens.some((tok) => e.definition.toLowerCase().includes(tok));
+  const termHits = FULL_GLOSSARY_ENTRIES.filter(termMatch);
+  const defHits = FULL_GLOSSARY_ENTRIES.filter((e) => !termMatch(e) && defMatch(e));
   return [...termHits, ...defHits].slice(0, cap).map((e: GlossaryEntry) => ({
     slug: e.slug,
     term: e.term,
@@ -168,12 +170,12 @@ export async function searchAll(
   const supabase = await createClient();
 
   // Cast to `any` at the textSearch step: `search_vec` is a GENERATED ALWAYS
-  // tsvector column added by migration 20260525_search_vectors.sql. It is
+  // tsvector column added by migration 20260825090000_search_vectors.sql. It is
   // not yet reflected in the auto-generated database.types.ts, so the strict
   // typed Supabase client would reject the column name. This is the
   // established project pattern (see app/api/v1/webhooks/route.ts).
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const [brokersRes, advisorsRes, articlesRes] = await Promise.all([
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (supabase
       .from("brokers")
       .select("slug, name, tagline")
@@ -182,7 +184,6 @@ export async function searchAll(
       .order("name", { ascending: true })
       .limit(brokerCap) as Promise<{ data: BrokerResult[] | null; error: unknown }>,
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (supabase
       .from("professionals")
       .select("slug, name, type, location_display, firm_name")
@@ -191,7 +192,6 @@ export async function searchAll(
       .order("name", { ascending: true })
       .limit(advisorCap) as Promise<{ data: AdvisorResult[] | null; error: unknown }>,
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (supabase
       .from("articles")
       .select("slug, title, excerpt, category")
@@ -200,6 +200,7 @@ export async function searchAll(
       .order("title", { ascending: true })
       .limit(articleCap) as Promise<{ data: ArticleResult[] | null; error: unknown }>,
   ]);
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   return {
     brokers: brokersRes.data ?? [],

@@ -6,6 +6,7 @@ import {
   useRef,
   useCallback,
   useReducer,
+  useMemo,
 } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -206,8 +207,10 @@ export default function SearchOverlay({
 
   // ─── Focus + ESC + keyboard nav ───────────────────────────────────────────
 
-  const flatItems =
-    state.status === "success" ? state.results : [];
+  const flatItems = useMemo(
+    () => (state.status === "success" ? state.results : []),
+    [state],
+  );
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -261,7 +264,6 @@ export default function SearchOverlay({
 
   useEffect(() => {
     if (!isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery("");
       dispatch({ type: "RESET" });
       setActiveIndex(-1);

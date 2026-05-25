@@ -25,9 +25,9 @@ vi.mock("@/lib/glossary-extended", () => ({
       category: "General",
     },
     {
-      term: "SMSF",
+      term: "Self-Managed Super Fund (SMSF)",
       slug: "smsf",
-      definition: "Self-Managed Super Fund — a super fund you control.",
+      definition: "A super structure you control.",
       category: "Super",
     },
   ],
@@ -223,7 +223,7 @@ describe("searchAll", () => {
       .mockReturnValueOnce(emptyChain);
 
     // DB respects the limit we pass — simulate by returning the capped set
-    const results = await searchAll("broker", { brokers: 3 });
+    await searchAll("broker", { brokers: 3 });
     // The chain mock returns all 10; actual capping is done by Supabase .limit()
     // We just verify the chain received .limit(3) — checked via spy
     expect(brokerChain.limit).toHaveBeenCalledWith(3);
