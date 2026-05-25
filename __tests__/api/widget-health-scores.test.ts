@@ -146,10 +146,10 @@ describe("GET /api/widget/health-scores", () => {
     // Use indexOf/substring to avoid the dotAll /s flag (only valid for es2018+)
     const prefix = "var BROKERS = ";
     const start = body.indexOf(prefix);
-    const match = start !== -1 ? [null, body.substring(start + prefix.length, body.indexOf(";\n", start + prefix.length))] : null;
-    expect(match).toBeTruthy();
-    if (match) {
-      const brokers = JSON.parse(match[1]) as { safety_label: string }[];
+    expect(start).toBeGreaterThan(-1);
+    if (start !== -1) {
+      const jsonStr = body.substring(start + prefix.length, body.indexOf(";\n", start + prefix.length));
+      const brokers = JSON.parse(jsonStr) as { safety_label: string }[];
       expect(brokers[0]?.safety_label).not.toBe("Strong");
     }
   });
