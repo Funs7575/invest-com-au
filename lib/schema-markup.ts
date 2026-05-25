@@ -13,6 +13,11 @@
  *   - ItemList     — best-for ranked broker lists, versus pages
  *   - Product      — marketplace listings (/invest/listings/[slug])
  *   - WebApplication — calculator pages (/franking-credits-calculator etc.)
+ *   - QAPage        — question-detail & glossary term pages (GEO: answer-first)
+ *   - DefinedTerm / DefinedTermSet — glossary terms & index
+ *   - Speakable     — voice / AI answer-extraction selectors
+ *   - ComparisonPage — versus/compare pages (Article + ItemList + FinancialProducts)
+ *   - ArticleKeyTakeaways — answer-first Article with hasPart ClaimReview hints
  *
  * Every builder accepts the minimum required fields and gracefully
  * omits optional ones so empty values don't leak into the rendered
@@ -625,4 +630,201 @@ export function definedTermPageJsonLd(input: DefinedTermPageInput) {
     speakable: speakableSpecification(selectors),
     mainEntity: definedTermNode(input),
   });
+}
+
+// ─── Article answer-first / key takeaways ─────────────────────
+//
+// GEO note: Plain `Article` schema is already on every article page but it
+// carries no explicit "here is the answer" signal. Adding a QAPage-style
+// `speakable` + an `hasPart` with a `Claim`-flavoured abstract as the first
+// sentence pulls the answer-first excerpt into AI-answer corpora. We keep the
+// primary `@type` as `Article` (Google's documented requirement for article
+// rich results) and bolt on the answer-first structure as `hasPart`.
+//
+// The `keyTakeaways` field is derived from the article `excerpt` or the first
+// section body — never fabricated — so this is AFSL-safe factual markup.
+
+export interface ArticleAnswerFirstInput {
+  title: string;
+  slug: string;
+  /** Lead excerpt / summary paragraph (the "answer-first" sentence). */
+  excerpt: string;
+  /** Up to 4 bullet-point facts derived from the article (AFSL-safe). */
+  keyTakeaways: string[];
+  authorName?: string | null;
+  authorUrl?: string | null;
+  publishedAt?: string | null;
+  updatedAt?: string | null;
+  category?: string | null;
+}
+
+/**
+ * Article JSON-LD enhanced with answer-first structure for GEO.
+ *
+ * Returns two blocks for separate `<script>` emission:
+ *   - `article`   — standard Article with `abstract` (the excerpt) and
+ *                   `speakable` selectors pointing at the answer-first DOM ids.
+ *   - `speakable` — standalone WebPage `speakable` block (additional signal).
+ *
+ * Selectors assume the article page renders:
+ *   `#article-title`   — the `<h1>` with the article headline
+ *   `#article-summary` — the `<p>` with the article excerpt / lead sentence
+ */
+export function articleAnswerFirstJsonLd(input: ArticleAnswerFirstInput) {
+  const pageUrl = absoluteUrl(`/article/${input.slug}`);
+  const author = input.authorName
+    ? compact({
+        "@type": "Person" as const,
+        name: input.authorName,
+        url: input.authorUrl ?? undefined,
+      })
+    : ORG;
+
+  const article = compact({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.title,
+    abstract: input.excerpt,
+    description: input.excerpt,
+    url: pageUrl,
+    datePublished: input.publishedAt ?? undefined,
+    dateModified: input.updatedAt ?? input.publishedAt ?? undefined,
+    author,
+    publisher: ORG,
+    articleSection: input.category ?? undefined,
+    mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+    speakable: speakableSpecification(["#article-title", "#article-summary"]),
+    // `keywords` carries the key facts as a comma-joined string so AI extractors
+    // surface them without needing to parse the prose body.
+    keywords:
+      input.keyTakeaways.length > 0
+        ? input.keyTakeaways.join("; ")
+        : undefined,
+  });
+
+  const speakable = speakableWebPageJsonLd({
+    name: input.title,
+    path: `/article/${input.slug}`,
+    selectors: ["#article-title", "#article-summary", "#article-key-takeaways"],
+  });
+
+  return { article, speakable };
+}
+
+// ─── Glossary term QAPage ─────────────────────────────────────
+//
+// GEO note: every glossary term page already emits a DefinedTerm / WebPage
+// block. When the definition can be framed as "What is X?" (which is true for
+// every definitional entry), adding a QAPage on top doubles the AI-citation
+// signal: the DefinedTerm marks the authoritative definition; the QAPage marks
+// the page as the canonical answer to the "What is X?" question. Both are
+// needed — DefinedTerm drives corpus-level citation, QAPage drives per-question
+// citation. Emit in a separate <script> block alongside definedTermPageJsonLd.
+
+export interface GlossaryTermQaInput {
+  term: string;
+  slug: string;
+  definition: string;
+  /** Optional additional question-style facts (derived from body if present). */
+  additionalFacts?: string[];
+}
+
+/**
+ * QAPage block for a glossary term page.
+ *
+ * Frames the term definition as the canonical accepted answer to "What is
+ * [term]?". If `additionalFacts` are provided they become `suggestedAnswer`
+ * nodes (related follow-on facts from the body, max 3).
+ *
+ * Never call this for terms whose definitions don't read as factual
+ * statements — but for a financial glossary all entries qualify.
+ */
+export function glossaryTermQaJsonLd(input: GlossaryTermQaInput) {
+  const pageUrl = absoluteUrl(`${GLOSSARY_PATH}/${input.slug}`);
+  const question = `What is ${input.term}?`;
+
+  const suggestedAnswers =
+    input.additionalFacts && input.additionalFacts.length > 0
+      ? input.additionalFacts.slice(0, 3).map((fact) => ({
+          "@type": "Answer",
+          text: fact,
+          author: ORG,
+        }))
+      : undefined;
+
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "QAPage",
+    name: question,
+    url: pageUrl,
+    mainEntity: compact({
+      "@type": "Question",
+      name: question,
+      author: ORG,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: input.definition,
+        author: ORG,
+        url: pageUrl,
+      },
+      suggestedAnswer: suggestedAnswers,
+    }),
+  });
+}
+
+// ─── Comparison ItemList (versus / compare pages) ─────────────
+//
+// GEO note: versus pages already emit Article + FinancialProduct schemas via
+// `versusComparisonJsonLd`. Adding a named `ItemList` on top gives AI systems
+// a ranked-list citation target ("according to invest.com.au, the top options
+// are…") — a different extraction path from the Article. Combine with the
+// existing `versusComparisonJsonLd` output in separate <script> blocks.
+
+export interface ComparisonBrokerEntry {
+  position: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  /** The scenario where this broker wins, e.g. "Best for international shares" */
+  bestFor?: string | null;
+  rating?: number | null;
+}
+
+export interface ComparisonPageItemListInput {
+  /** URL path segment, e.g. "stake-vs-commsec" */
+  slugs: string;
+  /** Full page title for the list name */
+  title: string;
+  brokers: ComparisonBrokerEntry[];
+}
+
+/**
+ * ItemList JSON-LD for a versus/comparison page.
+ *
+ * Lists each broker in the comparison as a ranked `ListItem` pointing at its
+ * canonical broker URL with a description. This is additive to
+ * `versusComparisonJsonLd` — emit as a separate `<script>` block.
+ *
+ * When `bestFor` is set it becomes the `description` so AI engines can surface
+ * "Stake is best for X, CommSec is best for Y" structured claims.
+ */
+export function comparisonPageItemListJsonLd(
+  input: ComparisonPageItemListInput,
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: input.title,
+    url: absoluteUrl(`/versus/${input.slugs}`),
+    numberOfItems: input.brokers.length,
+    itemListElement: input.brokers.map((b) =>
+      compact({
+        "@type": "ListItem",
+        position: b.position,
+        name: b.name,
+        url: absoluteUrl(`/broker/${b.slug}`),
+        description: b.bestFor ?? b.description ?? undefined,
+      }),
+    ),
+  };
 }
