@@ -240,6 +240,35 @@ export function buildOpenApiSpec(): OpenApiSpec {
             },
           ],
         },
+        AdvisorTrustScore: {
+          type: "object",
+          description:
+            "Factual composite score for a single advisor, computed from publicly disclosed credential " +
+            "and review signals. NOT a ranking or personal recommendation. " +
+            "See methodology_url for full scoring details.",
+          required: ["overall", "label", "methodology_url"],
+          properties: {
+            overall: {
+              type: "integer",
+              minimum: 0,
+              maximum: 100,
+              description: "Overall Trust Score, 0–100.",
+              example: 74,
+            },
+            label: {
+              type: "string",
+              enum: ["Strong", "Good", "Moderate", "Limited"],
+              description: "Human-readable band label corresponding to the overall score.",
+              example: "Good",
+            },
+            methodology_url: {
+              type: "string",
+              format: "uri",
+              description: "Link to the published scoring methodology.",
+              example: "https://invest.com.au/advisor/trust-score-methodology",
+            },
+          },
+        },
         Advisor: {
           type: "object",
           properties: {
@@ -262,6 +291,13 @@ export function buildOpenApiSpec(): OpenApiSpec {
             hourly_rate_cents: { type: "integer", nullable: true },
             initial_consultation_free: { type: "boolean" },
             updated_at: { type: "string", format: "date-time" },
+            trust_score: {
+              allOf: [{ $ref: "#/components/schemas/AdvisorTrustScore" }],
+              description:
+                "Computed Advisor Trust Score for this advisor. " +
+                "Factual single-entity score only — not a comparison, ranking, or award. " +
+                "See methodology_url for the published scoring algorithm.",
+            },
           },
         },
         HealthScore: {

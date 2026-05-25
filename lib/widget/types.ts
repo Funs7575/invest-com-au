@@ -18,6 +18,7 @@
  *   /api/widget/advisors      — advisor directory widget
  *   /api/widget/fee-index     — AU brokerage fee index table
  *   /api/widget/health-scores — broker health score comparison
+ *   /api/widget/badge         — single-entity score badge (advisor trust or broker health)
  *
  * All suite routes support an optional `?ref=<partnerId>` query param that
  * is threaded through to outbound invest.com.au links for partner attribution.
@@ -30,7 +31,8 @@ export type WidgetKind =
   | "calculator"
   | "advisors"
   | "fee-index"
-  | "health-scores";
+  | "health-scores"
+  | "badge";
 
 export type WidgetFilter = "all" | "asx" | "us" | "crypto" | "savings" | "term-deposits";
 
@@ -237,6 +239,35 @@ export const SUITE_WIDGET_CATALOGUE: ReadonlyArray<SuiteWidgetMeta> = [
       { title: "Specific brokers", description: "Health scores for chosen brokers.", params: "?brokers=stake,commsec,cmc-markets" },
       { title: "Dark theme", description: "Health scores styled for dark-mode sites.", params: "?theme=dark" },
       { title: "With partner ref", description: "Partner attribution threaded through links.", params: "?ref=yourpartnerId" },
+    ],
+  },
+  {
+    kind: "badge",
+    label: "Score Badge",
+    description:
+      "Single-entity score badge — shows an advisor's Trust Score or a broker's Health Score with a methodology link. Not a ranking or comparison.",
+    apiPath: "/api/widget/badge",
+    snippets: [
+      {
+        title: "Advisor Trust Score badge",
+        description: "Embeds a single advisor's Trust Score with gauge, label, and methodology link.",
+        params: "?type=advisor&slug=jane-smith-cfp",
+      },
+      {
+        title: "Broker Health Score badge",
+        description: "Embeds a single broker's Health Score with gauge, label, and methodology link.",
+        params: "?type=broker&slug=stake",
+      },
+      {
+        title: "Dark theme advisor badge",
+        description: "Advisor badge styled for dark-mode pages.",
+        params: "?type=advisor&slug=jane-smith-cfp&theme=dark",
+      },
+      {
+        title: "With partner ref",
+        description: "Partner attribution threaded through outbound links.",
+        params: "?type=advisor&slug=jane-smith-cfp&ref=yourpartnerId",
+      },
     ],
   },
 ];

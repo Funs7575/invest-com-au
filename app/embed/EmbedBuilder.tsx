@@ -62,6 +62,11 @@ export default function EmbedBuilder() {
   const [healthTheme, setHealthTheme] = useState<"light" | "dark">("light");
   const [healthLimit, setHealthLimit] = useState(5);
 
+  // ─── Badge widget state ───────────────────────────────────────────────────
+  const [badgeType, setBadgeType] = useState<"advisor" | "broker">("advisor");
+  const [badgeSlug, setBadgeSlug] = useState("");
+  const [badgeTheme, setBadgeTheme] = useState<"light" | "dark">("light");
+
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -121,6 +126,16 @@ export default function EmbedBuilder() {
     return `https://invest.com.au/api/widget/health-scores${qs ? `?${qs}` : ""}`;
   }, [healthSlugs, healthTheme, healthLimit, partnerRef]);
 
+  const badgeEmbedUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set("type", badgeType);
+    if (badgeSlug.trim()) params.set("slug", badgeSlug.trim());
+    if (badgeTheme !== "light") params.set("theme", badgeTheme);
+    if (partnerRef.trim()) params.set("ref", partnerRef.trim());
+    const qs = params.toString();
+    return `https://invest.com.au/api/widget/badge${qs ? `?${qs}` : ""}`;
+  }, [badgeType, badgeSlug, badgeTheme, partnerRef]);
+
   const activeUrl = useMemo(() => {
     switch (tab) {
       case "broker": return brokerEmbedUrl;
@@ -128,8 +143,9 @@ export default function EmbedBuilder() {
       case "advisors": return advisorEmbedUrl;
       case "fee-index": return feeIndexEmbedUrl;
       case "health-scores": return healthEmbedUrl;
+      case "badge": return badgeEmbedUrl;
     }
-  }, [tab, brokerEmbedUrl, calcEmbedUrl, advisorEmbedUrl, feeIndexEmbedUrl, healthEmbedUrl]);
+  }, [tab, brokerEmbedUrl, calcEmbedUrl, advisorEmbedUrl, feeIndexEmbedUrl, healthEmbedUrl, badgeEmbedUrl]);
 
   const snippet = `<script src="${activeUrl}"></script>`;
 
@@ -207,6 +223,7 @@ export default function EmbedBuilder() {
       case "advisors": return advisorTheme;
       case "fee-index": return feeTheme;
       case "health-scores": return healthTheme;
+      case "badge": return badgeTheme;
     }
   })();
 
@@ -575,6 +592,62 @@ export default function EmbedBuilder() {
             <p className="text-[11px] text-slate-500">
               Scores are computed from factual regulatory attributes — not a personal recommendation.
               General-advice disclaimer is included automatically.
+            </p>
+          </>
+        )}
+
+        {/* ── BADGE WIDGET CONTROLS ── */}
+        {tab === "badge" && (
+          <>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 leading-relaxed">
+              <strong>Single-entity badge only.</strong> This widget shows one advisor&apos;s or broker&apos;s
+              own factual score. It does not compare entities, rank, or imply &ldquo;best&rdquo; status.
+              A methodology link is always included on the badge.
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Score Type</label>
+                <select
+                  value={badgeType}
+                  onChange={(e) => setBadgeType(e.target.value as "advisor" | "broker")}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+                >
+                  <option value="advisor">Advisor Trust Score</option>
+                  <option value="broker">Broker Health Score</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                  {badgeType === "advisor" ? "Advisor Slug" : "Broker Slug"}
+                </label>
+                <input
+                  type="text"
+                  value={badgeSlug}
+                  onChange={(e) => setBadgeSlug(e.target.value)}
+                  placeholder={badgeType === "advisor" ? "e.g. jane-smith-cfp" : "e.g. stake"}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm placeholder:text-slate-400"
+                  maxLength={128}
+                />
+                <p className="mt-1 text-[11px] text-slate-500">
+                  Find the slug in the URL of the {badgeType === "advisor" ? "advisor profile" : "broker profile"} page.
+                </p>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+                <select
+                  value={badgeTheme}
+                  onChange={(e) => setBadgeTheme(e.target.value as "light" | "dark")}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+                >
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </div>
+            </div>
+            <p className="text-[11px] text-slate-500">
+              Renders a compact gauge badge (320px max-width) inside a Shadow DOM.
+              Includes the general-advice disclaimer and a link to the scoring methodology.
+              Not a recommendation or personal advice.
             </p>
           </>
         )}
