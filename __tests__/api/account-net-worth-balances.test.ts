@@ -122,7 +122,7 @@ describe("/api/account/net-worth/balances", () => {
 
   it("DELETE returns 401 for unauthenticated", async () => {
     mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
-    const res = await DELETE(makeReq("DELETE", { id: "some-uuid-1234-1234-1234-123456789012" }));
+    const res = await DELETE(makeReq("DELETE", { id: "11111111-1111-4111-8111-111111111111" }));
     expect(res.status).toBe(401);
   });
 
@@ -138,7 +138,7 @@ describe("/api/account/net-worth/balances", () => {
 
   it("DELETE removes balance successfully", async () => {
     mockFrom.mockImplementation(() => makeBuilder({ data: null, error: null }));
-    const res = await DELETE(makeReq("DELETE", { id: "11111111-1111-1111-1111-111111111111" }));
+    const res = await DELETE(makeReq("DELETE", { id: "11111111-1111-4111-8111-111111111111" }));
     expect(res.status).toBe(200);
     const json = await res.json() as { ok: boolean };
     expect(json.ok).toBe(true);
@@ -146,7 +146,7 @@ describe("/api/account/net-worth/balances", () => {
 
   it("DELETE returns 500 on db error", async () => {
     mockFrom.mockImplementation(() => makeBuilder({ data: null, error: { message: "delete failed" } }));
-    const res = await DELETE(makeReq("DELETE", { id: "11111111-1111-1111-1111-111111111111" }));
+    const res = await DELETE(makeReq("DELETE", { id: "11111111-1111-4111-8111-111111111111" }));
     expect(res.status).toBe(500);
   });
 });

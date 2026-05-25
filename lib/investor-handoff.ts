@@ -21,6 +21,7 @@
  * replayed. The investor can always re-generate from their holdings page.
  */
 
+// eslint-disable-next-line no-restricted-imports -- anonymous-path exception (see header): the advisor consuming a handoff link has no JWT, so the opaque token is the auth factor and the service-role client is required to read investor_handoffs + stamp consumed_at.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
