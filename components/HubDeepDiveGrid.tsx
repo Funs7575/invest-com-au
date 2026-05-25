@@ -83,7 +83,7 @@ export default function HubDeepDiveGrid({
                 {item.desc}
               </p>
               {cta && (
-                <span className="inline-flex items-center gap-1.5 text-sm font-bold text-amber-600 group-hover:underline">
+                <span className="inline-flex items-center gap-1.5 text-sm font-bold text-amber-700 group-hover:underline">
                   {cta}
                   <Icon name="arrow-right" size={14} />
                 </span>

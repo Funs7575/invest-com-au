@@ -191,7 +191,7 @@ export default async function GlossaryPage() {
                             {entry.term}
                           </span>
                           {entry.category && (
-                            <span className="text-[0.6rem] md:text-xs font-semibold px-1.5 md:px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                            <span className="text-[0.6rem] md:text-xs font-semibold px-1.5 md:px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
                               {entry.category}
                             </span>
                           )}

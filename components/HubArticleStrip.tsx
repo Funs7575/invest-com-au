@@ -74,7 +74,7 @@ export default function HubArticleStrip({
                   {a.excerpt}
                 </p>
               )}
-              <p className="text-xs font-bold text-amber-600 mt-3 inline-flex items-center gap-1">
+              <p className="text-xs font-bold text-amber-700 mt-3 inline-flex items-center gap-1">
                 Read article
                 <Icon name="arrow-right" size={12} />
               </p>
