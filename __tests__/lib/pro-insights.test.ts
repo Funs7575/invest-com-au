@@ -12,7 +12,6 @@ import {
   buildHealthScoreMovers,
   buildLoanRateSummary,
   formatDelta,
-  type BrokerFeeRow,
   type LoanRateRow,
 } from "@/lib/pro-insights";
 import type { FeeSnapshotRow } from "@/lib/fee-index";
