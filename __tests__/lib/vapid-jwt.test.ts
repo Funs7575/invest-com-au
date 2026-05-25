@@ -190,7 +190,7 @@ describe("buildVapidJwt", () => {
     const valid = await globalThis.crypto.subtle.verify(
       { name: "ECDSA", hash: { name: "SHA-256" } },
       publicKeyCryptoKey,
-      sigBytes,
+      sigBytes as BufferSource,
       signingInputBytes,
     );
     expect(valid).toBe(true);
@@ -208,7 +208,7 @@ describe("buildVapidJwt", () => {
     const valid = await globalThis.crypto.subtle.verify(
       { name: "ECDSA", hash: { name: "SHA-256" } },
       otherPublicKey,
-      sigBytes,
+      sigBytes as BufferSource,
       signingInputBytes,
     );
     expect(valid).toBe(false);

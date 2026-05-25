@@ -222,7 +222,8 @@ function buildEcP256Pkcs8(rawKey: Uint8Array): ArrayBuffer {
     tlv(0x04, ecPrivateKey), // privateKey OCTET STRING
   ]);
 
-  return tlv(0x30, pkcs8Body).buffer;
+  // Freshly-allocated full-size Uint8Array, so .buffer is exactly this data.
+  return tlv(0x30, pkcs8Body).buffer as ArrayBuffer;
 }
 
 function concat(arrays: Uint8Array[]): Uint8Array {

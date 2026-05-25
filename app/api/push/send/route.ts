@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- admin-gated internal push-send route (ADMIN_API_KEY checked above); fields destructured + validated below
     const body = await request.json();
     const { topic, title, body: notifBody, url, icon } = body as {
       topic: string;

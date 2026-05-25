@@ -14,7 +14,7 @@ vi.mock("@/lib/cron-auth", () => ({
   requireCronAuth: vi.fn(() => null),
 }));
 
-const dispatchPushMock = vi.fn(async () => ({
+const dispatchPushMock = vi.fn(async (_userId: string, _payload: unknown) => ({
   sent: 1,
   failed: 0,
   skipped_no_sub: false,
