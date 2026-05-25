@@ -143,7 +143,10 @@ describe("GET /api/widget/health-scores", () => {
     // AU HQ(5) + 13yr(15 since 2013 = ≥10yr) + rating(8) = 28 → Caution
     // The safety_label in the serialised JSON should be "Caution" not "Strong".
     // We parse the BROKERS JSON blob from the body to assert the label precisely.
-    const match = body.match(/var BROKERS = (\[.*?\]);/s);
+    // Use indexOf/substring to avoid the dotAll /s flag (only valid for es2018+)
+    const prefix = "var BROKERS = ";
+    const start = body.indexOf(prefix);
+    const match = start !== -1 ? [null, body.substring(start + prefix.length, body.indexOf(";\n", start + prefix.length))] : null;
     expect(match).toBeTruthy();
     if (match) {
       const brokers = JSON.parse(match[1]) as { safety_label: string }[];
