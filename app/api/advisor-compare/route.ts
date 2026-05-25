@@ -15,7 +15,26 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase
     .from("professionals")
     .select(
-      "id, slug, name, firm_name, type, photo_url, rating, review_count, verified, location_display, specialties, fee_structure, fee_description, hourly_rate_cents, flat_fee_cents, aum_percentage, initial_consultation_free, afsl_number, bio, booking_link, languages, accepts_international_clients, firb_specialist, accepts_new_clients",
+      // Core identity
+      "id, slug, name, firm_name, type, photo_url, location_display, " +
+      // Rating & reviews
+      "rating, review_count, " +
+      // Credentials & verification
+      "verified, afsl_number, registration_number, verified_at, " +
+      // Specialties
+      "specialties, " +
+      // Fee model
+      "fee_structure, fee_description, hourly_rate_cents, flat_fee_cents, aum_percentage, initial_consultation_free, " +
+      // Availability & booking
+      "accepts_new_clients, booking_link, " +
+      // Meeting methods
+      "meeting_types, " +
+      // Languages
+      "languages, " +
+      // Trust Score inputs — transparency & track record
+      "created_at, years_experience, bio, qualifications, education, memberships, linkedin_url, website, " +
+      // Additional (legacy fields kept for backwards-compat)
+      "accepts_international_clients, firb_specialist",
     )
     .in("slug", slugs)
     .eq("status", "active");
