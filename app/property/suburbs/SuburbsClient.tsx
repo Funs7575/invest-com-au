@@ -3,6 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import SearchInput from "@/components/directory/SearchInput";
+import ResultCount from "@/components/directory/ResultCount";
+import EmptyState from "@/components/directory/EmptyState";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
 import { SUBURB_DATA_DISCLAIMER } from "@/lib/compliance";
 
@@ -99,16 +102,14 @@ export default function SuburbsClient() {
       {/* Search */}
       <section className="bg-slate-50 border-b border-slate-200 sticky top-16 lg:top-20 z-30">
         <div className="container-custom py-3">
-          <div className="relative max-w-md">
-            <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search suburb name..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
-            />
-          </div>
+          <SearchInput
+            id="suburb-search"
+            value={search}
+            onChange={setSearch}
+            placeholder="Search suburb name..."
+            ariaLabel="Search suburbs"
+            className="max-w-md"
+          />
         </div>
       </section>
 
@@ -124,11 +125,25 @@ export default function SuburbsClient() {
                   ))}
                 </div>
               ) : sorted.length === 0 ? (
-                <div className="text-center py-16">
-                  <Icon name="bar-chart" size={40} className="text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500 font-medium">No suburbs found.</p>
-                </div>
+                <EmptyState
+                  icon="bar-chart"
+                  title="No suburbs found."
+                  body={
+                    search
+                      ? "No suburbs match your search. Try a different name or clear the search to browse all suburbs."
+                      : "No suburb data is available right now. Check back soon."
+                  }
+                  suggestions={
+                    search ? [{ label: "Clear search", onClick: () => setSearch("") }] : undefined
+                  }
+                />
               ) : (
+                <>
+                <ResultCount
+                  total={sorted.length}
+                  noun={sorted.length === 1 ? "suburb" : "suburbs"}
+                  className="mb-4"
+                />
                 <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
@@ -182,6 +197,7 @@ export default function SuburbsClient() {
                     </tbody>
                   </table>
                 </div>
+                </>
               )}
             </div>
 
