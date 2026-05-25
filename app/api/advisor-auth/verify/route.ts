@@ -2,11 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
 import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("advisor-auth-verify");
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: anonymous magic-link verification keyed by IP. Caps
+    // token-guessing/brute-force against advisor_auth_tokens.
+    if (!(await isAllowed("advisor_auth_verify", ipKey(request), { max: 10, refillPerSec: 10 / 60 }))) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- Pre-existing endpoint; token narrowed + validated inline. Tracked for Zod migration.
     const { token } = await request.json();
     if (!token) return NextResponse.json({ error: "Token required" }, { status: 400 });
 

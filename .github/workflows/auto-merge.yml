@@ -45,16 +45,8 @@ name: Auto-merge (selective)
 #   shows up in `git log` and PR history.
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
-  check_suite:
-    types: [completed]
-  issue_comment:
-    types: [created]
-  schedule:
-    # Every 15 minutes. Quiet window is 60 min so 15-min granularity is
-    # fine — worst-case a PR merges 14 min later than it could have.
-    - cron: "*/15 * * * *"
+  # DISABLED 2026-05-25 (founder request: stop loop/auto-merge churn).
+  # Re-enable by restoring the original triggers (see git history).
   workflow_dispatch: {}
 
 permissions:

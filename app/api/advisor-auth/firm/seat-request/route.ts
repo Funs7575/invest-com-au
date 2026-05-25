@@ -4,6 +4,7 @@ import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { sendAdminNotification } from "@/lib/advisor-emails";
 import { escapeHtml } from "@/lib/html-escape";
 import { logger } from "@/lib/logger";
+import { isAllowed } from "@/lib/rate-limit-db";
 
 const log = logger("advisor-auth:firm:seat-request");
 
@@ -11,6 +12,12 @@ export async function POST(request: NextRequest) {
   try {
     const advisorId = await requireAdvisorSession(request);
     if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+    // Rate limit per advisor — each request emails an admin notification.
+    // Pending-request dedup exists below, but cap email volume regardless.
+    if (!(await isAllowed("firm_seat_request", `a:${advisorId}`, { max: 10, refillPerSec: 10 / 3600 }))) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
 
     const admin = createAdminClient();
 
@@ -32,6 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (!firm) return NextResponse.json({ error: "Firm not found" }, { status: 404 });
 
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- Pre-existing advisor-session-gated endpoint; requestedSeats/reason guarded inline. Tracked for Zod migration.
     const body = await request.json();
     const { requestedSeats, reason } = body;
 

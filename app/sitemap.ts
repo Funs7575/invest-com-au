@@ -62,15 +62,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/private-credit/listings", "/invest/infrastructure/listings",
     "/invest/digital-infrastructure/listings",
     "/invest/public-social-infrastructure/listings",
-    // carbon/aquaculture/livestock /listings de-indexed pending compliance
-    // review (s708 / MIS classification) — guide hubs stay, listing pages omitted.
-    "/invest/royalties/listings",
+    // carbon/aquaculture/livestock/royalties/VC/litigation-funding/ILS /listings
+    // de-indexed (no live listings yet — thin pages hurt crawl budget).
+    // Guide hubs stay; listing pages omitted until supply threshold is met.
     "/invest/aquaculture",
     "/invest/livestock",
     "/invest/private-equity/listings",
-    "/invest/venture-capital", "/invest/venture-capital/listings",
-    "/invest/litigation-funding", "/invest/litigation-funding/listings",
-    "/invest/insurance-linked-securities", "/invest/insurance-linked-securities/listings",
+    "/invest/venture-capital",
+    "/invest/litigation-funding",
+    "/invest/insurance-linked-securities",
     "/foreign-investment/united-states", "/foreign-investment/japan", "/foreign-investment/india",
     "/foreign-investment/malaysia", "/foreign-investment/new-zealand", "/foreign-investment/south-korea",
     "/foreign-investment/saudi-arabia",
@@ -81,7 +81,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
     "/billing-policy",
     "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/rate-alerts", "/score",
-    "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor", "/find-advisor/life-event", "/community",
+    "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor", "/find-advisor/life-event", "/afsl-lookup", "/community",
     "/community/share-trading", "/community/etfs-index-funds", "/community/crypto",
     "/community/super-retirement", "/community/property", "/community/tax-strategy",
     "/community/broker-reviews", "/community/beginners", "/community/off-topic",
@@ -131,7 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/inheritance",
     "/pricing",
     "/firb-fee-estimator", "/non-resident-dividend-calculator", "/non-resident-cgt-checker",
-    "/franking-credits-calculator", "/chess-lookup",
+    "/franking-credits-calculator", "/investment-income-tax-calculator", "/chess-lookup",
     "/share-trading", "/crypto", "/crypto/quiz", "/savings", "/super", "/super/quiz", "/cfd",
     "/how-to",
     // Revenue-expansion hubs
@@ -712,8 +712,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  // Individual glossary term pages
-  const { GLOSSARY_ENTRIES } = await import("@/lib/glossary");
+  // Individual glossary term pages — full live set (203), so all term pages
+  // are discoverable. Server-only import keeps the client bundle lean.
+  const { FULL_GLOSSARY_ENTRIES: GLOSSARY_ENTRIES } = await import("@/lib/glossary-extended");
   const glossaryPages = GLOSSARY_ENTRIES.map((entry) => ({
     url: `${baseUrl}/glossary/${entry.slug}`,
     lastModified: new Date(),

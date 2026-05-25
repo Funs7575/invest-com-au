@@ -1,89 +1,145 @@
-# Visual regression specs
+# Visual screenshot sweep
 
-**Status: skeleton — enable with the setup steps in
-`.github/workflows/visual-regression.yml`.**
+End-to-end screenshot collection for invest.com.au. Crawls every route as
+each user type (anonymous, regular user, advisor, broker, business,
+advertiser, author, admin), captures full-page screenshots at three
+viewports, and emits a browsable HTML index.
 
-This directory holds Playwright specs whose only assertion is
-`toHaveScreenshot()`. They're kept separate from the functional e2e
-specs because the coverage goals are different: functional tests
-lock the DOM shape and behaviour; visual tests lock the pixels.
+> Supersedes the earlier "Chromatic regression skeleton" plan that lived
+> in this README — that approach covered 14 routes × 2 viewports for
+> pixel-diff CI. This is a broader, manual-trigger crawler designed for
+> auditing feature coverage across every account type. The Chromatic
+> idea is not gone; if pixel-diff CI is wanted later, layer it on top
+> by adding `argosScreenshot(page, name)` (or Chromatic's Playwright
+> mode) inside `runner.ts`.
 
-When the Chromatic integration is enabled, Chromatic's Playwright
-mode runs these specs, uploads each screenshot to Chromatic's diff
-service, and fails the PR check if any pixel-level diff exceeds the
-tolerance threshold (configurable in the Chromatic dashboard —
-default: 0.2% of pixels changed).
+## What gets captured
 
-## Coverage plan (14 routes × 2 viewports = 28 snapshots/run)
+- **Routes**: every `page.tsx` under `app/**` (671 today). Dynamic
+  segments (`[slug]`, `[category]`) are filled in from `fixtures.ts` —
+  add new param names there as discovery surfaces them.
+- **States**:
+  - `anonymous` — no cookies (always available)
+  - `user-individual` — logged-in regular user
+  - `advisor` — advisor-portal session
+  - `broker` — broker-portal session
+  - `business` — business-portal session
+  - `advertiser` — `/advertise` dashboard
+  - `author` — content author
+  - `admin` — ADMIN_EMAILS + MFA
+- **Viewports**: mobile (375×812), tablet (768×1024), desktop (1440×900).
 
-Legal / meta (highest ROI — rarely changes, so every diff is likely
-a regression):
+Default full sweep: 671 routes × 8 states × 3 viewports ≈ 16k screenshots.
+Use `MATCH=…` to slice it down for iteration.
 
-- `/`
-- `/privacy`
-- `/terms`
-- `/accessibility`
-- `/about`
-- `/how-we-earn`
+## Setup
 
-Financial tools (user-critical UI):
+One-time:
 
-- `/fee-impact`
-- `/tax/capital-gains`
-- `/tax/franking-credits`
+```bash
+npm install
+npm run e2e:install        # installs Chromium for Playwright
+```
 
-Marketplace (the most CSS-heavy surface):
+Test accounts: create one account per role you want to capture (use
+Supabase admin tooling, or sign up via the site). Then **seed** an auth
+state per account — this opens a headed browser and waits for you to log
+in once. The session cookie is then reused on every screenshot run.
 
-- `/compare`
-- `/find-advisor`
+```bash
+npm run screenshots:seed -- user-individual
+npm run screenshots:seed -- advisor
+npm run screenshots:seed -- broker
+npm run screenshots:seed -- business
+npm run screenshots:seed -- advertiser
+npm run screenshots:seed -- author
+npm run screenshots:seed -- admin   # complete MFA in the browser
+```
 
-Reviews (content pages that pick up header/footer changes):
+Storage states are saved to `e2e/visual/.auth/<state>.json` (gitignored).
+If a session expires, just re-run the seed command for that state.
 
-- `/broker/example-share-broker`
-- `/broker/example-sponsored-broker`
+## Running
 
-Glossary (long list, catches typography regressions):
+```bash
+# Full sweep (anonymous + every seeded state, every viewport)
+npm run screenshots
 
-- `/glossary`
+# One state only
+STATES=anonymous npm run screenshots
 
-## Viewports
+# Route filter (substring match)
+MATCH=/advisor npm run screenshots
 
-Each route is captured at two widths:
+# Just desktop viewport, fast iteration
+VIEWPORTS=desktop MATCH=/compare npm run screenshots
+```
 
-- **desktop** — 1440×900 (Chromium, default)
-- **mobile** — 375×812 (iPhone 13, via Playwright device preset)
+The dev server starts automatically via Playwright's `webServer` config.
+If you already have `npm run dev` running on port 3000, that's reused.
 
-## Why not Percy / Storybook / Playwright built-in
+## Output
 
-- **Percy**: similar feature, more expensive at this scale.
-- **Storybook + Chromatic stories**: requires setting up Storybook
-  (not currently in the repo). Would be more thorough than page-
-  level snapshots (catches component-level regressions in
-  isolation) but is a bigger commit.
-- **Playwright built-in `toHaveScreenshot()`**: stores baselines in
-  the repo. Free, no SaaS. Trade-off: diffs are reviewed in git
-  commits, not in a hosted UI — painful to approve/reject a 14-
-  snapshot batch.
+```
+e2e/visual/snapshots/
+  YYYY-MM-DD/
+    index.html                      ← open in browser to view the run
+    anonymous/
+      _root/
+        desktop.png
+        desktop.meta.json
+        tablet.png
+        tablet.meta.json
+        mobile.png
+        mobile.meta.json
+      compare/
+        desktop.png
+        ...
+    user-individual/
+      ...
+```
 
-## Implementation (for when enabling)
+The `index.html` shows every captured route per state with thumbnails;
+click a thumbnail to open the full-resolution PNG.
 
-1. Create `e2e/visual/{legal,tools,marketplace,reviews,glossary}.spec.ts`
-   — each file has 2-4 tests, one per route, using
-   `await expect(page).toHaveScreenshot()` after page.goto + a
-   short wait for network-idle.
-2. Make sure the `needs: ci` step in
-   `.github/workflows/visual-regression.yml` still downloads the
-   correct `.next` build artifact.
-3. Generate the initial baseline by pushing with the workflow
-   enabled and accepting all snapshots in Chromatic's dashboard.
-4. Tune the tolerance in Chromatic project settings —
-   0.2% (default) is usually fine for finance sites; tune down
-   to 0.1% if false negatives outweigh true ones.
+`meta.json` records the final URL after any redirects, the HTTP status,
+and the capture timestamp — useful for auditing whether anonymous → /admin
+landed on the login page (= expected) vs. 200'd through (= bug).
 
-## Budget
+## What's missing from v1
 
-Free tier: 5,000 snapshots/month. Expected usage: ~28 snapshots
-per PR × ~6 PRs/day = 5,040/month. That's right at the free-tier
-ceiling. Hobby plan ($149/mo) triples it.
+- **Visual diffing.** v1 captures, doesn't diff. To enable diffs, sign
+  up for [Argos CI](https://argos-ci.com) (free tier) and add
+  `argosScreenshot(page, name)` calls in `runner.ts`. Argos's web UI
+  shows side-by-side diffs and history; we deliberately didn't add SaaS
+  in v1 to keep the loop self-contained.
+- **End-to-end flow walks.** Reserved for multi-step journeys (signup →
+  onboarding → dashboard, get-matched-to-advisor, advisor application).
+  v1 is a route crawler only.
+- **"Click every option" probe.** Right now we scroll the page to
+  trigger lazy content but don't open accordions / hover menus /
+  click disclosure widgets. To add: extend `runner.ts` with a probe
+  step after the initial screenshot, save a second `desktop-expanded.png`.
 
-Workflow is `paths:`-gated so docs-only PRs don't consume budget.
+## Adding a new state
+
+1. Add an entry to `AUTH_STATES` in `state-registry.ts` (name, login
+   URL, post-login URL pattern).
+2. Run `npm run screenshots:seed -- <new-name>` to seed it.
+3. Next `npm run screenshots` will include it automatically.
+
+## Adding a fixture for a new dynamic param
+
+If discovery logs a route like `→ /some/path/example` and the route is
+actually `/some/path/[freshKey]`, add `freshKey: "real-value"` to
+`PARAM_FIXTURES` in `fixtures.ts` so the bot visits a real page.
+
+## Troubleshooting
+
+- **"storage state missing"** — run the seed command for that state.
+- **Login session expired** — re-run `screenshots:seed -- <state>`.
+- **Dev server fails to start in time** — increase `webServer.timeout`
+  in `playwright.config.ts`, or start `npm run dev` manually before
+  the screenshot command (the config will reuse it).
+- **A route crashes** — its error stack is dumped to
+  `<runDir>/<state>/<slug>/error.txt`. The run continues.

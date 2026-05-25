@@ -15,14 +15,9 @@ name: Auto-merge stats
 # usefulness; faster firing wastes minutes.
 
 on:
-  schedule:
-    - cron: "13 * * * *"
+  # DISABLED 2026-05-25 (founder request: stop loop/auto-merge churn).
+  # Re-enable by restoring the original triggers (see git history).
   workflow_dispatch: {}
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/auto-merge-stats.yml"
-      - ".github/workflows/scripts/auto-merge-stats.js"
 
 permissions:
   contents: write

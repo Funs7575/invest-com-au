@@ -14,6 +14,27 @@
 
 ## Active strategic decisions log
 
+### 2026-05-21 — Platform Expansion (PX stream) shipped
+
+Seven features that turn the platform from comparison directory into practice management tool for advisors and financial dashboard for investors.
+
+**Shipped in one session (branch `claude/sweet-gates-izLBx`):**
+- **PX-01: Slack lead alerts** — `slack_webhook_url` column on professionals, Slack Block Kit formatter (`lib/slack-lead-notify.ts`), internal Node route (`/api/internal/lead-webhooks`), advisor Settings tab UI. Advisors paste a Slack Incoming Webhook URL → get a structured Slack ping on every matched lead.
+- **PX-02: CRM/Zapier webhook sync** — `lead.received` added to outbound webhook ALLOWED_EVENTS; `sendOutboundWebhook` now accepts optional owner filter (prevents cross-advisor event leakage); wired from `submit-lead` via fire-and-forget internal route (edge runtime compatibility).
+- **PX-03: Firm shared lead inbox** — `Mine/Team` toggle in LeadsTab when `is_firm_admin=true`; `/api/advisor-portal/firm-leads` (GET + PATCH) returns all firm member leads with assignment dropdown. Firm admins can now see and reassign all leads across their team.
+- **PX-04: Fee impact visualiser** — `components/FeeImpactVisualiser.tsx` (pure SVG, no deps, interactive amount/horizon selectors, animated area chart, AUD callout). Embedded in `/broker/[slug]/` Fee Audit section for ETF/managed fund contexts.
+- **PX-05: Referral programme migration** — `referral_codes` + `referral_claims` tables (with RLS) that wire up the already-built `/api/referrals` route and `/account/referrals` UI which were orphaned without a DB backing.
+- **PX-06: Calendar booking on advisor profile** — already done (booking_link + BookingWidget already on advisor/[slug] profile page). No work needed.
+- **PX-07: Annual Financial MOT email** — daily cron (`/api/cron/annual-mot`) finds users whose account anniversary is today, queries their bookmarks, sends personalised re-engagement email. `mot_sent_at` column on `investor_profiles` prevents duplicate sends. Uses `auth.admin.listUsers()` pagination pattern.
+
+**Key architectural decision:** outbound webhooks (CRM/Zapier) and Slack notifications share one internal Node runtime route (`/api/internal/lead-webhooks`) called fire-and-forget from the edge `submit-lead` route. This sidesteps the `node:crypto` / edge runtime incompatibility without breaking the edge performance budget.
+
+**Docs:** `docs/plans/PLATFORM_EXPANSION_BRIEF.md` has full spec for each item.
+
+**Revisit:** 2026-06-21 — check Slack adoption rate in settings (query `SELECT COUNT(*) FROM professionals WHERE slack_webhook_url IS NOT NULL`), lead response time improvement in LeadsTab analytics, fee visualiser engagement (PostHog).
+
+---
+
 ### 2026-05-21 — GEO pivot: optimise to be *cited* by AI, not to *rank*
 
 **Trigger:** Google I/O 2026 (May 19–20) — the largest search overhaul in 25 years.
@@ -68,7 +89,20 @@ is a lens applied to existing work, not a new build — most of the moats alread
   `mainEntity: DefinedTerm`, replacing the hand-rolled inline node; index uses
   `definedTermSetJsonLd`. 41 schema tests green, tsc clean. **This is the GEO schema floor.**
 - [ ] Audit existing articles/glossary entries for answer-first opening sentences.
-- [ ] Glossary backfill 122 → 200 (78 terms) as a cloud-loop content stream.
+- [x] **Glossary "→200" was ALREADY met — corrected 2026-05-21.** The live glossary is
+  DB-backed (`public.glossary_terms`, seeded by migration `20260419` with **203 terms**);
+  `lib/glossary.ts` (122) is only the `JargonTooltip` source + build-time fallback and had
+  drifted behind. Real gap was static/DB parity, not new content. First attempt synced all
+  81 into `lib/glossary.ts` — but that file is **client-bundled** (JargonTooltip imports
+  `GLOSSARY`), so it tipped the shared client chunk +49.5 kB over the 12 MB bundle budget
+  (CI caught it). **Final shape (#1156):** keep `lib/glossary.ts` lean at 122 (client tooltip
+  set, == main, zero bundle change); put the 81 specialised terms in a **server-only**
+  `lib/glossary-extended.ts` (`FULL_GLOSSARY_ENTRIES` = 203) that powers the sitemap (was
+  missing 81 live term pages → now complete), internal-link targets, and the DB fallback.
+  Net: a GEO win (all 203 term pages in the sitemap + more internal-link targets) with no
+  client cost. Lesson (again): grep the runtime source before scoping from a tracker count,
+  and watch what's client- vs server-bundled. *Net-new terms beyond 203 = separate
+  new-content task; route through the content loop for accuracy.*
 - [ ] Confirm QQ public Q&A pages emit FAQ + (where apt) Speakable schema.
 
 **Deeper GEO dive (2026-05-21) — what else to add/adjust, grounded in the codebase:**
