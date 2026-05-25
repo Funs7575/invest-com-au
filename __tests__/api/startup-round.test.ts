@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 
 // ─── Hoisted mocks ────────────────────────────────────────────────────────────
@@ -66,6 +66,9 @@ function makeServerFromMock(
 describe("POST /api/startups/round", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Capital-raising is gated OFF by default; these tests cover the
+    // post-gate business logic, so enable the flag for the suite.
+    vi.stubEnv("STARTUP_RAISES_ENABLED", "true");
     mockGetUser.mockResolvedValue({ data: { user: { id: "uid-1" } } });
     // Active profile, no open round (success default)
     mockServerFrom.mockImplementation(makeServerFromMock({ id: "sp-1", status: "active" }, null));
@@ -75,6 +78,10 @@ describe("POST /api/startups/round", () => {
       select: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: { id: "round-1" }, error: null }),
     });
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("returns 401 when unauthenticated", async () => {
