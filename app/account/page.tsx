@@ -5,12 +5,14 @@ import AccountKindCards from "./AccountKindCards";
 import AccountActionPlansTiles from "./AccountActionPlansTiles";
 import AccountHero from "./_components/AccountHero";
 import AccountActivityFeed from "./_components/AccountActivityFeed";
+import PersonaCard from "@/components/persona/PersonaCard";
 import { createClient } from "@/lib/supabase/server";
 import { getKindsForUser, type KindMembership } from "@/lib/account-kinds";
 import { listPlansForUser } from "@/lib/getmatched/action-plans";
 import { listForUser as listSavedSearchesForUser } from "@/lib/saved-searches";
 import { loadDashboardState, type DashboardState } from "@/lib/account/dashboard-state";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { computePersona, type PersonaInput, type PersonaResult } from "@/lib/persona";
 import type { ActionPlan } from "@/lib/getmatched/types";
 
 export const dynamic = "force-dynamic";
@@ -29,12 +31,13 @@ export default async function AccountPage() {
   let savedSearchCount = 0;
   let reviewCount = 0;
   let dashboard: DashboardState | null = null;
+  let persona: PersonaResult | null = null;
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const admin = createAdminClient();
-      const [m, p, s, d, rc] = await Promise.all([
+      const [m, p, s, d, rc, ip] = await Promise.all([
         getKindsForUser(user.id),
         listPlansForUser(user.id),
         listSavedSearchesForUser(user.id),
@@ -45,12 +48,29 @@ export default async function AccountPage() {
               .select("id", { count: "exact", head: true })
               .eq("email", user.email)
           : Promise.resolve({ count: 0, error: null }),
+        supabase
+          .from("investor_profiles")
+          .select("is_fhb, is_pre_retiree, is_hnw, experience_level, budget_band, primary_vertical")
+          .eq("auth_user_id", user.id)
+          .maybeSingle(),
       ]);
       memberships = m;
       plans = p;
       savedSearchCount = s.length;
       dashboard = d;
       reviewCount = rc.count ?? 0;
+      if (ip.data) {
+        const profileData = ip.data;
+        const personaInput: PersonaInput = {
+          isFhb: profileData.is_fhb ?? false,
+          isPreRetiree: profileData.is_pre_retiree ?? false,
+          isHnw: profileData.is_hnw ?? false,
+          experienceLevel: (profileData.experience_level as PersonaInput["experienceLevel"]) ?? null,
+          budgetBand: (profileData.budget_band as PersonaInput["budgetBand"]) ?? null,
+          primaryVertical: profileData.primary_vertical ?? null,
+        };
+        persona = computePersona(personaInput);
+      }
     }
   } catch {
     /* fall through with empty data — AccountClient still renders */
@@ -71,6 +91,11 @@ export default async function AccountPage() {
             />
           </div>
           <AccountActivityFeed items={dashboard.feed} />
+        </div>
+      )}
+      {persona && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4">
+          <PersonaCard result={persona} showShare />
         </div>
       )}
       {plans.length > 0 && (
