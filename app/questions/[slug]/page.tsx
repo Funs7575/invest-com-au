@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
+import { faqJsonLd, qaPageJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { QuestionKeyTakeaways } from "@/components/QuestionKeyTakeaways";
 import {
   QUESTIONS_BY_SLUG,
   QUESTIONS,
@@ -61,12 +62,32 @@ export default async function QuestionPage({ params }: Props) {
       ? faqJsonLd(question.faqs.map((f) => ({ q: f.q, a: f.a })))
       : null;
 
-  // Speakable: mark the question + short answer as the extractable answer region
-  // so AI/voice engines surface the direct answer. See lib/schema-markup.ts.
+  // QAPage: primary structured-data block for AI-answer citation.
+  // acceptedAnswer = shortAnswer (direct answer); suggestedAnswers = FAQ items.
+  // No author override here — questions are site-level editorial content (ORG).
+  const qaLd = qaPageJsonLd({
+    question: question.question,
+    acceptedAnswer: question.shortAnswer,
+    path: `/questions/${slug}`,
+    suggestedAnswers:
+      question.faqs.length > 0 ? question.faqs.map((f) => f.a) : undefined,
+  });
+
+  // Speakable: mark the question title + key-takeaways block as the extractable
+  // answer region so AI/voice engines surface the direct answer without parsing
+  // the full prose. Three selectors cover the full answer-first surface:
+  //   #question-title        — the question itself
+  //   #question-key-takeaways — the bulleted answer-first summary
+  //   #question-short-answer — the "Short answer" prose (legacy selector kept
+  //                            for backward compat with any cached crawl)
   const speakableLd = speakableWebPageJsonLd({
     name: question.question,
     path: `/questions/${slug}`,
-    selectors: ["#question-title", "#question-short-answer"],
+    selectors: [
+      "#question-title",
+      "#question-key-takeaways",
+      "#question-short-answer",
+    ],
   });
 
   const relatedQuestions = question.relatedSlugs
@@ -78,6 +99,12 @@ export default async function QuestionPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      {/* QAPage: primary GEO signal — marks this page as the canonical answer
+          to the question with acceptedAnswer and suggestedAnswer nodes. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(qaLd) }}
       />
       {faqLd && (
         <script
@@ -126,6 +153,12 @@ export default async function QuestionPage({ params }: Props) {
             <p id="question-short-answer" className="text-gray-800">{question.shortAnswer}</p>
           </div>
         </header>
+
+        {/* Key takeaways — answer-first summary block for GEO / AI-answer
+            engines. Derived from shortAnswer (factual, AFSL-safe). The
+            #question-key-takeaways id is also referenced by the speakable
+            schema above so voice/AI can extract the direct answer. */}
+        <QuestionKeyTakeaways shortAnswer={question.shortAnswer} />
 
         {/* Detailed sections */}
         {question.sections.length > 0 && (

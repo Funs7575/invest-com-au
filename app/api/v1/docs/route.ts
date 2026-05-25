@@ -21,7 +21,7 @@ export function OPTIONS() {
  */
 export function GET() {
   const docs = {
-    name: "Invest.com.au Broker API",
+    name: "Invest.com.au Financial Data API",
     version: "1.0",
     base_url: "https://invest.com.au/api/v1",
     authentication: {
@@ -222,6 +222,166 @@ export function GET() {
           rate_limits: { per_minute: 30, per_day: 1000 },
           message:
             "Save this API key securely. It will not be shown again.",
+        },
+      },
+      {
+        path: "/api/v1/advisors",
+        method: "GET",
+        auth_required: true,
+        description:
+          "List active financial advisors and professionals. Returns public profile fields only — no PII, no billing data. Supports filtering and pagination.",
+        parameters: [
+          {
+            name: "type",
+            type: "string",
+            required: false,
+            description:
+              "Filter by professional type: financial_planner, smsf_accountant, property_advisor, tax_agent, mortgage_broker, wealth_manager, etc.",
+          },
+          {
+            name: "location_state",
+            type: "string",
+            required: false,
+            description: "Filter by Australian state code: NSW, VIC, QLD, WA, SA, TAS, ACT, NT",
+          },
+          {
+            name: "verified",
+            type: "boolean",
+            required: false,
+            description: "Filter verified advisors (true/false)",
+          },
+          {
+            name: "accepts_new_clients",
+            type: "boolean",
+            required: false,
+            description: "Filter by new-client availability (true/false)",
+          },
+          {
+            name: "limit",
+            type: "integer",
+            required: false,
+            description: "Results per page (default: 20, max: 100)",
+          },
+          {
+            name: "offset",
+            type: "integer",
+            required: false,
+            description: "Pagination offset (default: 0)",
+          },
+        ],
+        example_request: "GET /api/v1/advisors?type=financial_planner&location_state=NSW&verified=true&limit=10",
+        example_response: {
+          data: [
+            {
+              id: 42,
+              slug: "jane-smith-cfp",
+              name: "Jane Smith",
+              firm_name: "Smith Financial",
+              type: "financial_planner",
+              specialties: ["retirement", "smsf"],
+              location_state: "NSW",
+              location_display: "Sydney, NSW",
+              afsl_number: "123456",
+              rating: 4.8,
+              review_count: 24,
+              verified: true,
+              hourly_rate_cents: 35000,
+              initial_consultation_free: true,
+              accepts_new_clients: true,
+            },
+          ],
+          meta: {
+            total: 120,
+            limit: 10,
+            offset: 0,
+            updated_at: "2026-05-01T08:00:00Z",
+          },
+        },
+      },
+      {
+        path: "/api/v1/advisors/:slug",
+        method: "GET",
+        auth_required: true,
+        description:
+          "Get a single advisor's full public profile by slug. Includes approved reviews (last 10), qualifications, education, FAQs, and services metadata.",
+        parameters: [
+          {
+            name: "slug",
+            type: "string",
+            required: true,
+            in: "path",
+            description: "The advisor's URL slug (e.g. 'jane-smith-cfp')",
+          },
+        ],
+        example_request: "GET /api/v1/advisors/jane-smith-cfp",
+        example_response: {
+          data: {
+            id: 42,
+            slug: "jane-smith-cfp",
+            name: "Jane Smith",
+            type: "financial_planner",
+            rating: 4.8,
+            verified: true,
+            faqs: [{ q: "Do you offer a free initial meeting?", a: "Yes, 30 minutes at no cost." }],
+            reviews: [
+              {
+                id: 1,
+                rating: 5,
+                headline: "Excellent advice",
+                body: "Jane helped us structure our SMSF effectively.",
+                reviewer_name: "Michael T.",
+                created_at: "2026-04-10T09:00:00Z",
+              },
+            ],
+          },
+        },
+      },
+      {
+        path: "/api/v1/fee-index",
+        method: "GET",
+        auth_required: true,
+        description:
+          "AU brokerage fee index: market-wide average and median ASX per-trade fee, US share fee, and FX spread, with QoQ and YoY trend deltas. Updated daily. This is factual aggregate data — not financial advice.",
+        parameters: [
+          {
+            name: "history",
+            type: "integer",
+            required: false,
+            description:
+              "Number of prior daily snapshots to include in the history array (default: 90, max: 400). Pass 0 to return the latest snapshot only.",
+          },
+        ],
+        example_request: "GET /api/v1/fee-index?history=30",
+        example_response: {
+          data: {
+            latest: {
+              period: "2026-05-24",
+              computed_at: "2026-05-24T02:15:00Z",
+              broker_count: 22,
+              asx_fee_sample: 20,
+              avg_asx_fee: 8.50,
+              median_asx_fee: 9.50,
+              avg_us_fee: 1.20,
+              median_us_fee: 0.00,
+              avg_fx_spread: 0.55,
+              median_fx_spread: 0.60,
+            },
+            trend: {
+              quarter: {
+                avgAsxFee: { previous: 9.00, change: -0.50, changePct: -5.56 },
+                avgUsFee: { previous: 1.30, change: -0.10, changePct: -7.69 },
+                avgFxSpread: { previous: 0.57, change: -0.02, changePct: -3.51 },
+              },
+              year: null,
+            },
+            history: [
+              { period: "2026-05-23", avg_asx_fee: 8.60, median_asx_fee: 9.50 },
+            ],
+          },
+          meta: {
+            updated_at: "2026-05-24T02:15:00Z",
+            history_days: 30,
+          },
         },
       },
       {
