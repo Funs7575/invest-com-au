@@ -226,49 +226,74 @@ function CertificateCard({ cert }: { cert: CertificateRow }) {
           )}
         </div>
 
-        {cert.certificate_url ? (
-          <a
-            href={cert.certificate_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              padding: "6px 14px",
-              background: "var(--color-teal-600, #0d9488)",
-              color: "#ffffff",
-              borderRadius: "8px",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-            }}
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Download
-          </a>
-        ) : (
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              padding: "6px 14px",
-              background: "#f1f5f9",
-              color: "#94a3b8",
-              borderRadius: "8px",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-            }}
-          >
-            Pending
-          </span>
-        )}
+        <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+          {cert.certificate_number && (
+            <Link
+              href={`/certificate/${cert.certificate_number}`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 14px",
+                background: "#f0fdfa",
+                color: "var(--color-teal-600, #0d9488)",
+                border: "1px solid #99f6e4",
+                borderRadius: "8px",
+                fontSize: "0.8rem",
+                fontWeight: 600,
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+              aria-label={`View and share certificate for ${cert.course?.title ?? "this course"}`}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              Share
+            </Link>
+          )}
+          {cert.certificate_url ? (
+            <a
+              href={cert.certificate_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 14px",
+                background: "var(--color-teal-600, #0d9488)",
+                color: "#ffffff",
+                borderRadius: "8px",
+                fontSize: "0.8rem",
+                fontWeight: 600,
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download
+            </a>
+          ) : (
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "6px 14px",
+                background: "#f1f5f9",
+                color: "#94a3b8",
+                borderRadius: "8px",
+                fontSize: "0.8rem",
+                fontWeight: 600,
+                whiteSpace: "nowrap",
+              }}
+            >
+              Pending
+            </span>
+          )}
+        </div>
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", fontSize: "0.8rem", color: "#64748b" }}>

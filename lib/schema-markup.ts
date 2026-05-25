@@ -915,3 +915,112 @@ export function comparisonPageItemListJsonLd(
     ),
   };
 }
+
+// ─── Person + EducationalOccupationalCredential — certificate pages ──────────
+//
+// E-E-A-T note: A public, shareable certificate page carries two high-value
+// schema signals: (1) the Person node names the credential holder, building
+// their author/expert authority in AI and search-engine corpora; (2) the
+// EducationalOccupationalCredential node registers the credential with Google's
+// Learning & Credentials rich-result pathway and with LinkedIn's structured-
+// import format. Both are factual (educational credential, not advice) and
+// AFSL-safe. The `recognizedBy` field names Invest.com.au Academy as the
+// issuing authority, boosting E-E-A-T at the org level.
+//
+// Privacy: only the holder's chosen display name is exposed — never email,
+// user_id, or any other PII. The lookup key is the random `certificate_number`,
+// which is unguessable and not enumerable (no sequential endpoint exists).
+
+export interface PersonCredentialInput {
+  /** Holder display name (no PII — this is a public page). */
+  holderName: string;
+  /** Credential (course) title. */
+  credentialTitle: string;
+  /** Unguessable random certificate number, e.g. "INV-2026-00042". */
+  certificateNumber: string;
+  /** ISO-8601 date the certificate was issued. */
+  issuedAt: string;
+  /** CPD hours earned, if any. */
+  cpdHours?: number | null;
+  /**
+   * Issuer organisation name. Defaults to "Invest.com.au Academy".
+   * Override only if the credential comes from a named sub-brand.
+   */
+  issuerName?: string | null;
+}
+
+/**
+ * Returns a pair of linked JSON-LD blocks for a public certificate page:
+ *
+ *   - `credential` — `EducationalOccupationalCredential` node (the certificate
+ *     itself) with `recognizedBy` pointing at Invest.com.au Academy and
+ *     `about` pointing at the course. Emits as the first `<script>` block.
+ *
+ *   - `person` — `Person` node naming the holder. Linked back to the
+ *     credential via `hasCredential`. Emits as the second `<script>` block.
+ *
+ * Emit both as separate `<script type="application/ld+json">` blocks, in
+ * addition to the existing `BreadcrumbList` block.
+ *
+ * The builder is intentionally minimal: it never exposes the holder's email,
+ * internal user_id, or any Supabase row identifier. The `holderName` field
+ * must be the user's chosen display name sourced from their profile, not
+ * derived from auth metadata.
+ */
+export function personCredentialJsonLd(input: PersonCredentialInput) {
+  const issuer = input.issuerName ?? "Invest.com.au Academy";
+  const certUrl = absoluteUrl(`/certificate/${input.certificateNumber}`);
+
+  const credential = compact({
+    "@context": "https://schema.org",
+    "@type": "EducationalOccupationalCredential",
+    name: `Certificate of Completion — ${input.credentialTitle}`,
+    description: `${input.holderName} has successfully completed ${input.credentialTitle} and earned this certificate from ${issuer}.`,
+    url: certUrl,
+    identifier: input.certificateNumber,
+    dateCreated: input.issuedAt,
+    credentialCategory: "Certificate",
+    competencyRequired: input.cpdHours
+      ? `${input.cpdHours} CPD hour${input.cpdHours === 1 ? "" : "s"}`
+      : undefined,
+    recognizedBy: {
+      "@type": "Organization",
+      name: issuer,
+      url: absoluteUrl("/academy"),
+      sameAs: SITE_URL,
+    },
+    educationalLevel: "Professional Development",
+    about: {
+      "@type": "Course",
+      name: input.credentialTitle,
+      provider: {
+        "@type": "Organization",
+        name: issuer,
+        url: SITE_URL,
+      },
+    },
+    validFor: {
+      "@type": "Person",
+      name: input.holderName,
+    },
+  });
+
+  const person = compact({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: input.holderName,
+    hasCredential: {
+      "@type": "EducationalOccupationalCredential",
+      name: `Certificate of Completion — ${input.credentialTitle}`,
+      url: certUrl,
+      recognizedBy: {
+        "@type": "Organization",
+        name: issuer,
+        url: absoluteUrl("/academy"),
+      },
+      dateCreated: input.issuedAt,
+    },
+  });
+
+  return { credential, person };
+}
