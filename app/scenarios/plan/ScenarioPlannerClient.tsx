@@ -3,10 +3,11 @@
 /**
  * Scenario Planner — client component.
  *
- * Composes retirement, super-contributions, and investment-income-tax
- * projections into one unified view. Save up to 3 named scenarios to
- * `user_calculator_state` (key: "scenario_planner") and compare two
- * side-by-side.
+ * Composes retirement, super-contributions, investment-income-tax, and
+ * property/CGT projections into one unified view. Save up to 3 named
+ * scenarios to `user_calculator_state` (key: "scenario_planner") and
+ * compare two side-by-side with per-metric delta (absolute + %) and
+ * a neutral "larger/smaller" size indicator.
  *
  * AFSL compliance: all outputs are factual projections with
  * GENERAL_ADVICE_WARNING displayed prominently. No personalised
@@ -26,6 +27,7 @@ import {
   type ScenarioResult,
   type ScenarioPlannerSnapshot,
 } from "@/lib/scenario-engine";
+import { computeScenarioDelta, type DeltaRow } from "@/lib/scenario-delta";
 
 // ─── nanoid-lite (no dependency needed) ──────────────────────────────────────
 function nanoid(): string {
@@ -51,6 +53,11 @@ const DEFAULT_INPUTS: Required<ScenarioInput> = {
   frankingPct: 100,
   annualCapitalGain: 0,
   capitalGainDiscountEligible: false,
+  propertyPurchasePrice: 0,
+  propertyGrowthRatePct: 0,
+  propertyRentalYieldPct: 3,
+  propertyHoldingCostsPct: 1.5,
+  propertyHeld12Months: true,
 };
 
 // ─── Max saved scenarios ──────────────────────────────────────────────────────
@@ -428,7 +435,36 @@ function ResultsPanel({ result }: { result: ScenarioResult }) {
   );
 }
 
-// ─── Compare panel ────────────────────────────────────────────────────────────
+// ─── Compare panel (richer delta view) ───────────────────────────────────────
+
+function formatDeltaValue(value: number, format: DeltaRow["format"]): string {
+  switch (format) {
+    case "currency":
+      return formatCurrency(value);
+    case "years":
+      return `${Math.round(value)} yrs`;
+    case "percentage":
+      return `${value.toFixed(1)}%`;
+    default:
+      return String(value);
+  }
+}
+
+function formatDeltaDisplay(row: DeltaRow): string {
+  if (Math.abs(row.absoluteDelta) < 0.005) return "—";
+  const sign = row.absoluteDelta > 0 ? "+" : "";
+  const absStr = formatDeltaValue(Math.abs(row.absoluteDelta), row.format);
+  const pctStr =
+    row.pctDelta !== null ? ` (${sign}${row.pctDelta.toFixed(1)}%)` : "";
+  return `${sign}${absStr}${pctStr}`;
+}
+
+const CATEGORY_LABELS: Record<DeltaRow["category"], string> = {
+  retirement: "Retirement",
+  super: "Super Contributions",
+  investmentTax: "Investment Tax",
+  property: "Property / CGT",
+};
 
 function ComparePanel({
   a,
@@ -437,116 +473,100 @@ function ComparePanel({
   a: { label: string; result: ScenarioResult };
   b: { label: string; result: ScenarioResult };
 }) {
-  type Row = { label: string; va: string; vb: string; better?: "a" | "b" | "tie" };
-
-  const rows: Row[] = [
-    {
-      label: "Projected super at retirement",
-      va: formatCurrency(a.result.retirement.projectedSuperAtRetirement),
-      vb: formatCurrency(b.result.retirement.projectedSuperAtRetirement),
-      better:
-        a.result.retirement.projectedSuperAtRetirement >
-        b.result.retirement.projectedSuperAtRetirement
-          ? "a"
-          : a.result.retirement.projectedSuperAtRetirement <
-              b.result.retirement.projectedSuperAtRetirement
-            ? "b"
-            : "tie",
-    },
-    {
-      label: "4% rule target",
-      va: formatCurrency(a.result.retirement.targetBalance4PctRule),
-      vb: formatCurrency(b.result.retirement.targetBalance4PctRule),
-    },
-    {
-      label: "Gap to target",
-      va: formatCurrency(Math.abs(a.result.retirement.gapToTarget)),
-      vb: formatCurrency(Math.abs(b.result.retirement.gapToTarget)),
-      better:
-        a.result.retirement.gapToTarget <= b.result.retirement.gapToTarget
-          ? "a"
-          : "b",
-    },
-    {
-      label: "On track",
-      va: a.result.retirement.isOnTrack ? "Yes" : "No",
-      vb: b.result.retirement.isOnTrack ? "Yes" : "No",
-    },
-    {
-      label: "Drawdown years",
-      va: String(a.result.retirement.drawdownYears),
-      vb: String(b.result.retirement.drawdownYears),
-      better:
-        a.result.retirement.drawdownYears > b.result.retirement.drawdownYears
-          ? "a"
-          : a.result.retirement.drawdownYears <
-              b.result.retirement.drawdownYears
-            ? "b"
-            : "tie",
-    },
-    {
-      label: "Super tax saving p.a.",
-      va: formatCurrency(a.result.superContributions.taxSavingOnExtraContribs),
-      vb: formatCurrency(b.result.superContributions.taxSavingOnExtraContribs),
-      better:
-        a.result.superContributions.taxSavingOnExtraContribs >
-        b.result.superContributions.taxSavingOnExtraContribs
-          ? "a"
-          : a.result.superContributions.taxSavingOnExtraContribs <
-              b.result.superContributions.taxSavingOnExtraContribs
-            ? "b"
-            : "tie",
-    },
-    {
-      label: "Investment tax p.a.",
-      va: formatCurrency(a.result.investmentTax.taxOnInvestmentIncome),
-      vb: formatCurrency(b.result.investmentTax.taxOnInvestmentIncome),
-      better:
-        a.result.investmentTax.taxOnInvestmentIncome <
-        b.result.investmentTax.taxOnInvestmentIncome
-          ? "a"
-          : a.result.investmentTax.taxOnInvestmentIncome >
-              b.result.investmentTax.taxOnInvestmentIncome
-            ? "b"
-            : "tie",
-    },
-  ];
+  const deltas = computeScenarioDelta(a.result, b.result);
+  const categories = [...new Set(deltas.map((d) => d.category))] as DeltaRow["category"][];
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-      <div className="grid grid-cols-3 bg-violet-600 text-white text-xs font-bold">
-        <div className="px-4 py-3">Metric</div>
-        <div className="px-4 py-3 text-center border-l border-violet-500">
-          {a.label}
-        </div>
-        <div className="px-4 py-3 text-center border-l border-violet-500">
-          {b.label}
-        </div>
-      </div>
-      {rows.map((row, i) => (
-        <div
-          key={i}
-          className={`grid grid-cols-3 text-xs border-b border-slate-100 last:border-b-0 ${i % 2 === 0 ? "bg-white" : "bg-slate-50/60"}`}
-        >
-          <div className="px-4 py-2.5 text-slate-600 font-medium">
-            {row.label}
-          </div>
+    <div className="space-y-3">
+      {categories.map((cat) => {
+        const catRows = deltas.filter((d) => d.category === cat);
+        return (
           <div
-            className={`px-4 py-2.5 text-center font-semibold border-l border-slate-100 ${
-              row.better === "a" ? "text-emerald-700 bg-emerald-50/60" : "text-slate-800"
-            }`}
+            key={cat}
+            className="bg-white border border-slate-200 rounded-2xl overflow-hidden"
           >
-            {row.va}
+            {/* Category header */}
+            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_auto] bg-violet-600 text-white text-[0.65rem] font-bold">
+              <div className="px-4 py-2.5">{CATEGORY_LABELS[cat]}</div>
+              <div className="px-3 py-2.5 text-right border-l border-violet-500 truncate max-w-[7rem]">
+                {a.label}
+              </div>
+              <div className="px-3 py-2.5 text-right border-l border-violet-500 truncate max-w-[7rem]">
+                {b.label}
+              </div>
+              <div className="px-3 py-2.5 text-right border-l border-violet-500">
+                A − B
+              </div>
+              <div className="px-3 py-2.5 text-center border-l border-violet-500">
+                Size
+              </div>
+            </div>
+
+            {/* Rows */}
+            {catRows.map((row, i) => (
+              <div
+                key={row.metric}
+                className={`grid grid-cols-[2fr_1fr_1fr_1fr_auto] text-xs border-b border-slate-100 last:border-b-0 ${
+                  i % 2 === 0 ? "bg-white" : "bg-slate-50/50"
+                }`}
+              >
+                {/* Metric */}
+                <div className="px-4 py-2 text-slate-600 font-medium">
+                  {row.metric}
+                </div>
+
+                {/* A value */}
+                <div className="px-3 py-2 text-right font-semibold text-slate-800 border-l border-slate-100">
+                  {formatDeltaValue(row.valueA, row.format)}
+                </div>
+
+                {/* B value */}
+                <div className="px-3 py-2 text-right font-semibold text-slate-800 border-l border-slate-100">
+                  {formatDeltaValue(row.valueB, row.format)}
+                </div>
+
+                {/* Delta */}
+                <div
+                  className={`px-3 py-2 text-right font-semibold border-l border-slate-100 text-[0.65rem] ${
+                    Math.abs(row.absoluteDelta) < 0.005
+                      ? "text-slate-400"
+                      : row.absoluteDelta > 0
+                        ? "text-sky-700"
+                        : "text-orange-700"
+                  }`}
+                >
+                  {formatDeltaDisplay(row)}
+                </div>
+
+                {/* Neutral size indicator */}
+                <div className="px-3 py-2 text-center border-l border-slate-100">
+                  {row.sizeA === "equal" ? (
+                    <span className="inline-block text-[0.55rem] font-bold uppercase tracking-wide bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">
+                      =
+                    </span>
+                  ) : (
+                    <span
+                      className={`inline-block text-[0.55rem] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded ${
+                        row.sizeA === "larger"
+                          ? "bg-sky-50 text-sky-700"
+                          : "bg-orange-50 text-orange-700"
+                      }`}
+                    >
+                      A {row.sizeA}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-          <div
-            className={`px-4 py-2.5 text-center font-semibold border-l border-slate-100 ${
-              row.better === "b" ? "text-emerald-700 bg-emerald-50/60" : "text-slate-800"
-            }`}
-          >
-            {row.vb}
-          </div>
-        </div>
-      ))}
+        );
+      })}
+
+      <p className="text-[0.6rem] text-slate-400 leading-relaxed">
+        Size indicator (&quot;A larger&quot; / &quot;A smaller&quot;) is factual — it reflects the
+        numerical relationship between the two projections, not a recommendation
+        about which scenario is preferable.
+      </p>
     </div>
   );
 }
@@ -1199,6 +1219,12 @@ export default function ScenarioPlannerClient() {
             className="text-xs px-3 py-1.5 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200"
           >
             Find an Adviser →
+          </Link>
+          <Link
+            href="/scenarios/compare/salary-sacrifice-vs-etf"
+            className="text-xs px-3 py-1.5 bg-violet-100 text-violet-700 font-semibold rounded-lg hover:bg-violet-200"
+          >
+            Preset: Salary Sacrifice vs ETF →
           </Link>
         </div>
       </div>
