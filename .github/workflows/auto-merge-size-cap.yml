@@ -18,8 +18,9 @@ name: Auto-merge size cap
 # safe, and it already strips the review label when it does.
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+  # DISABLED 2026-05-25 (founder request: stop loop/auto-merge churn).
+  # Re-enable by restoring the original triggers (see git history).
+  workflow_dispatch: {}
 
 permissions:
   contents: read

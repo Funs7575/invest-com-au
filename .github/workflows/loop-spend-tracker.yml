@@ -29,10 +29,8 @@ name: Loop spend tracker
 # Manual trigger via workflow_dispatch.
 
 on:
-  schedule:
-    # Daily at 06:00 UTC. Picked to land before founder's working day so
-    # the issue is at the top of their inbox if it fires.
-    - cron: "0 6 * * *"
+  # DISABLED 2026-05-25 (founder request: stop loop/auto-merge churn).
+  # Re-enable by restoring the original triggers (see git history).
   workflow_dispatch: {}
 
 permissions:
