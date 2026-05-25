@@ -17,6 +17,7 @@ import QuizNextBestActions from "./QuizNextBestActions";
 import QuizPrimaryActionHero from "./QuizPrimaryActionHero";
 import QuizInlineEmailCapture from "./QuizInlineEmailCapture";
 import { resolveBestOutcome } from "@/lib/quiz-outcome";
+import type { VerticalScoredResult, StackQuizInputs } from "@/lib/quiz-scoring";
 
 interface ScoredResult {
   slug: string;
@@ -39,6 +40,10 @@ interface Props {
       the win first, then get nudged to capture (warm conversion). */
   onEmailCaptureSubmit: (email: string, name: string) => Promise<void> | void;
   emailCaptureStatus: "idle" | "loading" | "submitted" | "error";
+  /** Wealth-stack per-vertical results (populated when stack questions answered). */
+  stackResults?: Partial<Record<"super_fund" | "savings_account" | "robo_advisor", VerticalScoredResult[]>>;
+  /** Stack inputs used to build the vertical results — for rendering context labels. */
+  stackInputs?: StackQuizInputs;
 }
 
 export default function QuizResultsScreen({
@@ -54,6 +59,8 @@ export default function QuizResultsScreen({
   getMatchReasons,
   onEmailCaptureSubmit,
   emailCaptureStatus,
+  stackResults,
+  stackInputs,
 }: Props) {
   const topMatch = results[0];
   const runnerUps = results.slice(1);
@@ -198,6 +205,14 @@ export default function QuizResultsScreen({
             Now sits below the top match so the user sees the answer first, then
             the broader "broker + super + savings + tax" framing. */}
         <ThreadCardsStrip answers={unifiedAnswers} />
+
+        {/* Wealth-stack vertical picks — only shown when the quiz gathered
+            stack signals (risk band, super/savings interest). Each card is a
+            factual criteria match presented with the general-advice disclaimer.
+            NOT personal advice — factual matching based on stated criteria. */}
+        {stackResults && Object.keys(stackResults).length > 0 && (
+          <WealthStackStrip stackResults={stackResults} stackInputs={stackInputs} />
+        )}
 
         {/* Quick Comparison Table — only for outcomes that surface broker results */}
         {showBrokerResults && <QuizComparisonTable allResults={allResults} />}
@@ -431,5 +446,158 @@ export default function QuizResultsScreen({
         />
       </div>
     </div>
+  );
+}
+
+// ─── WealthStackStrip ─────────────────────────────────────────────────────
+// Renders the matched super, savings, and robo picks as a factual stack
+// below the main broker results. Each card includes the general-advice
+// disclaimer and a referral CTA to the product's review / comparison page.
+//
+// AFSL compliance: presented as "products that match your stated criteria"
+// (factual) not "the right product for you" (personal advice). The disclaimer
+// is unconditionally visible on every card.
+
+const VERTICAL_META: Record<
+  "super_fund" | "savings_account" | "robo_advisor",
+  { label: string; icon: string; colorClass: string; reviewBase: string; comparisonHref: string; description: string }
+> = {
+  super_fund: {
+    label: "Super fund",
+    icon: "landmark",
+    colorClass: "bg-blue-50 text-blue-700 border-blue-200",
+    reviewBase: "/broker",
+    comparisonHref: "/super",
+    description: "Where your compulsory retirement contributions grow. Matched to your risk band and balance.",
+  },
+  savings_account: {
+    label: "Savings account",
+    icon: "piggy-bank",
+    colorClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    reviewBase: "/broker",
+    comparisonHref: "/savings",
+    description: "High-interest account for cash you'll need within 1–5 years. Matched to your time horizon.",
+  },
+  robo_advisor: {
+    label: "Robo-advisor",
+    icon: "cpu",
+    colorClass: "bg-violet-50 text-violet-700 border-violet-200",
+    reviewBase: "/broker",
+    comparisonHref: "/robo-advisors",
+    description: "Automated, diversified portfolio. Rebalances itself — matched to your risk tolerance.",
+  },
+};
+
+interface WealthStackStripProps {
+  stackResults: Partial<Record<"super_fund" | "savings_account" | "robo_advisor", VerticalScoredResult[]>>;
+  stackInputs?: StackQuizInputs;
+}
+
+function WealthStackStrip({ stackResults }: WealthStackStripProps) {
+  const entries = (Object.entries(stackResults) as [
+    "super_fund" | "savings_account" | "robo_advisor",
+    VerticalScoredResult[]
+  ][]).filter(([, items]) => items.length > 0);
+
+  if (entries.length === 0) return null;
+
+  return (
+    <section
+      aria-labelledby="wealth-stack-heading"
+      className="mb-4 md:mb-6 result-card-in result-card-in-delay-2"
+    >
+      <div className="text-center mb-3 md:mb-4">
+        <p className="text-[0.58rem] md:text-[0.62rem] font-bold uppercase tracking-wider text-violet-600 mb-1">
+          Your wealth stack
+        </p>
+        <h2
+          id="wealth-stack-heading"
+          className="text-base md:text-xl font-extrabold text-slate-900"
+        >
+          Beyond the broker — your full stack
+        </h2>
+        <p className="text-[0.69rem] md:text-sm text-slate-500 mt-1">
+          Based on your risk profile and preferences. General information only — not personal advice.
+        </p>
+      </div>
+
+      <div className="space-y-2.5 md:space-y-3">
+        {entries.map(([kind, items]) => {
+          const meta = VERTICAL_META[kind];
+          const top = items[0];
+          if (!top?.broker) return null;
+
+          return (
+            <div
+              key={kind}
+              className="bg-white border border-slate-200 rounded-xl p-3.5 md:p-4"
+            >
+              {/* Header row */}
+              <div className="flex items-start gap-3 mb-2">
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border ${meta.colorClass}`}>
+                  <Icon name={meta.icon} size={18} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[0.58rem] md:text-[0.62rem] font-bold uppercase tracking-wider text-slate-400 mb-0.5">
+                    {meta.label}
+                  </p>
+                  <h3 className="text-sm md:text-base font-bold text-slate-900 leading-tight">
+                    {top.broker.name}
+                  </h3>
+                  {top.broker.tagline && (
+                    <p className="text-[0.65rem] md:text-xs text-slate-500 mt-0.5">{top.broker.tagline}</p>
+                  )}
+                </div>
+                {top.broker.rating && (
+                  <div className="shrink-0 text-right">
+                    <span className="text-xs font-bold text-amber-600">{top.broker.rating.toFixed(1)}</span>
+                    <span className="text-[0.62rem] text-slate-400">/5</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Description */}
+              <p className="text-[0.65rem] md:text-xs text-slate-500 mb-2.5 leading-relaxed">
+                {meta.description}
+              </p>
+
+              {/* Disclaimer — always visible per AFSL compliance */}
+              <p className="text-[0.58rem] md:text-[0.62rem] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1 mb-2.5 leading-relaxed">
+                <strong>General information only.</strong> This match is based on your stated criteria — not personal financial advice. Read the PDS/TMD before opening an account.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={`${meta.reviewBase}/${top.broker.slug}`}
+                  onClick={() => trackEvent("quiz_stack_review_click", { kind, slug: top.slug }, "/quiz")}
+                  className="text-[0.65rem] md:text-xs font-semibold text-slate-600 hover:text-slate-900 underline-offset-2 hover:underline"
+                >
+                  Read full review
+                </Link>
+                <Link
+                  href={meta.comparisonHref}
+                  onClick={() => trackEvent("quiz_stack_compare_click", { kind }, "/quiz")}
+                  className="text-[0.65rem] md:text-xs font-semibold text-slate-500 hover:text-slate-700"
+                >
+                  Compare all →
+                </Link>
+                {top.broker.affiliate_url && (
+                  <a
+                    href={top.broker.affiliate_url}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    onClick={() => trackEvent("quiz_stack_cta_click", { kind, slug: top.slug }, "/quiz")}
+                    className="ml-auto px-3 py-1.5 bg-violet-600 text-white text-[0.65rem] md:text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors"
+                  >
+                    {top.broker.benefit_cta ?? top.broker.cta_text ?? "Visit site"} →
+                  </a>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
