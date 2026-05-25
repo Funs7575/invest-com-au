@@ -24,6 +24,7 @@ import MobileBottomNav from "@/components/MobileBottomNav";
 import HomeActivitySection from "@/components/HomeActivitySection";
 import HomeHowItWorks from "@/components/HomeHowItWorks";
 import HomeRateOfTheDay from "@/components/HomeRateOfTheDay";
+import RateChangesToday from "@/components/RateChangesToday";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 
 export const metadata = {
@@ -261,6 +262,7 @@ export default async function HomePage() {
           so the homepage AI concierge entry can be restored without rebuilding it. */}
 
       <HomeRateOfTheDay />
+      <RateChangesToday />
 
       <ScrollFadeIn>
         <HomeRouteCards
