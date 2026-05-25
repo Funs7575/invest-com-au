@@ -1,132 +1,241 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useReducer,
+  useMemo,
+} from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
+import type { UnifiedSearchResults } from "@/lib/search";
 
-interface SearchItem {
-  title: string;
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface SearchResultItem {
+  key: string;
+  category: "Brokers" | "Advisors" | "Articles" | "Glossary" | "Tools";
   href: string;
-  category: string;
-  description?: string;
+  title: string;
+  subtitle: string | null;
 }
 
-const SEARCH_INDEX: SearchItem[] = [
-  // Platforms
-  { title: "Compare All Platforms", href: "/compare", category: "Platforms", description: "Side-by-side comparison of 100+ platforms" },
-  { title: "Share Trading", href: "/share-trading", category: "Platforms", description: "ASX & international share brokers" },
-  { title: "Crypto Exchanges", href: "/crypto", category: "Platforms", description: "AUSTRAC-registered crypto platforms" },
-  { title: "Super Funds", href: "/compare/super", category: "Platforms", description: "Compare fees & performance" },
-  { title: "Savings Accounts", href: "/savings", category: "Platforms", description: "High interest & at-call accounts" },
-  { title: "ETFs", href: "/compare/etfs", category: "Platforms", description: "Exchange-traded funds comparison" },
-  { title: "CFD & Forex", href: "/cfd", category: "Platforms", description: "Derivatives & currency trading" },
-  { title: "Robo-Advisors", href: "/compare?filter=robo", category: "Platforms", description: "Automated portfolio management" },
-  { title: "Current Deals & Offers", href: "/deals", category: "Platforms", description: "Live promotions from brokers" },
-
-  // Investment Verticals
-  { title: "All Investment Verticals", href: "/invest", category: "Invest", description: "Every way to invest in Australia" },
-  { title: "Investment Funds Directory", href: "/invest/funds", category: "Invest", description: "Managed, syndicated, infrastructure, wholesale" },
-  { title: "SMSF Services Hub", href: "/smsf", category: "Invest", description: "SMSF auditors, specialists, property, strategy" },
-  { title: "SMSF Auditors", href: "/smsf/auditors", category: "Advisors", description: "ASIC-approved auditors with SAN" },
-  { title: "Research & Sector Reports", href: "/research", category: "Learn", description: "Editorial investment research" },
-  { title: "Significant Investor Visa (SIV)", href: "/foreign-investment/siv", category: "Invest", description: "$5M complying investment pathway" },
-  { title: "Investment Marketplace", href: "/invest", category: "Invest", description: "Browse active investment listings" },
-  { title: "Mining & Resources", href: "/invest/mining", category: "Invest", description: "Iron ore, copper & critical minerals" },
-  { title: "Oil & Gas", href: "/invest/oil-gas", category: "Invest", description: "ASX majors, LNG, refineries" },
-  { title: "Uranium", href: "/invest/uranium", category: "Invest", description: "Paladin, Boss Energy, ATOM ETF" },
-  { title: "Lithium", href: "/invest/lithium", category: "Invest", description: "Pilbara producers & processing" },
-  { title: "Hydrogen", href: "/invest/hydrogen", category: "Invest", description: "Green H2, fuel cells & HGEN ETF" },
-  { title: "Buy a Business", href: "/invest/buy-business", category: "Invest", description: "SME acquisitions & franchise pathways" },
-  { title: "Farmland & Agriculture", href: "/invest/farmland", category: "Invest", description: "Livestock, cropping, water rights" },
-  { title: "Commercial Property", href: "/invest/commercial-property", category: "Invest", description: "Office, industrial, hotels" },
-  { title: "Renewable Energy", href: "/invest/renewable-energy", category: "Invest", description: "Solar, wind, hydrogen & battery" },
-  { title: "Startups & Tech", href: "/invest/startups", category: "Invest", description: "VC, angel investing & crowdfunding" },
-  { title: "Private Credit & P2P", href: "/invest/private-credit", category: "Invest", description: "La Trobe, Qualitas, Metrics" },
-  { title: "A-REITs", href: "/invest/reits", category: "Invest", description: "ASX-listed property trusts" },
-  { title: "Managed & Index Funds", href: "/invest/funds", category: "Invest", description: "Vanguard, Betashares, iShares — within fund directory" },
-  { title: "Dividend Investing", href: "/dividends", category: "Compare", description: "High-yield ASX stocks & franking credits" },
-  { title: "Options & Derivatives", href: "/invest/options-trading", category: "Guides", description: "ETOs, CFDs, warrants & futures" },
-  { title: "Forex Trading", href: "/cfd", category: "Compare", description: "AUD/USD, ASIC-regulated CFD-forex brokers" },
-  { title: "Commodities", href: "/invest/commodities", category: "Invest", description: "Gold, silver, oil & resource ETFs" },
-  { title: "Alternative Investments", href: "/invest/alternatives", category: "Invest", description: "Wine, art, cars, watches & collectibles" },
-  { title: "Infrastructure Funds", href: "/invest/infrastructure", category: "Invest", description: "Toll roads, airports, utilities" },
-  { title: "Hybrid Securities", href: "/invest/hybrid-securities", category: "Invest", description: "Bank hybrids & APRA phase-out" },
-  { title: "Crypto Staking & DeFi", href: "/invest/crypto-staking", category: "Invest", description: "Staking yields, DeFi & crypto ETFs" },
-  { title: "SMSF Investment Guide", href: "/invest/smsf", category: "Invest", description: "What SMSFs invest in & how" },
-  { title: "Bonds & Fixed Income", href: "/invest/bonds", category: "Invest", description: "Government & corporate bonds" },
-  { title: "Gold & Precious Metals", href: "/invest/gold", category: "Invest", description: "Perth Mint, ETFs & bullion" },
-  { title: "Private Equity", href: "/invest/private-equity", category: "Invest", description: "PE & hedge fund access" },
-  { title: "IPOs & New Listings", href: "/invest/ipo-calendar", category: "Guides", description: "Upcoming ASX IPOs" },
-  { title: "Franchise Opportunities", href: "/invest/franchise", category: "Invest", description: "Proven business models" },
-
-  // Property
-  { title: "Investment Property Hub", href: "/property", category: "Property", description: "Developments, suburb data & loans" },
-  { title: "New Developments", href: "/property/listings", category: "Property", description: "Off-the-plan apartments & houses" },
-  { title: "Suburb Research", href: "/property/suburbs", category: "Property", description: "Yields, growth & vacancy data" },
-  { title: "Investment Loans", href: "/property/finance", category: "Property", description: "Compare rates from major lenders" },
-  { title: "FIRB Guide", href: "/property/foreign-investment", category: "Property", description: "Foreign buyer rules & surcharges" },
-
-  // Advisors
-  { title: "Find an Advisor", href: "/find-advisor", category: "Advisors", description: "Browse all professional types" },
-  { title: "Financial Planners", href: "/advisors/financial-planners", category: "Advisors", description: "Wealth strategy & retirement" },
-  { title: "Mortgage Brokers", href: "/advisors/mortgage-brokers", category: "Advisors", description: "Compare 30+ lenders" },
-  { title: "SMSF Accountants", href: "/advisors/smsf-accountants", category: "Advisors", description: "Self-managed super specialists" },
-  { title: "Tax Agents", href: "/advisors/tax-agents", category: "Advisors", description: "Tax planning & lodgement" },
-  { title: "Buyer's Agents", href: "/advisors/buyers-agents", category: "Advisors", description: "Off-market access & negotiation" },
-  { title: "Insurance Brokers", href: "/advisors/insurance-brokers", category: "Advisors", description: "Life & income protection" },
-  { title: "Wealth Managers", href: "/advisors/wealth-managers", category: "Advisors", description: "Portfolio management" },
-
-  // Learn
-  { title: "All Articles & Guides", href: "/articles", category: "Learn", description: "Educational investment content" },
-  { title: "How-To Guides", href: "/how-to", category: "Learn", description: "Step-by-step investing guides" },
-  { title: "Calculators", href: "/calculators", category: "Learn", description: "Brokerage, mortgage, retirement" },
-  { title: "Glossary", href: "/glossary", category: "Learn", description: "Investment terms explained" },
-  { title: "Foreign Investment Hub", href: "/foreign-investment", category: "Learn", description: "FIRB, tax, visa & country guides" },
-
-  // Tools
-  { title: "Brokerage Calculator", href: "/calculators", category: "Tools", description: "Compare trading costs" },
-  { title: "Mortgage Calculator", href: "/mortgage-calculator", category: "Tools", description: "Repayment estimates" },
-  { title: "Retirement Calculator", href: "/retirement-calculator", category: "Tools", description: "Project your retirement savings" },
-  { title: "Savings Calculator", href: "/savings-calculator", category: "Tools", description: "Interest earnings projector" },
-  { title: "SMSF Calculator", href: "/smsf-calculator", category: "Tools", description: "SMSF fee comparison" },
-  { title: "FIRB Fee Estimator", href: "/firb-fee-estimator", category: "Tools", description: "Foreign investment application fee" },
-  { title: "Non-Resident Dividend Calculator", href: "/non-resident-dividend-calculator", category: "Tools", description: "DTA withholding tax on ASX dividends" },
-  { title: "Non-Resident CGT Checker", href: "/non-resident-cgt-checker", category: "Tools", description: "Section 855-10 exemption eligibility" },
-];
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const CATEGORY_ICONS: Record<string, string> = {
-  Platforms: "trending-up",
-  Invest: "layers",
-  Property: "building",
+  Brokers: "trending-up",
   Advisors: "users",
-  Learn: "book-open",
+  Articles: "book-open",
+  Glossary: "file-text",
   Tools: "calculator",
 };
 
-export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+const QUICK_LINKS = [
+  { title: "Compare Platforms", href: "/compare", icon: "trending-up" },
+  { title: "Investment Marketplace", href: "/invest", icon: "layers" },
+  { title: "Browse Advisors", href: "/advisors", icon: "users" },
+  { title: "Current Deals", href: "/deals", icon: "zap" },
+  { title: "Calculators", href: "/calculators", icon: "calculator" },
+  { title: "Foreign Investors", href: "/foreign-investment", icon: "globe" },
+];
+
+// ─── State machine ────────────────────────────────────────────────────────────
+
+type SearchState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; results: SearchResultItem[]; total: number }
+  | { status: "error"; message: string };
+
+type SearchAction =
+  | { type: "LOADING" }
+  | { type: "SUCCESS"; results: SearchResultItem[]; total: number }
+  | { type: "ERROR"; message: string }
+  | { type: "RESET" };
+
+function searchReducer(_: SearchState, action: SearchAction): SearchState {
+  switch (action.type) {
+    case "LOADING":
+      return { status: "loading" };
+    case "SUCCESS":
+      return { status: "success", results: action.results, total: action.total };
+    case "ERROR":
+      return { status: "error", message: action.message };
+    case "RESET":
+      return { status: "idle" };
+  }
+}
+
+// ─── Result flattener ─────────────────────────────────────────────────────────
+
+function flattenResults(data: UnifiedSearchResults): SearchResultItem[] {
+  const items: SearchResultItem[] = [];
+
+  for (const b of data.brokers) {
+    items.push({
+      key: `broker-${b.slug}`,
+      category: "Brokers",
+      href: `/broker/${b.slug}`,
+      title: b.name,
+      subtitle: b.tagline ?? null,
+    });
+  }
+  for (const a of data.advisors) {
+    items.push({
+      key: `advisor-${a.slug}`,
+      category: "Advisors",
+      href: `/advisor/${a.slug}`,
+      title: a.name,
+      subtitle: [a.firm_name, a.location_display].filter(Boolean).join(" · "),
+    });
+  }
+  for (const art of data.articles) {
+    items.push({
+      key: `article-${art.slug}`,
+      category: "Articles",
+      href: `/article/${art.slug}`,
+      title: art.title,
+      subtitle: art.excerpt ?? null,
+    });
+  }
+  for (const g of data.glossary) {
+    items.push({
+      key: `glossary-${g.slug}`,
+      category: "Glossary",
+      href: `/glossary#${g.slug}`,
+      title: g.term,
+      subtitle: g.definition.length > 100 ? g.definition.slice(0, 97) + "…" : g.definition,
+    });
+  }
+  for (const t of data.tools) {
+    items.push({
+      key: `tool-${t.slug}`,
+      category: "Tools",
+      href: t.href,
+      title: t.title,
+      subtitle: t.description,
+    });
+  }
+
+  return items;
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+export default function SearchOverlay({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
   const [query, setQuery] = useState("");
+  const [state, dispatch] = useReducer(searchReducer, { status: "idle" });
+  const [activeIndex, setActiveIndex] = useState(-1);
+
   const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const abortRef = useRef<AbortController | undefined>(undefined);
+  const router = useRouter();
 
-  const results = query.length >= 2
-    ? SEARCH_INDEX.filter(
-        (item) =>
-          item.title.toLowerCase().includes(query.toLowerCase()) ||
-          (item.description?.toLowerCase().includes(query.toLowerCase())) ||
-          item.category.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 8)
-    : [];
+  // ─── Fetch search results ──────────────────────────────────────────────────
 
-  const grouped = results.reduce<Record<string, SearchItem[]>>((acc, item) => {
-    if (!acc[item.category]) acc[item.category] = [];
-    acc[item.category].push(item);
-    return acc;
-  }, {});
+  const doSearch = useCallback((q: string) => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    dispatch({ type: "LOADING" });
+
+    fetch(`/api/search?q=${encodeURIComponent(q)}`, {
+      signal: controller.signal,
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Search failed");
+        return res.json() as Promise<UnifiedSearchResults>;
+      })
+      .then((data) => {
+        const results = flattenResults(data);
+        dispatch({ type: "SUCCESS", results, total: results.length });
+      })
+      .catch((err: Error) => {
+        if (err.name === "AbortError") return; // Normal — new query superseded this one
+        dispatch({ type: "ERROR", message: "Search failed. Please try again." });
+      });
+  }, []);
+
+  // ─── Debounce query changes ────────────────────────────────────────────────
+
+  useEffect(() => {
+    clearTimeout(debounceRef.current);
+    if (query.length < 2) {
+      dispatch({ type: "RESET" });
+      abortRef.current?.abort();
+      return;
+    }
+    debounceRef.current = setTimeout(() => doSearch(query), 200);
+    return () => clearTimeout(debounceRef.current);
+  }, [query, doSearch]);
+
+  // ─── Reset active index on new results ────────────────────────────────────
+
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [state]);
+
+  // ─── Global Cmd/Ctrl+K shortcut ────────────────────────────────────────────
+
+  useEffect(() => {
+    const handleGlobalKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        if (!isOpen) {
+          // Signal to parent to open — we can't call onClose here but
+          // Navigation wires this up via the same setSearchOpen toggle.
+          // Re-dispatch as a custom event the Navigation listener catches.
+          window.dispatchEvent(new CustomEvent("invest:search:open"));
+        }
+      }
+    };
+    window.addEventListener("keydown", handleGlobalKey);
+    return () => window.removeEventListener("keydown", handleGlobalKey);
+  }, [isOpen]);
+
+  // ─── Focus + ESC + keyboard nav ───────────────────────────────────────────
+
+  const flatItems = useMemo(
+    () => (state.status === "success" ? state.results : []),
+    [state],
+  );
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (!flatItems.length) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveIndex((i) => Math.min(i + 1, flatItems.length - 1));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveIndex((i) => Math.max(i - 1, -1));
+      } else if (e.key === "Enter" && activeIndex >= 0) {
+        e.preventDefault();
+        const item = flatItems[activeIndex];
+        if (item) {
+          router.push(item.href);
+          onClose();
+        }
+      }
     },
-    [onClose]
+    [onClose, flatItems, activeIndex, router]
   );
 
   useEffect(() => {
@@ -141,52 +250,124 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
     };
   }, [isOpen, handleKeyDown]);
 
+  // Scroll active item into view
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (!isOpen) setQuery("");
+    if (activeIndex >= 0 && listRef.current) {
+      const el = listRef.current.querySelector<HTMLElement>(
+        `[data-result-index="${activeIndex}"]`
+      );
+      el?.scrollIntoView({ block: "nearest" });
+    }
+  }, [activeIndex]);
+
+  // ─── Reset on close ────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    if (!isOpen) {
+      setQuery("");
+      dispatch({ type: "RESET" });
+      setActiveIndex(-1);
+      abortRef.current?.abort();
+    }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
+  // ─── Grouped results by category ──────────────────────────────────────────
+
+  const grouped: Partial<Record<string, SearchResultItem[]>> = {};
+  for (const item of flatItems) {
+    if (!grouped[item.category]) grouped[item.category] = [];
+    grouped[item.category]!.push(item);
+  }
+
+  // Build a flat index for keyboard nav — same order as rendered
+  let itemIndex = 0;
+
+  // ─── Render ────────────────────────────────────────────────────────────────
+
   return (
-    <div className="fixed inset-0 z-[200]" role="dialog" aria-modal="true" aria-label="Search">
+    <div
+      className="fixed inset-0 z-[200]"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Search"
+    >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
       {/* Search panel */}
       <div className="relative max-w-2xl mx-4 sm:mx-auto mt-[10vh]">
         <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-          {/* Search input */}
+          {/* Input row */}
           <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100">
-            <Icon name="search" size={20} className="text-slate-400 shrink-0" />
+            {state.status === "loading" ? (
+              <svg
+                className="w-5 h-5 text-amber-400 shrink-0 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                />
+              </svg>
+            ) : (
+              <Icon name="search" size={20} className="text-slate-400 shrink-0" />
+            )}
             <input
               ref={inputRef}
-              type="text"
+              type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search platforms, verticals, advisors, tools..."
+              placeholder="Search brokers, advisors, articles, glossary…"
               className="flex-1 text-base text-slate-900 placeholder:text-slate-500 outline-none bg-transparent"
               aria-label="Search"
+              aria-autocomplete="list"
+              aria-controls="search-results"
+              aria-activedescendant={
+                activeIndex >= 0 ? `search-result-${activeIndex}` : undefined
+              }
             />
-            <kbd className="hidden sm:flex items-center gap-1 px-2 py-1 text-[0.6rem] font-semibold text-slate-400 bg-slate-100 rounded-md border border-slate-200">
-              ESC
-            </kbd>
+            <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+              <kbd className="flex items-center gap-1 px-2 py-1 text-[0.6rem] font-semibold text-slate-400 bg-slate-100 rounded-md border border-slate-200">
+                ⌘K
+              </kbd>
+              <kbd className="flex items-center gap-1 px-2 py-1 text-[0.6rem] font-semibold text-slate-400 bg-slate-100 rounded-md border border-slate-200">
+                ESC
+              </kbd>
+            </div>
           </div>
 
-          {/* Results */}
-          <div className="max-h-[60vh] overflow-y-auto">
-            {query.length < 2 ? (
+          {/* Results area */}
+          <div
+            id="search-results"
+            ref={listRef}
+            className="max-h-[60vh] overflow-y-auto"
+            role="listbox"
+            aria-label="Search results"
+          >
+            {/* Empty-query state: quick links */}
+            {query.length < 2 && (
               <div className="px-5 py-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Quick Links</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                  Quick Links
+                </p>
                 <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { title: "Compare Platforms", href: "/compare", icon: "trending-up" },
-                    { title: "Investment Marketplace", href: "/invest", icon: "layers" },
-                    { title: "Browse Advisors", href: "/advisors", icon: "users" },
-                    { title: "Current Deals", href: "/deals", icon: "zap" },
-                    { title: "Calculators", href: "/calculators", icon: "calculator" },
-                    { title: "Foreign Investors", href: "/foreign-investment", icon: "globe" },
-                  ].map((link) => (
+                  {QUICK_LINKS.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
@@ -194,43 +375,156 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
                       className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
                     >
                       <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 group-hover:bg-amber-50 transition-colors">
-                        <Icon name={link.icon} size={14} className="text-slate-500 group-hover:text-amber-600" />
+                        <Icon
+                          name={link.icon}
+                          size={14}
+                          className="text-slate-500 group-hover:text-amber-600"
+                        />
                       </div>
-                      <span className="text-sm font-semibold text-slate-700 group-hover:text-slate-900">{link.title}</span>
+                      <span className="text-sm font-semibold text-slate-700 group-hover:text-slate-900">
+                        {link.title}
+                      </span>
                     </Link>
                   ))}
                 </div>
+                <p className="mt-4 text-xs text-slate-400">
+                  Tip: press{" "}
+                  <kbd className="inline-flex items-center px-1.5 py-0.5 text-[0.6rem] font-semibold bg-slate-100 border border-slate-200 rounded">
+                    ⌘K
+                  </kbd>{" "}
+                  to open search from anywhere
+                </p>
               </div>
-            ) : results.length === 0 ? (
+            )}
+
+            {/* Loading */}
+            {state.status === "loading" && query.length >= 2 && (
+              <div className="px-5 py-8 text-center">
+                <p className="text-sm text-slate-500">Searching…</p>
+              </div>
+            )}
+
+            {/* Error */}
+            {state.status === "error" && (
+              <div className="px-5 py-8 text-center">
+                <Icon name="alert-circle" size={24} className="text-red-300 mx-auto mb-2" />
+                <p className="text-sm text-slate-500">{state.message}</p>
+              </div>
+            )}
+
+            {/* No results */}
+            {state.status === "success" && flatItems.length === 0 && (
               <div className="px-5 py-8 text-center">
                 <Icon name="search" size={24} className="text-slate-300 mx-auto mb-2" />
-                <p className="text-sm text-slate-500">No results for &ldquo;{query}&rdquo;</p>
-                <p className="text-xs text-slate-400 mt-1">Try a different search term</p>
+                <p className="text-sm text-slate-500">
+                  No results for &ldquo;{query}&rdquo;
+                </p>
+                <p className="text-xs text-slate-400 mt-1">
+                  Try a different term, or{" "}
+                  <Link
+                    href={`/search?q=${encodeURIComponent(query)}`}
+                    onClick={onClose}
+                    className="text-amber-600 hover:underline"
+                  >
+                    see full results
+                  </Link>
+                </p>
               </div>
-            ) : (
+            )}
+
+            {/* Results grouped by category */}
+            {state.status === "success" && flatItems.length > 0 && (
               <div className="py-3">
-                {Object.entries(grouped).map(([category, items]) => (
-                  <div key={category} className="mb-2 last:mb-0">
-                    <p className="px-5 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-slate-400">{category}</p>
-                    {items.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={onClose}
-                        className="flex items-center gap-3 px-5 py-2.5 hover:bg-amber-50 transition-colors group"
-                      >
-                        <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 group-hover:bg-amber-100 transition-colors">
-                          <Icon name={CATEGORY_ICONS[category] || "file"} size={14} className="text-slate-500 group-hover:text-amber-600" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-slate-900 group-hover:text-amber-700 truncate">{item.title}</p>
-                          {item.description && <p className="text-xs text-slate-400 truncate">{item.description}</p>}
-                        </div>
-                        <Icon name="arrow-right" size={14} className="text-slate-300 shrink-0 group-hover:text-amber-500" />
-                      </Link>
-                    ))}
-                  </div>
-                ))}
+                {Object.entries(grouped).map(([category, items]) => {
+                  if (!items?.length) return null;
+                  return (
+                    <div key={category} className="mb-2 last:mb-0">
+                      <p className="px-5 py-1.5 text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                        <Icon
+                          name={CATEGORY_ICONS[category] ?? "file"}
+                          size={10}
+                          className="text-slate-400"
+                        />
+                        {category}
+                      </p>
+                      {items.map((item) => {
+                        const idx = itemIndex++;
+                        const isActive = idx === activeIndex;
+                        return (
+                          <Link
+                            key={item.key}
+                            id={`search-result-${idx}`}
+                            href={item.href}
+                            onClick={onClose}
+                            data-result-index={idx}
+                            role="option"
+                            aria-selected={isActive}
+                            className={`flex items-center gap-3 px-5 py-2.5 transition-colors group ${
+                              isActive
+                                ? "bg-amber-50"
+                                : "hover:bg-amber-50"
+                            }`}
+                          >
+                            <div
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                                isActive
+                                  ? "bg-amber-100"
+                                  : "bg-slate-100 group-hover:bg-amber-100"
+                              }`}
+                            >
+                              <Icon
+                                name={CATEGORY_ICONS[category] ?? "file"}
+                                size={14}
+                                className={`transition-colors ${
+                                  isActive
+                                    ? "text-amber-600"
+                                    : "text-slate-500 group-hover:text-amber-600"
+                                }`}
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p
+                                className={`text-sm font-semibold truncate transition-colors ${
+                                  isActive
+                                    ? "text-amber-700"
+                                    : "text-slate-900 group-hover:text-amber-700"
+                                }`}
+                              >
+                                {item.title}
+                              </p>
+                              {item.subtitle && (
+                                <p className="text-xs text-slate-400 truncate">
+                                  {item.subtitle}
+                                </p>
+                              )}
+                            </div>
+                            <Icon
+                              name="arrow-right"
+                              size={14}
+                              className={`shrink-0 transition-colors ${
+                                isActive
+                                  ? "text-amber-500"
+                                  : "text-slate-300 group-hover:text-amber-500"
+                              }`}
+                            />
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+
+                {/* See all results link */}
+                <div className="border-t border-slate-100 mx-5 mt-2 pt-2">
+                  <Link
+                    href={`/search?q=${encodeURIComponent(query)}`}
+                    onClick={onClose}
+                    className="flex items-center justify-center gap-2 py-2 text-sm text-amber-600 hover:text-amber-700 font-semibold transition-colors"
+                  >
+                    See all results for &ldquo;{query}&rdquo;
+                    <Icon name="arrow-right" size={14} />
+                  </Link>
+                </div>
               </div>
             )}
           </div>
