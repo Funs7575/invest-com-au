@@ -7,13 +7,13 @@
  * We mock useSubscription to control auth + subscription state.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "./setup";
+import { render, screen, mockPush } from "./setup";
+import { fireEvent } from "@testing-library/react";
 
 // ── Hoist mocks before imports ──────────────────────────────────────────────
 
-const { mockUseSubscription, mockRouterPush, mockFetch } = vi.hoisted(() => ({
+const { mockUseSubscription, mockFetch } = vi.hoisted(() => ({
   mockUseSubscription: vi.fn(),
-  mockRouterPush: vi.fn(),
   mockFetch: vi.fn(),
 }));
 
@@ -21,14 +21,8 @@ vi.mock("@/lib/hooks/useSubscription", () => ({
   useSubscription: mockUseSubscription,
 }));
 
-// next/navigation is already mocked in setup.tsx; we re-mock push here so
-// we can assert on it in individual tests.
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mockRouterPush }),
-  usePathname: () => "/account/upgrade",
-  useSearchParams: () => new URLSearchParams(),
-  useParams: () => ({}),
-}));
+// next/navigation (incl. the router push spy `mockPush`) is mocked globally
+// in ./setup — assert on the imported `mockPush` rather than re-mocking here.
 
 // ── Import subject after mocks are declared ─────────────────────────────────
 
@@ -61,7 +55,7 @@ function notLoggedIn() {
 }
 
 beforeEach(() => {
-  mockRouterPush.mockReset();
+  mockPush.mockReset();
   mockFetch.mockReset();
   // Restore the global fetch before each test
   vi.stubGlobal("fetch", mockFetch);
@@ -148,7 +142,7 @@ describe("InvestorProCheckout — unauthenticated user", () => {
     notLoggedIn();
     render(<InvestorProCheckout />);
     fireEvent.click(screen.getByRole("button", { name: /sign in & subscribe/i }));
-    expect(mockRouterPush).toHaveBeenCalledWith("/auth/login?next=/account/upgrade");
+    expect(mockPush).toHaveBeenCalledWith("/auth/login?next=/account/upgrade");
   });
 });
 
@@ -156,7 +150,7 @@ describe("InvestorProCheckout — existing Pro subscriber", () => {
   it("renders the Active state with a go-to-account link", () => {
     proUser();
     render(<InvestorProCheckout />);
-    expect(screen.getByText(/active/i)).toBeInTheDocument();
+    expect(screen.getByText("Active")).toBeInTheDocument();
     const link = screen.getByRole("link", { name: /go to account/i });
     expect(link).toHaveAttribute("href", "/account");
   });

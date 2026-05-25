@@ -168,7 +168,6 @@ export default async function BriefTrackerPage({
       const hasSubmittedOutcome = !!outcomeRow?.submitted_at;
       const acceptedMs = new Date(brief.accepted_at).getTime();
       const staleMs = DISPUTE_STALE_DAYS * 24 * 60 * 60 * 1000;
-      // eslint-disable-next-line react-hooks/purity -- server-rendered page; Date.now() is legitimate here (not a render-loop concern).
       const isStale = Date.now() - acceptedMs >= staleMs;
       canOpenDispute = hasSubmittedOutcome || isStale;
     }
