@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Link from "next/link";
 import AccountClient from "./AccountClient";
 import AccountKindCards from "./AccountKindCards";
 import AccountActionPlansTiles from "./AccountActionPlansTiles";
@@ -91,6 +92,14 @@ export default async function AccountPage() {
             />
           </div>
           <AccountActivityFeed items={dashboard.feed} />
+          <div className="flex justify-end pt-1">
+            <Link
+              href="/account/decisions"
+              className="text-xs font-semibold text-amber-700 hover:text-amber-900"
+            >
+              View decision inbox →
+            </Link>
+          </div>
         </div>
       )}
       {persona && (
