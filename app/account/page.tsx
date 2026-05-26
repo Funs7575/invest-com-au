@@ -113,6 +113,12 @@ export default async function AccountPage() {
               >
                 Verified products →
               </Link>
+              <Link
+                href="/account/life-events"
+                className="text-xs font-semibold text-slate-500 hover:text-violet-700"
+              >
+                Life events →
+              </Link>
             </div>
             <Link
               href="/account/decisions"
