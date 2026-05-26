@@ -25,9 +25,9 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [~] **F3** Fix quiz "Share result" URL to encode the result (shares blank quiz today)
 - [~] **F4** Fee-change alert capture on `/broker/[slug]` + `/compare`
 - [~] **F5** `SocialProofCounter` + `CohortInsights` on `/best/[slug]` + quiz results
-- [ ] **F6** Post-signup notification-preference onboarding step
-- [ ] **F7** `StickyCTABar` on `/best/[slug]`; save-shortlist + alert prompt on the compare bar
-- [ ] **F8** "Verified AFSL/ACL" trust chip on advisor directory cards
+- [~] **F6** Post-signup notification-preference onboarding step
+- [~] **F7** `StickyCTABar` on `/best/[slug]`; save-shortlist + alert prompt on the compare bar
+- [~] **F8** "Verified AFSL/ACL" trust chip on advisor directory cards
 
 ## Phase 2 — Surface buried pages (cheap SEO + UX)
 - [ ] **P1** Add `/tax` + `/insurance` hubs to nav; link `/tax-return` (seasonal) from `/tax`

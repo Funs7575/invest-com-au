@@ -54,6 +54,7 @@ import JargonTooltip from "@/components/JargonTooltip";
 import OnThisPage from "@/components/OnThisPage";
 import type { Article } from "@/lib/types";
 import SocialProofCounter from "@/components/SocialProofCounter";
+import StickyCTABar from "@/components/StickyCTABar";
 
 const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
   beginners: "beginner-guide",
@@ -764,6 +765,16 @@ export default async function BestBrokerPage({
           )}
         </div>
       </div>
+      {topPick && (
+        <StickyCTABar
+          broker={topPick}
+          detail={[
+            topPick.asx_fee && `ASX: ${topPick.asx_fee}`,
+            topPick.rating != null && `Rating: ${topPick.rating}/5`,
+          ].filter(Boolean).join(" · ") || "Australia's top-rated broker"}
+          context="review"
+        />
+      )}
     </>
   );
 }

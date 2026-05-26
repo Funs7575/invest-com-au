@@ -122,6 +122,16 @@ export const AFSL_VERIFIED_NOTE =
   "AFSL confirmed current on the ASIC Professional Registers.";
 
 /**
+ * Trust-chip tooltip for an advisor who has listed an AFSL number but whose
+ * licence currency has not yet been cross-checked by Invest.com.au against the
+ * ASIC Professional Registers. Components may prepend the number:
+ * "AFSL 123456 listed by this advisor. Verify currency on the ASIC
+ * Professional Registers."
+ */
+export const AFSL_LISTED_NOTE =
+  "AFSL number listed by this advisor. Verify currency on the ASIC Professional Registers.";
+
+/**
  * Verified-badge tooltip shown on the admin-only "Seeded" pill — clarifies
  * that the profile has not yet been independently verified.
  */
