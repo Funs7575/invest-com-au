@@ -81,6 +81,30 @@ const BADGE_CONFIG: Record<
     icon: "✅",
     color: "bg-green-50 border-green-200 text-green-800",
   },
+  trust_starter: {
+    label: "Trust Starter",
+    description: "Trust Score 40+ — good foundation",
+    icon: "🌱",
+    color: "bg-slate-50 border-slate-200 text-slate-700",
+  },
+  trust_growth: {
+    label: "Trust Growth",
+    description: "Trust Score 55+ — strong profile",
+    icon: "📈",
+    color: "bg-emerald-50 border-emerald-200 text-emerald-800",
+  },
+  trust_pro: {
+    label: "Trust Pro",
+    description: "Trust Score 70+ — highly trusted",
+    icon: "💎",
+    color: "bg-blue-50 border-blue-200 text-blue-800",
+  },
+  trust_elite: {
+    label: "Trust Elite",
+    description: "Trust Score 85+ — elite standing",
+    icon: "👑",
+    color: "bg-violet-50 border-violet-200 text-violet-800",
+  },
 };
 
 function formatDate(iso: string): string {
