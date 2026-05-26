@@ -77,7 +77,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [ ] **E2** Chrome extension (rate compare on competitor pages) — security-review-gated
 
 ## Phase 9 — Lifecycle-funnel moat
-- [ ] **L1** Cross-hub lifecycle routing graph (founder→sell-business→SMSF→private; retiree→aged-care→estate) — intent-routing + cross-links across hubs
+- [~] **L1** Cross-hub lifecycle routing graph (founder→sell-business→SMSF→private; retiree→aged-care→estate) — intent-routing + cross-links across hubs
 
 ---
 
