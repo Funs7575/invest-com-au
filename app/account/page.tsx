@@ -100,6 +100,7 @@ export default async function AccountPage() {
             />
           </div>
           <AccountActivityFeed items={dashboard.feed} />
+          {dashboard.hero.kind === "empty" && <DashboardZeroState />}
           <div className="flex items-center justify-between pt-1">
             <div className="flex items-center gap-4">
               <Link
@@ -165,6 +166,55 @@ export default async function AccountPage() {
         <AccountClient />
       </Suspense>
     </>
+  );
+}
+
+const ZERO_STATE_TILES = [
+  {
+    icon: "📊",
+    label: "Financial Health Score",
+    desc: "Score your finances in 2 minutes",
+    href: "/score",
+  },
+  {
+    icon: "🔍",
+    label: "Compare Brokers",
+    desc: "Side-by-side fees & features",
+    href: "/compare",
+  },
+  {
+    icon: "📋",
+    label: "Life Event Checklist",
+    desc: "Investing around major life moments",
+    href: "/just",
+  },
+  {
+    icon: "🤝",
+    label: "Find a Financial Adviser",
+    desc: "Verified & AFSL-licensed",
+    href: "/advisors/financial-planners",
+  },
+] as const;
+
+function DashboardZeroState() {
+  return (
+    <section className="bg-white border border-slate-200 rounded-2xl p-5">
+      <h2 className="text-base font-bold text-slate-900 mb-1">Explore what you can do</h2>
+      <p className="text-sm text-slate-500 mb-4">Four popular starting points for Australian investors.</p>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {ZERO_STATE_TILES.map((tile) => (
+          <Link
+            key={tile.href}
+            href={tile.href}
+            className="flex flex-col gap-2 p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors"
+          >
+            <span className="text-2xl leading-none">{tile.icon}</span>
+            <span className="text-xs font-bold text-slate-900 leading-tight">{tile.label}</span>
+            <span className="text-[11px] text-slate-500 leading-snug">{tile.desc}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 

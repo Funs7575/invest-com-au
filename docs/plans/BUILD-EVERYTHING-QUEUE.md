@@ -39,7 +39,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 ## Phase 3 — UX polish (high-traffic surfaces)
 - [ ] **U1** Migrate `/compare` to `components/directory/*` primitives
 - [ ] **U2** Mobile compare: "show more columns" affordance
-- [ ] **U3** First-run dashboard zero-state + wire `GettingStartedChecklist`
+- [~] **U3** First-run dashboard zero-state + wire `GettingStartedChecklist`
 - [ ] **U4** Fix `UserOnboarding` modal (focus trap / `role=dialog`; fix "don't show again")
 - [ ] **U5** Loading/empty/error states (`CommunityVote`, `find-advisor`)
 - [ ] **U6** Inline validation + a11y on goals/profile forms + `AdvisorReviewForm` stars
