@@ -88,7 +88,7 @@ function dollarsEnvToMicros(envValue: string | undefined, defaultUsd: number): n
 }
 
 export interface RouteConfig {
-  route: "concierge" | "admin_agent" | "qa_capture" | "calculator_explain";
+  route: "concierge" | "admin_agent" | "qa_capture" | "calculator_explain" | "advisor_fee_opinion";
   subjectType: "public_session" | "admin_user";
   perSubjectMicros: number;
   globalMicros: number;
@@ -141,6 +141,19 @@ export function loadCalculatorExplainConfig(): RouteConfig {
     perSubjectMicros: dollarsEnvToMicros(process.env.AI_CALC_EXPLAIN_USER_USD, 1),
     globalMicros: dollarsEnvToMicros(process.env.AI_CALC_EXPLAIN_GLOBAL_USD, 30),
     label: "calculator explain",
+  };
+}
+
+// Advisor fee opinion — factual fee-percentile context for a specific advisor.
+// Per-IP cap tighter than calculator explain (advisory context warrants caution).
+// Env vars: AI_ADVISOR_FEE_USER_USD (default $0.50/IP/day), AI_ADVISOR_FEE_GLOBAL_USD (default $20/day).
+export function loadAdvisorFeeOpinionConfig(): RouteConfig {
+  return {
+    route: "advisor_fee_opinion",
+    subjectType: "public_session",
+    perSubjectMicros: dollarsEnvToMicros(process.env.AI_ADVISOR_FEE_USER_USD, 0.5),
+    globalMicros: dollarsEnvToMicros(process.env.AI_ADVISOR_FEE_GLOBAL_USD, 20),
+    label: "advisor fee opinion",
   };
 }
 

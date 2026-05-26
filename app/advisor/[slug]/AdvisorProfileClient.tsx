@@ -18,6 +18,7 @@ import { getVerificationConfig, getVerificationLinks } from "@/lib/advisor-verif
 import { getQualificationData } from "@/lib/qualification-store";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 import { isValidEmail } from "@/lib/validate-email";
+import AdvisorFeeOpinionButton from "@/components/AdvisorFeeOpinionButton";
 import SocialShareButtons from "@/components/SocialShareButtons";
 
 const TYPE_TO_PLATFORMS: Record<string, { label: string; href: string }[]> = {
@@ -785,6 +786,14 @@ export default function AdvisorProfileClient({
                     </span>
                   </p>
                 )}
+                <AdvisorFeeOpinionButton
+                  advisorSlug={pro.slug}
+                  feeStructure={pro.fee_structure}
+                  feeDescription={pro.fee_description}
+                  hourlyRateCents={pro.hourly_rate_cents}
+                  flatFeeCents={pro.flat_fee_cents}
+                  aumPercentage={pro.aum_percentage}
+                />
               </SectionCard>
             )}
 
