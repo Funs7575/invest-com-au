@@ -44,6 +44,7 @@ const platformsMenu = {
     { label: "Current Deals", href: "/deals" },
     ...(SHOW_MATCH_LANGUAGE ? [{ label: "Get Matched (60s)", href: "/quiz" }] : []),
     { label: "Fee Calculator", href: "/calculators" },
+    { label: "Financial Health Score", href: "/score" },
   ],
 };
 
@@ -131,6 +132,7 @@ const learnMenu = {
     { label: "Tax Strategy Hub", href: "/tax" },
     { label: "Tax Return Guide", href: "/tax-return" },
     { label: "Insurance Hub", href: "/insurance" },
+    { label: "Life Event Checklists", href: "/just" },
     { label: "Property Investing", href: "/articles?category=property" },
     { label: "Crypto & Digital Assets", href: "/articles?category=crypto" },
   ],
@@ -303,6 +305,7 @@ const mobileSections = [
   {
     title: "Tools & Calculators",
     items: [
+      { name: "Financial Health Score", href: "/score" },
       { name: "Quick Audit (30s)", href: "/quick-audit" },
       { name: "Switching Calculator", href: "/switching-calculator" },
       { name: "Fee Simulator", href: "/fee-simulator" },
@@ -322,6 +325,7 @@ const mobileSections = [
   {
     title: "Learn & Community",
     items: [
+      { name: "Life Event Checklists", href: "/just" },
       { name: "Tax Strategy Hub", href: "/tax" },
       { name: "Tax Return Guide", href: "/tax-return" },
       { name: "Insurance Hub", href: "/insurance" },

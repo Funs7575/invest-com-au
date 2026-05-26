@@ -40,6 +40,7 @@ export function SiteFooter() {
 
           {/* Column 2 — Tools */}
           <FooterColumn title="Tools" items={[
+            { label: "Financial Health Score", href: "/score" },
             { label: "All Calculators (25)", href: "/calculators" },
             { label: "Quick Audit", href: "/quick-audit" },
             { label: "Portfolio X-Ray", href: "/portfolio-xray" },
@@ -76,6 +77,7 @@ export function SiteFooter() {
 
           {/* Column 5 — Learn & Community */}
           <FooterColumn title="Learn & Community" items={[
+            { label: "Life Event Checklists", href: "/just" },
             { label: "All Articles", href: "/articles" },
             { label: "How-To Guides", href: "/how-to" },
             { label: "Glossary", href: "/glossary" },
