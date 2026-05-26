@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { computeUserHealthScore, type HealthScoreInput } from "@/lib/user-health-score";
 import { computeCurrentStreak } from "@/lib/streak";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import PortfolioStressTest from "@/components/PortfolioStressTest";
+import EtfOverlapDetector from "@/components/EtfOverlapDetector";
 
 export const metadata: Metadata = {
   title: "Financial Health Score | Invest.com.au",
@@ -216,6 +218,32 @@ export default async function AccountHealthPage() {
         <p style={{ fontSize: 11, color: "var(--color-ink-400)", lineHeight: 1.5 }}>
           {GENERAL_ADVICE_WARNING} Your health score is a factual summary of the data you&apos;ve shared — not a recommendation or advice about your financial situation.
         </p>
+
+        {/* Portfolio analysis tools */}
+        <div className="iv2-card" style={{ padding: 24, marginTop: 20 }}>
+          <PortfolioStressTest />
+        </div>
+
+        <div className="iv2-card" style={{ padding: 24, marginTop: 12 }}>
+          <EtfOverlapDetector />
+        </div>
+
+        <div style={{ marginTop: 12, padding: 24 }} className="iv2-card">
+          <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--color-ink-900)", marginBottom: 8 }}>
+            More tools
+          </h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <Link href="/tools/dividend-calendar" style={{ fontSize: 13, color: "var(--color-blue-700)", textDecoration: "none" }}>
+              → ETF Dividend Calendar — track upcoming ex-dates and distribution payments
+            </Link>
+            <Link href="/tools/etf-overlap" style={{ fontSize: 13, color: "var(--color-blue-700)", textDecoration: "none" }}>
+              → ETF Overlap Detector — standalone tool with full holdings table
+            </Link>
+            <Link href="/tools/portfolio-stress-test" style={{ fontSize: 13, color: "var(--color-blue-700)", textDecoration: "none" }}>
+              → Portfolio Stress Test — standalone tool with allocation export
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );
