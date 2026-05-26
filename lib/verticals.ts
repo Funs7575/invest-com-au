@@ -68,6 +68,7 @@ export type ComplianceKey =
   | "property"
   | "startup"
   | "aged_care"
+  | "home_loans"
   | "tax_agent"
   | "course_affiliate"
   | "sponsored_disclosure"
@@ -1732,4 +1733,202 @@ export const AGED_CARE_HUB_CONFIG: HubConfig = {
   primaryKeywords: ["aged care financial planning Australia", "RAD DAP aged care", "home care packages", "aged care means test"],
   schemaTypes: ["FinancialService", "FAQPage"],
   newsletter: { listKey: "aged-care-hub", cadence: "monthly", sponsorSlotsAvailable: false },
+};
+
+// ─── H6 — Home Loans hub (referral-only; no credit assistance) ───────────────
+//
+// Invest.com.au does NOT hold an ACL. This hub provides factual comparisons
+// and calculator tools only. All credit-assistance actions (rate quotes,
+// application submissions, product recommendations) route to the
+// /advisors/mortgage-brokers directory. The NCCP_CREDIT_NOTE compliance key
+// renders the required disclaimer on every rendered page.
+export const HOME_LOANS_HUB_CONFIG: HubConfig = {
+  slug: "home-loans",
+  title: `Home Loans Australia (${CURRENT_YEAR}) — Compare Rates, Calculators & Mortgage Broker Finder`,
+  metaDescription:
+    "Compare home loan rates, use our free mortgage repayment calculator, and find a licensed mortgage broker. Independent factual information — not credit assistance.",
+  audiences: ["founder", "hnw"],
+  complianceKey: "home_loans",
+
+  hero: {
+    headline: "Home Loans Hub",
+    subhead:
+      "Compare variable and fixed rates, run the repayment calculator, and connect with a licensed mortgage broker. Invest.com.au provides factual information only — for credit assistance, speak to a licensed broker.",
+    stats: [
+      {
+        label: "Average owner-occupier variable rate (Big 4)",
+        value: "~6.2% p.a.",
+        dataAsOf: "2024-06-30",
+        stalesAt: "2026-12-31",
+        source: "https://www.rba.gov.au/statistics/tables/",
+      },
+      {
+        label: "Median new mortgage in Australia",
+        value: "$620,000",
+        dataAsOf: "2024-03-31",
+        stalesAt: "2026-12-31",
+        source: "https://www.abs.gov.au/statistics/economy/finance/lending-indicators",
+      },
+      {
+        label: "Average mortgage broker fee to borrower",
+        value: "$0 (lender-paid)",
+        dataAsOf: "2024-01-01",
+        stalesAt: "2027-01-01",
+        source: "https://www.mfaa.com.au/",
+      },
+    ],
+    primaryCta: {
+      label: "Find a Mortgage Broker",
+      href: "/advisors/mortgage-brokers",
+      lever: "lead_routing",
+    },
+    secondaryCta: {
+      label: "Mortgage Calculator",
+      href: "/mortgage-calculator",
+      lever: "affiliate_cpa",
+    },
+  },
+
+  serviceGrid: [
+    {
+      title: "Variable Rate Loans",
+      icon: "trending-up",
+      description:
+        "Rate moves with the RBA cash rate. Lower early repayments, flexible extra repayments, and offset account access. Suits borrowers comfortable with rate uncertainty.",
+      href: "/home-loans/variable",
+      cta: "Variable Rate Guide",
+    },
+    {
+      title: "Fixed Rate Loans",
+      icon: "lock",
+      description:
+        "Lock in a rate for 1–5 years for repayment certainty. Break fees apply if you exit early. Suits borrowers who want a predictable budget.",
+      href: "/home-loans/fixed",
+      cta: "Fixed Rate Guide",
+    },
+    {
+      title: "Refinancing",
+      icon: "refresh-cw",
+      description:
+        "Switch lenders to access a lower rate or better features. Most Australians who haven't refinanced in 3+ years are paying a loyalty tax. Average saving: $2,000–$5,000/year.",
+      href: "/home-loans/refinancing",
+      cta: "Refinancing Guide",
+    },
+    {
+      title: "First Home Buyer",
+      icon: "home",
+      description:
+        "First Home Guarantee (5% deposit, no LMI), FHSS super withdrawal, and state-based stamp duty concessions. Full eligibility guide and calculator.",
+      href: "/just/buying-first-home",
+      cta: "First Home Buyer Guide",
+    },
+    {
+      title: "Investment Loans",
+      icon: "dollar-sign",
+      description:
+        "Interest-only periods, negative gearing implications, and offset accounts for property investors. Key differences vs owner-occupier lending explained.",
+      href: "/home-loans/investment",
+      cta: "Investment Loan Guide",
+    },
+    {
+      title: "Offset & Redraw",
+      icon: "rotate-ccw",
+      description:
+        "Offset accounts reduce the interest charged daily. Redraw lets you access extra repayments. Key differences — and which feature suits your cash-flow strategy.",
+      href: "/home-loans/offset-redraw",
+      cta: "Offset & Redraw Guide",
+    },
+  ],
+
+  deepDives: [
+    {
+      title: "How to Compare Home Loans — Beyond the Headline Rate",
+      excerpt:
+        "The comparison rate, ongoing fees, and product features matter as much as the advertised rate. A complete checklist of what to review before signing.",
+      href: "/home-loans/compare",
+      readingTimeMinutes: 7,
+    },
+    {
+      title: "Variable vs Fixed Rate — Which Is Right for You?",
+      excerpt:
+        "Fixed gives repayment certainty; variable gives flexibility and typically lower rates over the long term. Historical RBA cycle data to guide your decision.",
+      href: "/home-loans/variable",
+      readingTimeMinutes: 6,
+    },
+    {
+      title: "Refinancing in Australia — Step-by-Step Guide",
+      excerpt:
+        "How to refinance, what it costs, and the break-even calculation that tells you if the rate saving outweighs the switching costs.",
+      href: "/home-loans/refinancing",
+      readingTimeMinutes: 8,
+    },
+    {
+      title: "Mortgage Broker vs Going Direct to the Bank",
+      excerpt:
+        "Brokers access 30+ lenders and are lender-paid — free to the borrower. The data on whether brokers get lower rates than direct applicants.",
+      href: "/advisor-guides/mortgage-broker-vs-bank",
+      readingTimeMinutes: 5,
+    },
+  ],
+
+  calculators: [
+    { slug: "mortgage-calculator", label: "Mortgage Repayment Calculator" },
+    { slug: "tools/mortgage-stress-test", label: "Mortgage Stress Test" },
+  ],
+
+  leadQueue: { kind: "general", topic: "home-loans" },
+
+  relatedHubs: ["property", "first-home-buyer", "retirement"],
+
+  articleFilters: {
+    category: "home-loans",
+    tags: ["home-loan", "mortgage", "first-home-buyer", "refinancing", "interest-rate", "fixed-rate", "variable-rate"],
+  },
+
+  primaryKeywords: [
+    "home loans australia",
+    "compare home loans",
+    "mortgage rates australia",
+    "mortgage broker australia",
+    "refinancing home loan",
+    "first home buyer loan",
+    "fixed rate home loan",
+  ],
+
+  schemaTypes: ["FAQPage", "WebPage", "FinancialService"],
+
+  faqs: [
+    {
+      question: "How do I compare home loans in Australia?",
+      answer:
+        "Compare the comparison rate (not just the headline rate) — the comparison rate folds in most fees and gives a truer cost of the loan. Also check: offset account availability, redraw facility, break fees on fixed rates, annual and monthly fees, and whether the lender is CHESS-sponsored (not relevant for loans, but signals a regulated entity). A mortgage broker can compare 30+ lenders' live rates on your behalf at no cost to you.",
+    },
+    {
+      question: "What is a comparison rate?",
+      answer:
+        "A comparison rate is calculated by adding the interest rate, most fees, and charges into a single percentage figure. It's standardised on a $150,000 loan over 25 years so products are comparable. The comparison rate is always higher than the advertised rate. It does not include government charges, LMI, or offset account savings — which is why a mortgage broker's full-cost modelling is still valuable.",
+    },
+    {
+      question: "Should I use a mortgage broker or go directly to a bank?",
+      answer:
+        "A mortgage broker accesses 30+ lenders (including second-tier lenders that often beat Big 4 rates) and is paid by the lender — free to you. ASIC's 2020 mortgage broker review found brokers generated lower average rates than direct borrowers. For complex situations (self-employed, non-resident, trust borrowers), a broker with specialist experience is strongly recommended. Invest.com.au cannot provide credit assistance — speak to a licensed mortgage broker for a credit recommendation.",
+    },
+    {
+      question: "What is LMI and how do I avoid it?",
+      answer:
+        "Lender's Mortgage Insurance (LMI) is an insurance premium paid by the borrower when the deposit is less than 20% of the purchase price (LVR > 80%). It protects the lender — not the borrower. LMI can be $10,000–$40,000+. You can avoid it with a 20%+ deposit, using the First Home Guarantee (5% deposit, government-backed), or by using a guarantor. Some lenders waive LMI for certain professions (doctors, lawyers) at LVRs up to 90%.",
+    },
+    {
+      question: "Is it worth refinancing my home loan?",
+      answer:
+        "The break-even question: divide your switching costs (discharge fee ~$300, new loan application fee ~$300, potential break fee on fixed loans, legal costs ~$500) by the monthly saving from the lower rate. If you'll be in the property longer than the break-even period, refinancing is usually worthwhile. Most Australians with loans older than 3 years are paying a loyalty premium of 0.5–1% above what a new borrower gets. Invest.com.au provides information only — speak to a licensed mortgage broker for a personalised refinancing analysis.",
+    },
+    {
+      question: "What is the First Home Guarantee?",
+      answer:
+        "The First Home Guarantee (FHBG) allows eligible first home buyers to purchase with a deposit as low as 5% without paying LMI. The government guarantees up to 15% of the property value to the lender. Income caps apply ($125,000 for singles, $200,000 for joint buyers) and property price caps vary by location. The scheme is limited in places per year. Apply through a participating lender or mortgage broker — not through Invest.com.au, which provides information only.",
+    },
+  ],
+
+  newsletter: { listKey: "home-loans-hub", cadence: "monthly", sponsorSlotsAvailable: true },
 };

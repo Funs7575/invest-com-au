@@ -70,7 +70,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [~] **H3** Alt-assets vertical (whisky/wine/watches/art)
 - [~] **H4** Outbound global-investing hub buildout (shares/etfs/lics/currency/bonds + tax sub-hub + calculators) — large, parallelizable
 - [~] **H5** Insurance comparison + lead funnel (VerticalConfig/HubConfig + quiz routing + lead wiring)
-- [ ] **H6** Mortgage/home-loan hub — **referral-only** (ACL escalator: no credit assistance)
+- [~] **H6** Mortgage/home-loan hub — **referral-only** (ACL escalator: no credit assistance)
 
 ## Phase 8 — Distribution (stream EE)
 - [ ] **E1** Embeddable widget marketplace (finish `app/embed`); WhatsApp/Telegram alerts bot

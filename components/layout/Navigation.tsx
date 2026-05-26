@@ -340,6 +340,7 @@ const mobileSections = [
       { name: "Retirement Hub", href: "/retirement" },
       { name: "Aged Care Hub", href: "/aged-care" },
       { name: "Insurance Hub", href: "/insurance" },
+      { name: "Home Loans Hub", href: "/home-loans" },
       { name: "Global Investing Hub", href: "/global-investing" },
       { name: "Investment Confessions", href: "/community/confessions" },
       { name: "Articles & Guides", href: "/articles" },
