@@ -121,6 +121,10 @@ const EXEMPT_PATTERNS = [
   // A static error response cannot be abused; rate limiting adds nothing.
   { match: /\/api\/portfolio-xray(\/|$)/, reason: "disabled pre-AFSL (410 Gone stub)" },
   { match: /\/api\/tax-optimizer(\/|$)/, reason: "disabled pre-AFSL (410 Gone stub)" },
+  // RBA poll GET endpoints set Cache-Control: public, max-age=60/300 so
+  // Vercel's CDN absorbs repeat reads. Vote POST requires a valid Supabase
+  // session + the DB UNIQUE constraint enforces one vote per user per poll.
+  { match: /\/api\/rba-polls\//, reason: "public reads CDN-cached; vote POST is session-auth + UNIQUE-constrained" },
 ];
 
 async function findRouteFiles(dir) {
