@@ -78,6 +78,8 @@ export function SiteFooter() {
           {/* Column 5 — Learn & Community */}
           <FooterColumn title="Learn & Community" items={[
             { label: "Life Event Checklists", href: "/just" },
+            { label: "Investing by Occupation", href: "/investing-for" },
+            { label: "Marketplace", href: "/marketplace" },
             { label: "All Articles", href: "/articles" },
             { label: "How-To Guides", href: "/how-to" },
             { label: "Glossary", href: "/glossary" },

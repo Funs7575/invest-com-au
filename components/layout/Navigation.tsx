@@ -137,6 +137,8 @@ const learnMenu = {
     { label: "Crypto & Digital Assets", href: "/articles?category=crypto" },
   ],
   resources: [
+    { label: "Investing by Occupation", href: "/investing-for" },
+    { label: "Marketplace (Find a Provider)", href: "/marketplace" },
     { label: "All Articles", href: "/articles" },
     { label: "How-To Guides", href: "/how-to" },
     { label: "Glossary", href: "/glossary" },
@@ -326,6 +328,8 @@ const mobileSections = [
     title: "Learn & Community",
     items: [
       { name: "Life Event Checklists", href: "/just" },
+      { name: "Investing by Occupation", href: "/investing-for" },
+      { name: "Marketplace (Find a Provider)", href: "/marketplace" },
       { name: "Tax Strategy Hub", href: "/tax" },
       { name: "Tax Return Guide", href: "/tax-return" },
       { name: "Insurance Hub", href: "/insurance" },
