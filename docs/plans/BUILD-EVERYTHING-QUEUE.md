@@ -58,17 +58,17 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [~] **D7** Investor-intent cohort report pipeline (matures at ~6mo data)
 
 ## Phase 6 — B2B / supply-side
-- [ ] **B1** Verification-as-a-Service (expose KYC/AFSL/ABN pipeline + trust mark)
-- [ ] **B2** Firm branded-profile subscription (`/firm/[slug]` enhanced tier)
-- [ ] **B3** Advisor lead-management CRM add-on (pipeline stages on briefs inbox)
-- [ ] **B4** Advisor careers / recruiter marketplace (job board; no reg risk)
+- [~] **B1** Verification-as-a-Service (expose KYC/AFSL/ABN pipeline + trust mark)
+- [~] **B2** Firm branded-profile subscription (`/firm/[slug]` enhanced tier)
+- [~] **B3** Advisor lead-management CRM add-on (pipeline stages on briefs inbox)
+- [~] **B4** Advisor careers / recruiter marketplace (job board; no reg risk)
 - [ ] **B5** B2B analytics / lead-quality benchmark dashboard
 
 ## Phase 7 — New consumer hubs (bigger; loop-friendly)
-- [ ] **H1** Family-Office hub (directory + diagnostic quiz — highest revenue/effort)
+- [~] **H1** Family-Office hub (directory + diagnostic quiz — highest revenue/effort)
 - [ ] **H2** Retirement + Aged-Care hub (annuity + reverse-mortgage affiliate + facility listings)
-- [ ] **H3** Alt-assets vertical (whisky/wine/watches/art)
-- [ ] **H4** Outbound global-investing hub buildout (shares/etfs/lics/currency/bonds + tax sub-hub + calculators) — large, parallelizable
+- [~] **H3** Alt-assets vertical (whisky/wine/watches/art)
+- [~] **H4** Outbound global-investing hub buildout (shares/etfs/lics/currency/bonds + tax sub-hub + calculators) — large, parallelizable
 - [ ] **H5** Insurance comparison + lead funnel (VerticalConfig/HubConfig + quiz routing + lead wiring)
 - [ ] **H6** Mortgage/home-loan hub — **referral-only** (ACL escalator: no credit assistance)
 

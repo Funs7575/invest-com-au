@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const supabase = await createClient();
   const { data: firm } = await supabase
     .from("advisor_firms")
-    .select("name, afsl_number, location_display, bio")
+    .select("name, afsl_number, location_display, bio, tagline")
     .eq("slug", slug)
     .eq("status", "active")
     .single();
@@ -25,9 +25,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!firm) return {};
 
   const title = `${firm.name} — Advisory Firm Profile`;
-  const description = firm.bio
+  const description = firm.tagline || (firm.bio
     ? firm.bio.slice(0, 155)
-    : `${firm.name} is a verified advisory firm${firm.location_display ? ` based in ${firm.location_display}` : ""}${firm.afsl_number ? ` (AFSL ${firm.afsl_number})` : ""}. View team members and request a consultation.`;
+    : `${firm.name} is a verified advisory firm${firm.location_display ? ` based in ${firm.location_display}` : ""}${firm.afsl_number ? ` (AFSL ${firm.afsl_number})` : ""}. View team members and request a consultation.`);
 
   return {
     title,
@@ -99,7 +99,17 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
     { name: typedFirm.name },
   ]);
 
-  const firstMemberSlug = members[0]?.slug;
+  const firstMemberSlug = members.at(0)?.slug;
+
+  const hasHighlightStats = Array.isArray(typedFirm.highlight_stats) && typedFirm.highlight_stats.length > 0;
+  const hasFeaturedServices = Array.isArray(typedFirm.featured_services) && typedFirm.featured_services.length > 0;
+  const hasCaseStudies = Array.isArray(typedFirm.case_studies) && typedFirm.case_studies.length > 0;
+
+  const highlightStatsCols =
+    !hasHighlightStats ? "" :
+    typedFirm.highlight_stats!.length <= 2 ? "grid-cols-2" :
+    typedFirm.highlight_stats!.length === 3 ? "grid-cols-3" :
+    "grid-cols-2 sm:grid-cols-4";
 
   return (
     <>
@@ -125,7 +135,21 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
         <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
           {/* ── Firm Header Card ── */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-violet-600 to-violet-500 h-24 sm:h-28" />
+            {/* Hero banner — custom image for Enhanced Partners, gradient fallback */}
+            {typedFirm.header_image_url ? (
+              <div className="h-28 sm:h-36 relative overflow-hidden">
+                <Image
+                  src={typedFirm.header_image_url}
+                  alt={`${typedFirm.name} banner`}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            ) : (
+              <div className="bg-gradient-to-r from-violet-600 to-violet-500 h-24 sm:h-28" />
+            )}
+
             <div className="px-6 pb-6 -mt-12">
               <div className="flex flex-col sm:flex-row sm:items-end gap-4">
                 {/* Logo / Initials */}
@@ -147,9 +171,20 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                 </div>
 
                 <div className="flex-1 min-w-0 pt-2">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 truncate">
-                    {typedFirm.name}
-                  </h1>
+                  <div className="flex items-start gap-2 flex-wrap">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 truncate">
+                      {typedFirm.name}
+                    </h1>
+                    {typedFirm.is_enhanced && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded-full border border-amber-200 shrink-0 mt-1">
+                        <Icon name="star" size={12} className="text-amber-500" />
+                        Enhanced Partner
+                      </span>
+                    )}
+                  </div>
+                  {typedFirm.tagline && (
+                    <p className="text-sm text-violet-600 font-medium mt-0.5">{typedFirm.tagline}</p>
+                  )}
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-slate-500">
                     {typedFirm.location_display && (
                       <span className="flex items-center gap-1">
@@ -205,7 +240,70 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
             </div>
           </div>
 
-          {/* ── Services We Offer ── */}
+          {/* ── Highlight Stats strip (Enhanced Partners only) ── */}
+          {hasHighlightStats && (
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-5">
+              <div className={`grid gap-4 ${highlightStatsCols}`}>
+                {typedFirm.highlight_stats!.map((stat, i) => (
+                  <div key={i} className="text-center">
+                    <p className="text-2xl font-bold text-emerald-700">{stat.value}</p>
+                    <p className="text-xs text-emerald-600 mt-0.5">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Featured Services (Enhanced Partners only) ── */}
+          {hasFeaturedServices && (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+              <h2 className="text-sm font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                <Icon name="zap" size={16} className="text-violet-600" />
+                Featured Services
+              </h2>
+              <div className={`grid gap-4 ${
+                typedFirm.featured_services!.length === 1 ? "grid-cols-1" :
+                typedFirm.featured_services!.length === 2 ? "grid-cols-1 sm:grid-cols-2" :
+                "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+              }`}>
+                {typedFirm.featured_services!.map((svc, i) => (
+                  <div key={i} className="border border-slate-100 rounded-lg p-4 bg-slate-50 hover:border-violet-200 transition-colors">
+                    {svc.icon && (
+                      <span className="text-2xl mb-2 block" aria-hidden="true">{svc.icon}</span>
+                    )}
+                    <p className="text-sm font-semibold text-slate-800 mb-1">{svc.title}</p>
+                    <p className="text-xs text-slate-500 leading-relaxed">{svc.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Case Studies / Client Success Stories (Enhanced Partners only) ── */}
+          {hasCaseStudies && (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+              <h2 className="text-sm font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                <Icon name="book-open" size={16} className="text-violet-600" />
+                Client Success Stories
+              </h2>
+              <div className="space-y-4">
+                {typedFirm.case_studies!.map((cs, i) => (
+                  <div key={i} className="border-l-2 border-violet-200 pl-4 py-1">
+                    <p className="text-sm font-semibold text-slate-800">{cs.title}</p>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">{cs.summary}</p>
+                    {cs.outcome && (
+                      <p className="text-xs text-emerald-600 font-medium mt-1.5 flex items-center gap-1">
+                        <Icon name="check" size={11} />
+                        {cs.outcome}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Services We Offer (derived from team member types) ── */}
           {members.length > 0 && (() => {
             const allTypes = [...new Set(members.map(m => PROFESSIONAL_TYPE_LABELS[m.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || m.type))];
             const allSpecs = [...new Set(members.flatMap(m => m.specialties || []))].slice(0, 12);
@@ -243,6 +341,12 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                 Trust Signals
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {/* invest.com.au verified badge (B1) */}
+                <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-3 text-center">
+                  <Icon name="check-circle" size={20} className="text-emerald-600 mx-auto mb-1" />
+                  <p className="text-xs font-semibold text-emerald-700">Verified by</p>
+                  <p className="text-[0.6rem] text-emerald-500 font-medium mt-0.5">invest.com.au</p>
+                </div>
                 {typedFirm.afsl_number && (
                   <div className="bg-violet-50 border border-violet-100 rounded-lg p-3 text-center">
                     <Icon name="check-circle" size={20} className="text-violet-600 mx-auto mb-1" />
@@ -408,6 +512,30 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
               </div>
             </section>
           )}
+
+          {/* ── Trust Mark Embed (B1 — for firms to embed on their own site) ── */}
+          <div className="bg-white rounded-xl border border-emerald-100 shadow-sm p-5">
+            <h2 className="text-sm font-semibold text-slate-800 mb-1 flex items-center gap-2">
+              <Icon name="check-circle" size={16} className="text-emerald-600" />
+              Verified by invest.com.au
+            </h2>
+            <p className="text-xs text-slate-500 mb-3">
+              Embed this trust mark badge on your website to show prospective clients that{" "}
+              {typedFirm.name} is a verified firm on invest.com.au.{" "}
+              <Link href="/how-we-verify" className="text-violet-600 hover:underline">
+                How we verify →
+              </Link>
+            </p>
+            <pre className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-[0.7rem] text-slate-600 overflow-x-auto whitespace-pre-wrap break-all">
+              {`<script src="https://invest.com.au/api/widget/trust-mark?type=firm&slug=${typedFirm.slug}"></script>`}
+            </pre>
+            <p className="text-[0.65rem] text-slate-400 mt-2">
+              Add <code className="bg-slate-100 px-1 py-0.5 rounded">?theme=dark</code> for a dark background.{" "}
+              <Link href="/embed/licensing" className="text-violet-600 hover:underline">
+                White-label licensing →
+              </Link>
+            </p>
+          </div>
 
           {/* ── Join Our Team ── */}
           {(() => {

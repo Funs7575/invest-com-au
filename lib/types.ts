@@ -1364,6 +1364,14 @@ export interface AdvisorFirm {
   max_seats: number;
   created_at: string;
   updated_at: string;
+  // Enhanced profile tier (B2 — Firm branded-profile subscription)
+  is_enhanced?: boolean;
+  enhanced_since?: string | null;
+  header_image_url?: string | null;
+  tagline?: string | null;
+  featured_services?: { title: string; description: string; icon?: string }[];
+  case_studies?: { title: string; summary: string; outcome?: string }[];
+  highlight_stats?: { label: string; value: string }[];
 }
 
 export interface AdvisorApplication {

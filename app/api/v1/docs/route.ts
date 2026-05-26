@@ -823,6 +823,46 @@ export function GET() {
         },
       },
       {
+        path: "/api/v1/verify",
+        method: "GET",
+        auth_required: true,
+        tiers: ["basic", "pro", "enterprise"],
+        description:
+          "Verification-as-a-Service: returns the invest.com.au verification status for a named advisor or advisory firm. Includes AFSL number, AFSL status (live from ASIC register cache), ABN, verified_at, verification_method, and a ready-made trust_mark_embed snippet. Factual data only — no PII.",
+        parameters: [
+          {
+            name: "type",
+            type: "string",
+            required: true,
+            description: "Entity type: 'advisor' or 'firm'",
+          },
+          {
+            name: "slug",
+            type: "string",
+            required: true,
+            description: "Entity slug (URL-safe identifier, lowercase alphanumeric + hyphens)",
+          },
+        ],
+        example_request: "GET /api/v1/verify?type=advisor&slug=jane-smith",
+        example_response: {
+          type: "advisor",
+          slug: "jane-smith",
+          name: "Jane Smith",
+          professional_type: "financial_planner",
+          verified: true,
+          afsl_number: "123456",
+          afsl_status: "current",
+          abn: "12345678901",
+          verified_at: "2026-01-15T10:00:00Z",
+          verification_method: "asic_register",
+          profile_url: "https://invest.com.au/advisor/jane-smith",
+          trust_mark_embed:
+            '<script src="https://invest.com.au/api/widget/trust-mark?type=advisor&slug=jane-smith"></script>',
+        },
+        notes:
+          "Cache-Control: public, max-age=3600. The trust_mark_embed field contains a self-contained <script> tag that renders a Shadow DOM badge. Add ?theme=dark for dark backgrounds.",
+      },
+      {
         path: "/api/v1/openapi.json",
         method: "GET",
         auth_required: false,
