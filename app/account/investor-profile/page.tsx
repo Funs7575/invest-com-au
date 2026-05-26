@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getInvestorProfile } from "@/lib/investor-profiles";
 import InvestorProfileForm from "./InvestorProfileForm";
+import ShareProfileButton from "@/components/ShareProfileButton";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,22 @@ export default async function InvestorProfilePage() {
     redirect("/account/login?redirect=/account/investor-profile");
   }
 
-  const profile = await getInvestorProfile(user.id);
+  const [profile, tokensRes] = await Promise.all([
+    getInvestorProfile(user.id),
+    supabase
+      .from("profile_share_tokens")
+      .select("id, created_at, expires_at, consumed_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(10),
+  ]);
+
+  const initialTokens = (tokensRes.data ?? []) as Array<{
+    id: string;
+    created_at: string;
+    expires_at: string;
+    consumed_at: string | null;
+  }>;
 
   return (
     <main className="bg-slate-50 min-h-[60vh]">
@@ -36,6 +52,9 @@ export default async function InvestorProfilePage() {
           </p>
         </header>
         <InvestorProfileForm initial={profile} />
+        <div className="mt-8">
+          <ShareProfileButton initialTokens={initialTokens} />
+        </div>
       </div>
     </main>
   );
