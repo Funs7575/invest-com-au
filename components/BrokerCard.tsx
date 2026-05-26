@@ -7,6 +7,7 @@ import { AFFILIATE_AD_TOOLTIP } from "@/lib/compliance";
 import SponsorBadge from "@/components/SponsorBadge";
 import Icon from "@/components/Icon";
 import ShortlistButton from "@/components/ShortlistButton";
+import BookmarkButton from "@/components/BookmarkButton";
 import BrokerLogo from "@/components/BrokerLogo";
 import FeeVerifiedPill from "@/components/FeeVerifiedPill";
 import EligibilityBadge from "@/components/EligibilityBadge";
@@ -99,6 +100,12 @@ export default memo(function BrokerCard({
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
+            <BookmarkButton
+              type="broker"
+              ref={broker.slug}
+              label={broker.name}
+              className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-amber-600 transition-all duration-200 shrink-0"
+            />
             <a
               href={getAffiliateLink(broker)}
               target="_blank"

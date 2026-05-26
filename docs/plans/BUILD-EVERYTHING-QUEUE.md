@@ -9,19 +9,19 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 ---
 
 ## Phase 0 — Compliance floor (do FIRST; AFSL-irrelevant; cheap)
-- [ ] **C1** Quiz CPC-campaign winner: render a "Sponsored"/"Ad" chip (paid placement currently unlabelled) — `app/quiz/`, `lib/quiz-scoring.ts`
-- [ ] **C2** Advisor directory: disclose "Featured = paid placement"; rename badge — `app/advisors/AdvisorsClient.tsx`, `app/find/[advisor-type]/[city]`
-- [ ] **C3** Quiz sponsor-boost disclosure: inline one-liner (RG 234 "clear & prominent"; currently collapsed) — `QuizResultsScreen.tsx`
-- [ ] **C4** RLS: `site_ab_tests` `USING(true)` → `TO service_role` (anon can write today)
-- [ ] **C5** RLS: `affiliate_monthly_reports` → scope off anon (anon can read revenue + write today)
-- [ ] **C6** RLS: webhook `signing_secret` column grant; `startup_profiles.esic_verified_by`; `startup_rounds` financial terms; `firm_credit_balance_summary` view → service_role
-- [ ] **C7** Flag OFF the `createPaymentForBrief` 10% clip (#859) until licensed — `lib/stripe-connect/index.ts`
-- [ ] **C8** Startup equity-raise listings: wholesale (s708) gate on view + enquiry, or unpublish — `app/invest/startups/listings/*`
-- [ ] **C9** Tidy: wealth-stack `GENERAL_ADVICE_WARNING` + flag; disable dead `/api/tax-optimizer` + `/api/portfolio-xray`; x-ray switch-CTA disclaimer; commodity-listing enquiry gate; advisor lead-auction framing disclosure
+- [x] **C1** Quiz CPC-campaign winner: render a "Sponsored"/"Ad" chip (paid placement currently unlabelled) — `app/quiz/`, `lib/quiz-scoring.ts`
+- [~] **C2** Advisor directory: disclose "Featured = paid placement"; rename badge — `app/advisors/AdvisorsClient.tsx`, `app/find/[advisor-type]/[city]`
+- [x] **C3** Quiz sponsor-boost disclosure: inline one-liner (RG 234 "clear & prominent"; currently collapsed) — `QuizResultsScreen.tsx`
+- [x] **C4** RLS: `site_ab_tests` `USING(true)` → `TO service_role` (anon can write today)
+- [x] **C5** RLS: `affiliate_monthly_reports` → scope off anon (anon can read revenue + write today)
+- [x] **C6** RLS: webhook `signing_secret` column grant; `startup_profiles.esic_verified_by`; `startup_rounds` financial terms; `firm_credit_balance_summary` view → service_role
+- [x] **C7** Flag OFF the `createPaymentForBrief` 10% clip (#859) until licensed — `lib/stripe-connect/index.ts`
+- [x] **C8** Startup equity-raise listings: wholesale (s708) gate on view + enquiry, or unpublish — `app/invest/startups/listings/*`
+- [~] **C9** Tidy: wealth-stack `GENERAL_ADVICE_WARNING` + flag; disable dead `/api/tax-optimizer` + `/api/portfolio-xray`; x-ray switch-CTA disclaimer; commodity-listing enquiry gate; advisor lead-auction framing disclosure
 
 ## Phase 1 — Wire up built-but-unplaced infrastructure (near-zero effort)
-- [ ] **F1** Place `BookmarkButton` on broker / `/best` / advisor cards (imported nowhere today)
-- [ ] **F2** Render `ExitIntentBrokerMatch` / `ExitIntentCapture` (built, never rendered)
+- [~] **F1** Place `BookmarkButton` on broker / `/best` / advisor cards (imported nowhere today)
+- [~] **F2** Render `ExitIntentBrokerMatch` / `ExitIntentCapture` (built, never rendered)
 - [ ] **F3** Fix quiz "Share result" URL to encode the result (shares blank quiz today)
 - [ ] **F4** Fee-change alert capture on `/broker/[slug]` + `/compare`
 - [ ] **F5** `SocialProofCounter` + `CohortInsights` on `/best/[slug]` + quiz results

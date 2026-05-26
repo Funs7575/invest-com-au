@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 const BUDGET_LABELS: Record<string, string> = {
   under_500: "Under $500", "500_2k": "$500–$2k", "2k_5k": "$2k–$5k",
@@ -271,6 +272,11 @@ export default function AdvisorAuctionsPage() {
       </div>
 
       <div className="container-custom max-w-4xl py-8">
+        {/* Framing disclosure — referral fee arrangement, not endorsement */}
+        <p className="text-[0.65rem] text-slate-400 mb-5 leading-relaxed">
+          Lead auctions are a paid referral service. Winning advisors pay a referral fee to access consumer contact details. Invest.com.au does not endorse, recommend, or accredit any advisor by virtue of their participation. {ADVERTISER_DISCLOSURE_SHORT}
+        </p>
+
         {/* Public consumer-job marketplace cross-link */}
         <div className="bg-gradient-to-br from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl p-4 mb-6 flex items-start sm:items-center gap-4 flex-col sm:flex-row">
           <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center shrink-0">

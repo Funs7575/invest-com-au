@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import { AdvisorOptInCheckboxes } from "@/components/AdvisorOptInCheckboxes";
 import type { ProfessionalType } from "@/lib/types";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 const VERTICALS = [
   { value: "business", label: "Business for Sale", icon: "💼", desc: "Sell your established business" },
@@ -342,6 +343,20 @@ export default function ListingSubmitForm() {
             <h2 className="text-lg font-bold text-slate-900 mb-1">Listing Details</h2>
             <p className="text-sm text-slate-500">Provide information about your {selectedVertical?.label ?? "opportunity"}.</p>
           </div>
+
+          {/* Regulatory notice for securities / fund verticals */}
+          {(form.vertical === "fund" || form.vertical === "pre_ipo" || form.vertical === "startup") && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
+              <Icon name="alert-triangle" size={16} className="text-amber-600 shrink-0 mt-0.5" />
+              <div className="text-xs text-amber-800 leading-relaxed space-y-1">
+                <p className="font-semibold">Information listing only — not an offer of securities</p>
+                <p>
+                  Invest.com.au is not an Australian Financial Services Licence holder and does not facilitate the offer, issue, or dealing in managed investment products or securities. This listing is an information directory entry only. You remain solely responsible for ensuring your fundraise or offer complies with the Corporations Act 2001 (Cth), including ASIC&#39;s MIS and disclosure requirements and, where applicable, the s708 wholesale investor exemption.
+                </p>
+                <p className="text-amber-700">{GENERAL_ADVICE_WARNING}</p>
+              </div>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-1.5">

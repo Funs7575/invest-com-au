@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createStaticClient } from "@/lib/supabase/static";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import { logger } from "@/lib/logger";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import { SPONSORED_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 export const revalidate = 3600;
 
@@ -168,7 +170,7 @@ function AdvisorCard({ advisor }: { advisor: AdvisorRow }) {
   return (
     <article className="bg-white rounded-xl border border-slate-200 p-5 flex gap-4 hover:border-slate-300 transition-colors">
       {advisor.photo_url ? (
-        <img
+        <Image
           src={advisor.photo_url}
           alt={advisor.name}
           width={64}
@@ -198,8 +200,11 @@ function AdvisorCard({ advisor }: { advisor: AdvisorRow }) {
               compact
             />
             {advisor.is_sponsored && (
-              <span className="ml-2 text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium">
-                Featured
+              <span
+                title={SPONSORED_DISCLOSURE_SHORT}
+                className="ml-2 text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium cursor-help"
+              >
+                Featured · Paid
               </span>
             )}
             {!advisor.is_sponsored && advisor.advisor_tier === "pro" && (
@@ -258,7 +263,6 @@ export default async function FindAdvisorPage({ params }: Props) {
 
   if (advisors.length === 0) notFound();
 
-  const canonical = `/find/${typeSlug}/${citySlug}`;
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Find an Advisor", url: absoluteUrl("/advisors") },
