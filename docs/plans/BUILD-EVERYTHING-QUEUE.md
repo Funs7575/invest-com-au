@@ -42,7 +42,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [~] **U3** First-run dashboard zero-state + wire `GettingStartedChecklist`
 - [~] **U4** Fix `UserOnboarding` modal (focus trap / `role=dialog`; fix "don't show again")
 - [~] **U5** Loading/empty/error states (`CommunityVote`, `find-advisor`)
-- [ ] **U6** Inline validation + a11y on goals/profile forms + `AdvisorReviewForm` stars
+- [~] **U6** Inline validation + a11y on goals/profile forms + `AdvisorReviewForm` stars
 
 ## Phase 4 — New lean-lane consumer features
 - [ ] **N1** Fee-impact visualiser, reusable across every fee/compare page (finish PR #1096)

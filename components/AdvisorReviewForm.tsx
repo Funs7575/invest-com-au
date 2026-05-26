@@ -10,27 +10,59 @@ interface AdvisorReviewFormProps {
   onCancel: () => void;
 }
 
-function StarRatingInput({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+function StarRatingInput({
+  id,
+  label,
+  value,
+  onChange,
+  showError,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  showError?: boolean;
+}) {
   const [hovered, setHovered] = useState(0);
+  const labelId = `${id}-label`;
   return (
     <div>
-      <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">{label}</label>
-      <div className="flex gap-0.5" onMouseLeave={() => setHovered(0)}>
+      <span id={labelId} className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
+        {label}
+      </span>
+      <div
+        role="radiogroup"
+        aria-labelledby={labelId}
+        className="flex gap-0.5"
+        onMouseLeave={() => setHovered(0)}
+      >
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
             type="button"
+            role="radio"
+            aria-checked={star === value}
+            aria-label={`${star} star${star !== 1 ? "s" : ""}`}
             onClick={() => onChange(star)}
             onMouseEnter={() => setHovered(star)}
             className={`min-w-11 min-h-11 md:min-w-0 md:min-h-0 text-2xl md:text-lg flex items-center justify-center transition-colors ${
               star <= (hovered || value) ? "text-amber-400" : "text-slate-200 hover:text-amber-200"
             }`}
           >
-            ★
+            <span aria-hidden="true">★</span>
           </button>
         ))}
-        {value > 0 && <span className="text-[0.6rem] text-slate-400 ml-1 self-center">{value}/5</span>}
+        {value > 0 && (
+          <span aria-hidden="true" className="text-[0.6rem] text-slate-400 ml-1 self-center">
+            {value}/5
+          </span>
+        )}
       </div>
+      {showError && (
+        <p role="alert" className="text-[0.65rem] text-red-600 mt-0.5">
+          Please select a rating
+        </p>
+      )}
     </div>
   );
 }
@@ -38,6 +70,7 @@ function StarRatingInput({ label, value, onChange }: { label: string; value: num
 export default function AdvisorReviewForm({ professionalId, advisorName, onSuccess, onCancel }: AdvisorReviewFormProps) {
   const [state, setState] = useState<"idle" | "submitting" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [attempted, setAttempted] = useState(false);
 
   // Form fields
   const [overallRating, setOverallRating] = useState(0);
@@ -63,7 +96,10 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
     state !== "submitting";
 
   const handleSubmit = async () => {
-    if (!canSubmit) return;
+    if (!canSubmit) {
+      setAttempted(true);
+      return;
+    }
 
     setErrorMsg("");
     setState("submitting");
@@ -112,10 +148,10 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
       <div className="space-y-3">
         {/* Star ratings grid */}
         <div className="grid grid-cols-2 gap-3">
-          <StarRatingInput label="Overall *" value={overallRating} onChange={setOverallRating} />
-          <StarRatingInput label="Communication *" value={communicationRating} onChange={setCommunicationRating} />
-          <StarRatingInput label="Expertise *" value={expertiseRating} onChange={setExpertiseRating} />
-          <StarRatingInput label="Value for Money *" value={valueForMoneyRating} onChange={setValueForMoneyRating} />
+          <StarRatingInput id="rating-overall" label="Overall *" value={overallRating} onChange={setOverallRating} showError={attempted && overallRating === 0} />
+          <StarRatingInput id="rating-communication" label="Communication *" value={communicationRating} onChange={setCommunicationRating} showError={attempted && communicationRating === 0} />
+          <StarRatingInput id="rating-expertise" label="Expertise *" value={expertiseRating} onChange={setExpertiseRating} showError={attempted && expertiseRating === 0} />
+          <StarRatingInput id="rating-value" label="Value for Money *" value={valueForMoneyRating} onChange={setValueForMoneyRating} showError={attempted && valueForMoneyRating === 0} />
         </div>
 
         {/* Used services toggle */}
@@ -127,6 +163,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             <button
               type="button"
               onClick={() => setUsedServices(true)}
+              aria-pressed={usedServices === true}
               className={`px-5 py-2.5 min-h-11 text-xs font-semibold rounded-lg border transition-all ${
                 usedServices === true
                   ? "bg-slate-900 text-white border-slate-900"
@@ -138,6 +175,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             <button
               type="button"
               onClick={() => setUsedServices(false)}
+              aria-pressed={usedServices === false}
               className={`px-5 py-2.5 min-h-11 text-xs font-semibold rounded-lg border transition-all ${
                 usedServices === false
                   ? "bg-slate-900 text-white border-slate-900"
@@ -147,6 +185,9 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
               No
             </button>
           </div>
+          {attempted && usedServices === null && (
+            <p role="alert" className="text-[0.65rem] text-red-600 mt-1">Please answer this question</p>
+          )}
         </div>
 
         {/* Reviewer name */}
@@ -186,6 +227,9 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             value={reviewBody}
             onChange={(e) => setReviewBody(e.target.value)}
             rows={4}
+            required
+            aria-required="true"
+            aria-invalid={attempted && !isBodyValid}
             placeholder="What was your experience working with this advisor? (minimum 50 characters)"
             className="w-full px-3 py-2.5 text-sm md:text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 resize-vertical"
           />
@@ -204,7 +248,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
 
         {/* Error message */}
         {state === "error" && errorMsg && (
-          <p className="text-xs text-red-600 font-medium">{errorMsg}</p>
+          <p role="alert" className="text-xs text-red-600 font-medium">{errorMsg}</p>
         )}
 
         {/* Actions */}
