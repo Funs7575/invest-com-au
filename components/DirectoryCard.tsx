@@ -47,6 +47,12 @@ export interface DirectoryItem {
   ctaLabel?: string;
   /** When true, renders a "Sponsored" amber badge on the card. */
   isSponsored?: boolean;
+  /**
+   * Pre-computed compatibility score (0–100) from the weekly advisor-match-scores
+   * cron. Factual profile overlap only — not a suitability recommendation.
+   * Only shown when the user is logged in and has a computed score for this advisor.
+   */
+  matchPercent?: number | null;
 }
 
 interface DirectoryCardProps {
@@ -72,6 +78,15 @@ export default function DirectoryCard({ item }: DirectoryCardProps) {
           )}
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
+          {item.matchPercent != null && (
+            <span
+              className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-100 text-violet-800"
+              title="Factual compatibility score based on your stated preferences — not a suitability recommendation"
+              data-testid="directory-card-match"
+            >
+              {item.matchPercent}% match
+            </span>
+          )}
           {item.isSponsored && (
             <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
               Sponsored
