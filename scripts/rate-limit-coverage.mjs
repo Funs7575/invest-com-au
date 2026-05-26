@@ -141,6 +141,13 @@ const EXEMPT_PATTERNS = [
   // only a status enum query param validated against a fixed Set. Per-IP
   // throttle would cost CDN cache hits with no real threat model.
   { match: /\/api\/ipo-offers(\/|$)/, reason: "public read w/ 1h CDN cache; provider-pooled; no writes" },
+  // office-hours public GET is a 5 min CDN-cached list of published sessions.
+  // No PII, no writes. Question POST + upvote POST + RSVP POST are all
+  // session-auth + per-user rate-limited inside the handler.
+  { match: /\/api\/office-hours(\/|$)/, reason: "public read CDN-cached; write endpoints are session-auth + isRateLimited" },
+  // advisor-portal office-hours endpoints require requireAdvisorSession (equivalent
+  // protection level to other /api/advisor-portal/* routes above).
+  { match: /\/api\/advisor-portal\/office-hours(\/|$)/, reason: "advisor session auth (requireAdvisorSession)" },
 ];
 
 async function findRouteFiles(dir) {

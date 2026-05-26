@@ -102,6 +102,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/subscription-dunning",
     "/api/cron/marketplace-stale-briefs",
     "/api/cron/lead-followup-reminders",
+    "/api/cron/office-hours-reminders",
   ],
   "daily-9-30": ["/api/cron/enforce-lead-sla"],
 
