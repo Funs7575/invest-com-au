@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 
@@ -30,8 +30,12 @@ const NOTIF_TOGGLES: Array<{ key: keyof NotifPrefs; label: string; description: 
   },
 ];
 
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export default function UserOnboarding() {
   const router = useRouter();
+  const dialogRef = useRef<HTMLDivElement>(null);
   // Lazy initializer runs once on client mount — no effect needed, no SSR
   // concerns because this component is always loaded with ssr: false.
   const [visible, setVisible] = useState(() => {
@@ -45,6 +49,41 @@ export default function UserOnboarding() {
     weekly_digest: true,
     morning_brief: false,
   });
+
+  // Move focus to the first focusable element whenever the step changes.
+  // Calling .focus() on a DOM element is safe in an effect (not set-state-in-effect).
+  useEffect(() => {
+    if (!visible) return;
+    const el = dialogRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+    el?.focus();
+  }, [visible, step]);
+
+  // Tab-cycle focus trap + Escape-to-close, handled via onKeyDown on the
+  // dialog div (no useEffect needed — React synthetic events work fine here).
+  const handleDialogKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") {
+      dismissPermanent();
+      return;
+    }
+    if (e.key !== "Tab") return;
+    const focusable = Array.from(
+      dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR) ?? [],
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0]!;
+    const last = focusable[focusable.length - 1]!;
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
 
   const dismissPermanent = () => {
     localStorage.setItem(STORAGE_KEY, "true");
@@ -70,9 +109,11 @@ export default function UserOnboarding() {
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="onboarding-title"
+      onKeyDown={handleDialogKeyDown}
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
       style={{ animation: "resultCardIn 0.3s ease-out" }}
     >
@@ -224,7 +265,14 @@ export default function UserOnboarding() {
                 <input
                   type="checkbox"
                   checked={dontShowAgain}
-                  onChange={(e) => setDontShowAgain(e.target.checked)}
+                  onChange={(e) => {
+                    setDontShowAgain(e.target.checked);
+                    if (e.target.checked) {
+                      localStorage.setItem(STORAGE_KEY, "true");
+                    } else {
+                      localStorage.removeItem(STORAGE_KEY);
+                    }
+                  }}
                   className="w-3.5 h-3.5 rounded border-slate-300 text-slate-900 focus:ring-slate-400/30 accent-slate-900"
                 />
                 <span className="text-xs text-slate-500">Don&apos;t show this again</span>
