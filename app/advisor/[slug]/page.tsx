@@ -22,6 +22,7 @@ import AdvisorTrustScoreSection from "./components/AdvisorTrustScoreSection";
 import AdvisorReputationSummary from "./components/AdvisorReputationSummary";
 import RecentAdvisorInsights from "./components/RecentAdvisorInsights";
 import FollowAdvisorButton from "@/components/FollowAdvisorButton";
+import { computeIdealClientBoost, type UserMatchProfile, type IdealClientCriteria } from "@/lib/advisor-profile-match";
 
 export const revalidate = 1800;
 
@@ -228,16 +229,52 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   const endorsementRows: { skill: string; user_id: string }[] = endorsementsResult.data ?? [];
   const sessionUser = sessionResult.data.user;
 
-  // Pre-fetch the logged-in user's follow state for this advisor
+  // Pre-fetch the logged-in user's follow state + good-fit check
   let initialFollowing = false;
+  let isGoodFit = false;
   if (sessionUser) {
-    const { data: followRow } = await supabase
-      .from("advisor_follows")
-      .select("id")
-      .eq("follower_user_id", sessionUser.id)
-      .eq("following_professional_id", pro.id)
-      .maybeSingle();
-    initialFollowing = !!followRow;
+    const [followRow, investorProfileRow, idealClientRow] = await Promise.all([
+      supabase
+        .from("advisor_follows")
+        .select("id")
+        .eq("follower_user_id", sessionUser.id)
+        .eq("following_professional_id", pro.id)
+        .maybeSingle(),
+      supabase
+        .from("investor_profiles")
+        .select("primary_vertical, budget_band, is_fhb, is_hnw, is_pre_retiree, experience_level, location_state")
+        .eq("auth_user_id", sessionUser.id)
+        .maybeSingle(),
+      supabase
+        .from("advisor_ideal_clients")
+        .select("criteria")
+        .eq("professional_id", pro.id)
+        .maybeSingle(),
+    ]);
+    initialFollowing = !!followRow.data;
+
+    if (investorProfileRow.data && idealClientRow.data) {
+      const ip = investorProfileRow.data as {
+        primary_vertical: string | null;
+        budget_band: string | null;
+        is_fhb: boolean;
+        is_hnw: boolean;
+        is_pre_retiree: boolean;
+        experience_level: string | null;
+        location_state: string | null;
+      };
+      const userProfile: UserMatchProfile = {
+        primary_vertical: ip.primary_vertical,
+        budget_band: ip.budget_band,
+        is_fhb: ip.is_fhb,
+        is_hnw: ip.is_hnw,
+        is_pre_retiree: ip.is_pre_retiree,
+        experience_level: ip.experience_level,
+        location_state: ip.location_state,
+      };
+      const boost = computeIdealClientBoost(userProfile, idealClientRow.data.criteria as IdealClientCriteria);
+      isGoodFit = boost >= 5; // at least 50% of criteria match
+    }
   }
 
   const endorsementCounts: Record<string, number> = {};
@@ -358,6 +395,19 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         }) }} />
       )}
       <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} teamMembers={teamMembers} firm={firm} expertArticles={expertArticles} />
+
+      {/* Good-fit hint — shown when logged-in user's profile matches ideal-client criteria */}
+      {isGoodFit && (
+        <div className="container-custom max-w-4xl mt-4">
+          <div className="flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-xl px-4 py-2.5">
+            <span className="text-violet-600 font-bold text-sm">✓</span>
+            <p className="text-sm font-semibold text-violet-800">
+              Good fit for your profile — based on your stated investment preferences
+            </p>
+            <span className="ml-auto text-[10px] text-violet-500">factual match, not personal advice</span>
+          </div>
+        </div>
+      )}
 
       {/* Follow strip — visible below the profile header */}
       <div className="container-custom max-w-4xl mt-4">

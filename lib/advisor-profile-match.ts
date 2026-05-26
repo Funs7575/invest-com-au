@@ -35,6 +35,58 @@ export interface AdvisorMatchProfile {
   review_count: number | null;
 }
 
+export interface IdealClientCriteria {
+  verticals?: string[];
+  budget_bands?: string[];
+  archetypes?: string[];
+  experience_levels?: string[];
+  description?: string;
+}
+
+/**
+ * Boost added to the match score (up to 10 pts) when the user's profile
+ * matches the advisor's stated ideal-client criteria.
+ *
+ * This is an additive bonus on top of the base 0–100 score — capped at 100.
+ */
+export function computeIdealClientBoost(
+  user: UserMatchProfile,
+  criteria: IdealClientCriteria | null | undefined,
+): number {
+  if (!criteria) return 0;
+
+  let matches = 0;
+  let checks = 0;
+
+  if (criteria.verticals && criteria.verticals.length > 0) {
+    checks++;
+    if (user.primary_vertical && criteria.verticals.includes(user.primary_vertical)) matches++;
+  }
+
+  if (criteria.budget_bands && criteria.budget_bands.length > 0) {
+    checks++;
+    if (user.budget_band && criteria.budget_bands.includes(user.budget_band)) matches++;
+  }
+
+  if (criteria.archetypes && criteria.archetypes.length > 0) {
+    checks++;
+    const userArchetypes = [
+      ...(user.is_fhb ? ["fhb"] : []),
+      ...(user.is_hnw ? ["hnw"] : []),
+      ...(user.is_pre_retiree ? ["pre_retiree"] : []),
+    ];
+    if (userArchetypes.some((a) => criteria.archetypes!.includes(a))) matches++;
+  }
+
+  if (criteria.experience_levels && criteria.experience_levels.length > 0) {
+    checks++;
+    if (user.experience_level && criteria.experience_levels.includes(user.experience_level)) matches++;
+  }
+
+  if (checks === 0) return 0;
+  return Math.round((matches / checks) * 10);
+}
+
 // Budget band midpoints in cents (for min_investment comparison)
 const BUDGET_MIDPOINTS: Record<string, number> = {
   under_100k:  50_000_00,
@@ -62,10 +114,12 @@ function toSpecialtiesArray(specialties: unknown): string[] {
  *   Budget / minimum investment  30 pts
  *   Archetype alignment          20 pts  (FHB / HNW / pre-retiree)
  *   Location overlap             10 pts
+ *   Ideal-client criteria boost   0–10 pts (additive, capped at 100)
  */
 export function computeAdvisorProfileMatch(
   user: UserMatchProfile,
   advisor: AdvisorMatchProfile,
+  idealCriteria?: IdealClientCriteria | null,
 ): number {
   const specs = toSpecialtiesArray(advisor.specialties);
   const specsLower = specs.map((s) => s.toLowerCase());
@@ -127,5 +181,8 @@ export function computeAdvisorProfileMatch(
     score += 5; // no location set — neutral half credit
   }
 
-  return Math.min(100, score);
+  // Apply ideal-client criteria boost
+  const boost = computeIdealClientBoost(user, idealCriteria);
+
+  return Math.min(100, score + boost);
 }

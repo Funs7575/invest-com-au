@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { withCronRunLog } from "@/lib/cron-run-log";
-import { computeAdvisorProfileMatch, type UserMatchProfile, type AdvisorMatchProfile } from "@/lib/advisor-profile-match";
+import { computeAdvisorProfileMatch, type UserMatchProfile, type AdvisorMatchProfile, type IdealClientCriteria } from "@/lib/advisor-profile-match";
 import { rankByOutcomes, fetchAdvisorOutcomeStats } from "@/lib/advisor-match-ranking";
 import { logger } from "@/lib/logger";
 
@@ -64,6 +64,15 @@ export async function GET(req: NextRequest) {
 
     const advisors = (rawAdvisors ?? []) as unknown as AdvisorMatchProfile[];
 
+    // Load ideal-client criteria for all advisors (for match boost)
+    const { data: rawCriteria } = await admin
+      .from("advisor_ideal_clients")
+      .select("professional_id, criteria");
+    const criteriaByAdvisor = new Map<number, IdealClientCriteria>();
+    for (const row of (rawCriteria ?? []) as unknown as Array<{ professional_id: number; criteria: IdealClientCriteria }>) {
+      criteriaByAdvisor.set(row.professional_id, row.criteria);
+    }
+
     // Load historical outcomes for all advisors
     const outcomesStats = await fetchAdvisorOutcomeStats(admin);
 
@@ -81,10 +90,10 @@ export async function GET(req: NextRequest) {
           experience_level: profile.experience_level,
         };
 
-        // Compute base match score for each advisor
+        // Compute base match score for each advisor (with ideal-client boost)
         const candidates = advisors.map((advisor) => ({
           id: advisor.id,
-          matchScore: computeAdvisorProfileMatch(userProfile, advisor),
+          matchScore: computeAdvisorProfileMatch(userProfile, advisor, criteriaByAdvisor.get(advisor.id)),
         }));
 
         // Blend with historical outcomes via rankByOutcomes
