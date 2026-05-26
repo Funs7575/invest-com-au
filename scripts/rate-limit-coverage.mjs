@@ -148,6 +148,8 @@ const EXEMPT_PATTERNS = [
   // advisor-portal office-hours endpoints require requireAdvisorSession (equivalent
   // protection level to other /api/advisor-portal/* routes above).
   { match: /\/api\/advisor-portal\/office-hours(\/|$)/, reason: "advisor session auth (requireAdvisorSession)" },
+  // ideal-client builder requires requireAdvisorSession; same protection level.
+  { match: /\/api\/advisor-portal\/ideal-client(\/|$)/, reason: "advisor session auth (requireAdvisorSession)" },
 ];
 
 async function findRouteFiles(dir) {
