@@ -125,6 +125,9 @@ const EXEMPT_PATTERNS = [
   // Vercel's CDN absorbs repeat reads. Vote POST requires a valid Supabase
   // session + the DB UNIQUE constraint enforces one vote per user per poll.
   { match: /\/api\/rba-polls\//, reason: "public reads CDN-cached; vote POST is session-auth + UNIQUE-constrained" },
+  // user-lists follow/clone require a valid Supabase session; UNIQUE DB
+  // constraint on follows prevents duplicates. Clone is also session-auth.
+  { match: /\/api\/user-lists\//, reason: "session-auth required; follow protected by DB UNIQUE constraint" },
 ];
 
 async function findRouteFiles(dir) {
