@@ -9,6 +9,8 @@ const PostBody = z.object({
   thread_id: z.number().int().positive(),
   body: z.string().min(1).max(5000),
   parent_id: z.number().int().positive().optional(),
+  is_anonymous: z.boolean().optional(),
+  debate_position: z.enum(["bull", "bear"]).optional(),
 });
 
 const log = logger("community:posts");
@@ -35,7 +37,7 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json({ error: "thread_id and body (1-5000 chars) are required" }, { status: 400 });
     }
-    const { thread_id, body: postBody, parent_id } = parsed.data;
+    const { thread_id, body: postBody, parent_id, is_anonymous, debate_position } = parsed.data;
 
     const admin = createAdminClient();
 
@@ -71,12 +73,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Get or derive display name
-    const displayName =
+    // Get or derive display name; anonymous posts redact the real name
+    const realDisplayName =
       user.user_metadata?.display_name ||
       user.user_metadata?.full_name ||
       user.email?.split("@")[0] ||
       "Anonymous";
+    const displayName = is_anonymous ? "Anonymous Investor" : realDisplayName;
 
     // Insert post
     const { data: post, error: insertError } = await admin
@@ -87,6 +90,9 @@ export async function POST(req: NextRequest) {
         author_name: displayName,
         body: postBody.trim(),
         parent_id: parent_id || null,
+        is_anonymous: is_anonymous ?? false,
+        post_type: debate_position ? "debate" : "reply",
+        debate_position: debate_position ?? null,
       })
       .select("id, thread_id, author_name, body, parent_id, created_at")
       .single();

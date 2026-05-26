@@ -12,6 +12,8 @@ const ThreadPostBody = z.object({
   category_slug: z.string().optional(),
   title: z.string().optional(),
   body: z.string().optional(),
+  thread_type: z.enum(["discussion", "confessions", "debate"]).optional(),
+  is_anonymous: z.boolean().optional(),
 });
 
 const log = logger("community:threads");
@@ -128,7 +130,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    const { category_slug, title, body: threadBody } = parsedBody.data;
+    const { category_slug, title, body: threadBody, thread_type, is_anonymous } = parsedBody.data;
 
     if (!category_slug || !title || !threadBody) {
       return NextResponse.json({ error: "Missing required fields: category_slug, title, body" }, { status: 400 });
@@ -154,12 +156,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Category not found" }, { status: 404 });
     }
 
-    // Get or derive display name
-    const displayName =
+    // Get or derive display name; confessions always show as "Anonymous Investor"
+    const realDisplayName =
       user.user_metadata?.display_name ||
       user.user_metadata?.full_name ||
       user.email?.split("@")[0] ||
       "Anonymous";
+    const displayName = is_anonymous ? "Anonymous Investor" : realDisplayName;
 
     const slug = generateSlug(title.trim());
 
@@ -173,6 +176,8 @@ export async function POST(req: NextRequest) {
         title: title.trim(),
         slug,
         body: threadBody.trim(),
+        thread_type: thread_type ?? "discussion",
+        is_anonymous: is_anonymous ?? false,
       })
       .select("id, slug, title, created_at")
       .single();
