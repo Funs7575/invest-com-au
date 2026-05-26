@@ -55,6 +55,7 @@ import OnThisPage from "@/components/OnThisPage";
 import type { Article } from "@/lib/types";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import StickyCTABar from "@/components/StickyCTABar";
+import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
 
 const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
   beginners: "beginner-guide",
@@ -608,6 +609,13 @@ export default async function BestBrokerPage({
               </section>
             ))}
           </div>
+
+          {/* Fee-impact visualiser — shown on fee-focused categories */}
+          {(slug === "low-fees" || slug === "beginners" || slug === "etfs" || slug === "us-shares" || slug === "chess-sponsored") && (
+            <div className="mb-6 md:mb-10">
+              <FeeImpactVisualiser />
+            </div>
+          )}
 
           {/* Contextual lead magnet */}
           <div className="mb-6 md:mb-10">

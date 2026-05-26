@@ -45,7 +45,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [~] **U6** Inline validation + a11y on goals/profile forms + `AdvisorReviewForm` stars
 
 ## Phase 4 — New lean-lane consumer features
-- [ ] **N1** Fee-impact visualiser, reusable across every fee/compare page (finish PR #1096)
+- [~] **N1** Fee-impact visualiser, reusable across every fee/compare page (finish PR #1096)
 - [ ] **N2** App-screenshot galleries on broker/crypto/savings listings (finish PR #1106)
 
 ## Phase 5 — Data products (low-effort moats; schema mostly built)

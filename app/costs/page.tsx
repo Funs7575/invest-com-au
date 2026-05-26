@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getAllCostScenarios } from "@/lib/cost-scenarios";
 import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR } from "@/lib/seo";
 import Icon from "@/components/Icon";
+import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
 
 export const revalidate = 3600;
 
@@ -103,6 +104,11 @@ export default function CostsHub() {
             >
               Personal Fee Calculator →
             </Link>
+          </div>
+
+          {/* Fee-impact visualiser — shows long-run drag of higher-cost platforms */}
+          <div className="mt-8">
+            <FeeImpactVisualiser />
           </div>
 
           {/* E-E-A-T footer */}

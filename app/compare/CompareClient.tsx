@@ -24,6 +24,7 @@ import CompareDesktopTable from "./_components/CompareDesktopTable";
 import CompareSelectionBar from "./_components/CompareSelectionBar";
 import CompareFooter from "./_components/CompareFooter";
 import CompareCrossSellBanner from "@/components/CompareCrossSellBanner";
+import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
 import type { ABTestConfig } from "@/lib/ab-test";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -988,6 +989,13 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 </button>
               </>
             )}
+          </div>
+        )}
+
+        {/* Fee-impact visualiser — educational section shown after main results */}
+        {sorted.length > 0 && (
+          <div className="mt-6">
+            <FeeImpactVisualiser />
           </div>
         )}
 
