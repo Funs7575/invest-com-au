@@ -30,7 +30,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [~] **F8** "Verified AFSL/ACL" trust chip on advisor directory cards
 
 ## Phase 2 — Surface buried pages (cheap SEO + UX)
-- [ ] **P1** Add `/tax` + `/insurance` hubs to nav; link `/tax-return` (seasonal) from `/tax`
+- [~] **P1** Add `/tax` + `/insurance` hubs to nav; link `/tax-return` (seasonal) from `/tax`
 - [ ] **P2** Surface `/just/[life-event]` + `/score` (nav/footer/home)
 - [ ] **P3** Discovery surface for 25 `/investing-for/[occupation]` + `/marketplace` pages
 - [ ] **P4** Surface `/wealth-stack` + `/concierge` (with the C9 warning)

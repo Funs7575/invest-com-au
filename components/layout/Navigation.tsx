@@ -128,7 +128,9 @@ const learnMenu = {
   ],
   topics: [
     { label: "Investing Basics", href: "/articles?category=beginners" },
-    { label: "Tax & Super", href: "/articles?category=tax" },
+    { label: "Tax Strategy Hub", href: "/tax" },
+    { label: "Tax Return Guide", href: "/tax-return" },
+    { label: "Insurance Hub", href: "/insurance" },
     { label: "Property Investing", href: "/articles?category=property" },
     { label: "Crypto & Digital Assets", href: "/articles?category=crypto" },
   ],
@@ -320,6 +322,9 @@ const mobileSections = [
   {
     title: "Learn & Community",
     items: [
+      { name: "Tax Strategy Hub", href: "/tax" },
+      { name: "Tax Return Guide", href: "/tax-return" },
+      { name: "Insurance Hub", href: "/insurance" },
       { name: "Articles & Guides", href: "/articles" },
       { name: "How-To Guides", href: "/how-to" },
       { name: "Glossary", href: "/glossary" },

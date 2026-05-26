@@ -246,6 +246,27 @@ export default function TaxHubPage() {
         </div>
       </section>
 
+      {/* Seasonal callout — tax return */}
+      <section className="py-6">
+        <div className="container-custom">
+          <Link
+            href="/tax-return"
+            className="group flex items-center justify-between gap-4 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 hover:border-amber-400 hover:bg-amber-100/60 transition-colors"
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-2xl shrink-0" aria-hidden>📋</span>
+              <div>
+                <p className="font-bold text-slate-900 text-sm">Lodging your tax return?</p>
+                <p className="text-xs text-slate-600 mt-0.5">Deductions, investment income, crypto, and how to find a tax agent — all in one guide.</p>
+              </div>
+            </div>
+            <span className="shrink-0 text-amber-700 font-semibold text-sm group-hover:translate-x-1 transition-transform whitespace-nowrap">
+              Tax Return Guide →
+            </span>
+          </Link>
+        </div>
+      </section>
+
       {/* Tax Rates */}
       <section className="py-10 bg-slate-50">
         <div className="container-custom">
