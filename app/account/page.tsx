@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import AccountClient from "./AccountClient";
 import AccountKindCards from "./AccountKindCards";
+import SwitchingTracker from "@/components/SwitchingTracker";
 import AccountActionPlansTiles from "./AccountActionPlansTiles";
 import AccountHero from "./_components/AccountHero";
 import AccountActivityFeed from "./_components/AccountActivityFeed";
@@ -157,6 +158,9 @@ export default async function AccountPage() {
           />
         </div>
       )}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8">
+        <SwitchingTracker />
+      </div>
       <Suspense fallback={<div className="py-16 text-center animate-pulse"><div className="h-8 w-48 bg-slate-200 rounded mx-auto" /></div>}>
         <AccountClient />
       </Suspense>
