@@ -46,7 +46,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 
 ## Phase 4 — New lean-lane consumer features
 - [~] **N1** Fee-impact visualiser, reusable across every fee/compare page (finish PR #1096)
-- [ ] **N2** App-screenshot galleries on broker/crypto/savings listings (finish PR #1106)
+- [~] **N2** App-screenshot galleries on broker/crypto/savings listings (finish PR #1106)
 
 ## Phase 5 — Data products (low-effort moats; schema mostly built)
 - [ ] **D1** "AU Brokerage Fee Index" — cron + index page + gated report (uses `broker_price_snapshots`)

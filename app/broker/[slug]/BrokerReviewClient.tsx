@@ -34,6 +34,7 @@ import SwitchStoriesList from "@/components/SwitchStoriesList";
 import OnThisPage from "@/components/OnThisPage";
 import CollapsibleSection from "@/components/CollapsibleSection";
 import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
+import AppScreenshotGallery from "@/components/AppScreenshotGallery";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
@@ -105,6 +106,7 @@ interface BrokerReviewProps {
   switchStories?: SwitchStory[];
   feeHistory: { id: number; field_name: string; old_value: string | null; new_value: string | null; change_type: string; changed_at: string }[];
   relatedDeals?: Broker[];
+  screenshots?: { url: string; label?: string | null }[];
 }
 
 const FIELD_LABELS: Record<string, string> = {
@@ -192,6 +194,7 @@ export default function BrokerReviewClient({
   switchStories = [],
   feeHistory,
   relatedDeals = [],
+  screenshots = [],
 }: BrokerReviewProps) {
   // Track this broker for "Recently Viewed"
   useEffect(() => { trackView(b); trackPageDuration(`/broker/${b.slug}`); }, [b]);
@@ -410,6 +413,10 @@ export default function BrokerReviewClient({
               Claim Deal →
             </a>
           </div>
+        )}
+
+        {screenshots.length > 0 && (
+          <AppScreenshotGallery screenshots={screenshots} brokerName={b.name} />
         )}
 
         {/* Who Is This Best For? */}

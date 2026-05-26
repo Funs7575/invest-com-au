@@ -103,7 +103,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
 
   // Fetch articles, user reviews, switch stories, fee history, related deals (in parallel)
   // NOTE: Q&A is intentionally excluded from this batch and streamed separately via <Suspense> below.
-  const [{ data: brokerArticles }, { data: expertArticlesRaw }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: relatedDealsRaw }, { data: versusEditorialsRaw }] = await Promise.all([
+  const [{ data: brokerArticles }, { data: expertArticlesRaw }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: relatedDealsRaw }, { data: versusEditorialsRaw }, { data: screenshotsRaw }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, slug, category, read_time')
@@ -158,6 +158,15 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .select('slug, broker_a_slug, broker_b_slug, title')
       .or(`broker_a_slug.eq.${slug},broker_b_slug.eq.${slug}`)
       .limit(24),
+    // App screenshots — shown as a gallery on the review page
+    supabase
+      .from('broker_creatives')
+      .select('url, label')
+      .eq('broker_slug', slug)
+      .eq('type', 'screenshot')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .limit(10),
   ]);
 
   // Fetch current savings/TD rate for rate-memory tracker (savings/TD products only)
@@ -328,6 +337,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           switchStories={(switchStoriesRaw || []) as SwitchStory[]}
           feeHistory={(feeHistoryRaw || []) as { id: number; field_name: string; old_value: string | null; new_value: string | null; change_type: string; changed_at: string }[]}
           relatedDeals={relatedDeals}
+          screenshots={(screenshotsRaw || []) as { url: string; label?: string | null }[]}
         />
       </Suspense>
       {versusComparisons.length > 0 && (
