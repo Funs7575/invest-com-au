@@ -715,6 +715,70 @@ export function GET() {
         },
       },
       {
+        path: "/api/v1/widget-licenses",
+        method: "GET | POST | DELETE",
+        auth_required: true,
+        tiers: ["pro", "enterprise"],
+        description:
+          "White-label widget license management. Create and manage wlt_xxx license tokens that remove the 'Powered by invest.com.au' attribution footer from /api/widget/licensed embeds. Max 10 tokens per API key.",
+        parameters: [
+          {
+            name: "id",
+            in: "query (DELETE only)",
+            type: "string",
+            required: true,
+            description: "License ID to deactivate.",
+          },
+        ],
+        post_body: {
+          name: "string (optional) — label for this license token, max 128 chars",
+          allowed_domains:
+            "string[] (optional) — restrict embedding to these hostnames, e.g. ['example.com']. Empty = all domains allowed.",
+        },
+        example_request: "POST /api/v1/widget-licenses\n{\"name\":\"My site\",\"allowed_domains\":[\"example.com\"]}",
+        example_response: {
+          license: {
+            id: "abc12345-...",
+            name: "My site",
+            token: "wlt_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            token_prefix: "wlt_xxxxxxxxxxxx",
+            allowed_domains: ["example.com"],
+            is_active: true,
+            created_at: "2026-05-26T00:00:00Z",
+          },
+          embed_url:
+            "https://invest.com.au/api/widget/licensed?license=wlt_xxx&brokers=stake,commsec",
+          message: "Save your license token securely — it will not be shown again.",
+        },
+      },
+      {
+        path: "/api/v1/webhooks",
+        method: "GET | POST | DELETE",
+        auth_required: true,
+        tiers: ["basic", "pro", "enterprise"],
+        description:
+          "Consumer webhook registration. Subscribe to events (broker.updated, health_score.updated, advisor.updated, savings.updated, fee.changed). Max 5 webhooks per API key. Payloads signed with HMAC-SHA256.",
+        post_body: {
+          url: "string — HTTPS URL to receive POST events",
+          events:
+            "string[] — one or more of: broker.updated, health_score.updated, advisor.updated, savings.updated, fee.changed",
+        },
+        example_request:
+          "POST /api/v1/webhooks\n{\"url\":\"https://example.com/invest-hook\",\"events\":[\"fee.changed\"]}",
+        example_response: {
+          webhook: {
+            id: "hook-uuid",
+            url: "https://example.com/invest-hook",
+            events: ["fee.changed"],
+            secret: "whsec_...",
+            secret_prefix: "whsec_xxxxxx",
+            is_active: true,
+            created_at: "2026-05-26T00:00:00Z",
+          },
+          message: "Save your signing secret securely — it will not be shown again.",
+        },
+      },
+      {
         path: "/api/v1/openapi.json",
         method: "GET",
         auth_required: false,

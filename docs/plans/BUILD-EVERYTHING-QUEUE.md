@@ -49,12 +49,12 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [~] **N2** App-screenshot galleries on broker/crypto/savings listings (finish PR #1106)
 
 ## Phase 5 — Data products (low-effort moats; schema mostly built)
-- [ ] **D1** "AU Brokerage Fee Index" — cron + index page + gated report (uses `broker_price_snapshots`)
+- [~] **D1** "AU Brokerage Fee Index" — cron + index page + gated report (uses `broker_price_snapshots`)
 - [~] **D2** Public AFSL/AR lookup tool (expand `/afsl/[number]` to fuzzy search)
 - [~] **D3** Tiered Data API billing (wire Stripe to `api_keys.tier`)
 - [~] **D4** Fee-change monitoring API + broker-health feed (B2B)
-- [ ] **D5** Cross-border tax reference API (`fi_*` tables → `/api/v1`)
-- [ ] **D6** Embeddable rate/fee widget licensing (white-label tiers + rate-change webhook)
+- [~] **D5** Cross-border tax reference API (`fi_*` tables → `/api/v1`)
+- [~] **D6** Embeddable rate/fee widget licensing (white-label tiers + rate-change webhook)
 - [ ] **D7** Investor-intent cohort report pipeline (matures at ~6mo data)
 
 ## Phase 6 — B2B / supply-side

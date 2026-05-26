@@ -18,6 +18,7 @@
  *   - "health_score.updated"
  *   - "advisor.updated"
  *   - "savings.updated"
+ *   - "fee.changed"  — fires when any broker fee field changes (ASX, US, FX, inactivity, min_deposit)
  *
  * Max 5 webhook endpoints per API key.
  */
@@ -42,6 +43,7 @@ const SUPPORTED_EVENTS = [
   "health_score.updated",
   "advisor.updated",
   "savings.updated",
+  "fee.changed",
 ] as const;
 
 const CreateWebhookBody = z.object({

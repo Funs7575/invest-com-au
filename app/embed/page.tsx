@@ -411,6 +411,29 @@ export default function EmbedPage() {
           REF_PARAM_ROW,
         ]} />
 
+        {/* White-label callout */}
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 flex items-start gap-4 flex-wrap mb-4">
+          <div className="flex-1 min-w-[12rem]">
+            <h3 className="font-bold text-sm text-slate-900 mb-1">Need white-label widgets?</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Pro and Enterprise API customers can remove the &ldquo;Powered by invest.com.au&rdquo;
+              attribution footer. Generate a license token from{" "}
+              <code className="font-mono bg-white border border-slate-200 px-1 rounded">
+                POST /api/v1/widget-licenses
+              </code>{" "}
+              and append <code className="font-mono bg-white border border-slate-200 px-1 rounded">
+                ?license=wlt_xxx
+              </code> to your embed URL.
+            </p>
+          </div>
+          <a
+            href="/embed/licensing"
+            className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 whitespace-nowrap"
+          >
+            View licensing tiers →
+          </a>
+        </div>
+
         {/* Interactive Builder */}
         <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-4">Get Your Embed Code</h2>
         <EmbedBuilder />
