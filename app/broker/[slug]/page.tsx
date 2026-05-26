@@ -26,6 +26,7 @@ import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import ClaimListingButton from "@/components/claims/ClaimListingButton";
+import FeeAlertCapture from "@/components/FeeAlertCapture";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -402,6 +403,13 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           )}
         </Suspense>
       </div>
+
+      {/* Fee-change alert capture — shown for share brokers, crypto, robo, and super */}
+      {b.platform_type !== "savings_account" && b.platform_type !== "term_deposit" && (
+        <div className="container-custom max-w-4xl mt-8">
+          <FeeAlertCapture brokerSlug={b.slug} brokerName={b.name} />
+        </div>
+      )}
 
       {/* DDO compliance — render the current TMD link prominently
           next to the product footer. DDO (Corporations Act s994A–C)

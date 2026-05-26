@@ -7,6 +7,7 @@ import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT, CRYPTO_WARNING, SP
 import { isSponsored } from "@/lib/sponsorship";
 import Icon from "@/components/Icon";
 import CohortInsights from "@/components/CohortInsights";
+import SocialProofCounter from "@/components/SocialProofCounter";
 import PersonaCard from "@/components/persona/PersonaCard";
 import { computePersona, personaInputFromQuizAnswers } from "@/lib/persona";
 
@@ -163,6 +164,11 @@ export default function QuizResultsScreen({
               Based on your answers
             </span>
           </div>
+        </div>
+
+        {/* Social proof — shows activity count beneath results header */}
+        <div className="mb-3 result-card-in">
+          <SocialProofCounter variant="badge" />
         </div>
 
         {/* Investor persona card — derived from quiz answers, no auth required.

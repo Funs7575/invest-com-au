@@ -22,9 +22,9 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 ## Phase 1 — Wire up built-but-unplaced infrastructure (near-zero effort)
 - [~] **F1** Place `BookmarkButton` on broker / `/best` / advisor cards (imported nowhere today)
 - [~] **F2** Render `ExitIntentBrokerMatch` / `ExitIntentCapture` (built, never rendered)
-- [ ] **F3** Fix quiz "Share result" URL to encode the result (shares blank quiz today)
-- [ ] **F4** Fee-change alert capture on `/broker/[slug]` + `/compare`
-- [ ] **F5** `SocialProofCounter` + `CohortInsights` on `/best/[slug]` + quiz results
+- [~] **F3** Fix quiz "Share result" URL to encode the result (shares blank quiz today)
+- [~] **F4** Fee-change alert capture on `/broker/[slug]` + `/compare`
+- [~] **F5** `SocialProofCounter` + `CohortInsights` on `/best/[slug]` + quiz results
 - [ ] **F6** Post-signup notification-preference onboarding step
 - [ ] **F7** `StickyCTABar` on `/best/[slug]`; save-shortlist + alert prompt on the compare bar
 - [ ] **F8** "Verified AFSL/ACL" trust chip on advisor directory cards

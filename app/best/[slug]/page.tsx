@@ -53,6 +53,7 @@ import PlacementImpressionTracker from "@/components/PlacementImpressionTracker"
 import JargonTooltip from "@/components/JargonTooltip";
 import OnThisPage from "@/components/OnThisPage";
 import type { Article } from "@/lib/types";
+import SocialProofCounter from "@/components/SocialProofCounter";
 
 const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
   beginners: "beginner-guide",
@@ -400,6 +401,11 @@ export default async function BestBrokerPage({
                 return ts > latest ? ts : latest;
               }, "") || new Date().toISOString()).toLocaleDateString("en-AU", { month: "long", year: "numeric" })}
             </span>
+          </div>
+
+{/* Social proof — shows investors comparing today */}
+          <div className="mb-4">
+            <SocialProofCounter variant="badge" />
           </div>
 
 {/* Our selection criteria — collapsible on mobile */}

@@ -9,6 +9,7 @@ import Icon from "@/components/Icon";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
+import FeeAlertCapture from "@/components/FeeAlertCapture";
 
 type FilterType = string;
 
@@ -111,6 +112,21 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
             context={(activeFilter === 'smsf' || activeFilter === 'smsf-brokers') ? 'smsf' : (activeFilter === 'property' || activeFilter === 'property-platforms') ? 'property' : 'general'}
             compact={activeFilter === 'all'}
           />
+        </div>
+      )}
+
+      {/* Fee-change alert capture — one row per visible broker, compact layout */}
+      {sorted.length > 0 && sorted.length <= 5 && (
+        <div className="mt-6 rounded-xl border border-amber-100 bg-amber-50 p-4">
+          <p className="text-xs font-semibold text-amber-900 mb-3">🔔 Get fee-change alerts for the platforms you&apos;re comparing</p>
+          <div className="space-y-2">
+            {sorted.slice(0, 3).map((b) => (
+              <div key={b.slug} className="flex items-center gap-3">
+                <span className="text-xs font-medium text-slate-700 w-36 shrink-0 truncate">{b.name}</span>
+                <FeeAlertCapture brokerSlug={b.slug} brokerName={b.name} compact className="flex-1" />
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

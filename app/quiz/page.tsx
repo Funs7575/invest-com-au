@@ -472,6 +472,7 @@ export default function QuizPage() {
 
   // Results UI state
   const [copied, setCopied] = useState(false);
+  const [sharedTopSlug, setSharedTopSlug] = useState<string | null>(null);
   const [showScoring, setShowScoring] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
@@ -511,6 +512,10 @@ export default function QuizPage() {
     const params = new URLSearchParams(window.location.search);
     const countryParam = params.get("country");
     const intentParam = params.get("intent");
+    const topParam = params.get("top");
+
+    if (topParam) setSharedTopSlug(topParam);
+
     if (!countryParam && !intentParam) return;
 
     const seed: Partial<UnifiedAnswers> = {};
@@ -808,7 +813,9 @@ export default function QuizPage() {
   };
 
   const handleShareResult = async () => {
-    const shareUrl = window.location.href;
+    const topSlug = results[0]?.slug;
+    const base = `${window.location.origin}/quiz`;
+    const shareUrl = topSlug ? `${base}?top=${encodeURIComponent(topSlug)}` : base;
     const topBrokerName = results[0]?.broker?.name || "my top platform";
     const shareText = `I got matched on Invest.com.au and ${topBrokerName} ranked highest for my criteria! Try Get Matched:`;
     if (typeof navigator.share === "function") {
@@ -974,6 +981,12 @@ export default function QuizPage() {
   })();
 
   return (
+    <>
+      {sharedTopSlug && (
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-center text-xs text-amber-800">
+          Someone got matched with <strong>{brokers.find((b) => b.slug === sharedTopSlug)?.name ?? sharedTopSlug}</strong> — take the quiz to see your match.
+        </div>
+      )}
     <QuizQuestionScreen
       step={questionIndex}
       questions={[{ question_text: current.text, options: current.options as { key: string; label: string; sub?: string; emoji?: string }[] }]}
@@ -1020,5 +1033,6 @@ export default function QuizPage() {
       onStartOver={() => { clearProgress(); setResumePrompt(false); handleRestart(); }}
       questionHeadingRef={questionHeadingRef}
     />
+    </>
   );
 }
