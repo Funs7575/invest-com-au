@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AlertsClient from "./AlertsClient";
 import PushOptIn from "./PushOptIn";
+import MorningBriefToggle from "./MorningBriefToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -37,13 +38,14 @@ export default async function AccountAlertsPage() {
       .order("created_at", { ascending: false }),
     admin
       .from("notification_preferences")
-      .select("browser_push")
+      .select("browser_push, morning_brief")
       .eq("user_id", user.id)
       .maybeSingle(),
   ]);
 
   const alerts = rowsRes.data ?? [];
   const browserPushEnabled = prefsRes.data?.browser_push === true;
+  const morningBriefEnabled = prefsRes.data?.morning_brief === true;
 
   return (
     <div className="py-6 md:py-10">
@@ -71,9 +73,9 @@ export default async function AccountAlertsPage() {
           </Link>
         </div>
 
-        {/* Browser push opt-in — shown above the alert list so users can
-            enable push before (or after) setting up their first alert. */}
-        <div className="mb-5">
+        {/* Email + push notification preferences */}
+        <div className="mb-5 space-y-3">
+          <MorningBriefToggle initialEnabled={morningBriefEnabled} />
           <PushOptIn initialEnabled={browserPushEnabled} />
         </div>
 
