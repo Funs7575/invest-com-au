@@ -61,5 +61,6 @@ ALTER TABLE consumer_webhook_deliveries ENABLE ROW LEVEL SECURITY;
 -- Service-role only — dispatch worker uses admin client (legitimate cron/service caller).
 -- No anon or authenticated-role access is permitted: the deliveries table contains
 -- potentially-sensitive response bodies and attempt metadata.
+DROP POLICY IF EXISTS "Service manage consumer_webhook_deliveries" ON consumer_webhook_deliveries;
 CREATE POLICY "Service manage consumer_webhook_deliveries"
   ON consumer_webhook_deliveries FOR ALL USING (true);
