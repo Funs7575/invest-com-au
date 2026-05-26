@@ -337,6 +337,8 @@ const mobileSections = [
       { name: "Marketplace (Find a Provider)", href: "/marketplace" },
       { name: "Tax Strategy Hub", href: "/tax" },
       { name: "Tax Return Guide", href: "/tax-return" },
+      { name: "Retirement Hub", href: "/retirement" },
+      { name: "Aged Care Hub", href: "/aged-care" },
       { name: "Insurance Hub", href: "/insurance" },
       { name: "Global Investing Hub", href: "/global-investing" },
       { name: "Investment Confessions", href: "/community/confessions" },

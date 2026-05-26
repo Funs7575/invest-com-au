@@ -66,7 +66,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 
 ## Phase 7 — New consumer hubs (bigger; loop-friendly)
 - [~] **H1** Family-Office hub (directory + diagnostic quiz — highest revenue/effort)
-- [ ] **H2** Retirement + Aged-Care hub (annuity + reverse-mortgage affiliate + facility listings)
+- [~] **H2** Retirement + Aged-Care hub (annuity + reverse-mortgage affiliate + facility listings)
 - [~] **H3** Alt-assets vertical (whisky/wine/watches/art)
 - [~] **H4** Outbound global-investing hub buildout (shares/etfs/lics/currency/bonds + tax sub-hub + calculators) — large, parallelizable
 - [ ] **H5** Insurance comparison + lead funnel (VerticalConfig/HubConfig + quiz routing + lead wiring)

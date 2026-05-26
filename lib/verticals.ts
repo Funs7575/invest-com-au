@@ -1443,3 +1443,293 @@ export const DIVIDENDS_HUB_CONFIG: HubConfig = {
     sponsorSlotsAvailable: true,
   },
 };
+
+export const RETIREMENT_HUB_CONFIG: HubConfig = {
+  slug: "retirement",
+  title: `Retirement Planning Hub (${yr})`,
+  metaDescription:
+    "Australia's retirement planning hub. Retirement income strategies, pension-phase super transitions, annuity comparisons, and access to licensed retirement planners. ASFA estimates couples need $690k for a comfortable retirement.",
+  audiences: ["retiree"],
+  complianceKey: "super",
+
+  hero: {
+    headline: "Retirement Planning Hub",
+    subhead:
+      "Plan the retirement you've worked for. Compare retirement income strategies, understand pension-phase super, explore annuities, and find a licensed retirement planner near you.",
+    stats: [
+      {
+        label: "Average retirement age",
+        value: "62",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2028-06-30",
+        source: "https://www.abs.gov.au/statistics/labour/employment-and-unemployment/retirement-and-retirement-intentions",
+      },
+      {
+        label: "Comfortable retirement (couple)",
+        value: "$690k",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2026-09-30",
+        source: "https://www.superannuation.asn.au/resources/retirement-standard/",
+      },
+      {
+        label: "Age Pension recipients",
+        value: "2.5M+",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2028-06-30",
+      },
+    ],
+    primaryCta: { label: "Talk to a Retirement Planner", href: "/quiz?vertical=retirement", lever: "lead_routing" },
+    secondaryCta: { label: "Use Retirement Calculator", href: "/retirement-calculator", lever: "affiliate_cpa" },
+  },
+
+  serviceGrid: [
+    {
+      title: "Retirement Income Planning",
+      description:
+        "Account-based pensions, defined benefit strategies, and drawdown-rate optimisation. Ensure your money lasts through a 25–30 year retirement.",
+      href: "/advisors/financial-planners?speciality=retirement",
+      icon: "trending-up",
+      cta: "Find Retirement Planners",
+    },
+    {
+      title: "Super → Pension Phase",
+      description:
+        "Transition-to-retirement (TTR) rules, pension-phase tax-free treatment, transfer balance cap ($1.9M in 2026), and commutation strategies.",
+      href: "/super",
+      icon: "layers",
+      cta: "Understand Pension Phase",
+    },
+    {
+      title: "Annuities & Lifetime Income",
+      description:
+        "Lifetime annuities, term annuities, and deferred lifetime annuities guarantee income you can't outlive. Compare products, fees, and Centrelink treatment.",
+      href: "/retirement/annuities",
+      icon: "shield-check",
+      cta: "Compare Annuities",
+    },
+    {
+      title: "Age Pension & Centrelink",
+      description:
+        "Assets and income tests, Centrelink treatment of super and investments, deeming rules, and optimising the pension through legal asset structuring.",
+      href: "/retirement/age-pension",
+      icon: "file-text",
+      cta: "Age Pension Guide",
+    },
+    {
+      title: "Reverse Mortgage",
+      description:
+        "Release equity from your home to supplement retirement income. Comparison is factual — speak to a licensed mortgage broker before applying.",
+      href: "/retirement/reverse-mortgage",
+      icon: "home",
+      cta: "Learn About Reverse Mortgages",
+    },
+    {
+      title: "Estate Planning",
+      description:
+        "Wills, Powers of Attorney, superannuation death benefit nominations, testamentary trusts, and estate liquidity planning.",
+      href: "/advisors/estate-planners",
+      icon: "book-open",
+      cta: "Find Estate Planners",
+    },
+  ],
+
+  deepDives: [
+    {
+      title: "How Much Do You Need to Retire?",
+      excerpt: "ASFA retirement standard, lifestyle budgets, Age Pension supplement, and the 4% rule applied to Australian balances.",
+      href: "/retirement/how-much-do-you-need",
+    },
+    {
+      title: "Pension Phase Super: The Tax-Free Zone",
+      excerpt: "How super in pension phase produces tax-free earnings and income once you turn 60. Transfer balance cap, TTR rules.",
+      href: "/retirement/pension-phase",
+    },
+    {
+      title: "Annuities vs Account-Based Pensions",
+      excerpt: "Guaranteed income for life vs flexible drawdown. Longevity risk, Centrelink treatment, and hybrid strategies.",
+      href: "/retirement/annuities-vs-abp",
+    },
+    {
+      title: "Age Pension Assets Test: Full Guide",
+      excerpt: "How the assets test works, thresholds for couples vs singles, super treatment before vs after Age Pension age.",
+      href: "/retirement/age-pension-assets-test",
+    },
+  ],
+
+  faqs: [
+    {
+      question: "At what age can I access my superannuation?",
+      answer:
+        "For most Australians born after 1 July 1964, the preservation age is 60. Once you reach 60 and meet a condition of release (such as retirement or reaching 65), you can access your super as a lump sum or start an account-based pension, tax-free.",
+    },
+    {
+      question: "What is the transfer balance cap?",
+      answer:
+        "The transfer balance cap is the limit on how much super you can move into the tax-free pension phase. In the 2026 financial year, the general cap is $1.9 million. Once in pension phase, earnings on those assets are tax-free.",
+    },
+    {
+      question: "How much super do I need to retire comfortably?",
+      answer:
+        "According to the ASFA Retirement Standard (June 2025), a couple needs approximately $690,000 in super to fund a 'comfortable' retirement (around $72,000/year), assuming they own their home and receive a part Age Pension. A single person needs approximately $595,000.",
+    },
+    {
+      question: "Are annuities appropriate for everyone?",
+      answer:
+        "Annuities suit retirees who want guaranteed income and protection against longevity risk (outliving your money). They're less flexible than account-based pensions and may not be ideal if you need large lump sums. Consider the Centrelink means-test treatment and speak to a licensed financial adviser before purchasing.",
+    },
+    {
+      question: "Is a reverse mortgage a good idea?",
+      answer:
+        "Reverse mortgages let you borrow against your home's equity without making repayments until you sell. Interest compounds, which can erode the estate. A reverse mortgage is a credit product — always consult a licensed mortgage broker and consider the long-term implications on estate plans and aged care costs before proceeding.",
+    },
+  ],
+
+  leadQueue: { kind: "retirement", advisorType: "retirement_planner" },
+  articleFilters: { category_in: ["retirement"], tags: ["retirement", "pension-phase", "annuity", "age-pension"] },
+  relatedHubs: ["super", "smsf", "aged-care"],
+  primaryKeywords: ["retirement planning Australia", "retirement income strategy", "pension phase super", "annuities Australia"],
+  schemaTypes: ["FinancialService", "FAQPage"],
+  newsletter: { listKey: "retirement-hub", cadence: "weekly", sponsorSlotsAvailable: true },
+};
+
+export const AGED_CARE_HUB_CONFIG: HubConfig = {
+  slug: "aged-care",
+  title: `Aged Care Financial Planning Hub (${yr})`,
+  metaDescription:
+    "Australia's aged care financial planning hub. RAD vs DAP explained, means-tested care fees, home care packages, and access to specialist aged care financial advisers. Costs, subsidies, and Centrelink treatment explained.",
+  audiences: ["retiree"],
+  complianceKey: "aged_care",
+
+  hero: {
+    headline: "Aged Care Financial Planning Hub",
+    subhead:
+      "Navigating the aged care system is complex and expensive. Understand RAD and DAP costs, means-tested fees, home care packages, and how to structure your finances to preserve your estate.",
+    stats: [
+      {
+        label: "Australians in aged care",
+        value: "1.3M+",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2028-06-30",
+        source: "https://www.gen-agedcaredata.gov.au/",
+      },
+      {
+        label: "Median RAD (2025)",
+        value: "$400k",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2027-06-30",
+      },
+      {
+        label: "Of care is government-subsidised",
+        value: "43%",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2028-06-30",
+      },
+    ],
+    primaryCta: { label: "Find an Aged Care Adviser", href: "/quiz?vertical=aged_care", lever: "lead_routing" },
+    secondaryCta: { label: "Download Planning Checklist", href: "/lead-magnets/aged-care-planning-guide", lever: "lead_magnet" },
+  },
+
+  serviceGrid: [
+    {
+      title: "Financial Assessment & Means Testing",
+      description:
+        "Understand your means-tested care fee, income assessment, and how assets (home, super, investments) are treated under the aged care means test.",
+      href: "/aged-care/means-test",
+      icon: "calculator",
+      cta: "Aged Care Means Test Guide",
+    },
+    {
+      title: "RAD vs DAP Decision",
+      description:
+        "Refundable Accommodation Deposit (lump sum) vs Daily Accommodation Payment (ongoing). Which is better depends on your assets, estate plans, and the facility's interest rate.",
+      href: "/aged-care/rad-vs-dap",
+      icon: "layers",
+      cta: "RAD vs DAP Explained",
+    },
+    {
+      title: "Home Care Packages",
+      description:
+        "Levels 1–4 of the Home Care Package program. Costs, subsidies, and how to compare approved home care providers in your area.",
+      href: "/aged-care/home-care-packages",
+      icon: "home",
+      cta: "Home Care Guide",
+    },
+    {
+      title: "Residential Facility Finder",
+      description:
+        "Search and compare residential aged care facilities by location, star rating, vacancy, services, and accommodation bond.",
+      href: "/aged-care/facilities",
+      icon: "map-pin",
+      cta: "Find a Facility",
+    },
+    {
+      title: "Centrelink & DVA Treatment",
+      description:
+        "How Centrelink and DVA assess the family home, HEAS (home equity access scheme), and income assets for aged care fees and the Age Pension.",
+      href: "/aged-care/centrelink",
+      icon: "file-text",
+      cta: "Centrelink Guide",
+    },
+    {
+      title: "Estate Preservation Strategy",
+      description:
+        "Structuring assets to minimise aged care fees while preserving the estate for beneficiaries. Specialist aged care financial advisers can model scenarios.",
+      href: "/advisors/financial-planners?speciality=aged-care",
+      icon: "shield-check",
+      cta: "Find Aged Care Advisers",
+    },
+  ],
+
+  deepDives: [
+    {
+      title: "Aged Care Costs: Complete Guide (2025)",
+      excerpt: "Basic daily fee, means-tested care fee, RAD/DAP, extra service fees — all explained with current dollar amounts.",
+      href: "/aged-care/costs",
+    },
+    {
+      title: "What Happens to the Family Home?",
+      excerpt: "How the home is treated in the means test: 2-year exemption, renting it out, selling it, and HEAS.",
+      href: "/aged-care/family-home",
+    },
+    {
+      title: "Home Care vs Residential Care",
+      excerpt: "When to choose home care packages vs residential aged care. Costs, services, and transition triggers.",
+      href: "/aged-care/home-vs-residential",
+    },
+    {
+      title: "Choosing an Aged Care Financial Adviser",
+      excerpt: "What credentials to look for (CPCA, FACP), questions to ask, and fee structures for aged care advice.",
+      href: "/advisor-guides/how-to-choose-aged-care-advisor",
+    },
+  ],
+
+  faqs: [
+    {
+      question: "What is a Refundable Accommodation Deposit (RAD)?",
+      answer:
+        "A RAD is a lump-sum payment to a residential aged care facility for your accommodation. It is fully refundable when you leave (or on death). If you cannot or choose not to pay the full RAD, you can pay a Daily Accommodation Payment (DAP) instead, or a combination of both. The interest rate used to convert between RAD and DAP is set by the government (the MPIR).",
+    },
+    {
+      question: "Will the government pay for aged care?",
+      answer:
+        "The Australian government subsidises a significant portion of aged care costs through the Aged Care Funding Instrument (ACFI) / AN-ACC. Your contribution is means-tested based on income and assets. If you have limited assets and income, the government pays a higher share. The basic daily fee (currently 85% of the Age Pension) is paid by virtually all residents.",
+    },
+    {
+      question: "Is my home included in the aged care means test?",
+      answer:
+        "The family home is initially exempt from the assets test for the first two years you are in residential care (or indefinitely if a protected person — spouse, carer, or dependent — lives there). After the exemption period, the home is assessed at a capped value (currently around $207,547) for the assets test. Selling or retaining the home has significant implications for your means-tested care fee.",
+    },
+    {
+      question: "What is an aged care financial adviser?",
+      answer:
+        "A specialist aged care financial adviser holds a relevant financial planning licence (AFSL or authorised representative) and has specific training in the aged care system — often the Aged Care Specialist (FACP) designation or CPCA certification. They can model RAD/DAP scenarios, Centrelink impacts, home-sale decisions, and estate outcomes. Fees typically $2,000–$5,000 for a full aged care plan.",
+    },
+  ],
+
+  leadQueue: { kind: "aged_care", state: "", certifiedAdvisorOnly: true },
+  articleFilters: { category_in: ["aged-care"], tags: ["aged-care", "RAD", "DAP", "home-care", "means-test"] },
+  relatedHubs: ["retirement", "super", "smsf"],
+  primaryKeywords: ["aged care financial planning Australia", "RAD DAP aged care", "home care packages", "aged care means test"],
+  schemaTypes: ["FinancialService", "FAQPage"],
+  newsletter: { listKey: "aged-care-hub", cadence: "monthly", sponsorSlotsAvailable: false },
+};

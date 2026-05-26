@@ -183,6 +183,21 @@ export const SUPER_WARNING_SHORT =
   "Switching super funds may affect your insurance cover. Check your current fund's insurance before switching.";
 
 /**
+ * Aged care referral warning — used on /aged-care hub and any page that
+ * references reverse mortgages or RAD/DAP decisions. Reverse mortgages are
+ * credit products regulated under the National Consumer Credit Protection Act
+ * (NCCP). Invest.com.au is not an ACL holder and provides factual information
+ * only. Always refer to a licensed mortgage broker for credit assistance.
+ */
+export const AGED_CARE_WARNING =
+  "Aged care financial information on Invest.com.au is general in nature. Costs, means-test thresholds, " +
+  "and subsidy rates change regularly — verify current figures at www.health.gov.au/aged-care. " +
+  "Reverse mortgages are credit products regulated under the National Consumer Credit Protection Act. " +
+  "Invest.com.au does not provide credit assistance. Speak to a licensed mortgage broker before applying. " +
+  "Seek advice from a licensed financial adviser (ideally a specialist aged care adviser with CPCA or FACP " +
+  "designation) before making accommodation, asset-structuring, or estate decisions.";
+
+/**
  * AFCA (Australian Financial Complaints Authority) reference.
  * Financial services providers must have an external dispute resolution (EDR) scheme.
  * While Invest.com.au is not a financial product issuer, linking to AFCA shows
