@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
@@ -7,7 +8,15 @@ const log = logger("push:send");
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VALID_TOPICS = ["fee_changes", "deals", "articles", "price_drops"] as const;
+const VALID_TOPICS = ["fee_changes", "deals", "articles", "price_drops", "market_events"] as const;
+
+const PushBody = z.object({
+  topic: z.enum(VALID_TOPICS),
+  title: z.string().min(1).max(200),
+  body: z.string().min(1).max(500),
+  url: z.string().url(),
+  icon: z.string().optional(),
+});
 
 /**
  * POST /api/push/send — Admin-only endpoint to broadcast a push notification.
@@ -25,27 +34,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
-    const { topic, title, body: notifBody, url, icon } = body as {
-      topic: string;
-      title: string;
-      body: string;
-      url: string;
-      icon?: string;
-    };
-
-    if (!topic || !(VALID_TOPICS as readonly string[]).includes(topic)) {
+    const parsed = PushBody.safeParse(await request.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: `Invalid topic. Options: ${VALID_TOPICS.join(", ")}` },
-        { status: 400 }
+        { error: `Invalid body. Required: topic (${VALID_TOPICS.join("|")}), title, body, url` },
+        { status: 400 },
       );
     }
-    if (!title || !notifBody || !url) {
-      return NextResponse.json(
-        { error: "title, body, and url are required" },
-        { status: 400 }
-      );
-    }
+    const { topic, title, body: notifBody, url, icon } = parsed.data;
 
     const supabase = createAdminClient();
 
