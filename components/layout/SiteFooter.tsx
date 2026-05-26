@@ -41,6 +41,8 @@ export function SiteFooter() {
           {/* Column 2 — Tools */}
           <FooterColumn title="Tools" items={[
             { label: "Financial Health Score", href: "/score" },
+            { label: "My Wealth Stack", href: "/wealth-stack" },
+            { label: "AI Concierge", href: "/concierge" },
             { label: "All Calculators (25)", href: "/calculators" },
             { label: "Quick Audit", href: "/quick-audit" },
             { label: "Portfolio X-Ray", href: "/portfolio-xray" },

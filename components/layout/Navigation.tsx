@@ -45,6 +45,8 @@ const platformsMenu = {
     ...(SHOW_MATCH_LANGUAGE ? [{ label: "Get Matched (60s)", href: "/quiz" }] : []),
     { label: "Fee Calculator", href: "/calculators" },
     { label: "Financial Health Score", href: "/score" },
+    { label: "My Wealth Stack", href: "/wealth-stack" },
+    { label: "AI Concierge", href: "/concierge" },
   ],
 };
 
@@ -308,6 +310,8 @@ const mobileSections = [
     title: "Tools & Calculators",
     items: [
       { name: "Financial Health Score", href: "/score" },
+      { name: "My Wealth Stack", href: "/wealth-stack" },
+      { name: "AI Concierge", href: "/concierge" },
       { name: "Quick Audit (30s)", href: "/quick-audit" },
       { name: "Switching Calculator", href: "/switching-calculator" },
       { name: "Fee Simulator", href: "/fee-simulator" },
