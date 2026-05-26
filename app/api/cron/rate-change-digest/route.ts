@@ -130,6 +130,30 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       return { response: NextResponse.json({ ok: false, error: insertErr.message }, { status: 500 }), stats: { changes: 0 } };
     }
 
+    // Fanout to feed_events so new rate changes appear in the unified feed.
+    // Failures are non-blocking — the digest itself already succeeded.
+    const feedRows = insertRows.map((r) => ({
+      event_type: "rate_change" as const,
+      ref_id: `${r.broker_id}:${r.product_kind}:${r.snapshot_captured_at}`,
+      headline:
+        r.direction === "up"
+          ? `${r.broker_name} raised their ${r.product_kind} rate by ${r.delta_bps} bps`
+          : r.direction === "down"
+            ? `${r.broker_name} cut their ${r.product_kind} rate by ${Math.abs(r.delta_bps)} bps`
+            : `${r.broker_name} added a new ${r.product_kind} rate`,
+      actor_name: r.broker_name,
+      actor_slug: r.broker_slug,
+      entity_slug: r.broker_slug,
+      score_base: r.direction === "up" ? 70 : r.direction === "new" ? 65 : 55,
+      published_at: r.snapshot_captured_at,
+    }));
+    const { error: feedErr } = await admin
+      .from("feed_events")
+      .upsert(feedRows, { onConflict: "event_type,ref_id", ignoreDuplicates: true });
+    if (feedErr) {
+      log.warn("feed_events fanout failed (non-blocking)", { error: feedErr.message });
+    }
+
     log.info("Rate change digest complete", { changes: insertRows.length, written: count, newestAt, previousAt });
     return {
       response: NextResponse.json({ ok: true, changes: insertRows.length, newestAt, previousAt }),

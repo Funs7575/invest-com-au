@@ -26,7 +26,9 @@ import HomeHowItWorks from "@/components/HomeHowItWorks";
 import HomeRateOfTheDay from "@/components/HomeRateOfTheDay";
 import RateChangesToday from "@/components/RateChangesToday";
 import InvestScoreGauge from "@/components/InvestScoreGauge";
+import HomeFeedSection from "@/components/HomeFeedSection";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
+import { Suspense } from "react";
 
 export const metadata = {
   title: {
@@ -265,6 +267,12 @@ export default async function HomePage() {
       <HomeRateOfTheDay />
       <InvestScoreGauge />
       <RateChangesToday />
+
+      {/* Social feed — personalised for logged-in users; streams in
+          dynamically so the ISR shell remains cacheable. */}
+      <Suspense fallback={null}>
+        <HomeFeedSection />
+      </Suspense>
 
       <ScrollFadeIn>
         <HomeRouteCards
