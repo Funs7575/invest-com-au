@@ -37,6 +37,7 @@ import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
+import BrokerReliabilityScore from "@/components/BrokerReliabilityScore";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -317,6 +318,7 @@ export default function BrokerReviewClient({
           >
             {getBenefitCta(b, 'review')}
           </a>
+          <BrokerReliabilityScore brokerId={b.id} brokerName={b.name} />
         </div>
         <p className="text-xs text-slate-400 mb-1">
           {ADVERTISER_DISCLOSURE_SHORT}
