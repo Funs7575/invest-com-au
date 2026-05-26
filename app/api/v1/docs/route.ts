@@ -652,6 +652,69 @@ export function GET() {
         },
       },
       {
+        path: "/api/v1/fee-changes",
+        method: "GET",
+        auth_required: true,
+        tiers: ["basic", "pro", "enterprise"],
+        description:
+          "Fee-change monitoring feed: paginated, time-ordered list of individual broker fee change events (ASX fee, US fee, FX rate, inactivity fee, min deposit). Useful for building price-change alerts or keeping a local fee database in sync. Informational data — not financial advice.",
+        parameters: [
+          {
+            name: "broker_slug",
+            type: "string",
+            required: false,
+            description: "Filter to a specific broker by slug (e.g. 'stake')",
+          },
+          {
+            name: "field",
+            type: "string",
+            required: false,
+            description:
+              "Filter to a specific fee field: asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, inactivity_fee, min_deposit",
+          },
+          {
+            name: "since",
+            type: "string",
+            required: false,
+            description: "ISO 8601 date string — only return changes on/after this date (e.g. '2026-01-01')",
+          },
+          {
+            name: "limit",
+            type: "integer",
+            required: false,
+            description: "Max results (default: 50, max: 200)",
+          },
+          {
+            name: "offset",
+            type: "integer",
+            required: false,
+            description: "Pagination offset (default: 0)",
+          },
+        ],
+        example_request: "GET /api/v1/fee-changes?since=2026-01-01&limit=20",
+        example_response: {
+          data: [
+            {
+              id: 4201,
+              broker_slug: "stake",
+              field_name: "asx_fee_value",
+              old_value: "5.00",
+              new_value: "3.00",
+              change_type: "update",
+              changed_at: "2026-03-15T10:30:00Z",
+              source: "fee_page_check",
+            },
+          ],
+          meta: {
+            total: 87,
+            limit: 20,
+            offset: 0,
+            updated_at: "2026-03-15T10:30:00Z",
+            disclaimer: "Fee change data is factual. Not financial advice.",
+          },
+        },
+      },
+      {
         path: "/api/v1/openapi.json",
         method: "GET",
         auth_required: false,
