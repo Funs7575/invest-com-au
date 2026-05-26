@@ -50,7 +50,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 
 ## Phase 5 — Data products (low-effort moats; schema mostly built)
 - [ ] **D1** "AU Brokerage Fee Index" — cron + index page + gated report (uses `broker_price_snapshots`)
-- [ ] **D2** Public AFSL/AR lookup tool (expand `/afsl/[number]` to fuzzy search)
+- [~] **D2** Public AFSL/AR lookup tool (expand `/afsl/[number]` to fuzzy search)
 - [ ] **D3** Tiered Data API billing (wire Stripe to `api_keys.tier`)
 - [ ] **D4** Fee-change monitoring API + broker-health feed (B2B)
 - [ ] **D5** Cross-border tax reference API (`fi_*` tables → `/api/v1`)

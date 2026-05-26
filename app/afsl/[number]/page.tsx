@@ -12,6 +12,7 @@
 
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import {
   AFSL_STATUS_LABELS,
@@ -19,6 +20,7 @@ import {
   normaliseAfslNumber,
 } from "@/lib/afsl-register";
 import { absoluteUrl, SITE_NAME } from "@/lib/seo";
+import AfslLookupClient from "@/app/afsl-lookup/AfslLookupClient";
 
 export const revalidate = 3600;
 export const dynamic = "force-static";
@@ -98,6 +100,14 @@ export default async function AfslLicenseePage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500">
+        <Link href="/" className="hover:text-slate-700">Home</Link>
+        <span aria-hidden className="mx-1.5">/</span>
+        <Link href="/afsl-lookup" className="hover:text-slate-700">AFSL Lookup</Link>
+        <span aria-hidden className="mx-1.5">/</span>
+        <span className="text-slate-700">{licensee.afsl_number}</span>
+      </nav>
+
       <header className="space-y-3">
         <div className="text-xs uppercase tracking-wider text-slate-500">
           AFSL register lookup
@@ -160,6 +170,18 @@ export default async function AfslLicenseePage({ params }: Props) {
           Sourced from the {licensee.source === "asic_connect" ? "ASIC Connect AFS register" : licensee.source}. Cached at most weekly. For a real-time check of conditions or
           authorised representatives, search ASIC Connect directly.
         </p>
+      </section>
+
+      {/* Fuzzy search — pre-seeded with this firm's name so users can explore
+          related licences (e.g. a group with multiple AFSLs). */}
+      <section className="border border-slate-200 rounded-xl p-5 space-y-3">
+        <h2 className="font-semibold text-slate-900">Search the AFSL Register</h2>
+        <p className="text-sm text-slate-600">
+          Search by firm name or AFSL number — pre-filled with &ldquo;{licensee.licensee_name}&rdquo; to show related licences.
+        </p>
+        <Suspense fallback={<div className="h-12 bg-slate-100 rounded-lg animate-pulse" />}>
+          <AfslLookupClient initialQuery={licensee.licensee_name} />
+        </Suspense>
       </section>
 
       <section className="border border-slate-200 rounded-xl p-5 flex items-start gap-4 flex-wrap">

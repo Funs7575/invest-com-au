@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import SearchInput from "@/components/directory/SearchInput";
 import { AFSL_STATUS_LABELS } from "@/lib/afsl-register";
@@ -48,7 +49,8 @@ export default function AfslLookupClient({
 }: {
   initialQuery?: string;
 }) {
-  const [query, setQuery] = useState(initialQuery);
+  const urlParams = useSearchParams();
+  const [query, setQuery] = useState(() => initialQuery || (urlParams.get("q") ?? ""));
   const [state, setState] = useState<FetchState>({ kind: "idle" });
   const inputId = useId();
   // Track the latest in-flight request so a slow earlier response can't
