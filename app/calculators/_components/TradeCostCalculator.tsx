@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { getParam, useUrlSync, AnimatedNumber, ShareResultsButton } from "./CalcShared";
+import CalculatorExplainButton from "@/components/CalculatorExplainButton";
 
 interface Props {
   brokers: Broker[];
@@ -235,6 +236,18 @@ export default function TradeCostCalculator({ brokers, searchParams }: Props) {
         </div>
       )}
 
+      <CalculatorExplainButton
+        calculatorId="trade-cost"
+        tradeAmount={amount}
+        market={market}
+        results={results.map((r) => ({
+          brokerName: r.broker.name,
+          totalCost: r.totalCost,
+          brokerage: r.brokerage,
+          fxCost: r.fxCost,
+          pctOfTrade: r.pctOfTrade,
+        }))}
+      />
       <ShareResultsButton />
     </div>
   );

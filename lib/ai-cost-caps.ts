@@ -88,7 +88,7 @@ function dollarsEnvToMicros(envValue: string | undefined, defaultUsd: number): n
 }
 
 export interface RouteConfig {
-  route: "concierge" | "admin_agent" | "qa_capture";
+  route: "concierge" | "admin_agent" | "qa_capture" | "calculator_explain";
   subjectType: "public_session" | "admin_user";
   perSubjectMicros: number;
   globalMicros: number;
@@ -128,6 +128,19 @@ export function loadQaCaptureConfig(): RouteConfig {
     perSubjectMicros: dollarsEnvToMicros(process.env.AI_QA_USER_DAILY_USD, 2),
     globalMicros: dollarsEnvToMicros(process.env.AI_QA_GLOBAL_USD, 50),
     label: "Q&A answer engine",
+  };
+}
+
+// Calculator explain — per-IP cap lower than the concierge (this is a
+// narrower, single-turn call). Env vars: AI_CALC_EXPLAIN_USER_USD (default
+// $1/IP/day), AI_CALC_EXPLAIN_GLOBAL_USD (default $30/day).
+export function loadCalculatorExplainConfig(): RouteConfig {
+  return {
+    route: "calculator_explain",
+    subjectType: "public_session",
+    perSubjectMicros: dollarsEnvToMicros(process.env.AI_CALC_EXPLAIN_USER_USD, 1),
+    globalMicros: dollarsEnvToMicros(process.env.AI_CALC_EXPLAIN_GLOBAL_USD, 30),
+    label: "calculator explain",
   };
 }
 
