@@ -34,7 +34,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [~] **P2** Surface `/just/[life-event]` + `/score` (nav/footer/home)
 - [~] **P3** Discovery surface for 25 `/investing-for/[occupation]` + `/marketplace` pages
 - [~] **P4** Surface `/wealth-stack` + `/concierge` (with the C9 warning)
-- [ ] **P5** Link orphan sub-pages: `/super/*`, `/community/*`, thin `/global-investing/*`
+- [~] **P5** Link orphan sub-pages: `/super/*`, `/community/*`, thin `/global-investing/*`
 
 ## Phase 3 — UX polish (high-traffic surfaces)
 - [ ] **U1** Migrate `/compare` to `components/directory/*` primitives

@@ -86,6 +86,8 @@ export function SiteFooter() {
             { label: "How-To Guides", href: "/how-to" },
             { label: "Glossary", href: "/glossary" },
             { label: "Community Forum", href: "/community" },
+            { label: "Investment Confessions", href: "/community/confessions" },
+            { label: "Global Investing Hub", href: "/global-investing" },
             { label: "Annual Report", href: "/reports/annual" },
             { label: "Write a Review", href: "/reviews/write" },
             { label: "Foreign Investors", href: "/foreign-investment" },
