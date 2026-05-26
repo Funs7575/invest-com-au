@@ -150,11 +150,11 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/weekly-rate-update",
     "/api/cron/personalized-digest",
   ],
-  "weekly-mon-9": ["/api/cron/fee-digest", "/api/cron/content-freshness", "/api/cron/stale-fee-editorial", "/api/cron/check-secret-rotation", "/api/cron/country-rule-alerts-digest", "/api/cron/watchlist-alerts", "/api/cron/life-event-wizard-nudge", "/api/cron/advisor-match-scores"],
+  "weekly-mon-9": ["/api/cron/fee-digest", "/api/cron/content-freshness", "/api/cron/stale-fee-editorial", "/api/cron/check-secret-rotation", "/api/cron/country-rule-alerts-digest", "/api/cron/watchlist-alerts", "/api/cron/life-event-wizard-nudge", "/api/cron/advisor-match-scores", "/api/cron/cpd-reminder"],
   "weekly-mon-11": ["/api/cron/advisor-dormant-nudge"],
 
   "monthly-1-3": ["/api/cron/property-suburb-refresh"],
-  "monthly-1-6": ["/api/cron/monthly-affiliate-report", "/api/cron/affiliate-payout-recon"],
+  "monthly-1-6": ["/api/cron/monthly-affiliate-report", "/api/cron/affiliate-payout-recon", "/api/cron/cpd-year-renewal"],
   "monthly-1-8": ["/api/cron/portfolio-monitor"],
   "monthly-1-9": [
     "/api/cron/monthly-advisor-reports",
