@@ -140,7 +140,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "weekly-fri-7": [
     "/api/cron/decisions-digest",
   ],
-  "weekly-sun-0": ["/api/cron/rotate-featured-advisors"],
+  "weekly-sun-0": ["/api/cron/rotate-featured-advisors", "/api/cron/intent-cohort-rollup"],
   "weekly-mon-3": [
     "/api/cron/afsl-expiry-monitor",
     "/api/cron/content-staleness",

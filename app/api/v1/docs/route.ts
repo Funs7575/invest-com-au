@@ -715,6 +715,50 @@ export function GET() {
         },
       },
       {
+        path: "/api/v1/cohort-report",
+        method: "GET",
+        auth_required: true,
+        tiers: ["enterprise"],
+        description:
+          "Investor-intent cohort report: aggregate, anonymised weekly cohort data compiled from quiz completions and lead-capture signals. No PII. Dimensions: inferred_vertical × experience_level × investment_range. Data matures meaningfully at ~6 months of accumulation.",
+        parameters: [
+          {
+            name: "vertical",
+            type: "string",
+            required: false,
+            description: "Filter to a specific inferred vertical (e.g. broker-seeker, etf-investor).",
+          },
+          {
+            name: "weeks",
+            type: "integer",
+            required: false,
+            description: "Number of weekly snapshots to return (default 12, max 52).",
+          },
+        ],
+        example_request: "GET /api/v1/cohort-report?weeks=12",
+        example_response: {
+          cohorts: [
+            {
+              week_start: "2026-05-19",
+              inferred_vertical: "broker-seeker",
+              experience_level: "beginner",
+              investment_range: "0-10k",
+              quiz_completions: 142,
+              leads_captured: 38,
+              conversion_rate: 26.76,
+              top_utm_source: "google",
+              computed_at: "2026-05-25T00:05:12Z",
+            },
+          ],
+          meta: {
+            weeks: 12,
+            total_rows: 48,
+            updated_at: "2026-05-25T00:05:12Z",
+            disclaimer: "Aggregate anonymised data. No PII included. Refreshed weekly.",
+          },
+        },
+      },
+      {
         path: "/api/v1/widget-licenses",
         method: "GET | POST | DELETE",
         auth_required: true,
