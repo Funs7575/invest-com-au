@@ -130,6 +130,9 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/tax-nurture",
   ],
 
+  "weekly-fri-7": [
+    "/api/cron/decisions-digest",
+  ],
   "weekly-sun-0": ["/api/cron/rotate-featured-advisors"],
   "weekly-mon-3": [
     "/api/cron/afsl-expiry-monitor",
