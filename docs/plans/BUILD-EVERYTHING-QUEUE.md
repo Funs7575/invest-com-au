@@ -62,7 +62,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [~] **B2** Firm branded-profile subscription (`/firm/[slug]` enhanced tier)
 - [~] **B3** Advisor lead-management CRM add-on (pipeline stages on briefs inbox)
 - [~] **B4** Advisor careers / recruiter marketplace (job board; no reg risk)
-- [ ] **B5** B2B analytics / lead-quality benchmark dashboard
+- [~] **B5** B2B analytics / lead-quality benchmark dashboard
 
 ## Phase 7 — New consumer hubs (bigger; loop-friendly)
 - [~] **H1** Family-Office hub (directory + diagnostic quiz — highest revenue/effort)

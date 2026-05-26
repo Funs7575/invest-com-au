@@ -219,6 +219,9 @@ export default function FirmPerformanceClient({ summary: initialSummary }: Props
 
       <p className="text-xs text-slate-500 text-center">
         Score = composite platform rank (reviews · response · profile). Updated nightly.
+        <Link href="/firm-portal/analytics" className="ml-2 underline hover:text-slate-700">
+          Lead analytics →
+        </Link>
         <Link href="/firm-portal/billing" className="ml-2 underline hover:text-slate-700">
           Billing →
         </Link>
