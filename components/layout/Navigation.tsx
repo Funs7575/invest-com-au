@@ -327,6 +327,7 @@ const mobileSections = [
       { name: "All Calculators (25)", href: "/calculators" },
       { name: "CHESS Lookup", href: "/chess-lookup" },
       { name: "Fee Alerts", href: "/fee-alerts" },
+      { name: "Embed Widgets", href: "/embed" },
     ],
   },
   {

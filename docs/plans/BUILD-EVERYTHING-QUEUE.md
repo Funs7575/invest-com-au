@@ -73,7 +73,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 - [~] **H6** Mortgage/home-loan hub — **referral-only** (ACL escalator: no credit assistance)
 
 ## Phase 8 — Distribution (stream EE)
-- [ ] **E1** Embeddable widget marketplace (finish `app/embed`); WhatsApp/Telegram alerts bot
+- [~] **E1** Embeddable widget marketplace (finish `app/embed`); WhatsApp/Telegram alerts bot
 - [ ] **E2** Chrome extension (rate compare on competitor pages) — security-review-gated
 
 ## Phase 9 — Lifecycle-funnel moat
