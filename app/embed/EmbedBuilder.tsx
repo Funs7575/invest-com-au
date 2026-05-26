@@ -67,6 +67,12 @@ export default function EmbedBuilder() {
   const [badgeSlug, setBadgeSlug] = useState("");
   const [badgeTheme, setBadgeTheme] = useState<"light" | "dark">("light");
 
+  // ─── Best-rates widget state ─────────────────────────────────────────────
+  const [ratesType, setRatesType] = useState<"savings" | "term_deposit" | "all">("savings");
+  const [ratesAdvisorSlug, setRatesAdvisorSlug] = useState("");
+  const [ratesTheme, setRatesTheme] = useState<"light" | "dark">("light");
+  const [ratesLimit, setRatesLimit] = useState(5);
+
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -136,6 +142,17 @@ export default function EmbedBuilder() {
     return `https://invest.com.au/api/widget/badge${qs ? `?${qs}` : ""}`;
   }, [badgeType, badgeSlug, badgeTheme, partnerRef]);
 
+  const bestRatesEmbedUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    if (ratesType !== "savings") params.set("type", ratesType);
+    if (ratesAdvisorSlug.trim()) params.set("for_advisor_slug", ratesAdvisorSlug.trim());
+    if (ratesTheme !== "light") params.set("theme", ratesTheme);
+    if (ratesLimit !== 5) params.set("limit", String(ratesLimit));
+    if (partnerRef.trim()) params.set("ref", partnerRef.trim());
+    const qs = params.toString();
+    return `https://invest.com.au/api/widget/best-rates${qs ? `?${qs}` : ""}`;
+  }, [ratesType, ratesAdvisorSlug, ratesTheme, ratesLimit, partnerRef]);
+
   const activeUrl = useMemo(() => {
     switch (tab) {
       case "broker": return brokerEmbedUrl;
@@ -144,8 +161,9 @@ export default function EmbedBuilder() {
       case "fee-index": return feeIndexEmbedUrl;
       case "health-scores": return healthEmbedUrl;
       case "badge": return badgeEmbedUrl;
+      case "best-rates": return bestRatesEmbedUrl;
     }
-  }, [tab, brokerEmbedUrl, calcEmbedUrl, advisorEmbedUrl, feeIndexEmbedUrl, healthEmbedUrl, badgeEmbedUrl]);
+  }, [tab, brokerEmbedUrl, calcEmbedUrl, advisorEmbedUrl, feeIndexEmbedUrl, healthEmbedUrl, badgeEmbedUrl, bestRatesEmbedUrl]);
 
   const snippet = `<script src="${activeUrl}"></script>`;
 
@@ -224,6 +242,7 @@ export default function EmbedBuilder() {
       case "fee-index": return feeTheme;
       case "health-scores": return healthTheme;
       case "badge": return badgeTheme;
+      case "best-rates": return ratesTheme;
     }
   })();
 
@@ -648,6 +667,77 @@ export default function EmbedBuilder() {
               Renders a compact gauge badge (320px max-width) inside a Shadow DOM.
               Includes the general-advice disclaimer and a link to the scoring methodology.
               Not a recommendation or personal advice.
+            </p>
+          </>
+        )}
+
+        {/* ── BEST-RATES WIDGET CONTROLS ── */}
+        {tab === "best-rates" && (
+          <>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                  Product type
+                </label>
+                <select
+                  value={ratesType}
+                  onChange={(e) => setRatesType(e.target.value as "savings" | "term_deposit" | "all")}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+                >
+                  <option value="savings">Savings accounts</option>
+                  <option value="term_deposit">Term deposits</option>
+                  <option value="all">Both (savings + term deposits)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                  Rows to show
+                </label>
+                <select
+                  value={ratesLimit}
+                  onChange={(e) => setRatesLimit(Number(e.target.value))}
+                  className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+                >
+                  {[3, 5, 8, 10].map((n) => (
+                    <option key={n} value={n}>{n} rows</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                Advisor co-branding <span className="text-slate-400 font-normal lowercase">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={ratesAdvisorSlug}
+                onChange={(e) => setRatesAdvisorSlug(e.target.value)}
+                placeholder="e.g. jane-smith-cfp"
+                className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm placeholder:text-slate-400"
+                maxLength={128}
+              />
+              <p className="mt-1 text-[11px] text-slate-500">
+                Enter an advisor&apos;s slug to co-brand the header with their name and a link to their profile.
+                Leave blank for a generic rates widget.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+              <select
+                value={ratesTheme}
+                onChange={(e) => setRatesTheme(e.target.value as "light" | "dark")}
+                className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+              >
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+
+            <p className="text-[11px] text-slate-500">
+              Rates are sourced from public provider disclosures and refreshed hourly.
+              Always includes a general-information disclaimer. Not personal financial advice.
             </p>
           </>
         )}
