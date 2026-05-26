@@ -87,6 +87,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/rate-change-digest",
     "/api/cron/comeback-rate-email",
     "/api/cron/td-maturity-reminders",
+    "/api/cron/ipo-alerts",
   ],
   "daily-8": [
     "/api/cron/complaints-sla",

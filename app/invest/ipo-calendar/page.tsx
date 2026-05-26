@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Icon from "@/components/Icon";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import IpoWatchlistButton from "@/components/IpoWatchlistButton";
+import { createClient } from "@/lib/supabase/server";
 import {
   breadcrumbJsonLd,
   SITE_URL,
@@ -11,7 +13,6 @@ import {
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const revalidate = 3600;
-// Build-touch 2026-05-03 — force fresh prerender (cached version had stuck client-render).
 
 export const metadata: Metadata = {
   title: `ASX IPO Calendar (${CURRENT_YEAR}) — Upcoming Australian IPOs & Recent Listings`,
@@ -25,6 +26,60 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/invest/ipo-calendar`,
   },
 };
+
+interface IpoOffer {
+  id: number;
+  asx_code: string | null;
+  company_name: string;
+  sector: string | null;
+  offer_type: string;
+  status: string;
+  offer_open_date: string | null;
+  offer_close_date: string | null;
+  listing_date: string | null;
+  issue_price_cents: number | null;
+  amount_raised_cents: number | null;
+  first_day_return_pct: number | null;
+  note: string | null;
+  description: string | null;
+  prospectus_url: string | null;
+}
+
+const STATUS_LABEL: Record<string, string> = {
+  upcoming: "Upcoming",
+  open:      "Open now",
+  closed:    "Closed",
+  listed:    "Listed",
+  withdrawn: "Withdrawn",
+};
+
+const STATUS_COLOR: Record<string, string> = {
+  upcoming:  "bg-indigo-100 text-indigo-700 border-indigo-200",
+  open:      "bg-emerald-100 text-emerald-700 border-emerald-200",
+  closed:    "bg-slate-100 text-slate-600 border-slate-200",
+  listed:    "bg-blue-100 text-blue-700 border-blue-200",
+  withdrawn: "bg-red-100 text-red-600 border-red-200",
+};
+
+function fmtPrice(cents: number | null): string {
+  if (!cents) return "TBC";
+  return "$" + (cents / 100).toFixed(2);
+}
+
+function fmtRaise(cents: number | null): string {
+  if (!cents) return "TBC";
+  const m = cents / 100 / 1_000_000;
+  return m >= 1000 ? `$${(m / 1000).toFixed(1)}B` : `$${m.toFixed(0)}M`;
+}
+
+function fmtDate(d: string | null): string {
+  if (!d) return "TBC";
+  return new Date(d + "T00:00:00").toLocaleDateString("en-AU", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
 
 const ACCESS_ROUTES = [
   {
@@ -54,63 +109,6 @@ const ACCESS_ROUTES = [
     body:
       "OnMarket is the dominant Australian platform aggregating public-offer IPOs and small-cap placements for retail investors. Free to register; no brokerage relationship required. The platform handles allocation, settlement and CHESS HIN cross-reference. Useful for accessing smaller deals where the discount broker channel doesn't get an allocation.",
     cta: { label: "Find a stockbroker", href: "/advisors/stockbroker-firms" },
-  },
-];
-
-const RECENT_LISTINGS = [
-  {
-    code: "GYG",
-    name: "Guzman y Gomez",
-    sector: "Consumer (Restaurants)",
-    listingDate: "Jun 2024",
-    issuePrice: "$22.00",
-    raised: "$335M",
-    note: "First-day pop ~36%",
-  },
-  {
-    code: "DIGICO",
-    name: "DigiCo Infrastructure REIT",
-    sector: "Infrastructure REIT",
-    listingDate: "Dec 2024",
-    issuePrice: "$5.00",
-    raised: "$2.0B",
-    note: "Largest 2024 ASX IPO by raise",
-  },
-  {
-    code: "RVA",
-    name: "Reventon Resources",
-    sector: "Critical minerals",
-    listingDate: "Q4 2024",
-    issuePrice: "$0.20",
-    raised: "$10M",
-    note: "Small-cap mining listing",
-  },
-  {
-    code: "NICK",
-    name: "Nickel Industries (re-list)",
-    sector: "Mining",
-    listingDate: "2024",
-    issuePrice: "n/a",
-    raised: "$300M+",
-    note: "Compliance re-listing",
-  },
-  {
-    code: "ARI",
-    name: "Aerison Group",
-    sector: "Industrial services",
-    listingDate: "Q1 2025",
-    issuePrice: "$1.50",
-    raised: "$60M",
-    note: "Mid-cap industrial",
-  },
-  {
-    code: "VIRGIN",
-    name: "Virgin Australia (re-list)",
-    sector: "Aviation",
-    listingDate: "Pending",
-    issuePrice: "TBC",
-    raised: "$685M (target)",
-    note: "Bain Capital re-list",
   },
 ];
 
@@ -152,7 +150,22 @@ const FAQS = [
   },
 ];
 
-export default function IpoCalendarPage() {
+export default async function IpoCalendarPage() {
+  const supabase = await createClient();
+
+  const { data: ipoData } = await supabase
+    .from("ipo_offers")
+    .select(
+      "id, asx_code, company_name, sector, offer_type, status, offer_open_date, offer_close_date, listing_date, issue_price_cents, amount_raised_cents, first_day_return_pct, note, description, prospectus_url",
+    )
+    .eq("is_published", true)
+    .order("listing_date", { ascending: false, nullsFirst: true })
+    .limit(100);
+
+  const offers = (ipoData ?? []) as IpoOffer[];
+  const upcoming = offers.filter((o) => o.status === "upcoming" || o.status === "open");
+  const recent = offers.filter((o) => o.status === "listed" || o.status === "closed");
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Invest", url: `${SITE_URL}/invest` },
@@ -259,29 +272,82 @@ export default function IpoCalendarPage() {
         </div>
       </section>
 
-      {/* Roadmap notice */}
-      <section className="py-6 md:py-8 bg-indigo-50 border-y border-indigo-200">
-        <div className="container-custom">
-          <div className="flex items-start gap-4 max-w-4xl">
-            <div className="w-10 h-10 rounded-lg bg-indigo-200 flex items-center justify-center shrink-0 mt-0.5">
-              <Icon name="info" size={20} className="text-indigo-800" />
-            </div>
-            <div>
-              <h2 className="text-sm font-extrabold uppercase tracking-wide text-indigo-800 mb-1">
-                Live data on the roadmap
-              </h2>
-              <p className="text-sm md:text-base text-indigo-900 leading-relaxed">
-                The recent-listings list below is editorially compiled. A
-                live-feed integration with ASX listing announcements is on the
-                product roadmap and will replace the static seed list with
-                automatically-updating upcoming and recent IPOs. Subscribe
-                below to be notified when the live calendar goes live and to
-                receive early notice of upcoming ASX IPOs.
-              </p>
+      {/* Upcoming IPOs */}
+      {upcoming.length > 0 && (
+        <section className="py-10 md:py-12 bg-white border-b border-slate-100" id="upcoming">
+          <div className="container-custom max-w-5xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">
+              Upcoming & open now
+            </p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">
+              Upcoming ASX IPOs
+            </h2>
+
+            <div className="space-y-3">
+              {upcoming.map((ipo) => (
+                <div
+                  key={ipo.id}
+                  className="bg-white border border-slate-200 rounded-xl p-5 flex items-start gap-4"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                      {ipo.asx_code && (
+                        <span className="text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded">
+                          {ipo.asx_code}
+                        </span>
+                      )}
+                      <span
+                        className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${STATUS_COLOR[ipo.status] ?? STATUS_COLOR.upcoming}`}
+                      >
+                        {STATUS_LABEL[ipo.status] ?? ipo.status}
+                      </span>
+                      {ipo.sector && (
+                        <span className="text-xs text-slate-500">{ipo.sector}</span>
+                      )}
+                    </div>
+                    <h3 className="text-sm font-bold text-slate-900 mb-0.5">{ipo.company_name}</h3>
+                    <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500 mt-1">
+                      {ipo.offer_open_date && (
+                        <span>Opens: {fmtDate(ipo.offer_open_date)}</span>
+                      )}
+                      {ipo.offer_close_date && (
+                        <span>Closes: {fmtDate(ipo.offer_close_date)}</span>
+                      )}
+                      {ipo.listing_date && (
+                        <span>Lists: {fmtDate(ipo.listing_date)}</span>
+                      )}
+                      {ipo.issue_price_cents !== null && (
+                        <span>Issue price: {fmtPrice(ipo.issue_price_cents)}</span>
+                      )}
+                      {ipo.amount_raised_cents !== null && (
+                        <span>Raise: {fmtRaise(ipo.amount_raised_cents)}</span>
+                      )}
+                    </div>
+                    {ipo.note && (
+                      <p className="text-xs text-slate-500 mt-1">{ipo.note}</p>
+                    )}
+                    {ipo.prospectus_url && (
+                      <Link
+                        href={ipo.prospectus_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-indigo-600 hover:underline mt-1 inline-block"
+                      >
+                        View prospectus →
+                      </Link>
+                    )}
+                  </div>
+                  <IpoWatchlistButton
+                    ipoId={ipo.id}
+                    alertType="listing"
+                    className="w-8 h-8 shrink-0"
+                  />
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* How to access ASX IPOs */}
       <section className="py-10 md:py-12 bg-white" id="how-to-access">
@@ -330,77 +396,81 @@ export default function IpoCalendarPage() {
         </div>
       </section>
 
-      {/* Filter / demo table */}
+      {/* Recent listings */}
       <section className="py-10 md:py-12 bg-slate-50 border-y border-slate-100" id="recent-listings">
         <div className="container-custom max-w-5xl">
           <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">
             Section 2 &middot; Recent ASX listings
           </p>
           <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">
-            Recently listed (last 6 months)
+            Recently listed (last 12 months)
           </h2>
           <p className="text-sm text-slate-500 mb-6 max-w-2xl">
-            Editorially compiled snapshot of meaningful ASX IPOs. Filter by
-            sector and listing date is on the product roadmap once the live
-            ASX integration ships.
+            Editorially compiled snapshot of meaningful ASX IPOs. New listings
+            are added as prospectuses are lodged.
           </p>
 
-          <div className="overflow-x-auto bg-white border border-slate-200 rounded-xl">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700">
-                    Code
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700">
-                    Company
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700">
-                    Sector
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700">
-                    Listed
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700">
-                    Issue
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700">
-                    Raised
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {RECENT_LISTINGS.map((l, i) => (
-                  <tr
-                    key={l.code}
-                    className={i % 2 === 0 ? "bg-white" : "bg-slate-50/40"}
-                  >
-                    <td className="py-3 px-4 font-bold text-indigo-700 border-b border-slate-100">
-                      {l.code}
-                    </td>
-                    <td className="py-3 px-4 text-slate-800 border-b border-slate-100">
-                      <div className="font-semibold">{l.name}</div>
-                      <div className="text-xs text-slate-500 mt-0.5">
-                        {l.note}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-slate-600 border-b border-slate-100">
-                      {l.sector}
-                    </td>
-                    <td className="py-3 px-4 text-slate-600 border-b border-slate-100">
-                      {l.listingDate}
-                    </td>
-                    <td className="py-3 px-4 text-slate-600 border-b border-slate-100 tabular-nums">
-                      {l.issuePrice}
-                    </td>
-                    <td className="py-3 px-4 text-slate-600 border-b border-slate-100 tabular-nums">
-                      {l.raised}
-                    </td>
+          {recent.length > 0 ? (
+            <div className="overflow-x-auto bg-white border border-slate-200 rounded-xl">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Code</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Company</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Sector</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Listed</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Issue</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Raised</th>
+                    <th className="text-left py-3 px-4 font-semibold text-slate-700 w-10"></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {recent.map((ipo, i) => (
+                    <tr
+                      key={ipo.id}
+                      className={i % 2 === 0 ? "bg-white" : "bg-slate-50/40"}
+                    >
+                      <td className="py-3 px-4 font-bold text-indigo-700 border-b border-slate-100">
+                        {ipo.asx_code ?? "—"}
+                      </td>
+                      <td className="py-3 px-4 text-slate-800 border-b border-slate-100">
+                        <div className="font-semibold">{ipo.company_name}</div>
+                        {ipo.note && (
+                          <div className="text-xs text-slate-500 mt-0.5">{ipo.note}</div>
+                        )}
+                        {ipo.first_day_return_pct !== null && (
+                          <div className={`text-xs font-semibold mt-0.5 ${ipo.first_day_return_pct >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                            Day-1: {ipo.first_day_return_pct >= 0 ? "+" : ""}{ipo.first_day_return_pct.toFixed(1)}%
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-3 px-4 text-slate-600 border-b border-slate-100">
+                        {ipo.sector ?? "—"}
+                      </td>
+                      <td className="py-3 px-4 text-slate-600 border-b border-slate-100">
+                        {fmtDate(ipo.listing_date)}
+                      </td>
+                      <td className="py-3 px-4 text-slate-600 border-b border-slate-100 tabular-nums">
+                        {fmtPrice(ipo.issue_price_cents)}
+                      </td>
+                      <td className="py-3 px-4 text-slate-600 border-b border-slate-100 tabular-nums">
+                        {fmtRaise(ipo.amount_raised_cents)}
+                      </td>
+                      <td className="py-3 px-4 border-b border-slate-100">
+                        <IpoWatchlistButton
+                          ipoId={ipo.id}
+                          alertType="listing"
+                          className="w-7 h-7"
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">No recent listings found. Check back soon.</p>
+          )}
 
           <p className="text-[11px] text-slate-400 mt-3">
             Data is editorially compiled and reviewed; market data moves

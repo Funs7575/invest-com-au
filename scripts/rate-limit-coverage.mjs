@@ -137,6 +137,10 @@ const EXEMPT_PATTERNS = [
   // iCal output is deterministic and fully CDN-absorbed at this traffic level.
   // No writes, no user input, no PII — per-IP throttle adds nothing.
   { match: /\/api\/market-events(\/|$)/, reason: "public read w/ 1h CDN cache; iCal/JSON; provider-pooled; no writes" },
+  // ipo-offers is a public-read list with 1h CDN cache. No PII, no writes,
+  // only a status enum query param validated against a fixed Set. Per-IP
+  // throttle would cost CDN cache hits with no real threat model.
+  { match: /\/api\/ipo-offers(\/|$)/, reason: "public read w/ 1h CDN cache; provider-pooled; no writes" },
 ];
 
 async function findRouteFiles(dir) {
