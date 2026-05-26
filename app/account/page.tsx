@@ -100,12 +100,20 @@ export default async function AccountPage() {
           </div>
           <AccountActivityFeed items={dashboard.feed} />
           <div className="flex items-center justify-between pt-1">
-            <Link
-              href="/account/term-deposits"
-              className="text-xs font-semibold text-slate-500 hover:text-violet-700"
-            >
-              Term deposits →
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/account/term-deposits"
+                className="text-xs font-semibold text-slate-500 hover:text-violet-700"
+              >
+                Term deposits →
+              </Link>
+              <Link
+                href="/account/verified"
+                className="text-xs font-semibold text-slate-500 hover:text-violet-700"
+              >
+                Verified products →
+              </Link>
+            </div>
             <Link
               href="/account/decisions"
               className="text-xs font-semibold text-amber-700 hover:text-amber-900"

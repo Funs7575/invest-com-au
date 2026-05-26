@@ -128,6 +128,11 @@ const EXEMPT_PATTERNS = [
   // user-lists follow/clone require a valid Supabase session; UNIQUE DB
   // constraint on follows prevents duplicates. Clone is also session-auth.
   { match: /\/api\/user-lists\//, reason: "session-auth required; follow protected by DB UNIQUE constraint" },
+  // verified-count is a public aggregate (count from a view). Cache-Control
+  // sets public, max-age=60, stale-while-revalidate=300 so Vercel's CDN
+  // absorbs repeat reads. No PII, no writes, no user input beyond URL segments
+  // validated against a fixed enum — per-IP throttling adds nothing.
+  { match: /\/api\/verified-count\//, reason: "public read w/ 60s CDN cache; provider-pooled; no writes" },
 ];
 
 async function findRouteFiles(dir) {
