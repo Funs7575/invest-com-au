@@ -271,6 +271,15 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 575 — 2026-05-26 — STATUS: ALL-BLOCKED · stream=all · nf-ci-running(#1176,#1180)
+
+- **Phase 2 (CI check):** #1176 (NF admin MFA): `Lint · Type-check · Test · Build` `in_progress`, all other required checks ✅, `Supabase types drift` ❌ (known noise). #1180 (NF SMS consent): `Lint · Type-check · Test · Build` `in_progress`, all required checks running, pattern identical. No rescue needed — CI triggered successfully by iter 574 rebase. #1198 (F parseMoney): CI confirmed green (iter 573). #1178 (NF autopilot): Blocked (complex cron conflicts — surfaced iter 574).
+- **Phase 3:** No pending engineering items in any non-blocked stream.
+- **STATUS: ALL-BLOCKED · stream=all · nf-ci-running(#1176,#1180)**
+- **Batch stop condition reached** (ALL-BLOCKED per batch mode contract). Total iterations this fire: 2 (574 CI-RESCUE + 575 ALL-BLOCKED).
+
+---
+
 ### iter 574 — 2026-05-26 — STATUS: CI-RESCUE · stream=NF · pr=#1176+#1180+block(#1178)
 
 - **Phase 0:** Lock acquired.
