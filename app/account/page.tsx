@@ -99,7 +99,13 @@ export default async function AccountPage() {
             />
           </div>
           <AccountActivityFeed items={dashboard.feed} />
-          <div className="flex justify-end pt-1">
+          <div className="flex items-center justify-between pt-1">
+            <Link
+              href="/account/term-deposits"
+              className="text-xs font-semibold text-slate-500 hover:text-violet-700"
+            >
+              Term deposits →
+            </Link>
             <Link
               href="/account/decisions"
               className="text-xs font-semibold text-amber-700 hover:text-amber-900"
