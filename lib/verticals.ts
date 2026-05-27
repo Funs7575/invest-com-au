@@ -1575,6 +1575,11 @@ export const RETIREMENT_HUB_CONFIG: HubConfig = {
       excerpt: "How the $300/fortnight Work Bonus works, the $11,800 accumulating balance, and worked examples of casual work while pensioning.",
       href: "/retirement/work-bonus",
     },
+    {
+      title: "Retirement Income Strategies — ABP, Buckets & SWR",
+      excerpt: "Account-based pension minimum drawdown rules, the 4% safe withdrawal rate, bucket strategy (3 buckets), sequencing risk, and Centrelink optimisation.",
+      href: "/retirement/retirement-income",
+    },
   ],
 
   faqs: [
