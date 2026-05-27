@@ -72,6 +72,9 @@ export default async function SuperPage() {
                 { label: "Super Quiz", href: "/super/quiz", badge: "Find your fund" },
                 { label: "Compare Super", href: "/compare/super", badge: "Fees & returns" },
                 { label: "Division 296 Tax", href: "/super/division-296", badge: "From July 2026" },
+                { label: "Catch-Up Contributions", href: "/super/catch-up-contributions", badge: "Carry-forward" },
+                { label: "Co-Contribution", href: "/super/co-contribution", badge: "Govt matches $0.50/$1" },
+                { label: "Spouse Contributions", href: "/super/spouse-contributions", badge: "Up to $540 offset" },
               ].map(({ label, href, badge }) => (
                 <Link
                   key={href}

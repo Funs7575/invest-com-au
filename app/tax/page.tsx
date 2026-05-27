@@ -96,6 +96,20 @@ const TAX_TOPICS = [
     icon: "🏥",
     keyFact: "1–1.5% surcharge above $93k",
   },
+  {
+    title: "Fringe Benefits Tax (FBT)",
+    description: "How FBT works for employees and employers: novated leases, reportable fringe benefits, exempt items, the EV FBT exemption, and how RFBA affects Medicare Levy Surcharge thresholds.",
+    href: "/tax/fringe-benefits",
+    icon: "🚗",
+    keyFact: "47% FBT rate; EV exemption from 2022",
+  },
+  {
+    title: "Small Business Tax",
+    description: "Business structure comparison (sole trader, company, trust), 25% base rate entity tax, instant asset write-off, small business CGT concessions, GST threshold, and Division 7A rules.",
+    href: "/tax/small-business",
+    icon: "🏢",
+    keyFact: "25% company rate for SMEs",
+  },
 ];
 
 const TAX_RATES = [
