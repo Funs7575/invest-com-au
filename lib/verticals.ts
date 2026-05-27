@@ -1580,6 +1580,16 @@ export const RETIREMENT_HUB_CONFIG: HubConfig = {
       excerpt: "Account-based pension minimum drawdown rules, the 4% safe withdrawal rate, bucket strategy (3 buckets), sequencing risk, and Centrelink optimisation.",
       href: "/retirement/retirement-income",
     },
+    {
+      title: "How Much Do You Need to Retire? ASFA Standard + 4% Rule",
+      excerpt: "ASFA comfortable standard ($690K couple, $595K single), the 4% safe withdrawal rate, Age Pension supplement, and balance benchmarks by age.",
+      href: "/retirement/how-much-do-you-need",
+    },
+    {
+      title: "Age Pension: Rates, Eligibility & Means Test",
+      excerpt: "Maximum pension rates, assets and income test thresholds, Pensioner Concession Card, and how super interacts with the Age Pension.",
+      href: "/retirement/age-pension",
+    },
   ],
 
   faqs: [
@@ -1921,6 +1931,27 @@ export const HOME_LOANS_HUB_CONFIG: HubConfig = {
         "IO vs P&I cost comparison, the repayment jump after the IO period, investment property offset strategy, and when IO is a bad idea.",
       href: "/home-loans/interest-only",
       readingTimeMinutes: 6,
+    },
+    {
+      title: "Fixed Rate Home Loans — When to Lock In",
+      excerpt:
+        "Break costs explained, rate lock fees, the split-loan strategy, and why long-term fixed rates can cost more when the RBA cuts.",
+      href: "/home-loans/fixed",
+      readingTimeMinutes: 6,
+    },
+    {
+      title: "Investment Property Loans — Rates, IO & Tax",
+      excerpt:
+        "How investment loans differ from owner-occupier, IO strategy for negative gearing, and the deductibility rules you need to know.",
+      href: "/home-loans/investment",
+      readingTimeMinutes: 6,
+    },
+    {
+      title: "Offset vs Redraw — Which Saves More?",
+      excerpt:
+        "How offset accounts reduce daily interest vs redraw access to extra repayments. Tax traps for investors if you redraw into non-deductible debt.",
+      href: "/home-loans/offset-redraw",
+      readingTimeMinutes: 5,
     },
   ],
 
