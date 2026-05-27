@@ -75,6 +75,7 @@ export default async function SuperPage() {
                 { label: "Catch-Up Contributions", href: "/super/catch-up-contributions", badge: "Carry-forward" },
                 { label: "Co-Contribution", href: "/super/co-contribution", badge: "Govt matches $0.50/$1" },
                 { label: "Spouse Contributions", href: "/super/spouse-contributions", badge: "Up to $540 offset" },
+                { label: "Pension Phase", href: "/super/pension-phase", badge: "Tax-free earnings" },
               ].map(({ label, href, badge }) => (
                 <Link
                   key={href}

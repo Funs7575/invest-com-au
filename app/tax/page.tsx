@@ -124,6 +124,13 @@ const TAX_TOPICS = [
     icon: "🎓",
     keyFact: "10% rate above $159,664",
   },
+  {
+    title: "Investment Record Keeping",
+    description: "ATO 5-year retention rules, what records to keep for shares, ETFs, property, and crypto, cost base documentation, Sharesight and Koinly tools, and what to do if you lose records.",
+    href: "/tax/record-keeping",
+    icon: "📁",
+    keyFact: "Property records: keep from purchase until 5 years after sale",
+  },
 ];
 
 const TAX_RATES = [
