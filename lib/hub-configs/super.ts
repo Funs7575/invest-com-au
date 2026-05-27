@@ -124,7 +124,7 @@ export const superHubConfig: HubConfig = {
       title: "Transition to Retirement (TTR) Explained",
       excerpt:
         "TTR lets you draw an income stream from your super from age 60 while still working. When it makes sense, how to structure it, and what traps to avoid — especially the tax treatment of TTR pensions.",
-      href: "/advisors/financial-planners",
+      href: "/super/transition-to-retirement",
       readingTimeMinutes: 6,
     },
     {
@@ -133,6 +133,13 @@ export const superHubConfig: HubConfig = {
         "How to use the ATO's online services to find super held with multiple funds, assess whether consolidating makes sense, and execute the rollover without triggering an insurance gap.",
       href: "/super/consolidation",
       readingTimeMinutes: 5,
+    },
+    {
+      title: "Insurance Inside Super — What You're Actually Covered For",
+      excerpt:
+        "Life, TPD and income protection cover inside super: group rates, the any-occupation TPD trap, MySuper inactivity rules, and the insurance gap risk when consolidating funds.",
+      href: "/super/insurance",
+      readingTimeMinutes: 6,
     },
   ],
 
