@@ -26,7 +26,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = hasSupabase ? await createClient() : null;
 
   // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/smsf/borrowing", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer", "/redundancy", "/inheritance", "/retirement", "/aged-care", "/home-loans", "/family-office", "/global-investing/tax", "/alt-assets", "/mortgage", "/super/transition-to-retirement", "/super/insurance", "/super/death-benefit", "/tax/salary-sacrifice", "/tax/rental-property", "/invest/ethical-investing", "/tax/trusts", "/tax/estate-planning", "/tax/medicare", "/super/division-296", "/smsf/wind-up", "/first-home-buyer/grants", "/invest/dollar-cost-averaging", "/retirement/deeming-rates", "/home-loans/lmi", "/invest/value-investing", "/invest/passive-vs-active", "/invest/shares-vs-property", "/invest/growth-investing", "/invest/rebalancing", "/super/catch-up-contributions", "/super/co-contribution", "/super/spouse-contributions", "/retirement/downsizer-contribution", "/home-loans/bridging-finance", "/home-loans/construction-loans", "/tax/fringe-benefits", "/tax/small-business", "/tax/foreign-income", "/tax/hecs-help", "/home-loans/interest-only", "/property/depreciation", "/invest/dividend-reinvestment", "/first-home-buyer/shared-equity", "/retirement/income-test", "/retirement/work-bonus"]);
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/smsf/borrowing", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer", "/redundancy", "/inheritance", "/retirement", "/aged-care", "/home-loans", "/family-office", "/global-investing/tax", "/alt-assets", "/mortgage", "/super/transition-to-retirement", "/super/insurance", "/super/death-benefit", "/tax/salary-sacrifice", "/tax/rental-property", "/invest/ethical-investing", "/tax/trusts", "/tax/estate-planning", "/tax/medicare", "/super/division-296", "/smsf/wind-up", "/first-home-buyer/grants", "/invest/dollar-cost-averaging", "/retirement/deeming-rates", "/home-loans/lmi", "/invest/value-investing", "/invest/passive-vs-active", "/invest/shares-vs-property", "/invest/growth-investing", "/invest/rebalancing", "/super/catch-up-contributions", "/super/co-contribution", "/super/spouse-contributions", "/retirement/downsizer-contribution", "/home-loans/bridging-finance", "/home-loans/construction-loans", "/tax/fringe-benefits", "/tax/small-business", "/tax/foreign-income", "/tax/hecs-help", "/home-loans/interest-only", "/property/depreciation", "/invest/dividend-reinvestment", "/first-home-buyer/shared-equity", "/retirement/income-test", "/retirement/work-bonus",
+    "/invest/etfs", "/invest/tax-loss-harvesting", "/invest/lump-sum-vs-dca",
+    "/property/equity-access", "/retirement/retirement-income",
+    "/first-home-buyer/stamp-duty", "/first-home-buyer/fhss-guide"]);
   const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/rate-alerts", "/embed", "/embed/licensing", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator",
     "/wealth-stack", "/startup/grants", "/lic-screener", "/tools/subscription-audit",
     "/questions", ...QUESTIONS.map((q) => `/questions/${q.slug}`)]);
@@ -229,6 +232,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/ethical-investing", "/invest/index-funds", "/invest/dollar-cost-averaging",
     "/invest/value-investing", "/invest/passive-vs-active", "/invest/shares-vs-property",
     "/invest/growth-investing", "/invest/rebalancing", "/invest/dividend-reinvestment",
+    "/invest/etfs", "/invest/tax-loss-harvesting", "/invest/lump-sum-vs-dca",
     // Super sub-pages (additional)
     "/super/division-296", "/super/catch-up-contributions", "/super/co-contribution",
     "/super/spouse-contributions",
@@ -236,12 +240,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/first-home-buyer/grants", "/first-home-buyer/shared-equity",
     // Retirement sub-pages (additional)
     "/retirement/deeming-rates", "/retirement/downsizer-contribution",
-    "/retirement/income-test", "/retirement/work-bonus",
+    "/retirement/income-test", "/retirement/work-bonus", "/retirement/retirement-income",
     // Home loans sub-pages (additional)
     "/home-loans/lmi", "/home-loans/bridging-finance", "/home-loans/construction-loans",
     "/home-loans/interest-only",
     // Property sub-pages (additional)
-    "/property/depreciation",
+    "/property/depreciation", "/property/equity-access",
     // Tax sub-pages (additional)
     "/tax/fringe-benefits", "/tax/small-business", "/tax/foreign-income", "/tax/hecs-help",
     // Property sub-pages
