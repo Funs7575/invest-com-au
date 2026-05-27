@@ -454,7 +454,8 @@ const nextConfig: NextConfig = {
       { source: "/how-to/invest-in-etfs", destination: "/how-to/invest-in-etfs-for-beginners", permanent: true },
       // Compare sub-pages that don't yet exist → hub
       { source: "/compare/brokers", destination: "/compare", permanent: true },
-      { source: "/compare/fx", destination: "/compare/money-transfer", permanent: true },
+      { source: "/compare/fx", destination: "/global-investing/currency/best-fx-providers", permanent: true },
+      { source: "/compare/money-transfer", destination: "/global-investing/currency/best-fx-providers", permanent: true },
       // /find/financial-advisor and /find/mortgage-broker → advisor directories
       { source: "/find/financial-advisor", destination: "/advisors/financial-planners", permanent: true },
       { source: "/find/mortgage-broker", destination: "/advisors/mortgage-brokers", permanent: true },

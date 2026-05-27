@@ -214,6 +214,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/global-investing/currency/best-fx-providers",
     "/global-investing/guides/ibkr-australia-setup",
     "/global-investing/guides/chess-vs-custodial-international",
+    "/global-investing/calculators/direct-vs-asx-cost",
     // Insurance sub-pages
     "/insurance/tpd", "/insurance/trauma",
     // Tax sub-pages (not in newHubPages)
