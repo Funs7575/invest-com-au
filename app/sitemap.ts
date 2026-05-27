@@ -171,6 +171,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/alt-assets",
     // Mortgage hub
     "/mortgage",
+    // Retirement sub-pages
+    "/retirement/pension-phase", "/retirement/annuities", "/retirement/age-pension",
+    "/retirement/how-much-do-you-need", "/retirement/annuities-vs-abp",
+    "/retirement/age-pension-assets-test", "/retirement/reverse-mortgage",
+    // Aged-care sub-pages
+    "/aged-care/rad-vs-dap", "/aged-care/costs", "/aged-care/means-test",
+    "/aged-care/home-care-packages", "/aged-care/home-vs-residential",
+    "/aged-care/centrelink", "/aged-care/family-home", "/aged-care/facilities",
     // Foreign investment hub — hreflang-aware entries generated in localizedPages below.
     // Non-localised sub-pages remain here; UAE is also in localizedPages (ar variant).
     "/foreign-investment/super",
