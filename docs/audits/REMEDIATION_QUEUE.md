@@ -271,6 +271,16 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 577 — 2026-05-27 — STATUS: ALL-BLOCKED · #1268-ci-running
+
+- **Phase 2 (CI check):** #1268 (main-rescue cron-webhook-mock): `Lint · Type-check · Test · Build` `in_progress`. No rescue needed — CI just triggered. #1198 (F parseMoney): `Lint · Type-check · Test · Build` ✅ SUCCESS (iter 573, confirmed now). All gate checks ✅. `Preview smoke test` ❌ + `Supabase types drift` ❌ — known infra noise. #1176/#1180: still showing old failure from `ff2198e` base — will be fixed by #1268 landing.
+- **Phase 3 (Item selection):** No pending engineering items in any non-blocked stream. NF-16 (#1178) remains blocked (complex cron conflicts). Other streams all done or blocked.
+- **Pending founder actions:** Merge #1268 (Tier A — tests only, CI pending), then merge #1198 (Tier A — script allowlist, CI green). After #1268 lands, rebase #1176 and #1180 onto new main to clear their CI failures.
+- **STATUS: ALL-BLOCKED · #1268-ci-running**
+- **Batch stop condition reached** (ALL-BLOCKED per batch mode contract). Total iterations this fire: 2 (576 MAIN-RESCUE + 577 ALL-BLOCKED).
+
+---
+
 ### iter 576 — 2026-05-27 — STATUS: MAIN-RESCUE · pr=#1268
 
 - **Phase 0:** Lock acquired. LOOP_PAUSE present (set 2026-05-25); manual founder invocation overrides sentinel for this fire.
