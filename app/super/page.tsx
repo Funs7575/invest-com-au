@@ -71,6 +71,7 @@ export default async function SuperPage() {
                 { label: "Leaving Australia", href: "/super/leaving-australia", badge: "DASP" },
                 { label: "Super Quiz", href: "/super/quiz", badge: "Find your fund" },
                 { label: "Compare Super", href: "/compare/super", badge: "Fees & returns" },
+                { label: "Division 296 Tax", href: "/super/division-296", badge: "From July 2026" },
               ].map(({ label, href, badge }) => (
                 <Link
                   key={href}
