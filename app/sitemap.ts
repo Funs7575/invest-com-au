@@ -205,6 +205,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/home-loans/investment", "/home-loans/offset-redraw", "/home-loans/compare",
     // ETF sub-pages
     "/etfs/bonds", "/etfs/international", "/etfs/sectors",
+    "/etfs/vs/ivv-vs-vts", "/etfs/vs/ndq-vs-ivv", "/etfs/vs/vgs-vs-iwld",
+    // Global investing sub-pages
+    "/global-investing/etfs",
+    "/global-investing/etfs/us", "/global-investing/etfs/global",
+    "/global-investing/shares/us",
+    "/global-investing/tax/w-8ben",
+    "/global-investing/currency/best-fx-providers",
     // Insurance sub-pages
     "/insurance/tpd", "/insurance/trauma",
     // Tax sub-pages (not in newHubPages)
