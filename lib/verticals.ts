@@ -1555,6 +1555,26 @@ export const RETIREMENT_HUB_CONFIG: HubConfig = {
       excerpt: "How the assets test works, thresholds for couples vs singles, super treatment before vs after Age Pension age.",
       href: "/retirement/age-pension-assets-test",
     },
+    {
+      title: "Age Pension Deeming Rates Explained",
+      excerpt: "How deemed income is calculated on financial assets, the 0.25%/2.25% rates, account-based pension grandfathering, and worked example.",
+      href: "/retirement/deeming-rates",
+    },
+    {
+      title: "Downsizer Contribution: Super Boost at Age 55+",
+      excerpt: "Contribute up to $300K ($600K couple) from a home sale to super with no TSB limit. Age Pension interaction and 90-day deadline.",
+      href: "/retirement/downsizer-contribution",
+    },
+    {
+      title: "Age Pension Income Test: Work Bonus & Deeming",
+      excerpt: "Income-free area, taper rate, Work Bonus ($300/fortnight exempt), deeming on financial assets, and step-by-step calculation.",
+      href: "/retirement/income-test",
+    },
+    {
+      title: "Work Bonus Scheme: Earn While on the Pension",
+      excerpt: "How the $300/fortnight Work Bonus works, the $11,800 accumulating balance, and worked examples of casual work while pensioning.",
+      href: "/retirement/work-bonus",
+    },
   ],
 
   faqs: [
@@ -1868,6 +1888,34 @@ export const HOME_LOANS_HUB_CONFIG: HubConfig = {
         "Brokers access 30+ lenders and are lender-paid — free to the borrower. The data on whether brokers get lower rates than direct applicants.",
       href: "/advisor-guides/mortgage-broker-vs-bank",
       readingTimeMinutes: 5,
+    },
+    {
+      title: "Lenders Mortgage Insurance (LMI) — What It Costs & How to Avoid It",
+      excerpt:
+        "LMI protects the lender, not you. Cost table at 80/85/90/95% LVR, 4 avoidance strategies, and the 30-year compounding cost of capitalising LMI.",
+      href: "/home-loans/lmi",
+      readingTimeMinutes: 6,
+    },
+    {
+      title: "Bridging Finance — Buying Before You Sell",
+      excerpt:
+        "Peak debt vs end debt explained, open vs closed bridge, real cost breakdown, and the 4 risks that catch buyers off guard.",
+      href: "/home-loans/bridging-finance",
+      readingTimeMinutes: 5,
+    },
+    {
+      title: "Construction Loans — How Progress Drawdowns Work",
+      excerpt:
+        "5-stage drawdown structure, construction vs standard loan comparison, fixed-price contract requirements, and the risks of provisional sums.",
+      href: "/home-loans/construction-loans",
+      readingTimeMinutes: 7,
+    },
+    {
+      title: "Interest-Only Home Loans — Strategy Guide",
+      excerpt:
+        "IO vs P&I cost comparison, the repayment jump after the IO period, investment property offset strategy, and when IO is a bad idea.",
+      href: "/home-loans/interest-only",
+      readingTimeMinutes: 6,
     },
   ],
 

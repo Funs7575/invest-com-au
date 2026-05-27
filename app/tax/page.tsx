@@ -110,6 +110,20 @@ const TAX_TOPICS = [
     icon: "🏢",
     keyFact: "25% company rate for SMEs",
   },
+  {
+    title: "Foreign Income Tax",
+    description: "How overseas dividends, capital gains, and interest are taxed in Australia. Double Tax Agreements, the Foreign Income Tax Offset, currency translation, and ASX global ETF distributions.",
+    href: "/tax/foreign-income",
+    icon: "🌏",
+    keyFact: "FITO offsets withholding tax dollar-for-dollar",
+  },
+  {
+    title: "HECS-HELP Repayments",
+    description: "Repayment thresholds (from $54,435), the CPI indexation rate, how salary sacrifice affects repayment income, voluntary repayments, and the 2024 WPI cap legislation change.",
+    href: "/tax/hecs-help",
+    icon: "🎓",
+    keyFact: "10% rate above $159,664",
+  },
 ];
 
 const TAX_RATES = [
