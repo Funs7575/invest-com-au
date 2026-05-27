@@ -74,7 +74,7 @@ Legend: `[ ]` todo · `[~]` in-progress (PR open) · `[x]` done (merged) · `[!]
 
 ## Phase 8 — Distribution (stream EE)
 - [~] **E1** Embeddable widget marketplace (finish `app/embed`); WhatsApp/Telegram alerts bot
-- [ ] **E2** Chrome extension (rate compare on competitor pages) — security-review-gated
+- [!] **E2** Chrome extension (rate compare on competitor pages) — security-review-gated (blocked: needs founder security-review sign-off before build)
 
 ## Phase 9 — Lifecycle-funnel moat
 - [~] **L1** Cross-hub lifecycle routing graph (founder→sell-business→SMSF→private; retiree→aged-care→estate) — intent-routing + cross-links across hubs
