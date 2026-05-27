@@ -444,6 +444,8 @@ const nextConfig: NextConfig = {
       { source: "/find/tax-accountant", destination: "/advisors/tax-agents", permanent: true },
       // /tools/stamp-duty-calculator doesn't exist; stamp duty info lives at:
       { source: "/tools/stamp-duty-calculator", destination: "/first-home-buyer/stamp-duty", permanent: true },
+      // /advisors/tax-accountants — no SLUG_TO_TYPE entry; canonical is tax-agents.
+      { source: "/advisors/tax-accountants", destination: "/advisors/tax-agents", permanent: true },
     ];
   },
 };
