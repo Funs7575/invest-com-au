@@ -431,6 +431,14 @@ const nextConfig: NextConfig = {
         destination: "/startup/grants",
         permanent: true,
       },
+      // ── Short-form advisor-guide slugs → canonical how-to-choose pages ──
+      // Referenced from /articles sidebar and lib/next-action.ts; served by
+      // the dynamic [slug] route but no data entry exists — 301 to canonical.
+      { source: "/advisor-guides/financial-planner", destination: "/advisor-guides/how-to-choose-financial-planner", permanent: true },
+      { source: "/advisor-guides/smsf-accountant", destination: "/advisor-guides/how-to-choose-smsf-accountant", permanent: true },
+      { source: "/advisor-guides/tax-agent", destination: "/advisor-guides/how-to-choose-tax-agent-investments", permanent: true },
+      { source: "/advisor-guides/mortgage-broker", destination: "/advisor-guides/how-to-choose-mortgage-broker", permanent: true },
+      { source: "/advisor-guides/property-advisor", destination: "/advisor-guides/how-to-choose-property-investment-advisor", permanent: true },
     ];
   },
 };
