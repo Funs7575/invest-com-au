@@ -179,6 +179,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/aged-care/rad-vs-dap", "/aged-care/costs", "/aged-care/means-test",
     "/aged-care/home-care-packages", "/aged-care/home-vs-residential",
     "/aged-care/centrelink", "/aged-care/family-home", "/aged-care/facilities",
+    // First home buyer sub-pages
+    "/first-home-buyer/fhss-guide", "/first-home-buyer/first-home-guarantee",
+    "/first-home-buyer/deposit-guide", "/first-home-buyer/stamp-duty",
     // Foreign investment hub — hreflang-aware entries generated in localizedPages below.
     // Non-localised sub-pages remain here; UAE is also in localizedPages (ar variant).
     "/foreign-investment/super",
