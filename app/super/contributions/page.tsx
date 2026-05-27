@@ -1,23 +1,24 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { SUPER_WARNING_SHORT, GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import Link from "next/link";
+import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "Super Contributions Guide — Concessional, Non-Concessional & Catch-Up (2026)",
+  title: `Super Contributions Guide — Concessional, Non-Concessional & Catch-Up (${CURRENT_YEAR})`,
   description:
-    "Complete guide to super contributions in Australia. Concessional cap $30,000, non-concessional cap $120,000, carry-forward rules, salary sacrifice, spouse contributions, and government co-contribution. Updated March 2026.",
+    "Complete guide to super contributions in Australia. Concessional cap $30,000, non-concessional cap $120,000, carry-forward rules, salary sacrifice, government co-contribution, and Division 296. Updated 2024-25 figures.",
   openGraph: {
-    title: "Super Contributions Guide — Concessional, Non-Concessional & Catch-Up (2026)",
+    title: `Super Contributions Guide — Concessional, Non-Concessional & Catch-Up (${CURRENT_YEAR})`,
     description:
       "Everything about Australian super contributions: the $30k concessional cap, $120k non-concessional cap, salary sacrifice tax benefits, catch-up contributions, spouse offset, and government co-contribution.",
     url: `${SITE_URL}/super/contributions`,
     images: [
       {
-        url: `/api/og?title=${encodeURIComponent("Super Contributions Guide 2026")}&sub=${encodeURIComponent("Concessional · Non-Concessional · Catch-Up · Salary Sacrifice")}`,
+        url: `/api/og?title=${encodeURIComponent("Super Contributions Guide " + String(CURRENT_YEAR))}&sub=${encodeURIComponent("Concessional · Non-Concessional · Catch-Up · Salary Sacrifice")}`,
         width: 1200,
         height: 630,
       },
@@ -27,211 +28,321 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/super/contributions` },
 };
 
-const CONTRIBUTION_COMPARISON = [
+// ─── Static data ─────────────────────────────────────────────────────────────
+
+const COMPARISON_ROWS = [
   {
-    label: "Who makes it?",
+    feature: "Who makes it?",
     concessional: "Employer (SG), salary sacrifice, or personal deductible",
-    nonConcessional: "You — from after-tax income",
+    nonConcessional: "You — from after-tax income; no deduction claimed",
   },
   {
-    label: "Annual cap (2025–26)",
+    feature: "Annual cap (2024-25)",
     concessional: "$30,000",
-    nonConcessional: "$120,000 (or $360,000 using 3-year bring-forward rule)",
+    nonConcessional: "$120,000 (or up to $360,000 using the 3-year bring-forward rule)",
   },
   {
-    label: "Tax rate inside super",
-    concessional: "15% (30% if income > $250k — Division 293)",
-    nonConcessional: "0% — already taxed in your hands",
+    feature: "Tax on entry to super",
+    concessional: "15% contributions tax (30% via Division 293 if income > $250k)",
+    nonConcessional: "0% — already taxed; earnings inside super taxed at 15%",
   },
   {
-    label: "Tax deduction",
+    feature: "Tax deduction available?",
     concessional: "Yes — salary sacrifice and personal deductible contributions reduce taxable income",
-    nonConcessional: "No deduction — contributions come from after-tax dollars",
+    nonConcessional: "No — contributions come from after-tax dollars; no deduction",
   },
   {
-    label: "Who benefits most?",
-    concessional: "Higher earners (top marginal rate 47% vs 15% in super)",
-    nonConcessional: "People with excess savings, selling an asset, or receiving a windfall",
+    feature: "Who benefits most?",
+    concessional: "Higher earners — top marginal rate 47% vs 15% inside super",
+    nonConcessional: "People with excess savings, an inheritance, or proceeds from selling an asset",
   },
   {
-    label: "Excess penalty",
-    concessional: "Included in assessable income + excess concessional charge",
-    nonConcessional: "Taxed at 47% on the excess (or choose to withdraw it)",
+    feature: "Excess cap penalty",
+    concessional: "Included in assessable income at marginal rate + excess concessional contributions charge",
+    nonConcessional: "Taxed at 47% on excess amount (or elect to withdraw it)",
   },
   {
-    label: "Catch-up (carry-forward)?",
-    concessional: "Yes — unused cap from prior 5 years if TSB < $500k",
-    nonConcessional: "No carry-forward — but 3-year bring-forward rule applies",
+    feature: "Carry-forward / bring-forward?",
+    concessional: "Carry-forward — unused cap last 5 years, if TSB < $500k",
+    nonConcessional: "3-year bring-forward rule; no carry-forward",
+  },
+  {
+    feature: "TSB eligibility limit",
+    concessional: "No limit to make contributions; carry-forward requires TSB < $500k",
+    nonConcessional: "Must be under $1.9M to make any NCC",
   },
 ];
 
-const CONTRIBUTIONS_SECTIONS = [
+const CONTRIBUTIONS_TYPES = [
   {
-    heading: "Employer Superannuation Guarantee — the foundation",
-    // dated-ok — legislated SG rate-rise dates from ATO
-    body: "The Superannuation Guarantee (SG) is the mandatory employer contribution to your super fund. For 2025–26, the SG rate is 11.5% of your ordinary time earnings (OTE). This rate is legislated to increase to 12% from 1 July 2025.\n\nThe SG is calculated on your 'ordinary time earnings' — your regular salary, wages, and some allowances. Overtime is generally excluded from the calculation base.\n\nHow to check it's being paid: Your payslip should show the super contribution amount. You can also log into myGov and check the ATO Super tab — employers must report contributions to the ATO within 28 days of the end of each quarter. If your employer isn't paying, contact the ATO's super complaints line or lodge an unpaid super tip-off online.\n\nSelf-employed: If you are genuinely self-employed (sole trader or contractor) you are not required to pay yourself the SG — but you are strongly encouraged to make personal contributions for your own retirement security.",
+    type: "Employer SG",
+    rate: "11.5% (2024-25)",
+    taxTreatment: "Concessional — 15% tax in fund",
+    notes: "Mandatory; calculated on ordinary time earnings. Rising to 12% from 1 July 2025.",
   },
   {
-    heading: "Salary sacrifice — the most efficient way to boost super",
-    body: "Salary sacrifice means asking your employer to divert part of your pre-tax salary into your super fund. This reduces your taxable income, meaning you pay less income tax.\n\nExample: $100,000 salary, $10,000 salary sacrifice\n• Without sacrifice: $10,000 taxed at ~34.5% marginal rate = $6,550 after tax\n• With salary sacrifice: $10,000 goes into super at 15% contributions tax = $8,500 in super\n• Net advantage: $1,950 more in super from the same gross income\n\nThe advantage grows with your marginal tax rate — at the 47% rate (income > $180k), every $10,000 salary sacrificed saves $3,200 in tax compared to taking it as salary.\n\nNote: salary sacrifice counts towards your $30,000 concessional cap. Contributions above the cap are included in your assessable income and taxed at your marginal rate plus an excess concessional contributions charge.\n\nDivision 293 tax: If your income (including concessional contributions) exceeds $250,000, an additional 15% tax (Division 293) is applied to your super contributions — bringing the effective tax rate to 30% rather than 15%. Even at 30%, super is often still more tax-efficient than taking salary at 47%.",
+    type: "Salary sacrifice",
+    rate: "Any amount (up to cap)",
+    taxTreatment: "Concessional — pre-tax; reduces PAYG withholding",
+    notes: "Agreed with employer before salary is earned; FBT-exempt for super contributions.",
   },
   {
-    heading: "Personal deductible contributions — for the self-employed and others with capacity",
-    body: "If your employer doesn't offer salary sacrifice (or you're self-employed), you can still make personal after-tax contributions to your super fund and claim a tax deduction for the full amount — effectively achieving the same outcome as salary sacrifice.\n\nTo do this:\n1. Make a contribution to your super fund using your bank account\n2. Lodge a 'Notice of Intent to Claim a Tax Deduction' (form SS-308) with your fund before lodging your tax return\n3. Your fund will acknowledge the notice, and you claim the deduction in your tax return\n\nThis is particularly useful for:\n• Self-employed people without an employer\n• Employees whose employers don't offer salary sacrifice\n• Part-year employees who want to top up before 30 June\n\nThe personal deductible contribution is treated as a concessional contribution and counted toward the $30,000 cap. The 15% contributions tax is deducted by your fund.",
+    type: "Personal deductible",
+    rate: "Any amount (up to cap)",
+    taxTreatment: "Concessional — deduction claimed in tax return",
+    notes: "s290-180 notice must be lodged with fund before lodging tax return.",
   },
   {
-    heading: "Non-concessional contributions — after-tax wealth-building",
-    body: "Non-concessional contributions (NCCs) are personal contributions made from your after-tax income that you do not claim a deduction for. They are not taxed when they enter super (you've already paid income tax).\n\nThe annual NCC cap for 2025–26 is $120,000. If you have a Total Super Balance (TSB) below $300,000, you can 'bring forward' up to 3 years of NCCs — contributing up to $360,000 in a single year.\n\nBring-forward caps by TSB (2025–26):\n• TSB < $300,000: $360,000 (3-year bring-forward)\n• TSB $300,000–$399,999: $240,000 (2-year bring-forward)\n• TSB $400,000–$499,999: $120,000 (1-year, no bring-forward)\n• TSB ≥ $500,000: $0 — NCCs prohibited\n\nWhen NCCs make sense: large windfall (inheritance, property sale), downsizer contributions, and people who want to build super without reducing their taxable income.",
+    type: "Personal non-deductible",
+    rate: "Up to $120,000/yr (NCC cap)",
+    taxTreatment: "Non-concessional — 0% on entry; 15% on earnings",
+    notes: "No tax deduction. Bring-forward rule may allow up to $360,000 in one year.",
   },
   {
-    heading: "Carry-forward (catch-up) contributions — the 5-year rule",
-    body: "If your Total Super Balance (TSB) was below $500,000 at 30 June of the previous year, you can use any unused concessional contribution cap from the previous 5 financial years.\n\nHow it works: The ATO tracks your unused concessional cap amounts from FY2019–20 onwards. You can see your available carry-forward amount in myGov under the ATO Super section.\n\nExample: You averaged only $10,000/year in concessional contributions for the past 3 years (vs the $27,500 cap in those years — noting the cap was lower historically). You have approximately $52,500 in unused amounts available to carry forward. If you receive a $50,000 bonus in 2025–26, you could make a $50,000 personal deductible contribution and claim it in full — as long as your total concessional contributions for the year don't exceed $30,000 + $50,000 = $80,000.\n\nWho benefits most: people who took career breaks, worked part-time, ran a business at a loss for several years, or simply didn't maximise contributions in earlier years but now have the financial capacity.",
+    type: "Spouse contributions",
+    rate: "Up to $3,000 for max offset",
+    taxTreatment: "Non-concessional in spouse's fund; contributor gets up to $540 tax offset",
+    notes: "Offset available when spouse earns ≤ $37,000; phases out at $40,000.",
   },
   {
-    heading: "Spouse contributions and the tax offset",
-    body: "You can contribute to your spouse's super fund and receive a tax offset if your spouse earns below $40,000. The maximum offset is $540 (18% of $3,000 contribution) when your spouse earns $37,000 or less, phasing out at $40,000.\n\nSpouse contribution strategy: Even a small contribution to a lower-income spouse's fund can provide the offset and begin building their super balance. This is particularly relevant where one spouse has taken parental leave or works part-time.\n\nSplitting concessional contributions: You can also split up to 85% of your concessional contributions made in one year to your spouse's super account. This doesn't provide an additional tax deduction but can equalise super balances (relevant for accessing the pension, tax-free thresholds in retirement, and estate planning).",
-  },
-  {
-    heading: "Government co-contribution — for lower income earners",
-    body: "If you earn below $60,400 (2025–26) and make a non-concessional contribution, the government will match 50 cents for every $1 you contribute — up to $500 for people earning $45,400 or less.\n\nMaximum co-contribution: $500 (if you contribute $1,000 and earn ≤ $45,400).\nPhase-out: The $500 maximum reduces progressively as income rises, reaching $0 at $60,400.\n\nEligibility requirements:\n• At least 10% of income from eligible employment, running a business, or both\n• Total income ≤ $60,400\n• TSB < $1.9 million\n• Age 71 or under\n• Australian resident (not on a temporary visa)\n\nThe co-contribution is automatically paid by the ATO after you lodge your tax return — you don't need to apply.",
-  },
-  {
-    heading: "Total Super Balance — how it affects your contributions",
-    body: "Your Total Super Balance (TSB) as at 30 June of the prior year is a key figure that determines which super strategies are available to you.\n\nKey TSB thresholds (2025–26):\n• < $500,000: Can use carry-forward concessional contributions\n• < $300,000: Can use 3-year NCC bring-forward ($360,000)\n• < $1.9 million: Government co-contribution available; can make non-concessional contributions\n• ≥ $1.9 million (General Transfer Balance Cap): No non-concessional contributions allowed\n\nYour TSB is your combined balance across all super accounts (accumulation and pension phase), including your super interest in a defined benefit scheme. It is calculated at 30 June each year and determines your options for the following financial year.",
+    type: "Government co-contribution",
+    rate: "$0.50 per $1 NCC (max $500)",
+    taxTreatment: "Non-concessional; paid automatically by ATO",
+    notes: "Income-tested: full match for income ≤ $45,400; phases out at $58,445.",
   },
 ];
 
-const CONTRIBUTIONS_FAQS = [
+const LIFE_STAGES = [
   {
-    question: "What is the super guarantee rate in 2025–26?",
-    answer:
-      // dated-ok — legislated SG rate-rise dates from ATO
-      "The Superannuation Guarantee (SG) rate for the 2025–26 financial year is 11.5% of ordinary time earnings. The rate is legislated to increase to 12% on 1 July 2025. Your employer must pay this on your ordinary time earnings (your regular salary — generally excluding overtime) at least quarterly, within 28 days of the end of each quarter.",
+    stage: "20s–30s",
+    label: "Start early — let compounding do the work",
+    strategies: [
+      "Even small extra contributions now have decades to compound inside super's 15% earnings tax environment.",
+      "If your employer offers salary sacrifice, start with a small amount ($50–$100/fortnight) and increase as your income grows.",
+      "Check you're on a growth or high-growth investment option — at this age, short-term volatility is acceptable for higher long-term returns.",
+      "Consolidate any existing super accounts to eliminate duplicate fees.",
+    ],
   },
   {
-    question: "Can I claim a tax deduction for personal super contributions?",
-    answer:
-      "Yes — if you are under 75, you can claim a tax deduction for personal super contributions regardless of your employment status. You must lodge a valid 'Notice of Intent to Claim a Tax Deduction' with your fund before you lodge your tax return (or 30 June of the following year, whichever is earlier). Your fund will acknowledge the notice. The contributed amount is treated as a concessional contribution (15% tax inside super) and counts toward the $30,000 concessional cap.",
+    stage: "40s–50s",
+    label: "Ramp up — prime earning years and catch-up opportunities",
+    strategies: [
+      "Use carry-forward contributions if you've had years with low concessional contributions (career breaks, part-time work, business losses).",
+      "Maximise salary sacrifice to the $30,000 concessional cap — the tax saving is largest when you're at your peak marginal rate.",
+      "Review your investment option — still likely growth-oriented, but consider adding some defensive exposure within the next 10 years.",
+      "If your TSB is approaching $500k, prioritise using carry-forward contributions before you lose eligibility.",
+    ],
   },
   {
-    question: "What happens if I exceed the concessional contributions cap?",
-    answer:
-      "Excess concessional contributions are included in your assessable income for that year (taxed at your marginal rate plus Medicare levy), with a 15% tax offset to account for the contributions tax already paid by your fund. An excess concessional contributions charge (interest) is also applied. You have the option to withdraw up to 85% of the excess from your fund to help pay the tax bill. Excess contributions do not count toward your non-concessional cap.",
-  },
-  {
-    question: "Who qualifies for the government co-contribution?",
-    answer:
-      "You qualify for the government co-contribution if: you earn below $60,400 (2025–26), at least 10% of your income is from eligible employment or running a business, you make a personal (non-concessional) contribution, your TSB is below $1.9 million, you're aged 71 or under, and you're an Australian resident (not a temporary visa holder). The maximum co-contribution is $500 (50% of a $1,000 contribution) for those earning $45,400 or less. The ATO automatically calculates and pays it after you lodge your tax return.",
-  },
-  {
-    question: "Can I contribute to super if I'm retired or over 67?",
-    answer:
-      // dated-ok — historical legislative effective date (work test relaxation)
-      "Yes, with some restrictions. From age 67–74, you can make super contributions (both concessional and non-concessional) only if you meet the 'work test' — gainfully employed for at least 40 hours over 30 consecutive days in the financial year. From 1 July 2022, this test is only required for non-concessional contributions and salary sacrifice for people aged 67–74; employer SG contributions continue automatically. Once you reach age 75, only mandatory employer SG contributions and downsizer contributions are permitted.",
+    stage: "55+ (Pre-retirement)",
+    label: "Maximise contributions and plan the transition",
+    strategies: [
+      "Consider a Transition to Retirement (TTR) strategy — draw a TTR pension and redirect salary back into super as salary sacrifice, potentially boosting your balance without reducing take-home pay.",
+      "Maximise both the concessional cap ($30,000) and non-concessional cap ($120,000) where cashflow allows.",
+      "Monitor your TSB against the Transfer Balance Cap ($1.9M) — contributions may become restricted as your balance grows.",
+      "Review Division 296 exposure if your TSB is approaching $3M — an additional 15% tax on earnings applies above that threshold from FY 2025-26.",
+    ],
   },
 ];
+
+const COMMON_MISTAKES = [
+  {
+    mistake: "Forgetting employer SG counts towards the concessional cap",
+    detail:
+      "Many people add salary sacrifice on top of employer SG and accidentally exceed the $30,000 cap. At 11.5% SG on a $200,000 salary, the employer alone contributes $23,000 — leaving only $7,000 of concessional cap before excess penalties apply.",
+  },
+  {
+    mistake: "Missing the s290-180 notice for personal deductible contributions",
+    detail:
+      "This notice must be lodged with your super fund before you lodge your tax return (or 30 June of the following financial year, whichever is earlier). Forgetting it means you lose the tax deduction entirely — the contribution is treated as non-concessional.",
+  },
+  {
+    mistake: "Making NCCs when TSB exceeds $1.9M",
+    detail:
+      "If your Total Super Balance was $1.9M or more on the prior 30 June, you cannot make any non-concessional contributions. Doing so results in a 47% tax charge on the excess. Check your TSB in myGov before making NCCs.",
+  },
+  {
+    mistake: "Excess concessional contributions — the compounding penalty",
+    detail:
+      "Excess concessional contributions are included in your assessable income at your marginal rate, with only a 15% offset (for the tax already paid by the fund). An excess concessional contributions charge (interest) is also applied from the start of the income year — meaning the longer it takes to resolve, the more you pay.",
+  },
+  {
+    mistake: "Assuming the bring-forward rule resets every year",
+    detail:
+      "Once triggered, the bring-forward period runs for 3 years and the cap is fixed at the amount determined in year 1. You cannot make additional NCCs mid-period beyond your allocated bring-forward amount. Wait for the 3-year period to expire before triggering another.",
+  },
+];
+
+const FAQS = [
+  {
+    q: "What is the superannuation contribution limit for 2024-25?",
+    a: "For the 2024-25 financial year, the concessional contributions cap is $30,000 per year. This includes employer Super Guarantee contributions (at 11.5%), salary sacrifice, and any personal contributions you claim as a tax deduction. The non-concessional contributions cap is $120,000 per year (or up to $360,000 using the 3-year bring-forward rule if your Total Super Balance was below $1.9M on the prior 30 June).",
+  },
+  {
+    q: "How do I make a personal tax-deductible super contribution?",
+    a: "Transfer money from your bank account directly into your super fund — this is a personal contribution. Then, before you lodge your tax return (or by 30 June of the following year, whichever comes first), lodge a 'Notice of Intent to Claim a Tax Deduction' (form SS-308) with your fund. Your fund must acknowledge the notice in writing. You then claim the deduction in your tax return. The contribution is treated as concessional — your fund pays 15% contributions tax — and counts toward the $30,000 concessional cap.",
+  },
+  {
+    q: "What is the bring-forward rule for non-concessional contributions?",
+    a: "The bring-forward rule lets you contribute up to 3 years' worth of non-concessional contributions in a single year — up to $360,000 — if your Total Super Balance (TSB) was below $1.9M on the prior 30 June and you are under 75. The exact amount you can bring forward depends on your TSB: under $1.68M allows the full $360,000 (3-year); $1.68M–$1.79M allows $240,000 (2-year); $1.79M–$1.9M allows $120,000 (1-year, no bring-forward); $1.9M or above — no NCCs at all. Once triggered, the 3-year period is locked in.",
+  },
+  {
+    q: "Can I claim a tax deduction if I salary sacrifice into super?",
+    a: "No — you do not separately claim a tax deduction for salary sacrifice contributions. The tax benefit of salary sacrifice is automatic: the sacrificed amount is diverted before income tax is calculated, so your PAYG withholding is reduced immediately. You do not need to lodge any notice with your super fund for salary sacrifice — the deduction is built into your reduced taxable income shown on your payment summary. Only personal contributions (paid from your own bank account) require the s290-180 Notice of Intent to be lodged.",
+  },
+  {
+    q: "What happens if I exceed my concessional contributions cap?",
+    a: "Excess concessional contributions are automatically included in your assessable income for that financial year and taxed at your marginal rate plus the Medicare levy. You receive a 15% tax offset to account for the contributions tax already paid by your fund. In addition, an excess concessional contributions charge (a form of interest) accrues from the start of the income year. The ATO will issue you an excess concessional contributions determination. You can elect to withdraw up to 85% of the excess from your super fund to help fund the tax bill, or you can leave the excess in the fund — but the tax is still payable. Any excess that remains in the fund does not count against your non-concessional cap.",
+  },
+];
+
+// ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function SuperContributionsPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Super", url: `${SITE_URL}/super` },
-    { name: "Contributions" },
+    { name: "Super Contributions" },
   ]);
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: CONTRIBUTIONS_FAQS.map((f) => ({
-      "@type": "Question",
-      name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.answer },
-    })),
-  };
+  const faqSchema = faqJsonLd(FAQS);
 
   return (
     <div className="bg-white min-h-screen">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
 
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
+      {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav
+            aria-label="Breadcrumb"
+            className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap"
+          >
             <Link href="/" className="hover:text-slate-900">Home</Link>
-            <span>/</span>
+            <span aria-hidden="true">/</span>
             <Link href="/super" className="hover:text-slate-900">Super</Link>
-            <span>/</span>
-            <span className="text-slate-900 font-medium">Contributions</span>
+            <span aria-hidden="true">/</span>
+            <span className="text-slate-900 font-medium">Super Contributions</span>
           </nav>
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-semibold text-slate-600 mb-4">
-              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
-              Super Contributions · Updated March 2026
+              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full" aria-hidden="true" />
+              {UPDATED_LABEL}
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
               Super Contributions Guide —{" "}
-              <span className="text-amber-600">Concessional, Non-Concessional &amp; Catch-Up Contributions</span>
+              <span className="text-amber-600">
+                Concessional, Non-Concessional &amp; Catch-Up
+              </span>
             </h1>
-            <p className="text-sm md:text-base text-slate-600 leading-relaxed">
-              Everything you need to know about contributing to super in Australia — from employer SG to salary sacrifice,
-              personal deductible contributions, catch-up rules, and the government co-contribution.
+            <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-4">
+              Super contributions are taxed at just 15% inside your fund — well below most
+              Australians&apos; marginal income tax rate. This guide covers every contribution type,
+              the 2024-25 caps, salary sacrifice, carry-forward rules, government co-contribution,
+              and common mistakes that cost people thousands in unnecessary tax.
+            </p>
+            <p className="text-sm text-slate-500 leading-relaxed">
+              Super is a concessionally taxed environment: earnings inside an accumulation account
+              are taxed at 15% (not your marginal rate), and capital gains held more than 12 months
+              are taxed at just 10%. The more you contribute — within the caps — the more of your
+              wealth grows in this low-tax environment.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ── Key Callouts ─────────────────────────────────────────────── */}
-      <section className="py-8 bg-slate-50">
+      {/* ── Key Figures ──────────────────────────────────────────────────── */}
+      <section className="py-8 bg-slate-50 border-b border-slate-100">
         <div className="container-custom">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white rounded-2xl border border-green-200 p-5">
-              <p className="text-xs font-bold text-green-800 uppercase tracking-wide mb-1">Concessional Cap</p>
-              <p className="text-xl font-black text-green-700">$30,000</p>
-              <p className="text-xs text-slate-600 mt-1 leading-relaxed">Per annum (2025–26). Includes employer SG, salary sacrifice, and personal deductible contributions.</p>
+              <p className="text-xs font-bold text-green-800 uppercase tracking-wide mb-1">
+                Concessional Cap
+              </p>
+              <p className="text-2xl font-black text-green-700">$30,000</p>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                Per year (2024-25). Includes employer SG (11.5%), salary sacrifice, and personal
+                deductible contributions.
+              </p>
             </div>
             <div className="bg-white rounded-2xl border border-blue-200 p-5">
-              <p className="text-xs font-bold text-blue-800 uppercase tracking-wide mb-1">Non-Concessional Cap</p>
-              <p className="text-xl font-black text-blue-700">$120,000</p>
-              <p className="text-xs text-slate-600 mt-1 leading-relaxed">Per annum (2025–26). Up to $360,000 under the 3-year bring-forward rule if TSB &lt; $300,000.</p>
+              <p className="text-xs font-bold text-blue-800 uppercase tracking-wide mb-1">
+                Non-Concessional Cap
+              </p>
+              <p className="text-2xl font-black text-blue-700">$120,000</p>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                Per year (2024-25). Bring-forward rule allows up to $360,000 in one year if
+                TSB &lt; $1.9M.
+              </p>
             </div>
             <div className="bg-white rounded-2xl border border-amber-200 p-5">
-              <p className="text-xs font-bold text-amber-800 uppercase tracking-wide mb-1">Super Rate (2025–26)</p>
-              <p className="text-xl font-black text-amber-700">11.5%</p>
-              {/* // dated-ok — legislated SG rate-rise date from ATO */}
-              <p className="text-xs text-slate-600 mt-1 leading-relaxed">Superannuation Guarantee rate. Rising to 12% from 1 July 2025.</p>
+              <p className="text-xs font-bold text-amber-800 uppercase tracking-wide mb-1">
+                Employer SG Rate
+              </p>
+              <p className="text-2xl font-black text-amber-700">11.5%</p>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                {/* dated-ok — legislated SG rate-rise dates from ATO */}
+                Superannuation Guarantee rate for 2024-25. Rising to 12% from 1 July 2025.
+              </p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Tax Rate in Super</p>
-              <p className="text-xl font-black text-slate-700">15%</p>
-              <p className="text-xs text-slate-600 mt-1 leading-relaxed">Contributions tax on concessional contributions. 30% if income exceeds $250,000 (Division 293).</p>
+              <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">
+                Tax Rate in Super
+              </p>
+              <p className="text-2xl font-black text-slate-700">15%</p>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                Contributions tax on concessional contributions. 30% (Division 293) if income
+                exceeds $250,000.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Comparison Table ─────────────────────────────────────────── */}
+      {/* ── Concessional vs Non-Concessional Table ───────────────────────── */}
       <section className="py-12 md:py-16">
         <div className="container-custom">
           <SectionHeading
             eyebrow="At a glance"
-            title="Concessional vs Non-Concessional contributions"
+            title="Concessional vs non-concessional contributions"
             sub="The two main contribution types — understand which applies to you and when each makes sense."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-50">Feature</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Concessional (Pre-Tax)</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Non-Concessional (After-Tax)</th>
+                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-44">
+                    Feature
+                  </th>
+                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">
+                    Concessional (pre-tax)
+                  </th>
+                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">
+                    Non-Concessional (after-tax)
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {CONTRIBUTION_COMPARISON.map((row, i) => (
-                  <tr key={row.label} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
-                    <td className="px-5 py-3.5 font-semibold text-slate-700 text-xs">{row.label}</td>
-                    <td className="px-5 py-3.5 text-slate-600 border-l border-green-100 text-xs leading-relaxed">{row.concessional}</td>
-                    <td className="px-5 py-3.5 text-slate-600 border-l border-blue-100 text-xs leading-relaxed">{row.nonConcessional}</td>
+                {COMPARISON_ROWS.map((row, i) => (
+                  <tr key={row.feature} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
+                    <td className="px-5 py-3.5 font-semibold text-slate-700 text-xs">
+                      {row.feature}
+                    </td>
+                    <td className="px-5 py-3.5 text-slate-600 border-l border-green-100 text-xs leading-relaxed">
+                      {row.concessional}
+                    </td>
+                    <td className="px-5 py-3.5 text-slate-600 border-l border-blue-100 text-xs leading-relaxed">
+                      {row.nonConcessional}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -240,55 +351,509 @@ export default function SuperContributionsPage() {
         </div>
       </section>
 
-      {/* ── Salary sacrifice calculator example ─────────────────────── */}
-      <section className="py-10 bg-amber-50 border-y border-amber-100">
-        <div className="container-custom max-w-2xl">
-          <SectionHeading eyebrow="Example calculation" title="Salary sacrifice: how much could you save?" />
-          <div className="bg-white rounded-2xl border border-amber-200 p-6">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-4">Scenario: $80,000 salary, $5,000 salary sacrifice</p>
-            <div className="space-y-3">
-              <div className="flex justify-between text-sm border-b border-slate-100 pb-2">
-                <span className="text-slate-600">Annual salary</span>
-                <span className="font-bold text-slate-900">$80,000</span>
-              </div>
-              <div className="flex justify-between text-sm border-b border-slate-100 pb-2">
-                <span className="text-slate-600">Salary sacrifice amount</span>
-                <span className="font-bold text-amber-700">−$5,000</span>
-              </div>
-              <div className="flex justify-between text-sm border-b border-slate-100 pb-2">
-                <span className="text-slate-600">Taxable income reduced to</span>
-                <span className="font-bold text-slate-900">$75,000</span>
-              </div>
-              <div className="flex justify-between text-sm border-b border-slate-100 pb-2">
-                <span className="text-slate-600">Income tax saved (at 32.5% marginal)</span>
-                <span className="font-bold text-green-700">$1,625</span>
-              </div>
-              <div className="flex justify-between text-sm border-b border-slate-100 pb-2">
-                <span className="text-slate-600">Contributions tax paid by fund (15%)</span>
-                <span className="font-bold text-amber-600">−$750</span>
-              </div>
-              <div className="flex justify-between text-sm font-bold text-base pt-1">
-                <span className="text-slate-900">Net advantage of salary sacrifice</span>
-                <span className="text-green-700">$875/year</span>
-              </div>
-            </div>
-            <p className="mt-4 text-xs text-slate-400">Illustrative only. Employer SG contribution of $9,200 (11.5% × $80,000) also applies — salary sacrifice does not reduce the SG base.</p>
+      {/* ── Contribution Types Table ─────────────────────────────────────── */}
+      <section className="py-12 md:py-16 bg-slate-50 border-y border-slate-100">
+        <div className="container-custom">
+          <SectionHeading
+            eyebrow="All contribution types"
+            title="Every way to contribute to super — 2024-25"
+            sub="From mandatory employer SG to government co-contributions — which types apply to you."
+          />
+          <div className="overflow-x-auto rounded-2xl border border-slate-200">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-800 text-white">
+                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                    Type
+                  </th>
+                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                    Amount / Rate
+                  </th>
+                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                    Tax treatment
+                  </th>
+                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                    Key notes
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {CONTRIBUTIONS_TYPES.map((ct, i) => (
+                  <tr key={ct.type} className={i % 2 === 0 ? "bg-white" : "bg-slate-50"}>
+                    <td className="px-5 py-3.5 font-semibold text-slate-800 text-xs whitespace-nowrap">
+                      {ct.type}
+                    </td>
+                    <td className="px-5 py-3.5 text-slate-600 text-xs">{ct.rate}</td>
+                    <td className="px-5 py-3.5 text-slate-600 text-xs leading-relaxed">
+                      {ct.taxTreatment}
+                    </td>
+                    <td className="px-5 py-3.5 text-slate-600 text-xs leading-relaxed">
+                      {ct.notes}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      {/* ── Content Sections ─────────────────────────────────────────── */}
+      {/* ── Salary Sacrifice Deep-Dive ───────────────────────────────────── */}
       <section className="py-12 md:py-16">
         <div className="container-custom max-w-3xl">
-          <SectionHeading eyebrow="Full guide" title="All contribution types explained" />
-          <div className="space-y-10">
-            {CONTRIBUTIONS_SECTIONS.map((section) => (
-              <div key={section.heading}>
-                <h3 className="text-base font-extrabold text-slate-900 mb-3">{section.heading}</h3>
-                <div className="text-sm text-slate-600 leading-relaxed space-y-3">
-                  {section.body.split("\n\n").map((para, i) => (
-                    <p key={i}>{para}</p>
+          <SectionHeading
+            eyebrow="Most popular strategy"
+            title="Salary sacrifice — how it works and how to set it up"
+          />
+          <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              Salary sacrifice means asking your employer to redirect part of your pre-tax salary
+              directly into your super fund before income tax is calculated. The contribution is
+              treated as concessional — your fund pays 15% contributions tax — and your PAYG
+              withholding drops immediately because your taxable income is lower.
+            </p>
+            <p>
+              <strong className="text-slate-800">How to set it up:</strong> Contact your payroll
+              department or HR team and ask to enter a salary sacrifice arrangement. Most employers
+              require a written request specifying the dollar amount or percentage you wish to
+              redirect. The arrangement must be agreed before the salary is earned (it cannot be
+              applied retrospectively). Once set up, contributions flow automatically each pay cycle.
+            </p>
+            <p>
+              <strong className="text-slate-800">FBT treatment:</strong> Super salary sacrifice
+              contributions are exempt from Fringe Benefits Tax (FBT) — unlike some other benefits
+              (cars, laptops) which attract FBT. This means your employer has no additional tax cost
+              for providing the arrangement, making them more willing to accommodate it.
+            </p>
+            <p>
+              <strong className="text-slate-800">Coordination with employer SG:</strong> Your
+              employer SG (11.5% in 2024-25) and your salary sacrifice both count toward the same
+              $30,000 concessional cap. Before setting up salary sacrifice, calculate how much of
+              the cap your employer SG already uses. On a $200,000 salary, 11.5% SG = $23,000 —
+              leaving only $7,000 of concessional cap for salary sacrifice before the excess
+              penalty applies.
+            </p>
+            <p>
+              <strong className="text-slate-800">Division 293 tax:</strong> If your income
+              (including concessional contributions) exceeds $250,000, an additional 15% tax
+              (Division 293) is applied to super contributions — bringing the effective rate to
+              30% rather than 15%. Even at 30%, salary sacrifice is typically still more
+              tax-efficient than taking income at the 47% top marginal rate.
+            </p>
+          </div>
+
+          {/* Salary sacrifice example */}
+          <div className="mt-8 bg-amber-50 rounded-2xl border border-amber-200 p-6">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-4">
+              Example: $100,000 salary, $10,000 salary sacrifice
+            </p>
+            <div className="space-y-2.5">
+              <div className="flex justify-between text-sm border-b border-amber-100 pb-2">
+                <span className="text-slate-600">Gross salary</span>
+                <span className="font-bold text-slate-900">$100,000</span>
+              </div>
+              <div className="flex justify-between text-sm border-b border-amber-100 pb-2">
+                <span className="text-slate-600">Salary sacrificed to super</span>
+                <span className="font-bold text-amber-700">−$10,000</span>
+              </div>
+              <div className="flex justify-between text-sm border-b border-amber-100 pb-2">
+                <span className="text-slate-600">Taxable income</span>
+                <span className="font-bold text-slate-900">$90,000</span>
+              </div>
+              <div className="flex justify-between text-sm border-b border-amber-100 pb-2">
+                <span className="text-slate-600">Income tax saved (32.5% marginal + 2% Medicare)</span>
+                <span className="font-bold text-green-700">+$3,450 saved</span>
+              </div>
+              <div className="flex justify-between text-sm border-b border-amber-100 pb-2">
+                <span className="text-slate-600">Contributions tax paid by fund (15%)</span>
+                <span className="font-bold text-red-600">−$1,500</span>
+              </div>
+              <div className="flex justify-between text-sm font-bold pt-1">
+                <span className="text-slate-900">Net tax advantage per $10,000 sacrificed</span>
+                <span className="text-green-700">$1,950</span>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-slate-400">
+              Illustrative only. Assumes 32.5% marginal rate + 2% Medicare levy. Employer SG of
+              $11,500 (11.5% × $100,000) counts separately toward the concessional cap.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Personal Deductible Contributions ───────────────────────────── */}
+      <section className="py-12 md:py-16 bg-green-50 border-y border-green-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="For self-employed and employees"
+            title="Personal deductible contributions and the s290-180 notice"
+          />
+          <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              Since 1 July 2017, the &quot;10% test&quot; was removed — meaning salaried employees can now
+              make personal after-tax contributions and claim a tax deduction for them, achieving
+              the same outcome as salary sacrifice even if their employer doesn&apos;t offer it.
+            </p>
+            <p>
+              <strong className="text-slate-800">How it works:</strong> Transfer money from your
+              bank account into your super fund (this is initially treated as a non-concessional
+              contribution). Then, before lodging your tax return or 30 June of the following
+              financial year — whichever is earlier — lodge a{" "}
+              <strong className="text-slate-800">Notice of Intent to Claim a Tax Deduction</strong>{" "}
+              (form SS-308) with your fund. Once your fund acknowledges the notice in writing,
+              you claim the full contribution amount as a deduction in your tax return. Your fund
+              then pays 15% contributions tax on that amount, and it counts as a concessional
+              contribution toward the $30,000 cap.
+            </p>
+            <div className="bg-white rounded-xl border border-green-200 p-4">
+              <p className="text-xs font-bold text-green-800 uppercase tracking-wide mb-2">
+                Critical: the notice locks in the deduction
+              </p>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                If you lodge your tax return before lodging the notice, you permanently lose the
+                deduction — the contribution stays non-concessional. The notice cannot be lodged
+                retrospectively after your return is submitted. Set a calendar reminder before
+                each 30 June and before lodging your tax return.
+              </p>
+            </div>
+            <p>
+              <strong className="text-slate-800">Effective tax saving:</strong> A person on a
+              32.5% marginal rate (income $45,001–$135,000) who makes a $10,000 personal
+              deductible contribution pays $1,500 in contributions tax inside the fund but saves
+              $3,450 in income tax — a net saving of $1,950. At the 47% top marginal rate, the
+              saving is $3,200 per $10,000 contributed.
+            </p>
+            <p>
+              <strong className="text-slate-800">Who benefits most:</strong> self-employed sole
+              traders and contractors (no employer SG), employees whose employers don&apos;t offer
+              salary sacrifice, people who receive a lump sum (bonus, contract payment) and
+              want to contribute near 30 June, and part-year workers topping up before year end.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Catch-Up Contributions ───────────────────────────────────────── */}
+      <section className="py-12 md:py-16">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="For those with unused cap"
+            title="Carry-forward (catch-up) concessional contributions"
+            sub="Unused concessional cap from the past five financial years can be carried forward if your Total Super Balance is below $500,000."
+          />
+          <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              If your Total Super Balance (TSB) was below $500,000 at 30 June of the previous
+              financial year, you can access unused concessional cap from the prior five financial
+              years (FY2019-20 onwards) on top of the current year&apos;s $30,000 cap. This can allow
+              very large concessional contributions in a single year — up to the accumulated
+              unused cap plus $30,000.
+            </p>
+            <p>
+              <strong className="text-slate-800">How to check your unused cap:</strong> Log in
+              to myGov, link the ATO, and navigate to the Super section. The ATO displays your
+              available carry-forward amounts by financial year. This figure is updated after the
+              tax return processing cycle (typically September–October each year).
+            </p>
+            <div className="bg-slate-50 rounded-xl border border-slate-200 p-5">
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-3">
+                Carry-forward example
+              </p>
+              <div className="space-y-1.5 text-xs text-slate-600">
+                <div className="flex justify-between">
+                  <span>FY2019-20 concessional contributions</span>
+                  <span className="font-semibold">$10,000 (cap was $25,000 — $15,000 unused)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>FY2020-21 contributions</span>
+                  <span className="font-semibold">$8,000 ($17,500 unused)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>FY2021-22 contributions</span>
+                  <span className="font-semibold">$12,000 ($15,500 unused)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>FY2022-23 contributions</span>
+                  <span className="font-semibold">$12,000 ($15,500 unused)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>FY2023-24 contributions</span>
+                  <span className="font-semibold">$15,000 ($12,500 unused)</span>
+                </div>
+                <div className="flex justify-between border-t border-slate-200 pt-1.5 mt-1.5 font-bold text-slate-800">
+                  <span>Total carry-forward available in 2024-25</span>
+                  <span>$76,000 (+ $30,000 current cap = $106,000 max)</span>
+                </div>
+              </div>
+            </div>
+            <p>
+              <strong className="text-slate-800">Who benefits most:</strong> people who had
+              career breaks, worked part-time, ran a business at a loss, or simply didn&apos;t
+              maximise contributions in earlier years. A once-in-a-career opportunity to shift a
+              large lump sum (inheritance, business sale, bonus) into the low-tax super
+              environment in a single year.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Non-Concessional and Bring-Forward ──────────────────────────── */}
+      <section className="py-12 md:py-16 bg-blue-50 border-y border-blue-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="After-tax wealth building"
+            title="Non-concessional contributions and the 3-year bring-forward rule"
+          />
+          <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              Non-concessional contributions (NCCs) are personal contributions from after-tax
+              income that you do not claim a deduction for. They are not taxed again when they
+              enter your fund (you&apos;ve already paid income tax), but investment earnings inside the
+              fund are taxed at 15%.
+            </p>
+            <p>
+              The annual NCC cap for 2024-25 is $120,000. If you have a TSB below $1.9M on the
+              prior 30 June, you may be eligible to &quot;bring forward&quot; up to three years of NCCs —
+              contributing as much as $360,000 in a single financial year.
+            </p>
+
+            <div className="bg-white rounded-xl border border-blue-200 p-5">
+              <p className="text-xs font-bold text-blue-800 uppercase tracking-wide mb-3">
+                Bring-forward caps by TSB (2024-25)
+              </p>
+              <div className="space-y-2 text-xs">
+                {[
+                  { tsb: "TSB below $1.68M", amount: "$360,000", period: "3-year bring-forward" },
+                  { tsb: "$1.68M – $1.79M", amount: "$240,000", period: "2-year bring-forward" },
+                  { tsb: "$1.79M – $1.9M", amount: "$120,000", period: "No bring-forward (1-year only)" },
+                  { tsb: "$1.9M or above", amount: "$0", period: "NCCs prohibited" },
+                ].map((row) => (
+                  <div
+                    key={row.tsb}
+                    className="flex justify-between items-center border-b border-blue-50 pb-1.5"
+                  >
+                    <span className="text-slate-600">{row.tsb}</span>
+                    <span className="font-bold text-slate-800">{row.amount}</span>
+                    <span className="text-slate-500 text-right">{row.period}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-slate-400 mt-3">
+                TSB thresholds are indexed to the general transfer balance cap. The $1.9M figure
+                applies for 2024-25.
+              </p>
+            </div>
+
+            <p>
+              <strong className="text-slate-800">When NCCs make sense:</strong> large windfall
+              events (inheritance, property sale, compensation), downsizer contributions (separate
+              rules apply), or when you want to grow your super beyond what the concessional cap
+              allows without reducing your taxable income.
+            </p>
+            <p>
+              <strong className="text-slate-800">Spouse contributions:</strong> you can also make
+              NCCs directly into your spouse&apos;s super account. If your spouse earns $37,000 or
+              less you receive a tax offset of up to $540 (18% of a $3,000 contribution). The
+              offset phases out at $40,000 of spouse income. Spouse contributions count toward the
+              receiving spouse&apos;s NCC cap.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Government Co-Contribution ───────────────────────────────────── */}
+      <section className="py-12 md:py-16">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="Free money from the government"
+            title="Low-income co-contribution — up to $500 matched by the ATO"
+          />
+          <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              If you earn below $58,445 (2024-25) and make a personal non-concessional
+              contribution, the government will match 50 cents for every dollar — up to $500 for
+              people earning $45,400 or less. This is one of the few financial strategies that
+              delivers an immediate, guaranteed 50% return on a contribution.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="bg-slate-50 rounded-xl border border-slate-200 p-4">
+                <p className="text-xs font-bold text-slate-700 mb-2">Full $500 co-contribution</p>
+                <ul className="text-xs text-slate-600 space-y-1">
+                  <li>Total income ≤ $45,400</li>
+                  <li>Make a $1,000 NCC to your fund</li>
+                  <li>ATO automatically adds $500</li>
+                  <li>No application required — paid after lodging tax return</li>
+                </ul>
+              </div>
+              <div className="bg-slate-50 rounded-xl border border-slate-200 p-4">
+                <p className="text-xs font-bold text-slate-700 mb-2">Eligibility checklist</p>
+                <ul className="text-xs text-slate-600 space-y-1">
+                  <li>Total income below $58,445</li>
+                  <li>10%+ income from employment or business</li>
+                  <li>TSB below $1.9M</li>
+                  <li>Age 71 or under</li>
+                  <li>Australian resident (not temporary visa)</li>
+                </ul>
+              </div>
+            </div>
+            <p>
+              The co-contribution reduces proportionally between $45,400 and $58,445. The ATO
+              calculates and pays the co-contribution automatically once you lodge your tax return
+              — you don&apos;t need to apply, but the NCC must be in your super account before 30 June.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Division 296 ─────────────────────────────────────────────────── */}
+      <section className="py-12 md:py-16 bg-orange-50 border-y border-orange-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="High-balance super"
+            title="Division 296 tax — additional 15% on earnings above $3 million"
+          />
+          <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              Division 296 is a proposed measure that imposes an additional 15% tax on the portion
+              of super earnings attributable to balances above $3 million. Originally legislated
+              to apply from 1 July 2025, the start date has been deferred to{" "}
+              <strong className="text-slate-800">1 July 2026</strong>. The legislation has passed
+              the House of Representatives but was awaiting Senate passage as of the 2025-26
+              budget.
+            </p>
+            <div className="bg-white rounded-xl border border-orange-200 p-4">
+              <p className="text-xs font-bold text-orange-800 uppercase tracking-wide mb-2">
+                How Division 296 works
+              </p>
+              <ul className="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                <li>
+                  Applies only to the proportion of a fund&apos;s earnings above $3M in total super
+                  balance.
+                </li>
+                <li>
+                  Effective earnings rate is applied to the increase in TSB during the financial
+                  year (including unrealised gains — this is a key difference from normal tax).
+                </li>
+                <li>
+                  The additional tax (15%) is assessed personally against the fund member and can
+                  be paid from the fund or personally.
+                </li>
+                <li>
+                  SMSF members are directly impacted; APRA fund members will have the tax
+                  calculated by the ATO and notified.
+                </li>
+              </ul>
+            </div>
+            <p>
+              If your TSB is approaching $3 million, the Division 296 tax is a critical planning
+              consideration. The super guarantee and salary sacrifice contributions still make sense
+              below $3M — it is only the earnings attribution above that threshold that attracts the
+              extra tax.
+            </p>
+            <p>
+              <Link
+                href="/super/division-296"
+                className="font-semibold text-amber-700 hover:text-amber-900 underline underline-offset-2"
+              >
+                Read our full Division 296 explainer &rarr;
+              </Link>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SMSF Contributions ───────────────────────────────────────────── */}
+      <section className="py-12 md:py-16">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="Self-managed super"
+            title="SMSF contributions — same rules, additional obligations"
+          />
+          <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              If you are a member of a self-managed super fund (SMSF), the same concessional and
+              non-concessional contribution rules apply — the $30,000 and $120,000 caps, the
+              bring-forward and carry-forward rules, and the TSB thresholds all operate
+              identically to APRA-regulated funds.
+            </p>
+            <p>
+              <strong className="text-slate-800">Trust deed requirements:</strong> your fund&apos;s
+              trust deed must expressly permit the type of contribution you wish to make. Most
+              modern deeds are drafted broadly, but older deeds (pre-2010 particularly) may
+              restrict the types of contributions or the member ages at which contributions are
+              permitted. Review your deed or seek trustee advice before making contributions to
+              an SMSF.
+            </p>
+            <p>
+              <strong className="text-slate-800">Accepting contributions:</strong> an SMSF can
+              only accept a contribution if the fund is in a position to accept it under the
+              superannuation laws — for instance, if a member is aged 67-74, the fund must
+              verify the work test is met before accepting non-mandated contributions. If the fund
+              accepts a contribution it shouldn&apos;t, the ATO may impose penalties and require the
+              money to be returned.
+            </p>
+            <p>
+              <strong className="text-slate-800">Record-keeping:</strong> SMSF trustees are
+              responsible for tracking contributions against the caps for all members. Unlike APRA
+              funds, the ATO doesn&apos;t automatically alert SMSF members when they are approaching
+              cap limits during the year. Maintain a running contributions register.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Contribution Strategies by Life Stage ───────────────────────── */}
+      <section className="py-12 md:py-16 bg-slate-50 border-y border-slate-100">
+        <div className="container-custom">
+          <SectionHeading
+            eyebrow="Strategy guide"
+            title="Contributions by life stage — what to prioritise and when"
+          />
+          <div className="grid md:grid-cols-3 gap-6">
+            {LIFE_STAGES.map((ls) => (
+              <div
+                key={ls.stage}
+                className="bg-white rounded-2xl border border-slate-200 p-5"
+              >
+                <div className="inline-block px-2.5 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-full mb-3">
+                  {ls.stage}
+                </div>
+                <h3 className="text-sm font-extrabold text-slate-900 mb-3">{ls.label}</h3>
+                <ul className="space-y-2">
+                  {ls.strategies.map((s, i) => (
+                    <li key={i} className="flex gap-2 text-xs text-slate-600 leading-relaxed">
+                      <span className="text-amber-500 font-bold shrink-0 mt-0.5">›</span>
+                      {s}
+                    </li>
                   ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Common Mistakes ──────────────────────────────────────────────── */}
+      <section className="py-12 md:py-16">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="Avoid these pitfalls"
+            title="5 common super contribution mistakes that cost Australians tax"
+          />
+          <div className="space-y-4">
+            {COMMON_MISTAKES.map((cm, i) => (
+              <div
+                key={cm.mistake}
+                className="bg-red-50 border border-red-100 rounded-xl p-5"
+              >
+                <div className="flex gap-3">
+                  <span className="text-red-400 font-black text-sm shrink-0 mt-0.5">
+                    {i + 1}.
+                  </span>
+                  <div>
+                    <p className="text-sm font-bold text-slate-800 mb-1">{cm.mistake}</p>
+                    <p className="text-xs text-slate-600 leading-relaxed">{cm.detail}</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -296,19 +861,24 @@ export default function SuperContributionsPage() {
         </div>
       </section>
 
-      {/* ── FAQs ─────────────────────────────────────────────────────── */}
-      <section className="py-12 md:py-16 bg-slate-50">
+      {/* ── FAQ ──────────────────────────────────────────────────────────── */}
+      <section className="py-12 md:py-16 bg-slate-50 border-y border-slate-100">
         <div className="container-custom max-w-3xl">
           <SectionHeading eyebrow="Questions" title="Frequently asked questions" />
-          <div className="space-y-4">
-            {CONTRIBUTIONS_FAQS.map((faq) => (
-              <details key={faq.question} className="group bg-white rounded-xl border border-slate-200">
+          <div className="space-y-3">
+            {FAQS.map((faq) => (
+              <details
+                key={faq.q}
+                className="group bg-white rounded-xl border border-slate-200"
+              >
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
-                  {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3">⌄</span>
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3" aria-hidden="true">
+                    ⌄
+                  </span>
                 </summary>
                 <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-                  {faq.answer}
+                  {faq.a}
                 </div>
               </details>
             ))}
@@ -316,12 +886,17 @@ export default function SuperContributionsPage() {
         </div>
       </section>
 
-      {/* ── CTA ──────────────────────────────────────────────────────── */}
+      {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section className="py-10 bg-gradient-to-br from-slate-900 to-slate-800">
         <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
           <div>
-            <h2 className="text-lg font-extrabold text-white mb-1">Compare super funds and get advice</h2>
-            <p className="text-slate-400 text-sm">Find a fund with low fees and strong performance, or speak with a financial planner about your contributions strategy.</p>
+            <h2 className="text-lg font-extrabold text-white mb-1">
+              Compare super funds and find an adviser
+            </h2>
+            <p className="text-slate-400 text-sm">
+              Find a fund with low fees and strong long-term performance, or speak with a
+              financial planner about your personal contributions strategy.
+            </p>
           </div>
           <div className="flex gap-3 shrink-0 flex-wrap">
             <Link
@@ -340,10 +915,10 @@ export default function SuperContributionsPage() {
         </div>
       </section>
 
-      {/* ── Compliance footer ────────────────────────────────────────── */}
+      {/* ── Compliance ───────────────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">{SUPER_WARNING_SHORT} {GENERAL_ADVICE_WARNING}</p>
+          <p className="text-xs text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
         </div>
       </section>
     </div>
