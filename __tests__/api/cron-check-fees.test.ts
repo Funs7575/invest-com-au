@@ -18,6 +18,11 @@ vi.mock("@supabase/supabase-js", () => ({
   })),
 }));
 
+vi.mock("@/lib/autopilot", () => ({
+  checkAutopilotGate: vi.fn().mockResolvedValue(null),
+  _resetAutopilotCache: vi.fn(),
+}));
+
 // Import the handler AFTER mocks
 import { GET, maxDuration } from "@/app/api/cron/check-fees/route";
 

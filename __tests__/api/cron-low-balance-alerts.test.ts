@@ -35,6 +35,11 @@ vi.mock("@/lib/supabase/admin", () => ({
   })),
 }));
 
+vi.mock("@/lib/autopilot", () => ({
+  checkAutopilotGate: vi.fn().mockResolvedValue(null),
+  _resetAutopilotCache: vi.fn(),
+}));
+
 import { GET, runtime, maxDuration } from "@/app/api/cron/low-balance-alerts/route";
 
 const SECRET = "test-cron-secret-1234567890";
