@@ -40,6 +40,10 @@ vi.mock("@/lib/cron-auth", () => ({
   requireCronAuth: mockRequireCronAuth,
 }));
 
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: vi.fn().mockResolvedValue(undefined),
+}));
+
 // ─── Supabase mock ────────────────────────────────────────────────────────────
 
 // The route calls supabase in 3 places:

@@ -7,6 +7,10 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock("@/lib/price-snapshots", () => ({
   captureBrokerSnapshotsBatch: vi.fn(async () => ({ total: 0, succeeded: 0, failed: 0 })),
 }));

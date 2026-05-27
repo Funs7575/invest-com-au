@@ -7,6 +7,10 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: vi.fn().mockResolvedValue(undefined),
+}));
+
 function makeBuilder(result: unknown = { data: [], error: null, count: 0 }) {
   const builder: Record<string, unknown> = {};
   for (const m of ["select","insert","update","upsert","delete","eq","neq","gt","gte","lt","lte","in","is","not","or","order","limit","range","single","maybeSingle","filter"]) {
