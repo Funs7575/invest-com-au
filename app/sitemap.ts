@@ -198,6 +198,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/foreign-investment/guides/non-resident-bank-account",
     // Super sub-pages
     "/super/contributions", "/super/consolidation", "/super/leaving-australia",
+    "/super/compare-guide",
+    // Home Loans sub-pages
+    "/home-loans/variable", "/home-loans/fixed", "/home-loans/refinancing",
+    "/home-loans/investment", "/home-loans/offset-redraw", "/home-loans/compare",
     // ETF sub-pages
     "/etfs/bonds", "/etfs/international", "/etfs/sectors",
     // Insurance sub-pages
