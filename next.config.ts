@@ -439,6 +439,11 @@ const nextConfig: NextConfig = {
       { source: "/advisor-guides/tax-agent", destination: "/advisor-guides/how-to-choose-tax-agent-investments", permanent: true },
       { source: "/advisor-guides/mortgage-broker", destination: "/advisor-guides/how-to-choose-mortgage-broker", permanent: true },
       { source: "/advisor-guides/property-advisor", destination: "/advisor-guides/how-to-choose-property-investment-advisor", permanent: true },
+      // ── Broken links from hub configs ──
+      // /find/tax-accountant has no static route — only /find/[type]/[city] exists.
+      { source: "/find/tax-accountant", destination: "/advisors/tax-agents", permanent: true },
+      // /tools/stamp-duty-calculator doesn't exist; stamp duty info lives at:
+      { source: "/tools/stamp-duty-calculator", destination: "/first-home-buyer/stamp-duty", permanent: true },
     ];
   },
 };
