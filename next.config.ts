@@ -446,6 +446,18 @@ const nextConfig: NextConfig = {
       { source: "/tools/stamp-duty-calculator", destination: "/first-home-buyer/stamp-duty", permanent: true },
       // /advisors/tax-accountants — no SLUG_TO_TYPE entry; canonical is tax-agents.
       { source: "/advisors/tax-accountants", destination: "/advisors/tax-agents", permanent: true },
+      // Short-form legacy paths → canonical destinations
+      { source: "/cfd-trading", destination: "/cfd", permanent: true },
+      { source: "/etf", destination: "/etfs", permanent: true },
+      { source: "/us-shares", destination: "/global-investing/shares/us", permanent: true },
+      { source: "/chess-sponsored", destination: "/best/chess-sponsored", permanent: true },
+      { source: "/how-to/invest-in-etfs", destination: "/how-to/invest-in-etfs-for-beginners", permanent: true },
+      // Compare sub-pages that don't yet exist → hub
+      { source: "/compare/brokers", destination: "/compare", permanent: true },
+      { source: "/compare/fx", destination: "/compare/money-transfer", permanent: true },
+      // /find/financial-advisor and /find/mortgage-broker → advisor directories
+      { source: "/find/financial-advisor", destination: "/advisors/financial-planners", permanent: true },
+      { source: "/find/mortgage-broker", destination: "/advisors/mortgage-brokers", permanent: true },
     ];
   },
 };
