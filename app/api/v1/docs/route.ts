@@ -863,6 +863,85 @@ export function GET() {
           "Cache-Control: public, max-age=3600. The trust_mark_embed field contains a self-contained <script> tag that renders a Shadow DOM badge. Add ?theme=dark for dark backgrounds.",
       },
       {
+        path: "/api/v1/tax/treaties",
+        method: "GET",
+        auth_required: true,
+        tiers: ["basic", "pro", "enterprise"],
+        description:
+          "Double-tax treaty (DTA) reference data for Australian residents investing globally. Returns applicable withholding-tax rates under each treaty (dividends, interest, royalties) and key treaty notes. Informational only — not tax advice.",
+        parameters: [
+          {
+            name: "country_code",
+            type: "string",
+            required: false,
+            description: "ISO 3166-1 alpha-2 country code (e.g. 'US', 'GB', 'JP'). Omit to return all treaties.",
+          },
+          {
+            name: "category",
+            type: "string",
+            required: false,
+            description: "Filter by income category: dividends | interest | royalties | capital_gains",
+          },
+        ],
+        example_request: "GET /api/v1/tax/treaties?country_code=US",
+        example_response: {
+          data: [
+            {
+              country_code: "US",
+              country_name: "United States",
+              treaty_signed: "1982-08-06",
+              dividends_rate_pct: 15,
+              dividends_notes: "15% under AUS-US DTA Art. 10. 5% if holding ≥10%.",
+              interest_rate_pct: 10,
+              royalties_rate_pct: 5,
+              capital_gains_notes: "Generally taxed only in resident country; US real-property exception applies.",
+              fito_available: true,
+              w8ben_required: true,
+              updated_at: "2026-01-01T00:00:00Z",
+            },
+          ],
+          meta: { total: 1, disclaimer: "Tax treaty rates are indicative. Consult a registered tax agent for advice." },
+        },
+      },
+      {
+        path: "/api/v1/tax/withholding-rates",
+        method: "GET",
+        auth_required: true,
+        tiers: ["basic", "pro", "enterprise"],
+        description:
+          "Statutory withholding-tax rates for Australian residents receiving foreign-source income. Returns both the non-treaty rate and the reduced DTA rate where applicable. Source: ATO foreign income tables + treaty text. Informational only.",
+        parameters: [
+          {
+            name: "country_code",
+            type: "string",
+            required: false,
+            description: "ISO 3166-1 alpha-2 country code. Omit for all countries.",
+          },
+          {
+            name: "income_type",
+            type: "string",
+            required: false,
+            description: "Income type: dividends | interest | royalties. Default: all.",
+          },
+        ],
+        example_request: "GET /api/v1/tax/withholding-rates?country_code=US&income_type=dividends",
+        example_response: {
+          data: [
+            {
+              country_code: "US",
+              income_type: "dividends",
+              statutory_rate_pct: 30,
+              treaty_rate_pct: 15,
+              treaty_available: true,
+              form_required: "W-8BEN",
+              fito_creditable: true,
+              notes: "AU-listed ETFs holding US shares (e.g. IVV) benefit from treaty rates automatically.",
+            },
+          ],
+          meta: { disclaimer: "Withholding rates are informational. Consult a registered tax agent." },
+        },
+      },
+      {
         path: "/api/v1/openapi.json",
         method: "GET",
         auth_required: false,

@@ -20,6 +20,8 @@ interface EnquireBody {
   investor_country?: string;
   investor_type?: string;
   source_page?: string;
+  /** Required true for equity-raise (startups/pre-IPO) listings — s708 gate. */
+  wholesale_confirmed?: boolean;
 }
 
 export async function POST(request: NextRequest) {
@@ -40,6 +42,7 @@ export async function POST(request: NextRequest) {
     let body: Partial<EnquireBody>;
 
     try {
+      // eslint-disable-next-line invest/no-unvalidated-req-json -- manual field-by-field validation below; Zod migration tracked in backlog
       body = await request.json();
     } catch {
       return NextResponse.json(
@@ -97,7 +100,7 @@ export async function POST(request: NextRequest) {
     // Verify listing exists and is active
     const { data: listing, error: listingError } = await supabase
       .from("investment_listings")
-      .select("id, status, title")
+      .select("id, status, title, vertical")
       .eq("id", body.listing_id)
       .single();
 
@@ -112,6 +115,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "This listing is no longer accepting enquiries." },
         { status: 410 }
+      );
+    }
+
+    // Wholesale gate: startup equity raises + pre-IPO are restricted to
+    // wholesale investors under s708 Corporations Act. Reject server-side if
+    // confirmation is missing so the gate can't be bypassed by removing the
+    // client-side checkbox. (C8 / #1135 follow-up)
+    const WHOLESALE_REQUIRED_VERTICALS = ["startups", "pre-ipo"];
+    if (WHOLESALE_REQUIRED_VERTICALS.includes((listing as { vertical?: string }).vertical ?? "") && !body.wholesale_confirmed) {
+      return NextResponse.json(
+        { error: "This listing is only available to wholesale investors under s708 Corporations Act. Please confirm your eligibility." },
+        { status: 403 }
       );
     }
 
