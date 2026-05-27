@@ -148,7 +148,7 @@ export async function proxy(request: NextRequest) {
 
   const cspDirectives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
     // The `https:` host-source above is the fallback for legacy CSP2
     // browsers that don't understand 'strict-dynamic'. CSP3 browsers
     // ignore both `https:` and the strict-dynamic-shadowed sources.
