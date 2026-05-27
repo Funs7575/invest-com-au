@@ -160,6 +160,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/global-investing/tax/cgt-on-foreign-shares",
     "/global-investing/tax/us-estate-tax",
     "/global-investing/tax/fito",
+    "/global-investing/lics",
+    "/global-investing/currency",
+    "/global-investing/bonds",
+    "/global-investing/property",
+    "/global-investing/crypto",
     // Family-office hub
     "/family-office",
     // Alt-assets hub
