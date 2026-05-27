@@ -75,6 +75,27 @@ const TAX_TOPICS = [
     icon: "🏛️",
     keyFact: "0% tax in pension phase",
   },
+  {
+    title: "Family Trusts & Tax",
+    description: "How discretionary (family) trusts are taxed in Australia — income splitting to beneficiaries, CGT discount, bucket company strategy, and ATO section 100A rules.",
+    href: "/tax/trusts",
+    icon: "🤝",
+    keyFact: "Income taxed at beneficiary's rate",
+  },
+  {
+    title: "Estate Planning & Tax",
+    description: "CGT at death, super death benefits tax, testamentary trusts for minor beneficiaries, and the difference between estate and non-estate assets.",
+    href: "/tax/estate-planning",
+    icon: "📜",
+    keyFact: "No inheritance tax in Australia",
+  },
+  {
+    title: "Medicare Levy & Surcharge",
+    description: "Standard 2% Medicare Levy, MLS thresholds ($93k+ single), private hospital cover exemption, Lifetime Health Cover loading, and the government rebate.",
+    href: "/tax/medicare",
+    icon: "🏥",
+    keyFact: "1–1.5% surcharge above $93k",
+  },
 ];
 
 const TAX_RATES = [

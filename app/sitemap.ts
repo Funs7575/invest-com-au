@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = hasSupabase ? await createClient() : null;
 
   // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/smsf/borrowing", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer", "/redundancy", "/inheritance", "/retirement", "/aged-care", "/home-loans", "/family-office", "/global-investing/tax", "/alt-assets", "/mortgage", "/super/transition-to-retirement", "/super/insurance", "/super/death-benefit", "/tax/salary-sacrifice", "/tax/rental-property", "/invest/ethical-investing"]);
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/smsf/borrowing", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer", "/redundancy", "/inheritance", "/retirement", "/aged-care", "/home-loans", "/family-office", "/global-investing/tax", "/alt-assets", "/mortgage", "/super/transition-to-retirement", "/super/insurance", "/super/death-benefit", "/tax/salary-sacrifice", "/tax/rental-property", "/invest/ethical-investing", "/tax/trusts", "/tax/estate-planning", "/tax/medicare"]);
   const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/rate-alerts", "/embed", "/embed/licensing", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator",
     "/wealth-stack", "/startup/grants", "/lic-screener", "/tools/subscription-audit",
     "/questions", ...QUESTIONS.map((q) => `/questions/${q.slug}`)]);
@@ -221,10 +221,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Tax sub-pages
     "/tax/capital-gains", "/tax/franking-credits", "/tax/negative-gearing",
     "/tax/crypto", "/tax/salary-sacrifice", "/tax/rental-property",
+    "/tax/investment-income", "/tax/trusts", "/tax/estate-planning", "/tax/medicare",
     // SMSF sub-pages (additional)
     "/smsf/borrowing",
-    // Invest sub-pages (ethical)
-    "/invest/ethical-investing",
+    // Invest sub-pages
+    "/invest/ethical-investing", "/invest/index-funds",
     // Property sub-pages
     "/property/finance",
     // Additional public pages
