@@ -41,6 +41,10 @@ vi.mock("@/lib/cron-run-log", () => ({
   wrapCronHandler: mockWrapCronHandler,
 }));
 
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: () => ({
     info: vi.fn(),
