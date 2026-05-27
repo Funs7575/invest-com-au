@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -11,209 +12,119 @@ import type { Broker } from "@/lib/types";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: `Crypto Tax Australia (${CURRENT_YEAR}) — ATO Rules for Bitcoin & Digital Assets`,
-  description: `How the ATO taxes crypto in Australia: CGT events, the 50% discount for long-term holdings, DeFi and staking income, cost base tracking, and reporting requirements. ${UPDATED_LABEL}.`,
+  title: `Crypto Tax Australia (${CURRENT_YEAR}) — ATO Rules for Bitcoin, DeFi & Digital Assets`,
+  description: `ATO crypto tax rules explained: every disposal is a CGT event, staking rewards are ordinary income, DeFi complexity, NFT treatment, exchange collapses, and record-keeping. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Crypto Tax Australia (${CURRENT_YEAR}) — ATO Rules Explained`,
-    description: "Every crypto disposal is a CGT event. How the ATO taxes Bitcoin, Ethereum, DeFi, staking, and NFTs — complete guide.",
+    description:
+      "Every crypto swap, sale, and spend is a CGT event. How the ATO taxes Bitcoin, Ethereum, DeFi, staking, NFTs, and exchange collapses — complete ATO-aligned guide.",
     url: `${SITE_URL}/tax/crypto`,
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/crypto` },
 };
 
-const SECTIONS = [
+// ─── DeFi complexity table data ──────────────────────────────────────────────
+
+const DEFI_ROWS = [
   {
-    heading: "ATO position on crypto — taxed as assets, not currency",
-    body: `The Australian Taxation Office (ATO) treats cryptocurrency as a capital asset for tax purposes — not as a foreign currency, not as cash, and not as a personal use item for most investors. This has significant implications for how gains, losses, and income are taxed.
-
-**The ATO's core position:**
-Crypto assets are treated as property, similar to shares. When you dispose of crypto, Capital Gains Tax (CGT) applies. When you receive crypto as income (from mining, staking, airdrops, or DeFi), it's ordinary income at the time received.
-
-**What counts as a CGT asset:**
-Bitcoin, Ethereum, and all other cryptocurrencies are CGT assets. So are non-fungible tokens (NFTs), utility tokens, governance tokens, and stablecoins. The technical nature of the token doesn't change the tax treatment.
-
-**The "personal use" exception:**
-The ATO allows an exception for "personal use assets" — crypto acquired and used solely for personal purchases (e.g., using Bitcoin to buy a product online). If you buy crypto and use it within a short period for a personal transaction, it may be exempt from CGT. However, the ATO scrutinises these claims closely, and the exemption generally doesn't apply to investors who hold crypto primarily for profit or investment.
-
-**The ATO's data matching program:**
-The ATO collects transaction data directly from Australian crypto exchanges (Coinbase, Independent Reserve, CoinJar, Swyftx, and others). Every time you buy or sell crypto on an Australian exchange, the ATO receives a data feed. The ATO also has international data sharing arrangements. Assuming crypto transactions are untraceable or undetectable is a significant compliance risk.`,
+    activity: "Lending (Aave, Compound)",
+    treatment: "Ordinary income",
+    taxableEvent: "When interest/rewards received",
+    notes: "Market value at receipt = income; new cost base established",
   },
   {
-    heading: "CGT events for crypto — what triggers tax",
-    body: `A CGT event occurs every time you "dispose" of a crypto asset. The ATO's definition of disposal is broad — it covers far more than simply selling for Australian dollars.
-
-**Every one of these is a taxable CGT event:**
-
-**1. Selling crypto for AUD:** The most obvious disposal. Calculate gain or loss: sale proceeds minus cost base (purchase price plus costs).
-
-**2. Trading one crypto for another:** Swapping Bitcoin for Ethereum is a disposal of Bitcoin. You're treated as having sold Bitcoin at its AUD value at the time of the swap, and acquired Ethereum at that same value (which becomes your new cost base). Even if you never touched AUD, you have a realised capital gain or loss on the Bitcoin.
-
-**3. Spending crypto on goods or services:** Using crypto to pay for anything — a coffee, software, a holiday — is a disposal. Calculate the gain or loss based on the AUD value at the time of spending versus your cost base.
-
-**4. Gifting crypto:** Giving crypto to someone else is treated as a disposal at the market value at the time of gifting. The recipient acquires the crypto at that market value (their cost base).
-
-**5. Wrapping and bridging:** Converting ETH to WETH (wrapped ETH) or bridging tokens between blockchains may trigger CGT events depending on whether the original token is technically "disposed of." The ATO has provided limited guidance on this — professional advice is recommended for complex DeFi activity.
-
-**6. NFT minting and sales:** Creating an NFT may have tax implications depending on whether it's a business activity. Selling an NFT you created is likely ordinary income (not CGT). Buying and selling NFTs as investments is subject to CGT.
-
-**What is NOT a CGT event:**
-- Transferring crypto between wallets you own (same owner)
-- Buying crypto with AUD (this is an acquisition, not a disposal)`,
+    activity: "Liquidity pools (Uniswap, Curve)",
+    treatment: "Income + CGT",
+    taxableEvent: "Rewards on receipt; CGT on exit",
+    notes: "Entering/exiting pool may be a CGT disposal; rewards are income",
   },
   {
-    heading: "The 50% CGT discount for long-term crypto holders",
-    body: `The 50% CGT discount available for shares and property also applies to cryptocurrency. If you hold a crypto asset for more than 12 months before disposing of it, only 50% of the net capital gain is included in your assessable income.
-
-**This is significant for long-term Bitcoin and Ethereum holders.**
-
-**Example:**
-You bought 1 Bitcoin for $25,000 in January 2024. You sell in March 2026 for $90,000.
-- Capital gain: $90,000 − $25,000 = $65,000
-- Held 26+ months: 50% discount applies
-- Assessable gain: $32,500
-- At 37% marginal rate: CGT = $12,025
-
-Without the 50% discount (if sold before 12 months):
-- Assessable gain: $65,000
-- At 37% marginal rate: CGT = $24,050
-
-The 12-month threshold saves $12,025 in this example.
-
-**The swap trap:**
-Many crypto investors lose their 12-month holding period by swapping tokens. If you hold Bitcoin for 10 months and swap it for Ethereum, you've disposed of Bitcoin (triggering CGT) and acquired Ethereum with a new acquisition date. The 12-month clock for the new Ethereum position starts at the swap date — not the original Bitcoin purchase date.
-
-**Staggered CGT:** If you've been dollar-cost averaging into crypto and have multiple purchase tranches, each purchase has its own acquisition date and 12-month threshold. You may have some parcels qualifying for the discount and others not.`,
+    activity: "Yield farming",
+    treatment: "Generally ordinary income",
+    taxableEvent: "When farming rewards received",
+    notes: "Complex — whittle-down rule may reduce cost base of deposited assets",
   },
   {
-    heading: "DeFi, staking, and mining — ordinary income rules",
-    body: `Activity that generates crypto rewards — staking, liquidity provision, yield farming, mining, and airdrops — is generally treated as ordinary income by the ATO, not capital gains. This is a critical distinction because ordinary income is taxed at your full marginal rate, with no CGT discount.
-
-**Staking rewards:**
-When you receive staking rewards (proof-of-stake validation, liquid staking like stETH, or exchange staking), the ATO treats the value of the reward at the time you receive it as ordinary income. It's similar to receiving interest on a bank deposit.
-
-The staking reward then has a cost base equal to the value at which it was included in your income. When you eventually sell the reward, CGT applies on any gain from that cost base.
-
-Example:
-- Receive 0.1 ETH staking reward when ETH = $4,000 AUD
-- Income: $400 (included in tax return year received)
-- Cost base of 0.1 ETH = $400
-- If you sell 18 months later when ETH = $6,000: capital gain = $600 − $400 = $200 (50% discount applies)
-
-**Liquidity mining and yield farming:**
-Rewards from providing liquidity on DeFi protocols (like Uniswap, Curve, or Aave) are treated as ordinary income at the time received. The underlying assets in the liquidity pool also create complex CGT events when you enter and exit positions.
-
-**Mining income:**
-If you mine cryptocurrency as a business activity, rewards are ordinary business income. If you mine as a hobby, the ATO may still treat rewards as ordinary income — the line between hobby and business mining is fact-specific.
-
-**Airdrops:**
-Generally treated as ordinary income at the time received, based on market value. If the airdropped token has no established market value at receipt, some uncertainty exists around timing — the ATO has indicated the income arises when the token can be traded.`,
+    activity: "Wrapped tokens (e.g. WETH)",
+    treatment: "Potentially CGT disposal",
+    taxableEvent: "At point of wrapping",
+    notes: "ATO guidance limited; professional advice recommended",
   },
   {
-    heading: "Cost base tracking — the hardest part of crypto tax",
-    body: `Accurate cost base tracking is the most challenging aspect of crypto tax compliance — and where most mistakes are made. Without reliable records, it's impossible to correctly calculate your capital gains or losses.
-
-**The core challenge:**
-Crypto investors often have hundreds or thousands of transactions across multiple exchanges, wallets, and chains. Each buy, sell, swap, fee payment, and income receipt needs to be recorded with a timestamp and AUD value at the time of the event.
-
-**Cost base includes:**
-- Purchase price in AUD at time of acquisition
-- Exchange fees and transaction fees paid in AUD or crypto (crypto fees need to be converted to AUD at the time paid)
-- Network gas fees for on-chain transactions
-
-**Cost identification methods:**
-The ATO allows several methods for identifying which parcels of an asset you're disposing of:
-
-**FIFO (First In, First Out):** The earliest-purchased parcels are considered sold first. This is the default and most common method.
-
-**LIFO (Last In, First Out):** The most recently purchased parcels are sold first. Can produce different results — some years more tax-efficient, some less.
-
-**Minimisation:** Identify the specific parcel that minimises your gain (typically the one with the highest cost base) — allowed in limited circumstances.
-
-**You must apply one method consistently** — switching methods to get the best outcome each year is not permitted.
-
-**Crypto tax software:**
-Tools like Koinly, CoinTracker, CryptoTaxCalculator (Australian-based), and TaxBit help automate cost base tracking. They connect to exchanges via API, import transaction history, apply CGT calculations, and produce ATO-compatible tax reports. For anyone with significant crypto activity, this software is essentially essential — manual calculation is error-prone and time-consuming.`,
+    activity: "Staking rewards",
+    treatment: "Ordinary income",
+    taxableEvent: "When rewards received (ATO 2023 guidance)",
+    notes: "Later sale of rewards = CGT event from new cost base",
   },
   {
-    heading: "Reporting requirements and the ATO's enforcement approach",
-    body: `The ATO takes crypto compliance seriously and has been actively pursuing under-reporting since 2018. Understanding your reporting obligations — and the ATO's detection capabilities — is essential.
-
-**What you must report:**
-- Capital gains and losses from all crypto disposals in the relevant financial year
-- All crypto income received (staking, mining, DeFi yields, airdrops) in the year received
-- Foreign exchange gains if applicable
-
-**Where to report:**
-Capital gains are reported in the Capital Gains section of your individual tax return. Crypto income (staking, mining) is reported as Other Income. Your tax software or accountant can assist with categorisation.
-
-**The ATO's data matching:**
-Since 2018, the ATO has operated a Cryptocurrency Data Matching Program. It collects transaction records from Australian exchanges, which are legally required to provide customer identity and transaction data. The ATO cross-references this with tax returns. If you have exchange transactions but no crypto income reported on your return, expect contact from the ATO.
-
-**International exchanges and offshore wallets:**
-The ATO participates in the OECD's Crypto-Asset Reporting Framework (CARF), which standardises information sharing between tax authorities globally. The ATO also uses blockchain analytics (Chainalysis and similar tools) to trace on-chain activity from known exchange addresses.
-
-**Penalties for non-compliance:**
-Failure to report crypto gains can result in: amended assessments plus interest (currently 9–10% per annum on unpaid tax), penalties ranging from 25–75% of the tax shortfall (depending on whether non-reporting was careless or deliberate), and in extreme cases, prosecution for tax fraud.
-
-**Voluntary disclosure:**
-The ATO's voluntary disclosure program allows taxpayers to come forward before an audit begins to receive reduced penalties. If you haven't reported crypto correctly in prior years, a voluntary disclosure is significantly better than waiting to be caught.`,
+    activity: "Airdrops",
+    treatment: "Ordinary income",
+    taxableEvent: "When tradeable (if no prior market value)",
+    notes: "Market value at receipt; nil cost base if valued at zero on receipt",
   },
 ];
+
+// ─── FAQ data ─────────────────────────────────────────────────────────────────
 
 const FAQS = [
   {
-    question: "Do I pay tax on crypto in Australia?",
-    answer: "Yes. The ATO treats cryptocurrency as a capital asset, not currency. Every disposal (selling, trading, spending, gifting) triggers a CGT event. Income from staking, mining, and DeFi yields is treated as ordinary income in the year received. You must report all crypto transactions in your annual tax return. The ATO data-matches Australian exchange transactions, so unreported crypto activity is detectable.",
+    q: "Is cryptocurrency taxable in Australia?",
+    a: "Yes. The ATO treats all cryptocurrency — Bitcoin, Ethereum, stablecoins, NFTs, DeFi tokens — as CGT assets, not currency. Every disposal (selling for AUD, trading one crypto for another, spending, or gifting) triggers a capital gains tax event. Income from staking, mining, DeFi yields, and airdrops is ordinary income taxed at your marginal rate in the year received. You must report all crypto activity in your annual tax return. The ATO receives data directly from Australian exchanges and participates in the OECD&apos;s global Crypto-Asset Reporting Framework.",
   },
   {
-    question: "What if I just hold crypto and never sell?",
-    answer: "Simply holding crypto does not trigger any tax event. CGT only applies when you dispose of the asset. Staking income is taxable when received (ordinary income), but capital gains only arise on disposal. If you bought Bitcoin and have held it without selling, swapping, or spending, you have no reportable CGT events — though you should still track your cost base carefully for when you do eventually dispose.",
+    q: "How do I calculate capital gains on crypto?",
+    a: "Capital gain = proceeds minus cost base. Proceeds is the AUD value of what you received (or the market value of what you disposed of). Cost base includes the original purchase price plus acquisition costs (exchange fees, gas fees). If you held the crypto for more than 12 months, you can apply the 50% CGT discount — only half the gain is added to your taxable income. You must use a consistent cost identification method (FIFO, LIFO, or specific identification) across all transactions and all financial years.",
   },
   {
-    question: "Is transferring crypto between my own wallets taxable?",
-    answer: "No — transferring between wallets you control (same owner) is not a CGT event. However, any fees paid in crypto for the transfer (e.g., ETH gas fees) may be a disposal of that small amount of crypto, creating a minor CGT event. Keep records of all wallet addresses you control to demonstrate ownership continuity. Moving crypto to an exchange wallet you own is fine; sending to someone else's wallet is a disposal (potentially a gift).",
+    q: "Are staking rewards taxed in Australia?",
+    a: "Yes — under updated ATO guidance from 2023, staking rewards are ordinary income at the market value on the day you receive them. This applies to proof-of-stake validation rewards, liquid staking tokens (e.g. stETH), and exchange staking programs. The reward amount is included in your assessable income for the financial year you received it, at your marginal income tax rate. When you later sell the staking rewards, that sale is a separate CGT event from the cost base established at receipt — the 50% discount applies if you held the rewards for 12+ months before selling.",
   },
   {
-    question: "How far back can the ATO audit my crypto?",
-    answer: "The standard amendment period for income tax assessments is 2 years for individuals with simple affairs, and 4 years for most investors. For cases involving fraud or evasion, there is no time limit — the ATO can go back indefinitely. The ATO's Cryptocurrency Data Matching Program has historical data from Australian exchanges going back to 2015 onwards. If you haven't correctly reported crypto in prior years, voluntary disclosure is the safest path.",
+    q: "What records do I need to keep for crypto tax?",
+    a: "The ATO requires: the date and time of every transaction; the AUD value at the time of each transaction; the counterparty (wallet address or exchange); the exchange or platform used; and all fees paid. For DeFi, you also need records of smart contract interactions, liquidity pool positions, and reward distributions. Records must be kept for at least 5 years. Crypto tax software such as Koinly, CoinTracker, or CryptoTaxCalculator (Australian-based) can connect to exchanges via API and automate this — manual tracking across hundreds of transactions is error-prone.",
   },
   {
-    question: "Can I claim crypto losses to offset other income?",
-    answer: "Crypto losses are capital losses — they can offset capital gains (including from shares, property, and other crypto), but they cannot directly offset ordinary income like salary or wages. If your crypto losses exceed your capital gains in a year, the excess carries forward to future years indefinitely. Crypto capital losses are valuable if you have other capital gains to offset — they can significantly reduce CGT in the year you realise gains from other investments.",
+    q: "Can I claim a loss if my crypto exchange collapsed?",
+    a: "Possibly — but it depends on the circumstances. Under ATO TD 2023/1 (the FTX guidance), if an exchange owes you crypto and becomes insolvent, you may have a debt that is a bad debt once it is formally unrecoverable. A CGT event may crystallise when it becomes clear the debt will not be repaid — usually when liquidators make that determination. You cannot simply claim a loss because an exchange froze withdrawals. Seek professional advice: the timing of loss recognition, whether it is a capital loss or bad debt, and the documentation required are all fact-specific. Do not amend prior year returns without a tax agent reviewing the position.",
   },
 ];
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function CryptoTaxPage() {
   const supabase = await createClient();
   const { data: exchangeRows } = await supabase
     .from("brokers")
-    .select("id, name, slug, color, logo_url, rating, cta_text, benefit_cta, tagline, affiliate_url, status, platform_type, created_at, updated_at, chess_sponsored, smsf_support, is_crypto, deal, editors_pick")
+    .select(
+      "id, name, slug, color, logo_url, rating, cta_text, benefit_cta, tagline, affiliate_url, status, platform_type, created_at, updated_at, chess_sponsored, smsf_support, is_crypto, deal, editors_pick"
+    )
     .eq("status", "active")
     .eq("platform_type", "crypto_exchange")
     .order("rating", { ascending: false })
     .limit(3);
   const exchanges: Broker[] = exchangeRows ?? [];
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Tax", url: `${SITE_URL}/tax` },
-    { name: "Crypto Tax" },
+    { name: "Crypto Tax Australia" },
   ]);
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQS.map((f) => ({
-      "@type": "Question",
-      name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.answer },
-    })),
-  };
+  const faqSchema = faqJsonLd(FAQS);
 
   return (
     <div className="bg-white min-h-screen">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -223,7 +134,7 @@ export default async function CryptoTaxPage() {
             <span>/</span>
             <Link href="/tax" className="hover:text-slate-900">Tax</Link>
             <span>/</span>
-            <span className="text-slate-900 font-medium">Crypto Tax</span>
+            <span className="text-slate-900 font-medium">Crypto Tax Australia</span>
           </nav>
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-semibold text-slate-600 mb-4">
@@ -235,68 +146,519 @@ export default async function CryptoTaxPage() {
               <span className="text-amber-600">({CURRENT_YEAR})</span>
               {" "}— ATO Rules for Bitcoin &amp; Digital Assets
             </h1>
-            <p className="text-sm md:text-base text-slate-600 leading-relaxed">
-              Every crypto swap, sale, and spend is a CGT event. The ATO data-matches exchange records.
-              We explain every taxable event, the 50% discount, DeFi income rules, and how to stay compliant.
+            <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-4">
+              The ATO treats crypto as a CGT asset, not currency. Every disposal — including swaps,
+              spending, and gifting — is a taxable event. Staking rewards and DeFi income are taxed
+              as ordinary income when received. This guide covers every ATO position as of the
+              2024&ndash;25 year.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Callouts */}
+      {/* Key fact callouts */}
       <section className="py-8 bg-slate-50 border-b border-slate-200">
         <div className="container-custom">
           <div className="grid sm:grid-cols-3 gap-4">
             <div className="bg-white rounded-2xl border border-amber-200 p-5">
-              <p className="text-xs font-bold text-amber-800 uppercase tracking-wide mb-1">Every Disposal</p>
+              <p className="text-xs font-bold text-amber-800 uppercase tracking-wide mb-1">
+                Every Disposal
+              </p>
               <p className="text-xl font-black text-amber-700">CGT Event</p>
-              <p className="text-xs text-slate-600 mt-1">Selling, swapping, spending, or gifting crypto all trigger CGT events — not just selling for AUD</p>
+              <p className="text-xs text-slate-600 mt-1">
+                Selling, swapping, spending, or gifting crypto all trigger CGT — not just cashing
+                out to AUD
+              </p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">DeFi / Staking</p>
+              <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">
+                Staking / DeFi Income
+              </p>
               <p className="text-xl font-black text-slate-900">Ordinary Income</p>
-              <p className="text-xs text-slate-600 mt-1">Staking rewards, mining income, and DeFi yields are ordinary income at the time received</p>
+              <p className="text-xs text-slate-600 mt-1">
+                Staking rewards, DeFi yields, and airdrops are taxed at your full marginal rate when
+                received
+              </p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
-              <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">ATO Enforcement</p>
+              <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">
+                ATO Enforcement
+              </p>
               <p className="text-xl font-black text-slate-900">Data Matching</p>
-              <p className="text-xs text-slate-600 mt-1">The ATO collects data directly from Australian crypto exchanges and uses blockchain analytics</p>
+              <p className="text-xs text-slate-600 mt-1">
+                Australian exchanges must report to the ATO; on-chain activity is traced via
+                blockchain analytics
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Content Sections */}
-      <section className="py-10 md:py-12 bg-slate-50">
+      {/* ATO position */}
+      <section className="py-10 md:py-12 bg-white">
         <div className="container-custom max-w-3xl">
-          <SectionHeading eyebrow="Crypto Tax Guide" title="ATO Crypto Tax Rules Explained" />
-          <div className="mt-8 space-y-10">
-            {SECTIONS.map((sec) => (
-              <div key={sec.heading}>
-                <h2 className="text-lg font-extrabold text-slate-900 mb-3">{sec.heading}</h2>
-                <div className="text-sm text-slate-600 leading-relaxed space-y-3">
-                  {sec.body.split("\n\n").map((para, i) => (
-                    <p key={i} className="whitespace-pre-line">{para}</p>
-                  ))}
+          <SectionHeading
+            eyebrow="ATO Position"
+            title="Crypto is a CGT asset — not currency"
+          />
+          <div className="mt-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              The Australian Taxation Office treats all cryptocurrency as a <strong>capital
+              gains tax (CGT) asset</strong> — the same legal category as shares and investment
+              property. It is not foreign currency, not cash, and not exempt from tax merely
+              because transactions occur on a blockchain.
+            </p>
+            <p>
+              This classification applies to Bitcoin, Ethereum, all altcoins, stablecoins
+              (including USDT and USDC), governance tokens, utility tokens, and
+              non-fungible tokens (NFTs). The underlying technology or intended purpose of
+              the token does not change the tax treatment.
+            </p>
+            <p>
+              The practical consequence: <strong>every time you dispose of a crypto asset, a
+              CGT event occurs</strong>. You calculate your gain or loss at that moment, in
+              Australian dollars. The 50% CGT discount applies if you held the asset for
+              more than 12 months.
+            </p>
+            <p>
+              When you <em>receive</em> crypto — from staking, mining, DeFi protocols,
+              airdrops, or as payment for services — that receipt is <strong>ordinary income</strong>,
+              not a capital gain. It is taxed at your marginal income tax rate in the year you
+              receive it, with no CGT discount available. The value at receipt then becomes your
+              cost base for any future CGT calculation when you eventually dispose of it.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Taxable disposals */}
+      <section className="py-10 md:py-12 bg-slate-50 border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="CGT Events"
+            title="What counts as a taxable disposal"
+          />
+          <div className="mt-6 space-y-5 text-sm text-slate-600 leading-relaxed">
+            <p>
+              The ATO&apos;s definition of &ldquo;disposal&rdquo; is deliberately broad. Any transfer
+              of ownership — or any event that effectively ends your economic interest in the asset
+              — triggers CGT.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-4 mt-2">
+              {[
+                {
+                  label: "Selling for AUD",
+                  detail:
+                    "The clearest disposal. Proceeds = AUD received. Gain = proceeds minus cost base.",
+                },
+                {
+                  label: "Trading crypto for crypto",
+                  detail:
+                    "Swapping BTC for ETH = two events: dispose BTC at its AUD value at swap time (CGT), acquire ETH at that same AUD value (new cost base). No AUD ever touches your account — but you have a realised gain or loss on the BTC.",
+                },
+                {
+                  label: "Spending crypto on goods/services",
+                  detail:
+                    "Using crypto to pay for anything is a disposal at market value at time of payment. Calculate gain vs. cost base on the crypto spent.",
+                },
+                {
+                  label: "Gifting crypto",
+                  detail:
+                    "Gifting is treated as a disposal at market value on the gift date. The recipient acquires at that value (their cost base). You may have a capital gain even though you received nothing.",
+                },
+                {
+                  label: "Losing private key access",
+                  detail:
+                    "Generally NOT deductible unless you can conclusively prove the crypto is permanently and irrecoverably lost or stolen. Mere loss of keys without evidence is not sufficient for the ATO.",
+                },
+                {
+                  label: "Wallet-to-wallet (same owner)",
+                  detail:
+                    "Moving crypto between wallets you control is NOT a CGT event. Keep records of all wallet addresses to prove ownership. Gas fees paid to transfer may be minor CGT events.",
+                },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="bg-white border border-slate-200 rounded-xl p-4"
+                >
+                  <p className="font-bold text-slate-900 text-xs mb-1">{item.label}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed">{item.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CGT calculation */}
+      <section className="py-10 md:py-12 bg-white border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="Calculation"
+            title="CGT calculation: cost base, discount, and identification methods"
+          />
+          <div className="mt-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              <strong>The formula:</strong> Capital gain = Proceeds &minus; Cost base. If held
+              more than 12 months: assessable gain = capital gain &times; 50% (the CGT
+              discount).
+            </p>
+            <p>
+              <strong>Cost base components</strong> include: the purchase price in AUD at
+              acquisition; brokerage or exchange fees paid at purchase; gas fees paid for
+              on-chain transactions (converted to AUD at the time paid); and any other
+              incidental costs of acquisition. Fees paid in crypto are themselves small CGT
+              events — they must be tracked.
+            </p>
+            <p>
+              <strong>Worked example — 50% discount in practice:</strong> You buy 1 BTC
+              for $40,000 (including fees) in January 2024. You sell in March 2026 for
+              $95,000. Capital gain = $55,000. Held 26 months &rarr; 50% discount: assessable
+              gain = $27,500. At a 37% marginal rate, tax = $10,175. Without the discount
+              (sold within 12 months), tax would be $20,350.
+            </p>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mt-2">
+              <p className="text-xs font-bold text-slate-800 mb-3 uppercase tracking-wide">
+                Cost identification methods — choose one and apply consistently
+              </p>
+              <div className="space-y-2">
+                <div className="flex gap-3">
+                  <span className="font-bold text-slate-900 text-xs w-36 shrink-0">FIFO (First In, First Out)</span>
+                  <span className="text-xs text-slate-600">Earliest-purchased parcels are treated as sold first. ATO default and most common. Favours long-held positions for the 12-month discount.</span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="font-bold text-slate-900 text-xs w-36 shrink-0">LIFO (Last In, First Out)</span>
+                  <span className="text-xs text-slate-600">Most recently purchased parcels sold first. Can produce different results — sometimes more tax-efficient, sometimes less.</span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="font-bold text-slate-900 text-xs w-36 shrink-0">Specific identification</span>
+                  <span className="text-xs text-slate-600">Identify exactly which parcel you are selling. Requires clear records linking the disposal to a specific acquisition. Cannot be used opportunistically to minimise tax each year.</span>
                 </div>
               </div>
-            ))}
+              <p className="text-xs text-slate-500 mt-3">
+                Switching methods year to year to obtain the best outcome is not permitted.
+                Apply the same method consistently across all years and all assets.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Staking and DeFi income */}
+      <section className="py-10 md:py-12 bg-slate-50 border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="Staking & DeFi"
+            title="Staking rewards and DeFi income — ordinary income rules"
+          />
+          <div className="mt-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              Updated ATO guidance released in 2023 confirmed that <strong>staking rewards are
+              ordinary income</strong> at the market value on the date you receive them. This
+              applies to proof-of-stake block rewards, liquid staking protocols (e.g., stETH,
+              rETH), and exchange-based staking products.
+            </p>
+            <p>
+              The staking reward is reported as &ldquo;other income&rdquo; in your tax return
+              (item 24) for the financial year of receipt. It is taxed at your full marginal
+              rate. When you later sell those rewards, a separate CGT event arises — and the
+              cost base for that CGT event is the market value you already included as income.
+              The 50% CGT discount applies if you hold the rewards for 12+ months before selling.
+            </p>
+            <p>
+              <strong>DeFi lending interest</strong> (from protocols like Aave or Compound) is
+              also ordinary income when received. <strong>Yield farming</strong> rewards are
+              generally income, though the whittle-down rule may reduce the cost base of assets
+              deposited into farming contracts — increasing any eventual CGT on those underlying
+              assets. These interactions are complex: crypto tax software or a specialist
+              accountant is recommended for active DeFi users.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* NFTs */}
+      <section className="py-10 md:py-12 bg-white border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading eyebrow="NFTs" title="NFT tax treatment" />
+          <div className="mt-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              NFTs are CGT assets subject to the same rules as other cryptocurrency. Buying and
+              selling NFTs as investments triggers CGT on disposal, with the 50% discount
+              available after 12 months.
+            </p>
+            <p>
+              <strong>NFTs you created:</strong> If you mint and sell an NFT, the ATO&apos;s
+              position is that this is more akin to selling an asset you manufactured than
+              investing — the proceeds are likely <strong>ordinary income</strong> (business
+              income or hobby income), not a capital gain. The business vs. hobby distinction
+              depends on facts: frequency, commerciality, scale, and intention. Royalty income
+              from secondary sales is also ordinary income.
+            </p>
+            <p>
+              <strong>Collectables threshold:</strong> Personal use assets and collectables
+              acquired for under $10,000 may be exempt from CGT. The ATO&apos;s collectables
+              threshold was set when NFT prices were negligible. For NFTs purchased at
+              significant values, the exemption is unlikely to apply. The ATO has indicated
+              it is scrutinising NFT activity closely.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Exchange collapses */}
+      <section className="py-10 md:py-12 bg-slate-50 border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="Exchange Collapses"
+            title="FTX and exchange insolvency — ATO TD 2023/1"
+          />
+          <div className="mt-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              When FTX collapsed in November 2022, the ATO released Technical Decision
+              TD 2023/1 to address how affected investors should treat their losses.
+              The ruling applies to any exchange insolvency or collapse scenario.
+            </p>
+            <p>
+              <strong>The ATO&apos;s position:</strong> If an exchange owes you crypto and
+              it collapses, you may have a <em>debt</em> owed to you (the exchange&apos;s
+              obligation to return your assets). That debt may become a <strong>bad debt</strong>
+              once it is formally irrecoverable — typically when liquidators confirm the
+              shortfall. At that point a CGT event may crystallise, potentially allowing a
+              capital loss.
+            </p>
+            <p>
+              You cannot simply declare a loss because an exchange freezes withdrawals. The
+              timing of loss recognition, whether it is treated as a capital loss or a bad
+              debt deduction, and the documentation required (proof of funds on exchange,
+              liquidator communications) are all fact-specific. <strong>Do not amend prior
+              year returns without professional advice</strong> — getting the timing wrong
+              creates its own compliance risks.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Personal use exemption */}
+      <section className="py-10 md:py-12 bg-white border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="Exemptions"
+            title="Personal use asset exemption — narrow and heavily scrutinised"
+          />
+          <div className="mt-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              The ATO allows an exemption for <strong>personal use assets</strong>: crypto
+              acquired and used solely for purchasing goods or services for personal
+              consumption. If the cost base of the crypto was under $10,000 and it was used
+              within a short time of acquisition for a personal purchase, the gain may be
+              exempt from CGT.
+            </p>
+            <p>
+              In practice, this exemption is extremely narrow. The ATO actively scrutinises
+              personal use claims and has stated that crypto held primarily as an investment
+              — even if occasionally spent — does not qualify. If you bought Bitcoin with any
+              intention of holding it for profit, any eventual CGT applies regardless of what
+              you ultimately spent it on.
+            </p>
+            <p>
+              The exemption is designed for someone who, for example, bought $200 in Bitcoin
+              specifically to make a single online purchase that week. It does not apply to
+              investors who happened to spend some of their holdings.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Record-keeping */}
+      <section className="py-10 md:py-12 bg-slate-50 border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="Record-Keeping"
+            title="What records you must keep — and how the ATO checks"
+          />
+          <div className="mt-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              The ATO requires you to keep records of every transaction for at least five years
+              from when you lodge the relevant return. Required data for each transaction:
+            </p>
+            <ul className="list-disc list-inside space-y-1 pl-2">
+              <li>Date and time of the transaction</li>
+              <li>AUD value at the time of the transaction (not current value)</li>
+              <li>The counterparty (wallet address, exchange, or name if known)</li>
+              <li>The exchange or platform used</li>
+              <li>All fees paid (in AUD or converted from crypto at the time)</li>
+              <li>Type of transaction (buy, sell, swap, staking receipt, airdrop, etc.)</li>
+            </ul>
+            <p>
+              <strong>ATO data matching:</strong> Since 2018, the ATO&apos;s Cryptocurrency
+              Data Matching Program has collected identity and transaction records from
+              Australian crypto exchanges. Swyftx, CoinJar, Independent Reserve, Coinbase
+              Australia, and others must report. The ATO cross-references this with tax
+              returns. If you have exchange activity but no crypto income declared, expect
+              an ATO enquiry.
+            </p>
+            <p>
+              <strong>International and on-chain tracing:</strong> Australia participates in
+              the OECD&apos;s Crypto-Asset Reporting Framework (CARF), which enables
+              cross-border exchange of exchange data. The ATO also uses blockchain analytics
+              tools (Chainalysis and similar) to trace on-chain flows from known exchange
+              deposit addresses.
+            </p>
+            <p>
+              <strong>Crypto tax software:</strong> For anyone with significant activity,
+              tools like Koinly, CoinTracker, and CryptoTaxCalculator (Australian-based)
+              connect to exchanges and wallets via API, apply CGT calculations, and produce
+              ATO-compatible tax reports. Manual calculation across hundreds of transactions
+              on multiple chains is error-prone and time-consuming.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Tax return reporting */}
+      <section className="py-10 md:py-12 bg-white border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="Tax Return"
+            title="Reporting crypto in your tax return"
+          />
+          <div className="mt-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              Crypto gains and losses are reported in the <strong>Capital gains</strong> section
+              of your individual tax return, which feeds into the CGT schedule. If you have
+              significant activity, you&apos;ll complete a full CGT schedule.
+            </p>
+            <p>
+              Crypto income (staking rewards, mining income, DeFi yields, airdrops) is reported
+              at <strong>item 24 — Other income</strong> in your individual return, for the
+              financial year you received it.
+            </p>
+            <p>
+              ATO myTax includes a dedicated crypto section from the 2024&ndash;25 income year.
+              For taxpayers using Australian exchanges that participate in data matching,
+              some pre-fill may be available — but pre-fill is rarely complete for active
+              traders or DeFi users. Always verify pre-filled data against your own records.
+            </p>
+            <p>
+              <strong>Common audit triggers</strong> include: large unreported gains from
+              known Australian exchanges, a mismatch between declared income and lifestyle
+              indicators, failure to declare DeFi or staking income, and transactions
+              inconsistent with prior years&apos; returns.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Legal strategies */}
+      <section className="py-10 md:py-12 bg-slate-50 border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="Tax Planning"
+            title="Legal strategies for minimising crypto CGT"
+          />
+          <div className="mt-6 space-y-4 text-sm text-slate-600 leading-relaxed">
+            <p>
+              These are legal tax minimisation strategies, not tax avoidance. None of them
+              involve misreporting or exploiting loopholes — they use the structure of the
+              tax law as intended.
+            </p>
+            <div className="space-y-3">
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
+                <p className="font-bold text-slate-900 text-xs mb-1">
+                  Hold for 12 months — CGT discount timing
+                </p>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  If you&apos;re approaching the 12-month mark on a profitable position, delaying
+                  the disposal past that date halves the assessable gain for individual investors.
+                  The value of this is largest for high-income earners. Be cautious of market
+                  risk in timing decisions.
+                </p>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
+                <p className="font-bold text-slate-900 text-xs mb-1">
+                  Tax-loss harvesting before 30 June
+                </p>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Review your portfolio in May&ndash;June. Selling positions that are sitting at
+                  a loss realises capital losses that offset your realised gains, reducing your
+                  CGT bill for the year. Capital losses carried forward never expire. Wash sale
+                  rules apply — repurchasing the same asset immediately may be challenged by
+                  the ATO if the sole purpose was to generate a loss.
+                </p>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
+                <p className="font-bold text-slate-900 text-xs mb-1">
+                  SMSF holding of crypto — 15% tax on gains
+                </p>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  A self-managed superannuation fund (SMSF) that holds crypto in the
+                  accumulation phase pays 15% tax on income and concessional CGT (10% after
+                  12 months with a one-third discount). In pension phase, tax can be zero.
+                  SMSFs must comply with the sole purpose test, investment strategy documentation,
+                  and ATO SMSF crypto guidelines. Seek SMSF-specialist advice before using
+                  a fund to hold crypto.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DeFi complexity table */}
+      <section className="py-10 md:py-12 bg-white border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <SectionHeading
+            eyebrow="DeFi Tax"
+            title="DeFi activity — income or CGT, and when the taxable event occurs"
+          />
+          <p className="text-sm text-slate-500 mt-2 mb-6">
+            DeFi creates some of the most complex crypto tax scenarios. The table below
+            summarises the ATO&apos;s general position on common activities — individual
+            circumstances vary and professional advice is recommended for active DeFi users.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs border-collapse">
+              <thead>
+                <tr className="bg-slate-800 text-white">
+                  <th className="text-left py-3 px-4 font-bold">Activity</th>
+                  <th className="text-left py-3 px-4 font-bold">Tax Treatment</th>
+                  <th className="text-left py-3 px-4 font-bold">Taxable Event</th>
+                  <th className="text-left py-3 px-4 font-bold">Notes</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {DEFI_ROWS.map((row) => (
+                  <tr key={row.activity} className="bg-white hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-4 font-semibold text-slate-800">{row.activity}</td>
+                    <td className="py-3 px-4 text-slate-700">{row.treatment}</td>
+                    <td className="py-3 px-4 text-slate-600">{row.taxableEvent}</td>
+                    <td className="py-3 px-4 text-slate-500">{row.notes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="text-xs text-slate-400 mt-2">
+              Based on ATO guidance current to {CURRENT_YEAR}. Verify at ato.gov.au/crypto.
+            </p>
           </div>
         </div>
       </section>
 
       {/* FAQs */}
-      <section className="py-10 md:py-12">
+      <section className="py-10 md:py-12 bg-slate-50 border-t border-slate-100">
         <div className="container-custom max-w-2xl">
-          <SectionHeading eyebrow="FAQ" title="Crypto Tax Questions" />
+          <SectionHeading eyebrow="FAQ" title="Crypto Tax Questions Answered" />
           <div className="mt-6 divide-y divide-slate-200">
             {FAQS.map((faq) => (
-              <details key={faq.question} className="py-4 group">
+              <details key={faq.q} className="py-4 group">
                 <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
-                  {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">
+                    ▾
+                  </span>
                 </summary>
-                <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.answer}</p>
+                <p className="mt-3 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </details>
             ))}
           </div>
@@ -307,44 +669,67 @@ export default async function CryptoTaxPage() {
       <section className="py-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
         <div className="container-custom text-center max-w-xl">
           <h2 className="text-xl font-extrabold mb-3">Get your crypto tax right</h2>
-          <p className="text-sm text-slate-300 mb-6">A crypto tax specialist can reconcile your transaction history, identify all CGT events, and prepare your tax return correctly — including prior year amendments if needed.</p>
+          <p className="text-sm text-slate-300 mb-6">
+            A crypto tax specialist can reconcile your transaction history across exchanges and
+            wallets, identify all CGT events including DeFi and staking, and prepare your tax
+            return correctly — including prior year amendments if needed.
+          </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/best/crypto-tax-advisors" className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm rounded-xl transition-colors">
-              Find a Crypto Tax Advisor →
+            <Link
+              href="/best/crypto-tax-advisors"
+              className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm rounded-xl transition-colors"
+            >
+              Find a Crypto Tax Advisor &rarr;
             </Link>
-            <Link href="/tax" className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-sm rounded-xl transition-colors">
-              All Tax Guides →
+            <Link
+              href="/tax"
+              className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-sm rounded-xl transition-colors"
+            >
+              All Tax Guides &rarr;
             </Link>
           </div>
         </div>
       </section>
 
+      {/* Exchange comparison */}
       {exchanges.length > 0 && (
         <section className="py-10 bg-white border-t border-slate-200">
           <div className="container-custom max-w-3xl">
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4">
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">COMPARE EXCHANGES</p>
-                <h2 className="text-lg font-bold text-slate-900">ATO-compliant crypto exchanges used by Australian investors</h2>
-                <p className="text-sm text-slate-500 mt-1">Choose an exchange that provides downloadable transaction history for your tax records.</p>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
+                  COMPARE EXCHANGES
+                </p>
+                <h2 className="text-lg font-bold text-slate-900">
+                  ATO-compliant crypto exchanges for Australian investors
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">
+                  Choose an exchange that provides downloadable transaction history and
+                  tax-reporting integrations for your record-keeping obligations.
+                </p>
               </div>
               <div className="grid sm:grid-cols-3 gap-3">
                 {exchanges.map((b) => (
-                  <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
+                  <div
+                    key={b.slug}
+                    className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3"
+                  >
                     <div>
                       <p className="font-bold text-slate-900 text-sm">{b.name}</p>
                       <p className="text-xs text-amber-500">{renderStars(Number(b.rating))}</p>
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                     </div>
                     <div className="mt-auto">
-                      <p className="text-xs font-semibold text-slate-700 mb-2">{b.benefit_cta ?? b.cta_text ?? 'Open Account'}</p>
+                      <p className="text-xs font-semibold text-slate-700 mb-2">
+                        {b.benefit_cta ?? b.cta_text ?? "Open Account"}
+                      </p>
                       <a
                         href={getAffiliateLink(b)}
                         rel={AFFILIATE_REL}
                         target="_blank"
                         className="block text-center w-full px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs rounded-lg transition-colors"
                       >
-                        {b.cta_text ?? 'Open Account →'}
+                        {b.cta_text ?? "Open Account →"}
                       </a>
                     </div>
                   </div>
@@ -355,16 +740,26 @@ export default async function CryptoTaxPage() {
         </section>
       )}
 
+      {/* Advisor prompt */}
       <section className="py-10 bg-slate-50 border-t border-slate-200">
         <div className="container-custom max-w-3xl">
-          <h2 className="text-lg font-bold text-slate-900 mb-4">Crypto tax getting complicated?</h2>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">
+            Crypto tax getting complicated?
+          </h2>
           <AdvisorPrompt type="tax_agent" />
         </div>
       </section>
 
+      {/* Compliance disclaimer */}
       <section className="py-6 bg-slate-100 border-t border-slate-200">
         <div className="container-custom max-w-3xl">
-          <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING} Crypto tax rules are complex and evolving. The ATO regularly updates its guidance on digital assets. Verify current rules at ato.gov.au/crypto and consult a registered tax agent for advice specific to your circumstances.</p>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            {GENERAL_ADVICE_WARNING} Crypto tax rules are complex and evolving. The ATO
+            regularly updates its guidance on digital assets, DeFi, NFTs, and exchange
+            collapses. Information on this page reflects ATO guidance current to {CURRENT_YEAR}{" "}
+            but may not reflect subsequent changes. Verify current rules at ato.gov.au/crypto
+            and consult a registered tax agent for advice specific to your circumstances.
+          </p>
         </div>
       </section>
     </div>
