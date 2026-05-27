@@ -1,299 +1,627 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
+import Link from "next/link";
+import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-
-const FAQS = [
-  {
-    q: "Does dollar-cost averaging reduce risk?",
-    a: "DCA reduces the risk of investing a large sum at the worst possible time (just before a major downturn). By spreading purchases, you avoid the regret of buying the peak. However, research consistently shows that lump sum investing outperforms DCA about two-thirds of the time, because markets go up more often than they go down. DCA is therefore a risk-reduction strategy (specifically regret risk and timing risk), not necessarily a return-maximization strategy.",
-  },
-  {
-    q: "Is dollar-cost averaging better than lump sum investing?",
-    a: "Mathematically, lump sum investing outperforms DCA in roughly 66-67% of scenarios (Vanguard research across multiple markets). The reason: markets trend upward over time, so the sooner you invest, the more time your money compounds. However, DCA has real psychological benefits — it removes the anxiety of timing decisions and makes it easier to stay invested during volatility. For regular salary earners investing their paycheck each month, DCA is the natural (and often optimal) approach.",
-  },
-  {
-    q: "How do I set up automatic DCA in Australia?",
-    a: "Most major Australian brokers support recurring investment orders. Pearler is purpose-built for DCA with automated regular investments in ETFs (including brokerage-free options on selected ETFs). CommSec, Selfwealth, Superhero, and Interactive Brokers also support recurring orders or allow you to set up BPAY/direct debit to fund regular purchases. For super, your employer SG contributions are already DCA by default.",
-  },
-  {
-    q: "What is a good DCA interval?",
-    a: "Monthly investing is the most common and practical interval — it aligns with payroll cycles and minimizes brokerage costs relative to investment amount. Fortnightly is also popular with fortnightly-pay employees. Daily or weekly DCA has diminishing marginal benefit over monthly and significantly higher brokerage costs unless using a zero-brokerage platform. The interval matters much less than consistency — picking a frequency you can maintain is more important than optimizing the exact interval.",
-  },
-  {
-    q: "Does DCA work in a bear market?",
-    a: "DCA works particularly well during extended downturns — you acquire more units at lower prices as the market falls, lowering your average cost basis. This 'buying more when it's cheap' effect is a genuine advantage over lump sum investing during periods of decline. The emotional challenge is that DCA requires you to keep investing when markets are falling and headlines are alarming. This is exactly the time most investors stop — undermining the strategy's benefit.",
-  },
-  {
-    q: "What is the brokerage impact on dollar-cost averaging?",
-    a: "Brokerage costs eat into DCA returns for small investment amounts. A $10 brokerage fee on a $200 monthly purchase represents 5% of the investment — destroying value. At $500/month, $10 brokerage is 2%. At $1,000/month, it is 1%. Platforms like Pearler offer $0 brokerage on selected ETFs; Superhero charges $2 per trade for ETFs. For small regular investors, low brokerage matters significantly. A useful rule: brokerage should not exceed 0.5% of each purchase.",
-  },
-];
-
-const COMPARISON = [
-  { aspect: "When it works best", dca: "Regular income investing (payroll)", lump: "Large windfall (inheritance, redundancy)" },
-  { aspect: "Market timing risk", dca: "Reduced — spreads entry points", lump: "Higher — single entry point" },
-  { aspect: "Expected return (long run)", dca: "Slightly lower (opportunity cost)", lump: "Slightly higher (more time in market)" },
-  { aspect: "Psychological ease", dca: "Easier — no single scary decision", lump: "Harder — requires conviction" },
-  { aspect: "Transaction costs", dca: "Higher (many trades)", lump: "Lower (one trade)" },
-  { aspect: "Brokerage optimization", dca: "Need low/zero brokerage platform", lump: "Less critical" },
-  { aspect: "Flexibility", dca: "Adjust amount monthly", lump: "Done in one go" },
-];
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: `Dollar-Cost Averaging Australia (${CURRENT_YEAR}) — DCA vs Lump Sum Guide`,
-  description: `Complete guide to dollar-cost averaging in Australia. DCA vs lump sum investing, brokerage costs, how to automate regular ETF purchases, and when each strategy makes sense. ${UPDATED_LABEL}.`,
-  openGraph: {
-    title: `Dollar-Cost Averaging Australia (${CURRENT_YEAR}) — DCA vs Lump Sum`,
-    description: "How DCA works, when it beats lump sum investing, best Australian platforms for automated DCA, and the brokerage cost trap.",
-    url: `${SITE_URL}/invest/dollar-cost-averaging`,
-    images: [{ url: `/api/og?title=${encodeURIComponent("Dollar-Cost Averaging Australia")}&sub=${encodeURIComponent("DCA vs Lump Sum · Automated ETF Investing · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
-  },
-  twitter: { card: "summary_large_image" },
+  title: `Dollar-Cost Averaging (DCA) in Australia ${CURRENT_YEAR}: How It Works | Invest.com.au`,
+  description:
+    "Dollar-cost averaging explained for Australian investors — how DCA works, DCA vs lump sum, the best assets to use it on, tax implications, common mistakes, and a step-by-step setup guide.",
   alternates: { canonical: `${SITE_URL}/invest/dollar-cost-averaging` },
+  openGraph: {
+    title: `Dollar-Cost Averaging (DCA) in Australia ${CURRENT_YEAR}`,
+    description:
+      "Invest a fixed amount at regular intervals regardless of price. Here is how DCA works, when it beats a lump sum, and how to set it up in Australia.",
+    url: `${SITE_URL}/invest/dollar-cost-averaging`,
+    type: "website",
+  },
 };
 
-export default function DollarCostAveragingPage() {
-  const faq = faqJsonLd(FAQS);
-  const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: absoluteUrl("/") },
-    { name: "Invest", url: absoluteUrl("/invest") },
-    { name: "Dollar-Cost Averaging", url: absoluteUrl("/invest/dollar-cost-averaging") },
-  ]);
+const faqItems = [
+  {
+    q: "Is DCA better than lump sum investing?",
+    a: "Historical data suggests lump sum investing outperforms DCA roughly 67% of the time in rising markets because it maximises time in market. However, DCA wins when the market falls shortly after a large initial investment, and it is almost always better for investors who receive regular income rather than a one-off windfall. For most Australians investing from a salary, DCA is simply the practical default — not a trade-off.",
+  },
+  {
+    q: "How much should I invest with DCA?",
+    a: "There is no universal figure, but a useful threshold is $500 per purchase to keep brokerage below 0.5% of the transaction (most platforms charge $5-$10 per trade). Investing $200/month at $10 brokerage means 5% of every purchase goes to fees, which seriously erodes returns over time. Start with an amount you can commit to through a market downturn without stopping.",
+  },
+  {
+    q: "Can I DCA into ETFs in Australia?",
+    a: "Yes. Several Australian platforms support automatic recurring investment into ASX-listed ETFs. Pearler is specifically built for scheduled ETF purchases. Stake and SelfWealth allow manual recurring buys. CommSec allows limit orders on a schedule. Vanguard's Personal Investor platform lets you set up regular investments directly into Vanguard funds. ETFs like VAS (Australian shares) and VGS (global shares) are the most common DCA targets.",
+  },
+  {
+    q: "Does DCA reduce my average cost?",
+    a: "DCA smooths your average entry price by purchasing at different price points over time — sometimes higher, sometimes lower. In a market that trends upward over the long run, your average cost will typically be lower than the final price but higher than the initial price. The primary benefit is not necessarily a lower average cost than a lump sum would have achieved, but reduced variance: you avoid the worst-case scenario of investing everything right before a significant fall.",
+  },
+  {
+    q: "What if I can't afford to keep investing?",
+    a: "Pausing is far better than stopping permanently. If your financial situation changes, reduce the amount rather than cancelling altogether. Stopping when markets fall is the most common and most damaging DCA mistake — it converts a paper loss into a real one and means you miss the recovery purchases at lower prices. If you have an emergency fund of 3-6 months of expenses in a high-interest savings account, short-term income disruptions should not force you to exit your investment schedule.",
+  },
+];
 
+const faq = faqJsonLd(faqItems);
+
+export default function DollarCostAveragingPage() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      {faq && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }} />}
+      {faq && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
+        />
+      )}
 
       <div className="bg-white min-h-screen">
-        {/* Hero */}
+
+        {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
-          <div className="container-custom max-w-5xl">
+          <div className="container-custom">
             <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-white">Home</Link>
+              <Link href="/" className="hover:text-white transition-colors">Home</Link>
               <span className="text-slate-600">/</span>
-              <Link href="/invest" className="hover:text-white">Invest</Link>
+              <Link href="/invest" className="hover:text-white transition-colors">Investing</Link>
               <span className="text-slate-600">/</span>
               <span className="text-white font-medium">Dollar-Cost Averaging</span>
             </nav>
+
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">{UPDATED_LABEL}</span>
+              <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
+                {UPDATED_LABEL}
+              </span>
+              <span className="text-xs font-semibold bg-slate-700 text-slate-300 px-3 py-1 rounded-full">
+                Strategy Guide
+              </span>
             </div>
+
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl">
-              Dollar-Cost Averaging in Australia ({CURRENT_YEAR})
+              Dollar-Cost Averaging (DCA) in Australia
             </h1>
-            <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-2xl mb-8">
-              Invest a fixed amount at regular intervals — regardless of price. DCA eliminates timing anxiety and builds long-term wealth systematically. Here&apos;s how it works and when to use it.
+            <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-2xl mb-6">
+              Dollar-cost averaging means investing a fixed dollar amount at regular intervals regardless of what the market is doing. You buy more units when prices fall and fewer when prices rise, smoothing your average entry cost over time.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/compare"
+                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
+              >
+                Compare Brokers &rarr;
+              </Link>
+              <Link
+                href="/invest/lump-sum-investing"
+                className="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
+              >
+                Lump Sum Guide
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Key stats ────────────────────────────────────────────────────── */}
+        <section className="py-8 bg-slate-50 border-b border-slate-200">
+          <div className="container-custom">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: "How often markets rise (1-year periods)", value: "~75%" },
-                { label: "DCA outperforms lump sum", value: "~33%" },
-                { label: "Minimum recommended per purchase", value: "$200+" },
-                { label: "Brokerage target (max per trade)", value: "0.5%" },
+                { value: "Fixed $", label: "Amount invested each period — not fixed units" },
+                { value: "67%", label: "Historical rate at which lump sum beats DCA in rising markets" },
+                { value: "$500+", label: "Recommended minimum per purchase to keep brokerage below 0.5%" },
+                { value: "Quarterly", label: "Suggested review frequency — check the plan, not daily prices" },
               ].map((s) => (
-                <div key={s.label} className="bg-white/10 rounded-xl p-4 text-center">
-                  <p className="text-2xl font-extrabold text-amber-400">{s.value}</p>
-                  <p className="text-xs text-slate-300 mt-1">{s.label}</p>
+                <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4 text-center">
+                  <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
+                  <p className="text-xs text-slate-500 mt-1 leading-snug">{s.label}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* What is DCA */}
-        <section className="py-12 bg-white">
-          <div className="container-custom max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-4">What is dollar-cost averaging?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p className="text-sm text-slate-700 leading-relaxed mb-4">
-                  Dollar-cost averaging (DCA) means investing a fixed dollar amount at regular intervals — weekly, fortnightly, or monthly — regardless of the current market price. When prices are high, your fixed amount buys fewer units. When prices are low, it buys more.
-                </p>
-                <p className="text-sm text-slate-700 leading-relaxed mb-4">
-                  Over time, this results in a <strong>lower average cost per unit</strong> than if you had tried to time the market. It also removes the psychological burden of deciding when to invest.
-                </p>
-                <p className="text-sm text-slate-700 leading-relaxed">
-                  Most Australian salary earners are already DCA investing without knowing it — every employer super guarantee (SG) contribution is a DCA purchase into your super fund.
-                </p>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
-                <h3 className="font-extrabold text-slate-900 mb-4">Example: $500/month into VAS ETF</h3>
-                <div className="space-y-2 text-sm">
-                  {[
-                    { month: "Jan", price: "$98.50", units: "5.08", total: "$500" },
-                    { month: "Feb", price: "$94.20", units: "5.31", total: "$500" },
-                    { month: "Mar", price: "$101.80", units: "4.91", total: "$500" },
-                    { month: "Apr", price: "$96.30", units: "5.19", total: "$500" },
-                  ].map((r) => (
-                    <div key={r.month} className="flex justify-between border-b border-slate-200 pb-1">
-                      <span className="text-slate-600">{r.month}</span>
-                      <span className="text-slate-700">@ {r.price}</span>
-                      <span className="font-bold text-slate-900">{r.units} units</span>
-                    </div>
-                  ))}
-                  <div className="flex justify-between pt-2 font-bold">
-                    <span className="text-slate-900">Average cost</span>
-                    <span className="text-amber-700">$97.54/unit</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* DCA vs Lump Sum */}
-        <section className="py-12 bg-slate-50 border-y border-slate-200">
-          <div className="container-custom max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">DCA vs lump sum — the evidence</h2>
-            <p className="text-sm text-slate-600 mb-6 max-w-2xl">
-              Vanguard research across US, UK, and Australian markets found lump sum investing outperforms DCA over a 10-year horizon in roughly two-thirds of scenarios. The reason: markets trend upward, so time in the market beats timing the market.
+        {/* ── Section 1: How DCA works ─────────────────────────────────────── */}
+        <section className="py-14 bg-white">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 1</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-4">How Dollar-Cost Averaging Works</h2>
+            <p className="text-slate-600 leading-relaxed mb-6">
+              Instead of investing a lump sum all at once, you split it into smaller, equal-dollar purchases on a fixed schedule. The price of the asset fluctuates, so each purchase buys a different number of units — more when cheap, fewer when expensive. Over time this produces an average cost that is neither the highest nor the lowest price you paid.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
-                <h3 className="font-extrabold text-amber-900 mb-3">When DCA makes sense</h3>
-                <ul className="space-y-2 text-sm text-slate-700">
-                  <li>You receive regular income (salary, freelance fees) — natural fit</li>
-                  <li>You have a lump sum but are anxious about investing at the peak</li>
-                  <li>You are new to investing and want to build habit and confidence</li>
-                  <li>Volatile asset class where timing uncertainty is higher</li>
-                  <li>You want to stay invested through downturns without willpower battles</li>
-                </ul>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
-                <h3 className="font-extrabold text-slate-900 mb-3">When lump sum makes sense</h3>
-                <ul className="space-y-2 text-sm text-slate-700">
-                  <li>You have a windfall (inheritance, redundancy, property sale proceeds)</li>
-                  <li>Your investment horizon is long (10+ years)</li>
-                  <li>You are disciplined and not prone to panic-selling</li>
-                  <li>Low-volatility assets where timing matters less</li>
-                  <li>You have conviction that the current entry point is reasonable</li>
-                </ul>
-              </div>
-            </div>
 
-            {/* Comparison table */}
-            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
-                <thead className="bg-slate-100">
-                  <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Aspect</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700">Dollar-Cost Averaging</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Lump Sum</th>
+            <h3 className="text-lg font-bold text-slate-900 mb-3">Worked Example: $500/month into VAS over 12 months</h3>
+            <p className="text-sm text-slate-500 mb-4">VAS is the Vanguard Australian Shares ETF. Prices below are illustrative only.</p>
+
+            <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="bg-slate-50">
+                    <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Month</th>
+                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Price/unit</th>
+                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Amount invested</th>
+                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Units bought</th>
+                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Cumulative units</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {COMPARISON.map((r) => (
-                    <tr key={r.aspect}>
-                      <td className="px-4 py-3 font-bold text-slate-900">{r.aspect}</td>
-                      <td className="px-4 py-3 text-slate-700">{r.dca}</td>
-                      <td className="px-4 py-3 text-slate-700">{r.lump}</td>
+                <tbody>
+                  {[
+                    { month: "Jan", price: "$85.00", amount: "$500", units: "5.88", cumulative: "5.88" },
+                    { month: "Feb", price: "$92.00", amount: "$500", units: "5.43", cumulative: "11.31" },
+                    { month: "Mar", price: "$88.00", amount: "$500", units: "5.68", cumulative: "16.99" },
+                    { month: "Apr", price: "$78.00", amount: "$500", units: "6.41", cumulative: "23.40" },
+                    { month: "May", price: "$74.00", amount: "$500", units: "6.76", cumulative: "30.16" },
+                    { month: "Jun", price: "$80.00", amount: "$500", units: "6.25", cumulative: "36.41" },
+                    { month: "Jul", price: "$83.00", amount: "$500", units: "6.02", cumulative: "42.43" },
+                    { month: "Aug", price: "$90.00", amount: "$500", units: "5.56", cumulative: "47.99" },
+                    { month: "Sep", price: "$95.00", amount: "$500", units: "5.26", cumulative: "53.25" },
+                    { month: "Oct", price: "$98.00", amount: "$500", units: "5.10", cumulative: "58.35" },
+                    { month: "Nov", price: "$105.00", amount: "$500", units: "4.76", cumulative: "63.11" },
+                    { month: "Dec", price: "$110.00", amount: "$500", units: "4.55", cumulative: "67.66" },
+                  ].map((row, i) => (
+                    <tr key={row.month} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
+                      <td className="py-2.5 px-3 font-semibold text-slate-800 border-b border-slate-100">{row.month}</td>
+                      <td className="py-2.5 px-3 text-right text-slate-700 border-b border-slate-100">{row.price}</td>
+                      <td className="py-2.5 px-3 text-right text-amber-700 font-semibold border-b border-slate-100">{row.amount}</td>
+                      <td className="py-2.5 px-3 text-right text-slate-600 border-b border-slate-100">{row.units}</td>
+                      <td className="py-2.5 px-3 text-right font-bold text-slate-900 border-b border-slate-100">{row.cumulative}</td>
                     </tr>
                   ))}
                 </tbody>
+                <tfoot>
+                  <tr className="bg-amber-50">
+                    <td colSpan={2} className="py-3 px-3 font-bold text-slate-900 text-sm">Total invested: $6,000</td>
+                    <td className="py-3 px-3 text-right font-bold text-slate-900 text-sm">$6,000</td>
+                    <td className="py-3 px-3 text-right font-bold text-slate-900 text-sm">67.66</td>
+                    <td className="py-3 px-3 text-right font-bold text-amber-700 text-sm">67.66 units</td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
-          </div>
-        </section>
 
-        {/* How to automate DCA in Australia */}
-        <section className="py-12 bg-white">
-          <div className="container-custom max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">How to automate DCA in Australia</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              {[
-                {
-                  title: "Pearler",
-                  desc: "Purpose-built for DCA. Automated recurring investments in ETFs. $0 brokerage on selected ETFs with AutoInvest. Popular with passive index investors.",
-                  badge: "DCA-native",
-                  color: "border-amber-200 bg-amber-50",
-                },
-                {
-                  title: "Superhero",
-                  desc: "$2 per ETF trade — low enough for $400+ monthly purchases. No built-in auto-invest, but you can fund via BPAY and place orders manually each month.",
-                  badge: "Low brokerage",
-                  color: "border-slate-200 bg-slate-50",
-                },
-                {
-                  title: "CommSec Pocket",
-                  desc: "$2 for trades up to $1,000. Simple interface, 7 ETF options. Ideal for beginners wanting a bank-backed platform. Manual investment, no automation.",
-                  badge: "Beginner-friendly",
-                  color: "border-slate-200 bg-slate-50",
-                },
-              ].map((p) => (
-                <div key={p.title} className={`rounded-xl border p-5 ${p.color}`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-extrabold text-slate-900">{p.title}</h3>
-                    <span className="text-xs font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">{p.badge}</span>
-                  </div>
-                  <p className="text-sm text-slate-700 leading-relaxed">{p.desc}</p>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
-              <p className="text-sm text-blue-900">
-                <strong>Brokerage rule of thumb:</strong> Keep brokerage below 0.5% of each purchase. At $10 brokerage, you need to invest at least $2,000 per trade to meet this threshold. At $2 brokerage, a $400 monthly purchase is at the 0.5% limit. For smaller amounts, use a zero-brokerage option.
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+              <h4 className="font-bold text-slate-900 mb-2">Average cost calculation</h4>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                Total invested: <strong>$6,000</strong> across <strong>67.66 units</strong> = average cost of <strong>$88.69 per unit</strong>.
+                The final price was $110.00 and the starting price was $85.00. A lump sum investor who bought in January at $85 would have a lower cost base, but one who invested at the April/May low of $74-$78 would have had to time the market perfectly. DCA produced a middle-ground cost without requiring any timing skill.
               </p>
             </div>
           </div>
         </section>
 
-        {/* DCA in super context */}
-        <section className="py-12 bg-slate-50 border-y border-slate-200">
-          <div className="container-custom max-w-5xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-4">DCA in super and SMSFs</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
-                <h3 className="font-extrabold text-slate-900 mb-3">Retail/industry super — automatic DCA</h3>
-                <p className="text-sm text-slate-700 leading-relaxed">Every employer SG contribution is a DCA transaction — occurring fortnightly or monthly regardless of market conditions. This is one of the structural advantages of compulsory super: it enforces DCA behavior that many investors would abandon during downturns. Additional voluntary contributions extend this benefit.</p>
+        {/* ── Section 2: DCA vs Lump Sum ───────────────────────────────────── */}
+        <section className="py-14 bg-slate-50 border-y border-slate-200">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 2</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-2">DCA vs Lump Sum: Three Scenarios</h2>
+            <p className="text-slate-600 leading-relaxed mb-6">
+              Research (including Vanguard&apos;s 2012 study) consistently shows lump sum outperforms DCA in roughly <strong>67% of historical periods</strong> across US, UK, and Australian markets. The reason is simple: in markets that trend upward most of the time, more time in market beats any entry timing strategy. But DCA still has a legitimate place.
+            </p>
+
+            <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="bg-slate-900 text-white">
+                    <th className="text-left py-3 px-4 font-semibold">Scenario</th>
+                    <th className="text-left py-3 px-4 font-semibold">What happens</th>
+                    <th className="text-left py-3 px-4 font-semibold">Lump sum result</th>
+                    <th className="text-left py-3 px-4 font-semibold">DCA result</th>
+                    <th className="text-left py-3 px-4 font-semibold">Winner</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    {
+                      scenario: "Market rises immediately",
+                      what: "Market climbs steadily from month 1",
+                      lump: "All capital earns the full gain",
+                      dca: "Later purchases buy in at higher prices, missing early gains",
+                      winner: "Lump sum",
+                      winnerClass: "text-green-700 font-bold",
+                    },
+                    {
+                      scenario: "Flat market",
+                      what: "Market drifts sideways for 12 months",
+                      lump: "Capital earns roughly 0% on price movement",
+                      dca: "Same outcome on price; DCA pays more in brokerage",
+                      winner: "Roughly equal",
+                      winnerClass: "text-slate-600 font-semibold",
+                    },
+                    {
+                      scenario: "Market dips then recovers",
+                      what: "Market falls 20% then rebounds to finish higher",
+                      lump: "Full capital exposed to the drawdown from day 1",
+                      dca: "Later purchases buy more units during the dip, lower average cost",
+                      winner: "DCA",
+                      winnerClass: "text-amber-600 font-bold",
+                    },
+                  ].map((row, i) => (
+                    <tr key={row.scenario} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
+                      <td className="py-3 px-4 font-semibold text-slate-900 border-b border-slate-100 align-top">{row.scenario}</td>
+                      <td className="py-3 px-4 text-slate-600 border-b border-slate-100 align-top">{row.what}</td>
+                      <td className="py-3 px-4 text-slate-600 border-b border-slate-100 align-top">{row.lump}</td>
+                      <td className="py-3 px-4 text-slate-600 border-b border-slate-100 align-top">{row.dca}</td>
+                      <td className={`py-3 px-4 border-b border-slate-100 align-top ${row.winnerClass}`}>{row.winner}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+              <p className="text-sm text-slate-700 leading-relaxed">
+                <strong>Key insight:</strong> The 67% lump-sum win rate assumes you already have the lump sum available. For the majority of Australians investing from a monthly salary, there is no lump sum to deploy — DCA is the only practical option. Even investors who receive a windfall (redundancy, inheritance) may prefer the psychological comfort of DCA, accepting a likely small return trade-off for reduced regret risk if markets fall immediately after investing.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Section 3: Benefits ──────────────────────────────────────────── */}
+        <section className="py-14 bg-white">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 3</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Benefits of Dollar-Cost Averaging</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {[
+                {
+                  title: "Removes timing risk",
+                  body: "No single purchase represents your entire position. Even if you invest on the worst possible day of the year, it is only one purchase among many. The risk of catastrophically bad timing is diversified across time.",
+                },
+                {
+                  title: "Automates investing behaviour",
+                  body: "A scheduled direct debit removes the temptation to delay, wait for a dip, or skip a month. Automating the decision is often the single most valuable thing an investor can do — removing themselves from the equation.",
+                },
+                {
+                  title: "Suits regular income earners",
+                  body: "Most Australians earn a salary or wages on a fortnightly or monthly cycle. DCA aligns investing with the natural rhythm of income — invest each pay cycle before lifestyle spending absorbs it.",
+                },
+                {
+                  title: "Reduces emotional decision-making",
+                  body: "During market falls, the temptation to sell or pause investing is powerful. A pre-committed DCA schedule reframes a market dip as an opportunity to buy more units at a lower price, which is exactly right behaviourally.",
+                },
+              ].map((card) => (
+                <div key={card.title} className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                  <h3 className="font-bold text-slate-900 mb-2">{card.title}</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">{card.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Section 4: Practical setup ───────────────────────────────────── */}
+        <section className="py-14 bg-slate-50 border-y border-slate-200">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 4</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Practical Setup in Australia</h2>
+            <p className="text-slate-600 leading-relaxed mb-6">
+              Several Australian brokerage platforms support recurring investment, though the level of automation varies.
+            </p>
+
+            <div className="space-y-3 mb-8">
+              {[
+                {
+                  platform: "Pearler",
+                  detail: "Built specifically for long-term, automated ETF investing. Supports scheduled purchases (weekly, fortnightly, monthly) into ASX-listed ETFs with low flat-fee brokerage. Most DCA-native platform available to Australian retail investors.",
+                  href: "/broker/pearler",
+                },
+                {
+                  platform: "Stake",
+                  detail: "Supports recurring orders for both ASX and US shares. Lower brokerage than traditional platforms. Auto-invest feature lets you set amount and frequency for a chosen ETF or stock.",
+                  href: "/broker/stake",
+                },
+                {
+                  platform: "SelfWealth",
+                  detail: "Flat-fee brokerage ($9.50 per trade) with a community portfolio feature. No native auto-invest, but a calendar reminder and manual execution each month is a workable alternative for disciplined investors.",
+                  href: "/broker/selfwealth",
+                },
+                {
+                  platform: "CommSec",
+                  detail: "Commonwealth Bank's brokerage arm. Allows scheduled limit orders. Higher brokerage ($10-$20+) makes it less suitable for sub-$1,000 DCA purchases, but useful for existing CBA customers who want simplicity.",
+                  href: "/broker/commsec",
+                },
+              ].map((p) => (
+                <div key={p.platform} className="bg-white border border-slate-200 rounded-xl p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="font-bold text-slate-900 mb-1">{p.platform}</h3>
+                      <p className="text-sm text-slate-600 leading-relaxed">{p.detail}</p>
+                    </div>
+                    <Link
+                      href={p.href}
+                      className="shrink-0 text-xs font-semibold text-amber-600 hover:text-amber-700 hover:underline"
+                    >
+                      Review &rarr;
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+              <h4 className="font-bold text-slate-900 mb-2">DCA is not the same as DRIP</h4>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                A Dividend Reinvestment Plan (DRIP) automatically reinvests dividend income back into the same shares. While DRIPs do produce a form of regular automated buying, the amount and timing are determined by dividend payments — not by your investment schedule. DCA via scheduled purchases and DRIPs can complement each other but they serve different purposes. You can read more in the{" "}
+                <Link href="/invest/dividend-investing" className="text-amber-600 hover:underline font-semibold">
+                  dividend investing guide
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Section 5: Asset classes ─────────────────────────────────────── */}
+        <section className="py-14 bg-white">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 5</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Which Asset Classes Suit DCA?</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+              <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+                <h3 className="font-bold text-green-800 mb-3">Well suited to DCA</h3>
+                <ul className="space-y-3 text-sm text-slate-700">
+                  {[
+                    {
+                      asset: "Broad ETFs (VAS, VGS, NDQ)",
+                      why: "High price volatility relative to long-term upward trend is exactly where DCA smoothing is most valuable. Low brokerage relative to purchase amount when investing $500+.",
+                    },
+                    {
+                      asset: "Individual ASX shares",
+                      why: "Works well for blue-chip companies with long track records. Greater single-stock risk than ETFs, but DCA still reduces timing risk on entry.",
+                    },
+                    {
+                      asset: "Cryptocurrency",
+                      why: "Extreme volatility makes market timing almost impossible. DCA is the dominant strategy used by long-term crypto holders. Higher risk asset overall — only appropriate for investors who have thoroughly assessed their risk tolerance.",
+                    },
+                  ].map((item) => (
+                    <li key={item.asset}>
+                      <strong className="text-green-700">{item.asset}</strong>
+                      <p className="text-slate-600 mt-0.5">{item.why}</p>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="rounded-xl border border-slate-200 bg-white p-5">
-                <h3 className="font-extrabold text-slate-900 mb-3">SMSF — you control the DCA cadence</h3>
-                <p className="text-sm text-slate-700 leading-relaxed">SMSF trustees set their own investment schedule. Automated regular orders in ASX ETFs (via a broker with recurring order capability) implement DCA efficiently. Most SMSF trustees combine monthly contributions with quarterly rebalancing. The key: don&apos;t accumulate large cash positions waiting for the &ldquo;right time&rdquo; — this defeats the purpose.</p>
+
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                <h3 className="font-bold text-slate-700 mb-3">Less suited to DCA</h3>
+                <ul className="space-y-3 text-sm text-slate-700">
+                  {[
+                    {
+                      asset: "Term deposits",
+                      why: "Fixed-rate products with a predetermined return. There is no market price to average — you simply lock in the current rate for the term. The benefit of DCA (buying more units when cheap) does not apply.",
+                    },
+                    {
+                      asset: "Cash and savings accounts",
+                      why: "No price fluctuation means no averaging benefit. Regular deposits into savings are excellent financial habits but they are not DCA in the investment sense.",
+                    },
+                    {
+                      asset: "Property (direct)",
+                      why: "Transaction costs (stamp duty, agent fees) and asset indivisibility make incremental purchasing impractical. REITs and property ETFs can be DCA'd instead.",
+                    },
+                  ].map((item) => (
+                    <li key={item.asset}>
+                      <strong className="text-slate-600">{item.asset}</strong>
+                      <p className="text-slate-500 mt-0.5">{item.why}</p>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="py-12 bg-white">
-          <div className="container-custom max-w-3xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Frequently asked questions</h2>
-            <div className="space-y-2">
-              {FAQS.map((item) => (
-                <details key={item.q} className="group rounded-xl border border-slate-200 bg-slate-50 overflow-hidden">
-                  <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-bold text-slate-900 text-sm hover:bg-slate-100 transition-colors">
+        {/* ── Section 6: Tax ───────────────────────────────────────────────── */}
+        <section className="py-14 bg-slate-50 border-y border-slate-200">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 6</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Tax Considerations for DCA in Australia</h2>
+            <p className="text-slate-600 leading-relaxed mb-6">
+              Australian tax law treats each DCA purchase as a separate CGT event with its own cost base and acquisition date. This has meaningful consequences for record-keeping and eventual sale.
+            </p>
+
+            <div className="space-y-4">
+              {[
+                {
+                  heading: "Each purchase is a separate CGT parcel",
+                  body: "When you invest $500/month over 24 months, you create 24 separate tax parcels. When you later sell, the ATO requires you to match each sale to a parcel and calculate the gain or loss on that specific parcel. You can choose which parcels to sell first (e.g., selecting parcels held over 12 months to access the 50% CGT discount).",
+                },
+                {
+                  heading: "The 12-month CGT discount applies parcel by parcel",
+                  body: "Each parcel becomes eligible for the 50% CGT discount (for individuals and trusts) after it has been held for at least 12 months from the purchase date — not from when you started DCA-ing. This means a parcel bought in month 1 qualifies in month 13, but the parcel bought in month 12 does not qualify until month 24.",
+                },
+                {
+                  heading: "Record-keeping is essential",
+                  body: "Keep a record of every purchase: date, number of units, price per unit, total cost, and brokerage paid. Most brokers provide transaction histories, but you should maintain your own records as tax liability calculations span years. Tax software like Sharesight can automate parcel tracking for ASX investments.",
+                },
+                {
+                  heading: "Brokerage is deductible against assessable income",
+                  body: "Where the investment is held to produce assessable income (dividends, distributions), brokerage on purchases is added to the cost base of the parcel (reducing the eventual capital gain). Brokerage on sales reduces the proceeds. Neither is deductible in the year paid — both affect your eventual CGT calculation.",
+                },
+              ].map((item) => (
+                <div key={item.heading} className="bg-white border border-slate-200 rounded-xl p-5">
+                  <h3 className="font-bold text-slate-900 mb-2">{item.heading}</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">{item.body}</p>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-slate-400 mt-4">
+              Tax rules are complex and depend on individual circumstances. The above is general information only — speak with a registered tax agent about your specific situation.
+            </p>
+          </div>
+        </section>
+
+        {/* ── Section 7: Common mistakes ───────────────────────────────────── */}
+        <section className="py-14 bg-white">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 7</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Common DCA Mistakes</h2>
+
+            <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
+              <h3 className="font-bold text-red-800 mb-4">Mistakes that defeat the purpose</h3>
+              <ul className="space-y-4 text-sm">
+                {[
+                  {
+                    mistake: "Stopping when the market falls",
+                    detail: "This is the single most damaging mistake. DCA's power is that it buys more units at lower prices. Pausing during a downturn means you miss the cheapest purchases of the cycle. Fear-driven pausing converts a temporary paper loss into a permanent strategy failure.",
+                  },
+                  {
+                    mistake: "Brokerage erosion on small amounts",
+                    detail: "If your brokerage is $10 and you invest $200, you pay 5% in fees before earning a cent. A $10 fee on a $1,000 purchase is 1%; on a $500 purchase it is 2%. Target sub-0.5% brokerage as a rule of thumb: use a flat-fee platform and ensure each purchase is at least $500-$1,000.",
+                  },
+                  {
+                    mistake: "Varying amounts based on market mood",
+                    detail: "Investing more when you feel confident and less when you feel anxious recreates timing risk. The discipline of DCA comes from a fixed amount on a fixed schedule. If you want to invest more, increase the regular amount and leave it there.",
+                  },
+                  {
+                    mistake: "Switching assets mid-plan",
+                    detail: "Changing from VAS to VGS to NDQ based on recent performance is return-chasing, not DCA. Choose your target allocation before you start and stick to it. Review the asset choice annually, not monthly.",
+                  },
+                  {
+                    mistake: "Ignoring the portfolio review",
+                    detail: "DCA does not mean set-and-forget forever. Review your target allocation quarterly. If one asset class has run hard and now represents 70% of a portfolio you intended to be 50/50, rebalance. But review the plan, not the daily price.",
+                  },
+                ].map((item) => (
+                  <li key={item.mistake} className="flex gap-3">
+                    <div className="w-2 h-2 rounded-full bg-red-400 mt-1.5 shrink-0" />
+                    <div>
+                      <strong className="text-red-800">{item.mistake}:</strong>{" "}
+                      <span className="text-slate-600">{item.detail}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Section 8: Step-by-step guide ───────────────────────────────── */}
+        <section className="py-14 bg-slate-50 border-y border-slate-200">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 8</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Step-by-Step: Starting a DCA Plan in Australia</h2>
+
+            <ol className="space-y-4">
+              {[
+                {
+                  n: 1,
+                  title: "Set your amount",
+                  body: "Calculate what you can invest consistently each month without touching it for at least 5 years. If the amount would cause financial stress during a market downturn, it is too large. A smaller, sustainable amount is far more valuable than a larger amount you will abandon.",
+                },
+                {
+                  n: 2,
+                  title: "Choose your asset",
+                  body: "Broad market ETFs (VAS for Australian shares, VGS for global shares) are the most common DCA targets for Australian retail investors. They are liquid, diversified, and available on all major platforms. If you want to include international or thematic exposure, decide the allocation before you start.",
+                },
+                {
+                  n: 3,
+                  title: "Set the frequency",
+                  body: "Monthly aligns well with most salary cycles. Fortnightly can reduce the average purchase price slightly in volatile markets but doubles brokerage costs. Weekly is only cost-effective on platforms with genuinely low per-trade fees. Monthly is the right default for most people.",
+                },
+                {
+                  n: 4,
+                  title: "Automate the transfer",
+                  body: "Set up a direct debit from your transaction account to your brokerage on the day after salary arrives. On platforms with auto-invest (Pearler, Stake), link this to an automatic trade so the money is invested immediately without a manual step.",
+                },
+                {
+                  n: 5,
+                  title: "Review quarterly, not daily",
+                  body: "Check that the schedule ran, that your asset allocation still reflects your intention, and that your financial situation has not changed materially. Do not adjust the strategy based on recent market performance. If markets have fallen 20%, that is a sign the plan is working as intended, not a reason to stop.",
+                },
+              ].map((step) => (
+                <li key={step.n} className="flex gap-5 bg-white border border-slate-200 rounded-xl p-5">
+                  <div className="w-10 h-10 rounded-full bg-amber-500 text-slate-900 font-extrabold flex items-center justify-center text-lg shrink-0">
+                    {step.n}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 mb-1">{step.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">{step.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* ── Section 9: FAQ ───────────────────────────────────────────────── */}
+        <section className="py-14 bg-white">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+            <div className="space-y-3">
+              {faqItems.map((item) => (
+                <details key={item.q} className="group bg-white border border-slate-200 rounded-xl">
+                  <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
                     {item.q}
-                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">&#9660;</span>
+                    <svg
+                      className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
                   </summary>
-                  <p className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{item.a}</p>
+                  <div className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{item.a}</div>
                 </details>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Compliance footer */}
-        <section className="py-10 bg-slate-50 border-t border-slate-200">
-          <div className="container-custom max-w-3xl">
-            <p className="text-xs text-slate-500 leading-relaxed mb-6">{GENERAL_ADVICE_WARNING}</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-              <Link href="/invest/index-funds" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">
-                Index funds guide &#8594;
-              </Link>
-              <Link href="/brokers" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">
-                Compare brokers &#8594;
-              </Link>
-              <Link href="/lump-sum-investing" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">
-                Lump sum investing &#8594;
-              </Link>
+        {/* ── Compliance warning ───────────────────────────────────────────── */}
+        <section className="py-8 bg-slate-50 border-t border-slate-200">
+          <div className="container-custom max-w-4xl">
+            <div className="bg-white border border-slate-200 rounded-xl p-5">
+              <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
             </div>
           </div>
         </section>
+
+        {/* ── Related guides CTA ───────────────────────────────────────────── */}
+        <section className="py-14 bg-white border-t border-slate-100">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Continue Learning</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                {
+                  title: "Lump Sum Investing",
+                  href: "/lump-sum-investing",
+                  desc: "Received a windfall? Here is the right sequence for handling a lump sum in Australia — super, tax timing, and investment options.",
+                },
+                {
+                  title: "Dividend Investing",
+                  href: "/invest/dividend-investing",
+                  desc: "High-yield ASX stocks, franking credits, DRIPs, and how dividend ETFs complement a DCA plan.",
+                },
+                {
+                  title: "Compare ETF Brokers",
+                  href: "/compare",
+                  desc: "Find the lowest brokerage platform for recurring ETF purchases to keep DCA costs below 0.5% per trade.",
+                },
+                {
+                  title: "Portfolio Calculator",
+                  href: "/portfolio-calculator",
+                  desc: "Project how a regular investment amount grows over time at different return assumptions.",
+                },
+              ].map((guide) => (
+                <Link
+                  key={guide.href}
+                  href={guide.href}
+                  className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-sm transition-all"
+                >
+                  <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                  <p className="text-sm text-slate-500 mt-1 leading-relaxed">{guide.desc}</p>
+                  <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-3">
+                    Read guide &rarr;
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
       </div>
     </>
   );
