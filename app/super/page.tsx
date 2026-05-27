@@ -66,6 +66,7 @@ export default async function SuperPage() {
               {[
                 { label: "SMSF Hub", href: "/smsf", badge: "Self-managed" },
                 { label: "Contributions", href: "/super/contributions", badge: "Salary sacrifice" },
+                { label: "Transition to Retirement", href: "/super/transition-to-retirement", badge: "TTR strategy" },
                 { label: "Consolidation", href: "/super/consolidation", badge: "Find lost super" },
                 { label: "Leaving Australia", href: "/super/leaving-australia", badge: "DASP" },
                 { label: "Super Quiz", href: "/super/quiz", badge: "Find your fund" },

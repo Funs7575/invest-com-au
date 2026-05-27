@@ -48,6 +48,20 @@ const TAX_TOPICS = [
     keyFact: "Every swap is a CGT event",
   },
   {
+    title: "Salary Sacrifice",
+    description: "Redirect pre-tax salary into super and pay 15% contributions tax instead of up to 47%. Concessional cap $30,000, carry-forward rules, and Division 293.",
+    href: "/tax/salary-sacrifice",
+    icon: "💼",
+    keyFact: "Save 19.5¢–32¢ per dollar",
+  },
+  {
+    title: "Rental Property Tax",
+    description: "Deductible expenses, depreciation (Div 40 and Div 43), negative gearing, CGT on sale, and the 6-year main residence rule for investment properties.",
+    href: "/tax/rental-property",
+    icon: "🏠",
+    keyFact: "~3M Australian property investors",
+  },
+  {
     title: "Super Tax Strategies",
     description: "Concessional contribution strategies, salary sacrifice, catch-up contributions, and super to reduce your tax in the accumulation and pension phase.",
     href: "/super",
