@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     description: "The right sequence — universal first steps, then the long-term plan.",
     url: `${SITE_URL}/lump-sum-investing`,
     type: "website",
+    images: [{ url: "/api/og?title=Lump+Sum+Investing+Guide&subtitle=Redundancy%2C+Inheritance+%26+Property+Sale&type=default", width: 1200, height: 630 }],
   },
 };
 

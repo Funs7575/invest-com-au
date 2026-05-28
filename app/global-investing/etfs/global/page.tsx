@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Best International ETFs Australia (${CURRENT_YEAR})`,
     description: "Complete guide to international ETFs in Australia. Compare global developed markets, emerging markets, and all-world ETFs.",
     url: `${SITE_URL}/global-investing/etfs/global`,
+    images: [{ url: "/api/og?title=International+ETFs+Australia&subtitle=Developed%2C+Emerging+%26+All-World+Guide&type=default", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/global-investing/etfs/global` },

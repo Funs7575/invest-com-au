@@ -9,6 +9,13 @@ export const metadata: Metadata = {
   title: "Investment Confessions — Community",
   description:
     "Anonymous investing confessions from real investors. Share your own mistakes, wins, and honest thoughts — no judgement.",
+  alternates: { canonical: absoluteUrl("/community/confessions") },
+  openGraph: {
+    title: "Investment Confessions — Invest.com.au Community",
+    description: "Anonymous investing confessions — mistakes, wins, and honest thoughts from real Australian investors.",
+    url: absoluteUrl("/community/confessions"),
+    images: [{ url: "/api/og?title=Investment+Confessions&subtitle=Real+Stories+from+Australian+Investors&type=default", width: 1200, height: 630 }],
+  },
 };
 
 interface ConfessionThread {

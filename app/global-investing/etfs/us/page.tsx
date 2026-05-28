@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "US-domiciled vs Australian-domiciled US-exposure ETFs — estate tax, tax reporting, currency and cost compared for Australian investors.",
     url: `${SITE_URL}/global-investing/etfs/us`,
+    images: [{ url: "/api/og?title=US+ETFs+for+Australians&subtitle=VOO%2C+IVV%2C+NDQ+%E2%80%94+Estate+Tax+%26+Cost+Guide&type=default", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/global-investing/etfs/us` },

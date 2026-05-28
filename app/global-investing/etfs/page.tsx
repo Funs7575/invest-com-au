@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "VGS vs IVV vs NDQ — complete guide to global ETFs on the ASX: MER comparison, hedged vs unhedged, tax treatment and how to build a simple global portfolio.",
     url: `${SITE_URL}/global-investing/etfs`,
+    images: [{ url: "/api/og?title=Best+Global+ETFs&subtitle=VGS%2C+IVV%2C+NDQ+Compared+for+Australians&type=default", width: 1200, height: 630 }],
   },
   alternates: { canonical: `${SITE_URL}/global-investing/etfs` },
 };

@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Check if Section 855-10 CGT exemption applies to your Australian investment.",
     url: absoluteUrl("/non-resident-cgt-checker"),
+    images: [{ url: "/api/og?title=Non-Resident+CGT+Checker&subtitle=Section+855-10+Eligibility&type=default", width: 1200, height: 630 }],
   },
 };
 
