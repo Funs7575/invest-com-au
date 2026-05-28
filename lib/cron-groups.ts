@@ -65,6 +65,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/advisor-auto-topup",
     "/api/cron/annual-mot",
     "/api/cron/recompute-trust-scores",
+    "/api/cron/feature-flag-expiry",
   ],
   "daily-4": [
     "/api/cron/email-bounce-sweep",
@@ -90,6 +91,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/comeback-rate-email",
     "/api/cron/td-maturity-reminders",
     "/api/cron/ipo-alerts",
+    "/api/cron/advisor-welcome-sequence",
   ],
   "daily-8": [
     "/api/cron/complaints-sla",
@@ -97,6 +99,8 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/abandoned-shortlist-drip",
     "/api/cron/streak-at-risk",
     "/api/cron/market-event-reminders",
+    "/api/cron/award-badges",
+    "/api/cron/refresh-leaderboard",
   ],
   "daily-9": [
     "/api/cron/investor-drip",
