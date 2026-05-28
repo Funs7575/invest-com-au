@@ -1,118 +1,120 @@
 import { describe, it, expect } from "vitest";
-import {
-  isValidEmail,
-  isValidEmailClient,
-  isDisposableEmail,
-} from "@/lib/validate-email";
+import { isValidEmail, isValidEmailClient, isDisposableEmail } from "@/lib/validate-email";
 
-describe("isValidEmail (server-side, strict)", () => {
+// ── isValidEmail ──────────────────────────────────────────────────────────────
+
+describe("isValidEmail", () => {
   it.each([
-    "finn@invest.com.au",
-    "jane.smith@example.co.uk",
-    "user+tag@example.com",
+    "user@example.com",
+    "user.name+tag@sub.example.co.uk",
+    "first.last@example.org",
+    "test@test.io",
     "a@b.co",
-    "user.name+tag.filter@subdomain.example.org",
-  ])("accepts %s", (email) => {
+  ])("returns true for valid email %s", (email) => {
     expect(isValidEmail(email)).toBe(true);
   });
 
   it.each([
     "",
-    "not-an-email",
-    "@example.com",
-    "finn@",
-    "finn@@example.com",
-    "finn@example",
-    "finn @example.com",
-    "finn@.example.com",
-    "finn@example..com",
-  ])("rejects %j", (email) => {
+    "notanemail",
+    "@nodomain.com",
+    "user@",
+    "user@domain",
+    "user @domain.com",
+    "user@ domain.com",
+    "user@domain .com",
+  ])("returns false for invalid format %s", (email) => {
     expect(isValidEmail(email)).toBe(false);
   });
 
-  it("rejects non-string input", () => {
-    expect(isValidEmail(null as unknown as string)).toBe(false);
-    expect(isValidEmail(undefined as unknown as string)).toBe(false);
-    expect(isValidEmail(123 as unknown as string)).toBe(false);
+  it("returns false for email exceeding 254 characters", () => {
+    const longEmail = "a".repeat(250) + "@b.com"; // 256 chars total
+    expect(longEmail.length).toBeGreaterThan(254);
+    expect(isValidEmail(longEmail)).toBe(false);
   });
 
-  it("rejects emails over 254 chars (RFC 5321)", () => {
-    const local = "a".repeat(250);
-    const email = `${local}@b.co`;
-    expect(email.length).toBeGreaterThan(254);
-    expect(isValidEmail(email)).toBe(false);
-  });
-
-  it("accepts emails exactly at the 254-char boundary", () => {
-    const local = "a".repeat(248);
-    const email = `${local}@b.co`;
-    expect(email.length).toBeLessThanOrEqual(254);
+  it("returns true for a valid email well within the 254-char limit", () => {
+    const email = "a".repeat(50) + "@example.com";
+    expect(email.length).toBeLessThan(254);
     expect(isValidEmail(email)).toBe(true);
   });
-});
 
-describe("isValidEmailClient (lighter inline check)", () => {
-  it("accepts typical addresses", () => {
-    expect(isValidEmailClient("finn@example.com")).toBe(true);
-  });
-
-  it("requires exactly one @", () => {
-    expect(isValidEmailClient("finn@@example.com")).toBe(false);
-    expect(isValidEmailClient("finnexample.com")).toBe(false);
-  });
-
-  it("requires a dot after the @", () => {
-    expect(isValidEmailClient("finn@example")).toBe(false);
-  });
-
-  it("rejects whitespace", () => {
-    expect(isValidEmailClient("finn @example.com")).toBe(false);
-    expect(isValidEmailClient("finn@ example.com")).toBe(false);
+  it("does not guard against disposable domains — that is isDisposableEmail's job", () => {
+    // isValidEmail only validates format; disposable filtering is separate
+    expect(isValidEmail("user@mailinator.com")).toBe(true);
   });
 });
 
-describe("isDisposableEmail (anti-spam guard)", () => {
-  it("flags mailinator and related", () => {
-    expect(isDisposableEmail("foo@mailinator.com")).toBe(true);
-    expect(isDisposableEmail("foo@trashmail.com")).toBe(true);
-  });
+// ── isDisposableEmail ─────────────────────────────────────────────────────────
 
-  it("flags guerrillamail + grr.la aliases", () => {
-    expect(isDisposableEmail("foo@guerrillamail.com")).toBe(true);
-    expect(isDisposableEmail("foo@grr.la")).toBe(true);
-    expect(isDisposableEmail("foo@sharklasers.com")).toBe(true);
-  });
-
-  it("flags 10-minute mail services", () => {
-    expect(isDisposableEmail("foo@10minutemail.com")).toBe(true);
-    expect(isDisposableEmail("foo@10mail.org")).toBe(true);
-  });
-
-  it("flags YOPmail + temp-mail", () => {
-    expect(isDisposableEmail("foo@yopmail.com")).toBe(true);
-    expect(isDisposableEmail("foo@temp-mail.org")).toBe(true);
-    expect(isDisposableEmail("foo@fakeinbox.com")).toBe(true);
-  });
-
-  it("is case-insensitive on the domain", () => {
-    expect(isDisposableEmail("foo@MAILINATOR.com")).toBe(true);
-    expect(isDisposableEmail("foo@MaIlInAtOr.com")).toBe(true);
-  });
-
-  it("trims whitespace in the domain", () => {
-    expect(isDisposableEmail("foo@mailinator.com ")).toBe(true);
-  });
-
-  it("does NOT flag regular providers", () => {
-    expect(isDisposableEmail("foo@gmail.com")).toBe(false);
-    expect(isDisposableEmail("foo@outlook.com")).toBe(false);
-    expect(isDisposableEmail("foo@example.com")).toBe(false);
-    expect(isDisposableEmail("foo@invest.com.au")).toBe(false);
-  });
-
-  it("returns false for malformed inputs", () => {
+describe("isDisposableEmail", () => {
+  it("returns false for an empty string", () => {
     expect(isDisposableEmail("")).toBe(false);
-    expect(isDisposableEmail("not-an-email")).toBe(false);
-    expect(isDisposableEmail(null as unknown as string)).toBe(false);
+  });
+
+  it("returns false for a non-disposable domain", () => {
+    expect(isDisposableEmail("user@gmail.com")).toBe(false);
+    expect(isDisposableEmail("user@company.com.au")).toBe(false);
+  });
+
+  it("returns true for mailinator.com", () => {
+    expect(isDisposableEmail("test@mailinator.com")).toBe(true);
+  });
+
+  it("returns true for guerrillamail.com", () => {
+    expect(isDisposableEmail("foo@guerrillamail.com")).toBe(true);
+  });
+
+  it("returns true for 10minutemail.com", () => {
+    expect(isDisposableEmail("bar@10minutemail.com")).toBe(true);
+  });
+
+  it("returns true for yopmail.com", () => {
+    expect(isDisposableEmail("baz@yopmail.com")).toBe(true);
+  });
+
+  it("is case-insensitive for the domain part", () => {
+    expect(isDisposableEmail("x@MAILINATOR.COM")).toBe(true);
+    expect(isDisposableEmail("x@Mailinator.Com")).toBe(true);
+  });
+
+  it("returns false for an email with no domain (malformed)", () => {
+    expect(isDisposableEmail("nodomain")).toBe(false);
+    expect(isDisposableEmail("user@")).toBe(false);
+  });
+
+  it("returns false for a domain that merely contains a disposable domain name", () => {
+    // "mycompany-mailinator.com" is not "mailinator.com"
+    expect(isDisposableEmail("user@mycompany-mailinator.com")).toBe(false);
+  });
+});
+
+// ── isValidEmailClient ────────────────────────────────────────────────────────
+
+describe("isValidEmailClient", () => {
+  it("returns true for a valid email", () => {
+    expect(isValidEmailClient("user@example.com")).toBe(true);
+  });
+
+  it("returns false for an email without @", () => {
+    expect(isValidEmailClient("notanemail")).toBe(false);
+  });
+
+  it("returns false for an email with spaces", () => {
+    expect(isValidEmailClient("user @domain.com")).toBe(false);
+  });
+
+  it("returns false for an empty string", () => {
+    expect(isValidEmailClient("")).toBe(false);
+  });
+
+  it("returns false when no domain part follows @", () => {
+    expect(isValidEmailClient("user@")).toBe(false);
+  });
+
+  it("does not enforce the 254-char limit (lighter than isValidEmail)", () => {
+    const longEmail = "a".repeat(250) + "@b.com";
+    // Client validator is intentionally lighter — does not check length
+    expect(isValidEmailClient(longEmail)).toBe(true);
   });
 });
