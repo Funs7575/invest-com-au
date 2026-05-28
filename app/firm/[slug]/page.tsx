@@ -93,6 +93,16 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
 
   const members = (membersRaw as Professional[]) || [];
 
+  const { data: jobPostsRaw } = await supabase
+    .from("job_posts")
+    .select("id, title, type, location, description")
+    .eq("firm_id", typedFirm.id)
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(6);
+
+  const jobPosts = (jobPostsRaw ?? []) as { id: string; title: string; type: string; location: string; description: string }[];
+
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Advisors", url: absoluteUrl("/advisors") },
@@ -537,16 +547,83 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
             </p>
           </div>
 
-          {/* ── Join Our Team ── */}
+          {/* ── Careers / Join Our Team ── */}
           {(() => {
+            const applyUrl = `/advisor-apply?firm_id=${typedFirm.id}&firm_name=${encodeURIComponent(typedFirm.name)}`;
+            const jobTypeLabel: Record<string, string> = {
+              full_time: "Full-time",
+              part_time: "Part-time",
+              contract: "Contract",
+              casual: "Casual",
+            };
+
+            if (jobPosts.length > 0) {
+              // Show actual published job listings
+              return (
+                <div className="bg-white rounded-xl border border-violet-100 shadow-sm p-6">
+                  <div className="flex items-start justify-between gap-3 mb-5">
+                    <div className="flex items-start gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center shrink-0 mt-0.5">
+                        <Icon name="briefcase" size={18} className="text-violet-600" />
+                      </div>
+                      <div>
+                        <h2 className="text-base font-bold text-slate-900">
+                          Open Roles at {typedFirm.name}
+                        </h2>
+                        <p className="text-sm text-slate-500 mt-0.5">
+                          {jobPosts.length} position{jobPosts.length !== 1 ? "s" : ""} currently available
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 mb-5">
+                    {jobPosts.map((job) => (
+                      <div
+                        key={job.id}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-violet-300 hover:bg-violet-50/30 transition-colors"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-slate-900 mb-1">{job.title}</p>
+                          <div className="flex flex-wrap items-center gap-2">
+                            {job.type && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded bg-violet-100 text-violet-700 text-xs font-medium">
+                                {jobTypeLabel[job.type] ?? job.type}
+                              </span>
+                            )}
+                            {job.location && (
+                              <span className="flex items-center gap-1 text-xs text-slate-500">
+                                <Icon name="map-pin" size={11} />
+                                {job.location}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <Link
+                          href={`${applyUrl}&role=${encodeURIComponent(job.title)}`}
+                          className="shrink-0 inline-flex items-center gap-1.5 bg-violet-600 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-violet-700 transition-colors"
+                        >
+                          Apply
+                          <Icon name="arrow-right" size={13} />
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="text-xs text-slate-400">
+                    Applications are reviewed by {typedFirm.name} directly.
+                  </p>
+                </div>
+              );
+            }
+
+            // No published jobs — show generic expression-of-interest section
             const memberTypes = [...new Set(members.map(m => PROFESSIONAL_TYPE_LABELS[m.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || m.type))];
             const hiringRoles: string[] = memberTypes.length > 0
               ? memberTypes.slice(0, 4)
               : ["Financial Planner", "Mortgage Broker", "Wealth Manager", "Investment Adviser"];
-            const applyUrl = `/advisor-apply?firm_id=${typedFirm.id}&firm_name=${encodeURIComponent(typedFirm.name)}`;
             return (
               <div className="bg-white rounded-xl border border-violet-100 shadow-sm p-6 relative overflow-hidden">
-                {/* Background accent */}
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-50/60 to-transparent pointer-events-none" />
                 <div className="relative">
                   <div className="flex items-start gap-3 mb-4">
