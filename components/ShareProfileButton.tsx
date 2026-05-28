@@ -75,6 +75,7 @@ export default function ShareProfileButton({ initialTokens = [] }: Props) {
             <input
               readOnly
               value={newShareUrl}
+              aria-label="Shareable profile link"
               className="flex-1 text-xs bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-700 select-all"
               onFocus={(e) => e.target.select()}
             />
