@@ -20,6 +20,8 @@ import ChatWidget from "@/components/ChatWidget";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import PushNotificationOptIn from "@/components/PushNotificationOptIn";
 import NewsletterExitIntentModal from "@/components/NewsletterExitIntentModal";
+import ExitIntentBrokerMatch from "@/components/ExitIntentBrokerMatch";
+import ExitIntentCapture from "@/components/ExitIntentCapture";
 import { isFlagEnabled, loadFlag } from "@/lib/feature-flags";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, websiteJsonLd } from "@/lib/seo";
 
@@ -114,16 +116,23 @@ export default async function RootLayout({
   //     rampable feature flags (0% → 100% via /admin/automation/flags).
   //   - newsletter_exit_intent: default-on; missing row = enabled,
   //     existing row honours enabled+rollout_pct.
-  const [chatEnabled, reportButtonEnabled, pushEnabled, newsletterExitIntentFlag] =
+  const [chatEnabled, reportButtonEnabled, pushEnabled, newsletterExitIntentFlag, exitIntentBrokerMatchEnabled, exitIntentCaptureEnabled] =
     await Promise.all([
       isFlagEnabled("chatbot_widget"),
       isFlagEnabled("report_button"),
       isFlagEnabled("push_notifications"),
       loadFlag("newsletter_exit_intent"),
+      // default-on: show broker-match popup unless flag explicitly disables it
+      loadFlag("exit_intent_broker_match"),
+      // default-off: enable only when ready to replace NewsletterExitIntentModal
+      isFlagEnabled("exit_intent_capture"),
     ]);
   const newsletterExitIntentEnabled = newsletterExitIntentFlag
     ? newsletterExitIntentFlag.enabled &&
       newsletterExitIntentFlag.rollout_pct > 0
+    : true;
+  const brokerMatchExitIntentEnabled = exitIntentBrokerMatchEnabled
+    ? exitIntentBrokerMatchEnabled.enabled && exitIntentBrokerMatchEnabled.rollout_pct > 0
     : true;
 
   // Country Mode / Language Mode: derive the active locale from the
@@ -188,9 +197,19 @@ export default async function RootLayout({
           {chatEnabled && <ChatWidget />}
           {reportButtonEnabled && <ReportProblemButton />}
           {pushEnabled && <Suspense fallback={null}><PushNotificationOptIn /></Suspense>}
-          {newsletterExitIntentEnabled && (
+          {newsletterExitIntentEnabled && !exitIntentCaptureEnabled && (
             <Suspense fallback={null}>
               <NewsletterExitIntentModal />
+            </Suspense>
+          )}
+          {exitIntentCaptureEnabled && (
+            <Suspense fallback={null}>
+              <ExitIntentCapture />
+            </Suspense>
+          )}
+          {brokerMatchExitIntentEnabled && (
+            <Suspense fallback={null}>
+              <ExitIntentBrokerMatch />
             </Suspense>
           )}
         </ThemeProvider>

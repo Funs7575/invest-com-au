@@ -1,7 +1,27 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import HubLeadForm from "@/components/leads/HubLeadForm";
+
+const FAQS = [
+  {
+    q: "Is there inheritance tax in Australia?",
+    a: "No. Australia abolished federal estate and inheritance tax in 1979. There is no tax when you receive an inheritance — no duty, no death tax. However, the assets you inherit may trigger capital gains tax (CGT) when you later sell them. The key distinction: inheriting is tax-free; selling the inherited asset later may not be.",
+  },
+  {
+    q: "What cost base do I use for inherited shares?",
+    a: "It depends when the deceased acquired the shares. (1) Pre-CGT assets (acquired before 20 September 1985): your cost base is the market value at date of death. (2) Post-CGT assets (acquired on or after 20 September 1985): you inherit the deceased's original cost base, including capital improvements and indexation up to 1999. This means you may inherit a large unrealised gain. Get the transaction records from the estate executor before any sale decision.",
+  },
+  {
+    q: "How is inherited superannuation taxed?",
+    a: "Super does not form part of the estate unless specifically directed by a binding death benefit nomination. It's paid directly to nominated beneficiaries. Tax depends on who receives it: (1) Tax-dependants (spouse, minor children, financial dependants): receive super tax-free. (2) Non-dependants (adult children, siblings): pay tax on the 'taxable component' — typically 15% + 2% Medicare levy (17% total), or 10% + 2% if any taxed element is involved. The 'tax-free component' (after-tax contributions) always passes through tax-free to any beneficiary.",
+  },
+  {
+    q: "What is the two-year CGT exemption on inherited property?",
+    a: "If you inherit a residential property that was the deceased's main residence, you have a two-year window from the date of death to sell the property CGT-free (subject to certain conditions). This is called the 'main residence exemption for deceased estates'. After two years, CGT applies from the date of death, not the original acquisition date. Don't let this window slip — an executor should flag the two-year deadline immediately. The exemption can apply even if the deceased didn't live in the property at death (if it was their main residence at some earlier point).",
+  },
+];
 
 export const revalidate = 3600;
 
@@ -24,9 +44,11 @@ export default function InheritancePage() {
     { name: "Lump-Sum Investing", url: absoluteUrl("/lump-sum-investing") },
     { name: "Inheritance", url: absoluteUrl("/lump-sum-investing/inheritance") },
   ]);
+  const faq = faqJsonLd(FAQS);
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {faq && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }} />}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
@@ -104,7 +126,24 @@ export default function InheritancePage() {
           </div>
         </section>
 
-        <section className="py-10 bg-white border-t border-slate-200">
+        {/* FAQs */}
+        <section className="py-12 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-3xl">
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {FAQS.map((faqItem) => (
+                <details key={faqItem.q} className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+                  <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-bold text-slate-900 hover:bg-slate-50">
+                    {faqItem.q}
+                  </summary>
+                  <div className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{faqItem.a}</div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-10 bg-slate-50 border-t border-slate-200">
           <div className="container-custom max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
               <Link href="/lump-sum-investing" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">All lump-sum guides →</Link>

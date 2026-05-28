@@ -7,6 +7,9 @@ import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT, CRYPTO_WARNING, SP
 import { isSponsored } from "@/lib/sponsorship";
 import Icon from "@/components/Icon";
 import CohortInsights from "@/components/CohortInsights";
+import SocialProofCounter from "@/components/SocialProofCounter";
+import PersonaCard from "@/components/persona/PersonaCard";
+import { computePersona, personaInputFromQuizAnswers } from "@/lib/persona";
 
 import QuizTopMatch from "./QuizTopMatch";
 import QuizComparisonTable from "./QuizComparisonTable";
@@ -67,6 +70,12 @@ export default function QuizResultsScreen({
   const allResults = results.filter(r => r.broker);
   const alternativesCount = Math.max(0, allResults.length - 1);
   const hasSponsoredResult = allResults.some(r => r.broker && isSponsored(r.broker));
+
+  const personaResult = computePersona(personaInputFromQuizAnswers(answers, {
+    amount: unifiedAnswers.amount,
+    experience: unifiedAnswers.experience,
+    goal: unifiedAnswers.goal,
+  }));
 
   // Resolve the inferred best outcome — post-job, calculator-first,
   // bundle-stack, advisor-browse, education-first, advisor-match, or
@@ -155,6 +164,18 @@ export default function QuizResultsScreen({
               Based on your answers
             </span>
           </div>
+        </div>
+
+        {/* Social proof — shows activity count beneath results header */}
+        <div className="mb-3 result-card-in">
+          <SocialProofCounter variant="badge" />
+        </div>
+
+        {/* Investor persona card — derived from quiz answers, no auth required.
+            Placed before broker results so users see their investor identity
+            before the platform recommendation. */}
+        <div className="mb-3 md:mb-6 result-card-in">
+          <PersonaCard result={personaResult} showShare compact />
         </div>
 
         {/* Primary action hero — renders the inferred best move FIRST when

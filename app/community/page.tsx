@@ -129,6 +129,23 @@ export default async function CommunityPage() {
         </div>
       </div>
 
+      {/* Featured — confessions */}
+      <div className="container-custom max-w-4xl mb-6">
+        <Link
+          href="/community/confessions"
+          className="flex items-center justify-between gap-4 bg-slate-800 hover:bg-slate-700 text-white rounded-xl px-5 py-4 transition-colors group"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl" aria-hidden="true">🤫</span>
+            <div>
+              <p className="font-bold text-sm">Investment Confessions</p>
+              <p className="text-xs text-slate-400">Anonymous investing wins, losses &amp; hard lessons — no judgement</p>
+            </div>
+          </div>
+          <Icon name="chevron-right" size={18} className="text-slate-500 group-hover:text-slate-300 transition-colors shrink-0" />
+        </Link>
+      </div>
+
       {/* Category Grid */}
       <div className="container-custom max-w-4xl pb-16">
         {cats.length === 0 && (

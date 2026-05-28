@@ -68,6 +68,7 @@ export type ComplianceKey =
   | "property"
   | "startup"
   | "aged_care"
+  | "home_loans"
   | "tax_agent"
   | "course_affiliate"
   | "sponsored_disclosure"
@@ -1442,4 +1443,576 @@ export const DIVIDENDS_HUB_CONFIG: HubConfig = {
     cadence: "weekly",
     sponsorSlotsAvailable: true,
   },
+};
+
+export const RETIREMENT_HUB_CONFIG: HubConfig = {
+  slug: "retirement",
+  title: `Retirement Planning Hub (${yr})`,
+  metaDescription:
+    "Australia's retirement planning hub. Retirement income strategies, pension-phase super transitions, annuity comparisons, and access to licensed retirement planners. ASFA estimates couples need $690k for a comfortable retirement.",
+  audiences: ["retiree"],
+  complianceKey: "super",
+
+  hero: {
+    headline: "Retirement Planning Hub",
+    subhead:
+      "Plan the retirement you've worked for. Compare retirement income strategies, understand pension-phase super, explore annuities, and find a licensed retirement planner near you.",
+    stats: [
+      {
+        label: "Average retirement age",
+        value: "62",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2028-06-30",
+        source: "https://www.abs.gov.au/statistics/labour/employment-and-unemployment/retirement-and-retirement-intentions",
+      },
+      {
+        label: "Comfortable retirement (couple)",
+        value: "$690k",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2026-09-30",
+        source: "https://www.superannuation.asn.au/resources/retirement-standard/",
+      },
+      {
+        label: "Age Pension recipients",
+        value: "2.5M+",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2028-06-30",
+      },
+    ],
+    primaryCta: { label: "Talk to a Retirement Planner", href: "/quiz?vertical=retirement", lever: "lead_routing" },
+    secondaryCta: { label: "Use Retirement Calculator", href: "/retirement-calculator", lever: "affiliate_cpa" },
+  },
+
+  serviceGrid: [
+    {
+      title: "Retirement Income Planning",
+      description:
+        "Account-based pensions, defined benefit strategies, and drawdown-rate optimisation. Ensure your money lasts through a 25–30 year retirement.",
+      href: "/advisors/financial-planners?speciality=retirement",
+      icon: "trending-up",
+      cta: "Find Retirement Planners",
+    },
+    {
+      title: "Super → Pension Phase",
+      description:
+        "Transition-to-retirement (TTR) rules, pension-phase tax-free treatment, transfer balance cap ($1.9M in 2026), and commutation strategies.",
+      href: "/super",
+      icon: "layers",
+      cta: "Understand Pension Phase",
+    },
+    {
+      title: "Annuities & Lifetime Income",
+      description:
+        "Lifetime annuities, term annuities, and deferred lifetime annuities guarantee income you can't outlive. Compare products, fees, and Centrelink treatment.",
+      href: "/retirement/annuities",
+      icon: "shield-check",
+      cta: "Compare Annuities",
+    },
+    {
+      title: "Age Pension & Centrelink",
+      description:
+        "Assets and income tests, Centrelink treatment of super and investments, deeming rules, and optimising the pension through legal asset structuring.",
+      href: "/retirement/age-pension",
+      icon: "file-text",
+      cta: "Age Pension Guide",
+    },
+    {
+      title: "Reverse Mortgage",
+      description:
+        "Release equity from your home to supplement retirement income. Comparison is factual — speak to a licensed mortgage broker before applying.",
+      href: "/retirement/reverse-mortgage",
+      icon: "home",
+      cta: "Learn About Reverse Mortgages",
+    },
+    {
+      title: "Estate Planning",
+      description:
+        "Wills, Powers of Attorney, superannuation death benefit nominations, testamentary trusts, and estate liquidity planning.",
+      href: "/advisors/estate-planners",
+      icon: "book-open",
+      cta: "Find Estate Planners",
+    },
+  ],
+
+  deepDives: [
+    {
+      title: "How Much Do You Need to Retire?",
+      excerpt: "ASFA retirement standard, lifestyle budgets, Age Pension supplement, and the 4% rule applied to Australian balances.",
+      href: "/retirement/how-much-do-you-need",
+    },
+    {
+      title: "Pension Phase Super: The Tax-Free Zone",
+      excerpt: "How super in pension phase produces tax-free earnings and income once you turn 60. Transfer balance cap, TTR rules.",
+      href: "/retirement/pension-phase",
+    },
+    {
+      title: "Annuities vs Account-Based Pensions",
+      excerpt: "Guaranteed income for life vs flexible drawdown. Longevity risk, Centrelink treatment, and hybrid strategies.",
+      href: "/retirement/annuities-vs-abp",
+    },
+    {
+      title: "Age Pension Assets Test: Full Guide",
+      excerpt: "How the assets test works, thresholds for couples vs singles, super treatment before vs after Age Pension age.",
+      href: "/retirement/age-pension-assets-test",
+    },
+    {
+      title: "Age Pension Deeming Rates Explained",
+      excerpt: "How deemed income is calculated on financial assets, the 0.25%/2.25% rates, account-based pension grandfathering, and worked example.",
+      href: "/retirement/deeming-rates",
+    },
+    {
+      title: "Downsizer Contribution: Super Boost at Age 55+",
+      excerpt: "Contribute up to $300K ($600K couple) from a home sale to super with no TSB limit. Age Pension interaction and 90-day deadline.",
+      href: "/retirement/downsizer-contribution",
+    },
+    {
+      title: "Age Pension Income Test: Work Bonus & Deeming",
+      excerpt: "Income-free area, taper rate, Work Bonus ($300/fortnight exempt), deeming on financial assets, and step-by-step calculation.",
+      href: "/retirement/income-test",
+    },
+    {
+      title: "Work Bonus Scheme: Earn While on the Pension",
+      excerpt: "How the $300/fortnight Work Bonus works, the $11,800 accumulating balance, and worked examples of casual work while pensioning.",
+      href: "/retirement/work-bonus",
+    },
+    {
+      title: "Retirement Income Strategies — ABP, Buckets & SWR",
+      excerpt: "Account-based pension minimum drawdown rules, the 4% safe withdrawal rate, bucket strategy (3 buckets), sequencing risk, and Centrelink optimisation.",
+      href: "/retirement/retirement-income",
+    },
+    {
+      title: "How Much Do You Need to Retire? ASFA Standard + 4% Rule",
+      excerpt: "ASFA comfortable standard ($690K couple, $595K single), the 4% safe withdrawal rate, Age Pension supplement, and balance benchmarks by age.",
+      href: "/retirement/how-much-do-you-need",
+    },
+    {
+      title: "Age Pension: Rates, Eligibility & Means Test",
+      excerpt: "Maximum pension rates, assets and income test thresholds, Pensioner Concession Card, and how super interacts with the Age Pension.",
+      href: "/retirement/age-pension",
+    },
+  ],
+
+  faqs: [
+    {
+      question: "At what age can I access my superannuation?",
+      answer:
+        "For most Australians born after 1 July 1964, the preservation age is 60. Once you reach 60 and meet a condition of release (such as retirement or reaching 65), you can access your super as a lump sum or start an account-based pension, tax-free.",
+    },
+    {
+      question: "What is the transfer balance cap?",
+      answer:
+        "The transfer balance cap is the limit on how much super you can move into the tax-free pension phase. In the 2026 financial year, the general cap is $1.9 million. Once in pension phase, earnings on those assets are tax-free.",
+    },
+    {
+      question: "How much super do I need to retire comfortably?",
+      answer:
+        "According to the ASFA Retirement Standard (June 2025), a couple needs approximately $690,000 in super to fund a 'comfortable' retirement (around $72,000/year), assuming they own their home and receive a part Age Pension. A single person needs approximately $595,000.",
+    },
+    {
+      question: "Are annuities appropriate for everyone?",
+      answer:
+        "Annuities suit retirees who want guaranteed income and protection against longevity risk (outliving your money). They're less flexible than account-based pensions and may not be ideal if you need large lump sums. Consider the Centrelink means-test treatment and speak to a licensed financial adviser before purchasing.",
+    },
+    {
+      question: "Is a reverse mortgage a good idea?",
+      answer:
+        "Reverse mortgages let you borrow against your home's equity without making repayments until you sell. Interest compounds, which can erode the estate. A reverse mortgage is a credit product — always consult a licensed mortgage broker and consider the long-term implications on estate plans and aged care costs before proceeding.",
+    },
+  ],
+
+  leadQueue: { kind: "retirement", advisorType: "retirement_planner" },
+  articleFilters: { category_in: ["retirement"], tags: ["retirement", "pension-phase", "annuity", "age-pension"] },
+  relatedHubs: ["super", "smsf", "aged-care"],
+  primaryKeywords: ["retirement planning Australia", "retirement income strategy", "pension phase super", "annuities Australia"],
+  schemaTypes: ["FinancialService", "FAQPage"],
+  newsletter: { listKey: "retirement-hub", cadence: "weekly", sponsorSlotsAvailable: true },
+};
+
+export const AGED_CARE_HUB_CONFIG: HubConfig = {
+  slug: "aged-care",
+  title: `Aged Care Financial Planning Hub (${yr})`,
+  metaDescription:
+    "Australia's aged care financial planning hub. RAD vs DAP explained, means-tested care fees, home care packages, and access to specialist aged care financial advisers. Costs, subsidies, and Centrelink treatment explained.",
+  audiences: ["retiree"],
+  complianceKey: "aged_care",
+
+  hero: {
+    headline: "Aged Care Financial Planning Hub",
+    subhead:
+      "Navigating the aged care system is complex and expensive. Understand RAD and DAP costs, means-tested fees, home care packages, and how to structure your finances to preserve your estate.",
+    stats: [
+      {
+        label: "Australians in aged care",
+        value: "1.3M+",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2028-06-30",
+        source: "https://www.gen-agedcaredata.gov.au/",
+      },
+      {
+        label: "Median RAD (2025)",
+        value: "$400k",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2027-06-30",
+      },
+      {
+        label: "Of care is government-subsidised",
+        value: "43%",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2028-06-30",
+      },
+    ],
+    primaryCta: { label: "Find an Aged Care Adviser", href: "/quiz?vertical=aged_care", lever: "lead_routing" },
+    secondaryCta: { label: "Download Planning Checklist", href: "/lead-magnets/aged-care-planning-guide", lever: "lead_magnet" },
+  },
+
+  serviceGrid: [
+    {
+      title: "Financial Assessment & Means Testing",
+      description:
+        "Understand your means-tested care fee, income assessment, and how assets (home, super, investments) are treated under the aged care means test.",
+      href: "/aged-care/means-test",
+      icon: "calculator",
+      cta: "Aged Care Means Test Guide",
+    },
+    {
+      title: "RAD vs DAP Decision",
+      description:
+        "Refundable Accommodation Deposit (lump sum) vs Daily Accommodation Payment (ongoing). Which is better depends on your assets, estate plans, and the facility's interest rate.",
+      href: "/aged-care/rad-vs-dap",
+      icon: "layers",
+      cta: "RAD vs DAP Explained",
+    },
+    {
+      title: "Home Care Packages",
+      description:
+        "Levels 1–4 of the Home Care Package program. Costs, subsidies, and how to compare approved home care providers in your area.",
+      href: "/aged-care/home-care-packages",
+      icon: "home",
+      cta: "Home Care Guide",
+    },
+    {
+      title: "Residential Facility Finder",
+      description:
+        "Search and compare residential aged care facilities by location, star rating, vacancy, services, and accommodation bond.",
+      href: "/aged-care/facilities",
+      icon: "map-pin",
+      cta: "Find a Facility",
+    },
+    {
+      title: "Centrelink & DVA Treatment",
+      description:
+        "How Centrelink and DVA assess the family home, HEAS (home equity access scheme), and income assets for aged care fees and the Age Pension.",
+      href: "/aged-care/centrelink",
+      icon: "file-text",
+      cta: "Centrelink Guide",
+    },
+    {
+      title: "Estate Preservation Strategy",
+      description:
+        "Structuring assets to minimise aged care fees while preserving the estate for beneficiaries. Specialist aged care financial advisers can model scenarios.",
+      href: "/advisors/financial-planners?speciality=aged-care",
+      icon: "shield-check",
+      cta: "Find Aged Care Advisers",
+    },
+  ],
+
+  deepDives: [
+    {
+      title: "Aged Care Costs: Complete Guide (2025)",
+      excerpt: "Basic daily fee, means-tested care fee, RAD/DAP, extra service fees — all explained with current dollar amounts.",
+      href: "/aged-care/costs",
+    },
+    {
+      title: "What Happens to the Family Home?",
+      excerpt: "How the home is treated in the means test: 2-year exemption, renting it out, selling it, and HEAS.",
+      href: "/aged-care/family-home",
+    },
+    {
+      title: "Home Care vs Residential Care",
+      excerpt: "When to choose home care packages vs residential aged care. Costs, services, and transition triggers.",
+      href: "/aged-care/home-vs-residential",
+    },
+    {
+      title: "Choosing an Aged Care Financial Adviser",
+      excerpt: "What credentials to look for (CPCA, FACP), questions to ask, and fee structures for aged care advice.",
+      href: "/advisor-guides/how-to-choose-aged-care-advisor",
+    },
+  ],
+
+  faqs: [
+    {
+      question: "What is a Refundable Accommodation Deposit (RAD)?",
+      answer:
+        "A RAD is a lump-sum payment to a residential aged care facility for your accommodation. It is fully refundable when you leave (or on death). If you cannot or choose not to pay the full RAD, you can pay a Daily Accommodation Payment (DAP) instead, or a combination of both. The interest rate used to convert between RAD and DAP is set by the government (the MPIR).",
+    },
+    {
+      question: "Will the government pay for aged care?",
+      answer:
+        "The Australian government subsidises a significant portion of aged care costs through the Aged Care Funding Instrument (ACFI) / AN-ACC. Your contribution is means-tested based on income and assets. If you have limited assets and income, the government pays a higher share. The basic daily fee (currently 85% of the Age Pension) is paid by virtually all residents.",
+    },
+    {
+      question: "Is my home included in the aged care means test?",
+      answer:
+        "The family home is initially exempt from the assets test for the first two years you are in residential care (or indefinitely if a protected person — spouse, carer, or dependent — lives there). After the exemption period, the home is assessed at a capped value (currently around $207,547) for the assets test. Selling or retaining the home has significant implications for your means-tested care fee.",
+    },
+    {
+      question: "What is an aged care financial adviser?",
+      answer:
+        "A specialist aged care financial adviser holds a relevant financial planning licence (AFSL or authorised representative) and has specific training in the aged care system — often the Aged Care Specialist (FACP) designation or CPCA certification. They can model RAD/DAP scenarios, Centrelink impacts, home-sale decisions, and estate outcomes. Fees typically $2,000–$5,000 for a full aged care plan.",
+    },
+  ],
+
+  leadQueue: { kind: "aged_care", state: "", certifiedAdvisorOnly: true },
+  articleFilters: { category_in: ["aged-care"], tags: ["aged-care", "RAD", "DAP", "home-care", "means-test"] },
+  relatedHubs: ["retirement", "super", "smsf"],
+  primaryKeywords: ["aged care financial planning Australia", "RAD DAP aged care", "home care packages", "aged care means test"],
+  schemaTypes: ["FinancialService", "FAQPage"],
+  newsletter: { listKey: "aged-care-hub", cadence: "monthly", sponsorSlotsAvailable: false },
+};
+
+// ─── H6 — Home Loans hub (referral-only; no credit assistance) ───────────────
+//
+// Invest.com.au does NOT hold an ACL. This hub provides factual comparisons
+// and calculator tools only. All credit-assistance actions (rate quotes,
+// application submissions, product recommendations) route to the
+// /advisors/mortgage-brokers directory. The NCCP_CREDIT_NOTE compliance key
+// renders the required disclaimer on every rendered page.
+export const HOME_LOANS_HUB_CONFIG: HubConfig = {
+  slug: "home-loans",
+  title: `Home Loans Australia (${CURRENT_YEAR}) — Compare Rates, Calculators & Mortgage Broker Finder`,
+  metaDescription:
+    "Compare home loan rates, use our free mortgage repayment calculator, and find a licensed mortgage broker. Independent factual information — not credit assistance.",
+  audiences: ["founder", "hnw"],
+  complianceKey: "home_loans",
+
+  hero: {
+    headline: "Home Loans Hub",
+    subhead:
+      "Compare variable and fixed rates, run the repayment calculator, and connect with a licensed mortgage broker. Invest.com.au provides factual information only — for credit assistance, speak to a licensed broker.",
+    stats: [
+      {
+        label: "Average owner-occupier variable rate (Big 4)",
+        value: "~6.2% p.a.",
+        dataAsOf: "2024-06-30",
+        stalesAt: "2026-12-31",
+        source: "https://www.rba.gov.au/statistics/tables/",
+      },
+      {
+        label: "Median new mortgage in Australia",
+        value: "$620,000",
+        dataAsOf: "2024-03-31",
+        stalesAt: "2026-12-31",
+        source: "https://www.abs.gov.au/statistics/economy/finance/lending-indicators",
+      },
+      {
+        label: "Average mortgage broker fee to borrower",
+        value: "$0 (lender-paid)",
+        dataAsOf: "2024-01-01",
+        stalesAt: "2027-01-01",
+        source: "https://www.mfaa.com.au/",
+      },
+    ],
+    primaryCta: {
+      label: "Find a Mortgage Broker",
+      href: "/advisors/mortgage-brokers",
+      lever: "lead_routing",
+    },
+    secondaryCta: {
+      label: "Mortgage Calculator",
+      href: "/mortgage-calculator",
+      lever: "affiliate_cpa",
+    },
+  },
+
+  serviceGrid: [
+    {
+      title: "Variable Rate Loans",
+      icon: "trending-up",
+      description:
+        "Rate moves with the RBA cash rate. Lower early repayments, flexible extra repayments, and offset account access. Suits borrowers comfortable with rate uncertainty.",
+      href: "/home-loans/variable",
+      cta: "Variable Rate Guide",
+    },
+    {
+      title: "Fixed Rate Loans",
+      icon: "lock",
+      description:
+        "Lock in a rate for 1–5 years for repayment certainty. Break fees apply if you exit early. Suits borrowers who want a predictable budget.",
+      href: "/home-loans/fixed",
+      cta: "Fixed Rate Guide",
+    },
+    {
+      title: "Refinancing",
+      icon: "refresh-cw",
+      description:
+        "Switch lenders to access a lower rate or better features. Most Australians who haven't refinanced in 3+ years are paying a loyalty tax. Average saving: $2,000–$5,000/year.",
+      href: "/home-loans/refinancing",
+      cta: "Refinancing Guide",
+    },
+    {
+      title: "First Home Buyer",
+      icon: "home",
+      description:
+        "First Home Guarantee (5% deposit, no LMI), FHSS super withdrawal, and state-based stamp duty concessions. Full eligibility guide and calculator.",
+      href: "/just/buying-first-home",
+      cta: "First Home Buyer Guide",
+    },
+    {
+      title: "Investment Loans",
+      icon: "dollar-sign",
+      description:
+        "Interest-only periods, negative gearing implications, and offset accounts for property investors. Key differences vs owner-occupier lending explained.",
+      href: "/home-loans/investment",
+      cta: "Investment Loan Guide",
+    },
+    {
+      title: "Offset & Redraw",
+      icon: "rotate-ccw",
+      description:
+        "Offset accounts reduce the interest charged daily. Redraw lets you access extra repayments. Key differences — and which feature suits your cash-flow strategy.",
+      href: "/home-loans/offset-redraw",
+      cta: "Offset & Redraw Guide",
+    },
+  ],
+
+  deepDives: [
+    {
+      title: "How to Compare Home Loans — Beyond the Headline Rate",
+      excerpt:
+        "The comparison rate, ongoing fees, and product features matter as much as the advertised rate. A complete checklist of what to review before signing.",
+      href: "/home-loans/compare",
+      readingTimeMinutes: 7,
+    },
+    {
+      title: "Variable vs Fixed Rate — Which Is Right for You?",
+      excerpt:
+        "Fixed gives repayment certainty; variable gives flexibility and typically lower rates over the long term. Historical RBA cycle data to guide your decision.",
+      href: "/home-loans/variable",
+      readingTimeMinutes: 6,
+    },
+    {
+      title: "Refinancing in Australia — Step-by-Step Guide",
+      excerpt:
+        "How to refinance, what it costs, and the break-even calculation that tells you if the rate saving outweighs the switching costs.",
+      href: "/home-loans/refinancing",
+      readingTimeMinutes: 8,
+    },
+    {
+      title: "Mortgage Broker vs Going Direct to the Bank",
+      excerpt:
+        "Brokers access 30+ lenders and are lender-paid — free to the borrower. The data on whether brokers get lower rates than direct applicants.",
+      href: "/advisor-guides/mortgage-broker-vs-bank",
+      readingTimeMinutes: 5,
+    },
+    {
+      title: "Lenders Mortgage Insurance (LMI) — What It Costs & How to Avoid It",
+      excerpt:
+        "LMI protects the lender, not you. Cost table at 80/85/90/95% LVR, 4 avoidance strategies, and the 30-year compounding cost of capitalising LMI.",
+      href: "/home-loans/lmi",
+      readingTimeMinutes: 6,
+    },
+    {
+      title: "Bridging Finance — Buying Before You Sell",
+      excerpt:
+        "Peak debt vs end debt explained, open vs closed bridge, real cost breakdown, and the 4 risks that catch buyers off guard.",
+      href: "/home-loans/bridging-finance",
+      readingTimeMinutes: 5,
+    },
+    {
+      title: "Construction Loans — How Progress Drawdowns Work",
+      excerpt:
+        "5-stage drawdown structure, construction vs standard loan comparison, fixed-price contract requirements, and the risks of provisional sums.",
+      href: "/home-loans/construction-loans",
+      readingTimeMinutes: 7,
+    },
+    {
+      title: "Interest-Only Home Loans — Strategy Guide",
+      excerpt:
+        "IO vs P&I cost comparison, the repayment jump after the IO period, investment property offset strategy, and when IO is a bad idea.",
+      href: "/home-loans/interest-only",
+      readingTimeMinutes: 6,
+    },
+    {
+      title: "Fixed Rate Home Loans — When to Lock In",
+      excerpt:
+        "Break costs explained, rate lock fees, the split-loan strategy, and why long-term fixed rates can cost more when the RBA cuts.",
+      href: "/home-loans/fixed",
+      readingTimeMinutes: 6,
+    },
+    {
+      title: "Investment Property Loans — Rates, IO & Tax",
+      excerpt:
+        "How investment loans differ from owner-occupier, IO strategy for negative gearing, and the deductibility rules you need to know.",
+      href: "/home-loans/investment",
+      readingTimeMinutes: 6,
+    },
+    {
+      title: "Offset vs Redraw — Which Saves More?",
+      excerpt:
+        "How offset accounts reduce daily interest vs redraw access to extra repayments. Tax traps for investors if you redraw into non-deductible debt.",
+      href: "/home-loans/offset-redraw",
+      readingTimeMinutes: 5,
+    },
+  ],
+
+  calculators: [
+    { slug: "mortgage-calculator", label: "Mortgage Repayment Calculator" },
+    { slug: "tools/mortgage-stress-test", label: "Mortgage Stress Test" },
+  ],
+
+  leadQueue: { kind: "general", topic: "home-loans" },
+
+  relatedHubs: ["property", "first-home-buyer", "retirement"],
+
+  articleFilters: {
+    category: "home-loans",
+    tags: ["home-loan", "mortgage", "first-home-buyer", "refinancing", "interest-rate", "fixed-rate", "variable-rate"],
+  },
+
+  primaryKeywords: [
+    "home loans australia",
+    "compare home loans",
+    "mortgage rates australia",
+    "mortgage broker australia",
+    "refinancing home loan",
+    "first home buyer loan",
+    "fixed rate home loan",
+  ],
+
+  schemaTypes: ["FAQPage", "WebPage", "FinancialService"],
+
+  faqs: [
+    {
+      question: "How do I compare home loans in Australia?",
+      answer:
+        "Compare the comparison rate (not just the headline rate) — the comparison rate folds in most fees and gives a truer cost of the loan. Also check: offset account availability, redraw facility, break fees on fixed rates, annual and monthly fees, and whether the lender is CHESS-sponsored (not relevant for loans, but signals a regulated entity). A mortgage broker can compare 30+ lenders' live rates on your behalf at no cost to you.",
+    },
+    {
+      question: "What is a comparison rate?",
+      answer:
+        "A comparison rate is calculated by adding the interest rate, most fees, and charges into a single percentage figure. It's standardised on a $150,000 loan over 25 years so products are comparable. The comparison rate is always higher than the advertised rate. It does not include government charges, LMI, or offset account savings — which is why a mortgage broker's full-cost modelling is still valuable.",
+    },
+    {
+      question: "Should I use a mortgage broker or go directly to a bank?",
+      answer:
+        "A mortgage broker accesses 30+ lenders (including second-tier lenders that often beat Big 4 rates) and is paid by the lender — free to you. ASIC's 2020 mortgage broker review found brokers generated lower average rates than direct borrowers. For complex situations (self-employed, non-resident, trust borrowers), a broker with specialist experience is strongly recommended. Invest.com.au cannot provide credit assistance — speak to a licensed mortgage broker for a credit recommendation.",
+    },
+    {
+      question: "What is LMI and how do I avoid it?",
+      answer:
+        "Lender's Mortgage Insurance (LMI) is an insurance premium paid by the borrower when the deposit is less than 20% of the purchase price (LVR > 80%). It protects the lender — not the borrower. LMI can be $10,000–$40,000+. You can avoid it with a 20%+ deposit, using the First Home Guarantee (5% deposit, government-backed), or by using a guarantor. Some lenders waive LMI for certain professions (doctors, lawyers) at LVRs up to 90%.",
+    },
+    {
+      question: "Is it worth refinancing my home loan?",
+      answer:
+        "The break-even question: divide your switching costs (discharge fee ~$300, new loan application fee ~$300, potential break fee on fixed loans, legal costs ~$500) by the monthly saving from the lower rate. If you'll be in the property longer than the break-even period, refinancing is usually worthwhile. Most Australians with loans older than 3 years are paying a loyalty premium of 0.5–1% above what a new borrower gets. Invest.com.au provides information only — speak to a licensed mortgage broker for a personalised refinancing analysis.",
+    },
+    {
+      question: "What is the First Home Guarantee?",
+      answer:
+        "The First Home Guarantee (FHBG) allows eligible first home buyers to purchase with a deposit as low as 5% without paying LMI. The government guarantees up to 15% of the property value to the lender. Income caps apply ($125,000 for singles, $200,000 for joint buyers) and property price caps vary by location. The scheme is limited in places per year. Apply through a participating lender or mortgage broker — not through Invest.com.au, which provides information only.",
+    },
+  ],
+
+  newsletter: { listKey: "home-loans-hub", cadence: "monthly", sponsorSlotsAvailable: true },
 };

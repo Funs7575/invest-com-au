@@ -205,6 +205,9 @@ export default function Footer() {
                 <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Articles &amp; Guides</Link></li>
                 <li><Link href="/grants" className="hover:text-white transition-colors inline-block py-0.5">Grants Hub</Link></li>
                 <li><Link href="/tax" className="hover:text-white transition-colors inline-block py-0.5">Tax Strategy Hub</Link></li>
+                <li><Link href="/global-investing/tax" className="hover:text-white transition-colors inline-block py-0.5">Global Investing Tax</Link></li>
+                <li><Link href="/family-office" className="hover:text-white transition-colors inline-block py-0.5">Family Office</Link></li>
+                <li><Link href="/alt-assets" className="hover:text-white transition-colors inline-block py-0.5">Alternative Assets</Link></li>
                 <li><Link href="/negative-gearing" className="hover:text-white transition-colors inline-block py-0.5">Negative Gearing</Link></li>
                 <li><Link href="/lump-sum-investing" className="hover:text-white transition-colors inline-block py-0.5">Lump-Sum Investing</Link></li>
                 <li><Link href="/visa-investment" className="hover:text-white transition-colors inline-block py-0.5">Visa &amp; Migration</Link></li>

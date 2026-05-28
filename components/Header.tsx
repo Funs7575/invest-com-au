@@ -76,6 +76,7 @@ const investMegaMenu = [
 
 const foreignDropdown = [
   { label: "Global Investing for Australians", href: "/global-investing", desc: "AU residents investing overseas — US shares, ETFs, FX, tax" },
+  { label: "Tax: CGT, FITO & US Estate Tax", href: "/global-investing/tax", desc: "Australian resident tax rules — CGT, FITO, US estate tax, DTA" },
   { label: "Foreign Investment Hub", href: "/foreign-investment", desc: "Start here — all verticals covered" },
   { label: "Shares for Non-Residents", href: "/foreign-investment/shares", desc: "Broker eligibility & withholding tax" },
   { label: "Crypto for Non-Residents", href: "/foreign-investment/crypto", desc: "AUSTRAC KYC & CGT treatment" },
@@ -102,6 +103,7 @@ const advisorsMegaMenu: { title: string; items: { label: string; href: string; d
       { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
       { label: "Wealth Managers", href: "/advisors/wealth-managers", desc: "Portfolio management for HNW" },
       { label: "Tax Agents", href: "/advisors/tax-agents", desc: "Tax planning & lodgement" },
+      { label: "Family Office Guide", href: "/family-office", desc: "Structure, SMSF & estate for $3M+" },
     ],
   },
   {

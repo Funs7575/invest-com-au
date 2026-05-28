@@ -39,6 +39,11 @@ const SpeedInsights = dynamic(
   { ssr: false },
 );
 
+const UserOnboarding = dynamic(
+  () => import("@/components/UserOnboarding"),
+  { ssr: false },
+);
+
 export default function LayoutSideEffects() {
   return (
     <>
@@ -48,6 +53,7 @@ export default function LayoutSideEffects() {
       <ClaimAnonymousOnAuth />
       <WebVitals />
       <SpeedInsights />
+      <UserOnboarding />
     </>
   );
 }

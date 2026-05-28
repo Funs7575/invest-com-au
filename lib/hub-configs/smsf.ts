@@ -121,6 +121,18 @@ export const smsfHubConfig: HubConfig = {
         "Project SMSF setup and ongoing costs against a retail super fund — see when SMSF breaks even.",
       href: "/smsf-calculator",
     },
+    {
+      title: "SMSF Borrowing (LRBA) — Complete Guide",
+      excerpt:
+        "How limited recourse borrowing works inside super, bare trust structure, ATO safe-harbour conditions, and the active LRBA lenders in Australia.",
+      href: "/smsf/borrowing",
+    },
+    {
+      title: "Winding Up an SMSF",
+      excerpt:
+        "7-step wind-up process, tax on asset sales and in-specie transfers, final ATO return obligations, and how to roll benefits to an APRA fund.",
+      href: "/smsf/wind-up",
+    },
   ],
 
   faqs: [],

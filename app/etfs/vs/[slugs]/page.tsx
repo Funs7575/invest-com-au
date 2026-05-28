@@ -180,6 +180,25 @@ const ETF_DATABASE: Record<string, ETFData> = {
     description: "Australia's most popular international ETF. Tracks developed market shares across the US, Europe, Japan, and other developed economies.",
     bestFor: "Investors wanting single-ETF global developed market exposure",
   },
+  iwld: {
+    ticker: "IWLD",
+    name: "iShares Core MSCI World All Cap ETF",
+    provider: "BlackRock iShares",
+    index: "MSCI World All Cap",
+    mer: 0.09,
+    merDisplay: "0.09%",
+    aum: "$1.5B",
+    aumValue: 1.5,
+    holdings: 1600,
+    yieldDisplay: "~1.4–1.8%",
+    franking: "0%",
+    frankingValue: 0,
+    hedged: false,
+    frequency: "Semi-annual",
+    category: "International Shares",
+    description: "A lower-cost alternative to VGS from iShares. Tracks developed-world shares including small caps at a 0.09% MER — cheaper than VGS but with lower AUM and liquidity.",
+    bestFor: "Cost-focused investors comfortable with lower liquidity vs VGS",
+  },
   vhy: {
     ticker: "VHY",
     name: "Vanguard Australian Shares High Yield ETF",
@@ -260,6 +279,7 @@ const POPULAR_PAIRS = [
   "ivv-vs-vts",
   "ndq-vs-ivv",
   "vgs-vs-ivv",
+  "vgs-vs-iwld",
   "vhy-vs-hvst",
   "vhy-vs-vas",
   "a200-vs-stw",
@@ -527,14 +547,14 @@ export default async function ETFVsPage({
                 Should I switch from {etfA.ticker} to {etfB.ticker} (or vice versa)?
                 <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
               </summary>
-              <p className="mt-3 text-sm text-slate-600 leading-relaxed">Generally, no — not if you're already invested. Switching between similar ETFs triggers CGT on any unrealised gains, and transaction costs apply. The fee saving over future years rarely justifies the immediate tax cost of switching. If you're starting fresh with new money, choose the cheapest option.</p>
+              <p className="mt-3 text-sm text-slate-600 leading-relaxed">Generally, no &mdash; not if you&apos;re already invested. Switching between similar ETFs triggers CGT on any unrealised gains, and transaction costs apply. The fee saving over future years rarely justifies the immediate tax cost of switching. If you&apos;re starting fresh with new money, choose the cheapest option.</p>
             </details>
             <details className="py-4 group">
               <summary className="text-sm font-semibold text-slate-900 cursor-pointer list-none flex items-center justify-between gap-2">
                 Can I hold both {etfA.ticker} and {etfB.ticker} at the same time?
                 <span className="text-slate-400 group-open:rotate-180 transition-transform shrink-0">▾</span>
               </summary>
-              <p className="mt-3 text-sm text-slate-600 leading-relaxed">Technically yes, but if they track similar indices (e.g. both ASX 200 ETFs), you're adding complexity without meaningful diversification benefit. There's no reason to hold two ETFs tracking the same market — you'd just be doubling your brokerage and complicating your tax reporting. Pick one and stick with it.</p>
+              <p className="mt-3 text-sm text-slate-600 leading-relaxed">Technically yes, but if they track similar indices (e.g. both ASX 200 ETFs), you&apos;re adding complexity without meaningful diversification benefit. There&apos;s no reason to hold two ETFs tracking the same market &mdash; you&apos;d just be doubling your brokerage and complicating your tax reporting. Pick one and stick with it.</p>
             </details>
           </div>
         </div>

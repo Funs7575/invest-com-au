@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 
 import { trackEvent } from "@/lib/tracking";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 interface StackComponent {
   kind: "share_broker" | "super_fund" | "savings_account" | "crypto_exchange" | "robo_advisor";
@@ -245,8 +246,7 @@ export default function WealthStackClient() {
         </button>
 
         <p className="text-[0.65rem] text-slate-400">
-          General information only — not personal advice. Always read the relevant PDS / Target
-          Market Determination before opening an account. Stack ID: <code>{stack.stackId}</code>
+          {GENERAL_ADVICE_WARNING} Stack ID: <code>{stack.stackId}</code>
         </p>
       </div>
     );

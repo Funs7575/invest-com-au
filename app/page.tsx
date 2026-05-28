@@ -23,7 +23,13 @@ import ScrollFadeIn from "@/components/ScrollFadeIn";
 import HomeActivitySection from "@/components/HomeActivitySection";
 import HomepagePersonalisedStrip from "@/components/HomepagePersonalisedStrip";
 import HomeHowItWorks from "@/components/HomeHowItWorks";
+import HomeRateOfTheDay from "@/components/HomeRateOfTheDay";
+import RateChangesToday from "@/components/RateChangesToday";
+import InvestScoreGauge from "@/components/InvestScoreGauge";
+import HomeFeedSection from "@/components/HomeFeedSection";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
+import Link from "next/link";
+import { Suspense } from "react";
 
 export const metadata = {
   title: {
@@ -265,6 +271,16 @@ export default async function HomePage() {
       {/* Temporarily hidden for the next few months. Keep the component intact
           so the homepage AI concierge entry can be restored without rebuilding it. */}
 
+      <HomeRateOfTheDay />
+      <InvestScoreGauge />
+      <RateChangesToday />
+
+      {/* Social feed — personalised for logged-in users; streams in
+          dynamically so the ISR shell remains cacheable. */}
+      <Suspense fallback={null}>
+        <HomeFeedSection />
+      </Suspense>
+
       <ScrollFadeIn>
         <HomeRouteCards
           listingCount={totalListingCount}
@@ -288,6 +304,18 @@ export default async function HomePage() {
       <ScrollFadeIn>
         <HomePathfinder />
       </ScrollFadeIn>
+
+      {/* Quick-access chips for buried tools */}
+      <section className="container-custom -mt-4 mb-6">
+        <div className="flex flex-wrap gap-2">
+          <Link href="/score" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:text-amber-800 transition-colors">
+            📊 Financial Health Score
+          </Link>
+          <Link href="/just" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:text-amber-800 transition-colors">
+            📋 Life Event Checklists
+          </Link>
+        </div>
+      </section>
 
       {/* Country Mode preview wrappers — read iv_intent_country cookie in
       their own subtree so the rest of the homepage stays ISR-cacheable.

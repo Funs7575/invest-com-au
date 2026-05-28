@@ -18,6 +18,8 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
   const [percentB, setPercentB] = useState(50);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [dataReady, setDataReady] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
 
   const pairKey = `${LS_PREFIX}${[brokerA.slug, brokerB.slug].sort().join("_")}`;
 
@@ -38,8 +40,12 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
           setPercentB(data.percent_b ?? 50);
           setTotal(data.total ?? 0);
         }
+        setDataReady(true);
       })
-      .catch(() => {});
+      .catch(() => {
+        setFetchError(true);
+        setDataReady(true);
+      });
   }, [brokerA.slug, brokerB.slug, pairKey]);
 
   const castVote = useCallback(
@@ -87,12 +93,27 @@ export default function CommunityVote({ brokerA, brokerB }: CommunityVoteProps) 
         Community Vote
       </h2>
       <p className="text-xs md:text-sm text-slate-500 mb-4">
-        {voted
+        {voted && dataReady && !fetchError
           ? `${total.toLocaleString()} vote${total !== 1 ? "s" : ""} so far`
           : "Which broker would you choose?"}
       </p>
 
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      {/* Loading skeleton — shown only while results are loading for previously-voted users */}
+      {voted && !dataReady && (
+        <div className="grid grid-cols-2 gap-3 mb-4 animate-pulse" aria-hidden="true">
+          <div className="h-28 rounded-xl bg-slate-100" />
+          <div className="h-28 rounded-xl bg-slate-100" />
+        </div>
+      )}
+
+      {/* Fetch-error notice — show only when user has voted (can't see correct tallies) */}
+      {voted && fetchError && (
+        <p className="text-xs text-slate-400 text-center py-2 mb-2">
+          Could not load vote tallies right now.
+        </p>
+      )}
+
+      <div className={`grid grid-cols-2 gap-3 mb-4 ${voted && !dataReady ? "hidden" : ""}`}>
         {[brokerA, brokerB].map((broker) => {
           const isChosen = chosenSlug === broker.slug;
           const percent = broker.slug === brokerA.slug ? percentA : percentB;

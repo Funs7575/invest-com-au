@@ -53,6 +53,9 @@ import PlacementImpressionTracker from "@/components/PlacementImpressionTracker"
 import JargonTooltip from "@/components/JargonTooltip";
 import OnThisPage from "@/components/OnThisPage";
 import type { Article } from "@/lib/types";
+import SocialProofCounter from "@/components/SocialProofCounter";
+import StickyCTABar from "@/components/StickyCTABar";
+import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
 
 const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
   beginners: "beginner-guide",
@@ -402,6 +405,11 @@ export default async function BestBrokerPage({
             </span>
           </div>
 
+{/* Social proof — shows investors comparing today */}
+          <div className="mb-4">
+            <SocialProofCounter variant="badge" />
+          </div>
+
 {/* Our selection criteria — collapsible on mobile */}
           <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 mb-6 md:mb-8">
             <h2 className="text-lg font-bold text-slate-900 mb-2">
@@ -602,6 +610,13 @@ export default async function BestBrokerPage({
             ))}
           </div>
 
+          {/* Fee-impact visualiser — shown on fee-focused categories */}
+          {(slug === "low-fees" || slug === "beginners" || slug === "etfs" || slug === "us-shares" || slug === "chess-sponsored") && (
+            <div className="mb-6 md:mb-10">
+              <FeeImpactVisualiser />
+            </div>
+          )}
+
           {/* Contextual lead magnet */}
           <div className="mb-6 md:mb-10">
             <ContextualLeadMagnet segment={SLUG_TO_SEGMENT[slug] || "fee-audit"} />
@@ -758,6 +773,16 @@ export default async function BestBrokerPage({
           )}
         </div>
       </div>
+      {topPick && (
+        <StickyCTABar
+          broker={topPick}
+          detail={[
+            topPick.asx_fee && `ASX: ${topPick.asx_fee}`,
+            topPick.rating != null && `Rating: ${topPick.rating}/5`,
+          ].filter(Boolean).join(" · ") || "Australia's top-rated broker"}
+          context="review"
+        />
+      )}
     </>
   );
 }

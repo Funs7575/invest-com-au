@@ -66,10 +66,16 @@ export default async function SuperPage() {
               {[
                 { label: "SMSF Hub", href: "/smsf", badge: "Self-managed" },
                 { label: "Contributions", href: "/super/contributions", badge: "Salary sacrifice" },
+                { label: "Transition to Retirement", href: "/super/transition-to-retirement", badge: "TTR strategy" },
                 { label: "Consolidation", href: "/super/consolidation", badge: "Find lost super" },
                 { label: "Leaving Australia", href: "/super/leaving-australia", badge: "DASP" },
                 { label: "Super Quiz", href: "/super/quiz", badge: "Find your fund" },
                 { label: "Compare Super", href: "/compare/super", badge: "Fees & returns" },
+                { label: "Division 296 Tax", href: "/super/division-296", badge: "From July 2026" },
+                { label: "Catch-Up Contributions", href: "/super/catch-up-contributions", badge: "Carry-forward" },
+                { label: "Co-Contribution", href: "/super/co-contribution", badge: "Govt matches $0.50/$1" },
+                { label: "Spouse Contributions", href: "/super/spouse-contributions", badge: "Up to $540 offset" },
+                { label: "Pension Phase", href: "/super/pension-phase", badge: "Tax-free earnings" },
               ].map(({ label, href, badge }) => (
                 <Link
                   key={href}

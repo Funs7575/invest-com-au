@@ -7,11 +7,13 @@ import { AFFILIATE_AD_TOOLTIP } from "@/lib/compliance";
 import SponsorBadge from "@/components/SponsorBadge";
 import Icon from "@/components/Icon";
 import ShortlistButton from "@/components/ShortlistButton";
+import BookmarkButton from "@/components/BookmarkButton";
 import BrokerLogo from "@/components/BrokerLogo";
 import FeeVerifiedPill from "@/components/FeeVerifiedPill";
 import EligibilityBadge from "@/components/EligibilityBadge";
 import { isSponsored } from "@/lib/sponsorship";
 import type { IntentCountryCode } from "@/lib/intent-context";
+import DealExpiryCountdown from "@/components/DealExpiryCountdown";
 
 export default memo(function BrokerCard({
   broker,
@@ -98,6 +100,12 @@ export default memo(function BrokerCard({
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
+            <BookmarkButton
+              type="broker"
+              ref={broker.slug}
+              label={broker.name}
+              className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-amber-600 transition-all duration-200 shrink-0"
+            />
             <a
               href={getAffiliateLink(broker)}
               target="_blank"
@@ -190,12 +198,7 @@ export default memo(function BrokerCard({
           <div className="flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-200/80 rounded-lg">
             <Icon name="flame" size={11} className="text-amber-500 shrink-0" />
             <span className="text-[0.6rem] text-amber-700 font-semibold truncate">{broker.deal_text}</span>
-            {broker.deal_expiry && (() => {
-              // eslint-disable-next-line react-hooks/purity
-              const daysLeft = Math.ceil((new Date(broker.deal_expiry).getTime() - Date.now()) / 86400000);
-              if (daysLeft <= 0) return null;
-              return <span className={`text-[0.55rem] shrink-0 font-bold px-1.5 py-0.5 rounded-full ${daysLeft <= 7 ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600'}`}>{daysLeft}d left</span>;
-            })()}
+            <DealExpiryCountdown dealExpiry={broker.deal_expiry} />
           </div>
         )}
       </div>

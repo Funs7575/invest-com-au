@@ -4,13 +4,6 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-/* Inline SVG icons to avoid lucide-react dependency */
-const Search = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-);
-const XIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-);
 import type { Broker } from "@/lib/types";
 import { trackEvent, getAffiliateLink, trackClick, AFFILIATE_REL } from "@/lib/tracking";
 import SocialProofCounter from "@/components/SocialProofCounter";
@@ -24,6 +17,11 @@ import CompareDesktopTable from "./_components/CompareDesktopTable";
 import CompareSelectionBar from "./_components/CompareSelectionBar";
 import CompareFooter from "./_components/CompareFooter";
 import CompareCrossSellBanner from "@/components/CompareCrossSellBanner";
+import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
+import SearchInput from "@/components/directory/SearchInput";
+import FilterChips, { type FilterChip } from "@/components/directory/FilterChips";
+import EmptyState from "@/components/directory/EmptyState";
+import ResultCount from "@/components/directory/ResultCount";
 import type { ABTestConfig } from "@/lib/ab-test";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -48,8 +46,6 @@ const platformTypes: { key: CompareCategory; label: string; short?: string }[] =
   label: schema.label,
   short: schema.shortLabel,
 }));
-
-const filters = platformTypes; // for URL compat
 
 /** Map URL ?category= values to platform category keys */
 const CATEGORY_TO_FILTER: Record<string, CompareCategory> = CATEGORY_ALIASES;
@@ -170,6 +166,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [selected, setSelected] = useState<Set<string>>(initialSelected);
   const [showMobileCompare, setShowMobileCompare] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  // Track which filter the user last expanded mobile columns for — comparing
+  // to activeFilter gives derived "showAllMobileColumns" that auto-resets on
+  // category change without a useEffect.
+  const [columnExpandedForFilter, setColumnExpandedForFilter] = useState<string | null>(null);
+  const showAllMobileColumns = columnExpandedForFilter === activeFilter;
   const [scenario, setScenario] = useState<ScenarioMode | "none">((searchParams.get("scenario") as ScenarioMode) || "none");
   const [costInputs, setCostInputs] = useState<CostInputs>(DEFAULT_COST_INPUTS);
 
@@ -651,17 +652,21 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               ))}
             </select>
             
-            {/* Active filter count + clear */}
-            {(activeFilter !== 'all' || activeFeatures.size > 0 || maxFee < 999 || minRating > 0 || searchQuery.trim()) && (
-              <button
-                onClick={() => { setActiveFilter('all'); setActiveFeatures(new Set()); setMaxFee(999); setMinRating(0); setSearchQuery(''); }}
-                className="shrink-0 px-3 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-1"
-              >
-                <XIcon className="w-3 h-3" />
-                Clear all ({[activeFilter !== 'all' ? 1 : 0, activeFeatures.size, maxFee < 999 ? 1 : 0, minRating > 0 ? 1 : 0].reduce((a, b) => a + b, 0)} filters)
-              </button>
-            )}
           </div>
+          {/* Active filter chips — one removable chip per active filter */}
+          <FilterChips
+            chips={[
+              ...(activeFilter !== 'all' ? [{ label: platformTypes.find(f => f.key === activeFilter)?.label ?? activeFilter, onClear: () => setActiveFilter('all') }] as FilterChip[] : []),
+              ...Array.from(activeFeatures).map((key): FilterChip => ({
+                label: featureFilterMeta[key]?.label ?? key,
+                onClear: () => setActiveFeatures(prev => { const next = new Set(prev); next.delete(key); return next; }),
+              })),
+              ...(maxFee < 999 ? [{ label: `ASX Fee ≤$${maxFee}`, onClear: () => setMaxFee(999) }] as FilterChip[] : []),
+              ...(minRating > 0 ? [{ label: `Rating ${minRating}+`, onClear: () => setMinRating(0) }] as FilterChip[] : []),
+              ...(searchQuery.trim() ? [{ label: `"${searchQuery.trim()}"`, onClear: () => setSearchQuery('') }] as FilterChip[] : []),
+            ]}
+            onClearAll={() => { setActiveFilter('all'); setActiveFeatures(new Set()); setMaxFee(999); setMinRating(0); setSearchQuery(''); }}
+          />
         </div>
 
         {/* Mobile: Filter + Search inline row */}
@@ -675,22 +680,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             </svg>
             {activeFilter !== 'all' ? platformTypes.find(f => f.key === activeFilter)?.label : activeFeatures.size > 0 ? `${activeFeatures.size} filter${activeFeatures.size > 1 ? 's' : ''}` : 'Filter & Sort'}
           </button>
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
-              className="w-full px-3 py-2.5 pl-8 min-h-11 border border-slate-200 rounded-full text-xs focus:outline-none focus:border-slate-400"
-              aria-label="Search platforms"
-            />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400" aria-label="Clear">
-                <XIcon className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
+          <SearchInput
+            id="compare-search-mobile"
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search..."
+            ariaLabel="Search platforms"
+            className="flex-1"
+          />
           <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Filter & Sort">
             {/* Sort */}
             <div className="mb-4">
@@ -791,38 +788,32 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {/* Desktop Search Input */}
-        <div className="hidden md:block relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
+        <div className="hidden md:block mb-4 w-80">
+          <SearchInput
+            id="compare-search"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={setSearchQuery}
             placeholder="Search platforms by name..."
-            className="w-80 px-4 py-2.5 pl-10 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
-            aria-label="Search platforms by name"
+            ariaLabel="Search platforms by name"
           />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute left-[18.5rem] top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-              aria-label="Clear search"
-            >
-              <XIcon className="w-4 h-4" />
-            </button>
-          )}
         </div>
 
-        {/* Results count — accessible */}
+        {/* Result count — sr-only aria-live for all sizes; ResultCount visible on mobile */}
         <div aria-live="polite" aria-atomic="true" className="sr-only">
-          {sorted.length} {sorted.length === 1 ? 'platform' : 'platforms'} found{activeFilter !== 'all' ? ` with ${filters.find(f => f.key === activeFilter)?.label} filter` : ''}{searchQuery ? ` matching "${searchQuery}"` : ''}
+          {sorted.length} {sorted.length === 1 ? 'platform' : 'platforms'} found
         </div>
-        {/* Mobile result count — visible */}
         <div className="md:hidden flex items-center justify-between mb-2">
-          <span className="text-[0.62rem] text-slate-400">
-            {sorted.length} platform{sorted.length !== 1 ? 's' : ''}
-            {activeFilter !== 'all' ? ` · ${filters.find(f => f.key === activeFilter)?.label}` : ''}
-            {sortCol !== 'rating' ? ` · Sorted by ${sortCol === 'asx_fee_value' ? 'ASX fee' : sortCol === 'us_fee_value' ? 'US fee' : sortCol === 'fx_rate' ? 'FX rate' : sortCol}` : ''}
-          </span>
+          <ResultCount total={sorted.length} noun="platforms" className="text-[0.62rem]" />
+          {/* U2 — show more columns affordance */}
+          {schema.columns.length > 4 && (
+            <button
+              type="button"
+              onClick={() => setColumnExpandedForFilter(prev => prev === activeFilter ? null : activeFilter)}
+              className="text-[0.62rem] font-semibold text-blue-700 hover:text-blue-800"
+            >
+              {showAllMobileColumns ? 'Fewer columns' : `+${schema.columns.length - 4} columns`}
+            </button>
+          )}
         </div>
 
         {/* Quiz prompt — hidden on mobile to save space */}
@@ -878,7 +869,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           )}
           {sortedRows.map(row => {
             const broker = row.broker;
-            const mobileColumns = schema.columns.slice(0, 4);
+            const mobileColumns = showAllMobileColumns ? schema.columns : schema.columns.slice(0, 4);
             return (
             <article key={broker.id} data-testid="compare-mobile-card" className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
               <div className="flex items-start gap-3">
@@ -966,28 +957,21 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         )}
 
         {sorted.length === 0 && (
-          <div className="text-center py-8 md:py-12 text-slate-500" role="status">
-            {searchQuery ? (
-              <>
-                <p className="text-sm md:text-lg font-medium mb-1.5">No platforms match &ldquo;{searchQuery}&rdquo;</p>
-                <button
-                  onClick={() => { setSearchQuery(""); setActiveFilter('all'); }}
-                  className="text-blue-700 text-sm font-semibold hover:text-blue-800 transition-colors"
-                >
-                  Clear all filters
-                </button>
-              </>
-            ) : (
-              <>
-                <p className="text-sm mb-2">No platforms match this filter. Try a different category.</p>
-                <button
-                  onClick={() => setActiveFilter('all')}
-                  className="text-blue-700 text-sm font-semibold hover:text-blue-800 transition-colors"
-                >
-                  Show all platforms
-                </button>
-              </>
-            )}
+          <EmptyState
+            title={searchQuery ? `No platforms match "${searchQuery}"` : "No platforms match this filter"}
+            body={searchQuery ? undefined : "Try a different platform category or remove some filters."}
+            suggestions={[
+              ...(searchQuery ? [{ label: "Clear search", onClick: () => { setSearchQuery(""); } }] : []),
+              ...(activeFilter !== 'all' || activeFeatures.size > 0 || maxFee < 999 || minRating > 0 ? [{ label: "Show all platforms", onClick: () => { setActiveFilter('all'); setActiveFeatures(new Set()); setMaxFee(999); setMinRating(0); setSearchQuery(''); } }] : []),
+            ]}
+            className="my-4"
+          />
+        )}
+
+        {/* Fee-impact visualiser — educational section shown after main results */}
+        {sorted.length > 0 && (
+          <div className="mt-6">
+            <FeeImpactVisualiser />
           </div>
         )}
 

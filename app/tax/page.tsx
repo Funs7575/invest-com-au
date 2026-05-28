@@ -48,6 +48,20 @@ const TAX_TOPICS = [
     keyFact: "Every swap is a CGT event",
   },
   {
+    title: "Salary Sacrifice",
+    description: "Redirect pre-tax salary into super and pay 15% contributions tax instead of up to 47%. Concessional cap $30,000, carry-forward rules, and Division 293.",
+    href: "/tax/salary-sacrifice",
+    icon: "💼",
+    keyFact: "Save 19.5¢–32¢ per dollar",
+  },
+  {
+    title: "Rental Property Tax",
+    description: "Deductible expenses, depreciation (Div 40 and Div 43), negative gearing, CGT on sale, and the 6-year main residence rule for investment properties.",
+    href: "/tax/rental-property",
+    icon: "🏠",
+    keyFact: "~3M Australian property investors",
+  },
+  {
     title: "Super Tax Strategies",
     description: "Concessional contribution strategies, salary sacrifice, catch-up contributions, and super to reduce your tax in the accumulation and pension phase.",
     href: "/super",
@@ -60,6 +74,62 @@ const TAX_TOPICS = [
     href: "/super/smsf",
     icon: "🏛️",
     keyFact: "0% tax in pension phase",
+  },
+  {
+    title: "Family Trusts & Tax",
+    description: "How discretionary (family) trusts are taxed in Australia — income splitting to beneficiaries, CGT discount, bucket company strategy, and ATO section 100A rules.",
+    href: "/tax/trusts",
+    icon: "🤝",
+    keyFact: "Income taxed at beneficiary's rate",
+  },
+  {
+    title: "Estate Planning & Tax",
+    description: "CGT at death, super death benefits tax, testamentary trusts for minor beneficiaries, and the difference between estate and non-estate assets.",
+    href: "/tax/estate-planning",
+    icon: "📜",
+    keyFact: "No inheritance tax in Australia",
+  },
+  {
+    title: "Medicare Levy & Surcharge",
+    description: "Standard 2% Medicare Levy, MLS thresholds ($93k+ single), private hospital cover exemption, Lifetime Health Cover loading, and the government rebate.",
+    href: "/tax/medicare",
+    icon: "🏥",
+    keyFact: "1–1.5% surcharge above $93k",
+  },
+  {
+    title: "Fringe Benefits Tax (FBT)",
+    description: "How FBT works for employees and employers: novated leases, reportable fringe benefits, exempt items, the EV FBT exemption, and how RFBA affects Medicare Levy Surcharge thresholds.",
+    href: "/tax/fringe-benefits",
+    icon: "🚗",
+    keyFact: "47% FBT rate; EV exemption from 2022",
+  },
+  {
+    title: "Small Business Tax",
+    description: "Business structure comparison (sole trader, company, trust), 25% base rate entity tax, instant asset write-off, small business CGT concessions, GST threshold, and Division 7A rules.",
+    href: "/tax/small-business",
+    icon: "🏢",
+    keyFact: "25% company rate for SMEs",
+  },
+  {
+    title: "Foreign Income Tax",
+    description: "How overseas dividends, capital gains, and interest are taxed in Australia. Double Tax Agreements, the Foreign Income Tax Offset, currency translation, and ASX global ETF distributions.",
+    href: "/tax/foreign-income",
+    icon: "🌏",
+    keyFact: "FITO offsets withholding tax dollar-for-dollar",
+  },
+  {
+    title: "HECS-HELP Repayments",
+    description: "Repayment thresholds (from $54,435), the CPI indexation rate, how salary sacrifice affects repayment income, voluntary repayments, and the 2024 WPI cap legislation change.",
+    href: "/tax/hecs-help",
+    icon: "🎓",
+    keyFact: "10% rate above $159,664",
+  },
+  {
+    title: "Investment Record Keeping",
+    description: "ATO 5-year retention rules, what records to keep for shares, ETFs, property, and crypto, cost base documentation, Sharesight and Koinly tools, and what to do if you lose records.",
+    href: "/tax/record-keeping",
+    icon: "📁",
+    keyFact: "Property records: keep from purchase until 5 years after sale",
   },
 ];
 
@@ -243,6 +313,27 @@ export default function TaxHubPage() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Seasonal callout — tax return */}
+      <section className="py-6">
+        <div className="container-custom">
+          <Link
+            href="/tax-return"
+            className="group flex items-center justify-between gap-4 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 hover:border-amber-400 hover:bg-amber-100/60 transition-colors"
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-2xl shrink-0" aria-hidden>📋</span>
+              <div>
+                <p className="font-bold text-slate-900 text-sm">Lodging your tax return?</p>
+                <p className="text-xs text-slate-600 mt-0.5">Deductions, investment income, crypto, and how to find a tax agent — all in one guide.</p>
+              </div>
+            </div>
+            <span className="shrink-0 text-amber-700 font-semibold text-sm group-hover:translate-x-1 transition-transform whitespace-nowrap">
+              Tax Return Guide →
+            </span>
+          </Link>
         </div>
       </section>
 

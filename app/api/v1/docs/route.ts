@@ -652,6 +652,296 @@ export function GET() {
         },
       },
       {
+        path: "/api/v1/fee-changes",
+        method: "GET",
+        auth_required: true,
+        tiers: ["basic", "pro", "enterprise"],
+        description:
+          "Fee-change monitoring feed: paginated, time-ordered list of individual broker fee change events (ASX fee, US fee, FX rate, inactivity fee, min deposit). Useful for building price-change alerts or keeping a local fee database in sync. Informational data — not financial advice.",
+        parameters: [
+          {
+            name: "broker_slug",
+            type: "string",
+            required: false,
+            description: "Filter to a specific broker by slug (e.g. 'stake')",
+          },
+          {
+            name: "field",
+            type: "string",
+            required: false,
+            description:
+              "Filter to a specific fee field: asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, inactivity_fee, min_deposit",
+          },
+          {
+            name: "since",
+            type: "string",
+            required: false,
+            description: "ISO 8601 date string — only return changes on/after this date (e.g. '2026-01-01')",
+          },
+          {
+            name: "limit",
+            type: "integer",
+            required: false,
+            description: "Max results (default: 50, max: 200)",
+          },
+          {
+            name: "offset",
+            type: "integer",
+            required: false,
+            description: "Pagination offset (default: 0)",
+          },
+        ],
+        example_request: "GET /api/v1/fee-changes?since=2026-01-01&limit=20",
+        example_response: {
+          data: [
+            {
+              id: 4201,
+              broker_slug: "stake",
+              field_name: "asx_fee_value",
+              old_value: "5.00",
+              new_value: "3.00",
+              change_type: "update",
+              changed_at: "2026-03-15T10:30:00Z",
+              source: "fee_page_check",
+            },
+          ],
+          meta: {
+            total: 87,
+            limit: 20,
+            offset: 0,
+            updated_at: "2026-03-15T10:30:00Z",
+            disclaimer: "Fee change data is factual. Not financial advice.",
+          },
+        },
+      },
+      {
+        path: "/api/v1/cohort-report",
+        method: "GET",
+        auth_required: true,
+        tiers: ["enterprise"],
+        description:
+          "Investor-intent cohort report: aggregate, anonymised weekly cohort data compiled from quiz completions and lead-capture signals. No PII. Dimensions: inferred_vertical × experience_level × investment_range. Data matures meaningfully at ~6 months of accumulation.",
+        parameters: [
+          {
+            name: "vertical",
+            type: "string",
+            required: false,
+            description: "Filter to a specific inferred vertical (e.g. broker-seeker, etf-investor).",
+          },
+          {
+            name: "weeks",
+            type: "integer",
+            required: false,
+            description: "Number of weekly snapshots to return (default 12, max 52).",
+          },
+        ],
+        example_request: "GET /api/v1/cohort-report?weeks=12",
+        example_response: {
+          cohorts: [
+            {
+              week_start: "2026-05-19",
+              inferred_vertical: "broker-seeker",
+              experience_level: "beginner",
+              investment_range: "0-10k",
+              quiz_completions: 142,
+              leads_captured: 38,
+              conversion_rate: 26.76,
+              top_utm_source: "google",
+              computed_at: "2026-05-25T00:05:12Z",
+            },
+          ],
+          meta: {
+            weeks: 12,
+            total_rows: 48,
+            updated_at: "2026-05-25T00:05:12Z",
+            disclaimer: "Aggregate anonymised data. No PII included. Refreshed weekly.",
+          },
+        },
+      },
+      {
+        path: "/api/v1/widget-licenses",
+        method: "GET | POST | DELETE",
+        auth_required: true,
+        tiers: ["pro", "enterprise"],
+        description:
+          "White-label widget license management. Create and manage wlt_xxx license tokens that remove the 'Powered by invest.com.au' attribution footer from /api/widget/licensed embeds. Max 10 tokens per API key.",
+        parameters: [
+          {
+            name: "id",
+            in: "query (DELETE only)",
+            type: "string",
+            required: true,
+            description: "License ID to deactivate.",
+          },
+        ],
+        post_body: {
+          name: "string (optional) — label for this license token, max 128 chars",
+          allowed_domains:
+            "string[] (optional) — restrict embedding to these hostnames, e.g. ['example.com']. Empty = all domains allowed.",
+        },
+        example_request: "POST /api/v1/widget-licenses\n{\"name\":\"My site\",\"allowed_domains\":[\"example.com\"]}",
+        example_response: {
+          license: {
+            id: "abc12345-...",
+            name: "My site",
+            token: "wlt_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            token_prefix: "wlt_xxxxxxxxxxxx",
+            allowed_domains: ["example.com"],
+            is_active: true,
+            created_at: "2026-05-26T00:00:00Z",
+          },
+          embed_url:
+            "https://invest.com.au/api/widget/licensed?license=wlt_xxx&brokers=stake,commsec",
+          message: "Save your license token securely — it will not be shown again.",
+        },
+      },
+      {
+        path: "/api/v1/webhooks",
+        method: "GET | POST | DELETE",
+        auth_required: true,
+        tiers: ["basic", "pro", "enterprise"],
+        description:
+          "Consumer webhook registration. Subscribe to events (broker.updated, health_score.updated, advisor.updated, savings.updated, fee.changed). Max 5 webhooks per API key. Payloads signed with HMAC-SHA256.",
+        post_body: {
+          url: "string — HTTPS URL to receive POST events",
+          events:
+            "string[] — one or more of: broker.updated, health_score.updated, advisor.updated, savings.updated, fee.changed",
+        },
+        example_request:
+          "POST /api/v1/webhooks\n{\"url\":\"https://example.com/invest-hook\",\"events\":[\"fee.changed\"]}",
+        example_response: {
+          webhook: {
+            id: "hook-uuid",
+            url: "https://example.com/invest-hook",
+            events: ["fee.changed"],
+            secret: "whsec_...",
+            secret_prefix: "whsec_xxxxxx",
+            is_active: true,
+            created_at: "2026-05-26T00:00:00Z",
+          },
+          message: "Save your signing secret securely — it will not be shown again.",
+        },
+      },
+      {
+        path: "/api/v1/verify",
+        method: "GET",
+        auth_required: true,
+        tiers: ["basic", "pro", "enterprise"],
+        description:
+          "Verification-as-a-Service: returns the invest.com.au verification status for a named advisor or advisory firm. Includes AFSL number, AFSL status (live from ASIC register cache), ABN, verified_at, verification_method, and a ready-made trust_mark_embed snippet. Factual data only — no PII.",
+        parameters: [
+          {
+            name: "type",
+            type: "string",
+            required: true,
+            description: "Entity type: 'advisor' or 'firm'",
+          },
+          {
+            name: "slug",
+            type: "string",
+            required: true,
+            description: "Entity slug (URL-safe identifier, lowercase alphanumeric + hyphens)",
+          },
+        ],
+        example_request: "GET /api/v1/verify?type=advisor&slug=jane-smith",
+        example_response: {
+          type: "advisor",
+          slug: "jane-smith",
+          name: "Jane Smith",
+          professional_type: "financial_planner",
+          verified: true,
+          afsl_number: "123456",
+          afsl_status: "current",
+          abn: "12345678901",
+          verified_at: "2026-01-15T10:00:00Z",
+          verification_method: "asic_register",
+          profile_url: "https://invest.com.au/advisor/jane-smith",
+          trust_mark_embed:
+            '<script src="https://invest.com.au/api/widget/trust-mark?type=advisor&slug=jane-smith"></script>',
+        },
+        notes:
+          "Cache-Control: public, max-age=3600. The trust_mark_embed field contains a self-contained <script> tag that renders a Shadow DOM badge. Add ?theme=dark for dark backgrounds.",
+      },
+      {
+        path: "/api/v1/tax/treaties",
+        method: "GET",
+        auth_required: true,
+        tiers: ["basic", "pro", "enterprise"],
+        description:
+          "Double-tax treaty (DTA) reference data for Australian residents investing globally. Returns applicable withholding-tax rates under each treaty (dividends, interest, royalties) and key treaty notes. Informational only — not tax advice.",
+        parameters: [
+          {
+            name: "country_code",
+            type: "string",
+            required: false,
+            description: "ISO 3166-1 alpha-2 country code (e.g. 'US', 'GB', 'JP'). Omit to return all treaties.",
+          },
+          {
+            name: "category",
+            type: "string",
+            required: false,
+            description: "Filter by income category: dividends | interest | royalties | capital_gains",
+          },
+        ],
+        example_request: "GET /api/v1/tax/treaties?country_code=US",
+        example_response: {
+          data: [
+            {
+              country_code: "US",
+              country_name: "United States",
+              treaty_signed: "1982-08-06",
+              dividends_rate_pct: 15,
+              dividends_notes: "15% under AUS-US DTA Art. 10. 5% if holding ≥10%.",
+              interest_rate_pct: 10,
+              royalties_rate_pct: 5,
+              capital_gains_notes: "Generally taxed only in resident country; US real-property exception applies.",
+              fito_available: true,
+              w8ben_required: true,
+              updated_at: "2026-01-01T00:00:00Z",
+            },
+          ],
+          meta: { total: 1, disclaimer: "Tax treaty rates are indicative. Consult a registered tax agent for advice." },
+        },
+      },
+      {
+        path: "/api/v1/tax/withholding-rates",
+        method: "GET",
+        auth_required: true,
+        tiers: ["basic", "pro", "enterprise"],
+        description:
+          "Statutory withholding-tax rates for Australian residents receiving foreign-source income. Returns both the non-treaty rate and the reduced DTA rate where applicable. Source: ATO foreign income tables + treaty text. Informational only.",
+        parameters: [
+          {
+            name: "country_code",
+            type: "string",
+            required: false,
+            description: "ISO 3166-1 alpha-2 country code. Omit for all countries.",
+          },
+          {
+            name: "income_type",
+            type: "string",
+            required: false,
+            description: "Income type: dividends | interest | royalties. Default: all.",
+          },
+        ],
+        example_request: "GET /api/v1/tax/withholding-rates?country_code=US&income_type=dividends",
+        example_response: {
+          data: [
+            {
+              country_code: "US",
+              income_type: "dividends",
+              statutory_rate_pct: 30,
+              treaty_rate_pct: 15,
+              treaty_available: true,
+              form_required: "W-8BEN",
+              fito_creditable: true,
+              notes: "AU-listed ETFs holding US shares (e.g. IVV) benefit from treaty rates automatically.",
+            },
+          ],
+          meta: { disclaimer: "Withholding rates are informational. Consult a registered tax agent." },
+        },
+      },
+      {
         path: "/api/v1/openapi.json",
         method: "GET",
         auth_required: false,

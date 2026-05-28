@@ -45,6 +45,9 @@ const platformsMenu = {
     { label: "Current Deals", href: "/deals" },
     ...(SHOW_MATCH_LANGUAGE ? [{ label: "Get Matched (60s)", href: "/quiz" }] : []),
     { label: "Fee Calculator", href: "/calculators" },
+    { label: "Financial Health Score", href: "/score" },
+    { label: "My Wealth Stack", href: "/wealth-stack" },
+    { label: "AI Concierge", href: "/concierge" },
   ],
 };
 
@@ -129,11 +132,17 @@ const learnMenu = {
   ],
   topics: [
     { label: "Investing Basics", href: "/articles?category=beginners" },
-    { label: "Tax & Super", href: "/articles?category=tax" },
+    { label: "Tax Strategy Hub", href: "/tax" },
+    { label: "Tax Return Guide", href: "/tax-return" },
+    { label: "Insurance Hub", href: "/insurance" },
+    { label: "Global Investing Hub", href: "/global-investing" },
+    { label: "Life Event Checklists", href: "/just" },
     { label: "Property Investing", href: "/articles?category=property" },
     { label: "Crypto & Digital Assets", href: "/articles?category=crypto" },
   ],
   resources: [
+    { label: "Investing by Occupation", href: "/investing-for" },
+    { label: "Marketplace (Find a Provider)", href: "/marketplace" },
     { label: "All Articles", href: "/articles" },
     { label: "How-To Guides", href: "/how-to" },
     { label: "Glossary", href: "/glossary" },
@@ -302,6 +311,9 @@ const mobileSections = [
   {
     title: "Tools & Calculators",
     items: [
+      { name: "Financial Health Score", href: "/score" },
+      { name: "My Wealth Stack", href: "/wealth-stack" },
+      { name: "AI Concierge", href: "/concierge" },
       { name: "Quick Audit (30s)", href: "/quick-audit" },
       { name: "Switching Calculator", href: "/switching-calculator" },
       { name: "Fee Simulator", href: "/fee-simulator" },
@@ -316,11 +328,23 @@ const mobileSections = [
       { name: "All Calculators (25)", href: "/calculators" },
       { name: "CHESS Lookup", href: "/chess-lookup" },
       { name: "Fee Alerts", href: "/fee-alerts" },
+      { name: "Embed Widgets", href: "/embed" },
     ],
   },
   {
     title: "Learn & Community",
     items: [
+      { name: "Life Event Checklists", href: "/just" },
+      { name: "Investing by Occupation", href: "/investing-for" },
+      { name: "Marketplace (Find a Provider)", href: "/marketplace" },
+      { name: "Tax Strategy Hub", href: "/tax" },
+      { name: "Tax Return Guide", href: "/tax-return" },
+      { name: "Retirement Hub", href: "/retirement" },
+      { name: "Aged Care Hub", href: "/aged-care" },
+      { name: "Insurance Hub", href: "/insurance" },
+      { name: "Home Loans Hub", href: "/home-loans" },
+      { name: "Global Investing Hub", href: "/global-investing" },
+      { name: "Investment Confessions", href: "/community/confessions" },
       { name: "Articles & Guides", href: "/articles" },
       { name: "How-To Guides", href: "/how-to" },
       { name: "Glossary", href: "/glossary" },

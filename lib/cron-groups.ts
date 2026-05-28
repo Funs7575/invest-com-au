@@ -64,6 +64,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/advisor-credit-expiry",
     "/api/cron/advisor-auto-topup",
     "/api/cron/annual-mot",
+    "/api/cron/recompute-trust-scores",
   ],
   "daily-4": [
     "/api/cron/email-bounce-sweep",
@@ -80,16 +81,22 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/review-sentiment-refresh",
     "/api/cron/versus-editorial-backfill",
   ],
-  "daily-6": ["/api/cron/check-fees", "/api/cron/tmd-audit", "/api/cron/refresh-loan-rates", "/api/cron/refresh-savings-rates", "/api/cron/snapshot-health-scores"],
+  "daily-6": ["/api/cron/check-fees", "/api/cron/tmd-audit", "/api/cron/refresh-loan-rates", "/api/cron/refresh-savings-rates", "/api/cron/snapshot-health-scores", "/api/cron/invest-score", "/api/cron/fee-index"],
   "daily-7": [
     "/api/cron/portfolio-alerts",
     "/api/cron/price-drop-alerts",
     "/api/cron/rate-alerts",
+    "/api/cron/rate-change-digest",
+    "/api/cron/comeback-rate-email",
+    "/api/cron/td-maturity-reminders",
+    "/api/cron/ipo-alerts",
   ],
   "daily-8": [
     "/api/cron/complaints-sla",
     "/api/cron/dated-stats-check",
     "/api/cron/abandoned-shortlist-drip",
+    "/api/cron/streak-at-risk",
+    "/api/cron/market-event-reminders",
   ],
   "daily-9": [
     "/api/cron/investor-drip",
@@ -97,6 +104,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/subscription-dunning",
     "/api/cron/marketplace-stale-briefs",
     "/api/cron/lead-followup-reminders",
+    "/api/cron/office-hours-reminders",
   ],
   "daily-9-30": ["/api/cron/enforce-lead-sla"],
 
@@ -113,10 +121,15 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "daily-11": [
     "/api/cron/advisor-dunning",
     "/api/cron/post-enquiry-drip",
+    "/api/cron/switching-review-reminders",
   ],
   "daily-12": ["/api/cron/abandoned-form-drip", "/api/cron/exit-intent-nurture"],
   "daily-15": ["/api/cron/web-vitals-rollup"],
   "daily-16": ["/api/cron/attribution-rollup"],
+  "daily-21": [
+    "/api/cron/personalized-morning-brief",
+    "/api/cron/seasonal-emails",
+  ],
   "daily-23": [
     "/api/cron/quiz-follow-up",
     "/api/cron/plan-resume-digest",
@@ -125,7 +138,10 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/tax-nurture",
   ],
 
-  "weekly-sun-0": ["/api/cron/rotate-featured-advisors"],
+  "weekly-fri-7": [
+    "/api/cron/decisions-digest",
+  ],
+  "weekly-sun-0": ["/api/cron/rotate-featured-advisors", "/api/cron/intent-cohort-rollup"],
   "weekly-mon-3": [
     "/api/cron/afsl-expiry-monitor",
     "/api/cron/content-staleness",
@@ -135,18 +151,21 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/weekly-newsletter",
     "/api/cron/weekly-rate-update",
     "/api/cron/personalized-digest",
+    "/api/cron/firm-performance-digest",
   ],
-  "weekly-mon-9": ["/api/cron/fee-digest", "/api/cron/content-freshness", "/api/cron/stale-fee-editorial", "/api/cron/check-secret-rotation", "/api/cron/country-rule-alerts-digest", "/api/cron/watchlist-alerts"],
+  "weekly-mon-9": ["/api/cron/fee-digest", "/api/cron/content-freshness", "/api/cron/stale-fee-editorial", "/api/cron/check-secret-rotation", "/api/cron/country-rule-alerts-digest", "/api/cron/watchlist-alerts", "/api/cron/life-event-wizard-nudge", "/api/cron/advisor-match-scores", "/api/cron/cpd-reminder"],
   "weekly-mon-11": ["/api/cron/advisor-dormant-nudge"],
 
   "monthly-1-3": ["/api/cron/property-suburb-refresh"],
-  "monthly-1-6": ["/api/cron/monthly-affiliate-report", "/api/cron/affiliate-payout-recon"],
+  "monthly-1-6": ["/api/cron/monthly-affiliate-report", "/api/cron/affiliate-payout-recon", "/api/cron/cpd-year-renewal"],
   "monthly-1-8": ["/api/cron/portfolio-monitor"],
   "monthly-1-9": [
     "/api/cron/monthly-advisor-reports",
     "/api/cron/annual-review-reminder",
+    "/api/cron/review-social-loop",
   ],
   "monthly-1-10": ["/api/cron/winback-drip"],
   "monthly-2-3": ["/api/cron/month-end-close"],
+  "monthly-15-9": ["/api/cron/user-health-score-email"],
   "quarterly-1-3": ["/api/cron/quarterly-anonymity-audit"],
 };

@@ -14,6 +14,11 @@ import {
   type AlertSubscription,
   type MetricKind,
 } from "@/lib/alert-thresholds";
+import {
+  isTelegramConfigured,
+  formatRateAlertMessage,
+  dispatchTelegramAlerts,
+} from "@/lib/telegram";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -174,6 +179,24 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ startedAt, verified, notified: 0, status: "no_subscriptions" });
   }
 
+  // ── 2b. Load Telegram subscriptions (batch — one query for all emails) ─────
+  // email (lowercase) → list of confirmed+active chat IDs for rate_alerts
+  const telegramByEmail = new Map<string, number[]>();
+  if (isTelegramConfigured()) {
+    const { data: tgSubs } = await supabase
+      .from("telegram_subscriptions")
+      .select("email, telegram_chat_id")
+      .eq("confirmed", true)
+      .eq("active", true)
+      .eq("rate_alerts", true);
+    for (const row of (tgSubs ?? []) as { email: string; telegram_chat_id: number }[]) {
+      const key = row.email.toLowerCase();
+      const existing = telegramByEmail.get(key) ?? [];
+      existing.push(row.telegram_chat_id);
+      telegramByEmail.set(key, existing);
+    }
+  }
+
   // ── 3. Evaluate thresholds and dispatch ───────────────────────────────────
 
   let notified = 0;
@@ -261,6 +284,23 @@ export async function GET(req: NextRequest) {
 
     if (!emailResult.ok) {
       failures.push({ id: rawSub.id, err: emailResult.error ?? "unknown" });
+    }
+
+    // Telegram dispatch — fire-and-forget alongside email
+    const tgChatIds = telegramByEmail.get(rawSub.email.toLowerCase()) ?? [];
+    if (tgChatIds.length > 0) {
+      const tgMessage = formatRateAlertMessage({
+        metricLabel: label,
+        direction: alertSub.direction,
+        oldRatePct: kind === "broker_fee" ? `$${(rawSub.threshold_bps / 100).toFixed(2)}` : `${(rawSub.threshold_bps / 100).toFixed(2)}%`,
+        newRatePct: valueDisplay,
+        productName: rawSub.broker_slug ?? rawSub.lender_slug ?? label,
+        deepLinkUrl: `${siteUrl}${path}`,
+      });
+      dispatchTelegramAlerts(
+        tgChatIds.map((chatId) => ({ chatId, email: rawSub.email })),
+        tgMessage,
+      ).catch((err) => log.warn("Telegram rate-alert dispatch failed (non-blocking)", { err }));
     }
 
     // Always stamp the row (even if email failed) so we don't immediately retry.

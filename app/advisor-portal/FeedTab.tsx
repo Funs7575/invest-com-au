@@ -18,7 +18,7 @@ interface Post {
     id: number;
     name: string | null;
     firm_name: string | null;
-    profile_image_url: string | null;
+    photo_url: string | null;
     slug: string | null;
   } | null;
 }
@@ -85,9 +85,9 @@ function PostCard({ post }: { post: Post }) {
       {/* Header */}
       <div className="flex items-start gap-3 mb-3">
         <div className="shrink-0">
-          {pro?.profile_image_url ? (
+          {pro?.photo_url ? (
             <Image
-              src={pro.profile_image_url}
+              src={pro.photo_url}
               alt={displayName}
               width={40}
               height={40}

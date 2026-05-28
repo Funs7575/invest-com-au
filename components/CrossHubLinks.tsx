@@ -93,6 +93,22 @@ export const HUB_REGISTRY: Record<string, HubMeta> = {
     label: "Find a Financial Adviser",
     tagline: "Match with an AFSL-authorised adviser for your situation.",
   },
+  "aged-care": {
+    label: "Aged Care",
+    tagline: "RAD/DAP planning, means test, and specialist adviser connections.",
+  },
+  "home-loans": {
+    label: "Home Loans",
+    tagline: "Compare rates, find a mortgage broker, and calculate repayments.",
+  },
+  tax: {
+    label: "Tax Strategy",
+    tagline: "CGT, franking credits, deductions, and tax planning guides.",
+  },
+  property: {
+    label: "Investment Property",
+    tagline: "Negative gearing, yield analysis, and portfolio growth strategy.",
+  },
 };
 
 export default function CrossHubLinks({

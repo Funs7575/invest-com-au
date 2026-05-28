@@ -9,6 +9,8 @@ import { getActiveBrokersFull } from "@/lib/cached-data";
 import BrokerReviewClient from "./BrokerReviewClient";
 import TmdBadge from "@/components/TmdBadge";
 import BrokerHistoryChart from "@/components/broker/BrokerHistoryChart";
+import SavingsRateHistoryChart from "@/components/savings/SavingsRateHistoryChart";
+import RateMemoryTracker from "@/components/savings/RateMemoryTracker";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -27,6 +29,7 @@ import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import ClaimListingButton from "@/components/claims/ClaimListingButton";
+import FeeAlertCapture from "@/components/FeeAlertCapture";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -103,7 +106,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
 
   // Fetch articles, user reviews, switch stories, fee history, related deals (in parallel)
   // NOTE: Q&A is intentionally excluded from this batch and streamed separately via <Suspense> below.
-  const [{ data: brokerArticles }, { data: expertArticlesRaw }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: relatedDealsRaw }, { data: versusEditorialsRaw }] = await Promise.all([
+  const [{ data: brokerArticles }, { data: expertArticlesRaw }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: relatedDealsRaw }, { data: versusEditorialsRaw }, { data: screenshotsRaw }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, slug, category, read_time')
@@ -158,7 +161,30 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .select('slug, broker_a_slug, broker_b_slug, title')
       .or(`broker_a_slug.eq.${slug},broker_b_slug.eq.${slug}`)
       .limit(24),
+    // App screenshots — shown as a gallery on the review page
+    supabase
+      .from('broker_creatives')
+      .select('url, label')
+      .eq('broker_slug', slug)
+      .eq('type', 'screenshot')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .limit(10),
   ]);
+
+  // Fetch current savings/TD rate for rate-memory tracker (savings/TD products only)
+  let currentSavingsRateBps: number | null = null;
+  if (b.platform_type === "savings_account" || b.platform_type === "term_deposit") {
+    const { data: rateSnap } = await supabase
+      .from("savings_rate_snapshots")
+      .select("rate_bps")
+      .eq("broker_id", b.id)
+      .eq("product_kind", b.platform_type)
+      .order("captured_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    currentSavingsRateBps = rateSnap?.rate_bps ?? null;
+  }
 
   // Filter related deals to same platform_type (or crypto match), take top 4
   const relatedDeals = ((relatedDealsRaw || []) as Broker[]).filter((d) => {
@@ -314,6 +340,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           switchStories={(switchStoriesRaw || []) as SwitchStory[]}
           feeHistory={(feeHistoryRaw || []) as { id: number; field_name: string; old_value: string | null; new_value: string | null; change_type: string; changed_at: string }[]}
           relatedDeals={relatedDeals}
+          screenshots={(screenshotsRaw || []) as { url: string; label?: string | null }[]}
         />
       </Suspense>
       {versusComparisons.length > 0 && (
@@ -360,19 +387,44 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           pageSlug={b.slug}
         />
       </div>
-      {/* Wave 15 — Fee history chart. Renders nothing if there are
-          fewer than 2 snapshots, so a freshly-added broker doesn't
-          show an empty frame. */}
+      {/* Rate memory tracker — shows delta since last visit for savings/TD */}
+      {(b.platform_type === "savings_account" || b.platform_type === "term_deposit") && currentSavingsRateBps !== null && (
+        <div className="container-custom max-w-4xl mt-4">
+          <RateMemoryTracker
+            brokerId={b.id}
+            productKind={b.platform_type}
+            currentRateBps={currentSavingsRateBps}
+            brokerName={b.name}
+          />
+        </div>
+      )}
+
+      {/* Fee/rate history chart. Savings and TD products show rate
+          history; all others show fee history. Renders nothing if
+          fewer than 2 snapshots exist. */}
       <div className="container-custom max-w-4xl mt-10">
         <Suspense fallback={null}>
-          <BrokerHistoryChart slug={b.slug} metric="asx_fee_value" daysBack={30} />
+          {b.platform_type === "savings_account" || b.platform_type === "term_deposit" ? (
+            <SavingsRateHistoryChart
+              brokerId={b.id}
+              productKind={b.platform_type}
+              brokerName={b.name}
+              daysBack={90}
+            />
+          ) : (
+            <BrokerHistoryChart slug={b.slug} metric="asx_fee_value" daysBack={30} />
+          )}
         </Suspense>
       </div>
 
-      {/* Related content rail — similar brokers + related articles.
-          Complements the "vs Alternatives" tab (BrokerReviewClient) which
-          is tab-scoped. This rail sits below the main review so both
-          surfaces are visible without duplication. */}
+      {/* Fee-change alert capture — shown for share brokers, crypto, robo, and super */}
+      {b.platform_type !== "savings_account" && b.platform_type !== "term_deposit" && (
+        <div className="container-custom max-w-4xl mt-8">
+          <FeeAlertCapture brokerSlug={b.slug} brokerName={b.name} />
+        </div>
+      )}
+
+      {/* Related content rail — similar brokers + related articles. */}
       {(() => {
         const { brokers: relBrokers, articles: relArts, guides: relGuides } = getRelatedForBroker(
           b,

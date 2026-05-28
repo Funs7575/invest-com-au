@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   // Get posts from followed advisors + own posts
   const { data: posts, error } = await admin
     .from("advisor_posts")
-    .select("*, professional:professionals(id, name, firm_name, profile_image_url, slug)")
+    .select("*, professional:professionals(id, name, firm_name, photo_url, slug)")
     .in("professional_id", followedIds)
     .eq("status", "published")
     .order("created_at", { ascending: false })

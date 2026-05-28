@@ -1,10 +1,12 @@
 "use client";
 
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { renderStars } from "@/lib/tracking";
 import BrokerLogo from "@/components/BrokerLogo";
 import Icon from "@/components/Icon";
+import { getSessionId } from "@/lib/session";
 
 interface Props {
   brokers: Broker[];
@@ -21,11 +23,110 @@ export default function CompareSelectionBar({
   onToggleMobileCompare,
   onToggleSelected,
 }: Props) {
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertEmail, setAlertEmail] = useState("");
+  const [alertStatus, setAlertStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+
   if (selected.size < 2) return null;
 
+  const selectedBrokers = Array.from(selected)
+    .map(slug => brokers.find(b => b.slug === slug))
+    .filter((b): b is Broker => b !== undefined);
+
+  async function handleSaveShortlist() {
+    if (saveStatus !== "idle") return;
+    setSaveStatus("saving");
+    const sessionId = getSessionId();
+    try {
+      await Promise.all(
+        selectedBrokers.map(b =>
+          fetch("/api/account/bookmarks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: "broker", ref: b.slug, label: b.name, session_id: sessionId }),
+          })
+        )
+      );
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("idle"), 2500);
+    } catch {
+      setSaveStatus("idle");
+    }
+  }
+
+  async function handleAlertSubmit(e: FormEvent) {
+    e.preventDefault();
+    const trimmed = alertEmail.trim();
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return;
+    setAlertStatus("sending");
+    try {
+      const res = await fetch("/api/fee-alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: trimmed,
+          brokerSlugs: Array.from(selected),
+          alertType: "any",
+          frequency: "immediate",
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setAlertStatus("done");
+    } catch {
+      setAlertStatus("error");
+    }
+  }
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 text-white py-2.5 md:py-3 shadow-lg bounce-in-up" style={{ paddingBottom: 'max(0.625rem, env(safe-area-inset-bottom))' }}>
-      <div className="container-custom flex items-center justify-between gap-2">
+    <div
+      className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 text-white shadow-lg bounce-in-up"
+      style={{ paddingBottom: "max(0rem, env(safe-area-inset-bottom))" }}
+    >
+      {/* Fee alert tray — expandable above the main bar row */}
+      {alertOpen && (
+        <div className="border-b border-slate-700/60 py-2.5">
+          <div className="container-custom">
+            {alertStatus === "done" ? (
+              <p className="text-xs text-emerald-400 font-semibold">
+                ✓ Subscribed — we&apos;ll email you if any of these platforms change their fees.
+              </p>
+            ) : (
+              <form onSubmit={handleAlertSubmit} className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs text-slate-300 shrink-0 hidden sm:inline">
+                  Fee alerts for {selectedBrokers.map(b => b.name).join(", ")}:
+                </span>
+                <span className="text-xs text-slate-300 shrink-0 sm:hidden">
+                  🔔 Fee alerts:
+                </span>
+                <input
+                  type="email"
+                  value={alertEmail}
+                  onChange={e => setAlertEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  required
+                  autoComplete="email"
+                  disabled={alertStatus === "sending"}
+                  className="flex-1 min-w-[130px] rounded-lg border border-slate-600 bg-slate-800 text-white placeholder-slate-500 px-3 py-1.5 text-xs focus:border-amber-400 focus:outline-none disabled:opacity-60"
+                />
+                <button
+                  type="submit"
+                  disabled={alertStatus === "sending"}
+                  className="shrink-0 px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60"
+                >
+                  {alertStatus === "sending" ? "Saving…" : "Alert me"}
+                </button>
+                {alertStatus === "error" && (
+                  <span className="text-xs text-red-400 w-full">Failed — please try again.</span>
+                )}
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Main compare bar row */}
+      <div className="container-custom py-2.5 md:py-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <div className="flex -space-x-1.5 shrink-0 md:hidden">
             {Array.from(selected).slice(0, 4).map(slug => {
@@ -40,7 +141,34 @@ export default function CompareSelectionBar({
             {selected.size}/4 selected
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 md:gap-2">
+          {/* Save shortlist */}
+          <button
+            onClick={handleSaveShortlist}
+            disabled={saveStatus === "saving"}
+            title={saveStatus === "saved" ? "Shortlist saved to bookmarks" : "Save all to bookmarks"}
+            className={`shrink-0 px-2 py-2 min-h-9 inline-flex items-center gap-1 rounded-lg text-xs font-semibold transition-colors ${
+              saveStatus === "saved"
+                ? "bg-emerald-600 text-white"
+                : "bg-slate-700 text-slate-200 hover:bg-slate-600"
+            }`}
+          >
+            <Icon name={saveStatus === "saved" ? "check-circle" : "bookmark"} size={14} />
+            <span className="hidden sm:inline">{saveStatus === "saved" ? "Saved" : "Save"}</span>
+          </button>
+
+          {/* Fee alert toggle */}
+          <button
+            onClick={() => setAlertOpen(o => !o)}
+            title="Get fee-change alerts for these platforms"
+            className={`shrink-0 px-2 py-2 min-h-9 inline-flex items-center gap-1 rounded-lg text-xs font-semibold transition-colors ${
+              alertOpen ? "bg-amber-600 text-white" : "bg-slate-700 text-slate-200 hover:bg-slate-600"
+            }`}
+          >
+            <Icon name="bell" size={14} />
+            <span className="hidden sm:inline">Alerts</span>
+          </button>
+
           {/* Mobile: Quick Compare inline */}
           <button
             onClick={onToggleMobileCompare}
@@ -49,7 +177,7 @@ export default function CompareSelectionBar({
             {showMobileCompare ? "Close" : "Quick Compare"}
           </button>
           <Link
-            href={`/versus?vs=${Array.from(selected).join(',')}`}
+            href={`/versus?vs=${Array.from(selected).join(",")}`}
             className="shrink-0 px-4 py-2 min-h-11 inline-flex items-center md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
           >
             Full Compare →

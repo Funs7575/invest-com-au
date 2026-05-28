@@ -10,6 +10,7 @@ import type { BillingSummary } from "./billing/types";
 import PinnedBillingWidget from "./billing/PinnedBillingWidget";
 import AnnualBillingPrompt from "./billing/AnnualBillingPrompt";
 import AvailabilityWidget from "./AvailabilityWidget";
+import AdvisorTrustScoreCard from "@/components/AdvisorTrustScoreCard";
 
 type LeaderboardRank = {
   rank: number;
@@ -132,6 +133,9 @@ export default function DashboardTab({
       </div>
 
       <YourRankWidget />
+      <div className="mb-6">
+        <AdvisorTrustScoreCard />
+      </div>
 
       {/* Free-leads notice (advisor still on the launch trial) */}
       {(advisor?.free_leads_used ?? 0) < 3 && (

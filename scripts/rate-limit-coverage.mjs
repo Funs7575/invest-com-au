@@ -121,6 +121,35 @@ const EXEMPT_PATTERNS = [
   // A static error response cannot be abused; rate limiting adds nothing.
   { match: /\/api\/portfolio-xray(\/|$)/, reason: "disabled pre-AFSL (410 Gone stub)" },
   { match: /\/api\/tax-optimizer(\/|$)/, reason: "disabled pre-AFSL (410 Gone stub)" },
+  // RBA poll GET endpoints set Cache-Control: public, max-age=60/300 so
+  // Vercel's CDN absorbs repeat reads. Vote POST requires a valid Supabase
+  // session + the DB UNIQUE constraint enforces one vote per user per poll.
+  { match: /\/api\/rba-polls\//, reason: "public reads CDN-cached; vote POST is session-auth + UNIQUE-constrained" },
+  // user-lists follow/clone require a valid Supabase session; UNIQUE DB
+  // constraint on follows prevents duplicates. Clone is also session-auth.
+  { match: /\/api\/user-lists\//, reason: "session-auth required; follow protected by DB UNIQUE constraint" },
+  // verified-count is a public aggregate (count from a view). Cache-Control
+  // sets public, max-age=60, stale-while-revalidate=300 so Vercel's CDN
+  // absorbs repeat reads. No PII, no writes, no user input beyond URL segments
+  // validated against a fixed enum — per-IP throttling adds nothing.
+  { match: /\/api\/verified-count\//, reason: "public read w/ 60s CDN cache; provider-pooled; no writes" },
+  // market-events GET and iCal are public reads with 1h CDN cache.
+  // iCal output is deterministic and fully CDN-absorbed at this traffic level.
+  // No writes, no user input, no PII — per-IP throttle adds nothing.
+  { match: /\/api\/market-events(\/|$)/, reason: "public read w/ 1h CDN cache; iCal/JSON; provider-pooled; no writes" },
+  // ipo-offers is a public-read list with 1h CDN cache. No PII, no writes,
+  // only a status enum query param validated against a fixed Set. Per-IP
+  // throttle would cost CDN cache hits with no real threat model.
+  { match: /\/api\/ipo-offers(\/|$)/, reason: "public read w/ 1h CDN cache; provider-pooled; no writes" },
+  // office-hours public GET is a 5 min CDN-cached list of published sessions.
+  // No PII, no writes. Question POST + upvote POST + RSVP POST are all
+  // session-auth + per-user rate-limited inside the handler.
+  { match: /\/api\/office-hours(\/|$)/, reason: "public read CDN-cached; write endpoints are session-auth + isRateLimited" },
+  // advisor-portal office-hours endpoints require requireAdvisorSession (equivalent
+  // protection level to other /api/advisor-portal/* routes above).
+  { match: /\/api\/advisor-portal\/office-hours(\/|$)/, reason: "advisor session auth (requireAdvisorSession)" },
+  // ideal-client builder requires requireAdvisorSession; same protection level.
+  { match: /\/api\/advisor-portal\/ideal-client(\/|$)/, reason: "advisor session auth (requireAdvisorSession)" },
 ];
 
 async function findRouteFiles(dir) {

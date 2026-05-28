@@ -1171,6 +1171,8 @@ export interface Professional {
   migration_agent_marn?: string;
   /** Self-reported availability: 'open' | 'waitlist' | 'closed'. Default 'open'. */
   availability_status?: 'open' | 'waitlist' | 'closed';
+  /** Denormalized count maintained by advisor_follows insert/delete triggers. */
+  follower_count?: number;
   // ── Stockbroker firm fields ────────────────────────────────────────
   // Populated only for type='stockbroker_firm' or 'private_wealth_manager'.
   // NULL for all other ProfessionalType values. See
@@ -1368,6 +1370,14 @@ export interface AdvisorFirm {
   max_seats: number;
   created_at: string;
   updated_at: string;
+  // Enhanced profile tier (B2 — Firm branded-profile subscription)
+  is_enhanced?: boolean;
+  enhanced_since?: string | null;
+  header_image_url?: string | null;
+  tagline?: string | null;
+  featured_services?: { title: string; description: string; icon?: string }[];
+  case_studies?: { title: string; summary: string; outcome?: string }[];
+  highlight_stats?: { label: string; value: string }[];
 }
 
 export interface AdvisorApplication {

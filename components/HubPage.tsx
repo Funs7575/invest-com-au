@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import HubHero from "@/components/HubHero";
+import LifecycleJourneyRail from "@/components/LifecycleJourneyRail";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
-import { GENERAL_ADVICE_WARNING, CRYPTO_WARNING, SUPER_WARNING, GRANTS_WARNING } from "@/lib/compliance";
+import { GENERAL_ADVICE_WARNING, CRYPTO_WARNING, SUPER_WARNING, GRANTS_WARNING, AGED_CARE_WARNING, NCCP_CREDIT_NOTE } from "@/lib/compliance";
 import type { HubConfig, ComplianceKey } from "@/lib/verticals";
 
 /**
@@ -83,6 +84,10 @@ function getComplianceText(key: ComplianceKey): string {
       return `${SUPER_WARNING} ${GENERAL_ADVICE_WARNING}`;
     case "grants":
       return `${GRANTS_WARNING} ${GENERAL_ADVICE_WARNING}`;
+    case "aged_care":
+      return `${AGED_CARE_WARNING} ${GENERAL_ADVICE_WARNING}`;
+    case "home_loans":
+      return `${NCCP_CREDIT_NOTE} ${GENERAL_ADVICE_WARNING}`;
     default:
       return GENERAL_ADVICE_WARNING;
   }
@@ -176,6 +181,9 @@ export default function HubPage({
       {crossHubLinks && (
         <div data-testid="hub-page-cross-hub-links">{crossHubLinks}</div>
       )}
+
+      {/* Lifecycle journey rail — auto-rendered when hub.slug is in a journey */}
+      <LifecycleJourneyRail hubSlug={config.slug} />
 
       {/* Compliance block — auto-rendered from complianceKey */}
       <section

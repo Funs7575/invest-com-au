@@ -1,6 +1,14 @@
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 
+const PERSONA_OG: Record<string, { emoji: string; color: string }> = {
+  Accumulator:         { emoji: "📈", color: "#0891b2" },
+  "FIRE-Chaser":       { emoji: "🔥", color: "#b45309" },
+  "Wealth-Protector":  { emoji: "🛡️", color: "#7c3aed" },
+  "Cautious-Builder":  { emoji: "🌱", color: "#16a34a" },
+  "SMSF-Architect":    { emoji: "🏛️", color: "#1d4ed8" },
+};
+
 export const runtime = "edge";
 
 /** Accent colour per calculator slug for the OG card. */
@@ -20,6 +28,7 @@ export async function GET(request: NextRequest) {
   const subtitle =
     searchParams.get("subtitle") || "Honest reviews, real fees, updated daily.";
   const type = searchParams.get("type") || "default";
+  const personaParam = searchParams.get("persona") ?? "";
 
   // ── Calculator result card ──────────────────────────────────────
   if (type === "calculator") {
@@ -145,16 +154,20 @@ export async function GET(request: NextRequest) {
   const green = "#15803d";
   const amber = "#f59e0b";
 
+  const personaMeta = PERSONA_OG[personaParam];
+
   const typeLabel =
-    type === "broker"
-      ? "Broker Review"
-      : type === "article"
-        ? "Guide"
-        : type === "scenario"
-          ? "Investing Scenario"
-          : type === "best"
-            ? "Best Platform Guide"
-            : null;
+    type === "persona"
+      ? "Investor Persona"
+      : type === "broker"
+        ? "Broker Review"
+        : type === "article"
+          ? "Guide"
+          : type === "scenario"
+            ? "Investing Scenario"
+            : type === "best"
+              ? "Best Platform Guide"
+              : null;
 
   return new ImageResponse(
     (
@@ -179,7 +192,9 @@ export async function GET(request: NextRequest) {
             left: 0,
             right: 0,
             height: "6px",
-            background: `linear-gradient(to right, ${green}, ${amber})`,
+            background: type === "persona" && personaMeta
+              ? `linear-gradient(to right, ${personaMeta.color}, ${amber})`
+              : `linear-gradient(to right, ${green}, ${amber})`,
             display: "flex",
           }}
         />
@@ -192,7 +207,7 @@ export async function GET(request: NextRequest) {
               fontSize: "16px",
               textTransform: "uppercase",
               letterSpacing: "2px",
-              color: amber,
+              color: type === "persona" && personaMeta ? personaMeta.color : amber,
               marginBottom: "16px",
             }}
           >
@@ -200,18 +215,53 @@ export async function GET(request: NextRequest) {
           </div>
         )}
 
-        {/* Title */}
-        <div
-          style={{
-            fontSize: title.length > 40 ? "44px" : "56px",
-            fontWeight: 800,
-            lineHeight: 1.15,
-            marginBottom: "20px",
-            display: "flex",
-          }}
-        >
-          {title}
-        </div>
+        {/* Persona layout: emoji + name side by side */}
+        {type === "persona" && personaMeta ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "28px", marginBottom: "20px" }}>
+            <div
+              style={{
+                width: "96px",
+                height: "96px",
+                borderRadius: "50%",
+                background: personaMeta.color + "30",
+                border: `3px solid ${personaMeta.color}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "52px",
+                flexShrink: 0,
+              }}
+            >
+              {personaMeta.emoji}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div
+                style={{
+                  fontSize: "56px",
+                  fontWeight: 900,
+                  lineHeight: 1.1,
+                  color: "white",
+                  display: "flex",
+                }}
+              >
+                {title}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Default title layout */
+          <div
+            style={{
+              fontSize: title.length > 40 ? "44px" : "56px",
+              fontWeight: 800,
+              lineHeight: 1.15,
+              marginBottom: "20px",
+              display: "flex",
+            }}
+          >
+            {title}
+          </div>
+        )}
 
         {/* Subtitle */}
         <div

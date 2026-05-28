@@ -25,6 +25,7 @@ const WidgetBuilderTab = dynamic(() => import("./WidgetBuilderTab"));
 const CourseBuilderTab = dynamic(() => import("./CourseBuilderTab"));
 const EventsTab = dynamic(() => import("./EventsTab"));
 const BadgesTab = dynamic(() => import("./BadgesTab"));
+const IdealClientBuilderTab = dynamic(() => import("@/components/IdealClientBuilder"));
 const FeedTab = dynamic(() => import("./FeedTab"));
 const CaseStudiesTab = dynamic(() => import("./CaseStudiesTab"));
 const ReviewsTab = dynamic(() => import("./ReviewsTab"));
@@ -211,6 +212,7 @@ export default function AdvisorPortalPage() {
     { key: "courses", label: "Courses", icon: "book-open" },
     { key: "events", label: "Events", icon: "calendar" },
     { key: "badges", label: "Badges", icon: "award" },
+    { key: "ideal-client", label: "Ideal Client", icon: "target" },
     { key: "profile", label: "Profile", icon: "user" },
     { key: "profile-details", label: "Profile Details", icon: "layers" },
     { key: "billing", label: "Billing", icon: "credit-card" },
@@ -370,6 +372,9 @@ export default function AdvisorPortalPage() {
 
         {/* ─── BADGES ─── */}
         {view === "badges" && <BadgesTab advisor={advisor} />}
+
+        {/* ─── IDEAL CLIENT PROFILE ─── */}
+        {view === "ideal-client" && <IdealClientBuilderTab />}
 
         {/* ─── COURSES ─── */}
         {view === "courses" && (

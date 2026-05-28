@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
@@ -510,6 +510,70 @@ const EVENTS: JustEvent[] = [
       {
         q: "Should I invest inside or outside super?",
         a: "Both. Super offers a concessional tax rate of 15% on earnings (vs your marginal rate outside super) and a 0% tax rate in pension phase — but you can't access the money until preservation age (60). Outside super, you can access funds at any time but pay your marginal rate on investment earnings and CGT on gains. The general rule: maximise concessional super first, then build wealth outside super.",
+      },
+    ],
+  },
+  {
+    slug: "buying-first-home",
+    headline: "You're buying your first home",
+    subhead:
+      "The first home purchase combines the biggest financial commitment most Australians make with a maze of grants, stamp duty concessions, LMI rules, and loan structures. Here's the sequencing.",
+    advisorType: "mortgage broker",
+    advisorHref: "/advisors/mortgage-brokers",
+    actions: [
+      {
+        timeframe: "6–12 months before",
+        title: "Build your deposit and check the First Home Guarantee",
+        detail:
+          "You need at least 5% genuine savings for most lenders. The First Home Guarantee (FHBG) lets eligible buyers purchase with 5% deposit and no LMI — the government guarantees the remaining 15%. Income caps apply ($125k single / $200k couple) and property price caps vary by state. Check eligibility at nhfic.gov.au. A 20% deposit avoids LMI entirely, saving $10,000–$40,000+.",
+      },
+      {
+        timeframe: "3–6 months before",
+        title: "Get pre-approval and understand your borrowing power",
+        detail:
+          "Mortgage pre-approval (also called conditional approval) tells you your borrowing limit before you bid. A licensed mortgage broker can compare 30+ lenders simultaneously and is paid by the lender — free to you. Avoid applying to multiple lenders directly: each credit inquiry reduces your credit score temporarily.",
+      },
+      {
+        timeframe: "At purchase",
+        title: "Check stamp duty concessions and first home buyer grants",
+        detail:
+          "Most states offer stamp duty exemptions or concessions for first home buyers under a price threshold. NSW offers a property tax opt-in alternative. VIC offers a full exemption under $600k. QLD exemption applies under $500k. Check your state revenue office for current thresholds. First Home Owner Grants ($10,000–$30,000) apply for new builds in most states.",
+      },
+      {
+        timeframe: "At settlement",
+        title: "Understand your mortgage structure",
+        detail:
+          "Choose between variable (offset access, flexibility) or fixed (repayment certainty, break fee risk) or a split. Ensure you have a 100% offset account on any variable portion — parking your savings in offset reduces daily interest charged. Review the comparison rate, not just the headline rate.",
+      },
+      {
+        timeframe: "Ongoing",
+        title: "Review your home loan every 2–3 years",
+        detail:
+          "New customers often get better rates than existing borrowers — the 'loyalty tax'. Set a calendar reminder to benchmark your rate every 2–3 years. A mortgage broker can refinance you to a lower rate when the savings exceed the switching costs (typically within 6–12 months on most switches).",
+      },
+    ],
+    hubLinks: [
+      { label: "First Home Buyer Hub", href: "/first-home-buyer", description: "Grants, FHSS, FHBG and stamp duty concessions" },
+      { label: "Home Loans Hub", href: "/home-loans", description: "Compare variable, fixed, and investment loans" },
+      { label: "FHSS Guide", href: "/first-home-buyer/fhss-guide", description: "Withdraw super contributions for a deposit" },
+      { label: "Stamp Duty Guide", href: "/first-home-buyer/stamp-duty", description: "State-by-state concessions explained" },
+    ],
+    faqs: [
+      {
+        q: "What is the First Home Guarantee (FHBG)?",
+        a: "The First Home Guarantee (formerly First Home Loan Deposit Scheme) allows eligible first home buyers to purchase with a 5% deposit without paying Lender's Mortgage Insurance (LMI). The government guarantees up to 15% of the loan. Income caps apply ($125,000 for singles, $200,000 for couples as of 2024–25) and property price caps vary by state and whether the property is in a capital city or regional area. Places are limited annually — apply early through a participating lender.",
+      },
+      {
+        q: "How much stamp duty will I pay as a first home buyer?",
+        a: "Each state and territory sets its own stamp duty concessions for first home buyers. Generally, properties under a certain threshold are exempt or discounted. NSW: exemption for properties under $800k (phased reduction up to $1M). VIC: full exemption under $600k, phased up to $750k. QLD: exemption under $500k (owner-occupier). WA: concession for properties under $430k. NSW also offers a Property Tax annual charge as an opt-in alternative to upfront stamp duty — useful if you plan to sell within 10–15 years.",
+      },
+      {
+        q: "Should I use a mortgage broker or go to my bank?",
+        a: "A mortgage broker accesses 30+ lenders including smaller banks that often beat Big 4 rates. They're paid by the lender — free to you. ASIC research shows brokers generate lower average interest rates than direct applicants. For first home buyers with complex situations (self-employed, irregular income, gifted deposits), a specialist broker is strongly recommended. invest.com.au cannot provide credit assistance — we refer you to licensed mortgage brokers.",
+      },
+      {
+        q: "Can I use my superannuation for a first home deposit?",
+        a: "Yes — via the First Home Super Saver Scheme (FHSS). You can make voluntary concessional or non-concessional contributions into super (above mandatory employer contributions) and later withdraw them for a first home deposit. The withdrawal cap is $50,000 (from 1 July 2022). Concessional contributions are taxed at 15% going in, but the associated earnings benefit from the super tax rate rather than your marginal rate. Apply for an FHSS determination through the ATO before signing a contract.",
       },
     ],
   },

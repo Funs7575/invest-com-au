@@ -19,6 +19,7 @@
  *   /api/widget/fee-index     — AU brokerage fee index table
  *   /api/widget/health-scores — broker health score comparison
  *   /api/widget/badge         — single-entity score badge (advisor trust or broker health)
+ *   /api/widget/best-rates    — top savings / term-deposit rates; co-branded for advisors
  *
  * All suite routes support an optional `?ref=<partnerId>` query param that
  * is threaded through to outbound invest.com.au links for partner attribution.
@@ -32,7 +33,8 @@ export type WidgetKind =
   | "advisors"
   | "fee-index"
   | "health-scores"
-  | "badge";
+  | "badge"
+  | "best-rates";
 
 export type WidgetFilter = "all" | "asx" | "us" | "crypto" | "savings" | "term-deposits";
 
@@ -267,6 +269,36 @@ export const SUITE_WIDGET_CATALOGUE: ReadonlyArray<SuiteWidgetMeta> = [
         title: "With partner ref",
         description: "Partner attribution threaded through outbound links.",
         params: "?type=advisor&slug=jane-smith-cfp&ref=yourpartnerId",
+      },
+    ],
+  },
+  {
+    kind: "best-rates",
+    label: "Best Rates",
+    description:
+      "Top savings accounts and term deposits from the Invest.com.au rate database. " +
+      "Optionally co-branded with an advisor's name and profile link.",
+    apiPath: "/api/widget/best-rates",
+    snippets: [
+      {
+        title: "Top savings accounts (default)",
+        description: "Best savings account rates — refreshed daily.",
+        params: "",
+      },
+      {
+        title: "Term deposits only",
+        description: "Best term-deposit rates.",
+        params: "?type=term_deposit",
+      },
+      {
+        title: "Co-branded for advisor",
+        description: "Rates widget with advisor's name and profile link in the header.",
+        params: "?for_advisor_slug=jane-smith-cfp",
+      },
+      {
+        title: "Dark theme, 5 rows",
+        description: "Dark-mode rates widget limited to 5 rows.",
+        params: "?theme=dark&limit=5",
       },
     ],
   },

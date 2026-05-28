@@ -2,15 +2,16 @@ import Icon from "@/components/Icon";
 import {
   ABN_VERIFIED_NOTE,
   AFSL_VERIFIED_NOTE,
+  AFSL_LISTED_NOTE,
   SEEDED_PROFILE_NOTE,
 } from "@/lib/compliance";
 
 /**
- * Verified badge — renders up to three pill labels that document
- * why a professional profile carries the verified flag.
+ * Verified badge — renders pill labels documenting a professional's credentials.
  *
  *   - "ABN Verified"   → green,  when verification_method contains 'abn'
  *   - "AFSL Current"   → blue,   when verification_method contains 'afsl'
+ *   - "AFSL #XXXXXX"   → amber,  when afsl_number present but not yet checked
  *   - "Seeded"         → grey,   when verification_method === 'seeded_data'
  *                                and showSeeded=true (admin-only)
  *
@@ -18,17 +19,13 @@ import {
  */
 
 export interface VerifiedBadgeProps {
-  /** The professionals.verification_method value. Null hides the badge. */
+  /** The professionals.verification_method value. Null shows any afsl/abn-only chips. */
   method: string | null | undefined;
   afsl?: string | null;
   abn?: string | null;
   /**
-   * `professionals.last_verified_at` (or equivalent for teams). When
-   * provided, appended to the tooltip as "Re-verified <relative>" and
-   * surfaced as a small footnote under the pills so consumers see the
-   * badge isn't stale. ASIC + TPB credentials have annual review
-   * cycles; surfacing freshness is a meaningful trust signal beyond
-   * the binary pill.
+   * `professionals.last_verified_at`. Appended to the tooltip as "Re-verified
+   * <relative>" and shown as a small footnote when not compact.
    */
   lastVerifiedAt?: string | null;
   /**
@@ -42,8 +39,8 @@ export interface VerifiedBadgeProps {
   className?: string;
 }
 
-function hasToken(method: string, token: string): boolean {
-  return method.toLowerCase().split(/[+,\s]/).includes(token);
+function hasToken(m: string, token: string): boolean {
+  return m.toLowerCase().split(/[+,\s]/).includes(token);
 }
 
 function relativeAgoLabel(iso: string): string | null {
@@ -69,12 +66,13 @@ export default function VerifiedBadge({
   compact = false,
   className,
 }: VerifiedBadgeProps) {
-  if (!method) return null;
+  // Nothing to show if no method and no credential numbers
+  if (!method && !afsl && !abn) return null;
 
-  const m = method.toLowerCase();
+  const m = method ? method.toLowerCase() : "";
   const isSeeded = m === "seeded_data";
-  const hasAbn = hasToken(m, "abn");
-  const hasAfsl = hasToken(m, "afsl");
+  const hasAbn = m ? hasToken(m, "abn") : false;
+  const hasAfsl = m ? hasToken(m, "afsl") : false;
 
   // Admin-only badge, hidden on public pages
   if (isSeeded && !showSeeded) return null;
@@ -100,7 +98,9 @@ export default function VerifiedBadge({
       icon: "check-circle",
     });
   }
+
   if (hasAfsl) {
+    // Full AFSL verification — confirmed against ASIC registers
     pills.push({
       label: "AFSL Current",
       title:
@@ -110,7 +110,16 @@ export default function VerifiedBadge({
       cls: "bg-sky-100 text-sky-800 border-sky-200",
       icon: "shield-check",
     });
+  } else if (afsl) {
+    // AFSL number listed but not yet cross-checked against ASIC
+    pills.push({
+      label: `AFSL ${afsl}`,
+      title: AFSL_LISTED_NOTE.replace("AFSL number", `AFSL ${afsl}`),
+      cls: "bg-amber-50 text-amber-700 border-amber-200",
+      icon: "shield",
+    });
   }
+
   if (isSeeded && showSeeded) {
     pills.push({
       label: "Seeded",

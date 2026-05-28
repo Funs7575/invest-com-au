@@ -14,6 +14,8 @@ import Icon from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { trackEvent } from "@/lib/tracking";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
+import { SPONSORED_DISCLOSURE_SHORT } from "@/lib/compliance";
+import BookmarkButton from "@/components/BookmarkButton";
 
 export interface ExpertTeamCard {
   id: number;
@@ -1207,9 +1209,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                               compact
                             />
                             {isFeatured && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm">
+                              <span
+                                title={SPONSORED_DISCLOSURE_SHORT}
+                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm cursor-help"
+                              >
                                 <Icon name="star" size={9} />
-                                Featured
+                                Featured · Paid
                               </span>
                             )}
                             {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
@@ -1253,14 +1258,22 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             </p>
                           )}
                         </div>
-                        <button
-                          onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
-                          disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
-                          title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
-                          className={`shrink-0 p-1.5 rounded-lg transition-colors ${inShortlist(pro.slug) ? "text-violet-600 bg-violet-50 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "text-slate-200 cursor-not-allowed" : "text-slate-300 hover:text-violet-500 hover:bg-violet-50"}`}
-                        >
-                          <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <BookmarkButton
+                            type="advisor"
+                            ref={pro.slug}
+                            label={pro.name}
+                            className="shrink-0 p-1.5 rounded-lg text-slate-300 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                          />
+                          <button
+                            onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
+                            disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
+                            title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
+                            className={`shrink-0 p-1.5 rounded-lg transition-colors ${inShortlist(pro.slug) ? "text-violet-600 bg-violet-50 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "text-slate-200 cursor-not-allowed" : "text-slate-300 hover:text-violet-500 hover:bg-violet-50"}`}
+                          >
+                            <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
+                          </button>
+                        </div>
                       </div>
 
                       {/* Type + Location row */}

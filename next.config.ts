@@ -431,6 +431,34 @@ const nextConfig: NextConfig = {
         destination: "/startup/grants",
         permanent: true,
       },
+      // ── Short-form advisor-guide slugs → canonical how-to-choose pages ──
+      // Referenced from /articles sidebar and lib/next-action.ts; served by
+      // the dynamic [slug] route but no data entry exists — 301 to canonical.
+      { source: "/advisor-guides/financial-planner", destination: "/advisor-guides/how-to-choose-financial-planner", permanent: true },
+      { source: "/advisor-guides/smsf-accountant", destination: "/advisor-guides/how-to-choose-smsf-accountant", permanent: true },
+      { source: "/advisor-guides/tax-agent", destination: "/advisor-guides/how-to-choose-tax-agent-investments", permanent: true },
+      { source: "/advisor-guides/mortgage-broker", destination: "/advisor-guides/how-to-choose-mortgage-broker", permanent: true },
+      { source: "/advisor-guides/property-advisor", destination: "/advisor-guides/how-to-choose-property-investment-advisor", permanent: true },
+      // ── Broken links from hub configs ──
+      // /find/tax-accountant has no static route — only /find/[type]/[city] exists.
+      { source: "/find/tax-accountant", destination: "/advisors/tax-agents", permanent: true },
+      // /tools/stamp-duty-calculator doesn't exist; stamp duty info lives at:
+      { source: "/tools/stamp-duty-calculator", destination: "/first-home-buyer/stamp-duty", permanent: true },
+      // /advisors/tax-accountants — no SLUG_TO_TYPE entry; canonical is tax-agents.
+      { source: "/advisors/tax-accountants", destination: "/advisors/tax-agents", permanent: true },
+      // Short-form legacy paths → canonical destinations
+      { source: "/cfd-trading", destination: "/cfd", permanent: true },
+      { source: "/etf", destination: "/etfs", permanent: true },
+      { source: "/us-shares", destination: "/global-investing/shares/us", permanent: true },
+      { source: "/chess-sponsored", destination: "/best/chess-sponsored", permanent: true },
+      { source: "/how-to/invest-in-etfs", destination: "/how-to/invest-in-etfs-for-beginners", permanent: true },
+      // Compare sub-pages that don't yet exist → hub
+      { source: "/compare/brokers", destination: "/compare", permanent: true },
+      { source: "/compare/fx", destination: "/global-investing/currency/best-fx-providers", permanent: true },
+      { source: "/compare/money-transfer", destination: "/global-investing/currency/best-fx-providers", permanent: true },
+      // /find/financial-advisor and /find/mortgage-broker → advisor directories
+      { source: "/find/financial-advisor", destination: "/advisors/financial-planners", permanent: true },
+      { source: "/find/mortgage-broker", destination: "/advisors/mortgage-brokers", permanent: true },
     ];
   },
 };
