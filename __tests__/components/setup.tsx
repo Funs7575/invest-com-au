@@ -42,6 +42,7 @@ vi.mock("next/navigation", () => ({
 vi.mock("next/image", () => ({
   default: (props: Record<string, unknown>) => {
     const { fill: _fill, priority: _priority, ...rest } = props;
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
     return <img {...rest} />;
   },
 }));
@@ -61,6 +62,12 @@ vi.mock("next/link", () => ({
       {children}
     </a>
   ),
+}));
+
+// Mock useUser hook — prevents Supabase browser client creation in jsdom tests.
+// Any component that calls useUser() gets unauthenticated + not-loading state.
+vi.mock("@/lib/hooks/useUser", () => ({
+  useUser: () => ({ user: null, loading: false }),
 }));
 
 // Mock useShortlist hook (used by ShortlistButton and QuizPromptBar)
