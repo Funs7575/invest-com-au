@@ -36,15 +36,14 @@ export default function RateMemoryTracker({ brokerId, productKind, currentRateBp
 
   const moved = delta.current - delta.previous;
   const isUp = moved > 0;
-  const color = isUp ? "#16a34a" : "#dc2626";
-  const bg = isUp ? "#f0fdf4" : "#fef2f2";
   const arrow = isUp ? "↑" : "↓";
   const absPct = bpsToPercent(Math.abs(moved));
 
   return (
     <div
       role="status"
-      style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 8, background: bg, border: `1px solid ${isUp ? "#bbf7d0" : "#fecaca"}`, fontSize: 13, color, marginBottom: 12 }}
+      className={isUp ? "text-green-700 bg-green-50 border border-green-200" : "text-red-600 bg-red-50 border border-red-200"}
+      style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 8, fontSize: 13, marginBottom: 12 }}
     >
       <span style={{ fontWeight: 700, fontSize: 15 }}>{arrow}</span>
       <span>

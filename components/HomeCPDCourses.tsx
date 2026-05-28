@@ -30,7 +30,7 @@ function StarRating({ rating, count }: { rating: number; count: number | null })
   const half = rating - full >= 0.5;
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
-      <span style={{ color: "#f59e0b", fontSize: 11, letterSpacing: "-1px" }} aria-hidden>
+      <span className="text-amber-400" style={{ fontSize: 11, letterSpacing: "-1px" }} aria-hidden>
         {"★".repeat(full)}
         {half ? "½" : ""}
         {"☆".repeat(Math.max(0, 5 - full - (half ? 1 : 0)))}

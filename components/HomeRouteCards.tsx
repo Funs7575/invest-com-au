@@ -147,7 +147,7 @@ export default function HomeRouteCards({
               <span style={{ fontWeight: 700, color: "var(--color-ink-900)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {b.name}
               </span>
-              <span style={{ color: "#2563eb", fontWeight: 800, flexShrink: 0 }}>
+              <span className="text-blue-600" style={{ fontWeight: 800, flexShrink: 0 }}>
                 {b.asx_fee ?? "—"}
               </span>
             </div>
@@ -538,7 +538,7 @@ export default function HomeRouteCards({
             alignItems: "center",
           }}
         >
-          <span aria-hidden style={{ width: 6, height: 6, borderRadius: 99, background: "#10b981", display: "inline-block" }} />
+          <span aria-hidden className="bg-emerald-500" style={{ width: 6, height: 6, borderRadius: 99, display: "inline-block" }} />
           <span>Updated weekly</span>
           <span aria-hidden>·</span>
           <span>{brokerCount.toLocaleString("en-AU")} platforms tracked</span>

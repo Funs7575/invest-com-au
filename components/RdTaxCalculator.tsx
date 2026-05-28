@@ -154,7 +154,7 @@ export default function RdTaxCalculator() {
             <p className="text-xs uppercase tracking-wider text-amber-400 font-extrabold mb-2">
               Estimated refundable cash offset
             </p>
-            <p className="text-4xl md:text-5xl font-extrabold leading-none" style={{ color: "#EAB308" }}>
+            <p className="text-4xl md:text-5xl font-extrabold leading-none text-yellow-500">
               {formatAUD(calc.refund)}
             </p>
             <p className="text-sm text-slate-300 mt-3">

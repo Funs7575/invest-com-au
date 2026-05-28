@@ -82,7 +82,7 @@ export default function HomeNewsletterCTA() {
           }}
         >
           Stay ahead of the market.{" "}
-          <span style={{ color: "#2dd4bf" }}>Free weekly insights.</span>
+          <span className="text-teal-400">Free weekly insights.</span>
         </h2>
 
         {/* Sub-copy */}
@@ -130,7 +130,7 @@ export default function HomeNewsletterCTA() {
               </div>
             ))}
           </div>
-          <span style={{ fontSize: 12, color: "#64748b" }}>
+          <span className="text-slate-500" style={{ fontSize: 12 }}>
             12,000+ subscribers · No spam · Unsubscribe anytime
           </span>
         </div>
