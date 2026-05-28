@@ -81,10 +81,21 @@ export default defineConfig({
         // Conservative +1pp nudge on global lines/statements; +1pp on
         // functions/branches since the lib tests hit previously-zero coverage
         // functions. API-route floor matches: +1pp each.
-        lines: 66,
-        functions: 74,
-        branches: 74,
-        statements: 66,
+        //
+        // Ratchet 2026-05-28 (Wave 15b) — Waves 8–15 added ~550 new lib tests
+        // across 18 pure-lib modules (life-event-checklist, advisor-credit-packs,
+        // prefill-url, lead-magnets, lifecycle-journeys, qa-ctas, consumer-copy,
+        // validate-email, help-content, account-types, advisor-types, api-tiers,
+        // listing-vertical-images, advisor-billing-multipliers, advisor-tiers,
+        // ab-winner, concierge-scoring, concierge-seeds). All target
+        // previously-zero-coverage lib functions. Conservative +1pp on global
+        // lines/statements (these are lib modules, not app/api, so the API-route
+        // floor is unchanged — those floors are already tight from the per-route
+        // sweep). +1pp on global functions/branches to match the new lib coverage.
+        lines: 67,
+        functions: 75,
+        branches: 75,
+        statements: 67,
         // API-route floor. Raised from 13/58/30 (D-10, Apr 2026) after
         // D-11 added tests for virtually all existing routes (batches 1-23+,
         // ~110 route files covered). Conservative 5pp buffer applied.
