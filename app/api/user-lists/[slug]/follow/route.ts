@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:user-lists:follow");
@@ -34,6 +35,10 @@ export async function POST(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  if (await isRateLimited(`list_follow:${user.id}`, 30, 60)) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
 
   const slug = getSlug(req);
   const list = await resolveList(slug, supabase);

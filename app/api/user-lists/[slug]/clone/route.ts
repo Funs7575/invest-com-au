@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isRateLimited } from "@/lib/rate-limit";
 import { slugify } from "@/lib/utils";
 import { logger } from "@/lib/logger";
 
@@ -25,6 +26,10 @@ export async function POST(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  if (await isRateLimited(`list_clone:${user.id}`, 5, 60)) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
 
   const segments = req.nextUrl.pathname.split("/");
   const idx = segments.indexOf("user-lists");
