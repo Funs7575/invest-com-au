@@ -290,15 +290,16 @@ const eslintConfig = [
       "invest/no-unsafe-inner-html": "error",
 
       // ── Validation (Stream E) ────────────────────────────────────────────
-      // E-03: forward guardrail — new `await req.json()` / `await
+      // Forward guardrail — every `await req.json()` / `await
       // request.json()` must be consumed by a Zod schema or wrapped in
-      // withValidatedBody. Severity is `warn` because ~200 legacy routes
-      // pre-date Stream E; `npm run lint` should still pass while E-02
-      // migrates them. The husky/lint-staged hook runs `eslint --fix
-      // --max-warnings 0` on staged files, so NEW drift on staged routes
-      // is caught at commit time — only previously-touched legacy files
-      // get a free pass.
-      "invest/no-unvalidated-req-json": "warn",
+      // withValidatedBody. Promoted from `warn` to `error` once the last
+      // legacy routes were migrated (Stream E + the 2026-05 validation
+      // backfill) and the repo reached zero violations — so `npm run lint`
+      // now hard-fails on any new or reintroduced unvalidated body read,
+      // not just on staged files. For an unavoidable exception, opt out at
+      // the call site with `// eslint-disable-next-line
+      // invest/no-unvalidated-req-json -- <reason>`.
+      "invest/no-unvalidated-req-json": "error",
     },
   },
   {
