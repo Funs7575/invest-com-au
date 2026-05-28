@@ -5,6 +5,7 @@ import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
 import { isValidEmail } from "@/lib/validate-email";
+import { isRateLimited } from "@/lib/rate-limit";
 import {
   SELF_SERVE_TIER_PRICES_CENTS,
   SELF_SERVE_TIERS,
@@ -49,6 +50,11 @@ const Body = z
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (await isRateLimited(`advertise_checkout:${ip}`, 5, 60)) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
     const parsed = Body.safeParse(await request.json());
     if (!parsed.success) {
       return NextResponse.json(

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("listing-checkout");
 
@@ -27,6 +28,11 @@ const BodySchema = z
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (await isRateLimited(`listings_checkout:${ip}`, 5, 60)) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
     // Launch-ops kill switch: flip `stripe_checkout` off in
     // /admin/automation/flags to pause new Stripe checkout sessions
     // (webhook backlog, dispute spike, pricing bug). See
