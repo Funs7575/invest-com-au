@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import EtfOverlapDetector from "@/components/EtfOverlapDetector";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 
 export const metadata: Metadata = {
   title: "ETF Overlap Detector | Invest.com.au",
@@ -9,9 +10,16 @@ export const metadata: Metadata = {
   openGraph: { title: "ETF Overlap Detector", description: "Check for unintentional concentration across your ETFs." },
 };
 
+const LD = calculatorJsonLd({
+  name: "ETF Overlap Detector",
+  description: "See how much your ETFs overlap. Holding VGS and NDQ? You may have more US tech concentration than you realise.",
+  path: "/tools/etf-overlap",
+});
+
 export default function EtfOverlapPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(LD) }} />
       <nav className="text-xs text-slate-400">
         <Link href="/tools" className="hover:text-violet-700">Tools</Link>
         <span className="mx-1">›</span>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import DividendCalendar from "@/components/DividendCalendar";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 
 export const metadata: Metadata = {
   title: "ETF Dividend Calendar | Invest.com.au",
@@ -9,9 +10,16 @@ export const metadata: Metadata = {
   openGraph: { title: "ETF Dividend Calendar", description: "Track upcoming ETF ex-dates and distribution payments." },
 };
 
+const LD = calculatorJsonLd({
+  name: "ETF Dividend Calendar",
+  description: "Upcoming ASX ETF distribution ex-dates and payment dates. Know when to own shares to receive your distribution.",
+  path: "/tools/dividend-calendar",
+});
+
 export default function DividendCalendarPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(LD) }} />
       <nav className="text-xs text-slate-400">
         <Link href="/tools" className="hover:text-violet-700">Tools</Link>
         <span className="mx-1">›</span>

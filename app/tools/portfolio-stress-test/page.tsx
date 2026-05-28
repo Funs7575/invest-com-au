@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PortfolioStressTest from "@/components/PortfolioStressTest";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 
 export const metadata: Metadata = {
   title: "Portfolio Stress Test | Invest.com.au",
@@ -9,9 +10,16 @@ export const metadata: Metadata = {
   openGraph: { title: "Portfolio Stress Test", description: "Stress-test your portfolio against historical market crises." },
 };
 
+const LD = calculatorJsonLd({
+  name: "Portfolio Stress Test",
+  description: "See how your portfolio allocation would have fared during the GFC, COVID crash, dot-com bust and 2022 rate hike cycle.",
+  path: "/tools/portfolio-stress-test",
+});
+
 export default function PortfolioStressTestPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(LD) }} />
       <nav className="text-xs text-slate-400">
         <Link href="/tools" className="hover:text-violet-700">Tools</Link>
         <span className="mx-1">›</span>

@@ -92,6 +92,18 @@ export default async function PersonaTypePage({
 
   return (
     <div style={{ background: "var(--color-ink-50)", minHeight: "100vh", paddingTop: 48, paddingBottom: 72 }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: `${personaType} Investor Persona`,
+            description: result.description,
+            url: absoluteUrl(`/persona/${type}`),
+          }),
+        }}
+      />
       <div className="container-custom" style={{ maxWidth: 680 }}>
 
         <nav style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 28 }}>

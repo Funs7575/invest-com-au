@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { absoluteUrl } from "@/lib/seo";
 import PollWidget from "./PollWidget";
 
 export const dynamic = "force-dynamic";
@@ -145,6 +146,18 @@ export default async function RbaPollPage() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: "RBA Rate Prediction",
+            description: "Predict the Reserve Bank of Australia's next cash rate decision and track your accuracy on the leaderboard.",
+            url: absoluteUrl("/rba-poll"),
+          }),
+        }}
+      />
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900">RBA Rate Prediction</h1>
         <p className="text-slate-600 mt-2">

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { absoluteUrl } from "@/lib/seo";
 import ListFollowButton from "./ListFollowButton";
 
 // Revalidate every 60s — list edits are infrequent, no need for force-dynamic.
@@ -120,6 +121,19 @@ export default async function PublicListPage({ params }: Params) {
 
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: list.title,
+            description: list.description || "A curated investment list on Invest.com.au",
+            url: absoluteUrl(`/lists/${slug}`),
+            numberOfItems: list.item_count,
+          }),
+        }}
+      />
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-start justify-between gap-4">
