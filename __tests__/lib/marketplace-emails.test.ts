@@ -376,7 +376,7 @@ describe("marketplace-emails", () => {
 
   describe("returns false when sendEmail fails", () => {
     it("sendProviderNewMatchRequest propagates ok:false", async () => {
-      sendEmailMock.mockResolvedValueOnce({ ok: false, error: "HTTP 500" });
+      sendEmailMock.mockResolvedValueOnce({ ok: false });
       const ok = await sendProviderNewMatchRequest({
         providerEmail: "x@x.com",
         providerName: "X",
