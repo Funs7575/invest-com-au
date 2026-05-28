@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CURRENT_YEAR } from "@/lib/seo";
+import { CURRENT_YEAR, breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
 import SmartRecommendationsStrip from "@/components/SmartRecommendationsStrip";
 
 export const metadata: Metadata = {
@@ -14,9 +14,18 @@ export const metadata: Metadata = {
   alternates: { canonical: "/find-advisor" },
 };
 
+const breadcrumbLd = breadcrumbJsonLd([
+  { name: "Home", url: absoluteUrl("/") },
+  { name: "Find an Advisor" },
+]);
+
 export default function FindAdvisorLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <SmartRecommendationsStrip />
       {children}
     </>

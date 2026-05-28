@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
   if (!guard.ok) return guard.response;
 
   const supabase = createAdminClient();
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing admin route; fields validated by company_name check below
   const body = await request.json();
   const { id, ...fields } = body;
 
@@ -84,9 +85,14 @@ export async function DELETE(request: NextRequest) {
   if (!guard.ok) return guard.response;
 
   const supabase = createAdminClient();
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing admin route; id validated immediately below
   const { id } = await request.json();
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
-  await supabase.from("bd_pipeline").delete().eq("id", id);
+  const { error: deleteError } = await supabase.from("bd_pipeline").delete().eq("id", id);
+  if (deleteError) {
+    log.error("bd_pipeline delete failed", { error: deleteError.message, id });
+    return NextResponse.json({ error: "Delete failed." }, { status: 500 });
+  }
   await supabase.from("admin_audit_log").insert({
     action: "bd_pipeline:deleted",
     entity_type: "bd_pipeline",

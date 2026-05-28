@@ -68,19 +68,29 @@ export async function POST(req: NextRequest) {
     if (existingVote) {
       if (existingVote.value === vote) {
         // Same vote again: remove the vote (toggle off)
-        await admin
+        const { error: deleteVoteError } = await admin
           .from("forum_votes")
           .delete()
           .eq("id", existingVote.id);
+
+        if (deleteVoteError) {
+          log.error("Failed to remove vote", { error: deleteVoteError.message });
+          return NextResponse.json({ error: "Failed to record vote change" }, { status: 500 });
+        }
 
         scoreDelta = -vote;
         reputationDelta = -vote; // Remove the reputation effect
       } else {
         // Changing vote direction
-        await admin
+        const { error: updateVoteError } = await admin
           .from("forum_votes")
           .update({ value: vote, created_at: new Date().toISOString() })
           .eq("id", existingVote.id);
+
+        if (updateVoteError) {
+          log.error("Failed to update vote direction", { error: updateVoteError.message });
+          return NextResponse.json({ error: "Failed to record vote change" }, { status: 500 });
+        }
 
         scoreDelta = vote * 2; // Swing from -1 to +1 or vice versa
         reputationDelta = vote * 2;
@@ -141,10 +151,13 @@ export async function POST(req: NextRequest) {
         .eq("user_id", target.author_id)
         .maybeSingle();
       if (authorProfile) {
-        await admin
+        const { error: repError } = await admin
           .from("forum_user_profiles")
           .update({ reputation: (authorProfile.reputation ?? 0) + reputationDelta })
           .eq("user_id", target.author_id);
+        if (repError) {
+          log.warn("Reputation update failed (non-fatal)", { error: repError.message, authorId: target.author_id });
+        }
       }
     }
 

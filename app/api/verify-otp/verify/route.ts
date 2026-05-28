@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
 
   let email: string, code: string;
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing; body fields validated immediately below
     ({ email, code } = await request.json());
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
@@ -89,8 +90,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Incorrect code. Please try again." }, { status: 400 });
   }
 
-  // Mark used
-  await supabase.from("email_otps").update({ used_at: new Date().toISOString() }).eq("id", otp.id);
+  // Mark used — if this fails the OTP stays active and can be replayed; return 500.
+  const { error: markUsedError } = await supabase
+    .from("email_otps")
+    .update({ used_at: new Date().toISOString() })
+    .eq("id", otp.id);
+
+  if (markUsedError) {
+    return NextResponse.json({ error: "Verification error. Please try again." }, { status: 500 });
+  }
 
   return NextResponse.json({ success: true, verified: true });
 }

@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
   if (!guard.ok) return guard.response;
 
   const supabase = createAdminClient();
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing admin route; id+action validated immediately below
   const { id, action } = await request.json();
 
   if (!id || !action) return NextResponse.json({ error: "id and action required" }, { status: 400 });
@@ -62,7 +63,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    await supabase.from("brokers").update(updateField).eq("id", item.broker_id);
+    const { error: brokerUpdateError } = await supabase
+      .from("brokers")
+      .update(updateField)
+      .eq("id", item.broker_id);
+
+    if (brokerUpdateError) {
+      log.error("Broker fee update failed", { error: brokerUpdateError.message, brokerId: item.broker_id });
+      return NextResponse.json({ error: "Failed to apply fee update to broker" }, { status: 500 });
+    }
 
     // Log the change in broker_data_changes
     const { error: logError } = await supabase.from("broker_data_changes").insert({

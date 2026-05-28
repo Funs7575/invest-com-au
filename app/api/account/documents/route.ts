@@ -37,14 +37,18 @@ export async function GET(): Promise<NextResponse> {
     return NextResponse.json({ error: "Failed to load documents" }, { status: 500 });
   }
 
-  const documents = await Promise.all(
-    (rows ?? []).map(async (row) => {
-      const { data: signed } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .createSignedUrl(row.file_path, SIGNED_URL_EXPIRY_SECONDS);
-      return { ...row, download_url: signed?.signedUrl ?? null };
-    }),
+  const filePaths = (rows ?? []).map((r) => r.file_path);
+  const { data: signedUrls } = filePaths.length
+    ? await supabase.storage.from(STORAGE_BUCKET).createSignedUrls(filePaths, SIGNED_URL_EXPIRY_SECONDS)
+    : { data: [] };
+
+  const urlMap = new Map(
+    (signedUrls ?? []).map((s) => [s.path, s.signedUrl]),
   );
+  const documents = (rows ?? []).map((row) => ({
+    ...row,
+    download_url: urlMap.get(row.file_path) ?? null,
+  }));
 
   return NextResponse.json({ documents });
 }

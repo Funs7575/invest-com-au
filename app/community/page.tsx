@@ -5,6 +5,8 @@ import Icon from "@/components/Icon";
 
 // Each category now has ≥3 seeded threads (migration
 // 20260802000000_seed_forum_threads.sql) — safe to index.
+export const revalidate = 3600; // categories change rarely; ISR cuts per-request DB round-trips
+
 export const metadata = {
   title: "Community Forum",
   description:

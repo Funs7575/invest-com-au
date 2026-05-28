@@ -41,6 +41,7 @@ export async function PATCH(request: NextRequest) {
 
   let body: { applicationId: number; action: "approve" | "reject"; rejectionReason?: string };
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing admin route; body shape checked in subsequent if-guards
     body = await request.json();
   } catch (err) {
     log.warn("Advisor applications invalid JSON", { err: err instanceof Error ? err.message : String(err) });
@@ -166,26 +167,36 @@ export async function PATCH(request: NextRequest) {
     if (newFirm) {
       firmId = newFirm.id;
       // Link the professional to the firm
-      await supabase.from("professionals").update({ firm_id: firmId, is_firm_admin: true }).eq("id", newPro.id);
+      const { error: firmLinkError } = await supabase.from("professionals").update({ firm_id: firmId, is_firm_admin: true }).eq("id", newPro.id);
+      if (firmLinkError) {
+        log.error("Firm link failed (professional created, not linked)", { error: firmLinkError.message, professionalId: newPro.id, firmId });
+      }
     }
   }
 
   // Update application
-  await supabase.from("advisor_applications").update({
+  const { error: appUpdateError } = await supabase.from("advisor_applications").update({
     status: "approved",
     professional_id: newPro.id,
     firm_id: firmId,
     reviewed_at: new Date().toISOString(),
   }).eq("id", applicationId);
+  if (appUpdateError) {
+    log.error("Application status update failed (professional created, status not updated)", { error: appUpdateError.message, applicationId });
+  }
 
   // Generate magic link token and send approval email
   const token = randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
-  await supabase.from("advisor_auth_tokens").insert({
+  const { error: tokenError } = await supabase.from("advisor_auth_tokens").insert({
     professional_id: newPro.id,
     token,
     expires_at: expiresAt,
   });
+  if (tokenError) {
+    log.error("Auth token creation failed — advisor created but cannot log in", { error: tokenError.message, professionalId: newPro.id });
+    return NextResponse.json({ error: "Advisor profile created but login token failed — retry or generate manually" }, { status: 500 });
+  }
 
   const loginUrl = `${siteUrl}/advisor-portal?token=${token}`;
   sendApplicationApproved(app.email, app.name, loginUrl).catch((err) => log.error("Approval email failed", { err: err instanceof Error ? err.message : String(err), applicationId }));

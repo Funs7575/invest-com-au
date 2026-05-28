@@ -69,6 +69,9 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Invalid id." }, { status: 400 });
   }
   const admin = createAdminClient();
-  await admin.from("brief_routing_rules").delete().eq("id", id);
+  const { error } = await admin.from("brief_routing_rules").delete().eq("id", id);
+  if (error) {
+    return NextResponse.json({ error: "Delete failed." }, { status: 500 });
+  }
   return NextResponse.json({ success: true });
 }

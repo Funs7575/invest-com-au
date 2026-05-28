@@ -81,6 +81,7 @@ export async function POST(request: NextRequest) {
     if (hasSpamUrl) autoFlags.push("spam_url");
 
     const supabase = await createClient();
+    const adminClient = createAdminClient();
 
     const { data: pro } = await supabase
       .from("professionals")
@@ -93,9 +94,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Advisor not found." }, { status: 404 });
     }
 
-    // Check for duplicate by email (if provided) or by IP + professional combo
+    // Check for duplicate across ALL statuses (pending/flagged/approved) so a
+    // reviewer cannot submit multiple reviews by timing around moderation.
+    // Uses admin client because the SELECT RLS policy only exposes approved rows.
     if (reviewer_email) {
-      const { data: existing } = await supabase
+      const { data: existing } = await adminClient
         .from("professional_reviews")
         .select("id")
         .eq("professional_id", professional_id)
@@ -121,8 +124,7 @@ export async function POST(request: NextRequest) {
 
     if (reviewer_email?.trim()) {
       try {
-        const adminSupabase = createAdminClient();
-        const { data: leadMatch } = await adminSupabase
+        const { data: leadMatch } = await adminClient
           .from("professional_leads")
           .select("id")
           .eq("professional_id", professional_id)
@@ -140,7 +142,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const { error: insertError } = await supabase
+    const { error: insertError } = await adminClient
       .from("professional_reviews")
       .insert({
         professional_id,

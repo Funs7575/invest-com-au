@@ -44,122 +44,103 @@ const STALE_DAYS = 180;
 
 async function gatherMetrics(): Promise<Metric[]> {
   const supabase = createAdminClient();
-  const metrics: Metric[] = [];
-  const staleCutoff = new Date(
-    Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000,
-  ).toISOString();
+  const staleCutoff = new Date(Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const staleFeeCutoff = new Date(Date.now() - FEE_STALE_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
-  // 1. Unclaimed placeholder advisors
-  try {
-    const { data: placeholders } = await supabase
-      .from("professionals")
-      .select("slug, name, type")
-      .ilike("email", `%${PLACEHOLDER_EMAIL_DOMAIN}%`)
+  const results = await Promise.allSettled([
+    // 1. Unclaimed placeholder advisors
+    supabase.from("professionals").select("slug, name, type")
+      .ilike("email", `%${PLACEHOLDER_EMAIL_DOMAIN}%`).eq("status", "active").limit(500),
+
+    // 2. Stale articles
+    supabase.from("articles").select("slug, title, published_at")
+      .eq("status", "published").lt("published_at", staleCutoff)
+      .order("published_at", { ascending: true }).limit(500),
+
+    // 3. Verticals without hero images
+    supabase.from("investment_verticals").select("slug, name").is("hero_image", null).eq("active", true),
+
+    // 4. Listings missing description or price_display
+    supabase.from("investment_listings").select("slug, title")
+      .eq("status", "active").or("description.is.null,price_display.is.null").limit(500),
+
+    // 5. All professional types + statuses (processed in JS to find empty types)
+    supabase.from("professionals").select("type, status"),
+
+    // 6. Active listings by vertical (processed in JS to find sparse ones)
+    supabase.from("investment_listings").select("vertical").eq("status", "active"),
+
+    // 7. Brokers with stale or missing fee verification
+    supabase.from("brokers").select("slug, name, fee_verified_date")
       .eq("status", "active")
-      .limit(500);
-    const count = placeholders?.length || 0;
-    metrics.push({
-      label: "Unclaimed placeholder advisors",
-      count,
-      severity: count > 30 ? "warn" : count > 0 ? "ok" : "ok",
-      description: `Seeded profiles with @${PLACEHOLDER_EMAIL_DOMAIN} emails. These need outreach and claim flow before hard launch to avoid readers reaching fake contact details.`,
-      fixHref: "/admin/advisors",
-      sample: (placeholders || []).slice(0, 5).map((p) => p.slug),
-    });
-  } catch {
-    metrics.push({
-      label: "Unclaimed placeholder advisors",
-      count: -1,
-      severity: "warn",
-      description: "Query failed — check Supabase connectivity.",
-    });
-  }
+      .or(`fee_verified_date.is.null,fee_verified_date.lt.${staleFeeCutoff}`)
+      .limit(200),
+  ]);
 
-  // 2. Stale articles
-  try {
-    const { data: stale } = await supabase
-      .from("articles")
-      .select("slug, title, published_at")
-      .eq("status", "published")
-      .lt("published_at", staleCutoff)
-      .order("published_at", { ascending: true })
-      .limit(500);
-    const count = stale?.length || 0;
-    metrics.push({
-      label: `Stale articles (> ${STALE_DAYS} days old)`,
-      count,
-      severity: count > 50 ? "warn" : "ok",
-      description: `Articles published more than ${STALE_DAYS} days ago. Candidates for freshness review — update stats, refresh policy references, add recent events.`,
-      fixHref: "/admin/articles",
-      sample: (stale || []).slice(0, 5).map((a) => a.slug),
-    });
-  } catch {
-    metrics.push({
-      label: "Stale articles",
-      count: -1,
-      severity: "warn",
-      description: "Query failed.",
-    });
-  }
+  const [r1, r2, r3, r4, r5, r6, r7] = results;
 
-  // 3. Verticals without hero images
-  try {
-    const { data: noHero } = await supabase
-      .from("investment_verticals")
-      .select("slug, name")
-      .is("hero_image", null)
-      .eq("active", true);
-    const count = noHero?.length || 0;
-    metrics.push({
-      label: "Verticals without hero images",
-      count,
-      severity: count > 5 ? "warn" : "ok",
-      description: "Active investment_verticals rows with null hero_image. Not fatal but reduces visual quality on homepage strips and social shares.",
-      fixHref: "/admin/commodity-hubs",
-      sample: (noHero || []).slice(0, 5).map((v) => v.slug),
-    });
-  } catch {
-    metrics.push({
-      label: "Verticals without hero images",
-      count: -1,
-      severity: "warn",
-      description: "Query failed.",
-    });
-  }
+  // 1
+  const placeholders = r1.status === "fulfilled" ? r1.value.data ?? [] : null;
+  const m1Count = placeholders?.length ?? 0;
+  const m1: Metric = placeholders
+    ? {
+        label: "Unclaimed placeholder advisors",
+        count: m1Count,
+        severity: m1Count > 30 ? "warn" : "ok",
+        description: `Seeded profiles with @${PLACEHOLDER_EMAIL_DOMAIN} emails. These need outreach and claim flow before hard launch to avoid readers reaching fake contact details.`,
+        fixHref: "/admin/advisors",
+        sample: placeholders.slice(0, 5).map((p) => (p as { slug: string }).slug),
+      }
+    : { label: "Unclaimed placeholder advisors", count: -1, severity: "warn", description: "Query failed — check Supabase connectivity." };
 
-  // 4. Listings missing description or price_display
-  try {
-    const { data: incomplete } = await supabase
-      .from("investment_listings")
-      .select("slug, title")
-      .eq("status", "active")
-      .or("description.is.null,price_display.is.null")
-      .limit(500);
-    const count = incomplete?.length || 0;
-    metrics.push({
-      label: "Active listings missing description or price",
-      count,
-      severity: count > 10 ? "block" : count > 0 ? "warn" : "ok",
-      description: "Active investment_listings rows missing a description or price_display. These render as low-quality cards on listings pages.",
-      fixHref: "/admin/listings",
-      sample: (incomplete || []).slice(0, 5).map((l) => l.slug),
-    });
-  } catch {
-    metrics.push({
-      label: "Listings missing fields",
-      count: -1,
-      severity: "warn",
-      description: "Query failed.",
-    });
-  }
+  // 2
+  const stale = r2.status === "fulfilled" ? r2.value.data ?? [] : null;
+  const m2Count = stale?.length ?? 0;
+  const m2: Metric = stale
+    ? {
+        label: `Stale articles (> ${STALE_DAYS} days old)`,
+        count: m2Count,
+        severity: m2Count > 50 ? "warn" : "ok",
+        description: `Articles published more than ${STALE_DAYS} days ago. Candidates for freshness review — update stats, refresh policy references, add recent events.`,
+        fixHref: "/admin/articles",
+        sample: stale.slice(0, 5).map((a) => (a as { slug: string }).slug),
+      }
+    : { label: "Stale articles", count: -1, severity: "warn", description: "Query failed." };
 
-  // 5. Advisor types with zero active advisors — finds dead category pages
-  try {
-    const { data: all } = await supabase
-      .from("professionals")
-      .select("type, status");
+  // 3
+  const noHero = r3.status === "fulfilled" ? r3.value.data ?? [] : null;
+  const m3Count = noHero?.length ?? 0;
+  const m3: Metric = noHero
+    ? {
+        label: "Verticals without hero images",
+        count: m3Count,
+        severity: m3Count > 5 ? "warn" : "ok",
+        description: "Active investment_verticals rows with null hero_image. Not fatal but reduces visual quality on homepage strips and social shares.",
+        fixHref: "/admin/commodity-hubs",
+        sample: noHero.slice(0, 5).map((v) => (v as { slug: string }).slug),
+      }
+    : { label: "Verticals without hero images", count: -1, severity: "warn", description: "Query failed." };
+
+  // 4
+  const incomplete = r4.status === "fulfilled" ? r4.value.data ?? [] : null;
+  const m4Count = incomplete?.length ?? 0;
+  const m4: Metric = incomplete
+    ? {
+        label: "Active listings missing description or price",
+        count: m4Count,
+        severity: m4Count > 10 ? "block" : m4Count > 0 ? "warn" : "ok",
+        description: "Active investment_listings rows missing a description or price_display. These render as low-quality cards on listings pages.",
+        fixHref: "/admin/listings",
+        sample: incomplete.slice(0, 5).map((l) => (l as { slug: string }).slug),
+      }
+    : { label: "Listings missing fields", count: -1, severity: "warn", description: "Query failed." };
+
+  // 5
+  let m5: Metric;
+  if (r5.status === "fulfilled") {
+    const all = (r5.value.data ?? []) as Array<{ type: string; status: string }>;
     const byType = new Map<string, number>();
-    for (const row of (all || []) as Array<{ type: string; status: string }>) {
+    for (const row of all) {
       if (row.status === "active") {
         byType.set(row.type, (byType.get(row.type) || 0) + 1);
       } else if (!byType.has(row.type)) {
@@ -167,83 +148,54 @@ async function gatherMetrics(): Promise<Metric[]> {
       }
     }
     const empty = Array.from(byType.entries()).filter(([, n]) => n === 0);
-    metrics.push({
+    m5 = {
       label: "Advisor types with zero active advisors",
       count: empty.length,
       severity: empty.length > 0 ? "warn" : "ok",
       description: "Advisor directory categories where every listing is inactive. The type-page would render empty.",
       fixHref: "/admin/advisors",
       sample: empty.slice(0, 5).map(([t]) => t),
-    });
-  } catch {
-    metrics.push({
-      label: "Advisor types with zero active advisors",
-      count: -1,
-      severity: "warn",
-      description: "Query failed.",
-    });
+    };
+  } else {
+    m5 = { label: "Advisor types with zero active advisors", count: -1, severity: "warn", description: "Query failed." };
   }
 
-  // 6. Categories with few listings — sparse marketplace
-  try {
-    const { data: counts } = await supabase
-      .from("investment_listings")
-      .select("vertical")
-      .eq("status", "active");
+  // 6
+  let m6: Metric;
+  if (r6.status === "fulfilled") {
+    const counts = (r6.value.data ?? []) as Array<{ vertical: string }>;
     const byVertical = new Map<string, number>();
-    for (const row of (counts || []) as Array<{ vertical: string }>) {
+    for (const row of counts) {
       byVertical.set(row.vertical, (byVertical.get(row.vertical) || 0) + 1);
     }
-    const sparse = Array.from(byVertical.entries()).filter(
-      ([, n]) => n > 0 && n < 3,
-    );
-    metrics.push({
+    const sparse = Array.from(byVertical.entries()).filter(([, n]) => n > 0 && n < 3);
+    m6 = {
       label: "Verticals with <3 active listings",
       count: sparse.length,
       severity: sparse.length > 3 ? "warn" : "ok",
       description: "Categories with 1-2 active listings render as visually-thin marketplace pages. Consider boosting supply or suppressing the category from nav until supply improves.",
       fixHref: "/admin/listings",
       sample: sparse.slice(0, 5).map(([v, n]) => `${v} (${n})`),
-    });
-  } catch {
-    metrics.push({
-      label: "Verticals with sparse listings",
-      count: -1,
-      severity: "warn",
-      description: "Query failed.",
-    });
+    };
+  } else {
+    m6 = { label: "Verticals with sparse listings", count: -1, severity: "warn", description: "Query failed." };
   }
 
-  // 7. Brokers with stale or missing fee verification
-  try {
-    const staleFeeCutoff = new Date(
-      Date.now() - FEE_STALE_DAYS * 24 * 60 * 60 * 1000,
-    ).toISOString();
-    const { data: staleOrMissing } = await supabase
-      .from("brokers")
-      .select("slug, name, fee_verified_date")
-      .eq("status", "active")
-      .or(`fee_verified_date.is.null,fee_verified_date.lt.${staleFeeCutoff}`)
-      .limit(200);
-    const count = staleOrMissing?.length || 0;
-    metrics.push({
-      label: `Brokers with stale or missing fee verification (>${FEE_STALE_DAYS}d)`,
-      count,
-      severity: count > 5 ? "block" : count > 0 ? "warn" : "ok",
-      description: `Active brokers whose fees have not been human-verified in the last ${FEE_STALE_DAYS} days (or never). Readers see a red "unverified" pill on these cards — the highest-impact trust drag on the site.`,
-      fixHref: "/admin/fee-queue",
-      sample: (staleOrMissing || []).slice(0, 5).map((b) => b.slug),
-    });
-  } catch {
-    metrics.push({
-      label: "Brokers with stale fee verification",
-      count: -1,
-      severity: "warn",
-      description: "Query failed.",
-    });
-  }
+  // 7
+  const staleOrMissing = r7.status === "fulfilled" ? r7.value.data ?? [] : null;
+  const m7Count = staleOrMissing?.length ?? 0;
+  const m7: Metric = staleOrMissing
+    ? {
+        label: `Brokers with stale or missing fee verification (>${FEE_STALE_DAYS}d)`,
+        count: m7Count,
+        severity: m7Count > 5 ? "block" : m7Count > 0 ? "warn" : "ok",
+        description: `Active brokers whose fees have not been human-verified in the last ${FEE_STALE_DAYS} days (or never). Readers see a red "unverified" pill on these cards — the highest-impact trust drag on the site.`,
+        fixHref: "/admin/fee-queue",
+        sample: staleOrMissing.slice(0, 5).map((b) => (b as { slug: string }).slug),
+      }
+    : { label: "Brokers with stale fee verification", count: -1, severity: "warn", description: "Query failed." };
 
-  return metrics;
+  return [m1, m2, m3, m4, m5, m6, m7];
 }
 
 /* ─── V2: deployment & environment checks ─── */

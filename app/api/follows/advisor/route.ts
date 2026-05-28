@@ -47,7 +47,10 @@ export const POST = withValidatedBody(FollowSchema, async (request, body) => {
     .maybeSingle();
   if (proData !== null) {
     const current = (proData as { follower_count?: number } | null)?.follower_count ?? 0;
-    await admin.from("professionals").update({ follower_count: current + 1 }).eq("id", body.professionalId);
+    const { error: incrementError } = await admin.from("professionals").update({ follower_count: current + 1 }).eq("id", body.professionalId);
+    if (incrementError) {
+      log.warn("follower_count increment failed (best-effort)", { error: incrementError.message, professionalId: body.professionalId });
+    }
   }
 
   return NextResponse.json({ success: true });
@@ -98,7 +101,10 @@ export async function DELETE(request: Request) {
     .maybeSingle();
   if (proData !== null) {
     const current = (proData as { follower_count?: number } | null)?.follower_count ?? 1;
-    await admin.from("professionals").update({ follower_count: Math.max(0, current - 1) }).eq("id", professionalId);
+    const { error: decrementError } = await admin.from("professionals").update({ follower_count: Math.max(0, current - 1) }).eq("id", professionalId);
+    if (decrementError) {
+      log.warn("follower_count decrement failed (best-effort)", { error: decrementError.message, professionalId });
+    }
   }
 
   return NextResponse.json({ success: true });

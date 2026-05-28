@@ -39,19 +39,29 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Failed to load files" }, { status: 500 });
   }
 
-  const filesWithMeta = await Promise.all(
-    (files ?? []).map(async (f) => {
-      const { data: signed } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .createSignedUrl(f.storage_path, 300);
-      const { count } = await supabase
-        .from("startup_data_room_access")
-        .select("*", { count: "exact", head: true })
-        .eq("file_id", f.id)
-        .is("revoked_at", null);
-      return { ...f, download_url: signed?.signedUrl ?? null, active_grants: count ?? 0 };
-    }),
-  );
+  const storagePaths = (files ?? []).map((f) => f.storage_path);
+  const fileIds = (files ?? []).map((f) => f.id);
+
+  const [{ data: signedUrls }, { data: grantRows }] = await Promise.all([
+    storagePaths.length
+      ? supabase.storage.from(STORAGE_BUCKET).createSignedUrls(storagePaths, 300)
+      : Promise.resolve({ data: [] }),
+    fileIds.length
+      ? supabase.from("startup_data_room_access").select("file_id").in("file_id", fileIds).is("revoked_at", null)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const urlMap = new Map((signedUrls ?? []).map((s) => [s.path, s.signedUrl]));
+  const grantMap = new Map<string, number>();
+  for (const g of grantRows ?? []) {
+    grantMap.set(g.file_id, (grantMap.get(g.file_id) ?? 0) + 1);
+  }
+
+  const filesWithMeta = (files ?? []).map((f) => ({
+    ...f,
+    download_url: urlMap.get(f.storage_path) ?? null,
+    active_grants: grantMap.get(f.id) ?? 0,
+  }));
 
   return NextResponse.json({ files: filesWithMeta });
 }
