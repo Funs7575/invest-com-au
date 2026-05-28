@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logger } from "@/lib/logger";
+import { logger, trackRequest } from "@/lib/logger";
 import {
   extractSvixHeaders,
   verifyResendSignature,
@@ -27,6 +27,7 @@ export const runtime = "nodejs";
  * real users.
  */
 export async function POST(request: NextRequest) {
+  trackRequest(request);
   const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
   if (!webhookSecret) {
     log.error("RESEND_WEBHOOK_SECRET not configured — rejecting webhook");

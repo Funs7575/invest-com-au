@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logger } from "@/lib/logger";
+import { logger, trackRequest } from "@/lib/logger";
 import { timingSafeEqual } from "crypto";
 
 const log = logger("broker-signup-postback");
@@ -23,6 +24,7 @@ const log = logger("broker-signup-postback");
  * Auth: Bearer token via PARTNER_API_KEY or dedicated POSTBACK_SECRET
  */
 export async function POST(request: NextRequest) {
+  trackRequest(request);
   try {
     // Verify auth
     const authHeader = request.headers.get("authorization");
@@ -43,8 +45,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { click_id, broker_slug, external_ref, revenue_cents, commission_type } = body;
+    const PostbackBody = z.object({
+      click_id: z.string().max(200).optional(),
+      broker_slug: z.string().max(100).optional(),
+      external_ref: z.string().max(200).optional(),
+      revenue_cents: z.number().int().min(0).max(100_000_000).optional(),
+      commission_type: z.enum(["cpa", "revshare", "hybrid"]).optional(),
+    });
+    const parsed = PostbackBody.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    }
+    const { click_id, broker_slug, external_ref, revenue_cents, commission_type } = parsed.data;
 
     if (!click_id && !broker_slug) {
       return NextResponse.json(

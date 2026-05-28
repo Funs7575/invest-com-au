@@ -211,12 +211,14 @@ export async function POST(req: NextRequest) {
   // Persist the user message first so we have a record even if
   // streaming fails halfway through.
   const supabase = createAdminClient();
-  void supabase.from("chatbot_conversations").insert({
+  supabase.from("chatbot_conversations").insert({
     session_id,
     role: "user",
     content: v.data.message,
     model: MODEL,
     context: { finder: v.data.finder ?? null, retrieved_count: retrieved.length },
+  }).then(({ error }) => {
+    if (error) log.warn("chatbot_conversations user insert failed", { error: error.message });
   });
 
   // Build messages array — trim history to the last 10 turns to
@@ -339,7 +341,7 @@ export async function POST(req: NextRequest) {
               retrieved_count: retrieved.length,
             });
           }
-          void supabase.from("chatbot_conversations").insert({
+          supabase.from("chatbot_conversations").insert({
             session_id,
             role: "assistant",
             content: assembledAssistant,
@@ -356,6 +358,8 @@ export async function POST(req: NextRequest) {
             },
             flagged: hallucinated.length > 0,
             flagged_reason: hallucinated.length > 0 ? "hallucinated_slug" : null,
+          }).then(({ error }) => {
+            if (error) log.warn("chatbot_conversations assistant insert failed", { error: error.message });
           });
         }
         // V-NEW-06: post-record usage + 80% alert. Fire-and-forget;

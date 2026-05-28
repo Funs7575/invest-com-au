@@ -18,7 +18,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logger } from "@/lib/logger";
+import { logger, trackRequest } from "@/lib/logger";
 import {
   verifyTelegramWebhookSecret,
   sendTelegramMessage,
@@ -176,6 +176,7 @@ async function handleStatus(chatId: number, firstName: string): Promise<void> {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  trackRequest(request);
   if (!isTelegramConfigured()) {
     return NextResponse.json({ error: "not configured" }, { status: 503 });
   }

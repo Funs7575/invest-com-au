@@ -146,16 +146,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to submit enquiry." }, { status: 500 });
     }
 
-    // Increment lead count on listing
-    await supabase.rpc("increment_field", {
+    // Increment lead count on listing (best-effort, non-blocking)
+    supabase.rpc("increment_field", {
       table_name: "property_listings",
       field_name: "lead_count",
       row_id: listing_id,
       amount: 1,
     }).then(({ error }) => {
       if (error) {
-        // Fallback
-        supabase.from("property_listings").update({ lead_count: (listing as Record<string, unknown>).lead_count as number + 1 }).eq("id", listing_id);
+        log.warn("increment_field RPC failed, using fallback update", { error: error.message });
+        supabase.from("property_listings")
+          .update({ lead_count: (listing as Record<string, unknown>).lead_count as number + 1 })
+          .eq("id", listing_id)
+          .then(({ error: fallbackError }) => {
+            if (fallbackError) log.error("lead_count fallback update failed", { error: fallbackError.message });
+          });
       }
     });
 
