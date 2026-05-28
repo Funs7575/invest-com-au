@@ -257,7 +257,9 @@ export default async function HomePage() {
           static content below. See components/HomepagePersonalisedStrip.tsx. */}
       <HomepagePersonalisedStrip />
 
-      <HomeActivitySection />
+      <Suspense fallback={null}>
+        <HomeActivitySection />
+      </Suspense>
 
       <HomeHero
         topBrokers={topBrokersForHero}
@@ -354,9 +356,12 @@ export default async function HomePage() {
       </ScrollFadeIn>
 
       {/* Pro Squad of the Month — rotating verified-team spotlight ranked
-          by outcome flywheel data. Server-rendered, fail-soft to null. */}
+          by outcome flywheel data. Wrapped in Suspense so the async DB read
+          never blocks the ISR-cached page shell. */}
       <ScrollFadeIn>
-        <HomeSquadOfTheMonth />
+        <Suspense fallback={null}>
+          <HomeSquadOfTheMonth />
+        </Suspense>
       </ScrollFadeIn>
 
       <ScrollFadeIn>

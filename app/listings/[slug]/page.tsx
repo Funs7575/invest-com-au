@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { listingProductJsonLd } from "@/lib/schema-markup";
 import {
   getListingBySlug,
   incrementListingViewCount,
@@ -58,6 +59,16 @@ export default async function ListingDetailPage({ params }: Params) {
     { name: listing.title },
   ]);
 
+  const productLd = listingProductJsonLd({
+    slug: listing.slug,
+    title: listing.title,
+    description: listing.description,
+    priceAud: listing.askingPriceCents != null ? Math.round(listing.askingPriceCents / 100) : null,
+    priceDisplay: listing.askingPriceCents == null ? "Price on request" : null,
+    locationState: listing.locationState,
+    vertical: listing.kind,
+  });
+
   const moreInfoHref = `/briefs/new?template=opportunity_assessment&listing_id=${encodeURIComponent(
     listing.id,
   )}`;
@@ -67,6 +78,10 @@ export default async function ListingDetailPage({ params }: Params) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
       />
 
       <section className="bg-slate-900 text-white">

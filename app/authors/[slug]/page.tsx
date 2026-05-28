@@ -11,6 +11,7 @@ import {
   formatRole,
   SITE_NAME,
 } from "@/lib/seo";
+import { personJsonLd } from "@/lib/schema-markup";
 import { NOINDEX_PERSONA_SLUGS } from "@/lib/compliance";
 
 export const revalidate = 3600;
@@ -94,6 +95,15 @@ export default async function AuthorPage({
     { name: "Authors", url: absoluteUrl("/authors") },
     { name: m.full_name },
   ]);
+  const personLd = personJsonLd({
+    name: m.full_name,
+    profileUrl: `/authors/${slug}`,
+    jobTitle: formatRole(m.role),
+    description: m.short_bio ?? null,
+    imageUrl: m.avatar_url ?? null,
+    linkedinUrl: m.linkedin_url ?? null,
+    twitterUrl: m.twitter_url ?? null,
+  });
 
   const initials = m.full_name
     .split(" ")
@@ -112,6 +122,10 @@ export default async function AuthorPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }}
       />
 
       {/* Hero */}
