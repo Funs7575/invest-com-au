@@ -85,17 +85,88 @@ describe("/api/admin/advisor-applications", () => {
   it("PATCH reject returns success when app is pending", async () => {
     const appData = { id: 1, status: "pending", email: "user@test.com", name: "John", rejection_reason: null };
     const appBuilder = makeBuilder({ data: appData, error: null });
-    // single() needs to return data directly
     appBuilder.single = vi.fn(() => Promise.resolve({ data: appData, error: null }));
     const updateBuilder = makeBuilder({ data: null, error: null });
     const insertBuilder = makeBuilder({ data: null, error: null });
     mockFrom
-      .mockReturnValueOnce(appBuilder)  // select app
-      .mockReturnValueOnce(updateBuilder) // update app status
-      .mockReturnValueOnce(insertBuilder); // audit log
+      .mockReturnValueOnce(appBuilder)
+      .mockReturnValueOnce(updateBuilder)
+      .mockReturnValueOnce(insertBuilder);
 
     const res = await PATCH(makeReq("PATCH", { applicationId: 1, action: "reject", rejectionReason: "Not suitable" }));
-    // The response could be 200 or 404 depending on mock chain - just check it's not 401
     expect(res.status).not.toBe(401);
+  });
+
+  it("PATCH approve returns 500 when auth token insert fails", async () => {
+    const appData = {
+      id: 2, status: "pending", email: "advisor@example.com", name: "Jane Smith",
+      type: "financial_planner", location_suburb: null, location_state: null,
+      afsl_number: null, registration_number: null, specialties: null, bio: null,
+      website: null, fee_description: null, photo_url: null, abn: null,
+      firm_name: null, phone: null, account_type: "individual",
+    };
+
+    // location_suburb is null → geocode branch is skipped entirely
+    const appFetchBuilder = makeBuilder({ data: appData, error: null });
+    appFetchBuilder.single = vi.fn(() => Promise.resolve({ data: appData, error: null }));
+
+    const slugCheckBuilder = makeBuilder({ data: null, error: null });
+    slugCheckBuilder.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+
+    const insertProBuilder = makeBuilder({ data: { id: 99 }, error: null });
+    insertProBuilder.single = vi.fn(() => Promise.resolve({ data: { id: 99 }, error: null }));
+
+    const appUpdateBuilder = makeBuilder({ data: null, error: null });
+
+    const tokenInsertBuilder = makeBuilder({ data: null, error: { message: "token insert failed" } });
+
+    mockFrom
+      .mockReturnValueOnce(appFetchBuilder)     // advisor_applications select
+      .mockReturnValueOnce(slugCheckBuilder)    // professionals slug check (geocode skipped — location_suburb null)
+      .mockReturnValueOnce(insertProBuilder)    // professionals insert
+      .mockReturnValueOnce(appUpdateBuilder)    // advisor_applications update
+      .mockReturnValueOnce(tokenInsertBuilder); // advisor_auth_tokens insert FAILS
+
+    const res = await PATCH(makeReq("PATCH", { applicationId: 2, action: "approve" }));
+    expect(res.status).toBe(500);
+    const json = await res.json();
+    expect(json.error).toMatch(/token/i);
+  });
+
+  it("PATCH approve returns 200 on happy path", async () => {
+    const appData = {
+      id: 3, status: "pending", email: "advisor2@example.com", name: "Bob Lee",
+      type: "tax_agent", location_suburb: null, location_state: null,
+      afsl_number: null, registration_number: null, specialties: null, bio: null,
+      website: null, fee_description: null, photo_url: null, abn: null,
+      firm_name: null, phone: null, account_type: "individual",
+    };
+
+    const appFetchBuilder = makeBuilder({ data: appData, error: null });
+    appFetchBuilder.single = vi.fn(() => Promise.resolve({ data: appData, error: null }));
+
+    const slugCheckBuilder = makeBuilder({ data: null, error: null });
+    slugCheckBuilder.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+
+    const insertProBuilder = makeBuilder({ data: { id: 100 }, error: null });
+    insertProBuilder.single = vi.fn(() => Promise.resolve({ data: { id: 100 }, error: null }));
+
+    const appUpdateBuilder = makeBuilder({ data: null, error: null });
+    const tokenInsertBuilder = makeBuilder({ data: null, error: null });
+    const auditBuilder = makeBuilder({ data: null, error: null });
+
+    mockFrom
+      .mockReturnValueOnce(appFetchBuilder)     // advisor_applications select
+      .mockReturnValueOnce(slugCheckBuilder)    // professionals slug check (geocode skipped — location_suburb null)
+      .mockReturnValueOnce(insertProBuilder)    // professionals insert
+      .mockReturnValueOnce(appUpdateBuilder)    // advisor_applications update
+      .mockReturnValueOnce(tokenInsertBuilder)  // advisor_auth_tokens insert
+      .mockReturnValueOnce(auditBuilder);       // admin_audit_log insert
+
+    const res = await PATCH(makeReq("PATCH", { applicationId: 3, action: "approve" }));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.success).toBe(true);
+    expect(json.professionalId).toBe(100);
   });
 });

@@ -59,6 +59,15 @@ function makeTerminalBuilder() {
   };
 }
 
+/** Builder that returns a DB error on the final .eq() terminal call. */
+function makeTerminalBuilderError(message = "db error") {
+  return {
+    update: vi.fn().mockReturnThis(),
+    delete: vi.fn().mockReturnThis(),
+    eq: vi.fn(() => Promise.resolve({ error: { message } })),
+  };
+}
+
 /** Builder for insert. */
 function makeInsertBuilder(error: unknown = null) {
   return { insert: vi.fn(() => Promise.resolve({ error })) };
@@ -219,5 +228,29 @@ describe("POST /api/community/vote", () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.vote_score).toBe(0); // 1 + (-1)
+  });
+
+  it("returns 500 when vote delete fails on toggle-off", async () => {
+    const target = { id: TARGET_ID, author_id: AUTHOR_ID, vote_score: 5 };
+    mockAdminFrom
+      .mockImplementationOnce(() => makeSingleBuilder(target, null))               // fetch target
+      .mockImplementationOnce(() => makeSingleBuilder({ id: 1, value: 1 }, null))  // existing vote (same)
+      .mockImplementationOnce(() => makeTerminalBuilderError("delete failed"));     // DELETE fails
+    const res = await POST(makeRequest({ target_type: "thread", target_id: TARGET_ID, vote: 1 }));
+    expect(res.status).toBe(500);
+    const data = await res.json();
+    expect(data.error).toMatch(/vote/i);
+  });
+
+  it("returns 500 when vote direction update fails", async () => {
+    const target = { id: TARGET_ID, author_id: AUTHOR_ID, vote_score: 2 };
+    mockAdminFrom
+      .mockImplementationOnce(() => makeSingleBuilder(target, null))                // fetch target
+      .mockImplementationOnce(() => makeSingleBuilder({ id: 1, value: -1 }, null)) // existing opposite vote
+      .mockImplementationOnce(() => makeTerminalBuilderError("update failed"));     // UPDATE fails
+    const res = await POST(makeRequest({ target_type: "thread", target_id: TARGET_ID, vote: 1 }));
+    expect(res.status).toBe(500);
+    const data = await res.json();
+    expect(data.error).toMatch(/vote/i);
   });
 });
