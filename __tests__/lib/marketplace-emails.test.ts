@@ -163,9 +163,10 @@ describe("marketplace-emails", () => {
       expect(html).toContain("A");
       expect(html).toContain("B");
       expect(html).toContain("C");
-      // 4th item should be sliced off
-      expect(html).not.toContain("<li");
-      // All 3 items should appear as list items
+      // 4th item is sliced off
+      expect(html).not.toContain(">D<");
+      // items 1-3 rendered as list items
+      expect(html).toContain("<li");
     });
 
     it("renders without list when topBriefTitles is empty", async () => {
