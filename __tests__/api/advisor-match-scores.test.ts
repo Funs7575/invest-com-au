@@ -119,6 +119,10 @@ describe("GET /api/cron/advisor-match-scores", () => {
       return advCallCount >= 2 ? Promise.resolve({ data: [ADVISOR_ROW], error: null }) : advChain;
     });
 
+    const criteriaChain = {
+      select: vi.fn(() => Promise.resolve({ data: [], error: null })),
+    };
+
     const upsertChain = {
       upsert: vi.fn(() => Promise.resolve({ error: null })),
     };
@@ -128,6 +132,7 @@ describe("GET /api/cron/advisor-match-scores", () => {
       callIndex++;
       if (callIndex === 1) return profileChain;
       if (callIndex === 2) return advChain;
+      if (callIndex === 3) return criteriaChain;
       return upsertChain;
     });
 

@@ -141,8 +141,10 @@ describe("getCategoryBySlug", () => {
 
 describe("getAllCategorySlugs", () => {
   it("matches getAllCategories().map(c => c.slug)", () => {
+    // getAllCategorySlugs deduplicates entries with identical slugs
+    // (the function comment documents this intentional behaviour)
     expect(getAllCategorySlugs()).toEqual(
-      getAllCategories().map((c) => c.slug),
+      [...new Set(getAllCategories().map((c) => c.slug))],
     );
   });
 });

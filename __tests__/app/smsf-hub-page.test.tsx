@@ -1,219 +1,115 @@
 /**
  * @vitest-environment jsdom
  *
- * Smoke tests for /smsf/page.tsx — W-13 proof-of-template validation.
- * Verifies the HubPage HOC correctly orchestrates the SMSF hub:
- * hero, service grid, articles section, deep-dives, and compliance block.
+ * Smoke tests for /smsf/page.tsx — custom guide layout (rebuilt from HubPage HOC).
+ * Verifies hero, breadcrumb JSON-LD, FAQ JSON-LD, topic cards, and compliance.
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { render, screen } from "../components/setup";
-import SmsfHubPage from "@/app/smsf/page";
-
-// ── Mocks ────────────────────────────────────────────────────────────────────
-
-const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
-
-vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn().mockResolvedValue({ from: mockFrom }),
-}));
-
-vi.mock("@/components/Icon", () => ({
-  default: ({ name, ...rest }: { name: string; [k: string]: unknown }) => (
-    <span data-testid={`icon-${name}`} {...rest} />
-  ),
-}));
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-type Article = {
-  slug: string;
-  title: string;
-  excerpt: string | null;
-  category: string | null;
-  published_at: string | null;
-};
-
-function setupArticlesMock(articles: Article[] = []) {
-  const limit = vi.fn().mockResolvedValue({ data: articles });
-  const order = vi.fn().mockReturnValue({ limit });
-  const or = vi.fn().mockReturnValue({ order });
-  const eq = vi.fn().mockReturnValue({ or });
-  const select = vi.fn().mockReturnValue({ eq });
-  mockFrom.mockReturnValue({ select });
-}
-
-// ── Tests ─────────────────────────────────────────────────────────────────────
+import SmsfPage from "@/app/smsf/page";
 
 describe("SmsfHubPage", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    setupArticlesMock();
-  });
-
-  // ── HubPage HOC structure ─────────────────────────────────────────────────
-
-  it("renders the hub-page container from HubPage HOC", async () => {
-    render(await SmsfHubPage());
-    expect(screen.getByTestId("hub-page")).toBeInTheDocument();
-  });
-
-  it("renders the HubHero with SMSF headline", async () => {
-    render(await SmsfHubPage());
-    expect(screen.getByTestId("hub-hero")).toBeInTheDocument();
+  it("renders the h1 SMSF headline", () => {
+    render(SmsfPage());
     expect(
-      screen.getByText("SMSF Investment & Services Hub")
+      screen.getByRole("heading", { level: 1, name: /Self-Managed Super Funds/i })
     ).toBeInTheDocument();
   });
 
-  it("renders the HubHero subhead text", async () => {
-    render(await SmsfHubPage());
-    expect(screen.getByText(/600,000\+ Australians/)).toBeInTheDocument();
-  });
-
-  it("renders breadcrumb JSON-LD from HubPage", async () => {
-    render(await SmsfHubPage());
-    const ldScript = screen.getByTestId("hub-page-breadcrumb-ld");
-    expect(ldScript).toBeInTheDocument();
-    const ld = JSON.parse(ldScript.innerHTML);
-    expect(ld["@type"]).toBe("BreadcrumbList");
+  it("renders breadcrumb JSON-LD with BreadcrumbList type", () => {
+    render(SmsfPage());
+    const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+    const breadcrumbScript = Array.from(scripts).find((s) => {
+      try {
+        return JSON.parse(s.innerHTML)["@type"] === "BreadcrumbList";
+      } catch {
+        return false;
+      }
+    });
+    expect(breadcrumbScript).toBeDefined();
+    const ld = JSON.parse(breadcrumbScript!.innerHTML);
     const names = ld.itemListElement.map((item: { name: string }) => item.name);
     expect(names).toContain("Home");
-    expect(names).toContain("Smsf");
+    expect(names).toContain("SMSF");
   });
 
-  it("renders FAQPage JSON-LD because SMSF_HUB_CONFIG has faqs", async () => {
-    render(await SmsfHubPage());
-    expect(screen.getByTestId("hub-page-faq-ld")).toBeInTheDocument();
+  it("renders FAQPage JSON-LD", () => {
+    render(SmsfPage());
+    const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+    const faqScript = Array.from(scripts).find((s) => {
+      try {
+        return JSON.parse(s.innerHTML)["@type"] === "FAQPage";
+      } catch {
+        return false;
+      }
+    });
+    expect(faqScript).toBeDefined();
   });
 
-  it("renders compliance block with SMSF insurance cover warning", async () => {
-    render(await SmsfHubPage());
-    const block = screen.getByTestId("hub-page-compliance");
-    expect(block).toBeInTheDocument();
-    expect(block).toHaveTextContent("insurance cover");
+  it("renders the nav breadcrumb with Home link", () => {
+    render(SmsfPage());
+    expect(
+      screen.getByRole("navigation", { name: /breadcrumb/i })
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Home" })).toBeInTheDocument();
   });
 
-  // ── Service grid slot ─────────────────────────────────────────────────────
-
-  it("renders the service grid slot wrapper", async () => {
-    render(await SmsfHubPage());
-    expect(screen.getByTestId("hub-page-service-grid")).toBeInTheDocument();
+  it("renders hero CTA links", () => {
+    render(SmsfPage());
+    expect(
+      screen.getByRole("link", { name: /how to set up an smsf/i })
+    ).toHaveAttribute("href", "/smsf/setup");
+    expect(
+      screen.getByRole("link", { name: /find an smsf auditor/i })
+    ).toHaveAttribute("href", "/smsf/auditors");
   });
 
-  it("renders all four SMSF service category titles", async () => {
-    render(await SmsfHubPage());
-    expect(screen.getByText("Setup & Administration")).toBeInTheDocument();
-    expect(screen.getByText("Annual Auditing")).toBeInTheDocument();
-    expect(screen.getByText("Property in SMSF")).toBeInTheDocument();
+  it("renders the SMSF costs heading and cost table rows", () => {
+    render(SmsfPage());
+    expect(
+      screen.getByRole("heading", { level: 2, name: /SMSF costs/i })
+    ).toBeInTheDocument();
+    expect(screen.getByText("ATO supervisory levy")).toBeInTheDocument();
+  });
+
+  it("renders SMSF statistics cards", () => {
+    render(SmsfPage());
+    expect(screen.getByText("Up to 6")).toBeInTheDocument();
+    expect(screen.getByText("~620,000")).toBeInTheDocument();
+    expect(screen.getByText("$200K+")).toBeInTheDocument();
+  });
+
+  it("renders all eight SMSF topic cards", () => {
+    render(SmsfPage());
+    expect(screen.getByText("SMSF Setup")).toBeInTheDocument();
+    expect(screen.getByText("SMSF Property")).toBeInTheDocument();
+    expect(screen.getByText("SMSF Borrowing (LRBA)")).toBeInTheDocument();
+    expect(screen.getByText("SMSF Crypto")).toBeInTheDocument();
+    expect(screen.getByText("SMSF Wind-Up")).toBeInTheDocument();
     expect(screen.getByText("Investment Strategy")).toBeInTheDocument();
+    expect(screen.getByText("SMSF Insurance")).toBeInTheDocument();
+    expect(screen.getByText("SMSF Audits")).toBeInTheDocument();
   });
 
-  // ── Cross-link section (children slot) ───────────────────────────────────
-
-  it("renders the SMSF Investment Guide cross-link section", async () => {
-    render(await SmsfHubPage());
-    expect(screen.getByText("SMSF Investment Guide")).toBeInTheDocument();
-  });
-
-  it("cross-link points to /invest/smsf", async () => {
-    render(await SmsfHubPage());
+  it("renders the FAQ section with at least one question", () => {
+    render(SmsfPage());
     expect(
-      screen.getByRole("link", { name: /read the guide/i })
-    ).toHaveAttribute("href", "/invest/smsf");
-  });
-
-  // ── Articles section ─────────────────────────────────────────────────────
-
-  it("does not render articles heading when Supabase returns empty array", async () => {
-    setupArticlesMock([]);
-    render(await SmsfHubPage());
+      screen.getByRole("heading", { level: 2, name: /Frequently asked questions/i })
+    ).toBeInTheDocument();
     expect(
-      screen.queryByText("Featured SMSF articles")
-    ).not.toBeInTheDocument();
-  });
-
-  it("renders articles section when articles are returned", async () => {
-    setupArticlesMock([
-      {
-        slug: "smsf-audit-guide",
-        title: "SMSF Audit Guide 2026",
-        excerpt: "What to expect from your annual audit.",
-        category: "smsf",
-        published_at: "2026-03-01",
-      },
-      {
-        slug: "smsf-lrba-explained",
-        title: "LRBA Explained",
-        excerpt: null,
-        category: "smsf",
-        published_at: "2026-02-15",
-      },
-    ]);
-    render(await SmsfHubPage());
-    expect(screen.getByText("Featured SMSF articles")).toBeInTheDocument();
-    expect(screen.getByText("SMSF Audit Guide 2026")).toBeInTheDocument();
-    expect(screen.getByText("LRBA Explained")).toBeInTheDocument();
-  });
-
-  it("article cards link to /article/<slug>", async () => {
-    setupArticlesMock([
-      {
-        slug: "smsf-audit-guide",
-        title: "SMSF Audit Guide 2026",
-        excerpt: null,
-        category: "smsf",
-        published_at: "2026-03-01",
-      },
-    ]);
-    render(await SmsfHubPage());
-    expect(
-      screen.getByRole("link", { name: /smsf audit guide 2026/i })
-    ).toHaveAttribute("href", "/article/smsf-audit-guide");
-  });
-
-  it("renders article excerpt when present", async () => {
-    setupArticlesMock([
-      {
-        slug: "smsf-pension-phase",
-        title: "SMSF Pension Phase",
-        excerpt: "Transition to pension phase at 60.",
-        category: "smsf",
-        published_at: "2026-01-01",
-      },
-    ]);
-    render(await SmsfHubPage());
-    expect(
-      screen.getByText("Transition to pension phase at 60.")
+      screen.getByText("How much super do I need to set up an SMSF?")
     ).toBeInTheDocument();
   });
 
-  // ── Deep-dives section ───────────────────────────────────────────────────
-
-  it("renders the deep-dives section from SMSF_HUB_CONFIG", async () => {
-    render(await SmsfHubPage());
-    expect(screen.getByText("SMSF deep-dives")).toBeInTheDocument();
+  it("renders the general advice warning", () => {
+    render(SmsfPage());
+    expect(screen.getByText(/general in nature/i)).toBeInTheDocument();
   });
 
-  it("renders the first deep-dive card from config", async () => {
-    render(await SmsfHubPage());
-    expect(screen.getByText("How to Set Up an SMSF")).toBeInTheDocument();
-  });
-
-  // ── Error resilience ─────────────────────────────────────────────────────
-
-  it("renders page gracefully when Supabase throws an error", async () => {
-    const limit = vi.fn().mockRejectedValue(new Error("DB unavailable"));
-    const order = vi.fn().mockReturnValue({ limit });
-    const or = vi.fn().mockReturnValue({ order });
-    const eq = vi.fn().mockReturnValue({ or });
-    const select = vi.fn().mockReturnValue({ eq });
-    mockFrom.mockReturnValue({ select });
-
-    render(await SmsfHubPage());
-    // Page renders without crashing; fetchSmsfArticles catch returns []
-    expect(screen.getByTestId("hub-page")).toBeInTheDocument();
+  it("renders the LRBA section link", () => {
+    render(SmsfPage());
     expect(
-      screen.queryByText("Featured SMSF articles")
-    ).not.toBeInTheDocument();
+      screen.getByRole("link", { name: /full lrba guide/i })
+    ).toHaveAttribute("href", "/smsf/borrowing");
   });
 });

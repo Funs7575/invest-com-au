@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import FollowAdvisorButton from "@/components/FollowAdvisorButton";
 
 export const revalidate = 1800;
@@ -204,6 +205,10 @@ export default async function AdvisorInsightsPage({ params }: { params: Promise<
             </div>
           )}
         </div>
+
+        <p style={{ fontSize: 11, color: "var(--color-ink-400)", marginTop: 40, lineHeight: 1.6 }}>
+          {GENERAL_ADVICE_WARNING}
+        </p>
       </div>
     </>
   );
