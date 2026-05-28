@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { resolveAdvisorBadges } from "@/lib/forum-author-badges";
+import { discussionForumPostingJsonLd } from "@/lib/schema-markup";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
@@ -127,9 +128,16 @@ export async function generateMetadata({
 
   if (!thread) return { title: "Thread Not Found" };
 
+  const { category: categorySlug } = await params;
   return {
     title: `${thread.title} - Community Forum`,
     description: `Discussion started by ${thread.author_name} in the Invest.com.au community forum.`,
+    alternates: { canonical: absoluteUrl(`/community/${categorySlug}/${threadId}`) },
+    openGraph: {
+      title: `${thread.title} - Invest.com.au Community`,
+      description: `Discussion started by ${thread.author_name} in the Invest.com.au community forum.`,
+      url: absoluteUrl(`/community/${categorySlug}/${threadId}`),
+    },
   };
 }
 
@@ -143,34 +151,35 @@ export default async function ThreadPage({
   const { category: categorySlug, threadId } = await params;
   const supabase = await createClient();
 
-  // Fetch category
-  const { data: catData } = await supabase
-    .from("forum_categories")
-    .select("id, slug, name, icon, color")
-    .eq("slug", categorySlug)
-    .eq("status", "active")
-    .single();
+  // Parallel fetch — all three are independent (slug + threadId available immediately)
+  const [
+    { data: catData },
+    { data: threadData },
+    { data: postsData },
+  ] = await Promise.all([
+    supabase
+      .from("forum_categories")
+      .select("id, slug, name, icon, color")
+      .eq("slug", categorySlug)
+      .eq("status", "active")
+      .single(),
+    supabase
+      .from("forum_threads")
+      .select("*")
+      .eq("id", threadId)
+      .eq("is_removed", false)
+      .single(),
+    supabase
+      .from("forum_posts")
+      .select("*")
+      .eq("thread_id", threadId)
+      .eq("is_removed", false)
+      .order("created_at", { ascending: true }),
+  ]);
 
   if (!catData) notFound();
-  const category = catData as ForumCategory;
-
-  // Fetch thread
-  const { data: threadData } = await supabase
-    .from("forum_threads")
-    .select("*")
-    .eq("id", threadId)
-    .eq("is_removed", false)
-    .single();
-
   if (!threadData) notFound();
-
-  // Fetch posts
-  const { data: postsData } = await supabase
-    .from("forum_posts")
-    .select("*")
-    .eq("thread_id", threadId)
-    .eq("is_removed", false)
-    .order("created_at", { ascending: true });
+  const category = catData as ForumCategory;
 
   // Fetch author profiles
   const authorIds = new Set<string>();
@@ -228,11 +237,26 @@ export default async function ThreadPage({
     { name: thread.title },
   ]);
 
+  const forumPostingLd = discussionForumPostingJsonLd({
+    title: thread.title,
+    body: thread.body,
+    authorName: thread.author_name,
+    createdAt: thread.created_at,
+    updatedAt: thread.updated_at,
+    replyCount: thread.reply_count,
+    categoryName: category.name,
+    url: absoluteUrl(`/community/${categorySlug}/${threadId}`),
+  });
+
   return (
     <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(forumPostingLd) }}
       />
 
       {/* Breadcrumbs */}

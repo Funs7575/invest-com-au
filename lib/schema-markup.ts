@@ -1206,3 +1206,37 @@ export function personCredentialJsonLd(input: PersonCredentialInput) {
 
   return { credential, person };
 }
+
+// ─── DiscussionForumPosting ───────────────────────────────────
+
+export interface DiscussionForumPostingInput {
+  title: string;
+  body: string;
+  authorName: string;
+  createdAt: string;
+  updatedAt?: string | null;
+  replyCount?: number;
+  categoryName?: string;
+  url: string;
+}
+
+export function discussionForumPostingJsonLd(input: DiscussionForumPostingInput) {
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "DiscussionForumPosting",
+    headline: input.title,
+    text: input.body.slice(0, 500) || undefined,
+    url: input.url,
+    datePublished: input.createdAt,
+    dateModified: input.updatedAt ?? input.createdAt,
+    author: {
+      "@type": "Person",
+      name: input.authorName,
+    },
+    commentCount: input.replyCount ?? 0,
+    about: input.categoryName
+      ? { "@type": "Thing", name: input.categoryName }
+      : undefined,
+    publisher: ORG,
+  });
+}
