@@ -19,8 +19,10 @@ export const metadata: Metadata = {
 
 export default async function ForAdvisorsPage() {
   const supabase = await createClient();
-  const { count: advisorCount } = await supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active");
-  const { count: leadCount } = await supabase.from("professional_leads").select("id", { count: "exact", head: true });
+  const [{ count: advisorCount }, { count: leadCount }] = await Promise.all([
+    supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active"),
+    supabase.from("professional_leads").select("id", { count: "exact", head: true }),
+  ]);
 
   return (
     <div className="min-h-screen bg-white">

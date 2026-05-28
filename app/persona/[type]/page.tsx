@@ -65,10 +65,12 @@ export async function generateMetadata({
   return {
     title: `${personaType} Investor Persona | Invest.com.au`,
     description: result.description,
+    alternates: { canonical: absoluteUrl(`/persona/${type}`) },
     openGraph: {
       title: `${result.emoji} ${personaType} — Investor Persona`,
       description: result.tagline,
       images: [{ url: ogUrl, width: 1200, height: 630 }],
+      url: absoluteUrl(`/persona/${type}`),
     },
     twitter: {
       card: "summary_large_image",

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { absoluteUrl } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import ListFollowButton from "./ListFollowButton";
 
@@ -47,6 +48,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: `${data.title} — Invest.com.au`,
     description: data.description || `A curated investment list on Invest.com.au`,
+    alternates: { canonical: absoluteUrl(`/lists/${slug}`) },
+    openGraph: {
+      title: `${data.title} — Invest.com.au`,
+      description: data.description || `A curated investment list on Invest.com.au`,
+      url: absoluteUrl(`/lists/${slug}`),
+    },
   };
 }
 
