@@ -3,10 +3,15 @@ import { NextRequest } from "next/server";
 
 // ── Mock state ────────────────────────────────────────────────────────────────
 
+const { mockIsRateLimited } = vi.hoisted(() => ({ mockIsRateLimited: vi.fn() }));
 const mockGetUser = vi.fn();
 const mockFrom = vi.fn();
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
+
+vi.mock("@/lib/rate-limit", () => ({
+  isRateLimited: (...args: unknown[]) => mockIsRateLimited(...args),
+}));
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
@@ -97,12 +102,22 @@ describe("GET /api/user-profile", () => {
 // ── PUT tests ─────────────────────────────────────────────────────────────────
 
 describe("PUT /api/user-profile", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockIsRateLimited.mockResolvedValue(false);
+  });
 
   it("returns 401 when unauthenticated", async () => {
     mockGetUser.mockResolvedValueOnce({ data: { user: null } });
     const res = await PUT(makePut({ display_name: "Bob" }));
     expect(res.status).toBe(401);
+  });
+
+  it("returns 429 when rate limited", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    mockIsRateLimited.mockResolvedValueOnce(true);
+    const res = await PUT(makePut({ display_name: "Bob" }));
+    expect(res.status).toBe(429);
   });
 
   it("returns 400 when body is malformed JSON", async () => {

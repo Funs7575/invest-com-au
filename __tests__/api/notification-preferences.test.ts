@@ -3,8 +3,13 @@ import { NextRequest } from "next/server";
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
+const { mockIsRateLimited } = vi.hoisted(() => ({ mockIsRateLimited: vi.fn() }));
 const mockGetUser = vi.fn();
 const mockFrom = vi.fn();
+
+vi.mock("@/lib/rate-limit", () => ({
+  isRateLimited: (...args: unknown[]) => mockIsRateLimited(...args),
+}));
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
@@ -103,12 +108,22 @@ describe("GET /api/notification-preferences", () => {
 // ── POST tests ────────────────────────────────────────────────────────────────
 
 describe("POST /api/notification-preferences", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockIsRateLimited.mockResolvedValue(false);
+  });
 
   it("returns 401 when unauthenticated", async () => {
     mockGetUser.mockResolvedValueOnce({ data: { user: null } });
     const res = await POST(makePost({ fee_alerts: true }));
     expect(res.status).toBe(401);
+  });
+
+  it("returns 429 when rate limited", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    mockIsRateLimited.mockResolvedValueOnce(true);
+    const res = await POST(makePost({ fee_alerts: true }));
+    expect(res.status).toBe(429);
   });
 
   it("returns 400 for malformed JSON body", async () => {
