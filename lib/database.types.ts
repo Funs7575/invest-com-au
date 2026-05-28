@@ -12877,9 +12877,7 @@ export type Database = {
           used_services: boolean | null
           value_for_money_rating: number | null
           verified: boolean | null
-          verified_at: string | null
           verified_client_at: string | null
-          verified_engagement: boolean
         }
         Insert: {
           admin_overridden_at?: string | null
@@ -12905,9 +12903,7 @@ export type Database = {
           used_services?: boolean | null
           value_for_money_rating?: number | null
           verified?: boolean | null
-          verified_at?: string | null
           verified_client_at?: string | null
-          verified_engagement?: boolean
         }
         Update: {
           admin_overridden_at?: string | null
@@ -12933,9 +12929,7 @@ export type Database = {
           used_services?: boolean | null
           value_for_money_rating?: number | null
           verified?: boolean | null
-          verified_at?: string | null
           verified_client_at?: string | null
-          verified_engagement?: boolean
         }
         Relationships: [
           {
@@ -14326,69 +14320,101 @@ export type Database = {
       }
       rate_alert_subscriptions: {
         Row: {
-          broker_slug: string | null
           created_at: string
-          direction: string
           email: string
           frequency: string
           id: string
-          last_fired_value_bps: number | null
           last_notified_at: string | null
-          lender_slug: string | null
-          metric_kind: string | null
           notification_count: number
           product_filters: Json
           product_kind: string
           threshold_bps: number
           unsubscribe_token: string
           updated_at: string
-          user_id: string | null
           verified: boolean
           verify_token: string
         }
         Insert: {
-          broker_slug?: string | null
           created_at?: string
-          direction?: string
           email: string
           frequency?: string
           id?: string
-          last_fired_value_bps?: number | null
           last_notified_at?: string | null
-          lender_slug?: string | null
-          metric_kind?: string | null
           notification_count?: number
           product_filters?: Json
           product_kind: string
           threshold_bps: number
           unsubscribe_token: string
           updated_at?: string
-          user_id?: string | null
           verified?: boolean
           verify_token: string
         }
         Update: {
-          broker_slug?: string | null
           created_at?: string
-          direction?: string
           email?: string
           frequency?: string
           id?: string
-          last_fired_value_bps?: number | null
           last_notified_at?: string | null
-          lender_slug?: string | null
-          metric_kind?: string | null
           notification_count?: number
           product_filters?: Json
           product_kind?: string
           threshold_bps?: number
           unsubscribe_token?: string
           updated_at?: string
-          user_id?: string | null
           verified?: boolean
           verify_token?: string
         }
         Relationships: []
+      }
+      rate_change_log: {
+        Row: {
+          broker_id: number
+          broker_name: string
+          broker_slug: string
+          delta_bps: number
+          direction: string
+          id: string
+          logged_at: string
+          new_rate_bps: number
+          old_rate_bps: number | null
+          product_kind: string
+          snapshot_captured_at: string
+        }
+        Insert: {
+          broker_id: number
+          broker_name: string
+          broker_slug: string
+          delta_bps: number
+          direction: string
+          id?: string
+          logged_at?: string
+          new_rate_bps: number
+          old_rate_bps?: number | null
+          product_kind: string
+          snapshot_captured_at: string
+        }
+        Update: {
+          broker_id?: number
+          broker_name?: string
+          broker_slug?: string
+          delta_bps?: number
+          direction?: string
+          id?: string
+          logged_at?: string
+          new_rate_bps?: number
+          old_rate_bps?: number | null
+          product_kind?: string
+          snapshot_captured_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rate_change_log_broker_id_fkey"
+            columns: ["broker_id"]
+            isOneToOne: false
+            referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rate_limit_buckets: {
         Row: {
@@ -15614,315 +15640,6 @@ export type Database = {
         }
         Relationships: []
       }
-      startup_data_room_access: {
-        Row: {
-          file_id: string
-          granted_at: string
-          granted_by_user_id: string
-          granted_to_user_id: string
-          id: string
-          revoked_at: string | null
-        }
-        Insert: {
-          file_id: string
-          granted_at?: string
-          granted_by_user_id: string
-          granted_to_user_id: string
-          id?: string
-          revoked_at?: string | null
-        }
-        Update: {
-          file_id?: string
-          granted_at?: string
-          granted_by_user_id?: string
-          granted_to_user_id?: string
-          id?: string
-          revoked_at?: string | null
-        }
-        Relationships: []
-      }
-      startup_data_room_files: {
-        Row: {
-          category: string
-          filename: string
-          id: string
-          requires_wholesale_cert: boolean
-          round_id: string | null
-          startup_id: string
-          storage_path: string
-          uploaded_at: string
-        }
-        Insert: {
-          category: string
-          filename: string
-          id?: string
-          requires_wholesale_cert?: boolean
-          round_id?: string | null
-          startup_id: string
-          storage_path: string
-          uploaded_at?: string
-        }
-        Update: {
-          category?: string
-          filename?: string
-          id?: string
-          requires_wholesale_cert?: boolean
-          round_id?: string | null
-          startup_id?: string
-          storage_path?: string
-          uploaded_at?: string
-        }
-        Relationships: []
-      }
-      startup_investor_inquiries: {
-        Row: {
-          created_at: string
-          data_room_access_granted_at: string | null
-          id: string
-          inquiry_message: string
-          investor_user_id: string
-          round_id: string
-          status: string
-          wholesale_cert_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          data_room_access_granted_at?: string | null
-          id?: string
-          inquiry_message: string
-          investor_user_id: string
-          round_id: string
-          status?: string
-          wholesale_cert_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          data_room_access_granted_at?: string | null
-          id?: string
-          inquiry_message?: string
-          investor_user_id?: string
-          round_id?: string
-          status?: string
-          wholesale_cert_id?: string | null
-        }
-        Relationships: []
-      }
-      startup_profiles: {
-        Row: {
-          abn: string | null
-          company_name: string
-          created_at: string
-          esic_eligible_self_attested: boolean
-          esic_verified_at: string | null
-          esic_verified_by: string | null
-          founded_at: string | null
-          id: string
-          linkedin_url: string | null
-          owner_user_id: string
-          pitch_deck_url: string | null
-          sector: string[]
-          slug: string
-          stage: string
-          status: string
-          team: Json
-          updated_at: string
-        }
-        Insert: {
-          abn?: string | null
-          company_name: string
-          created_at?: string
-          esic_eligible_self_attested?: boolean
-          esic_verified_at?: string | null
-          esic_verified_by?: string | null
-          founded_at?: string | null
-          id?: string
-          linkedin_url?: string | null
-          owner_user_id: string
-          pitch_deck_url?: string | null
-          sector?: string[]
-          slug: string
-          stage: string
-          status?: string
-          team?: Json
-          updated_at?: string
-        }
-        Update: {
-          abn?: string | null
-          company_name?: string
-          created_at?: string
-          esic_eligible_self_attested?: boolean
-          esic_verified_at?: string | null
-          esic_verified_by?: string | null
-          founded_at?: string | null
-          id?: string
-          linkedin_url?: string | null
-          owner_user_id?: string
-          pitch_deck_url?: string | null
-          sector?: string[]
-          slug?: string
-          stage?: string
-          status?: string
-          team?: Json
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      startup_rounds: {
-        Row: {
-          closes_at: string | null
-          created_at: string
-          discount_pct: number | null
-          id: string
-          instrument: string
-          interest_rate_pct: number | null
-          lead_investor_name: string | null
-          maturity_months: number | null
-          min_ticket_aud_cents: number
-          raised_aud_cents: number
-          startup_id: string
-          status: string
-          target_aud_cents: number
-          updated_at: string
-          valuation_cap_aud_cents: number | null
-          wholesale_only: boolean
-        }
-        Insert: {
-          closes_at?: string | null
-          created_at?: string
-          discount_pct?: number | null
-          id?: string
-          instrument: string
-          interest_rate_pct?: number | null
-          lead_investor_name?: string | null
-          maturity_months?: number | null
-          min_ticket_aud_cents?: number
-          raised_aud_cents?: number
-          startup_id: string
-          status?: string
-          target_aud_cents: number
-          updated_at?: string
-          valuation_cap_aud_cents?: number | null
-          wholesale_only?: boolean
-        }
-        Update: {
-          closes_at?: string | null
-          created_at?: string
-          discount_pct?: number | null
-          id?: string
-          instrument?: string
-          interest_rate_pct?: number | null
-          lead_investor_name?: string | null
-          maturity_months?: number | null
-          min_ticket_aud_cents?: number
-          raised_aud_cents?: number
-          startup_id?: string
-          status?: string
-          target_aud_cents?: number
-          updated_at?: string
-          valuation_cap_aud_cents?: number | null
-          wholesale_only?: boolean
-        }
-        Relationships: []
-      }
-      startup_sessions: {
-        Row: {
-          created_at: string
-          expires_at: string
-          id: string
-          session_token: string
-          startup_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          expires_at: string
-          id?: string
-          session_token?: string
-          startup_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string
-          id?: string
-          session_token?: string
-          startup_id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      esic_verifications: {
-        Row: {
-          ato_register_check: Json | null
-          created_at: string
-          evidence_doc_path: string
-          id: string
-          notes: string | null
-          outcome: string
-          reviewed_at: string | null
-          reviewed_by_user_id: string | null
-          startup_id: string
-        }
-        Insert: {
-          ato_register_check?: Json | null
-          created_at?: string
-          evidence_doc_path: string
-          id?: string
-          notes?: string | null
-          outcome?: string
-          reviewed_at?: string | null
-          reviewed_by_user_id?: string | null
-          startup_id: string
-        }
-        Update: {
-          ato_register_check?: Json | null
-          created_at?: string
-          evidence_doc_path?: string
-          id?: string
-          notes?: string | null
-          outcome?: string
-          reviewed_at?: string | null
-          reviewed_by_user_id?: string | null
-          startup_id?: string
-        }
-        Relationships: []
-      }
-      wholesale_investor_certifications: {
-        Row: {
-          certification_type: string
-          created_at: string
-          evidence_doc_path: string
-          expires_at: string
-          id: string
-          status: string
-          user_id: string
-          verified_at: string | null
-          verified_by: string | null
-        }
-        Insert: {
-          certification_type: string
-          created_at?: string
-          evidence_doc_path: string
-          expires_at: string
-          id?: string
-          status?: string
-          user_id: string
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Update: {
-          certification_type?: string
-          created_at?: string
-          evidence_doc_path?: string
-          expires_at?: string
-          id?: string
-          status?: string
-          user_id?: string
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Relationships: []
-      }
       stripe_webhook_events: {
         Row: {
           completed_at: string | null
@@ -17000,6 +16717,72 @@ export type Database = {
         }
         Relationships: []
       }
+      user_daily_checkins: {
+        Row: {
+          check_in_date: string
+          created_at: string
+          id: string
+          points: number
+          source: string
+          streak_count: number
+          user_id: string
+        }
+        Insert: {
+          check_in_date: string
+          created_at?: string
+          id?: string
+          points?: number
+          source?: string
+          streak_count?: number
+          user_id: string
+        }
+        Update: {
+          check_in_date?: string
+          created_at?: string
+          id?: string
+          points?: number
+          source?: string
+          streak_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_health_score_log: {
+        Row: {
+          cost: number
+          diversification: number
+          engagement: number
+          id: string
+          overall: number
+          risk_alignment: number
+          scored_at: string
+          scored_month: string
+          user_id: string
+        }
+        Insert: {
+          cost: number
+          diversification: number
+          engagement: number
+          id?: string
+          overall: number
+          risk_alignment: number
+          scored_at?: string
+          scored_month: string
+          user_id: string
+        }
+        Update: {
+          cost?: number
+          diversification?: number
+          engagement?: number
+          id?: string
+          overall?: number
+          risk_alignment?: number
+          scored_at?: string
+          scored_month?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_notifications: {
         Row: {
           body: string | null
@@ -17131,6 +16914,47 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      user_rate_memory: {
+        Row: {
+          broker_id: number
+          id: string
+          last_seen_at: string
+          last_seen_rate_bps: number
+          notified_at: string | null
+          notified_rate_bps: number | null
+          product_kind: string
+          user_id: string
+        }
+        Insert: {
+          broker_id: number
+          id?: string
+          last_seen_at?: string
+          last_seen_rate_bps: number
+          notified_at?: string | null
+          notified_rate_bps?: number | null
+          product_kind: string
+          user_id: string
+        }
+        Update: {
+          broker_id?: number
+          id?: string
+          last_seen_at?: string
+          last_seen_rate_bps?: number
+          notified_at?: string | null
+          notified_rate_bps?: number | null
+          product_kind?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_rate_memory_broker_id_fkey"
+            columns: ["broker_id"]
+            isOneToOne: false
+            referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_reviews: {
         Row: {
