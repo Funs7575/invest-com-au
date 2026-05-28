@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { NextRequest } from "next/server";
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
@@ -46,8 +47,8 @@ vi.mock("@/lib/supabase/admin", () => ({
 import { GET } from "@/app/api/cron/advisor-onboarding/route";
 import { requireCronAuth } from "@/lib/cron-auth";
 
-function makeReq(): Request {
-  return new Request("http://localhost/api/cron/advisor-onboarding");
+function makeReq(): NextRequest {
+  return new Request("http://localhost/api/cron/advisor-onboarding") as unknown as NextRequest;
 }
 
 function makeAdvisor(overrides: Record<string, unknown> = {}) {

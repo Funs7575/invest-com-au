@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import type { NextRequest } from "next/server";
 
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
@@ -36,7 +37,7 @@ import { GET, runtime, maxDuration } from "@/app/api/cron/weekly-rate-update/rou
 
 const SECRET = "test-cron-secret-1234567890";
 function req(headers: Record<string, string> = {}) {
-  return new Request("http://localhost/api/cron/weekly-rate-update", { headers });
+  return new Request("http://localhost/api/cron/weekly-rate-update", { headers }) as unknown as NextRequest;
 }
 
 describe("GET /api/cron/weekly-rate-update", () => {
