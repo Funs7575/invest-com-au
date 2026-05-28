@@ -9,6 +9,39 @@ const PERSONA_OG: Record<string, { emoji: string; color: string }> = {
   "SMSF-Architect":    { emoji: "🏛️", color: "#1d4ed8" },
 };
 
+/** Per-category accent colour + emoji for /best/[slug] OG cards. */
+const BEST_CAT_OG: Record<string, { emoji: string; accent: string }> = {
+  beginners:              { emoji: "🌱", accent: "#16a34a" },
+  "us-shares":            { emoji: "🌐", accent: "#2563eb" },
+  "low-fees":             { emoji: "💰", accent: "#d97706" },
+  "chess-sponsored":      { emoji: "🔒", accent: "#0891b2" },
+  smsf:                   { emoji: "🏛️", accent: "#7c3aed" },
+  crypto:                 { emoji: "🪙", accent: "#ea580c" },
+  "low-fx-fees":          { emoji: "💱", accent: "#0d9488" },
+  "free-brokerage":       { emoji: "✨", accent: "#16a34a" },
+  "under-5-dollars":      { emoji: "💵", accent: "#16a34a" },
+  "no-inactivity-fee":    { emoji: "⏰", accent: "#d97706" },
+  "international-shares": { emoji: "🌍", accent: "#2563eb" },
+  "day-trading":          { emoji: "⚡", accent: "#ca8a04" },
+  "dividend-investing":   { emoji: "💸", accent: "#16a34a" },
+  "etf-investing":        { emoji: "📊", accent: "#2563eb" },
+  "mobile-app":           { emoji: "📱", accent: "#7c3aed" },
+  "fractional-shares":    { emoji: "🧩", accent: "#7c3aed" },
+  "joint-accounts":       { emoji: "👥", accent: "#0d9488" },
+  "trust-accounts":       { emoji: "🏦", accent: "#1d4ed8" },
+  children:               { emoji: "🎓", accent: "#16a34a" },
+  "low-minimum-deposit":  { emoji: "🪙", accent: "#d97706" },
+  "robo-advisors":        { emoji: "🤖", accent: "#2563eb" },
+  "research-tools":       { emoji: "🔬", accent: "#7c3aed" },
+  "etf-platforms":        { emoji: "📈", accent: "#16a34a" },
+  "micro-investing":      { emoji: "🌱", accent: "#0d9488" },
+  "super-funds":          { emoji: "🏖️", accent: "#7c3aed" },
+  "property-investing":   { emoji: "🏠", accent: "#d97706" },
+  "cfd-forex":            { emoji: "📉", accent: "#e11d48" },
+  "credit-cards-investors": { emoji: "💳", accent: "#0891b2" },
+  "savings-accounts":     { emoji: "🏧", accent: "#16a34a" },
+};
+
 export const runtime = "edge";
 
 /** Accent colour per calculator slug for the OG card. */
@@ -29,6 +62,7 @@ export async function GET(request: NextRequest) {
     searchParams.get("subtitle") || "Honest reviews, real fees, updated daily.";
   const type = searchParams.get("type") || "default";
   const personaParam = searchParams.get("persona") ?? "";
+  const bestSlug = searchParams.get("slug") ?? "";
 
   // ── Calculator result card ──────────────────────────────────────
   if (type === "calculator") {
@@ -155,6 +189,7 @@ export async function GET(request: NextRequest) {
   const amber = "#f59e0b";
 
   const personaMeta = PERSONA_OG[personaParam];
+  const bestCatMeta = type === "best" ? (BEST_CAT_OG[bestSlug] ?? null) : null;
 
   const typeLabel =
     type === "persona"
@@ -194,7 +229,9 @@ export async function GET(request: NextRequest) {
             height: "6px",
             background: type === "persona" && personaMeta
               ? `linear-gradient(to right, ${personaMeta.color}, ${amber})`
-              : `linear-gradient(to right, ${green}, ${amber})`,
+              : type === "best" && bestCatMeta
+                ? `linear-gradient(to right, ${bestCatMeta.accent}, ${amber})`
+                : `linear-gradient(to right, ${green}, ${amber})`,
             display: "flex",
           }}
         />
@@ -207,7 +244,11 @@ export async function GET(request: NextRequest) {
               fontSize: "16px",
               textTransform: "uppercase",
               letterSpacing: "2px",
-              color: type === "persona" && personaMeta ? personaMeta.color : amber,
+              color: type === "persona" && personaMeta
+                ? personaMeta.color
+                : type === "best" && bestCatMeta
+                  ? bestCatMeta.accent
+                  : amber,
               marginBottom: "16px",
             }}
           >
@@ -246,6 +287,37 @@ export async function GET(request: NextRequest) {
               >
                 {title}
               </div>
+            </div>
+          </div>
+        ) : type === "best" && bestCatMeta ? (
+          /* Best-category layout: emoji circle + title */
+          <div style={{ display: "flex", alignItems: "center", gap: "28px", marginBottom: "20px" }}>
+            <div
+              style={{
+                width: "88px",
+                height: "88px",
+                borderRadius: "50%",
+                background: bestCatMeta.accent + "25",
+                border: `3px solid ${bestCatMeta.accent}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "44px",
+                flexShrink: 0,
+              }}
+            >
+              {bestCatMeta.emoji}
+            </div>
+            <div
+              style={{
+                fontSize: title.length > 40 ? "40px" : "52px",
+                fontWeight: 800,
+                lineHeight: 1.15,
+                color: "white",
+                display: "flex",
+              }}
+            >
+              {title}
             </div>
           </div>
         ) : (

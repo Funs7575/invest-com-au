@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("notifications");
 
@@ -86,6 +87,10 @@ export async function POST(req: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
+  }
+
+  if (await isRateLimited(`notif_prefs:${user.id}`, 10, 60)) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
 
   let raw: unknown;
