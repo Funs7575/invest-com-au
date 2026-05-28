@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-import { faqJsonLd } from "@/lib/schema-markup";
+import { faqJsonLd, calculatorJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 86400;
 
@@ -94,10 +94,16 @@ export default function DirectVsAsxCostPage() {
     { name: "Direct vs ASX Cost" },
   ]);
   const faq = faqJsonLd(FAQS);
+  const appLd = calculatorJsonLd({
+    name: "Direct US Shares vs ASX ETFs Cost Calculator",
+    description: "Compare the total annual cost of buying US shares directly vs AU-listed ETFs. FX spread, brokerage, MER, and tax friction at $5K–$500K.",
+    path: "/global-investing/calculators/direct-vs-asx-cost",
+  });
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appLd) }} />
       {faq && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }} />}
       <div className="bg-white min-h-screen">
 

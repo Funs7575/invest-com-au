@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import {
   SharesightSyncError,
@@ -31,6 +32,11 @@ export async function POST() {
   } = await supabase.auth.getUser();
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  // Sharesight syncs hit an external API — limit to 6/min per user
+  if (await isRateLimited(`sharesight_sync:${user.id}`, 6, 60)) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
 
   try {
