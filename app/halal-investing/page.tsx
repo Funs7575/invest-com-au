@@ -32,8 +32,9 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: `${SITE_URL}/halal-investing`,
     type: "article",
+    images: [{ url: "/api/og?title=Halal+Investing+Australia&subtitle=Shariah-Compliant+ETFs%2C+Super+%26+Banking&type=default", width: 1200, height: 630 }],
   },
-  twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
+  twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC, images: ["/api/og?title=Halal+Investing+Australia&subtitle=Shariah-Compliant+ETFs%2C+Super+%26+Banking&type=default"] },
 };
 
 const breadcrumb = breadcrumbJsonLd([

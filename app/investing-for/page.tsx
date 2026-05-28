@@ -15,6 +15,7 @@ export const metadata: Metadata = {
       "Find the investing guide that matches your career. Super, tax, income protection, and wealth-building strategies for 30+ Australian occupations.",
     url: `${SITE_URL}/investing-for`,
     type: "website",
+    images: [{ url: "/api/og?title=Investing+by+Occupation&subtitle=Guides+for+Every+Australian+Profession&type=default", width: 1200, height: 630 }],
   },
 };
 
