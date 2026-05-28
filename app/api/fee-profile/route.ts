@@ -2,8 +2,18 @@ import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
+import { z } from "zod";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 
 const log = logger("fee-profile");
+
+const FeeProfileBody = z.object({
+  asx_trades_per_month: z.coerce.number().int().min(0).max(999).default(4),
+  us_trades_per_month: z.coerce.number().int().min(0).max(999).default(0),
+  avg_trade_size: z.coerce.number().int().min(0).max(9_999_999).default(5000),
+  portfolio_value: z.coerce.number().int().min(0).max(99_999_999).nullable().optional(),
+  current_broker_slug: z.string().max(100).nullable().optional(),
+});
 
 export async function GET() {
   try {
@@ -32,7 +42,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withValidatedBody(FeeProfileBody, async (request: NextRequest, body) => {
   try {
     if (!(await isAllowed("fee_profile", ipKey(request), { max: 20, refillPerSec: 20 / 3600 }))) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
@@ -62,28 +72,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-
-    // Validate inputs
-    const asxTrades = Math.max(0, Math.min(999, Math.round(Number(body.asx_trades_per_month) || 4)));
-    const usTrades = Math.max(0, Math.min(999, Math.round(Number(body.us_trades_per_month) || 0)));
-    const avgTradeSize = Math.max(0, Math.min(9999999, Math.round(Number(body.avg_trade_size) || 5000)));
-    const portfolioValue = body.portfolio_value
-      ? Math.max(0, Math.min(99999999, Math.round(Number(body.portfolio_value))))
-      : null;
-    const currentBrokerSlug =
-      typeof body.current_broker_slug === "string"
-        ? body.current_broker_slug.slice(0, 100)
-        : null;
-
     const { error } = await supabase.from("fee_profiles").upsert(
       {
         user_id: user.id,
-        asx_trades_per_month: asxTrades,
-        us_trades_per_month: usTrades,
-        avg_trade_size: avgTradeSize,
-        portfolio_value: portfolioValue,
-        current_broker_slug: currentBrokerSlug,
+        asx_trades_per_month: body.asx_trades_per_month,
+        us_trades_per_month: body.us_trades_per_month,
+        avg_trade_size: body.avg_trade_size,
+        portfolio_value: body.portfolio_value ?? null,
+        current_broker_slug: body.current_broker_slug ?? null,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id" }
@@ -105,4 +101,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

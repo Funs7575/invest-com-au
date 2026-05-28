@@ -4,11 +4,19 @@ import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
 import { escapeHtml } from "@/lib/html-escape";
+import { z } from "zod";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 
 const log = logger("lead-outcome");
 
-const VALID_OUTCOMES = ["contacted", "converted", "lost", "no_response"] as const;
-type Outcome = (typeof VALID_OUTCOMES)[number];
+const PostBody = z.object({
+  lead_id: z.string().uuid(),
+  outcome: z.enum(["contacted", "converted", "lost", "no_response"]),
+  advisor_id: z.string().optional(),
+  sale_price_cents: z.number().int().min(0).max(100_000_000).optional(),
+  success_fee_cents: z.number().int().min(0).max(100_000_000).optional(),
+  notes: z.string().max(2000).optional(),
+});
 
 /**
  * POST /api/lead-outcome
@@ -16,32 +24,15 @@ type Outcome = (typeof VALID_OUTCOMES)[number];
  * Updates a lead's outcome (contacted, converted, lost, no_response).
  * Called by advisors from their dashboard or email links.
  */
-export async function POST(request: NextRequest) {
+export const POST = withValidatedBody(PostBody, async (request: NextRequest, body) => {
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
     if (await isRateLimited(`lead-outcome:${ip}`, 10, 60)) {
       return NextResponse.json({ error: "Too many requests." }, { status: 429 });
     }
-    // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing; Zod backfill is E-04 stream territory, out of scope for SSOT cleanup PR
-    const body = await request.json();
-    const { lead_id, outcome, sale_price_cents, success_fee_cents, notes } = body;
 
     // Auth: simple token check — advisor_id from query param or body
     const advisorId = request.nextUrl.searchParams.get("advisor_id") || body.advisor_id;
-
-    if (!lead_id || !outcome) {
-      return NextResponse.json(
-        { error: "lead_id and outcome are required." },
-        { status: 400 },
-      );
-    }
-
-    if (!VALID_OUTCOMES.includes(outcome as Outcome)) {
-      return NextResponse.json(
-        { error: `Invalid outcome. Must be one of: ${VALID_OUTCOMES.join(", ")}` },
-        { status: 400 },
-      );
-    }
 
     const supabase = await createClient();
 
@@ -49,7 +40,7 @@ export async function POST(request: NextRequest) {
     const { data: lead, error: leadError } = await supabase
       .from("professional_leads")
       .select("id, professional_id")
-      .eq("id", lead_id)
+      .eq("id", body.lead_id)
       .single();
 
     if (leadError || !lead) {
@@ -63,23 +54,23 @@ export async function POST(request: NextRequest) {
 
     // Build update payload
     const updatePayload: Record<string, unknown> = {
-      outcome,
+      outcome: body.outcome,
       outcome_at: new Date().toISOString(),
-      outcome_notes: notes?.trim() || null,
+      outcome_notes: body.notes?.trim() || null,
     };
 
     // Store sale price and success fee if outcome is 'converted'
-    if (outcome === "converted" && sale_price_cents) {
-      updatePayload.sale_price_cents = sale_price_cents;
-      if (success_fee_cents) {
-        updatePayload.success_fee_cents = success_fee_cents;
+    if (body.outcome === "converted" && body.sale_price_cents) {
+      updatePayload.sale_price_cents = body.sale_price_cents;
+      if (body.success_fee_cents) {
+        updatePayload.success_fee_cents = body.success_fee_cents;
       }
     }
 
     const { error: updateError } = await supabase
       .from("professional_leads")
       .update(updatePayload)
-      .eq("id", lead_id);
+      .eq("id", body.lead_id);
 
     if (updateError) {
       log.error("Failed to update lead outcome:", updateError);
@@ -89,7 +80,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true, lead_id, outcome });
+    return NextResponse.json({ success: true, lead_id: body.lead_id, outcome: body.outcome });
   } catch (error) {
     log.error("Lead outcome error:", error);
     return NextResponse.json(
@@ -97,7 +88,7 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
-}
+});
 
 /**
  * GET /api/lead-outcome
@@ -122,6 +113,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Map action to valid outcome (GET links don't support 'no_response' — that's a POST-only action)
+    type Outcome = "contacted" | "converted" | "lost" | "no_response";
     const actionMap: Record<string, Outcome> = {
       contacted: "contacted",
       converted: "converted",

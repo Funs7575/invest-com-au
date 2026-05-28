@@ -1,10 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
-import { isValidEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 
 const log = logger("advisor-signup");
+
+const AdvisorSignupBody = z.object({
+  name: z.string().min(1, "Full name required").max(200),
+  email: z.string().email("Valid email required").max(254),
+  phone: z.string().min(1, "Phone required").max(50),
+  firm_name: z.string().max(200).optional(),
+  type: z.string().min(1, "Advisor type required").max(50),
+  afsl_number: z.string().max(20).optional(),
+  abn: z.string().max(20).optional(),
+  registration_number: z.string().max(50).optional(),
+  specialties: z.array(z.string().max(100)).max(20).optional(),
+  location_state: z.string().min(1, "State required").max(10),
+  location_suburb: z.string().min(1, "Suburb required").max(100),
+  bio: z.string().max(5000).optional(),
+  fee_structure: z.string().max(50).optional(),
+  fee_description: z.string().max(1000).optional(),
+  pitch_message: z.string().max(2000).optional(),
+  years_experience: z.number().int().min(0).max(60).optional(),
+  client_types: z.string().max(500).optional(),
+  languages: z.string().max(200).optional(),
+});
 
 function slugify(text: string): string {
   return text
@@ -13,53 +35,11 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withValidatedBody(AdvisorSignupBody, async (request: NextRequest, body) => {
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
     if (await isRateLimited(`advisor_signup:${ip}`, 3, 60)) {
       return NextResponse.json({ error: "Too many signup attempts. Please try again later." }, { status: 429 });
-    }
-
-    const body = await request.json();
-    const {
-      name,
-      email,
-      phone,
-      firm_name,
-      type,
-      afsl_number,
-      abn,
-      registration_number,
-      specialties,
-      location_state,
-      location_suburb,
-      bio,
-      fee_structure,
-      fee_description,
-      pitch_message,
-      years_experience,
-      client_types,
-      languages,
-    } = body;
-
-    // Validate required fields
-    if (!name?.trim()) {
-      return NextResponse.json({ error: "Full name is required." }, { status: 400 });
-    }
-    if (!email?.trim() || !isValidEmail(email.trim())) {
-      return NextResponse.json({ error: "A valid email address is required." }, { status: 400 });
-    }
-    if (!phone?.trim()) {
-      return NextResponse.json({ error: "Phone number is required." }, { status: 400 });
-    }
-    if (!type?.trim()) {
-      return NextResponse.json({ error: "Advisor type is required." }, { status: 400 });
-    }
-    if (!location_state?.trim()) {
-      return NextResponse.json({ error: "State is required." }, { status: 400 });
-    }
-    if (!location_suburb?.trim()) {
-      return NextResponse.json({ error: "Suburb is required." }, { status: 400 });
     }
 
     const supabase = createAdminClient();
@@ -68,7 +48,7 @@ export async function POST(request: NextRequest) {
     const { data: existing } = await supabase
       .from("professionals")
       .select("id")
-      .eq("email", email.trim().toLowerCase())
+      .eq("email", body.email.trim().toLowerCase())
       .maybeSingle();
 
     if (existing) {
@@ -80,10 +60,10 @@ export async function POST(request: NextRequest) {
 
     // Create auth user via Supabase admin
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-      email: email.trim().toLowerCase(),
+      email: body.email.trim().toLowerCase(),
       email_confirm: true,
       user_metadata: {
-        full_name: name.trim(),
+        full_name: body.name.trim(),
         role: "advisor",
       },
     });
@@ -100,7 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate slug from name + suburb
-    const slugBase = slugify(`${name.trim()}-${location_suburb.trim()}`);
+    const slugBase = slugify(`${body.name.trim()}-${body.location_suburb.trim()}`);
     // Check for slug conflicts
     const { data: slugConflict } = await supabase
       .from("professionals")
@@ -111,31 +91,31 @@ export async function POST(request: NextRequest) {
     const slug = slugConflict ? `${slugBase}-${Date.now().toString(36)}` : slugBase;
 
     // Build location_display
-    const locationDisplay = `${location_suburb.trim()}, ${location_state.trim()}`;
+    const locationDisplay = `${body.location_suburb.trim()}, ${body.location_state.trim()}`;
 
     // Insert into professionals table
     const { data: professional, error: insertError } = await supabase
       .from("professionals")
       .insert({
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        phone: phone.trim(),
-        firm_name: firm_name?.trim() || null,
-        type,
+        name: body.name.trim(),
+        email: body.email.trim().toLowerCase(),
+        phone: body.phone.trim(),
+        firm_name: body.firm_name?.trim() || null,
+        type: body.type,
         slug,
-        afsl_number: afsl_number?.trim() || null,
-        abn: abn?.trim() || null,
-        registration_number: registration_number?.trim() || null,
-        specialties: Array.isArray(specialties) ? specialties : [],
-        location_state: location_state.trim(),
-        location_suburb: location_suburb.trim(),
+        afsl_number: body.afsl_number?.trim() || null,
+        abn: body.abn?.trim() || null,
+        registration_number: body.registration_number?.trim() || null,
+        specialties: Array.isArray(body.specialties) ? body.specialties : [],
+        location_state: body.location_state.trim(),
+        location_suburb: body.location_suburb.trim(),
         location_display: locationDisplay,
-        bio: bio?.trim() || null,
-        fee_structure: fee_structure || null,
-        fee_description: fee_description?.trim() || null,
-        years_experience: years_experience ? parseInt(String(years_experience)) || null : null,
-        languages: languages
-          ? String(languages).split(",").map((l: string) => l.trim()).filter(Boolean)
+        bio: body.bio?.trim() || null,
+        fee_structure: body.fee_structure || null,
+        fee_description: body.fee_description?.trim() || null,
+        years_experience: body.years_experience ? parseInt(String(body.years_experience)) || null : null,
+        languages: body.languages
+          ? String(body.languages).split(",").map((l: string) => l.trim()).filter(Boolean)
           : [],
         status: "pending",
         verified: false,
@@ -157,8 +137,8 @@ export async function POST(request: NextRequest) {
 
     // Log confirmation
     log.info("New advisor registered", {
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
+      name: body.name.trim(),
+      email: body.email.trim().toLowerCase(),
       professionalId: professional.id,
       slug: professional.slug,
     });
@@ -170,8 +150,8 @@ export async function POST(request: NextRequest) {
         agreement_type: "advisor_services",
         agreement_version: "1.0",
         professional_id: professional.id,
-        email: email.trim().toLowerCase(),
-        accepted_by_name: name.trim(),
+        email: body.email.trim().toLowerCase(),
+        accepted_by_name: body.name.trim(),
         ip_address: ip,
         user_agent: request.headers.get("user-agent") || null,
       });
@@ -186,23 +166,23 @@ export async function POST(request: NextRequest) {
     // Create advisor_application record for admin review pipeline
     try {
       await supabase.from("advisor_applications").insert({
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        phone: phone.trim(),
-        firm_name: firm_name?.trim() || null,
-        type,
-        afsl_number: afsl_number?.trim() || null,
-        registration_number: registration_number?.trim() || null,
-        abn: abn?.trim() || null,
-        location_state: location_state.trim(),
-        location_suburb: location_suburb.trim(),
-        specialties: Array.isArray(specialties) ? specialties.join(", ") : (specialties || null),
-        bio: bio?.trim() || null,
-        fee_description: fee_description?.trim() || null,
-        pitch_message: pitch_message?.trim()?.slice(0, 2000) || null,
-        years_experience: years_experience ? parseInt(String(years_experience)) || null : null,
-        client_types: client_types?.trim()?.slice(0, 500) || null,
-        languages: languages?.trim()?.slice(0, 200) || null,
+        name: body.name.trim(),
+        email: body.email.trim().toLowerCase(),
+        phone: body.phone.trim(),
+        firm_name: body.firm_name?.trim() || null,
+        type: body.type,
+        afsl_number: body.afsl_number?.trim() || null,
+        registration_number: body.registration_number?.trim() || null,
+        abn: body.abn?.trim() || null,
+        location_state: body.location_state.trim(),
+        location_suburb: body.location_suburb.trim(),
+        specialties: Array.isArray(body.specialties) ? body.specialties.join(", ") : (body.specialties || null),
+        bio: body.bio?.trim() || null,
+        fee_description: body.fee_description?.trim() || null,
+        pitch_message: body.pitch_message?.trim()?.slice(0, 2000) || null,
+        years_experience: body.years_experience ? parseInt(String(body.years_experience)) || null : null,
+        client_types: body.client_types?.trim()?.slice(0, 500) || null,
+        languages: body.languages?.trim()?.slice(0, 200) || null,
         account_type: "individual",
         status: "pending",
         professional_id: professional.id,
@@ -223,4 +203,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
