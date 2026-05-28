@@ -2,6 +2,7 @@
 import { recordCpcClick } from "@/lib/marketplace/allocation";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { createRateLimiter } from "@/lib/rate-limiter";
 
@@ -17,6 +18,25 @@ function hashIP(ip: string): string {
   return createHash("sha256").update(salt + ip).digest("hex").slice(0, 16);
 }
 
+// Tracking call originating from the /go/[slug] redirect. Fields are
+// validated/guarded individually below; the schema is permissive so we never
+// reject a currently-valid request, and `.passthrough()` keeps any extra
+// redirect params intact.
+const Body = z
+  .object({
+    // campaign_id/rate_cents arrive from query-param-derived client values and
+    // were previously passed through untyped — accept string or number so no
+    // currently-valid request is rejected; they're cast at the call site below
+    // exactly as the prior `any` body did.
+    campaign_id: z.union([z.string(), z.number()]).optional(),
+    broker_slug: z.string().optional(),
+    rate_cents: z.union([z.string(), z.number()]).optional(),
+    click_id: z.string().optional(),
+    page: z.string().optional(),
+    session_id: z.string().optional(),
+  })
+  .passthrough();
+
 /**
  * POST /api/marketplace/campaign-click
  * Records a CPC click event, debits the broker's wallet, and updates campaign spend.
@@ -24,7 +44,7 @@ function hashIP(ip: string): string {
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const parsed = Body.safeParse(await request.json());
     const {
       campaign_id,
       broker_slug,
@@ -32,7 +52,7 @@ export async function POST(request: NextRequest) {
       click_id,
       page,
       session_id,
-    } = body;
+    } = parsed.success ? parsed.data : {};
 
     if (!campaign_id || !broker_slug || !rate_cents) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -48,9 +68,9 @@ export async function POST(request: NextRequest) {
     }
 
     const success = await recordCpcClick(
-      campaign_id,
+      campaign_id as number,
       broker_slug,
-      rate_cents,
+      rate_cents as number,
       {
         click_id,
         page,

@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { isRateLimited } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminEmails } from "@/lib/admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-outreach");
+
+// Permissive schema — the handler keeps its own `!to_email || !to_name`
+// guard, so fields stay optional and the body just needs to be an object.
+const Body = z
+  .object({
+    to_email: z.any(),
+    to_name: z.any(),
+    firm_name: z.any(),
+    advisor_type: z.any(),
+  })
+  .passthrough();
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,8 +31,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
-    const body = await request.json();
-    const { to_email, to_name, firm_name, advisor_type } = body;
+    const parsed = Body.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Email and name required" }, { status: 400 });
+    }
+    const { to_email, to_name, firm_name, advisor_type } = parsed.data;
 
     if (!to_email || !to_name) {
       return NextResponse.json({ error: "Email and name required" }, { status: 400 });

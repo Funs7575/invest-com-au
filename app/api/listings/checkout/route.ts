@@ -1,6 +1,7 @@
 import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
@@ -9,11 +10,20 @@ const log = logger("listing-checkout");
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-interface CheckoutBody {
-  listing_id: number;
-  plan_id: number;
-  contact_email: string;
-}
+// Permissive by design — the per-field guards below produce the precise,
+// field-specific 400 messages the clients/tests rely on (listing_id /
+// plan_id / contact_email). Fields are accepted as unknown so the schema
+// never rejects ahead of those guards (e.g. listing_id: "three" must reach
+// the "must be a number" guard, not a generic schema error), while the body
+// is still consumed through a schema for the validation contract.
+const BodySchema = z
+  .object({
+    listing_id: z.unknown(),
+    plan_id: z.unknown(),
+    contact_email: z.unknown(),
+  })
+  .partial()
+  .passthrough();
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,16 +35,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "temporarily_unavailable" }, { status: 503 });
     }
 
-    let body: Partial<CheckoutBody>;
+    let raw: unknown;
 
     try {
-      body = await request.json();
+      raw = await request.json();
     } catch {
       return NextResponse.json(
         { error: "Invalid JSON body." },
         { status: 400 }
       );
     }
+
+    const parsed = BodySchema.safeParse(raw);
+    const body: z.infer<typeof BodySchema> = parsed.success ? parsed.data : {};
 
     // Validate required fields
     if (!body.listing_id || typeof body.listing_id !== "number") {

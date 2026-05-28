@@ -2,10 +2,16 @@ import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 const log = logger("course");
+
+// course_slug must be a non-empty string — matches the prior
+// `body.course_slug && typeof body.course_slug === "string"` guard, which
+// rejected both missing and empty-string slugs.
+const Body = z.object({ course_slug: z.string().min(1) });
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,23 +31,23 @@ export async function POST(request: NextRequest) {
     }
 
     // Read course_slug from request body
-    let courseSlug: string;
+    let raw: unknown;
     try {
-      const body = await request.json();
-      if (body.course_slug && typeof body.course_slug === "string") {
-        courseSlug = body.course_slug;
-      } else {
-        return NextResponse.json(
-          { error: "course_slug is required" },
-          { status: 400 }
-        );
-      }
+      raw = await request.json();
     } catch {
       return NextResponse.json(
         { error: "Invalid request body" },
         { status: 400 }
       );
     }
+    const parsed = Body.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "course_slug is required" },
+        { status: 400 }
+      );
+    }
+    const courseSlug: string = parsed.data.course_slug;
 
     const admin = createAdminClient();
 

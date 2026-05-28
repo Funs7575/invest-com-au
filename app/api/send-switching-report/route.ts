@@ -17,8 +17,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- display-only report payload rendered into an email template; the three required fields (email/currentBroker/cheapestBroker) are guarded immediately below and numeric fields are interpolated, not persisted
     const body = await request.json();
-    const { email, currentBroker, currentBrokerSlug, cheapestBroker, cheapestBrokerSlug, currentCost, cheapestCost, savings, tradesPerYear, avgTradeSize, usAllocation } = body;
+    const { email, currentBroker, cheapestBroker, cheapestBrokerSlug, currentCost, cheapestCost, savings, tradesPerYear, avgTradeSize, usAllocation } = body;
 
     if (!email || !currentBroker || !cheapestBroker) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });

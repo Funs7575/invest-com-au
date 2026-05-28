@@ -1,10 +1,30 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from "zod";
 import { logger } from '@/lib/logger';
 import { isValidEmail } from '@/lib/validate-email';
 import { createRateLimiter } from '@/lib/rate-limiter';
 
 const log = logger('switch-story');
+
+// Each field is type-and-range checked below with a field-specific 400
+// message, so the schema only enforces "body is an object" — keeping every
+// existing validation message and response code intact.
+const StoryBody = z
+  .object({
+    source_broker_slug: z.unknown(),
+    dest_broker_slug: z.unknown(),
+    display_name: z.unknown(),
+    email: z.unknown(),
+    title: z.unknown(),
+    body: z.unknown(),
+    reason: z.unknown(),
+    source_rating: z.unknown(),
+    dest_rating: z.unknown(),
+    estimated_savings: z.unknown(),
+    time_with_source: z.unknown(),
+  })
+  .passthrough();
 
 const checkRateLimit = createRateLimiter(300_000, 3); // 3 per 5 min per IP
 
@@ -56,7 +76,8 @@ export async function POST(request: NextRequest) {
   // Parse body
   let body: Record<string, unknown>;
   try {
-    body = await request.json();
+    const parsed = StoryBody.safeParse(await request.json());
+    body = parsed.success ? parsed.data : {};
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 
@@ -6,6 +7,26 @@ import { isRateLimited } from "@/lib/rate-limit";
  * GET /api/portfolio?email=xxx — get portfolio by email
  * POST /api/portfolio — create or update portfolio
  */
+
+// The route normalises/guards every field itself (`email` presence + the
+// `Array.isArray(holdings)` check → the "Email and holdings required" 400, and
+// per-holding fields are read defensively). The schema therefore only asserts
+// the body is an object — it never rejects a currently-valid body — and the
+// destructure below keeps the exact loose shapes the handler already assumed.
+const PostBody = z.object({}).passthrough();
+
+type PortfolioHolding = {
+  broker_slug: string;
+  balance: number;
+  trades_per_year?: number;
+  us_allocation?: number;
+};
+
+type PortfolioPostBody = {
+  email?: string;
+  name?: string;
+  holdings?: PortfolioHolding[];
+};
 
 export async function GET(request: NextRequest) {
   const email = request.nextUrl.searchParams.get("email")?.toLowerCase().trim();
@@ -41,8 +62,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { email, name, holdings } = body;
+    const parsed = PostBody.safeParse(await request.json());
+    const { email, name, holdings } = (
+      parsed.success ? parsed.data : {}
+    ) as PortfolioPostBody;
 
     if (!email || !holdings || !Array.isArray(holdings)) {
       return NextResponse.json({ error: "Email and holdings required" }, { status: 400 });
@@ -173,7 +196,7 @@ export async function POST(request: NextRequest) {
       optimal_broker: optimalSlug,
       holdings: enrichedHoldings,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to save portfolio" }, { status: 500 });
   }
 }

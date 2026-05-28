@@ -1,9 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("sync-shortlist");
+
+// `slugs` elements are filtered to non-empty strings below; keep the schema
+// permissive (unknown[]) so a mixed array degrades gracefully rather than
+// rejecting the whole request, matching the route's prior behaviour.
+const ShortlistBody = z.object({ slugs: z.array(z.unknown()).optional() });
 
 const MAX_SHORTLIST = 8;
 
@@ -61,13 +67,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    const parsed = ShortlistBody.safeParse(await request.json());
 
-    const brokerSlugs = Array.isArray(body.slugs)
-      ? body.slugs
-          .filter((s: unknown): s is string => typeof s === "string" && s.length > 0)
-          .slice(0, MAX_SHORTLIST)
-      : [];
+    const brokerSlugs = (parsed.success ? parsed.data.slugs ?? [] : [])
+      .filter((s: unknown): s is string => typeof s === "string" && s.length > 0)
+      .slice(0, MAX_SHORTLIST);
 
     // Delete existing shortlist for user, then insert new one
     const { error: deleteError } = await supabase

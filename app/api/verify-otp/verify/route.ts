@@ -1,9 +1,18 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { isRateLimited } from "@/lib/rate-limit";
 import { timingSafeEqual } from "crypto";
 
 export const runtime = "nodejs";
+
+// Optional-string fields preserve the route's two-stage response: a wrong
+// type → "Invalid request"; a present-but-empty/missing field → the
+// "Email and code required" message enforced by the guard below.
+const OtpVerifyBody = z.object({
+  email: z.string().optional(),
+  code: z.string().optional(),
+});
 
 /**
  * POST /api/verify-otp/verify
@@ -40,9 +49,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many attempts from this network. Please try again in 4 hours." }, { status: 429 });
   }
 
-  let email: string, code: string;
+  let email: string | undefined, code: string | undefined;
   try {
-    ({ email, code } = await request.json());
+    const parsed = OtpVerifyBody.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+    ({ email, code } = parsed.data);
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }

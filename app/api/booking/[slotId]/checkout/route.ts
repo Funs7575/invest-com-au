@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-// eslint-disable-next-line no-restricted-imports -- service-role legitimate: reads professionals.session_price_cents (cross-user query, no auth.uid() linkage)
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createBookingCheckout } from "@/lib/stripe-connect";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -49,7 +48,7 @@ export async function POST(req: NextRequest, { params }: Params): Promise<Respon
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid request body.", issues: parsed.error.issues }, { status: 400 });
   }
-  const { consumerEmail, consumerName, topic } = parsed.data;
+  const { consumerEmail, consumerName } = parsed.data;
 
   // Optional: attach logged-in user_id for consumer-side payment history
   const supabase = await createClient();

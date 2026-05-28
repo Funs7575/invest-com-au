@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { sendEmail } from "@/lib/resend";
 import { escapeHtml } from "@/lib/html-escape";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -6,6 +7,19 @@ import { ADMIN_EMAIL } from "@/lib/admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("sponsored-booking");
+
+// Optional strings preserve the route's "Missing required fields" 400 for the
+// name/email/company/package presence guard below.
+const BookingBody = z
+  .object({
+    name: z.string().optional(),
+    email: z.string().optional(),
+    company: z.string().optional(),
+    phone: z.string().optional(),
+    package: z.string().optional(),
+    message: z.string().optional(),
+  })
+  .passthrough();
 
 const VALID_PACKAGES = [
   "sponsored-article",
@@ -15,8 +29,10 @@ const VALID_PACKAGES = [
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { name, email, company, phone, package: pkg, message } = body;
+    const parsed = BookingBody.safeParse(await request.json());
+    const { name, email, company, phone, package: pkg, message } = parsed.success
+      ? parsed.data
+      : {};
 
     // Rate limit
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";

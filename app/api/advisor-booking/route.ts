@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { escapeHtml } from "@/lib/html-escape";
@@ -6,6 +7,21 @@ import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-booking");
+
+// Permissive schema — the handler keeps its own required-field guard and also
+// reads `sourcePage`, so fields stay optional and the body passes through.
+const PostBody = z
+  .object({
+    advisorSlug: z.any(),
+    investorName: z.any(),
+    investorEmail: z.any(),
+    investorPhone: z.any(),
+    bookingDate: z.any(),
+    bookingTime: z.any(),
+    topic: z.any(),
+    sourcePage: z.any(),
+  })
+  .passthrough();
 
 // GET available slots for an advisor
 export async function GET(request: NextRequest) {
@@ -65,7 +81,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests." }, { status: 429 });
     }
 
-    const body = await request.json();
+    const parsed = PostBody.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+    const body = parsed.data;
     const { advisorSlug, investorName, investorEmail, investorPhone, bookingDate, bookingTime, topic } = body;
 
     if (!advisorSlug || !investorName || !investorEmail || !bookingDate || !bookingTime) {

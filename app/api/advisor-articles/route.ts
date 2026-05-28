@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -104,12 +105,39 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(data || []);
 }
 
+// Permissive schemas — the POST/PUT handlers keep their own field-level
+// guards and read an open-ended set of keys (PUT spreads `...updates`), so
+// every field is optional and the schemas passthrough. Validation just
+// confirms the body is a JSON object; field types preserve the original
+// untyped `await request.json()` ergonomics.
+const PostBody = z
+  .object({
+    professional_id: z.any(),
+    title: z.any(),
+    content: z.any(),
+    excerpt: z.any(),
+    category: z.any(),
+    tags: z.any(),
+    pricing_tier: z.any(),
+    action: z.any(),
+  })
+  .passthrough();
+
+const PutBody = z
+  .object({
+    id: z.any(),
+    action: z.any(),
+  })
+  .passthrough();
+
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
   if (await isRateLimited(`advisor_article:${ip}`, 10, 60)) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const supabase = await createClient();
-  const body = await request.json();
+  const parsedBody = PostBody.safeParse(await request.json());
+  if (!parsedBody.success) return NextResponse.json({ error: parsedBody.error.issues[0]?.message ?? "Invalid request body" }, { status: 400 });
+  const body = parsedBody.data;
   const { professional_id, title, content, excerpt, category, tags, pricing_tier, action } = body;
   if (!professional_id || !title?.trim() || !content?.trim()) return NextResponse.json({ error: "Title and content required" }, { status: 400 });
 
@@ -162,7 +190,10 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   const supabase = await createClient();
-  const body = await request.json();
+  const parsedBody = PutBody.safeParse(await request.json());
+  if (!parsedBody.success) return NextResponse.json({ error: parsedBody.error.issues[0]?.message ?? "Invalid request body" }, { status: 400 });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- preserve the original untyped-body ergonomics; handler reads an open-ended `updates` set
+  const body = parsedBody.data as Record<string, any>;
   const { id, action, ...updates } = body;
   if (!id) return NextResponse.json({ error: "Article ID required" }, { status: 400 });
 

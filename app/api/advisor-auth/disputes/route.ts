@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -8,6 +9,19 @@ import {
   notifyAdminEscalated,
 } from "@/lib/advisor-lead-dispute-resolver";
 import type { DisputeReason } from "@/lib/advisor-lead-disputes";
+
+// Permissive schema mirroring the prior `body as {…}` cast — no field-level
+// tightening. leadId / reason presence is enforced by the existing
+// `!leadId || !reason` guard, and reason_code keeps its dynamic
+// "Invalid reason_code. Must be one of: …" handler check.
+const Body = z
+  .object({
+    leadId: z.any(),
+    reason: z.any(),
+    details: z.any(),
+    reason_code: z.any(),
+  })
+  .passthrough();
 
 const log = logger("advisor-auth:disputes");
 
@@ -33,13 +47,11 @@ export async function POST(request: NextRequest) {
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-  const body = await request.json();
-  const { leadId, reason, details, reason_code: rawReasonCode } = body as {
-    leadId?: number;
-    reason?: string;
-    details?: string;
-    reason_code?: string;
-  };
+  const parsed = Body.safeParse(await request.json());
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Lead ID and reason required" }, { status: 400 });
+  }
+  const { leadId, reason, details, reason_code: rawReasonCode } = parsed.data;
   if (!leadId || !reason) return NextResponse.json({ error: "Lead ID and reason required" }, { status: 400 });
 
   // Validate the optional standardised reason_code. Unknown values

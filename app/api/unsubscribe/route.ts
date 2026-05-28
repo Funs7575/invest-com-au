@@ -1,9 +1,14 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 const log = logger("unsubscribe");
+
+// `email` is validated below (presence + "@" check) with a field-specific
+// 400 message, so keep it permissive here to preserve that exact response.
+const UnsubBody = z.object({ email: z.unknown() }).passthrough();
 
 /**
  * POST /api/unsubscribe
@@ -22,7 +27,8 @@ export async function POST(request: NextRequest) {
 
   let body: Record<string, unknown>;
   try {
-    body = await request.json();
+    const parsed = UnsubBody.safeParse(await request.json());
+    body = parsed.success ? parsed.data : {};
   } catch (err) {
     log.warn("unsubscribe invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
