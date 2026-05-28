@@ -5,15 +5,16 @@ import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import Link from "next/link";
 import PageWalkthrough from "@/components/PageWalkthrough";
+import dynamic from "next/dynamic";
 
-import AdminKpiCards from "./_components/AdminKpiCards";
-import AdminClickChart from "./_components/AdminClickChart";
-import AdminDataQuality from "./_components/AdminDataQuality";
-import AdminActivityFeed from "./_components/AdminActivityFeed";
-import AdminRevenueForecast from "./_components/AdminRevenueForecast";
-import AdminBottomGrid from "./_components/AdminBottomGrid";
-import AdminPendingActions from "./_components/AdminPendingActions";
-import AdminTopPagesAdvisor from "./_components/AdminTopPagesAdvisor";
+const AdminKpiCards = dynamic(() => import("./_components/AdminKpiCards"));
+const AdminClickChart = dynamic(() => import("./_components/AdminClickChart"));
+const AdminDataQuality = dynamic(() => import("./_components/AdminDataQuality"));
+const AdminActivityFeed = dynamic(() => import("./_components/AdminActivityFeed"));
+const AdminRevenueForecast = dynamic(() => import("./_components/AdminRevenueForecast"));
+const AdminBottomGrid = dynamic(() => import("./_components/AdminBottomGrid"));
+const AdminPendingActions = dynamic(() => import("./_components/AdminPendingActions"));
+const AdminTopPagesAdvisor = dynamic(() => import("./_components/AdminTopPagesAdvisor"));
 
 const ADMIN_DASHBOARD_WALKTHROUGH = [
   { target: "#admin-kpis", title: "Site Overview", description: "Key performance metrics at a glance — brokers, articles, clicks, marketplace revenue, and Pro members. Click any card to jump to its detail page.", position: "bottom" as const },
