@@ -1,8 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-portfolio-alerts");
 
@@ -30,7 +31,7 @@ export const maxDuration = 30;
  *   delivery channel for portfolio alerts. The rate-alerts and watchlist
  *   crons already cover push delivery for their own alert types.
  */
-export async function GET(req: Request) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -134,3 +135,5 @@ export async function GET(req: Request) {
 
   return NextResponse.json({ portfolios_checked: (portfolios || []).length, alerts_sent: alertsSent, fee_changes_found: recentChanges?.length || 0 });
 }
+
+export const GET = wrapCronHandler("portfolio-alerts", handler);

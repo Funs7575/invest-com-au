@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-refresh-leaderboard");
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -102,3 +103,5 @@ export async function GET(req: NextRequest) {
   log.info("leaderboard refreshed", { yearMonth, ranked: rows.length });
   return NextResponse.json({ success: true, ranked: rows.length });
 }
+
+export const GET = wrapCronHandler("refresh-leaderboard", handler);

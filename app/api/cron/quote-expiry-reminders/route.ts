@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
 import { sendQuoteExpiryReminderEmail } from "@/lib/quote-emails";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -16,7 +17,7 @@ const log = logger("cron-quote-expiry-reminders");
  * next ~26 hours, hasn't already been reminded, and sends the consumer
  * a nudge with bid count and the lowest current bid.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -103,3 +104,5 @@ export async function GET(req: NextRequest) {
   log.info("Quote expiry reminders processed", { sent, skipped, scanned: jobs?.length ?? 0 });
   return NextResponse.json({ sent, skipped, scanned: jobs?.length ?? 0 });
 }
+
+export const GET = wrapCronHandler("quote-expiry-reminders", handler);

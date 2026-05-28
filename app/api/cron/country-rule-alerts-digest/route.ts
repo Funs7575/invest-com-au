@@ -33,6 +33,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
 import { intentCountryMeta, type IntentCountryCode } from "@/lib/intent-context";
 import { escapeHtml } from "@/lib/html-escape";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:country-rule-alerts-digest");
 
@@ -69,7 +70,7 @@ const SEVERITY_LABEL: Record<string, string> = {
   info: "FYI",
 };
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -240,3 +241,5 @@ const KNOWN_INTENT_CODES = new Set<IntentCountryCode>([
 function isKnownIntentCountry(code: string): code is IntentCountryCode {
   return KNOWN_INTENT_CODES.has(code as IntentCountryCode);
 }
+
+export const GET = wrapCronHandler("country-rule-alerts-digest", handler);

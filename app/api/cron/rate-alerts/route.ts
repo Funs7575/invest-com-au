@@ -19,6 +19,7 @@ import {
   formatRateAlertMessage,
   dispatchTelegramAlerts,
 } from "@/lib/telegram";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -103,7 +104,7 @@ function resolveCurrentValue(
   return null;
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -365,3 +366,5 @@ export async function GET(req: NextRequest) {
     failures: failures.length,
   });
 }
+
+export const GET = wrapCronHandler("rate-alerts", handler);

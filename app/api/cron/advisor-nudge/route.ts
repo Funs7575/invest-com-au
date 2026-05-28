@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -15,7 +16,7 @@ const log = logger("cron-advisor-nudge");
  * but haven't responded within 48 hours.
  * Also nudges advisors whose credit_balance_cents is running low (<1 lead fee).
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -124,3 +125,5 @@ function buildLowBalanceEmail(name: string): string {
 <p style="color:#94a3b8;font-size:12px;margin-top:24px;">Invest.com.au · <a href="https://invest.com.au/advisor-dashboard/notifications" style="color:#94a3b8;">Manage notifications</a></p>
 </body></html>`;
 }
+
+export const GET = wrapCronHandler("advisor-nudge", handler);

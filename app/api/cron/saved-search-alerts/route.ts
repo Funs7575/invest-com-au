@@ -35,6 +35,7 @@ import {
   type SavedSearchKind,
   type SavedSearchRow,
 } from "@/lib/saved-searches";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:saved-search-alerts");
 
@@ -177,7 +178,7 @@ function buildDigestHtml(
 }
 
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -316,3 +317,5 @@ export async function GET(req: NextRequest) {
     errors,
   });
 }
+
+export const GET = wrapCronHandler("saved-search-alerts", handler);

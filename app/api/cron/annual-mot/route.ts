@@ -16,6 +16,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:annual-mot");
 
@@ -111,8 +112,8 @@ function buildMOTEmail(
   return { subject, html };
 }
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  const unauth = requireCronAuth(request);
+async function handler(req: NextRequest): Promise<NextResponse> {
+  const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
   const admin = createAdminClient();
@@ -217,3 +218,5 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   log.info("Annual MOT cron complete", { sent, skipped });
   return NextResponse.json({ sent, skipped });
 }
+
+export const GET = wrapCronHandler("annual-mot", handler);

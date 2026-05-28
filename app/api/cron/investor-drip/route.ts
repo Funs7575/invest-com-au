@@ -14,6 +14,7 @@ export const maxDuration = 60;
 
 import { getSiteUrl } from "@/lib/url";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 const SITE_URL = getSiteUrl();
 
 /**
@@ -97,7 +98,7 @@ function personalRecEmail(name: string, hasQuizResult: boolean): string {
     </div></div>`;
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -301,3 +302,5 @@ export async function GET(req: NextRequest) {
     timestamp: now.toISOString(),
   });
 }
+
+export const GET = wrapCronHandler("investor-drip", handler);

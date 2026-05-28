@@ -4,6 +4,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
 import { sendQuoteReviewRequestEmail } from "@/lib/quote-emails";
 import { createHmac } from "crypto";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -28,7 +29,7 @@ function makeReviewToken(auctionId: number, email: string): string {
  * Runs daily. Picks awarded auctions where winning_bid_id is set,
  * the bid was accepted ≥14 days ago, and review_request_sent_at is null.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -109,3 +110,5 @@ export async function GET(req: NextRequest) {
   log.info("Review requests processed", { sent, skipped, scanned: jobs?.length ?? 0 });
   return NextResponse.json({ sent, skipped, scanned: jobs?.length ?? 0 });
 }
+
+export const GET = wrapCronHandler("quote-review-requests", handler);

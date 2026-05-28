@@ -5,6 +5,7 @@ import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
 import { FEE_STALE_DAYS } from "@/lib/fee-freshness";
 import { SITE_URL } from "@/lib/seo";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:stale-fee-editorial");
 
@@ -22,7 +23,7 @@ export const maxDuration = 60;
  * Also writes each stale broker into the content_freshness_log so
  * the existing admin fee-queue shows them as pending action.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -152,3 +153,5 @@ export function renderDigest(rows: PrioritisedRow[]): string {
   </body>
 </html>`;
 }
+
+export const GET = wrapCronHandler("stale-fee-editorial", handler);

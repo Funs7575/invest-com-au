@@ -4,6 +4,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
 import { selectSnapshotIdsToDelete } from "@/lib/snapshot-retention";
 import type { SnapshotRow } from "@/lib/snapshot-retention";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:prune-rate-history");
 
@@ -48,7 +49,7 @@ export const maxDuration = 60;
 const RETENTION_DAYS = 90;
 const BATCH_LIMIT = 20_000;
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -157,3 +158,5 @@ export async function GET(req: NextRequest) {
     broker_health_score_history_anchors_kept: healthAnchors,
   });
 }
+
+export const GET = wrapCronHandler("prune-rate-history", handler);

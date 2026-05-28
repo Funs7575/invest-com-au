@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -21,7 +22,7 @@ const log = logger("cron:editorial-auto-publish");
 // Pre-launch (AFSL pending), Tier 2 content publishes under the
 // "invest.com.au Research Team" byline only; Tier 1 pillar articles stay
 // out of this auto-promote loop and require a `ceo_approvals` gate.
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -98,3 +99,5 @@ export async function GET(req: NextRequest) {
     failedRows: failed,
   });
 }
+
+export const GET = wrapCronHandler("editorial-auto-publish", handler);

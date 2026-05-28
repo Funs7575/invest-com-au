@@ -2,12 +2,13 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:verify-review-clients");
 
 export const maxDuration = 60;
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -172,3 +173,5 @@ export async function GET(req: NextRequest) {
     timestamp: new Date().toISOString(),
   });
 }
+
+export const GET = wrapCronHandler("verify-review-clients", handler);

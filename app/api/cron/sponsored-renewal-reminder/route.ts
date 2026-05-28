@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
 import { SITE_URL } from "@/lib/seo";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:sponsored-renewal-reminder");
 
@@ -19,7 +20,7 @@ export const maxDuration = 60;
  * not silently drop a reminder on the floor — the next run still
  * catches it.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -194,3 +195,5 @@ function escapeBasic(s: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 }
+
+export const GET = wrapCronHandler("sponsored-renewal-reminder", handler);

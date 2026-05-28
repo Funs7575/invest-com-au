@@ -7,6 +7,7 @@ import {
   sendConsumerStaleBriefNudge,
   sendProviderDailyDigest,
 } from "@/lib/marketplace-emails";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 /**
  * N2 — Stale brief auto-broaden + nudge cron.
@@ -193,7 +194,7 @@ async function handleProviderDigest() {
   return { digested };
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -222,3 +223,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "cron failed" }, { status: 500 });
   }
 }
+
+export const GET = wrapCronHandler("marketplace-stale-briefs", handler);

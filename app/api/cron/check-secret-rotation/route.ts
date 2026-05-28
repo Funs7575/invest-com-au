@@ -3,6 +3,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:check-secret-rotation");
 
@@ -98,7 +99,7 @@ function checkSecret(spec: SecretSpec, now: Date): SecretStatus {
   };
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -174,3 +175,5 @@ export async function GET(req: NextRequest) {
     statuses: needsAction,
   });
 }
+
+export const GET = wrapCronHandler("check-secret-rotation", handler);

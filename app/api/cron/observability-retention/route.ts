@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:observability-retention");
 
@@ -22,7 +23,7 @@ export const maxDuration = 60;
  * Runs daily. Bounded per-run to 20k deletes so a cold catch-up run
  * can't time out the handler.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -90,3 +91,5 @@ export async function GET(req: NextRequest) {
     cron_health_alerts_deleted: alertsDeleted,
   });
 }
+
+export const GET = wrapCronHandler("observability-retention", handler);

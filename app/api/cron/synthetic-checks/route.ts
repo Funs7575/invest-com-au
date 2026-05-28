@@ -4,6 +4,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
 import { escapeHtml } from "@/lib/html-escape";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:synthetic-checks");
 
@@ -207,7 +208,7 @@ async function maybeAlert(
   }
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -271,3 +272,5 @@ export async function GET(req: NextRequest) {
     status: failures.length === 0 ? 200 : 207, // 207 Multi-Status to surface partial failures
   });
 }
+
+export const GET = wrapCronHandler("synthetic-checks", handler);

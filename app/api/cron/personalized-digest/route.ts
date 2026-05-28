@@ -3,6 +3,7 @@ import { sendEmail } from "@/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("personalized-digest");
 
@@ -17,7 +18,7 @@ export const maxDuration = 60;
  *    watchlist summary, and a personalized broker recommendation
  * 3. Send via Resend, track in digest_sends to prevent duplicates
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -340,3 +341,5 @@ export async function GET(req: NextRequest) {
     digest_date: digestDate,
   });
 }
+
+export const GET = wrapCronHandler("personalized-digest", handler);

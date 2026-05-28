@@ -5,6 +5,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
 import { getSiteUrl } from "@/lib/url";
 import { escapeHtml } from "@/lib/html-escape";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:advisor-welcome-sequence");
 
@@ -24,7 +25,7 @@ export const maxDuration = 120;
  *
  * Cron routes under /api/cron/* are exempt from rate limiting.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -174,3 +175,5 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ sent, failed, checked: (advisors ?? []).length });
 }
+
+export const GET = wrapCronHandler("advisor-welcome-sequence", handler);

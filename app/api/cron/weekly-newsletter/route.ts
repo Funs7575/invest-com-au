@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { weeklyDigestEmail } from "@/lib/email-templates";
 import { NextRequest, NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "edge";
 export const maxDuration = 120;
@@ -19,7 +20,7 @@ export const maxDuration = 120;
  * Recipients: email_captures where newsletter_opt_in = true & unsubscribed = false.
  * De-duplicates via newsletter_sends table.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -227,3 +228,5 @@ export async function GET(req: NextRequest) {
     editionDate,
   });
 }
+
+export const GET = wrapCronHandler("weekly-newsletter", handler);

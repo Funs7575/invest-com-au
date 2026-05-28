@@ -4,15 +4,16 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { runTaxNurture } from "@/lib/tax-nurture";
 import { logger } from "@/lib/logger";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:tax-nurture");
 
-export async function GET(request: NextRequest) {
-  const auth = requireCronAuth(request);
+async function handler(req: NextRequest): Promise<NextResponse> {
+  const auth = requireCronAuth(req);
   if (auth) return auth;
 
   if (
-    !(await isAllowed("cron_tax_nurture", ipKey(request), {
+    !(await isAllowed("cron_tax_nurture", ipKey(req), {
       max: 5,
       refillPerSec: 0.01,
     }))
@@ -31,3 +32,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Run failed." }, { status: 500 });
   }
 }
+
+export const GET = wrapCronHandler("tax-nurture", handler);

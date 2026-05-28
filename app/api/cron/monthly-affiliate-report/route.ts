@@ -5,6 +5,7 @@ import { escapeHtml } from "@/lib/html-escape";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAIL } from "@/lib/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("monthly-affiliate-report");
 
@@ -13,8 +14,8 @@ const log = logger("monthly-affiliate-report");
  * Schedule: 1st of each month at 6:00 AM UTC
  * Aggregates clicks, signups, and revenue by broker for the previous month.
  */
-export async function GET(request: NextRequest) {
-  const unauth = requireCronAuth(request);
+async function handler(req: NextRequest): Promise<NextResponse> {
+  const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
   try {
@@ -164,3 +165,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Report generation failed" }, { status: 500 });
   }
 }
+
+export const GET = wrapCronHandler("monthly-affiliate-report", handler);

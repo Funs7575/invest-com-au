@@ -1,8 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-advisor-onboarding");
 
@@ -16,7 +17,7 @@ export const maxDuration = 30;
  *   Step 1 → 2: Day 2 — Complete your profile + add Calendly
  *   Step 2 → 3: Day 5 — Write your first article ($299)
  */
-export async function GET(req: Request) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -138,3 +139,5 @@ export async function GET(req: Request) {
 
   return NextResponse.json({ sent, checked: (advisors || []).length });
 }
+
+export const GET = wrapCronHandler("advisor-onboarding", handler);

@@ -4,6 +4,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
 import { SITE_URL } from "@/lib/seo";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:exit-intent-nurture");
 
@@ -95,7 +96,7 @@ const EMAILS: NurtureEmail[] = [
   },
 ];
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -231,3 +232,5 @@ function templateEmail(opts: {
   </body>
 </html>`;
 }
+
+export const GET = wrapCronHandler("exit-intent-nurture", handler);

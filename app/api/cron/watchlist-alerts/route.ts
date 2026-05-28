@@ -32,6 +32,7 @@ import {
   type BrokerSnapshot,
   type WatchlistItemRow,
 } from "@/lib/watchlist-alerts";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:watchlist-alerts");
 
@@ -53,7 +54,7 @@ interface UserRow {
   raw_user_meta_data: { full_name?: string; name?: string } | null;
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -321,3 +322,5 @@ async function fetchAuthUsers(
   }
   return out;
 }
+
+export const GET = wrapCronHandler("watchlist-alerts", handler);

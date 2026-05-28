@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { generateVersusPairs } from "@/lib/versus-pairs";
 import type { PlatformType } from "@/lib/types";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:versus-editorial-backfill");
 
@@ -57,7 +58,7 @@ interface GeneratedEditorial {
   faqs: { question: string; answer: string }[];
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -263,3 +264,5 @@ function validateEditorial(e: GeneratedEditorial): void {
   if (!Array.isArray(e.faqs) || e.faqs.length < 2)
     throw new Error("faqs must have 2+ entries");
 }
+
+export const GET = wrapCronHandler("versus-editorial-backfill", handler);

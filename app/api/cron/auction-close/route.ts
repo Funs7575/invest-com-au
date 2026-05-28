@@ -4,6 +4,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
 import { sendEmail } from "@/lib/resend";
 import { SITE_URL } from "@/lib/seo";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -98,7 +99,7 @@ async function sendConsumerAuctionMatchedEmail(
  * Registered in cron-groups.ts under 'every-30m' — runs every 30 minutes.
  * Max 60s runtime handles up to ~200 expiring auctions in a single fire.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -231,3 +232,5 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ awarded, expired: expired_count, errors });
 }
+
+export const GET = wrapCronHandler("auction-close", handler);

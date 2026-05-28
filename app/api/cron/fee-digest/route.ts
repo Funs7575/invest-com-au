@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { feeDigestEmail } from "@/lib/email-templates";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-fee-digest");
 
@@ -16,7 +17,7 @@ export const maxDuration = 60;
  * Respects each subscriber's broker_slugs and alert_type preferences.
  * Uses newsletter_sends table to avoid duplicate sends.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -185,3 +186,5 @@ export async function GET(req: NextRequest) {
     timestamp: now.toISOString(),
   });
 }
+
+export const GET = wrapCronHandler("fee-digest", handler);

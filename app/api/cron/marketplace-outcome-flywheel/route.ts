@@ -9,6 +9,7 @@ import {
   createPendingOutcomeRequests,
   refreshProviderOutcomeScores,
 } from "@/lib/outcomes";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 /**
  * N4 — Outcome flywheel cron.
@@ -69,7 +70,7 @@ async function emailPendingReviews(): Promise<number> {
   return sent;
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -97,3 +98,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "cron failed" }, { status: 500 });
   }
 }
+
+export const GET = wrapCronHandler("marketplace-outcome-flywheel", handler);

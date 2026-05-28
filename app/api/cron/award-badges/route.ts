@@ -3,13 +3,14 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { cpdYearFor } from "@/lib/course-certificates";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-award-badges");
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -116,3 +117,5 @@ export async function GET(req: NextRequest) {
   log.info("award-badges cron complete", { awarded });
   return NextResponse.json({ success: true, awarded });
 }
+
+export const GET = wrapCronHandler("award-badges", handler);

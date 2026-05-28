@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { invalidateFlagCache } from "@/lib/feature-flags";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:feature-flag-expiry");
 
@@ -27,7 +28,7 @@ export const maxDuration = 60;
  */
 const ARCHIVE_AFTER_DAYS = 90;
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -89,3 +90,5 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     errors: errors.length > 0 ? errors : undefined,
   });
 }
+
+export const GET = wrapCronHandler("feature-flag-expiry", handler);

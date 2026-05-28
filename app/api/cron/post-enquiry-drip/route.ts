@@ -1,8 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-post-enquiry-drip");
 
@@ -115,7 +116,7 @@ function buildCrossSellHtml(crossSells: CrossSell[], siteUrl: string): string {
  * Step 3 (Day 14): Dedicated cross-sell email — "3 other professionals who can help"
  * Step 4 (Day 30): "Fee update: your shortlisted brokers changed" + annual check-in
  */
-export async function GET(req: Request) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -442,3 +443,5 @@ export async function GET(req: Request) {
 
   return NextResponse.json({ sent, checked: (leads || []).length, advisor_nudges_sent: advisorNudgesSent });
 }
+
+export const GET = wrapCronHandler("post-enquiry-drip", handler);

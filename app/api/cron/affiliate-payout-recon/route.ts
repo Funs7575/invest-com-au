@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:affiliate-payout-recon");
 
@@ -52,7 +53,7 @@ export function calculatePayoutVariance(
   return { delta, deltaPct, shouldFlag };
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -130,3 +131,5 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ ok: true, reconciled, flagged });
 }
+
+export const GET = wrapCronHandler("affiliate-payout-recon", handler);

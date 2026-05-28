@@ -5,6 +5,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
 import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -29,7 +30,7 @@ interface AdvisorRow {
   email: string;
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -163,3 +164,5 @@ export async function GET(req: NextRequest) {
     failures: failures.length,
   });
 }
+
+export const GET = wrapCronHandler("lead-followup-reminders", handler);

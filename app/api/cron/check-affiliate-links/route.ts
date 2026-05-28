@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-affiliate");
 
@@ -18,7 +19,7 @@ export const maxDuration = 60;
  * Updates brokers.link_status, link_status_code, link_last_checked.
  * Sends an alert email if any links are broken.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -252,3 +253,5 @@ async function sendLinkHealthAlert(
     log.error("Failed to send link health alert", { error: err instanceof Error ? err.message : String(err) });
   }
 }
+
+export const GET = wrapCronHandler("check-affiliate-links", handler);

@@ -5,6 +5,7 @@ import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
 import { CRON_GROUPS } from "@/lib/cron-groups";
 import { SITE_URL } from "@/lib/seo";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:cron-health-alert");
 
@@ -67,7 +68,7 @@ function enumerate(): EndpointExpectation[] {
   }));
 }
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -253,3 +254,5 @@ function renderAlertEmail(
   </body>
 </html>`;
 }
+
+export const GET = wrapCronHandler("cron-health-alert", handler);

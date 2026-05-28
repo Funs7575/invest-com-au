@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:quarterly-anonymity-audit");
 
@@ -62,14 +63,14 @@ async function probePage(url: string): Promise<PageResult> {
   }
 }
 
-export async function GET(request: NextRequest) {
-  requireCronAuth(request);
+async function handler(req: NextRequest): Promise<NextResponse> {
+  requireCronAuth(req);
 
   const origin =
     process.env.NEXT_PUBLIC_SITE_URL ||
     (process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : new URL(request.url).origin);
+      : new URL(req.url).origin);
 
   const pagesToProbe = [
     `${origin}/`,
@@ -133,3 +134,5 @@ export async function GET(request: NextRequest) {
     })),
   });
 }
+
+export const GET = wrapCronHandler("quarterly-anonymity-audit", handler);

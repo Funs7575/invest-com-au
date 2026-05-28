@@ -4,6 +4,7 @@ import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { SITE_URL } from "@/lib/seo";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:broker-review-invites");
 
@@ -31,7 +32,7 @@ const CLICK_MIN_AGE_DAYS = 7;
 const CLICK_MAX_AGE_DAYS = 30;
 const DEDUP_WINDOW_DAYS = 90;
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -218,3 +219,5 @@ function renderInviteEmail(opts: {
   </body>
 </html>`;
 }
+
+export const GET = wrapCronHandler("broker-review-invites", handler);

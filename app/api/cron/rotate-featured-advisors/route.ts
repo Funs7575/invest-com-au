@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -17,7 +18,7 @@ const log = logger("cron-rotate-featured-advisors");
  *   2. Selects the next batch of Gold advisors for the coming week
  *      (round-robin by last_lead_date to ensure fair rotation)
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -77,3 +78,5 @@ export async function GET(req: NextRequest) {
     featured_until: nextWeek,
   });
 }
+
+export const GET = wrapCronHandler("rotate-featured-advisors", handler);

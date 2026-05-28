@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-content-freshness");
 
@@ -24,7 +25,7 @@ export const dynamic = "force-dynamic";
 
 const STALE_DAYS = 180;
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -126,3 +127,5 @@ async function notifyAdmin(queued: number): Promise<void> {
     }),
   });
 }
+
+export const GET = wrapCronHandler("content-freshness", handler);

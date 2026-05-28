@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:hub-subscriber-drip");
 
@@ -208,7 +209,7 @@ function buildStep3Html(hub: HubConfig, unsub: string): string {
  *
  * Idempotency: hub_drip_log UNIQUE (email, segment_slug, drip_step).
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -332,3 +333,5 @@ export async function GET(req: NextRequest) {
   log.info("Hub subscriber drip complete", stats);
   return NextResponse.json({ ...stats, timestamp: now.toISOString() });
 }
+
+export const GET = wrapCronHandler("hub-subscriber-drip", handler);

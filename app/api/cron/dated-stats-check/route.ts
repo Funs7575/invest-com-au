@@ -4,6 +4,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
 import { getStaleStats, getUpcomingStaleStats } from "@/lib/dated-stats";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:dated-stats-check");
 
@@ -19,7 +20,7 @@ export const maxDuration = 30;
  *
  * Registered in CRON_GROUPS["daily-8"]. Non-blocking on email failure.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -85,3 +86,5 @@ ${
 
   return NextResponse.json({ ok: true, stale: stale.length, upcoming: upcoming.length });
 }
+
+export const GET = wrapCronHandler("dated-stats-check", handler);

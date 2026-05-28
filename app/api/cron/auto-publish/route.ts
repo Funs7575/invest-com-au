@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "edge";
 export const maxDuration = 30;
@@ -10,7 +11,7 @@ export const maxDuration = 30;
  * Runs daily. Publishes articles whose content_calendar target_publish_date
  * has arrived and whose status is 'scheduled'.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -67,3 +68,5 @@ export async function GET(req: NextRequest) {
     articles: published,
   });
 }
+
+export const GET = wrapCronHandler("auto-publish", handler);

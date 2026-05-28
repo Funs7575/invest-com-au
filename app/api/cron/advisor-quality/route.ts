@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { fireConsumerWebhook } from "@/lib/consumer-webhook-dispatch";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const maxDuration = 60;
 
@@ -15,7 +16,7 @@ const log = logger("cron-advisor-quality");
  * 2. Response Time SLA — warns then auto-pauses non-responsive advisors
  * 3. ASIC/TPB Register Check — verifies AFSL numbers are still active
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -339,3 +340,5 @@ export async function GET(req: NextRequest) {
   log.info("Advisor quality check complete", { results: results.length });
   return NextResponse.json({ ok: true, results });
 }
+
+export const GET = wrapCronHandler("advisor-quality", handler);

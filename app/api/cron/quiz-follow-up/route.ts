@@ -7,6 +7,7 @@ import {
 } from "@/lib/email-templates";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("quiz-followup");
 
@@ -25,7 +26,7 @@ export const maxDuration = 60;
  * Each drip is sent at most once per lead (tracked via quiz_follow_ups table).
  * Only one email per lead per cron run to avoid flooding.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -439,3 +440,5 @@ export async function GET(req: NextRequest) {
     timestamp: now.toISOString(),
   });
 }
+
+export const GET = wrapCronHandler("quiz-follow-up", handler);

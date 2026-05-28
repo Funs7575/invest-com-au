@@ -1,8 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-portfolio-monitor");
 
@@ -27,7 +28,7 @@ export const maxDuration = 60;
  * Each click-through generates ~$1-5 in affiliate revenue.
  * At 1,000 portfolios: $1/month cost → $50-500/month revenue.
  */
-export async function GET(req: Request) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -59,7 +60,7 @@ export async function GET(req: Request) {
     if (!portfolio.email || !portfolio.holdings || !Array.isArray(portfolio.holdings)) continue;
 
     const firstName = portfolio.name?.split(" ")[0] || "Investor";
-    const prevFees = (portfolio.annual_fees_cents || 0) / 100;
+    const _prevFees = (portfolio.annual_fees_cents || 0) / 100;
 
     // Recalculate current fees
     let totalFees = 0;
@@ -249,3 +250,5 @@ export async function GET(req: Request) {
     emailsSent: alertsSent,
   });
 }
+
+export const GET = wrapCronHandler("portfolio-monitor", handler);

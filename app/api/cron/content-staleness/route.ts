@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminEmail } from "@/lib/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-content-staleness");
 
@@ -19,7 +20,7 @@ export const maxDuration = 60;
  * - +20 if article references brokers whose fees have changed
  * - +10 if article is not evergreen
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -126,3 +127,5 @@ export async function GET(req: NextRequest) {
     articles: results.filter((r) => r.needsUpdate),
   });
 }
+
+export const GET = wrapCronHandler("content-staleness", handler);

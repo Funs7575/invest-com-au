@@ -1,9 +1,10 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { formatCurrency } from "@/lib/utils";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-weekly-rate-update");
 
@@ -109,7 +110,7 @@ function buildEmailHtml(
   `;
 }
 
-export async function GET(req: Request) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -223,3 +224,5 @@ export async function GET(req: Request) {
     timestamp: new Date().toISOString(),
   });
 }
+
+export const GET = wrapCronHandler("weekly-rate-update", handler);

@@ -6,6 +6,7 @@ import { sendEmail } from "@/lib/resend";
 import { cpdYearFor } from "@/lib/course-certificates";
 import { getSiteUrl } from "@/lib/url";
 import { escapeHtml } from "@/lib/html-escape";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:cpd-reminder");
 
@@ -22,7 +23,7 @@ export const maxDuration = 120;
  * Cron routes under /api/cron/* are exempt from rate limiting per the
  * project rate-limit audit.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -167,3 +168,5 @@ export async function GET(req: NextRequest) {
   log.info("CPD reminder cron complete", { sent, skipped, cpd_year });
   return NextResponse.json({ sent, skipped, cpd_year });
 }
+
+export const GET = wrapCronHandler("cpd-reminder", handler);

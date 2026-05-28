@@ -7,6 +7,7 @@ import {
   checkInEmail,
 } from "@/lib/email-templates";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -23,7 +24,7 @@ export const maxDuration = 60;
  * Only processes brokers registered within the last 15 days.
  * Each email is sent at most once per broker (tracked via broker_notifications).
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -274,3 +275,5 @@ export async function GET(req: NextRequest) {
     timestamp: now.toISOString(),
   });
 }
+
+export const GET = wrapCronHandler("welcome-drip", handler);

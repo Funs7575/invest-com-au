@@ -1,8 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron-annual-reminder");
 
@@ -23,7 +24,7 @@ export const maxDuration = 30;
  *
  * The real value: it reactivates dormant users at zero acquisition cost.
  */
-export async function GET(req: Request) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -140,3 +141,5 @@ export async function GET(req: Request) {
   log.info("Annual reminders sent", { sent, checked: users.length });
   return NextResponse.json({ sent, checked: users.length });
 }
+
+export const GET = wrapCronHandler("annual-review-reminder", handler);

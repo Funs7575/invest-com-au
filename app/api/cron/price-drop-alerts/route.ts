@@ -4,6 +4,7 @@ import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { buildEmailToUserIdMap, notifyUser } from "@/lib/notifications";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 export const maxDuration = 60;
 
@@ -24,7 +25,7 @@ const FIELD_LABELS: Record<string, string> = {
  * Runs daily — complements the instant check-fees cron by catching decreases
  * that were auto-approved and sending targeted "price drop" emails.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -80,7 +81,7 @@ export async function GET(req: NextRequest) {
     if (relevant.length === 0) continue;
 
     // Check we haven't already notified for these exact changes
-    const changeKeys = relevant.map((d) => `${d.broker_slug}:${d.field_name}:${d.new_value}`);
+    const _changeKeys = relevant.map((d) => `${d.broker_slug}:${d.field_name}:${d.new_value}`);
 
     const dropRows = relevant.map((d) => {
       const oldNum = parseFloat((d.old_value || "").replace(/[^0-9.]/g, ""));
@@ -238,3 +239,5 @@ export async function GET(req: NextRequest) {
     timestamp: new Date().toISOString(),
   });
 }
+
+export const GET = wrapCronHandler("price-drop-alerts", handler);

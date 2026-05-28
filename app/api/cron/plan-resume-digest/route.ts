@@ -8,6 +8,7 @@ import {
   shouldSkip,
   type DigestCandidate,
 } from "@/lib/account/plan-resume-digest";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("plan-resume-digest");
 
@@ -20,7 +21,7 @@ const DEDUP_WINDOW_DAYS = 7;
  * Cron: daily nudge to users who started a Get Matched plan and
  * abandoned it >3 days ago. One email per user per 7 days.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest): Promise<NextResponse> {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -133,3 +134,5 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ sent, failed, scanned: plans.length });
 }
+
+export const GET = wrapCronHandler("plan-resume-digest", handler);
