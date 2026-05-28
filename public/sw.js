@@ -1,47 +1,80 @@
 /**
- * Invest.com.au service worker.
+ * Invest.com.au service worker — caching + push notifications.
  *
- * Strategy:
- *   - Static assets (/_next/static/...): stale-while-revalidate
- *     with a 7-day cache
- *   - Images: cache-first with a 30-day expiry
- *   - HTML pages: network-first, fall back to cache on offline
- *     so the last-visited page can still render
+ * This is the single service worker registered at scope "/".
+ * It handles both offline caching and web push notifications.
+ *
+ * Caching strategy:
+ *   - Static assets (/_next/static/...): stale-while-revalidate (7 days)
+ *   - Images: cache-first (30 days)
+ *   - HTML pages: network-first, fall back to cache, then /offline
  *   - API routes: never cached (always network)
  *
- * Registered once from /lib/register-sw.ts via a useEffect in the
- * layout. A new build bumps SW_VERSION in its place and the old
- * cache is cleaned up on activation.
+ * Push strategy:
+ *   - push: show notification with title/body/icon/url from payload
+ *   - notificationclick: focus existing tab or open new one
+ *   - pushsubscriptionchange: re-subscribe and POST to /api/push/subscribe
  *
  * Privacy: nothing under /admin, /broker-portal, /advisor-portal,
  * /dashboard, or /api is ever cached — those are either auth-gated
  * or mutating.
  */
 
-const SW_VERSION = "v1";
+const SW_VERSION = "v2";
 const STATIC_CACHE = `invest-static-${SW_VERSION}`;
 const IMAGE_CACHE = `invest-images-${SW_VERSION}`;
 const HTML_CACHE = `invest-html-${SW_VERSION}`;
+const SHELL_CACHE = `invest-shell-${SW_VERSION}`;
 
-const STATIC_MAX_AGE_DAYS = 7;
-const IMAGE_MAX_AGE_DAYS = 30;
+const OFFLINE_URL = "/offline";
+
+// URLs to precache as the offline app shell
+const APP_SHELL = [
+  OFFLINE_URL,
+];
+
+// Key static pages to warm into HTML_CACHE on install
+const WARM_PAGES = [
+  "/",
+  "/compare",
+  "/calculators",
+  "/articles",
+];
 
 self.addEventListener("install", (event) => {
-  self.skipWaiting();
+  event.waitUntil(
+    (async () => {
+      const shellCache = await caches.open(SHELL_CACHE);
+      // Precache app shell — offline fallback must always be available
+      await shellCache.addAll(APP_SHELL);
+
+      // Warm key navigation pages into HTML_CACHE (best-effort — don't fail install)
+      const htmlCache = await caches.open(HTML_CACHE);
+      await Promise.allSettled(
+        WARM_PAGES.map((url) =>
+          fetch(url, { redirect: "follow" }).then((res) => {
+            if (res.ok) htmlCache.put(url, res);
+          })
+        )
+      );
+
+      self.skipWaiting();
+    })()
+  );
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     (async () => {
-      // Clean up old caches
+      // Clean up caches from old versions
       const keys = await caches.keys();
       await Promise.all(
         keys
           .filter((k) => !k.endsWith(SW_VERSION))
-          .map((k) => caches.delete(k)),
+          .map((k) => caches.delete(k))
       );
       await self.clients.claim();
-    })(),
+    })()
   );
 });
 
@@ -64,16 +97,19 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
 
   const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return; // cross-origin → let the browser handle
+  if (url.origin !== self.location.origin) return; // cross-origin → let browser handle
   if (shouldBypass(url)) return;
 
   // Static Next.js assets → stale-while-revalidate
-  if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/fonts/")) {
+  if (
+    url.pathname.startsWith("/_next/static/") ||
+    url.pathname.startsWith("/fonts/")
+  ) {
     event.respondWith(staleWhileRevalidate(req, STATIC_CACHE));
     return;
   }
 
-  // Images
+  // Images → cache-first
   if (
     url.pathname.match(/\.(png|jpg|jpeg|webp|avif|svg|ico|gif)$/i) ||
     url.pathname.startsWith("/_next/image") ||
@@ -83,9 +119,9 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // HTML pages → network first, fall back to cache
+  // HTML navigations → network-first with offline fallback
   if (req.headers.get("accept")?.includes("text/html")) {
-    event.respondWith(networkFirst(req, HTML_CACHE));
+    event.respondWith(networkFirstWithOfflineFallback(req, HTML_CACHE));
   }
 });
 
@@ -110,18 +146,114 @@ async function cacheFirst(request, cacheName) {
     if (response && response.status === 200) cache.put(request, response.clone());
     return response;
   } catch {
-    return cached || new Response("", { status: 504 });
+    return new Response("", { status: 504 });
   }
 }
 
-async function networkFirst(request, cacheName) {
+async function networkFirstWithOfflineFallback(request, cacheName) {
   const cache = await caches.open(cacheName);
   try {
     const response = await fetch(request);
     if (response && response.status === 200) cache.put(request, response.clone());
     return response;
   } catch {
+    // Try cache for this specific page first
     const cached = await cache.match(request);
-    return cached || new Response("Offline", { status: 503 });
+    if (cached) return cached;
+
+    // Fall back to the precached offline page
+    const shellCache = await caches.open(SHELL_CACHE);
+    const offlinePage = await shellCache.match(OFFLINE_URL);
+    return (
+      offlinePage ||
+      new Response("You are offline", {
+        status: 503,
+        headers: { "Content-Type": "text/plain" },
+      })
+    );
   }
 }
+
+// ─── Push notification handlers ─────────────────────────────────────────────
+
+self.addEventListener("push", function (event) {
+  if (!event.data) return;
+
+  let data;
+  try {
+    data = event.data.json();
+  } catch {
+    // If JSON parsing fails, use text
+    data = {
+      title: "invest.com.au",
+      body: event.data.text(),
+      url: "/",
+    };
+  }
+
+  const title = data.title || "invest.com.au";
+  const options = {
+    body: data.body || "",
+    icon: data.icon || "/icon-192.png",
+    badge: "/icon-192.png",
+    tag: data.topic || "general",
+    data: {
+      url: data.url || "/",
+    },
+    // Vibrate pattern for mobile
+    vibrate: [100, 50, 100],
+    // Auto-close after 30 seconds
+    requireInteraction: false,
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", function (event) {
+  event.notification.close();
+
+  let url =
+    event.notification.data && event.notification.data.url
+      ? event.notification.data.url
+      : "/";
+
+  // If relative URL, make it absolute
+  if (url.startsWith("/")) {
+    url = self.location.origin + url;
+  }
+
+  event.waitUntil(
+    // Try to focus an existing tab, otherwise open a new one
+    self.clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then(function (clientList) {
+        for (let i = 0; i < clientList.length; i++) {
+          const client = clientList[i];
+          if (client.url === url && "focus" in client) {
+            return client.focus();
+          }
+        }
+        if (self.clients.openWindow) {
+          return self.clients.openWindow(url);
+        }
+      })
+  );
+});
+
+// Handle subscription change (browser re-subscribes after expiry)
+self.addEventListener("pushsubscriptionchange", function (event) {
+  event.waitUntil(
+    self.registration.pushManager
+      .subscribe(event.oldSubscription.options)
+      .then(function (subscription) {
+        return fetch("/api/push/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            subscription: subscription.toJSON(),
+            topics: ["fee_changes", "deals"], // Re-subscribe with default topics
+          }),
+        });
+      })
+  );
+});

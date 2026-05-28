@@ -23,6 +23,8 @@ import AdvisorReputationSummary from "./components/AdvisorReputationSummary";
 import RecentAdvisorInsights from "./components/RecentAdvisorInsights";
 import FollowAdvisorButton from "@/components/FollowAdvisorButton";
 import { computeIdealClientBoost, type UserMatchProfile, type IdealClientCriteria } from "@/lib/advisor-profile-match";
+import { getRelatedForAdvisor } from "@/lib/related-content";
+import RelatedRail from "@/components/RelatedRail";
 
 export const revalidate = 1800;
 
@@ -625,6 +627,43 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
       {/* ── Recent insights from this advisor ── */}
       <RecentAdvisorInsights slug={slug} advisorId={pro.id} advisorName={pro.name} />
 
+      {/* Related advisors + guide rail — factual discovery, not advice. */}
+      {(() => {
+        const { advisors: relAdvisors, guides: relGuides } = getRelatedForAdvisor(
+          { id: pro.id, slug: pro.slug, type: pro.type, specialties: pro.specialties ?? [], location_state: pro.location_state },
+          similar.map((s) => ({
+            id: s.id,
+            slug: s.slug,
+            name: s.name,
+            type: s.type,
+            specialties: s.specialties ?? [],
+            location_state: s.location_state,
+            location_display: s.location_display,
+            rating: s.rating,
+            verified: s.verified,
+            firm_name: s.firm_name,
+          })),
+        );
+        if (relAdvisors.length === 0 && relGuides.length === 0) return null;
+        return (
+          <div className="container-custom max-w-4xl mt-6">
+            {relAdvisors.length > 0 && (
+              <RelatedRail
+                heading={`Similar ${PROFESSIONAL_TYPE_LABELS[pro.type as keyof typeof PROFESSIONAL_TYPE_LABELS] ?? "Advisors"}`}
+                items={relAdvisors}
+              />
+            )}
+            {relGuides.length > 0 && (
+              <RelatedRail
+                heading="Useful Guides"
+                items={[]}
+                secondaryItems={relGuides}
+                className="mt-4"
+              />
+            )}
+          </div>
+        );
+      })()}
       <ClaimListingButton
         claimType="advisor"
         targetSlug={pro.slug}

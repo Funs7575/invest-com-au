@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import MobileBottomNav from "@/components/MobileBottomNav";
 
 // Navigation is large (738 lines incl. mega-menu data) — code-split into
 // its own chunk so it doesn't block the main page bundle. Keeps SSR so
@@ -12,7 +13,7 @@ const Navigation = dynamic(
   {
     ssr: true,
     loading: () => (
-      <div className="h-16 md:h-20 bg-white border-b border-slate-100" aria-hidden="true" />
+      <div className="h-16 md:h-20 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-700" aria-hidden="true" />
     ),
   }
 );
@@ -62,6 +63,11 @@ export default function LayoutShell({ children, countryModeBanner }: LayoutShell
       {countryModeBanner}
       <main id="main-content" className="min-h-screen pb-14 sm:pb-0">{children}</main>
       <SiteFooter />
+      {/* MobileBottomNav — persistent across all non-admin routes.
+          The component itself handles hiding on /admin, /auth, /quiz etc.
+          via its HIDDEN_PREFIXES list. Placed after the footer so it
+          paints above it in the stacking order (z-40). */}
+      <MobileBottomNav />
       <CookieBanner />
       <BackToTop />
       <QuizPromptBar />

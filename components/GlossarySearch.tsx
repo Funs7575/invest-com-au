@@ -29,7 +29,7 @@ export default function GlossarySearch({ entries }: { entries: GlossaryEntry[] }
             className="w-full pl-9 pr-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
           />
         </div>
-        <p className="text-sm text-slate-500 text-center py-4">No terms match "{query}"</p>
+        <p className="text-sm text-slate-500 text-center py-4">No terms match &ldquo;{query}&rdquo;</p>
       </div>
     );
   }
@@ -54,7 +54,7 @@ export default function GlossarySearch({ entries }: { entries: GlossaryEntry[] }
             <div key={entry.term} className="bg-white border border-slate-200 rounded-lg p-3">
               <h3 className="text-sm font-bold text-slate-900">{entry.term}</h3>
               <p className="text-xs text-slate-600 mt-1">{entry.definition}</p>
-              {entry.category && <span className="inline-block mt-1.5 text-[0.56rem] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">{entry.category}</span>}
+              {entry.category && <span className="inline-block mt-1.5 text-[0.56rem] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">{entry.category}</span>}
             </div>
           ))}
         </div>

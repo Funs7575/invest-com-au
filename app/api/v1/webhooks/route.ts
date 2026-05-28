@@ -8,9 +8,11 @@
  * Tier requirement: basic or higher (free tier cannot register webhooks).
  *
  * Webhook signing:
- *   Each registration gets a unique signing secret (`whsec_<32-hex-chars>`).
- *   The secret is returned exactly once at creation time — it is stored as a
- *   SHA-256 hash. Payloads are signed as:
+ *   Each registration gets a unique signing secret (`whsec_<32-hex-chars>`),
+ *   returned exactly once at creation time. We store a SHA-256 hash (for
+ *   identification) AND the raw secret in `signing_secret` (service-role /
+ *   deny-all-anon RLS) — the dispatch worker needs the raw value to HMAC-sign
+ *   outbound payloads. Payloads are signed as:
  *     X-Invest-Signature: sha256=<HMAC-SHA256(secret, body)>
  *
  * Supported events (passed as an array in `events`):
@@ -183,6 +185,10 @@ export const POST = withValidatedBody(
         events: body.events,
         secret_hash: secretHash,
         secret_prefix: secretPrefix,
+        // signing_secret stored plaintext (service-role / deny-all-anon RLS).
+        // Required by the dispatch worker to sign outbound payloads; the
+        // hash alone cannot be reversed.
+        signing_secret: plainSecret,
         is_active: true,
       })
       .select("id, url, events, secret_prefix, is_active, created_at")

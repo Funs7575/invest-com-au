@@ -25,6 +25,12 @@ vi.mock("@/lib/logger", () => ({
   })),
 }));
 
+// Mock the VAPID JWT builder so push-dispatch tests don't need real key material.
+// The unit under test here is the dispatch loop, not the JWT construction.
+vi.mock("@/lib/vapid-jwt", () => ({
+  buildVapidAuthHeader: vi.fn(async () => "vapid t=mock.jwt.sig, k=mock-pub"),
+}));
+
 const { mockMaybeSingle, mockSubsQuery, mockDeleteIn, mockDeleteBuilder } =
   vi.hoisted(() => ({
     mockMaybeSingle: vi.fn(),
@@ -249,6 +255,16 @@ describe("dispatchPushToUser", () => {
     expect(sent.title).toBe(PAYLOAD.title);
     expect(sent.body).toBe(PAYLOAD.body);
     expect(sent.url).toBe(PAYLOAD.url);
+  });
+
+  it("sets the Authorization header from buildVapidAuthHeader", async () => {
+    setupFrom();
+    const sender = mockSender(201);
+    await dispatchPushToUser(USER_ID, PAYLOAD, sender);
+    const [, init] = sender.mock.calls[0] as [string, RequestInit];
+    const headers = init.headers as Record<string, string>;
+    // The mock returns "vapid t=mock.jwt.sig, k=mock-pub"
+    expect(headers["Authorization"]).toBe("vapid t=mock.jwt.sig, k=mock-pub");
   });
 
   it("uses custom icon and tag when provided", async () => {

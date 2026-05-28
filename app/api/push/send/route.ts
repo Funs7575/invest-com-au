@@ -1,22 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { buildVapidAuthHeader } from "@/lib/vapid-jwt";
 
 const log = logger("push:send");
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VALID_TOPICS = ["fee_changes", "deals", "articles", "price_drops", "market_events"] as const;
-
-const PushBody = z.object({
-  topic: z.enum(VALID_TOPICS),
-  title: z.string().min(1).max(200),
-  body: z.string().min(1).max(500),
-  url: z.string().url(),
-  icon: z.string().optional(),
-});
+const VALID_TOPICS = ["fee_changes", "deals", "articles", "price_drops"] as const;
 
 /**
  * POST /api/push/send — Admin-only endpoint to broadcast a push notification.
@@ -34,14 +26,28 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const parsed = PushBody.safeParse(await request.json());
-    if (!parsed.success) {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- admin-gated internal push-send route (ADMIN_API_KEY checked above); fields destructured + validated below
+    const body = await request.json();
+    const { topic, title, body: notifBody, url, icon } = body as {
+      topic: string;
+      title: string;
+      body: string;
+      url: string;
+      icon?: string;
+    };
+
+    if (!topic || !(VALID_TOPICS as readonly string[]).includes(topic)) {
       return NextResponse.json(
-        { error: `Invalid body. Required: topic (${VALID_TOPICS.join("|")}), title, body, url` },
-        { status: 400 },
+        { error: `Invalid topic. Options: ${VALID_TOPICS.join(", ")}` },
+        { status: 400 }
       );
     }
-    const { topic, title, body: notifBody, url, icon } = parsed.data;
+    if (!title || !notifBody || !url) {
+      return NextResponse.json(
+        { error: "title, body, and url are required" },
+        { status: 400 }
+      );
+    }
 
     const supabase = createAdminClient();
 
@@ -90,20 +96,25 @@ export async function POST(request: NextRequest) {
       topic,
     });
 
-    // Send notifications via Web Push protocol
-    // Uses VAPID for authentication (RFC 8292)
+    // Send notifications via Web Push protocol (RFC 8292 — ES256 VAPID JWT)
     let sent = 0;
     let failed = 0;
     const staleEndpoints: string[] = [];
 
     const results = await Promise.allSettled(
       subscriptions.map(async (sub) => {
+        // Build a per-endpoint VAPID JWT (aud = scheme+host of the endpoint)
+        const authHeader = await buildVapidAuthHeader(
+          sub.endpoint,
+          vapidPrivate,
+          vapidPublic,
+        );
         const res = await fetch(sub.endpoint, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "TTL": "86400",
-            ...(vapidPublic ? { "Authorization": `vapid t=${vapidPublic}` } : {}),
+            Authorization: authHeader,
           },
           body: payload,
         });

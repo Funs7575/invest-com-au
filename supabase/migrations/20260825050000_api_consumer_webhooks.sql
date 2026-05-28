@@ -26,5 +26,6 @@ CREATE INDEX IF NOT EXISTS idx_api_consumer_webhooks_key
 
 ALTER TABLE api_consumer_webhooks ENABLE ROW LEVEL SECURITY;
 -- Service-role only (admin/cron use the service key)
+DROP POLICY IF EXISTS "Service manage api_consumer_webhooks" ON api_consumer_webhooks;
 CREATE POLICY "Service manage api_consumer_webhooks"
   ON api_consumer_webhooks FOR ALL USING (true);

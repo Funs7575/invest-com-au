@@ -159,7 +159,7 @@ export default async function ForeignInvestmentHubPage() {
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
                 Investing in Australia{" "}
-                <span className="text-amber-500">from Overseas</span>
+                <span className="text-amber-700">from Overseas</span>
               </h1>
               <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-5">
                 Rules for non-residents, visa holders, expats and new migrants across
@@ -209,7 +209,7 @@ export default async function ForeignInvestmentHubPage() {
                 { label: "Property FIRB fee", value: "$14,100", sub: "for properties up to $1M" },
               ].map((s) => (
                 <div key={s.label} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-                  <div className="text-xl md:text-2xl font-extrabold text-amber-600">{s.value}</div>
+                  <div className="text-xl md:text-2xl font-extrabold text-amber-700">{s.value}</div>
                   <div className="text-[0.65rem] font-bold text-slate-900 mt-0.5">{s.label}</div>
                   <div className="text-[0.6rem] text-slate-500 mt-0.5">{s.sub}</div>
                 </div>
@@ -299,11 +299,11 @@ export default async function ForeignInvestmentHubPage() {
               ))}
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/best/foreign-investors" className="text-sm font-bold text-amber-600 hover:text-amber-700">
+              <Link href="/best/foreign-investors" className="text-sm font-bold text-amber-700 hover:text-amber-800">
                 Best platforms for non-residents &rarr;
               </Link>
               <span className="text-slate-300">·</span>
-              <Link href="/best/expat-investors" className="text-sm font-bold text-amber-600 hover:text-amber-700">
+              <Link href="/best/expat-investors" className="text-sm font-bold text-amber-700 hover:text-amber-800">
                 Best platforms for expats &rarr;
               </Link>
             </div>
@@ -339,7 +339,7 @@ export default async function ForeignInvestmentHubPage() {
                   <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wide mb-1.5">Key rule</p>
                   <p className="text-xs text-slate-700 leading-relaxed">{v.keyRule}</p>
                 </div>
-                <div className="mt-3 text-xs font-bold text-amber-600 group-hover:text-amber-700 flex items-center gap-1">
+                <div className="mt-3 text-xs font-bold text-amber-700 group-hover:text-amber-800 flex items-center gap-1">
                   Full guide <span>&rarr;</span>
                 </div>
               </Link>
@@ -373,7 +373,7 @@ export default async function ForeignInvestmentHubPage() {
                 <div className="text-2xl mb-2">{v.icon}</div>
                 <h3 className="text-sm font-extrabold text-slate-900 group-hover:text-amber-700 mb-1.5 transition-colors">{v.title}</h3>
                 <p className="text-xs text-slate-500 leading-relaxed flex-1">{v.desc}</p>
-                <div className="mt-3 text-xs font-bold text-amber-600 group-hover:text-amber-700">Full guide →</div>
+                <div className="mt-3 text-xs font-bold text-amber-700 group-hover:text-amber-800">Full guide →</div>
               </Link>
             ))}
           </div>
@@ -416,7 +416,7 @@ export default async function ForeignInvestmentHubPage() {
               </Link>
             ))}
           </div>
-          <Link href="/foreign-investment/send-money-australia" className="inline-flex items-center gap-2 text-sm font-bold text-amber-600 hover:text-amber-700">
+          <Link href="/foreign-investment/send-money-australia" className="inline-flex items-center gap-2 text-sm font-bold text-amber-700 hover:text-amber-800">
             Send money to Australia — compare transfer rates →
           </Link>
         </div>
@@ -443,7 +443,7 @@ export default async function ForeignInvestmentHubPage() {
             dtaDisclaimer={DTA_DISCLAIMER}
           />
           <div className="mt-4">
-            <Link href="/foreign-investment/tax" className="text-sm font-bold text-amber-600 hover:text-amber-700">
+            <Link href="/foreign-investment/tax" className="text-sm font-bold text-amber-700 hover:text-amber-800">
               See the full tax guide for non-residents &rarr;
             </Link>
           </div>

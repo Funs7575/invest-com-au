@@ -10,6 +10,12 @@ import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { getCurrentPricesBatch } from "@/lib/holdings/value";
 import { listBookmarks } from "@/lib/bookmarks";
 import { metricKindLabel, metricKindPath } from "@/lib/alert-thresholds";
+import { SCENARIO_PLANNER_CALC_KEY, type ScenarioPlannerSnapshot } from "@/lib/scenario-engine";
+import {
+  assembleSavedScenarioPreviews,
+  type ScenarioPreview,
+} from "@/lib/scenario-deep-link";
+import { formatCurrency } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -132,6 +138,112 @@ function BookmarksIcon() {
     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
     </svg>
+  );
+}
+
+// ─── Re-export for tests ───────────────────────────────────────────────────
+// assembleSavedScenarioPreviews is pure and lives in lib/scenario-deep-link —
+// re-exported here so test files can follow the same import pattern as the
+// existing assembleDashboardSummary tests.
+export { assembleSavedScenarioPreviews } from "@/lib/scenario-deep-link";
+export type { ScenarioPreview } from "@/lib/scenario-deep-link";
+
+// ─── Saved scenarios inline card ───────────────────────────────────────────
+
+/**
+ * Renders the saved scenario planner card with inline previews and Resume links.
+ *
+ * When `previews` is empty, falls back to the same summary-card style as the
+ * other dashboard tiles (count + CTA link) so the layout is consistent.
+ *
+ * Note: anonymous-only scenarios live in sessionStorage and cannot be read
+ * server-side — users who haven't signed in when saving will see an empty
+ * state with a prompt to open the planner and re-save while signed in.
+ */
+function SavedScenariosCard({ previews }: { previews: ScenarioPreview[] }) {
+  if (previews.length === 0) {
+    // Empty-state: mirror SummaryCard appearance.
+    return (
+      <Link
+        href="/scenarios/plan"
+        className="group flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 hover:border-violet-300 hover:shadow-sm transition-all"
+      >
+        <div className="flex items-center justify-between gap-2">
+          <div className="w-9 h-9 bg-violet-50 text-violet-600 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-violet-100 transition-colors">
+            <ScenariosIcon />
+          </div>
+          <span className="text-xs font-semibold text-violet-700 group-hover:text-violet-900 transition-colors">
+            Open planner &rarr;
+          </span>
+        </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-0.5">
+            Saved scenarios
+          </p>
+          <p className="text-2xl font-extrabold text-slate-900 tabular-nums leading-tight">
+            None saved
+          </p>
+          <p className="mt-0.5 text-xs text-slate-500 leading-relaxed">
+            Save up to 3 scenarios in the planner to resume them here
+          </p>
+        </div>
+      </Link>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5">
+      {/* Card header */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="w-9 h-9 bg-violet-50 text-violet-600 rounded-xl flex items-center justify-center shrink-0">
+            <ScenariosIcon />
+          </div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Saved scenarios
+          </p>
+        </div>
+        <Link
+          href="/scenarios/plan"
+          className="text-xs font-semibold text-violet-700 hover:text-violet-900 transition-colors shrink-0"
+        >
+          Planner &rarr;
+        </Link>
+      </div>
+
+      {/* Scenario rows */}
+      <div className="space-y-2">
+        {previews.map((preview, idx) => (
+          <div
+            key={idx}
+            className="flex items-center justify-between gap-3 bg-slate-50 rounded-xl px-3 py-2.5"
+          >
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-900 truncate">
+                {preview.label}
+              </p>
+              <p className="text-xs text-slate-500 leading-snug">
+                {formatCurrency(preview.projectedSuper)} projected &middot;{" "}
+                {preview.isOnTrack ? (
+                  <span className="text-emerald-600 font-semibold">On track</span>
+                ) : (
+                  <span className="text-amber-600 font-semibold">
+                    {formatCurrency(Math.abs(preview.gapToTarget))} gap
+                  </span>
+                )}
+                {" "}&middot; {preview.drawdownYears} yrs drawdown
+              </p>
+            </div>
+            <Link
+              href={preview.resumeHref}
+              className="shrink-0 text-xs font-bold px-3 py-1.5 bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200 transition-colors"
+            >
+              Resume
+            </Link>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -289,6 +401,7 @@ export default async function ProDashboardPage() {
     watchlistRes,
     savedScenariosRes,
     activeDealsRes,
+    calcStateRes,
   ] = await Promise.all([
     supabase
       .from("investor_holdings")
@@ -313,6 +426,14 @@ export default async function ProDashboardPage() {
       .from("pro_deals")
       .select("id", { count: "exact", head: true })
       .eq("status", "active"),
+    // Fetch the signed-in user's calculator state to render scenario previews.
+    // user_calculator_state has RLS scoped to auth.uid()=user_id, so the
+    // regular server client is correct here (not admin).
+    supabase
+      .from("user_calculator_state")
+      .select("state")
+      .eq("user_id", userId)
+      .maybeSingle(),
   ]);
 
   // rate_alert_subscriptions — fetch full rows for the alert feed section.
@@ -351,6 +472,23 @@ export default async function ProDashboardPage() {
   const priceMap = await getCurrentPricesBatch(pricePairs);
 
   const alertRows = (alertsRes.data ?? []) as AlertFeedRow[];
+
+  // Parse saved scenario previews from the user_calculator_state DB row.
+  // The DB row holds a JSON blob under `state[SCENARIO_PLANNER_CALC_KEY].data`
+  // matching the `ScenarioPlannerSnapshot` shape. If the user has no saved
+  // scenarios (or never opened the planner), `scenarioPreviews` will be empty.
+  // Anonymous-only saves live in sessionStorage and cannot be read server-side
+  // — that is expected and noted in the card's empty-state copy.
+  const calcStateData = (
+    (calcStateRes.data as { state?: unknown } | null)?.state as
+      | Record<string, { data?: unknown }>
+      | null
+      | undefined
+  )?.[SCENARIO_PLANNER_CALC_KEY]?.data as
+    | ScenarioPlannerSnapshot
+    | null
+    | undefined;
+  const scenarioPreviews = assembleSavedScenarioPreviews(calcStateData?.scenarios);
 
   const summary = assembleDashboardSummary({
     holdings,
@@ -464,19 +602,8 @@ export default async function ProDashboardPage() {
           ctaLabel="View watchlist"
         />
 
-        {/* Saved comparisons */}
-        <SummaryCard
-          href="/account/saved"
-          icon={<ScenariosIcon />}
-          title="Saved comparisons"
-          value={
-            summary.savedScenariosCount === 0
-              ? "None saved"
-              : `${summary.savedScenariosCount} scenario${summary.savedScenariosCount === 1 ? "" : "s"}`
-          }
-          sub="Broker comparisons and calculator snapshots"
-          ctaLabel="View saved"
-        />
+        {/* Saved scenarios — inline previews with Resume deep-links */}
+        <SavedScenariosCard previews={scenarioPreviews} />
 
         {/* Pro deals */}
         <SummaryCard

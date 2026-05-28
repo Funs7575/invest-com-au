@@ -558,6 +558,23 @@ export default async function InsightsPage() {
             </p>
           </section>
 
+          {/* ── Market Pulse CTA ─────────────────────────────────────── */}
+          <div className="rounded-xl border border-teal-100 bg-teal-50 p-5 mb-4">
+            <h2 className="text-base font-bold text-teal-900">
+              Market Pulse — Aggregate Time-Series Dashboard
+            </h2>
+            <p className="mt-1 text-sm text-teal-800">
+              See how health scores, savings rates, and fee indexes have moved
+              over time — daily aggregate trends across all tracked platforms.
+            </p>
+            <Link
+              href="/market-pulse"
+              className="mt-3 inline-block rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800"
+            >
+              View Market Pulse →
+            </Link>
+          </div>
+
           {/* ── Narrative report CTA ─────────────────────────────────── */}
           <div className="rounded-xl border border-blue-100 bg-blue-50 p-5 mb-8">
             <h2 className="text-base font-bold text-blue-900">

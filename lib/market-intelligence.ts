@@ -413,3 +413,321 @@ export function trimTrendWindow(
   if (points.length <= windowDays) return points;
   return points.slice(points.length - windowDays);
 }
+
+// ─── Market Pulse: health-score time series ──────────────────────────────────
+
+/** A row from broker_health_score_history (the subset we need). */
+export interface HealthScoreHistoryRow {
+  broker_slug: string;
+  overall_score: number;
+  captured_at: string; // ISO timestamp
+}
+
+/**
+ * A single point on the market-wide average health-score time series.
+ *
+ * Only emitted when >= 2 brokers contributed to the bucket (privacy guard —
+ * prevents back-calculation to individual scores).
+ */
+export interface HealthScoreTrendPoint {
+  /** YYYY-MM-DD — the UTC calendar day this bucket represents. */
+  day: string;
+  /** Arithmetic mean across contributing brokers, rounded to 1dp. */
+  avgScore: number;
+  /** Number of distinct broker_slug values in the bucket. */
+  brokerCount: number;
+}
+
+/**
+ * Bucket broker health-score history rows into daily averages.
+ *
+ * Groups rows by UTC calendar day (YYYY-MM-DD) of `captured_at`, then emits
+ * one `HealthScoreTrendPoint` per day where >= 2 distinct brokers have a row.
+ * Days with only one broker are suppressed (privacy guard).
+ * Output is sorted chronologically (oldest first).
+ *
+ * Handles sparse / empty input gracefully — returns an empty array.
+ */
+export function buildHealthScoreTrendPoints(
+  rows: HealthScoreHistoryRow[],
+): HealthScoreTrendPoint[] {
+  if (rows.length === 0) return [];
+
+  // Group: day → Map<broker_slug, latest overall_score for that day>
+  const byDay = new Map<string, Map<string, number>>();
+
+  for (const row of rows) {
+    if (!Number.isFinite(Number(row.overall_score))) continue;
+    const day = row.captured_at.slice(0, 10); // YYYY-MM-DD
+    if (!byDay.has(day)) byDay.set(day, new Map());
+    const dayMap = byDay.get(day)!;
+    // Keep the latest entry per broker per day (rows may not be unique per
+    // broker_slug per day if the cron ran multiple times).
+    const existing = dayMap.get(row.broker_slug);
+    if (
+      existing === undefined ||
+      row.captured_at > (rows.find(
+        (r) => r.broker_slug === row.broker_slug &&
+               r.captured_at.slice(0, 10) === day &&
+               r.captured_at > row.captured_at,
+      )?.captured_at ?? "")
+    ) {
+      dayMap.set(row.broker_slug, Number(row.overall_score));
+    }
+  }
+
+  const points: HealthScoreTrendPoint[] = [];
+
+  for (const [day, brokerMap] of byDay.entries()) {
+    if (brokerMap.size < 2) continue; // privacy guard
+    const scores = [...brokerMap.values()];
+    const avg = scores.reduce((sum, s) => sum + s, 0) / scores.length;
+    points.push({
+      day,
+      avgScore: roundTo(avg, 1) as number,
+      brokerCount: brokerMap.size,
+    });
+  }
+
+  // Sort chronologically
+  return points.sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0));
+}
+
+/**
+ * Direction of movement for the market-wide health score.
+ * Mirrors the FeeTrendSummary's TrendDirection for consistency.
+ */
+export interface HealthScoreTrendSummary {
+  /** Average score at the most recent data point, or null if no data. */
+  latest: number | null;
+  /** Average score at the earliest data point, or null if < 2 points. */
+  earliest: number | null;
+  /** Signed absolute change (latest − earliest). */
+  absoluteChange: number | null;
+  /** Signed percentage change. */
+  pctChange: number | null;
+  direction: TrendDirection;
+  pointCount: number;
+}
+
+/**
+ * Summarise the direction of the market-wide health-score trend from a
+ * chronological series of daily average points.
+ *
+ * "Flat" = |pctChange| <= 1 % (mirrors fee-trend convention).
+ * Returns direction "insufficient_data" when fewer than 2 points exist.
+ */
+export function computeHealthScoreTrendSummary(
+  points: HealthScoreTrendPoint[],
+): HealthScoreTrendSummary {
+  if (points.length === 0) {
+    return { latest: null, earliest: null, absoluteChange: null, pctChange: null, direction: "insufficient_data", pointCount: 0 };
+  }
+  if (points.length === 1) {
+    return { latest: points[0]!.avgScore, earliest: points[0]!.avgScore, absoluteChange: null, pctChange: null, direction: "insufficient_data", pointCount: 1 };
+  }
+
+  const earliest = points[0]!.avgScore;
+  const latest = points[points.length - 1]!.avgScore;
+  const absoluteChange = roundTo(latest - earliest, 2);
+  const pctChange = earliest === 0 ? null : roundTo(((latest - earliest) / earliest) * 100, 1);
+
+  let direction: TrendDirection = "flat";
+  if (pctChange !== null) {
+    if (pctChange < -1) direction = "falling";
+    else if (pctChange > 1) direction = "rising";
+  }
+
+  return {
+    latest: roundTo(latest, 1) as number,
+    earliest: roundTo(earliest, 1) as number,
+    absoluteChange,
+    pctChange,
+    direction,
+    pointCount: points.length,
+  };
+}
+
+// ─── Market Pulse: savings-rate time series ──────────────────────────────────
+
+/** A row from savings_rate_snapshots (the subset we need). */
+export interface SavingsRateRow {
+  rate_bps: number;
+  captured_at: string; // ISO timestamp
+  product_kind: string; // "savings_account" | "term_deposit"
+  broker_id: number;
+  intro_rate_bps: number | null;
+}
+
+/**
+ * A single point on the market-wide savings-rate time series.
+ *
+ * Only emitted when >= 2 distinct broker_ids contributed.
+ */
+export interface SavingsRateTrendPoint {
+  /** YYYY-MM-DD */
+  day: string;
+  /**
+   * Best (highest) standard rate across contributing brokers, in % pa (bps ÷ 100).
+   * Rounded to 2dp.
+   */
+  bestRate: number;
+  /**
+   * Arithmetic mean standard rate across contributing brokers, in % pa.
+   * Rounded to 2dp.
+   */
+  avgRate: number;
+  /** Number of distinct broker_ids that contributed. */
+  brokerCount: number;
+}
+
+/**
+ * Bucket savings-rate snapshot rows into daily best/average values.
+ *
+ * - Only "savings_account" rows are included (term deposits have term-specific
+ *   rates that skew market-wide comparisons — they are a separate product type).
+ * - Groups by UTC calendar day. Within each day, uses the latest snapshot per
+ *   broker (an append-only table may have multiple rows per broker per day).
+ * - Days with < 2 distinct brokers are suppressed (privacy guard).
+ * - `rate_bps` is the standard rate; intro rates are intentionally excluded
+ *   from market averages (they are promotional and time-limited).
+ * - Output is sorted chronologically (oldest first).
+ */
+export function buildSavingsRateTrendPoints(
+  rows: SavingsRateRow[],
+): SavingsRateTrendPoint[] {
+  if (rows.length === 0) return [];
+
+  // Group: day → Map<broker_id, latest rate_bps for that day>
+  const byDay = new Map<string, Map<number, { rate_bps: number; captured_at: string }>>();
+
+  for (const row of rows) {
+    if (row.product_kind !== "savings_account") continue;
+    if (!Number.isFinite(Number(row.rate_bps))) continue;
+
+    const day = row.captured_at.slice(0, 10);
+    if (!byDay.has(day)) byDay.set(day, new Map());
+    const dayMap = byDay.get(day)!;
+
+    const existing = dayMap.get(row.broker_id);
+    // Keep the latest captured_at row per broker per day
+    if (!existing || row.captured_at > existing.captured_at) {
+      dayMap.set(row.broker_id, { rate_bps: Number(row.rate_bps), captured_at: row.captured_at });
+    }
+  }
+
+  const points: SavingsRateTrendPoint[] = [];
+
+  for (const [day, brokerMap] of byDay.entries()) {
+    if (brokerMap.size < 2) continue; // privacy guard
+    const rates = [...brokerMap.values()].map((v) => v.rate_bps / 100); // bps → % pa
+    const best = Math.max(...rates);
+    const avg = rates.reduce((sum, r) => sum + r, 0) / rates.length;
+    points.push({
+      day,
+      bestRate: (roundTo(best, 2) as number),
+      avgRate: (roundTo(avg, 2) as number),
+      brokerCount: brokerMap.size,
+    });
+  }
+
+  return points.sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0));
+}
+
+/**
+ * Compute a trend summary for the savings-rate series (best rate direction).
+ *
+ * "Flat" = |pctChange| <= 1 %. Returns "insufficient_data" for < 2 points.
+ */
+export interface SavingsRateTrendSummary {
+  latestBest: number | null;
+  earliestBest: number | null;
+  latestAvg: number | null;
+  absoluteChangeBest: number | null;
+  pctChangeBest: number | null;
+  direction: TrendDirection;
+  pointCount: number;
+}
+
+export function computeSavingsRateTrendSummary(
+  points: SavingsRateTrendPoint[],
+): SavingsRateTrendSummary {
+  if (points.length === 0) {
+    return { latestBest: null, earliestBest: null, latestAvg: null, absoluteChangeBest: null, pctChangeBest: null, direction: "insufficient_data", pointCount: 0 };
+  }
+  if (points.length === 1) {
+    return { latestBest: points[0]!.bestRate, earliestBest: points[0]!.bestRate, latestAvg: points[0]!.avgRate, absoluteChangeBest: null, pctChangeBest: null, direction: "insufficient_data", pointCount: 1 };
+  }
+
+  const earliest = points[0]!.bestRate;
+  const latest = points[points.length - 1]!.bestRate;
+  const latestAvg = points[points.length - 1]!.avgRate;
+  const absoluteChangeBest = roundTo(latest - earliest, 2);
+  const pctChangeBest = earliest === 0 ? null : roundTo(((latest - earliest) / earliest) * 100, 1);
+
+  let direction: TrendDirection = "flat";
+  if (pctChangeBest !== null) {
+    if (pctChangeBest < -1) direction = "falling";
+    else if (pctChangeBest > 1) direction = "rising";
+  }
+
+  return {
+    latestBest: roundTo(latest, 2) as number,
+    earliestBest: roundTo(earliest, 2) as number,
+    latestAvg: roundTo(latestAvg, 2) as number,
+    absoluteChangeBest,
+    pctChangeBest,
+    direction,
+    pointCount: points.length,
+  };
+}
+
+// ─── Market Pulse: fee-index delta series ────────────────────────────────────
+
+/**
+ * A single point on the fee-index period-over-period delta series.
+ * Each point is the signed change vs the prior period in the series.
+ */
+export interface FeeIndexDeltaPoint {
+  /** YYYY-MM-DD */
+  period: string;
+  /** Signed delta vs prior period for avg ASX fee, or null. */
+  asxDelta: number | null;
+  /** Signed delta vs prior period for avg US fee, or null. */
+  usDelta: number | null;
+  /** Signed delta vs prior period for avg FX spread, or null. */
+  fxDelta: number | null;
+}
+
+/**
+ * Convert a chronological series of fee trend points into a period-over-period
+ * delta series.
+ *
+ * The first point has no prior, so it is omitted. Output length is
+ * `points.length - 1` for a non-empty input (0 for empty or single-point).
+ * Null values propagate: if either side of a delta is null, the delta is null.
+ */
+export function buildFeeIndexDeltaSeries(
+  points: FeeTrendPoint[],
+): FeeIndexDeltaPoint[] {
+  if (points.length < 2) return [];
+
+  const deltas: FeeIndexDeltaPoint[] = [];
+  for (let i = 1; i < points.length; i++) {
+    const prev = points[i - 1]!;
+    const curr = points[i]!;
+
+    const diff = (a: number | null, b: number | null): number | null => {
+      if (a === null || b === null) return null;
+      return roundTo(b - a, 4);
+    };
+
+    deltas.push({
+      period: curr.period,
+      asxDelta: diff(prev.avgAsxFee, curr.avgAsxFee),
+      usDelta: diff(prev.avgUsFee, curr.avgUsFee),
+      fxDelta: diff(prev.avgFxSpread, curr.avgFxSpread),
+    });
+  }
+  return deltas;
+}

@@ -5,9 +5,10 @@ import { formatCurrency } from "@/lib/utils";
 import { trackEvent } from "@/lib/tracking";
 import Icon from "@/components/Icon";
 import {
-  getParam, useUrlSync, AnimatedNumber, ShareResultsButton,
+  getParam, useUrlSync, AnimatedNumber,
   CalcSection, InputField, TAX_BRACKETS,
 } from "./CalcShared";
+import ShareResult from "@/components/ShareResult";
 
 interface Props {
   searchParams: URLSearchParams;
@@ -155,7 +156,18 @@ export default function CgtCalculator({ searchParams }: Props) {
           )}
         </div>
       </div>
-      <ShareResultsButton />
+      {showResults && (
+        <div className="mt-4">
+          <ShareResult
+            calculatorKey="cgt"
+            resultLabel={`Tax: $${(held12Months ? taxWith : taxWithout).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`}
+            calcTitle="CGT Estimator"
+            calcSlug="cgt"
+            state={{ cg_amt: gainAmount, cg_mr: String(marginalRate), cg_12m: held12Months ? "1" : "0" }}
+            showDisclaimer
+          />
+        </div>
+      )}
     </CalcSection>
   );
 }

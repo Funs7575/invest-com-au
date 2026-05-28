@@ -20,8 +20,8 @@ import CountryExpertsPreview from "@/components/country-mode/CountryExpertsPrevi
 import CountryComparePreview from "@/components/country-mode/CountryComparePreview";
 import CountryPopularLinks from "@/components/country-mode/CountryPopularLinks";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
-import MobileBottomNav from "@/components/MobileBottomNav";
 import HomeActivitySection from "@/components/HomeActivitySection";
+import HomepagePersonalisedStrip from "@/components/HomepagePersonalisedStrip";
 import HomeHowItWorks from "@/components/HomeHowItWorks";
 import HomeRateOfTheDay from "@/components/HomeRateOfTheDay";
 import RateChangesToday from "@/components/RateChangesToday";
@@ -251,6 +251,12 @@ export default async function HomePage() {
         }}
       />
 
+      {/* Personalised strip — visible to signed-in and returning visitors;
+          renders null for anonymous / first-time visitors. Wrapped in its
+          own Suspense so the async auth read never blocks the ISR-cached
+          static content below. See components/HomepagePersonalisedStrip.tsx. */}
+      <HomepagePersonalisedStrip />
+
       <HomeActivitySection />
 
       <HomeHero
@@ -368,8 +374,6 @@ export default async function HomePage() {
       <ScrollFadeIn>
         <CountryToolsStripWrapper />
       </ScrollFadeIn>
-
-      <MobileBottomNav />
     </div>
   );
 }

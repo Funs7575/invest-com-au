@@ -9,7 +9,6 @@ import {
   getOpportunityCategories,
   getAllSubcategorySlugs,
 } from "@/lib/invest-categories";
-import { LEAD_MAGNETS } from "@/lib/lead-magnets";
 import { listingUrl } from "@/lib/listing-url";
 import type { InvestListingVertical, PlatformType } from "@/lib/types";
 import { generateVersusPairs } from "@/lib/versus-pairs";
@@ -17,37 +16,61 @@ import { BCP47_TAG } from "@/lib/i18n/locales";
 import { AUSTRALIAN_STATES } from "@/lib/seo/best-pages";
 import { getEnabledIntents } from "@/lib/getmatched/intents";
 
-// Regenerate sitemap at most once per day — avoids per-request DB queries
+// Regenerate each shard at most once per day — avoids per-request DB queries
 export const revalidate = 86400;
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
-  const hasSupabase = !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-  const supabase = hasSupabase ? await createClient() : null;
+// ─── Shard IDs ────────────────────────────────────────────────────────────────
+// 0  static pages
+// 1  localized / hreflang pages
+// 2  brokers + best/best-for + versus + cost scenarios
+// 3  articles + scenarios + reports + alerts
+// 4  advisors (profiles, type×state, type×city, find-advisor)
+// 5  glossary + how-to + invest-categories + marketplace
+// 6  property + suburb guides + investing-cities
+// 7  misc (authors, reviewers, quotes, newsletter, grants, investingFor, events, afsl, feed)
+// ─────────────────────────────────────────────────────────────────────────────
 
-  // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/smsf/borrowing", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer", "/redundancy", "/inheritance", "/retirement", "/aged-care", "/home-loans", "/family-office", "/global-investing/tax", "/alt-assets", "/mortgage", "/super/transition-to-retirement", "/super/insurance", "/super/death-benefit", "/tax/salary-sacrifice", "/tax/rental-property", "/invest/ethical-investing", "/tax/trusts", "/tax/estate-planning", "/tax/medicare", "/super/division-296", "/smsf/wind-up", "/first-home-buyer/grants", "/invest/dollar-cost-averaging", "/retirement/deeming-rates", "/home-loans/lmi", "/invest/value-investing", "/invest/passive-vs-active", "/invest/shares-vs-property", "/invest/growth-investing", "/invest/rebalancing", "/super/catch-up-contributions", "/super/co-contribution", "/super/spouse-contributions", "/retirement/downsizer-contribution", "/home-loans/bridging-finance", "/home-loans/construction-loans", "/tax/fringe-benefits", "/tax/small-business", "/tax/foreign-income", "/tax/hecs-help", "/home-loans/interest-only", "/property/depreciation", "/invest/dividend-reinvestment", "/first-home-buyer/shared-equity", "/retirement/income-test", "/retirement/work-bonus",
-    "/invest/etfs", "/invest/tax-loss-harvesting", "/invest/lump-sum-vs-dca",
-    "/property/equity-access", "/retirement/retirement-income",
-    "/first-home-buyer/stamp-duty", "/first-home-buyer/fhss-guide",
-    "/tax/record-keeping", "/super/pension-phase",
-    "/home-loans/variable", "/home-loans/fixed", "/home-loans/refinancing",
-    "/home-loans/investment", "/home-loans/offset-redraw",
-    "/retirement/age-pension", "/retirement/how-much-do-you-need", "/retirement/annuities",
-    "/invest/index-funds", "/invest/dollar-cost-averaging", "/invest/passive-vs-active",
-    "/invest/shares-vs-property", "/invest/ethical-investing", "/invest/fire",
-    "/tax/capital-gains", "/tax/rental-property", "/tax/investment-income",
-    "/tax/work-from-home", "/super/contributions",
-    "/property/positive-gearing"]);
-  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/rate-alerts", "/embed", "/embed/licensing", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator",
+export function generateSitemaps() {
+  return [
+    { id: 0 },
+    { id: 1 },
+    { id: 2 },
+    { id: 3 },
+    { id: 4 },
+    { id: 5 },
+    { id: 6 },
+    { id: 7 },
+  ];
+}
+
+// ─── Shared helpers ───────────────────────────────────────────────────────────
+
+function baseUrl(): string {
+  return process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
+}
+
+async function getSupabase() {
+  const hasSupabase = !!(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+  return hasSupabase ? await createClient() : null;
+}
+
+// ─── Shard builders ───────────────────────────────────────────────────────────
+
+async function buildShard0(): Promise<MetadataRoute.Sitemap> {
+  const base = baseUrl();
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer", "/redundancy", "/inheritance"]);
+  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/rate-alerts", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator",
     "/wealth-stack", "/startup/grants", "/lic-screener", "/tools/subscription-audit",
     "/questions", ...QUESTIONS.map((q) => `/questions/${q.slug}`)]);
-  // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
-  const staticPages = [
+  const staticPaths = [
     "", "/compare", "/versus", "/reviews", "/calculators",
     "/term-deposits", "/robo-advisors", "/property-platforms", "/research-tools",
     "/invest", "/invest/funds",
+    "/invest/listings", "/invest/alternatives/platforms", "/invest/alternatives/guides",
     // Browse-Opportunities (intent: opportunity) — IA refactor 2026-05-07.
     // The 4 Compare-tagged slugs (forex, managed-funds, dividend-investing,
     // ipos) are 301-redirected via next.config.ts and intentionally absent
@@ -68,19 +91,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/ipo-calendar", "/invest/commodities",
     "/smsf", "/smsf/auditors",
     "/research",
-    "/invest/buy-business/listings", "/invest/mining/listings",
-    "/invest/farmland/listings", "/invest/commercial-property/listings",
-    "/invest/franchise/listings", "/invest/renewable-energy/listings",
-    "/invest/startups/listings", "/invest/alternatives/listings",
-    "/invest/private-credit/listings", "/invest/infrastructure/listings",
-    "/invest/digital-infrastructure/listings",
-    "/invest/public-social-infrastructure/listings",
-    // carbon/aquaculture/livestock/royalties/VC/litigation-funding/ILS /listings
-    // de-indexed (no live listings yet — thin pages hurt crawl budget).
-    // Guide hubs stay; listing pages omitted until supply threshold is met.
+    // /invest/X/listings pages are generated programmatically in shard 2 via
+    // getOpportunityCategories() — do NOT hardcode them here to avoid duplication.
+    // These non-opportunity invest paths (aquaculture, livestock, etc.) are
+    // guide-only and have no /listings subdirectory.
     "/invest/aquaculture",
     "/invest/livestock",
-    "/invest/private-equity/listings",
     "/invest/venture-capital",
     "/invest/litigation-funding",
     "/invest/insurance-linked-securities",
@@ -117,8 +133,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/advisor-guides/tax-agent-vs-accountant",
     "/advisor-guides/mortgage-broker-vs-bank",
     "/advisor-guides/buyers-agent-vs-diy",
-    
-    "/portfolio-calculator",
+
     "/advisor-apply", "/switching-calculator", "/savings-calculator",
     "/quick-audit", "/portfolio-xray", "/tax-optimizer", "/fee-simulator",
     "/trade-cost-calculator", "/us-share-costs-calculator", "/cgt-calculator",
@@ -137,7 +152,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/tools/salary-sacrifice-optimiser",
     "/tools/cgt-calculator",
     "/tools/subscription-audit",
-    "/lic-screener",
     "/startup/grants",
     "/wealth-stack",
     "/redundancy",
@@ -169,34 +183,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/learn",
     // Global investing hub (outbound — AU residents → world)
     "/global-investing",
-    "/global-investing/tax",
-    "/global-investing/tax/cgt-on-foreign-shares",
-    "/global-investing/tax/us-estate-tax",
-    "/global-investing/tax/fito",
-    "/global-investing/lics",
-    "/global-investing/currency",
-    "/global-investing/bonds",
-    "/global-investing/property",
-    "/global-investing/crypto",
-    // Family-office hub
-    "/family-office",
-    // Alt-assets hub
-    "/alt-assets",
-    // Mortgage hub
-    "/mortgage",
-    // Retirement sub-pages
-    "/retirement/pension-phase", "/retirement/annuities", "/retirement/age-pension",
-    "/retirement/how-much-do-you-need", "/retirement/annuities-vs-abp",
-    "/retirement/age-pension-assets-test", "/retirement/reverse-mortgage",
-    // Aged-care sub-pages
-    "/aged-care/rad-vs-dap", "/aged-care/costs", "/aged-care/means-test",
-    "/aged-care/home-care-packages", "/aged-care/home-vs-residential",
-    "/aged-care/centrelink", "/aged-care/family-home", "/aged-care/facilities",
-    // First home buyer sub-pages
-    "/first-home-buyer/fhss-guide", "/first-home-buyer/first-home-guarantee",
-    "/first-home-buyer/deposit-guide", "/first-home-buyer/stamp-duty",
-    // Foreign investment hub — hreflang-aware entries generated in localizedPages below.
-    // Non-localised sub-pages remain here; UAE is also in localizedPages (ar variant).
+    // Foreign investment hub — hreflang-aware entries generated in shard 1.
+    // Non-localised sub-pages remain here; UAE is also in shard 1 (ar variant).
     "/foreign-investment/super",
     "/foreign-investment/shares", "/foreign-investment/energy",
     "/foreign-investment/savings", "/foreign-investment/cfd",
@@ -211,62 +199,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/foreign-investment/guides/non-resident-bank-account",
     // Super sub-pages
     "/super/contributions", "/super/consolidation", "/super/leaving-australia",
-    "/super/compare-guide", "/super/transition-to-retirement",
-    "/super/insurance", "/super/death-benefit",
-    // Home Loans sub-pages
-    "/home-loans/variable", "/home-loans/fixed", "/home-loans/refinancing",
-    "/home-loans/investment", "/home-loans/offset-redraw", "/home-loans/compare",
     // ETF sub-pages
     "/etfs/bonds", "/etfs/international", "/etfs/sectors",
-    "/etfs/vs/ivv-vs-vts", "/etfs/vs/ndq-vs-ivv", "/etfs/vs/vgs-vs-iwld",
-    // Global investing sub-pages
-    "/global-investing/etfs",
-    "/global-investing/etfs/us", "/global-investing/etfs/global",
-    "/global-investing/shares/us",
-    "/global-investing/tax/w-8ben",
-    "/global-investing/currency/best-fx-providers",
-    "/global-investing/guides/ibkr-australia-setup",
-    "/global-investing/guides/chess-vs-custodial-international",
-    "/global-investing/calculators/direct-vs-asx-cost",
     // Insurance sub-pages
     "/insurance/tpd", "/insurance/trauma",
-    // Tax sub-pages
-    "/tax/capital-gains", "/tax/franking-credits", "/tax/negative-gearing",
-    "/tax/crypto", "/tax/salary-sacrifice", "/tax/rental-property",
-    "/tax/investment-income", "/tax/trusts", "/tax/estate-planning", "/tax/medicare",
-    "/tax/work-from-home",
-    // SMSF sub-pages (additional)
-    "/smsf/borrowing", "/smsf/wind-up",
-    // Invest sub-pages
-    "/invest/ethical-investing", "/invest/index-funds", "/invest/dollar-cost-averaging",
-    "/invest/value-investing", "/invest/passive-vs-active", "/invest/shares-vs-property",
-    "/invest/growth-investing", "/invest/rebalancing", "/invest/dividend-reinvestment",
-    "/invest/etfs", "/invest/tax-loss-harvesting", "/invest/lump-sum-vs-dca", "/invest/fire",
-    // Super sub-pages (additional)
-    "/super/division-296", "/super/catch-up-contributions", "/super/co-contribution",
-    "/super/spouse-contributions", "/super/pension-phase", "/super/contributions",
-    // First home buyer sub-pages (additional)
-    "/first-home-buyer/grants", "/first-home-buyer/shared-equity",
-    // Retirement sub-pages (additional)
-    "/retirement/deeming-rates", "/retirement/downsizer-contribution",
-    "/retirement/income-test", "/retirement/work-bonus", "/retirement/retirement-income",
-    // Home loans sub-pages (additional)
-    "/home-loans/lmi", "/home-loans/bridging-finance", "/home-loans/construction-loans",
-    "/home-loans/interest-only", "/home-loans/variable", "/home-loans/fixed",
-    "/home-loans/refinancing", "/home-loans/investment", "/home-loans/offset-redraw",
-    // Property sub-pages (additional)
-    "/property/depreciation", "/property/equity-access", "/property/positive-gearing",
-    // Tax sub-pages (batch 6+)
-    "/tax/record-keeping",
-    // Tax sub-pages (additional)
-    "/tax/fringe-benefits", "/tax/small-business", "/tax/foreign-income", "/tax/hecs-help",
+    // Tax sub-pages (not in newHubPages)
     // Property sub-pages
     "/property/finance",
     // Additional public pages
-    "/tools", "/rates", "/properties", "/pro",
+    "/rates", "/properties", "/pro",
     "/advertise", "/advertise/packages", "/advertise/featured-placement", "/advertiser-terms", "/accessibility",
     "/fsg", "/legal", "/developer-terms", "/consultations",
-    "/courses", "/reports", "/portfolio", "/portfolio-calculator",
+    "/courses", "/reports", "/portfolio",
     "/advisor-signup",
     "/quotes", "/quotes/post", "/quotes/recent-wins",
     "/press",
@@ -275,7 +219,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/advisor-guides/how-to-choose-real-estate-agent",
     // Calculators
     "/mortgage-calculator", "/retirement-calculator", "/smsf-calculator",
-    "/debt-calculator", "/property-yield-calculator", "/fee-impact",
+    "/debt-calculator", "/property-yield-calculator",
     "/compound-interest-calculator", "/dividend-reinvestment-calculator",
     "/fire-calculator", "/property-vs-shares-calculator",
     "/super-contributions-calculator", "/tco-calculator",
@@ -289,12 +233,127 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/advisors/leaderboard", "/advisors/compare",
     // Content tools
     "/switch-scripts",
-  ].map((path) => ({
-    url: `${baseUrl}${path}`,
+    // New hub pages added during content rebuild
+    "/family-office", "/alt-assets", "/mortgage",
+    "/retirement", "/retirement/pension-phase", "/retirement/annuities",
+    "/retirement/annuities-vs-abp", "/retirement/age-pension",
+    "/retirement/how-much-do-you-need", "/retirement/age-pension-assets-test",
+    "/retirement/reverse-mortgage", "/retirement/deeming-rates",
+    "/retirement/income-test", "/retirement/work-bonus",
+    "/aged-care", "/aged-care/rad-vs-dap", "/aged-care/costs",
+    "/aged-care/means-test", "/aged-care/home-care-packages",
+    "/aged-care/home-vs-residential", "/aged-care/centrelink",
+    "/aged-care/family-home", "/aged-care/facilities",
+    "/home-loans", "/home-loans/variable", "/home-loans/fixed",
+    "/home-loans/refinancing", "/home-loans/investment",
+    "/home-loans/offset-redraw", "/home-loans/bridging-finance",
+    "/home-loans/construction-loans", "/home-loans/interest-only",
+    "/home-loans/lmi",
+    "/first-home-buyer/fhss-guide", "/first-home-buyer/first-home-guarantee",
+    "/first-home-buyer/deposit-guide", "/first-home-buyer/stamp-duty",
+    "/first-home-buyer/shared-equity",
+    "/global-investing/tax", "/global-investing/tax/cgt-on-foreign-shares",
+    "/global-investing/tax/us-estate-tax", "/global-investing/tax/fito",
+    "/global-investing/tax/w-8ben",
+    "/global-investing/lics", "/global-investing/currency",
+    "/global-investing/bonds", "/global-investing/property",
+    "/global-investing/crypto",
+    "/global-investing/guides/chess-vs-custodial-international",
+    "/global-investing/currency/best-fx-providers",
+    "/global-investing/etfs/us",
+    "/super/death-benefit", "/super/compare-guide", "/super/division-296",
+    "/super/catch-up-contributions",
+    "/super/co-contribution", "/super/spouse-contributions",
+    "/super/transition-to-retirement", "/super/insurance",
+    "/tax/salary-sacrifice", "/tax/trusts", "/tax/medicare",
+    "/tax/estate-planning", "/tax/rental-property", "/tax/investment-income",
+    "/tax/work-from-home", "/tax/record-keeping", "/tax/hecs-help",
+    "/tax/foreign-income", "/tax/fringe-benefits", "/tax/small-business",
+    "/invest/ipos", "/invest/dollar-cost-averaging",
+    "/invest/lump-sum-vs-dca", "/invest/tax-loss-harvesting",
+    "/invest/ethical-investing", "/invest/fire", "/invest/value-investing",
+    "/invest/passive-vs-active", "/invest/shares-vs-property",
+    "/invest/growth-investing", "/invest/rebalancing",
+    "/invest/dividend-reinvestment", "/invest/index-funds",
+    "/property/depreciation", "/property/equity-access",
+    "/property/positive-gearing",
+    "/smsf/borrowing", "/smsf/wind-up",
+    "/embed", "/embed/licensing",
+    // New hub pages (static portions)
+    "/etfs", "/etfs/asx-200", "/etfs/us-exposure", "/etfs/dividends",
+    "/etfs/screener",
+    "/etfs/vas", "/etfs/a200", "/etfs/ivv", "/etfs/ndq", "/etfs/vgs",
+    "/etfs/vts", "/etfs/vhy", "/etfs/stw", "/etfs/ioz", "/etfs/ethi",
+    "/etfs/vgad", "/etfs/hack", "/etfs/vaf", "/etfs/iwld",
+    "/etfs/vs/vas-vs-a200", "/etfs/vs/vas-vs-stw", "/etfs/vs/ioz-vs-vas",
+    "/etfs/vs/ivv-vs-vts", "/etfs/vs/ndq-vs-ivv", "/etfs/vs/vgs-vs-ivv",
+    "/etfs/vs/vhy-vs-hvst", "/etfs/vs/vhy-vs-vas",
+    "/insurance", "/insurance/life", "/insurance/income-protection",
+    "/insurance/health", "/insurance/home-contents",
+    "/tax", "/tax/capital-gains", "/tax/franking-credits",
+    "/tax/negative-gearing", "/tax/crypto",
+    "/fee-tracker",
+    "/super/smsf",
+    "/advisors/international-tax-specialists",
+    "/advisors/firb-specialists",
+    "/advisors/migration-agents",
+    "/brokers/full-service",
+    // Testimonials, feed, tax-return hub
+    "/testimonials",
+    "/feed",
+    "/tax-return",
+  ];
+
+  return staticPaths.map((path) => ({
+    url: `${base}${path}`,
     lastModified: new Date(),
     changeFrequency: (path === "" || highPriority.has(path) ? "weekly" : "monthly") as "weekly" | "monthly",
     priority: path === "" ? 1.0 : highPriority.has(path) ? 0.9 : medPriority.has(path) ? 0.7 : 0.4,
   }));
+}
+
+async function buildShard1(): Promise<MetadataRoute.Sitemap> {
+  const base = baseUrl();
+
+  const LOCALE_GROUPS: Array<{
+    canonical: string;
+    canonicalPriority: number;
+    localePaths: Partial<Record<"zh" | "ko" | "ar", string>>;
+  }> = [
+    { canonical: "/foreign-investment",           canonicalPriority: 0.9, localePaths: { zh: "/zh/foreign-investment",           ko: "/ko/foreign-investment"           } },
+    { canonical: "/foreign-investment/siv",        canonicalPriority: 0.7, localePaths: { zh: "/zh/foreign-investment/siv",        ko: "/ko/foreign-investment/siv"        } },
+    { canonical: "/foreign-investment/property",   canonicalPriority: 0.7, localePaths: { zh: "/zh/foreign-investment/property",   ko: "/ko/foreign-investment/property"   } },
+    { canonical: "/foreign-investment/tax",        canonicalPriority: 0.7, localePaths: { zh: "/zh/foreign-investment/tax",        ko: "/ko/foreign-investment/tax"        } },
+    { canonical: "/foreign-investment/united-arab-emirates", canonicalPriority: 0.7, localePaths: { ar: "/ar/foreign-investment/united-arab-emirates" } },
+  ];
+
+  return LOCALE_GROUPS.flatMap(
+    ({ canonical, canonicalPriority, localePaths }) => {
+      const languages: Record<string, string> = {
+        [BCP47_TAG.en]: `${base}${canonical}`,
+        "x-default": `${base}${canonical}`,
+      };
+      for (const [locale, localePath] of Object.entries(localePaths) as [keyof typeof BCP47_TAG, string][]) {
+        languages[BCP47_TAG[locale]] = `${base}${localePath}`;
+      }
+      const alternates = { languages };
+      return [
+        { url: `${base}${canonical}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: canonicalPriority, alternates },
+        ...Object.values(localePaths).map((localePath) => ({
+          url: `${base}${localePath}`,
+          lastModified: new Date(),
+          changeFrequency: "weekly" as const,
+          priority: Math.min(canonicalPriority, 0.7) as number,
+          alternates,
+        })),
+      ];
+    },
+  );
+}
+
+async function buildShard2(): Promise<MetadataRoute.Sitemap> {
+  const base = baseUrl();
+  const supabase = await getSupabase();
 
   // Dynamic broker pages
   const { data: brokers } = supabase
@@ -302,57 +361,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     : { data: null };
 
   const brokerPages = (brokers || []).map((b) => ({
-    url: `${baseUrl}/broker/${b.slug}`,
+    url: `${base}/broker/${b.slug}`,
     lastModified: b.updated_at ? new Date(b.updated_at) : new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));
 
-  // Dynamic article pages — only published. Without this filter,
-  // drafts (status='draft') and archived (status='archived') articles
-  // leak into the sitemap and get crawled by Google. Every other
-  // dynamic source on this file (brokers, professionals, scenarios,
-  // alerts, reports, advisor_articles) already filters by its
-  // status column; this query was the lone exception (P0-4 in
-  // docs/audits/2026-04-26-comprehensive-audit.md §8.1).
-  const { data: articles } = supabase
-    ? await supabase
-        .from("articles")
-        .select("slug, updated_at")
-        .eq("status", "published")
-    : { data: null };
-
-  const articlePages = (articles || []).map((a) => ({
-    url: `${baseUrl}/article/${a.slug}`,
-    lastModified: a.updated_at ? new Date(a.updated_at) : new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
-  // Dynamic scenario pages
-  const { data: scenarios } = supabase
-    ? await supabase.from("scenarios").select("slug, updated_at")
-    : { data: null };
-
-  const scenarioPages = (scenarios || []).map((s) => ({
-    url: `${baseUrl}/scenario/${s.slug}`,
-    lastModified: s.updated_at ? new Date(s.updated_at) : new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
   // Best Broker for X hub pages
   const bestPages = [
-    { url: `${baseUrl}/best`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
+    { url: `${base}/best`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
     ...getAllCategorySlugs().map((slug) => ({
-      url: `${baseUrl}/best/${slug}`,
+      url: `${base}/best/${slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),
   ];
 
-  // Dynamic /best-for/[slug] scenarios (from best_for_scenarios)
+  // Dynamic /best-for/[slug] scenarios
   const { data: bestForScenarios } = supabase
     ? await supabase
         .from("best_for_scenarios")
@@ -360,121 +386,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .eq("status", "active")
     : { data: null };
   const bestForPages = [
-    { url: `${baseUrl}/best-for`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.85 },
+    { url: `${base}/best-for`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.85 },
     ...(bestForScenarios || []).map((s: { slug: string; updated_at: string | null }) => ({
-      url: `${baseUrl}/best-for/${s.slug}`,
+      url: `${base}/best-for/${s.slug}`,
       lastModified: s.updated_at ? new Date(s.updated_at) : new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.75,
     })),
   ];
 
-  // Dynamic commodity sector stocks + ETFs pages
-  const { data: commoditySectors } = supabase
-    ? await supabase
-        .from("commodity_sectors")
-        .select("slug")
-        .eq("status", "active")
-    : { data: null };
-  const commodityPages = (commoditySectors || []).flatMap(
-    (s: { slug: string }) => [
-      {
-        url: `${baseUrl}/invest/${s.slug}/stocks`,
-        lastModified: new Date(),
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      },
-      {
-        url: `${baseUrl}/invest/${s.slug}/etfs`,
-        lastModified: new Date(),
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      },
-    ],
-  );
-
-  // Individual stock detail pages
-  const { data: commodityStocks } = supabase
-    ? await supabase
-        .from("commodity_stocks")
-        .select("sector_slug, ticker")
-        .eq("status", "active")
-    : { data: null };
-  const stockDetailPages = (commodityStocks || []).map(
-    (s: { sector_slug: string; ticker: string }) => ({
-      url: `${baseUrl}/invest/${s.sector_slug}/stocks/${s.ticker.toLowerCase()}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    }),
-  );
-
-  // Broker transfer guides
-  const { data: transferGuides } = supabase
-    ? await supabase
-        .from("broker_transfer_guides")
-        .select("broker_slug, updated_at")
-    : { data: null };
-  const transferGuidePages = [
-    { url: `${baseUrl}/how-to/transfer-from`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
-    ...(transferGuides || []).map(
-      (g: { broker_slug: string; updated_at: string | null }) => ({
-        url: `${baseUrl}/how-to/transfer-from/${g.broker_slug}`,
-        lastModified: g.updated_at ? new Date(g.updated_at) : new Date(),
-        changeFrequency: "monthly" as const,
-        priority: 0.7,
-      }),
-    ),
-  ];
-
-  // Dynamic team member pages (authors + reviewers)
-  const { data: teamMembers } = supabase
-    ? await supabase.from("team_members").select("slug, role, updated_at").eq("status", "active")
-    : { data: null };
-
-  const authorPages = (teamMembers || []).map((m) => ({
-    url: `${baseUrl}/authors/${m.slug}`,
-    lastModified: m.updated_at ? new Date(m.updated_at) : new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.4,
-  }));
-
-  const reviewerPages = (teamMembers || [])
-    .filter((m) => m.role === "expert_reviewer" || m.role === "editor")
-    .map((m) => ({
-      url: `${baseUrl}/reviewers/${m.slug}`,
-      lastModified: m.updated_at ? new Date(m.updated_at) : new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.4,
-    }));
-
-  // Dynamic regulatory alert pages
-  const { data: alerts } = supabase
-    ? await supabase.from("regulatory_alerts").select("slug, updated_at").eq("status", "published")
-    : { data: null };
-
-  const alertPages = (alerts || []).map((a) => ({
-    url: `${baseUrl}/alerts/${a.slug}`,
-    lastModified: a.updated_at ? new Date(a.updated_at) : new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
-  // Dynamic quarterly report pages
-  const { data: reports } = supabase
-    ? await supabase.from("quarterly_reports").select("slug, updated_at").eq("status", "published")
-    : { data: null };
-
-  const reportPages = (reports || []).map((r) => ({
-    url: `${baseUrl}/reports/${r.slug}`,
-    lastModified: r.updated_at ? new Date(r.updated_at) : new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
   // Cost scenario pages
   const costPages = getAllCostScenarioSlugs().map((slug) => ({
-    url: `${baseUrl}/costs/${slug}`,
+    url: `${base}/costs/${slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
@@ -611,10 +534,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "axitrader-vs-pepperstone", "activtrades-vs-pepperstone",
   ];
 
-  // Programmatic versus pairs — generated from live broker inventory so
-  // new brokers automatically enter SEO coverage. Curated pairs are
-  // merged in too so any hand-picked pair (e.g. one we have editorial
-  // for) is guaranteed to ship.
+  // Programmatic versus pairs — generated from live broker inventory
   let generatedPairSlugs: string[] = [];
   let editorialSlugs: string[] = [];
   if (supabase) {
@@ -623,10 +543,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .from("brokers")
         .select("slug, name, rating, platform_type")
         .eq("status", "active"),
-      // Every row in versus_editorials is a page that definitely has
-      // content — guarantee those are in the sitemap even if the
-      // generator happens not to surface them (platform-type drift,
-      // deactivated broker, etc).
       supabase.from("versus_editorials").select("slug"),
     ]);
     const versusRows = versusRowsRes.data;
@@ -649,14 +565,204 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const hasEditorial = editorialSlugSet.has(pair);
     const isHandCurated = versusPopularPairs.includes(pair);
     return {
-      url: `${baseUrl}/versus/${pair}`,
+      url: `${base}/versus/${pair}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
-      // Pages with real editorial content ship at 0.9; curated-but-no-
-      // editorial pairs at 0.8; auto-generated pairs at 0.6.
       priority: hasEditorial ? 0.9 : isHandCurated ? 0.8 : 0.6,
     };
   });
+
+  // Dynamic commodity sector stocks + ETFs pages
+  const { data: commoditySectors } = supabase
+    ? await supabase
+        .from("commodity_sectors")
+        .select("slug")
+        .eq("status", "active")
+    : { data: null };
+  const commodityPages = (commoditySectors || []).flatMap(
+    (s: { slug: string }) => [
+      {
+        url: `${base}/invest/${s.slug}/stocks`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      },
+      {
+        url: `${base}/invest/${s.slug}/etfs`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      },
+    ],
+  );
+
+  // Individual stock detail pages
+  const { data: commodityStocks } = supabase
+    ? await supabase
+        .from("commodity_stocks")
+        .select("sector_slug, ticker")
+        .eq("status", "active")
+    : { data: null };
+  const stockDetailPages = (commodityStocks || []).map(
+    (s: { sector_slug: string; ticker: string }) => ({
+      url: `${base}/invest/${s.sector_slug}/stocks/${s.ticker.toLowerCase()}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }),
+  );
+
+  // Broker transfer guides
+  const { data: transferGuides } = supabase
+    ? await supabase
+        .from("broker_transfer_guides")
+        .select("broker_slug, updated_at")
+    : { data: null };
+  const transferGuidePages = [
+    { url: `${base}/how-to/transfer-from`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
+    ...(transferGuides || []).map(
+      (g: { broker_slug: string; updated_at: string | null }) => ({
+        url: `${base}/how-to/transfer-from/${g.broker_slug}`,
+        lastModified: g.updated_at ? new Date(g.updated_at) : new Date(),
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      }),
+    ),
+  ];
+
+  // Full-service stockbroker firm detail pages
+  const { data: stockbrokerFirms } = supabase
+    ? await supabase
+        .from("professionals")
+        .select("slug, updated_at")
+        .in("type", ["stockbroker_firm", "private_wealth_manager"])
+        .eq("status", "active")
+    : { data: null };
+  const stockbrokerFirmPages = (stockbrokerFirms || []).map((f) => ({
+    url: `${base}/brokers/full-service/${f.slug}`,
+    lastModified: f.updated_at ? new Date(f.updated_at) : new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // Category listing pages — /invest/{slug}/listings for all opportunity categories.
+  // Static invest hub pages (/invest, /invest/listings, /invest/alternatives, etc.) live in shard 0.
+  const investCategoryPages = getOpportunityCategories().map((c) => c.slug).map((slug) => ({
+    url: `${base}/invest/${slug}/listings`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
+  // Sub-category listing pages
+  const investSubcategoryPages = getAllSubcategorySlugs().map(({ category, subcategory }) => ({
+    url: `${base}/invest/${category}/listings/${subcategory}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // Individual investment listing detail pages
+  const { data: investListings } = supabase
+    ? await supabase.from("investment_listings").select("slug, vertical, sub_category, updated_at").eq("status", "active")
+    : { data: null };
+
+  const investListingPages = (investListings || []).map((l) => ({
+    url: `${base}${listingUrl(l as { vertical: InvestListingVertical; sub_category?: string; slug: string })}`,
+    lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
+  return [
+    ...brokerPages,
+    ...bestPages,
+    ...bestForPages,
+    ...costPages,
+    ...versusPages,
+    ...commodityPages,
+    ...stockDetailPages,
+    ...transferGuidePages,
+    ...stockbrokerFirmPages,
+    ...investCategoryPages,
+    ...investSubcategoryPages,
+    ...investListingPages,
+  ];
+}
+
+async function buildShard3(): Promise<MetadataRoute.Sitemap> {
+  const base = baseUrl();
+  const supabase = await getSupabase();
+
+  // Dynamic article pages — only published
+  const { data: articles } = supabase
+    ? await supabase
+        .from("articles")
+        .select("slug, updated_at")
+        .eq("status", "published")
+    : { data: null };
+
+  const articlePages = (articles || []).map((a) => ({
+    url: `${base}/article/${a.slug}`,
+    lastModified: a.updated_at ? new Date(a.updated_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // Dynamic scenario pages
+  const { data: scenarios } = supabase
+    ? await supabase.from("scenarios").select("slug, updated_at")
+    : { data: null };
+
+  const scenarioPages = (scenarios || []).map((s) => ({
+    url: `${base}/scenario/${s.slug}`,
+    lastModified: s.updated_at ? new Date(s.updated_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // Dynamic regulatory alert pages
+  const { data: alerts } = supabase
+    ? await supabase.from("regulatory_alerts").select("slug, updated_at").eq("status", "published")
+    : { data: null };
+
+  const alertPages = (alerts || []).map((a) => ({
+    url: `${base}/alerts/${a.slug}`,
+    lastModified: a.updated_at ? new Date(a.updated_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // Dynamic quarterly report pages
+  const { data: reports } = supabase
+    ? await supabase.from("quarterly_reports").select("slug, updated_at").eq("status", "published")
+    : { data: null };
+
+  const reportPages = (reports || []).map((r) => ({
+    url: `${base}/reports/${r.slug}`,
+    lastModified: r.updated_at ? new Date(r.updated_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // Expert articles (advisor-authored)
+  const { data: expertArticleSlugs } = supabase
+    ? await supabase.from("advisor_articles").select("slug, published_at").eq("status", "published")
+    : { data: null };
+
+  const expertArticlePages = (expertArticleSlugs || []).map((a) => ({
+    url: `${base}/expert/${a.slug}`,
+    lastModified: a.published_at ? new Date(a.published_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...articlePages, ...scenarioPages, ...alertPages, ...reportPages, ...expertArticlePages];
+}
+
+async function buildShard4(): Promise<MetadataRoute.Sitemap> {
+  const base = baseUrl();
+  const supabase = await getSupabase();
 
   // Dynamic advisor profile pages
   const { data: professionals } = supabase
@@ -664,15 +770,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     : { data: null };
 
   const advisorPages = (professionals || []).map((p) => ({
-    url: `${baseUrl}/advisor/${p.slug}`,
+    url: `${base}/advisor/${p.slug}`,
     lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));
 
-  // Programmatic /find/[advisor-type]/[city] pages — DB-driven, same source as
-  // generateStaticParams in app/find/[advisor-type]/[city]/page.tsx.
-  // Deduplicates by type×city slug combination, capped at 2000 entries.
+  // Programmatic /find/[advisor-type]/[city] pages
   const { data: findAdvisorRows } = supabase
     ? await supabase
         .from("professionals")
@@ -689,16 +793,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const key = `${typeSlug}:${citySlug}`;
       if (findAdvisorSeen.has(key)) return [];
       findAdvisorSeen.add(key);
-      return [{ url: `${baseUrl}/find/${typeSlug}/${citySlug}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.65 }];
+      return [{ url: `${base}/find/${typeSlug}/${citySlug}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.65 }];
     })
     .slice(0, 2000);
 
-  // Programmatic advisor type + state pages
+  // Advisor type + state pages
   const advisorTypes = ["smsf-accountants", "financial-planners", "property-advisors", "tax-agents", "mortgage-brokers", "estate-planners", "insurance-brokers", "buyers-agents", "real-estate-agents", "wealth-managers", "aged-care-advisors", "crypto-advisors", "debt-counsellors"];
   const states = ["nsw", "vic", "qld", "wa", "sa", "tas", "act", "nt"];
 
   const advisorTypePages = advisorTypes.map((type) => ({
-    url: `${baseUrl}/advisors/${type}`,
+    url: `${base}/advisors/${type}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.8,
@@ -706,18 +810,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const advisorStatePages = advisorTypes.flatMap((type) =>
     states.map((state) => ({
-      url: `${baseUrl}/advisors/${type}/${state}`,
+      url: `${base}/advisors/${type}/${state}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.6,
     }))
   );
 
-  // Advisor type + city pages (e.g. /advisors/financial-planners/sydney)
+  // Advisor type + city pages
   const advisorCities = ["sydney", "melbourne", "brisbane", "perth", "adelaide", "gold-coast", "canberra", "hobart", "darwin", "newcastle", "wollongong", "geelong", "sunshine-coast", "townsville", "cairns", "toowoomba", "ballarat", "bendigo", "launceston", "central-coast"];
   const advisorCityPages = advisorTypes.flatMap((type) =>
     advisorCities.map((city) => ({
-      url: `${baseUrl}/advisors/${type}/${city}`,
+      url: `${base}/advisors/${type}/${city}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.6,
@@ -730,89 +834,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "newcastle", "wollongong", "geelong", "sunshine-coast", "townsville", "cairns", "toowoomba",
     "ballarat", "bendigo", "launceston", "central-coast",
     // City + type combos (high search volume)
-    // Financial planners — all major cities
     "sydney-financial-planner", "melbourne-financial-planner", "brisbane-financial-planner",
     "perth-financial-planner", "adelaide-financial-planner", "canberra-financial-planner",
     "gold-coast-financial-planner", "hobart-financial-planner", "darwin-financial-planner",
     "newcastle-financial-planner", "wollongong-financial-planner", "geelong-financial-planner",
     "sunshine-coast-financial-planner", "townsville-financial-planner",
-    // SMSF accountants — major cities
     "sydney-smsf", "melbourne-smsf", "brisbane-smsf",
     "perth-smsf", "adelaide-smsf", "canberra-smsf", "gold-coast-smsf",
-    // Tax agents — major cities
     "sydney-tax-agent", "melbourne-tax-agent", "brisbane-tax-agent",
     "perth-tax-agent", "adelaide-tax-agent", "canberra-tax-agent",
-    // Mortgage brokers — all major cities
     "sydney-mortgage-broker", "melbourne-mortgage-broker", "brisbane-mortgage-broker",
     "perth-mortgage-broker", "gold-coast-mortgage-broker", "adelaide-mortgage-broker",
     "canberra-mortgage-broker", "hobart-mortgage-broker", "newcastle-mortgage-broker",
     "wollongong-mortgage-broker", "geelong-mortgage-broker", "sunshine-coast-mortgage-broker",
-    // Property & buyers agents
     "sydney-property-advisor", "melbourne-property-advisor", "brisbane-property-advisor",
     "perth-property-advisor", "adelaide-property-advisor",
     "sydney-buyers-agent", "melbourne-buyers-agent", "brisbane-buyers-agent",
     "perth-buyers-agent", "gold-coast-buyers-agent", "adelaide-buyers-agent",
     "canberra-buyers-agent", "newcastle-buyers-agent", "sunshine-coast-buyers-agent",
-    // Accountants
     "sydney-accountant", "melbourne-accountant", "brisbane-accountant",
     "perth-accountant", "adelaide-accountant",
-    // Wealth managers
     "sydney-wealth-manager", "melbourne-wealth-manager", "brisbane-wealth-manager",
     "perth-wealth-manager",
-    // Estate planners
     "sydney-estate-planner", "melbourne-estate-planner", "brisbane-estate-planner",
-    // Insurance brokers
     "sydney-insurance-broker", "melbourne-insurance-broker", "brisbane-insurance-broker",
-    // Real estate agents
     "sydney-real-estate-agent", "melbourne-real-estate-agent", "brisbane-real-estate-agent",
     "perth-real-estate-agent", "gold-coast-real-estate-agent",
   ];
   const advisorLocationPages = advisorLocationSlugs.map(slug => ({
-    url: `${baseUrl}/find-advisor/${slug}`,
+    url: `${base}/find-advisor/${slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
-  }));
-
-  // How-to guide pages
-  const howToPages = getAllGuideSlugs().map((slug) => ({
-    url: `${baseUrl}/how-to/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
-
-  // Expert articles (advisor-authored)
-  const { data: expertArticleSlugs } = supabase
-    ? await supabase.from("advisor_articles").select("slug, published_at").eq("status", "published")
-    : { data: null };
-
-  const expertArticlePages = (expertArticleSlugs || []).map((a) => ({
-    url: `${baseUrl}/expert/${a.slug}`,
-    lastModified: a.published_at ? new Date(a.published_at) : new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
-  // City / location investing pages
-  const investingCityPages = [
-    { url: `${baseUrl}/investing`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
-    ...getAllCitySlugs().map((slug) => ({
-      url: `${baseUrl}/investing/${slug}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    })),
-  ];
-
-  // Individual glossary term pages — full live set (203), so all term pages
-  // are discoverable. Server-only import keeps the client bundle lean.
-  const { FULL_GLOSSARY_ENTRIES: GLOSSARY_ENTRIES } = await import("@/lib/glossary-extended");
-  const glossaryPages = GLOSSARY_ENTRIES.map((entry) => ({
-    url: `${baseUrl}/glossary/${entry.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.4,
   }));
 
   // Advisor firm pages
@@ -820,47 +873,86 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ? await supabase.from("advisor_firms").select("slug").eq("status", "active")
     : { data: null };
   const firmPages = (firms || []).map((f) => ({
-    url: `${baseUrl}/firm/${f.slug}`,
+    url: `${base}/firm/${f.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.6,
   }));
+
+  return [
+    ...advisorPages,
+    ...findAdvisorCityPages,
+    ...advisorTypePages,
+    ...advisorStatePages,
+    ...advisorCityPages,
+    ...advisorLocationPages,
+    ...firmPages,
+  ];
+}
+
+async function buildShard5(): Promise<MetadataRoute.Sitemap> {
+  const base = baseUrl();
+
+  // Individual glossary term pages
+  const { FULL_GLOSSARY_ENTRIES: GLOSSARY_ENTRIES } = await import("@/lib/glossary-extended");
+  const glossaryPages = GLOSSARY_ENTRIES.map((entry) => ({
+    url: `${base}/glossary/${entry.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.4,
+  }));
+
+  // How-to guide pages
+  const howToPages = getAllGuideSlugs().map((slug) => ({
+    url: `${base}/how-to/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // ── /marketplace hub + intent + intent×state pages ──
+  const enabledIntents = await getEnabledIntents();
+  const marketplaceHubPage = {
+    url: `${base}/marketplace`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.85,
+  };
+  const marketplaceIntentPages = enabledIntents.map((i) => ({
+    url: `${base}/marketplace/${i.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+  const marketplaceIntentStatePages = enabledIntents.flatMap((i) =>
+    AUSTRALIAN_STATES.map((s) => ({
+      url: `${base}/marketplace/${i.slug}/${s.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    })),
+  );
+
+  return [
+    ...glossaryPages,
+    ...howToPages,
+    marketplaceHubPage,
+    ...marketplaceIntentPages,
+    ...marketplaceIntentStatePages,
+  ];
+}
+
+async function buildShard6(): Promise<MetadataRoute.Sitemap> {
+  const base = baseUrl();
+  const supabase = await getSupabase();
 
   // Property listing pages
   const { data: propertyListings } = supabase
     ? await supabase.from("property_listings").select("slug, updated_at").in("status", ["active", "coming_soon"])
     : { data: null };
   const propertyListingPages = (propertyListings || []).map((l) => ({
-    url: `${baseUrl}/property/listings/${l.slug}`,
+    url: `${base}/property/listings/${l.slug}`,
     lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
-
-  // ── Investment Marketplace pages ──
-  const investStaticPages = [
-    { url: `${baseUrl}/invest`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
-    { url: `${baseUrl}/invest/listings`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
-    { url: `${baseUrl}/invest/alternatives`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
-    { url: `${baseUrl}/invest/alternatives/platforms`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
-    { url: `${baseUrl}/invest/alternatives/guides`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
-  ];
-
-  // Category listing pages: /invest/{category}/listings
-  // Only emit /invest/<slug>/listings URLs for opportunity-tagged categories.
-  // The 12 demoted categories (4 Compare-redirected + 8 Guide) don't have
-  // /listings subdirectories and would emit dead URLs.
-  const investCategoryPages = getOpportunityCategories().map((c) => c.slug).map((slug) => ({
-    url: `${baseUrl}/invest/${slug}/listings`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
-
-  // Sub-category listing pages: /invest/{category}/listings/{subcategory}
-  const investSubcategoryPages = getAllSubcategorySlugs().map(({ category, subcategory }) => ({
-    url: `${baseUrl}/invest/${category}/listings/${subcategory}`,
-    lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));
@@ -871,15 +963,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     : { data: null };
 
   const suburbGuidePages = (suburbSlugs || []).map((s) => ({
-    url: `${baseUrl}/property/suburbs/${s.slug}`,
+    url: `${base}/property/suburbs/${s.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.6,
   }));
 
-  // AA-05: /[suburb]/property-investing programmatic pages (top-level URL, higher SEO priority)
+  // AA-05: /[suburb]/property-investing programmatic pages
   const suburbInvestingPages = (suburbSlugs || []).map((s) => ({
-    url: `${baseUrl}/${s.slug}/property-investing`,
+    url: `${base}/${s.slug}/property-investing`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.7,
@@ -887,83 +979,57 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Property static hub pages
   const propertyHubPages = [
-    { url: `${baseUrl}/property`, priority: 0.8 },
-    { url: `${baseUrl}/property/listings`, priority: 0.8 },
-    { url: `${baseUrl}/property/suburbs`, priority: 0.7 },
-    { url: `${baseUrl}/property/buyer-agents`, priority: 0.7 },
-    { url: `${baseUrl}/property/foreign-investment`, priority: 0.8 },
+    { url: `${base}/property`, priority: 0.8 },
+    { url: `${base}/property/listings`, priority: 0.8 },
+    { url: `${base}/property/suburbs`, priority: 0.7 },
+    { url: `${base}/property/buyer-agents`, priority: 0.7 },
+    { url: `${base}/property/foreign-investment`, priority: 0.8 },
   ].map((p) => ({ ...p, lastModified: new Date(), changeFrequency: "weekly" as const }));
 
-  // New hubs: ETF, Insurance, Tax, Fee Tracker, Advisor Specialists
-  const newHubPages = [
-    // ETF Hub
-    { url: `${baseUrl}/etfs`, priority: 0.9 },
-    { url: `${baseUrl}/etfs/asx-200`, priority: 0.85 },
-    { url: `${baseUrl}/etfs/us-exposure`, priority: 0.85 },
-    { url: `${baseUrl}/etfs/dividends`, priority: 0.85 },
-    // ETF screener + ticker pages (AA-04 + BB-09)
-    { url: `${baseUrl}/etfs/screener`, priority: 0.88 },
-    { url: `${baseUrl}/etfs/vas`, priority: 0.85 },
-    { url: `${baseUrl}/etfs/a200`, priority: 0.85 },
-    { url: `${baseUrl}/etfs/ivv`, priority: 0.85 },
-    { url: `${baseUrl}/etfs/ndq`, priority: 0.85 },
-    { url: `${baseUrl}/etfs/vgs`, priority: 0.85 },
-    { url: `${baseUrl}/etfs/vts`, priority: 0.82 },
-    { url: `${baseUrl}/etfs/vhy`, priority: 0.82 },
-    { url: `${baseUrl}/etfs/stw`, priority: 0.80 },
-    { url: `${baseUrl}/etfs/ioz`, priority: 0.80 },
-    { url: `${baseUrl}/etfs/ethi`, priority: 0.78 },
-    { url: `${baseUrl}/etfs/vgad`, priority: 0.78 },
-    { url: `${baseUrl}/etfs/hack`, priority: 0.75 },
-    { url: `${baseUrl}/etfs/vaf`, priority: 0.75 },
-    { url: `${baseUrl}/etfs/iwld`, priority: 0.75 },
-    // ETF vs pages
-    { url: `${baseUrl}/etfs/vs/vas-vs-a200`, priority: 0.8 },
-    { url: `${baseUrl}/etfs/vs/vas-vs-stw`, priority: 0.75 },
-    { url: `${baseUrl}/etfs/vs/ioz-vs-vas`, priority: 0.75 },
-    { url: `${baseUrl}/etfs/vs/ivv-vs-vts`, priority: 0.75 },
-    { url: `${baseUrl}/etfs/vs/ndq-vs-ivv`, priority: 0.8 },
-    { url: `${baseUrl}/etfs/vs/vgs-vs-ivv`, priority: 0.75 },
-    { url: `${baseUrl}/etfs/vs/vhy-vs-hvst`, priority: 0.75 },
-    { url: `${baseUrl}/etfs/vs/vhy-vs-vas`, priority: 0.75 },
-    // Insurance Hub
-    { url: `${baseUrl}/insurance`, priority: 0.9 },
-    { url: `${baseUrl}/insurance/life`, priority: 0.85 },
-    { url: `${baseUrl}/insurance/income-protection`, priority: 0.85 },
-    { url: `${baseUrl}/insurance/health`, priority: 0.85 },
-    { url: `${baseUrl}/insurance/home-contents`, priority: 0.8 },
-    // Tax Strategy Hub
-    { url: `${baseUrl}/tax`, priority: 0.9 },
-    { url: `${baseUrl}/tax/capital-gains`, priority: 0.85 },
-    { url: `${baseUrl}/tax/franking-credits`, priority: 0.85 },
-    { url: `${baseUrl}/tax/negative-gearing`, priority: 0.85 },
-    { url: `${baseUrl}/tax/crypto`, priority: 0.85 },
-    // Fee Tracker
-    { url: `${baseUrl}/fee-tracker`, priority: 0.85 },
-    // Super sub-pages
-    { url: `${baseUrl}/super/smsf`, priority: 0.85 },
-    // Advisor Specialists
-    { url: `${baseUrl}/advisors/international-tax-specialists`, priority: 0.85 },
-    { url: `${baseUrl}/advisors/firb-specialists`, priority: 0.8 },
-    { url: `${baseUrl}/advisors/migration-agents`, priority: 0.8 },
-    // Full-service stockbrokers vertical
-    { url: `${baseUrl}/brokers/full-service`, priority: 0.85 },
-  ].map((p) => ({ ...p, lastModified: new Date(), changeFrequency: "weekly" as const }));
+  // City / location investing pages
+  const investingCityPages = [
+    { url: `${base}/investing`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
+    ...getAllCitySlugs().map((slug) => ({
+      url: `${base}/investing/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+  ];
 
-  // Full-service stockbroker firm detail pages
-  const { data: stockbrokerFirms } = supabase
-    ? await supabase
-        .from("professionals")
-        .select("slug, updated_at")
-        .in("type", ["stockbroker_firm", "private_wealth_manager"])
-        .eq("status", "active")
+  return [
+    ...propertyListingPages,
+    ...suburbGuidePages,
+    ...suburbInvestingPages,
+    ...propertyHubPages,
+    ...investingCityPages,
+  ];
+}
+
+async function buildShard7(): Promise<MetadataRoute.Sitemap> {
+  const base = baseUrl();
+  const supabase = await getSupabase();
+
+  // Dynamic team member pages (authors + reviewers)
+  const { data: teamMembers } = supabase
+    ? await supabase.from("team_members").select("slug, role, updated_at").eq("status", "active")
     : { data: null };
-  const stockbrokerFirmPages = (stockbrokerFirms || []).map((f) => ({
-    url: `${baseUrl}/brokers/full-service/${f.slug}`,
-    lastModified: f.updated_at ? new Date(f.updated_at) : new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
+
+  const authorPages = (teamMembers || []).map((m) => ({
+    url: `${base}/authors/${m.slug}`,
+    lastModified: m.updated_at ? new Date(m.updated_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.4,
   }));
+
+  const reviewerPages = (teamMembers || [])
+    .filter((m) => m.role === "expert_reviewer" || m.role === "editor")
+    .map((m) => ({
+      url: `${base}/reviewers/${m.slug}`,
+      lastModified: m.updated_at ? new Date(m.updated_at) : new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    }));
 
   // Newsletter archive & edition pages
   const { data: newsletterEditions } = supabase
@@ -974,32 +1040,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     : { data: null };
 
   const newsletterArchivePage = {
-    url: `${baseUrl}/newsletter`,
+    url: `${base}/newsletter`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.6,
   };
 
   const newsletterEditionPages = (newsletterEditions || []).map((e) => ({
-    url: `${baseUrl}/newsletter/${e.edition_date}`,
+    url: `${base}/newsletter/${e.edition_date}`,
     lastModified: e.created_at ? new Date(e.created_at) : new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.5,
   }));
 
-  // Individual investment listing detail pages
-  const { data: investListings } = supabase
-    ? await supabase.from("investment_listings").select("slug, vertical, sub_category, updated_at").eq("status", "active")
-    : { data: null };
-
-  const investListingPages = (investListings || []).map((l) => ({
-    url: `${baseUrl}${listingUrl(l as { vertical: InvestListingVertical; sub_category?: string; slug: string })}`,
-    lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.6,
-  }));
-
-  // Public quote request pages (open jobs only — expired/closed drop off on next sitemap regen)
+  // Public quote request pages
   const { data: publicJobs } = supabase
     ? await supabase
         .from("advisor_auctions")
@@ -1010,13 +1064,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     : { data: null };
 
   const quoteJobPages = (publicJobs || []).map((j) => ({
-    url: `${baseUrl}/quotes/${j.slug}`,
+    url: `${base}/quotes/${j.slug}`,
     lastModified: j.created_at ? new Date(j.created_at) : new Date(),
     changeFrequency: "hourly" as const,
     priority: 0.6,
   }));
 
-  // Category × location landing pages — long-tail SEO surface
+  // Category × location landing pages
   const QUOTE_TYPES = [
     "smsf_accountant", "financial_planner", "property_advisor", "tax_agent",
     "mortgage_broker", "estate_planner", "insurance_broker", "buyers_agent",
@@ -1026,98 +1080,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const QUOTE_STATES = ["nsw", "vic", "qld", "wa", "sa", "tas", "act", "nt"];
   const quoteCategoryStatePages = QUOTE_TYPES.flatMap((t) =>
     QUOTE_STATES.map((s) => ({
-      url: `${baseUrl}/quotes/by/${t}/${s}`,
+      url: `${base}/quotes/by/${t}/${s}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.5,
     })),
   );
-
-  // Locale-aware pages — each group links canonical ↔ locale alternates via hreflang.
-  // These replace the previously bare static-path entries for the same URLs.
-  // x-default always points to the canonical (en-AU) path.
-  const LOCALE_GROUPS: Array<{
-    canonical: string;
-    canonicalPriority: number;
-    localePaths: Partial<Record<"zh" | "ko" | "ar", string>>;
-  }> = [
-    { canonical: "/foreign-investment",           canonicalPriority: 0.9, localePaths: { zh: "/zh/foreign-investment",           ko: "/ko/foreign-investment"           } },
-    { canonical: "/foreign-investment/siv",        canonicalPriority: 0.7, localePaths: { zh: "/zh/foreign-investment/siv",        ko: "/ko/foreign-investment/siv"        } },
-    { canonical: "/foreign-investment/property",   canonicalPriority: 0.7, localePaths: { zh: "/zh/foreign-investment/property",   ko: "/ko/foreign-investment/property"   } },
-    { canonical: "/foreign-investment/tax",        canonicalPriority: 0.7, localePaths: { zh: "/zh/foreign-investment/tax",        ko: "/ko/foreign-investment/tax"        } },
-    { canonical: "/foreign-investment/united-arab-emirates", canonicalPriority: 0.7, localePaths: { ar: "/ar/foreign-investment/united-arab-emirates" } },
-  ];
-
-  const localizedPages: MetadataRoute.Sitemap = LOCALE_GROUPS.flatMap(
-    ({ canonical, canonicalPriority, localePaths }) => {
-      const languages: Record<string, string> = {
-        [BCP47_TAG.en]: `${baseUrl}${canonical}`,
-        "x-default": `${baseUrl}${canonical}`,
-      };
-      for (const [locale, localePath] of Object.entries(localePaths) as [keyof typeof BCP47_TAG, string][]) {
-        languages[BCP47_TAG[locale]] = `${baseUrl}${localePath}`;
-      }
-      const alternates = { languages };
-      return [
-        { url: `${baseUrl}${canonical}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: canonicalPriority, alternates },
-        ...Object.values(localePaths).map((localePath) => ({
-          url: `${baseUrl}${localePath}`,
-          lastModified: new Date(),
-          changeFrequency: "weekly" as const,
-          priority: Math.min(canonicalPriority, 0.7) as number,
-          alternates,
-        })),
-      ];
-    },
-  );
-
-  // ── /marketplace hub + intent + intent×state pages ──
-  // Programmatic SEO surface — 1 hub + N intents + (N × 8 states) leaf
-  // pages. Intents come from the admin-tunable taxonomy; if the DB is
-  // unreachable, `getEnabledIntents()` falls back to the code-defined
-  // list so the sitemap stays populated. Routes:
-  //   /marketplace                     (hub)
-  //   /marketplace/[intent]            (per intent)
-  //   /marketplace/[intent]/[state]    (per intent × state)
-  // /account/refer and other /account/* paths are noindex — not emitted
-  // here; robots.ts already disallows /account/.
-  const enabledIntents = await getEnabledIntents();
-  const marketplaceHubPage = {
-    url: `${baseUrl}/marketplace`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.85,
-  };
-  const marketplaceIntentPages = enabledIntents.map((i) => ({
-    url: `${baseUrl}/marketplace/${i.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
-  const marketplaceIntentStatePages = enabledIntents.flatMap((i) =>
-    AUSTRALIAN_STATES.map((s) => ({
-      url: `${baseUrl}/marketplace/${i.slug}/${s.slug}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    })),
-  );
-
-  // ── /testimonials — single static page ──
-  const testimonialsPage = {
-    url: `${baseUrl}/testimonials`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.5,
-  };
-
-  // ── /feed — public advisor insights feed ──
-  const feedPage = {
-    url: `${baseUrl}/feed`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  };
 
   // ── AA-02: /grants/[industry] programmatic pages ──
   const grantsIndustrySlugs = [
@@ -1125,7 +1093,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "mining", "healthcare", "export", "creative", "defence",
   ];
   const grantsIndustryPages = grantsIndustrySlugs.map((slug) => ({
-    url: `${baseUrl}/grants/${slug}`,
+    url: `${base}/grants/${slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.6,
@@ -1146,7 +1114,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ["nt", "nt-business-innovation"],
   ];
   const grantsStateProgramPages = grantsStatePrograms.map(([state, program]) => ({
-    url: `${baseUrl}/grants/${state}/${program}`,
+    url: `${base}/grants/${state}/${program}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.6,
@@ -1162,25 +1130,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "freelancer", "contractor", "sports-professional",
   ];
   const investingForIndexPage = {
-    url: `${baseUrl}/investing-for`,
+    url: `${base}/investing-for`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.75,
   };
   const investingForPages = investingForSlugs.map((slug) => ({
-    url: `${baseUrl}/investing-for/${slug}`,
+    url: `${base}/investing-for/${slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.65,
   }));
-
-  // ── Z-27: /tax-return hub (seasonal June–October) ──
-  const taxReturnHubPage = {
-    url: `${baseUrl}/tax-return`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.82,
-  };
 
   // ── CPD events — /events/[id] detail pages ──
   const { data: publishedEvents } = supabase
@@ -1191,18 +1151,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .gte("starts_at", new Date().toISOString())
     : { data: null };
   const eventDetailPages = (publishedEvents || []).map((ev: { id: number; updated_at: string | null }) => ({
-    url: `${baseUrl}/events/${ev.id}`,
+    url: `${base}/events/${ev.id}`,
     lastModified: ev.updated_at ? new Date(ev.updated_at) : new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.65,
   }));
 
   // ── CO-03: /afsl/[number] — dynamic AFSL licensee SEO pages ──
-  // The afsl_register table is populated pre-launch via admin CSV upload
-  // or post-launch via weekly cron. Currently empty; query is future-ready
-  // so new entries surface in the sitemap automatically after upload.
-  // Only index current/suspended licensees — cancelled/ceased pages carry
-  // lower SEO value and are still served (dynamicParams=true) but omitted here.
   const { data: afslLicensees } = supabase
     ? await supabase
         .from("afsl_register")
@@ -1210,19 +1165,44 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .in("status", ["current", "suspended"])
     : { data: null };
   const afslPages = (afslLicensees || []).map((l: { afsl_number: string; last_verified_at: string | null }) => ({
-    url: `${baseUrl}/afsl/${l.afsl_number}`,
+    url: `${base}/afsl/${l.afsl_number}`,
     lastModified: l.last_verified_at ? new Date(l.last_verified_at) : new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.5,
   }));
 
-  // ── Lead-magnet download pages ──
-  const leadMagnetPages = LEAD_MAGNETS.map((m) => ({
-    url: `${baseUrl}/lead-magnets/${m.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.5,
-  }));
+  return [
+    ...authorPages,
+    ...reviewerPages,
+    newsletterArchivePage,
+    ...newsletterEditionPages,
+    ...quoteJobPages,
+    ...quoteCategoryStatePages,
+    ...grantsIndustryPages,
+    ...grantsStateProgramPages,
+    investingForIndexPage,
+    ...investingForPages,
+    ...eventDetailPages,
+    ...afslPages,
+  ];
+}
 
-  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...findAdvisorCityPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...suburbInvestingPages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages, investingForIndexPage, ...investingForPages, taxReturnHubPage, ...afslPages, feedPage, ...eventDetailPages, ...leadMagnetPages];
+// ─── Main export ──────────────────────────────────────────────────────────────
+// Next.js calls `sitemap({ id })` for each ID returned by `generateSitemaps`.
+// It automatically builds a sitemap index at `/sitemap.xml` that references
+// each shard at `/sitemap/0.xml`, `/sitemap/1.xml`, … `/sitemap/7.xml`.
+// robots.ts already points to `/sitemap.xml` so no change is needed there.
+
+export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
+  switch (id) {
+    case 0: return buildShard0();
+    case 1: return buildShard1();
+    case 2: return buildShard2();
+    case 3: return buildShard3();
+    case 4: return buildShard4();
+    case 5: return buildShard5();
+    case 6: return buildShard6();
+    case 7: return buildShard7();
+    default: return [];
+  }
 }

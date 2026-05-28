@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { useUser } from "@/lib/hooks/useUser";
+import EmptyState from "@/components/directory/EmptyState";
 
 type Kind = "advisors" | "teams" | "invest";
 type Frequency = "off" | "daily" | "weekly";
@@ -169,29 +170,15 @@ export default function SavedSearchesClient() {
         )}
 
         {rows.length === 0 && (
-          <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
-            <h2 className="text-lg font-bold text-slate-900 mb-1">
-              No saved searches yet
-            </h2>
-            <p className="text-sm text-slate-500 mb-4">
-              Save an advisor or team filter to get a daily digest when new
-              providers match.
-            </p>
-            <div className="flex gap-2 justify-center">
-              <Link
-                href="/advisors"
-                className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition-colors"
-              >
-                Browse Advisors
-              </Link>
-              <Link
-                href="/teams"
-                className="inline-block px-5 py-2.5 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors"
-              >
-                Browse Teams
-              </Link>
-            </div>
-          </div>
+          <EmptyState
+            icon="search"
+            title="No saved searches yet"
+            body="Filter advisors or teams, then save the search to receive a digest when new providers match your criteria."
+            ctas={[
+              { label: "Browse advisors", href: "/advisors" },
+              { label: "Browse teams", href: "/teams", variant: "secondary" },
+            ]}
+          />
         )}
 
         <div className="space-y-3">

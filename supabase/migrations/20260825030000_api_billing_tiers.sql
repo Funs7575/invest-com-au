@@ -57,5 +57,6 @@ CREATE INDEX IF NOT EXISTS idx_api_key_subs_key_id
 
 ALTER TABLE api_key_subscriptions ENABLE ROW LEVEL SECURITY;
 -- Service-role only — no authenticated-user policy needed (admin/webhook use)
+DROP POLICY IF EXISTS "Service manage api_key_subscriptions" ON api_key_subscriptions;
 CREATE POLICY "Service manage api_key_subscriptions"
   ON api_key_subscriptions FOR ALL USING (true);
