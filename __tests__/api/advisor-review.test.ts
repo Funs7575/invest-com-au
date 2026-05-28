@@ -236,7 +236,9 @@ describe("POST /api/advisor-review", () => {
 
       const res = await POST(makeReq(VALID));
       expect(res.status).toBe(200);
-      expect(capturedInsert.mock.calls[0]?.[0]).toMatchObject({ verified_engagement: false });
+      expect(capturedInsert).toHaveBeenCalledWith(
+        expect.objectContaining({ verified_engagement: false }),
+      );
     });
 
     it("sets verified_engagement=true when a matching lead exists", async () => {
@@ -248,9 +250,9 @@ describe("POST /api/advisor-review", () => {
 
       const res = await POST(makeReq(VALID));
       expect(res.status).toBe(200);
-      const payload = capturedInsert.mock.calls[0]?.[0] as Record<string, unknown>;
-      expect(payload).toMatchObject({ verified_engagement: true });
-      expect(typeof payload["verified_at"]).toBe("string");
+      expect(capturedInsert).toHaveBeenCalledWith(
+        expect.objectContaining({ verified_engagement: true, verified_at: expect.any(String) }),
+      );
     });
 
     it("continues successfully even if engagement check throws (non-blocking)", async () => {
