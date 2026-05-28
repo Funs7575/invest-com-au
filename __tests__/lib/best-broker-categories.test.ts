@@ -140,9 +140,9 @@ describe("getCategoryBySlug", () => {
 });
 
 describe("getAllCategorySlugs", () => {
-  it("matches getAllCategories().map(c => c.slug)", () => {
+  it("matches deduped getAllCategories().map(c => c.slug)", () => {
     expect(getAllCategorySlugs()).toEqual(
-      getAllCategories().map((c) => c.slug),
+      [...new Set(getAllCategories().map((c) => c.slug))],
     );
   });
 });

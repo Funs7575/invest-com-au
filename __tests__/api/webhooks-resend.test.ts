@@ -5,6 +5,7 @@ import { NextRequest } from "next/server";
 
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
+  trackRequest: vi.fn(),
 }));
 
 const mockVerify = vi.fn<(...args: unknown[]) => boolean>();

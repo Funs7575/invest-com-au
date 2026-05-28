@@ -51,6 +51,17 @@ vi.mock("@/lib/supabase/admin", () => ({
 // fetch mock — controls Resend API responses per call
 vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(new Response(JSON.stringify({ id: "email-1" }), { status: 200 }))));
 
+vi.mock("@/lib/cron-run-log", () => ({
+  withCronRunLog: vi.fn(async (_name: string, fn: () => Promise<{ response: unknown }>) => {
+    const { response } = await fn();
+    return response;
+  }),
+  wrapCronHandler: vi.fn(
+    (_name: string, handler: (req: unknown) => Promise<unknown>) => handler,
+  ),
+  cleanupCronRunLog: vi.fn(() => Promise.resolve(0)),
+}));
+
 import { GET, runtime, maxDuration } from "@/app/api/cron/advisor-nudge/route";
 import { requireCronAuth } from "@/lib/cron-auth";
 

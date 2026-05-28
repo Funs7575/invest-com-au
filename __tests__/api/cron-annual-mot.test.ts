@@ -22,6 +22,17 @@ vi.mock("@/lib/supabase/admin", () => ({
   })),
 }));
 
+vi.mock("@/lib/cron-run-log", () => ({
+  withCronRunLog: vi.fn(async (_name: string, fn: () => Promise<{ response: unknown }>) => {
+    const { response } = await fn();
+    return response;
+  }),
+  wrapCronHandler: vi.fn(
+    (_name: string, handler: (req: unknown) => Promise<unknown>) => handler,
+  ),
+  cleanupCronRunLog: vi.fn(() => Promise.resolve(0)),
+}));
+
 import { GET, runtime, maxDuration } from "@/app/api/cron/annual-mot/route";
 
 const CRON_SECRET = "test-cron-secret-mot";

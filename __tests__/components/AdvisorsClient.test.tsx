@@ -29,6 +29,15 @@ vi.mock("@/lib/hooks/useAdvisorShortlist", () => ({
   useAdvisorShortlist: () => ({ toggle: vi.fn(), has: () => false, count: 0, max: 3 }),
 }));
 
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: vi.fn(() => ({
+    auth: {
+      getUser: vi.fn(() => Promise.resolve({ data: { user: null } })),
+      onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
+    },
+  })),
+}));
+
 function pro(overrides: Partial<Professional> = {}): Professional {
   return {
     id: 1,

@@ -60,6 +60,17 @@ vi.mock("@/lib/email-templates", () => ({
   feeChangeAlertEmail: (rows: Array<{ broker: string }>) => `<p>fee-change-html-for-${rows.map((r) => r.broker).join("-")}</p>`,
 }));
 
+vi.mock("@/lib/cron-run-log", () => ({
+  withCronRunLog: vi.fn(async (_name: string, fn: () => Promise<{ response: unknown }>) => {
+    const { response } = await fn();
+    return response;
+  }),
+  wrapCronHandler: vi.fn(
+    (_name: string, handler: (req: unknown) => Promise<unknown>) => handler,
+  ),
+  cleanupCronRunLog: vi.fn(() => Promise.resolve(0)),
+}));
+
 import { GET } from "@/app/api/cron/check-fees/route";
 
 // Tiny chainable-query builder that yields `data` when awaited.

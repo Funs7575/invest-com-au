@@ -33,6 +33,17 @@ vi.mock("@/lib/url", () => ({
   getSiteUrl: vi.fn(() => "https://invest.com.au"),
 }));
 
+vi.mock("@/lib/cron-run-log", () => ({
+  withCronRunLog: vi.fn(async (_name: string, fn: () => Promise<{ response: unknown }>) => {
+    const { response } = await fn();
+    return response;
+  }),
+  wrapCronHandler: vi.fn(
+    (_name: string, handler: (req: unknown) => Promise<unknown>) => handler,
+  ),
+  cleanupCronRunLog: vi.fn(() => Promise.resolve(0)),
+}));
+
 import { GET, runtime, maxDuration } from "@/app/api/cron/rate-alerts/route";
 
 const SECRET = "test-cron-secret-1234567890";

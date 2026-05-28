@@ -3,6 +3,15 @@ import { render, screen } from "./setup";
 import BrokerCard from "@/components/BrokerCard";
 import type { Broker } from "@/lib/types";
 
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: vi.fn(() => ({
+    auth: {
+      getUser: vi.fn(() => Promise.resolve({ data: { user: null } })),
+      onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
+    },
+  })),
+}));
+
 /**
  * Factory for creating test broker data with sensible defaults.
  * Override any field by passing a partial Broker.

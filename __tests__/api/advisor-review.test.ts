@@ -32,25 +32,34 @@ import { POST } from "@/app/api/advisor-review/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
+/**
+ * Server chain: .select().eq().single() — used for pro lookup.
+ * Thenable so `await chain({...})` also resolves.
+ */
 function chain(result: unknown) {
   const b: Record<string, unknown> = {};
-  for (const m of ["select", "eq", "limit", "insert"]) b[m] = vi.fn(() => b);
+  for (const m of ["select", "eq"]) b[m] = vi.fn(() => b);
   b.single = vi.fn(() => Promise.resolve(result));
-  b.then = (cb: (v: unknown) => void) => { cb(result); return Promise.resolve(); };
   return b;
 }
 
 /**
- * Build an admin-client chain that returns a result from the final .limit() call.
- * The chain is: from(table) → select() → eq() → eq() → limit() → resolves with result.
+ * Admin chain for .select().eq().eq().limit() — dup check + engagement check.
+ * Returns { data: [...], error: null }.
  */
-function adminChain(result: unknown) {
-  const b: Record<string, unknown> = {};
-  const terminal = () => Promise.resolve(result);
-  b.select = vi.fn(() => b);
-  b.eq = vi.fn(() => b);
-  b.limit = vi.fn(() => terminal());
-  return b;
+function adminLimitChain(data: unknown[]) {
+  const c: Record<string, ReturnType<typeof vi.fn>> = {};
+  c.select = vi.fn(() => c);
+  c.eq = vi.fn(() => c);
+  c.limit = vi.fn(() => Promise.resolve({ data, error: null }));
+  return c;
+}
+
+/**
+ * Admin chain for .insert() — the review insert.
+ */
+function adminInsertChain(err: unknown = null) {
+  return { insert: vi.fn(() => Promise.resolve({ error: err })) };
 }
 
 function makeReq(body: Record<string, unknown>): NextRequest {
@@ -75,26 +84,21 @@ const VALID = {
 };
 
 /**
- * Sets up the standard happy-path:
- *   1. professional lookup → found
- *   2. duplicate email check → empty (no duplicate)
- *   3. insert → optional error
- * The admin engagement check is configured separately via adminFromMock.
+ * Sets up the full happy-path mock sequence (with reviewer_email).
+ * Route order: serverFrom → pro lookup
+ *              adminFrom  → dup check (professional_reviews .limit(1))
+ *              adminFrom  → engagement check (professional_leads .limit(1))
+ *              adminFrom  → insert (professional_reviews .insert())
  */
-function setupHappyPath(insertErr: unknown = null) {
+function setupHappyPath({
+  dupFound = false,
+  engagementFound = false,
+  insertErr = null as unknown,
+} = {}) {
   serverFromMock.mockReturnValueOnce(chain({ data: { id: "pro-1", name: "Bob", slug: "bob-sydney" } }));
-  serverFromMock.mockReturnValueOnce(chain({ data: [] })); // duplicate check
-  serverFromMock.mockReturnValueOnce(chain({ error: insertErr })); // insert
-}
-
-/** No matching engagement lead found. */
-function setupNoEngagement() {
-  adminFromMock.mockReturnValueOnce(adminChain({ data: [], error: null }));
-}
-
-/** Matching engagement lead found. */
-function setupEngagementMatch() {
-  adminFromMock.mockReturnValueOnce(adminChain({ data: [{ id: 42 }], error: null }));
+  adminFromMock.mockReturnValueOnce(adminLimitChain(dupFound ? [{ id: 7 }] : []));
+  adminFromMock.mockReturnValueOnce(adminLimitChain(engagementFound ? [{ id: 42 }] : []));
+  adminFromMock.mockReturnValueOnce(adminInsertChain(insertErr));
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
@@ -161,18 +165,16 @@ describe("POST /api/advisor-review", () => {
 
   it("returns 409 when reviewer has already reviewed this advisor", async () => {
     serverFromMock.mockReturnValueOnce(chain({ data: { id: "pro-1", name: "Bob", slug: "bob" } }));
-    serverFromMock.mockReturnValueOnce(chain({ data: [{ id: 7 }] })); // duplicate found
+    adminFromMock.mockReturnValueOnce(adminLimitChain([{ id: 7 }])); // dup found
     expect((await POST(makeReq(VALID))).status).toBe(409);
   });
 
   it("returns 500 when insert fails", async () => {
-    setupNoEngagement();
-    setupHappyPath({ message: "db error" });
+    setupHappyPath({ insertErr: { message: "db error" } });
     expect((await POST(makeReq(VALID))).status).toBe(500);
   });
 
   it("returns 200 on success without RESEND_API_KEY — no email sent", async () => {
-    setupNoEngagement();
     setupHappyPath();
     const res = await POST(makeReq(VALID));
     expect(res.status).toBe(200);
@@ -181,7 +183,6 @@ describe("POST /api/advisor-review", () => {
 
   it("returns 200 with RESEND_API_KEY — fires admin email", async () => {
     process.env.RESEND_API_KEY = "re_test_key";
-    setupNoEngagement();
     setupHappyPath();
     const res = await POST(makeReq(VALID));
     expect(res.status).toBe(200);
@@ -191,14 +192,12 @@ describe("POST /api/advisor-review", () => {
 
   it("returns 200 even when Resend email send throws (non-blocking catch)", async () => {
     process.env.RESEND_API_KEY = "re_test_key";
-    setupNoEngagement();
     setupHappyPath();
     fetchMock.mockRejectedValueOnce(new Error("network down"));
     expect((await POST(makeReq(VALID))).status).toBe(200);
   });
 
   it("auto-flags reviews containing profanity (status=flagged)", async () => {
-    setupNoEngagement();
     setupHappyPath();
     const body = "This advisor is a complete bastard and I hate them so much and would not recommend.";
     const res = await POST(makeReq({ ...VALID, body }));
@@ -208,7 +207,6 @@ describe("POST /api/advisor-review", () => {
   });
 
   it("auto-flags reviews containing spam URLs (status=flagged)", async () => {
-    setupNoEngagement();
     setupHappyPath();
     const body = "Check out https://spam.example.com for better advice — this advisor is merely adequate for daily use.";
     const res = await POST(makeReq({ ...VALID, body }));
@@ -219,67 +217,58 @@ describe("POST /api/advisor-review", () => {
 
   it("skips duplicate check and engagement check when no reviewer_email provided", async () => {
     serverFromMock.mockReturnValueOnce(chain({ data: { id: "pro-1", name: "Bob", slug: "bob" } }));
-    serverFromMock.mockReturnValueOnce(chain({ error: null })); // insert (no dup check)
+    adminFromMock.mockReturnValueOnce(adminInsertChain(null)); // insert only — no dup or engagement check
     const res = await POST(makeReq({ ...VALID, reviewer_email: undefined }));
     expect(res.status).toBe(200);
-    // Admin client should NOT have been called (no email to match against)
-    expect(adminFromMock).not.toHaveBeenCalled();
+    // Admin client called only for insert, not for dup or engagement
+    expect(adminFromMock).toHaveBeenCalledTimes(1);
   });
 
   // ── Engagement verification (verified_engagement) ────────────────────────
 
   describe("engagement verification", () => {
     it("sets verified_engagement=false when no matching lead found", async () => {
-      setupNoEngagement();
-      // Capture the insert call to check what was passed
-      let insertPayload: unknown = null;
-      const insertChain = chain({ error: null });
-      (insertChain.insert as ReturnType<typeof vi.fn>).mockImplementation((payload: unknown) => {
-        insertPayload = payload;
-        return Promise.resolve({ error: null });
-      });
       serverFromMock.mockReturnValueOnce(chain({ data: { id: "pro-1", name: "Bob", slug: "bob" } }));
-      serverFromMock.mockReturnValueOnce(chain({ data: [] })); // dup check
-      serverFromMock.mockReturnValueOnce(insertChain);
+      adminFromMock.mockReturnValueOnce(adminLimitChain([])); // dup check — no dup
+      adminFromMock.mockReturnValueOnce(adminLimitChain([])); // engagement — no match
+      const capturedInsert = vi.fn(() => Promise.resolve({ error: null }));
+      adminFromMock.mockReturnValueOnce({ insert: capturedInsert });
 
-      await POST(makeReq(VALID));
-      expect(insertPayload).toMatchObject({ verified_engagement: false });
+      const res = await POST(makeReq(VALID));
+      expect(res.status).toBe(200);
+      expect(capturedInsert.mock.calls[0]?.[0]).toMatchObject({ verified_engagement: false });
     });
 
     it("sets verified_engagement=true when a matching lead exists", async () => {
-      setupEngagementMatch();
-      let insertPayload: unknown = null;
-      const insertChain = chain({ error: null });
-      (insertChain.insert as ReturnType<typeof vi.fn>).mockImplementation((payload: unknown) => {
-        insertPayload = payload;
-        return Promise.resolve({ error: null });
-      });
       serverFromMock.mockReturnValueOnce(chain({ data: { id: "pro-1", name: "Bob", slug: "bob" } }));
-      serverFromMock.mockReturnValueOnce(chain({ data: [] }));
-      serverFromMock.mockReturnValueOnce(insertChain);
+      adminFromMock.mockReturnValueOnce(adminLimitChain([])); // dup check — no dup
+      adminFromMock.mockReturnValueOnce(adminLimitChain([{ id: 42 }])); // engagement — match found
+      const capturedInsert = vi.fn(() => Promise.resolve({ error: null }));
+      adminFromMock.mockReturnValueOnce({ insert: capturedInsert });
 
-      await POST(makeReq(VALID));
-      expect(insertPayload).toMatchObject({ verified_engagement: true });
-      // verified_at should be an ISO date string
-      expect(typeof (insertPayload as Record<string, unknown>)["verified_at"]).toBe("string");
+      const res = await POST(makeReq(VALID));
+      expect(res.status).toBe(200);
+      const payload = capturedInsert.mock.calls[0]?.[0] as Record<string, unknown>;
+      expect(payload).toMatchObject({ verified_engagement: true });
+      expect(typeof payload["verified_at"]).toBe("string");
     });
 
     it("continues successfully even if engagement check throws (non-blocking)", async () => {
-      // Simulate admin client failure
+      serverFromMock.mockReturnValueOnce(chain({ data: { id: "pro-1", name: "Bob", slug: "bob-sydney" } }));
+      adminFromMock.mockReturnValueOnce(adminLimitChain([])); // dup check — success
       adminFromMock.mockImplementationOnce(() => {
         throw new Error("admin db connection refused");
-      });
-      setupHappyPath();
+      }); // engagement check throws — caught internally
+      adminFromMock.mockReturnValueOnce(adminInsertChain(null)); // insert — success
       const res = await POST(makeReq(VALID));
-      // Still 200 — engagement check is best-effort
       expect(res.status).toBe(200);
     });
 
-    it("does not call admin client when reviewer_email is absent", async () => {
+    it("does not call admin client for dup/engagement checks when reviewer_email is absent", async () => {
       serverFromMock.mockReturnValueOnce(chain({ data: { id: "pro-1", name: "Bob", slug: "bob" } }));
-      serverFromMock.mockReturnValueOnce(chain({ error: null }));
+      adminFromMock.mockReturnValueOnce(adminInsertChain(null)); // insert only — no dup or engagement
       await POST(makeReq({ ...VALID, reviewer_email: undefined }));
-      expect(adminFromMock).not.toHaveBeenCalled();
+      expect(adminFromMock).toHaveBeenCalledTimes(1);
     });
   });
 });

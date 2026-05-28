@@ -4,10 +4,10 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const { mockGetUser, mockOrder, mockCreateSignedUrl } = vi.hoisted(() => ({
+const { mockGetUser, mockOrder, mockCreateSignedUrls } = vi.hoisted(() => ({
   mockGetUser: vi.fn(),
   mockOrder: vi.fn(),
-  mockCreateSignedUrl: vi.fn(),
+  mockCreateSignedUrls: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -16,7 +16,7 @@ vi.mock("@/lib/supabase/server", () => ({
     from: vi.fn(() => ({
       select: vi.fn(() => ({ order: mockOrder })),
     })),
-    storage: { from: vi.fn(() => ({ createSignedUrl: mockCreateSignedUrl })) },
+    storage: { from: vi.fn(() => ({ createSignedUrls: mockCreateSignedUrls })) },
   })),
 }));
 
@@ -27,7 +27,7 @@ describe("GET /api/account/documents", () => {
     vi.clearAllMocks();
     mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } } });
     mockOrder.mockResolvedValue({ data: [], error: null });
-    mockCreateSignedUrl.mockResolvedValue({ data: { signedUrl: "https://x/y" } });
+    mockCreateSignedUrls.mockResolvedValue({ data: [] });
   });
 
   it("returns 401 when unauthenticated", async () => {
@@ -47,6 +47,9 @@ describe("GET /api/account/documents", () => {
       data: [{ id: "d1", file_path: "u1/d1/file.pdf", file_name: "file.pdf" }],
       error: null,
     });
+    mockCreateSignedUrls.mockResolvedValue({
+      data: [{ path: "u1/d1/file.pdf", signedUrl: "https://x/y" }],
+    });
     const res = await GET();
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -56,7 +59,8 @@ describe("GET /api/account/documents", () => {
 
   it("tolerates a missing signed url (download_url null)", async () => {
     mockOrder.mockResolvedValue({ data: [{ id: "d1", file_path: "p" }], error: null });
-    mockCreateSignedUrl.mockResolvedValue({ data: null });
+    // createSignedUrls returns no entry for this path — download_url should be null
+    mockCreateSignedUrls.mockResolvedValue({ data: [] });
     const res = await GET();
     expect(res.status).toBe(200);
     const body = await res.json();

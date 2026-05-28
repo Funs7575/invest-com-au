@@ -91,12 +91,14 @@ describe("GET /api/cron/advisor-match-scores", () => {
       eqCount++;
       return eqCount >= 2 ? Promise.resolve({ data: [], error: null }) : advChain;
     });
+    const criteriaChain = { select: vi.fn(() => Promise.resolve({ data: [], error: null })) };
 
     let callIndex = 0;
     mockFrom.mockImplementation(() => {
       callIndex++;
       if (callIndex === 1) return profileChain;
-      return advChain;
+      if (callIndex === 2) return advChain;
+      return criteriaChain;
     });
 
     const res = await GET(makeReq());
@@ -119,6 +121,7 @@ describe("GET /api/cron/advisor-match-scores", () => {
       return advCallCount >= 2 ? Promise.resolve({ data: [ADVISOR_ROW], error: null }) : advChain;
     });
 
+    const criteriaChain = { select: vi.fn(() => Promise.resolve({ data: [], error: null })) };
     const upsertChain = {
       upsert: vi.fn(() => Promise.resolve({ error: null })),
     };
@@ -128,6 +131,7 @@ describe("GET /api/cron/advisor-match-scores", () => {
       callIndex++;
       if (callIndex === 1) return profileChain;
       if (callIndex === 2) return advChain;
+      if (callIndex === 3) return criteriaChain;
       return upsertChain;
     });
 

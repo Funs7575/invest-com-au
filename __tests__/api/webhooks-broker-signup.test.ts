@@ -5,6 +5,7 @@ import { NextRequest } from "next/server";
 
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
+  trackRequest: vi.fn(),
 }));
 
 const mockAdminFrom = vi.fn();
@@ -34,21 +35,6 @@ function makeGet(params: Record<string, string>, key?: string): NextRequest {
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
   return new NextRequest(url.toString(), {
     headers: key ? { authorization: `Bearer ${key}` } : {},
-  });
-}
-
-function chainFor(results: unknown[]): ReturnType<typeof vi.fn> {
-  let callIndex = 0;
-  return vi.fn(() => {
-    const result = results[callIndex] ?? results.at(-1);
-    callIndex++;
-    const c: Record<string, unknown> = {};
-    c.select = vi.fn(() => c);
-    c.eq = vi.fn(() => c);
-    c.insert = vi.fn(() => c);
-    c.single = vi.fn().mockResolvedValue(result);
-    c.maybeSingle = vi.fn().mockResolvedValue(result);
-    return c;
   });
 }
 

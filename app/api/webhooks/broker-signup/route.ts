@@ -187,9 +187,9 @@ export async function GET(request: NextRequest) {
     method: "POST",
     headers: request.headers,
     body: JSON.stringify({
-      click_id,
-      broker_slug,
-      external_ref,
+      ...(click_id ? { click_id } : {}),
+      ...(broker_slug ? { broker_slug } : {}),
+      ...(external_ref ? { external_ref } : {}),
       revenue_cents: amount ? Math.round(parseFloat(amount) * 100) : 0,
     }),
   });

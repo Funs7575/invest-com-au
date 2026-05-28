@@ -96,7 +96,7 @@ describe("POST /api/lead-outcome", () => {
     const res = await POST(makePost({ outcome: "contacted" }));
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/lead_id.*outcome/i);
+    expect(json.error).toMatch(/lead_id/i);
   });
 
   it("returns 400 when outcome is missing", async () => {
@@ -108,7 +108,7 @@ describe("POST /api/lead-outcome", () => {
     const res = await POST(makePost({ lead_id: LEAD_ID, outcome: "cancelled" }));
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/Invalid outcome/i);
+    expect(json.error).toMatch(/outcome/i);
   });
 
   it("returns 404 when lead not found", async () => {

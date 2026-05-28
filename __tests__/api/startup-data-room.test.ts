@@ -78,7 +78,8 @@ function makeCountChain(count: number) {
   return {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
-    is: vi.fn().mockResolvedValue({ count }),
+    in: vi.fn().mockReturnThis(),
+    is: vi.fn().mockResolvedValue({ data: [], error: null, count }),
   };
 }
 
@@ -97,7 +98,7 @@ describe("GET /api/startups/data-room", () => {
     vi.clearAllMocks();
     mockRequireStartupSession.mockResolvedValue(STARTUP_ID);
     mockStorageFrom.mockReturnValue({
-      createSignedUrl: vi.fn().mockResolvedValue({ data: { signedUrl: "https://signed.url/file" } }),
+      createSignedUrls: vi.fn().mockResolvedValue({ data: [] }),
     });
     mockServerFrom.mockImplementation((table: string) => {
       if (table === "startup_data_room_files") return makeFilesQueryChain([]);
@@ -136,9 +137,21 @@ describe("GET /api/startups/data-room", () => {
       uploaded_at: new Date().toISOString(),
       storage_path: `${STARTUP_ID}/${FILE_ID}/pitch.pdf`,
     };
+    mockStorageFrom.mockReturnValue({
+      createSignedUrls: vi.fn().mockResolvedValue({
+        data: [{ path: `${STARTUP_ID}/${FILE_ID}/pitch.pdf`, signedUrl: "https://signed.url/file" }],
+      }),
+    });
+    const grantRows = [{ file_id: FILE_ID }, { file_id: FILE_ID }];
     mockServerFrom.mockImplementation((table: string) => {
       if (table === "startup_data_room_files") return makeFilesQueryChain([fakeFile]);
-      return makeCountChain(2);
+      // startup_data_room_access: return 2 grant rows for FILE_ID
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        in: vi.fn().mockReturnThis(),
+        is: vi.fn().mockResolvedValue({ data: grantRows, error: null }),
+      };
     });
 
     const res = await GET(makeGetReq());
