@@ -20,6 +20,7 @@ import { join } from "node:path";
 const MANDATORY_ROOTS = [
   "app/compare",
   "app/best",
+  "app/best-for",
   "app/brokers",
   "app/calculators",
   "app/broker",
@@ -30,6 +31,8 @@ const MANDATORY_ROOTS = [
   "app/crypto",
   "app/forex",
   "app/super",
+  "app/smsf",
+  "app/dividends",
 ];
 
 // Files that do not need compliance (non-product pages, utility routes, etc.)
@@ -37,6 +40,7 @@ const ALLOWLIST = new Set<string>([
   // Index/landing pages that don't show product data themselves
   "app/compare/page.tsx",
   "app/best/page.tsx",
+  "app/best-for/page.tsx", // index/landing — lists scenario links; rankings + warning live on /best-for/[slug]
   "app/brokers/page.tsx",
   "app/property/page.tsx",
   // Compliance is rendered in a nested layout for these trees
@@ -46,12 +50,21 @@ const ALLOWLIST = new Set<string>([
   "app/brokers/[slug]/page.tsx",
   // HubPage HOC renders compliance footer from config.complianceKey — no raw ComplianceFooter import needed
   "app/super/page.tsx",
+  "app/dividends/page.tsx",
 ]);
 
 const COMPLIANCE_PATTERNS = [
   /ComplianceFooter/,
   /PropertyDisclaimer/, // property-specific variant
   /GENERAL_ADVICE_WARNING/, // raw use of the constant
+  /GeneralAdviceWarning/, // components/commodities/GeneralAdviceWarning (RG 234 footer)
+  /ListingComplianceNotice/, // components/invest/ListingComplianceNotice (s708 + risk warning)
+  /RiskWarningInline/, // inline risk warning
+  /FACTUAL_COMPARISON_DISCLAIMER/, // lib/compliance-config factual disclaimers
+  /FACTUAL_DIRECTORY_DISCLAIMER/,
+  /FACTUAL_CALCULATOR_DISCLAIMER/,
+  /CRYPTO_WARNING/, // crypto-specific risk warning
+  /SUPER_WARNING/, // super-specific warning
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

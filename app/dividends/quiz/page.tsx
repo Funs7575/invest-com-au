@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import { Suspense } from "react";
 import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
 import { DIVIDENDS_ONBOARDING_CONFIG } from "@/lib/hub-onboarding-configs";
@@ -35,6 +36,7 @@ export default function DividendsQuizPage() {
       >
         <HubOnboardingShell config={DIVIDENDS_ONBOARDING_CONFIG} />
       </Suspense>
+      <ComplianceFooter />
     </>
   );
 }
