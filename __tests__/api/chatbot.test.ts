@@ -115,6 +115,25 @@ describe("POST /api/chatbot", () => {
     expect(json.provider).toBe("claude");
   });
 
+  it("replaces a personal-advice reply with a compliant fallback (V-NEW-02)", async () => {
+    let callCount = 0;
+    mockAdminFrom.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return makeConversationSelectChain({ data: [], error: null });
+      return makeInsertChain({ error: null });
+    });
+    mockRespondToMessage.mockResolvedValue({
+      ...CHAT_RESULT,
+      reply: "You should buy CommSec shares now — it's the best for you.",
+    });
+
+    const res = await POST(makePost({ session_id: "sess-abc", message: "what should I buy?" }));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.reply).not.toContain("You should buy");
+    expect(json.reply).toMatch(/ASIC-registered financial adviser/i);
+  });
+
   it("passes prior conversation history to respondToMessage", async () => {
     const priorTurns = [
       { role: "user", content: "What is SMSF?" },

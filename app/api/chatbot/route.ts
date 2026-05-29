@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed } from "@/lib/rate-limit-db";
 import { respondToMessage, type ChatMessage } from "@/lib/chatbot";
+import { filterFactualOutput, GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { logger } from "@/lib/logger";
 
 const log = logger("chatbot");
@@ -20,6 +21,7 @@ export const runtime = "nodejs";
  * the provider bill bounded.
  */
 export async function POST(request: NextRequest) {
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- body is validated below: session_id/message are typeof-string-guarded, message is length-capped at 2000, and unknown fields are ignored.
   const body = await request.json().catch(() => ({}));
   const sessionId = typeof body.session_id === "string" ? body.session_id : null;
   const message = typeof body.message === "string" ? body.message : null;
@@ -66,6 +68,30 @@ export async function POST(request: NextRequest) {
     conversation,
   );
 
+  // V-NEW-02 — run the model reply through the deterministic compliance filter
+  // (the gate every other AI surface uses). The chatbot reply is conversational
+  // with a GAW *closer*, so the GAW-prefix and stat-citation rules don't fit its
+  // format — we only BLOCK on the rules that matter for a chat reply: a
+  // personal-advice phrase ("you should buy …") or an unsafe markdown link. On a
+  // block we replace the reply with a compliant fallback rather than break the
+  // chat. Other rejected rules are logged for audit, not blocked.
+  const filter = filterFactualOutput(result.reply);
+  const blockingSpans = filter.rejectedSpans.filter(
+    (s) => s.rule === "personal-advice-phrase" || s.rule === "unsafe-markdown-link",
+  );
+  let safeReply = result.reply;
+  if (blockingSpans.length > 0) {
+    log.warn("chatbot_reply_filtered", {
+      sessionId,
+      rules: [...new Set(blockingSpans.map((s) => s.rule))],
+    });
+    safeReply =
+      "I can share factual, general information about brokers, fees, and investing concepts, " +
+      "but I can't tell you what you personally should buy or do. " +
+      GENERAL_ADVICE_WARNING +
+      " For advice tailored to your situation, consider speaking with an ASIC-registered financial adviser.";
+  }
+
   // Persist both turns (user + assistant) for audit
   const baseRow = {
     session_id: sessionId,
@@ -83,7 +109,7 @@ export async function POST(request: NextRequest) {
     {
       ...baseRow,
       role: "assistant" as const,
-      content: result.reply,
+      content: safeReply,
       context: result.retrieved,
       model: result.model,
       tokens_in: result.tokensIn,
@@ -95,7 +121,7 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json({
-    reply: result.reply,
+    reply: safeReply,
     retrieved: result.retrieved,
     flagged: result.flagged,
     flaggedReason: result.flaggedReason,
