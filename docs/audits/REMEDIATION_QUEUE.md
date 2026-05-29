@@ -265,6 +265,25 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 586 — 2026-05-29 — STATUS: ALL-BLOCKED · CI in-progress on all 4 PRs
+
+- **Phase 0:** Lock held (batch fire, iter 3 of 5). Synced main to `f496ade`.
+- **Phase 2 (CI check):**
+  - **#1176** (NF-03 admin MFA): `Lint · Build` in_progress (03:09:10Z). Fast gates ✅. a11y gate hasn't run yet (depends on Lint/Build). Expected to pass since FIPersonaRouter fix is on main.
+  - **#1268** (MAIN-RESCUE cron-webhook-mock): `Lint · Build` in_progress (03:10:01Z). Fast gates ✅.
+  - **#1269** (NF-16 v2 autopilot): `Lint · Build` in_progress (03:09:30Z). Fast gates ✅.
+  - **#1180** (NF-20 SMS consent): `Lint · Build` queued (03:09:28Z). Queued, not yet started.
+  - **#1198** (F parseMoney): All required checks ✅. Awaiting founder merge.
+- **Phase 3:** No pending engineering items in any non-blocked stream.
+- **STATUS: ALL-BLOCKED · CI-running-on-all-4-PRs**
+- **Batch stop condition reached** (ALL-BLOCKED). Total iterations this fire: 3 (584 MAIN-RESCUE + 585 CI-RESCUE re-trigger + 586 ALL-BLOCKED).
+- **Pending founder actions:**
+  - Merge **#1198** (F parseMoney — Tier A, CI ✅ green, auto-merge-safe).
+  - After CI green: merge **#1268** (MAIN-RESCUE — Tier A, tests-only) → **#1176** (Tier C, NF-03 admin MFA) → **#1180** (Tier C, NF-20 SMS consent) → **#1269** (Tier B, NF-16 autopilot, 15-min obs window).
+  - Merge auto-revert PRs **#1237, #1246, #1254, #1263** (deepen-loop reverts — FIPersonaRouter.tsx a11y fix on main makes their a11y concern moot for in-flight PRs, but founder may still want to revert the feature content).
+
+---
+
 ### iter 585 — 2026-05-29 — STATUS: CI-RESCUE · stream=NF+MAIN-RESCUE · re-trigger all 4 PRs
 
 - **Phase 0:** Lock held (batch fire, iter 2 of up to 5). Synced main to `9c554d5`.
