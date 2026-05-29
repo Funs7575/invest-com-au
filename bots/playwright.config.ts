@@ -26,6 +26,9 @@ const isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?$/.test(config.host)
 export default defineConfig({
   testDir: ".",
   testMatch: /.*\.spec\.ts$/,
+  // Keep Playwright artifacts inside the (gitignored) run dir so bot runs never
+  // dirty the tracked tree.
+  outputDir: `${config.runDir}/artifacts`,
   // Sessions visit several routes and run axe + link checks; give them room.
   timeout: 180_000,
   fullyParallel: true,
@@ -47,7 +50,9 @@ export default defineConfig({
     process.env.BOTS_SKIP_WEBSERVER === "1" || !isLocal
       ? undefined
       : {
-          command: "npm run dev",
+          // Defaults to the dev server; override with BOTS_WEBSERVER_CMD (e.g.
+          // "npm run start" to drive the production build instead).
+          command: process.env.BOTS_WEBSERVER_CMD ?? "npm run dev",
           url: config.baseUrl,
           reuseExistingServer: true,
           timeout: 600_000,
