@@ -265,6 +265,25 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 590 — 2026-05-29 — STATUS: ALL-BLOCKED · CI in-progress on all 4 PRs post-rebase
+
+- **Phase 0:** Lock acquired (batch fire, iter 1 of up to 5 this fire). Synced main to `38b6e0e` (iter 589 queue commit).
+- **Phase 0.5:** No LOOP_PAUSE sentinel. Proceeding.
+- **Phase 1 (Sync):** On main at `38b6e0e`. No migrations in last 24h, no inflight drift-failing checks → Phase 1.5 skipped. Main HEAD is a queue commit → Phase 1.7 inferred healthy.
+- **Phase 2 (CI rescue — in-flight PR review):**
+  - **#1268** (MAIN-RESCUE): All checks `queued` — fresh CI run triggered by iter 589 rebase (`5d1c3bb`). No failures. No rescue needed.
+  - **#1176** (NF-03 admin MFA): `Lint · Type-check · Test · Build` **in_progress** (started 04:37Z). `AI factual-filter gate` ✅. `Supabase types drift` ❌ (infra noise — EXCLUDED_CHECK_NAMES). No actionable failure. No rescue needed.
+  - **#1180** (NF-20 SMS consent): `Lint · Type-check · Test · Build` **in_progress** (started 04:36Z). `AI factual-filter gate` ✅. No failures. No rescue needed.
+  - **#1269** (NF-16 v2 autopilot): `Lint · Type-check · Test · Build` **in_progress** (started 04:36Z). `AI factual-filter gate` ✅. `Stripe webhook idempotency gate` ✅. No failures. No rescue needed.
+- **Phase 3 (Item selection):** No pending engineering items in any non-blocked stream. All streams complete or blocked. No override conditions met.
+- **STATUS: ALL-BLOCKED · CI-in-progress-on-all-4-PRs**
+- **Batch stop condition reached** (ALL-BLOCKED). Total iterations this fire: 1.
+- **Pending founder actions after CI green:**
+  - Merge **#1268** (Tier A — tests-only, `auto-merge-safe`) → **#1176** (Tier C, NF-03 admin MFA — announce intent before merge) → **#1180** (Tier C, NF-20 SMS consent — announce intent before merge) → **#1269** (Tier B, NF-16 autopilot, 15-min obs window).
+  - All 4 PRs are on current main (`52665c8`/`1cbb001` base via iter 589 rebase). Expected: Lint/Build ✅ on all 4 once CI completes.
+
+---
+
 ### iter 589 — 2026-05-29 — STATUS: CI-RESCUE · stream=NF+MAIN-RESCUE · rebased all 4 PRs onto main+1cbb001
 
 - **Phase 0:** Lock held (batch fire, this fire iter 1 of up to 5 — fresh session, prior fire lock released). Synced main to `52665c8`.
