@@ -46,7 +46,7 @@ const CRYPTO_SECTIONS = [
   },
   {
     heading: "CGT on crypto for non-residents — a grey area",
-    body: "The CGT treatment of cryptocurrency gains for non-residents is legally complex and not yet definitively resolved by Australian courts or ATO rulings. The key question is whether crypto is 'taxable Australian property' (TAP) — the category for which non-residents CANNOT claim the standard CGT exemption.\n\nThe ATO's view and most tax practitioners' interpretation is that most cryptocurrency held on Australian exchanges is NOT taxable Australian property — it is not Australian land or an interest in an Australian entity. This means non-residents should generally be exempt from Australian CGT on crypto gains under Section 855-10.\n\nHowever, this is not black-letter law. DeFi positions, NFTs, and more exotic assets are even less clear.\n\nThe more important practical point: even if Australian CGT doesn't apply, your home country will almost certainly tax crypto gains. Don't assume tax-free — get advice on your home country's treatment.",
+    body: "The CGT treatment of cryptocurrency gains for non-residents is legally complex and not yet definitively resolved by Australian courts or ATO rulings. The key question is whether crypto is &lsquo;taxable Australian property&rsquo; (TAP) — the category for which non-residents CANNOT claim the standard CGT exemption.\n\nThe ATO's view and most tax practitioners' interpretation is that most cryptocurrency held on Australian exchanges is NOT taxable Australian property — it is not Australian land or an interest in an Australian entity. This means non-residents should generally be exempt from Australian CGT on crypto gains under Section 855-10.\n\nHowever, this is not black-letter law. DeFi positions, NFTs, and more exotic assets are even less clear.\n\nThe more important practical point: even if Australian CGT doesn't apply, your home country will almost certainly tax crypto gains. Don't assume tax-free — get advice on your home country's treatment.",
   },
   {
     heading: "Offshore exchanges vs. AUSTRAC-registered exchanges",
@@ -61,7 +61,7 @@ const CRYPTO_SECTIONS = [
 const CRYPTO_FAQS = [
   {
     question: "Do non-residents pay Australian tax on crypto gains?",
-    answer: "Based on the current ATO interpretation and most tax practitioners' views, non-residents are generally NOT subject to Australian CGT on crypto gains — crypto is not 'taxable Australian property'. However, this is not settled law. More importantly, you will likely owe tax on crypto gains in your home country. Get local tax advice.",
+    answer: "Based on the current ATO interpretation and most tax practitioners' views, non-residents are generally NOT subject to Australian CGT on crypto gains — crypto is not &lsquo;taxable Australian property&rsquo;. However, this is not settled law. More importantly, you will likely owe tax on crypto gains in your home country. Get local tax advice.",
   },
   {
     question: "Do I need an Australian bank account to use an Australian crypto exchange?",
@@ -140,7 +140,7 @@ export default async function ForeignCryptoPage() {
               AUSTRAC · KYC · Updated March 2026
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
-              <span className="text-amber-500">Crypto</span> for Non-Residents{" "}
+              <span className="text-amber-600">Crypto</span> for Non-Residents{" "}
               <br />in Australia
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed">
@@ -163,7 +163,7 @@ export default async function ForeignCryptoPage() {
             <div className="bg-white rounded-2xl border border-amber-200 p-5">
               <p className="text-xs font-bold text-amber-800 uppercase tracking-wide mb-1">CGT for Non-Residents</p>
               <p className="text-xl font-black text-amber-700">Likely Exempt</p>
-              <p className="text-xs text-slate-600 mt-1 leading-relaxed">Crypto likely not 'taxable Australian property' — but not settled law. Home country CGT still applies.</p>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">Crypto likely not &lsquo;taxable Australian property&rsquo; — but not settled law. Home country CGT still applies.</p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
               <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Withholding Tax</p>

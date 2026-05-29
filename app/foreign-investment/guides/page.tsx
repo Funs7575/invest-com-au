@@ -141,7 +141,7 @@ export default function ForeignInvestmentGuidesPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-[1.1] mb-4 tracking-tight text-slate-900">
               The Complete Guide to Investing{" "}
-              <span className="text-amber-500">in Australia</span>
+              <span className="text-amber-600">in Australia</span>
             </h1>
             <p className="text-sm md:text-lg text-slate-600 leading-relaxed max-w-2xl">
               Whether you&apos;re an expat, temporary resident, or investing from overseas &mdash;

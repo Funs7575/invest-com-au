@@ -130,7 +130,7 @@ export default async function SendMoneyAustraliaPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-4 tracking-tight text-slate-900">
               Send Money to Australia:{" "}
-              <span className="text-amber-500">Best Options for Foreign Investors</span>
+              <span className="text-amber-600">Best Options for Foreign Investors</span>
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-6">
               Every foreign investor in Australia needs to move money here — whether for property, shares,

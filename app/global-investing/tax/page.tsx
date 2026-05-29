@@ -249,7 +249,7 @@ export default function GlobalInvestingTaxPage() {
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
                 Tax on international investing{" "}
-                <span className="text-amber-500">for Australians</span>
+                <span className="text-amber-600">for Australians</span>
               </h1>
               <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-3">
                 As an Australian tax resident, you are taxed on your{" "}

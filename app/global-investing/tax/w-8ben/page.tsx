@@ -160,7 +160,7 @@ export default function W8BENPage() {
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
                 W-8BEN form{" "}
-                <span className="text-amber-500">for Australian investors</span>
+                <span className="text-amber-600">for Australian investors</span>
               </h1>
               <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-5">
                 The W-8BEN certifies that you are a non-US person. Without it, your US broker

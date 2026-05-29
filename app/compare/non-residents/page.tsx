@@ -153,7 +153,7 @@ export default async function NonResidentBrokersPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-4 tracking-tight text-slate-900">
               Best ASX Brokers{" "}
-              <span className="text-amber-500">That Accept Non-Residents</span>
+              <span className="text-amber-600">That Accept Non-Residents</span>
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-6">
               Most Australian share brokers require an Australian residential address — which means they&apos;re effectively

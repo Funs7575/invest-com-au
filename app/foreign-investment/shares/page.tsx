@@ -150,7 +150,7 @@ export default async function ForeignSharesPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
               Investing in{" "}
-              <span className="text-amber-500">Australian Shares</span>
+              <span className="text-amber-600">Australian Shares</span>
               <br />as a Non-Resident
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed">

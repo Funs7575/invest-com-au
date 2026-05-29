@@ -136,7 +136,7 @@ export default async function PropertyHubPage() {
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 leading-[1.1] mb-3 tracking-tight">
                 Australia&apos;s #1{" "}
-                <span className="text-amber-500">property investment</span>{" "}
+                <span className="text-amber-600">property investment</span>{" "}
                 guide.
               </h1>
               <p className="text-sm md:text-base text-slate-600 mb-5 leading-relaxed">

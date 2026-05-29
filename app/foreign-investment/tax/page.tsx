@@ -151,7 +151,7 @@ export default async function ForeignTaxPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
               Australian Tax for{" "}
-              <span className="text-amber-500">Non-Residents</span>
+              <span className="text-amber-600">Non-Residents</span>
               <br />& Foreign Investors
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed">

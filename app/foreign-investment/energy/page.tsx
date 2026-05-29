@@ -133,7 +133,7 @@ export default function ForeignInvestmentEnergyPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
               Foreign Investment in{" "}
-              <span className="text-amber-500">Australian Energy</span>
+              <span className="text-amber-600">Australian Energy</span>
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed">
               FIRB thresholds, the 2025 critical-infrastructure amendments,

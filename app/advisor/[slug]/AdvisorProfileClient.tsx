@@ -984,13 +984,13 @@ export default function AdvisorProfileClient({
                         {(r.communication_rating || r.expertise_rating || r.value_for_money_rating) && (
                           <div className="flex flex-wrap gap-4 mt-3">
                             {r.communication_rating ? (
-                              <span className="text-xs text-slate-400">Comms: <span className="text-amber-500">{"★".repeat(r.communication_rating)}</span></span>
+                              <span className="text-xs text-slate-400">Comms: <span className="text-amber-600">{"★".repeat(r.communication_rating)}</span></span>
                             ) : null}
                             {r.expertise_rating ? (
-                              <span className="text-xs text-slate-400">Expertise: <span className="text-amber-500">{"★".repeat(r.expertise_rating)}</span></span>
+                              <span className="text-xs text-slate-400">Expertise: <span className="text-amber-600">{"★".repeat(r.expertise_rating)}</span></span>
                             ) : null}
                             {r.value_for_money_rating ? (
-                              <span className="text-xs text-slate-400">Value: <span className="text-amber-500">{"★".repeat(r.value_for_money_rating)}</span></span>
+                              <span className="text-xs text-slate-400">Value: <span className="text-amber-600">{"★".repeat(r.value_for_money_rating)}</span></span>
                             ) : null}
                           </div>
                         )}

@@ -141,7 +141,7 @@ export default async function ForeignSuperPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
               Superannuation for{" "}
-              <span className="text-amber-500">Foreign Workers</span>
+              <span className="text-amber-600">Foreign Workers</span>
               <br />— DASP Guide
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-6">

@@ -227,7 +227,7 @@ export default function ChessVsCustodialPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-4 tracking-tight text-slate-900">
               CHESS vs Custodial for{" "}
-              <span className="text-amber-500">international shares</span>
+              <span className="text-amber-600">international shares</span>
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-4">
               When you buy US, UK, or global shares through an Australian broker, two fundamentally
