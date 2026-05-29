@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { personaFromType, type PersonaType } from "@/lib/persona";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 const SLUG_TO_TYPE: Record<string, PersonaType> = {
   "accumulator":       "Accumulator",
@@ -90,7 +91,15 @@ export default async function PersonaTypePage({
   const result = personaFromType(personaType);
   const traits = PERSONA_TRAITS[personaType];
 
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: "Invest.com.au", url: absoluteUrl("/") },
+    { name: "Investor Personas" },
+    { name: result.persona },
+  ]);
+
   return (
+    <>
+    <JsonLd data={breadcrumbLd} />
     <div style={{ background: "var(--color-ink-50)", minHeight: "100vh", paddingTop: 48, paddingBottom: 72 }}>
       <div className="container-custom" style={{ maxWidth: 680 }}>
 
@@ -185,5 +194,6 @@ export default async function PersonaTypePage({
         </p>
       </div>
     </div>
+    </>
   );
 }

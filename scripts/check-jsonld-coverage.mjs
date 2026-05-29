@@ -133,6 +133,7 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "broker-signup", category: "FORM" },
   { prefix: "marketplace/register", category: "FORM" },
   { prefix: "community/new", category: "FORM" },
+  { prefix: "clubs/[clubId]/join", category: "FORM" }, // invite-token club-join action; data-capture form gated on ?token, no SEO surface
   { prefix: "complaints/submit", category: "FORM" },
   { prefix: "review", category: "FORM" }, // /review/[token], /review/broker/[token]
   { prefix: "reviews/write", category: "FORM" },
