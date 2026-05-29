@@ -125,3 +125,49 @@ export function classifyAiCrawler(userAgent: string | null | undefined): AiCrawl
   }
   return null;
 }
+
+export interface AiReferralEventProps {
+  source: string;
+  label: string;
+  vendor: string;
+  kind: AiReferrerMatch["kind"];
+  landing_path: string;
+}
+
+/**
+ * Build the analytics payload for an AI-sourced visit, or null when the
+ * referrer is not a known AI source. Keeps the "should we record this, and
+ * with what" decision in one tested place so the client tracker stays thin.
+ */
+export function aiReferralEventProps(
+  referrer: string | null | undefined,
+  landingPath: string,
+): AiReferralEventProps | null {
+  const match = classifyAiReferrer(referrer);
+  if (!match) return null;
+  return { ...match, landing_path: landingPath };
+}
+
+export interface AiReferrerSourceInfo {
+  source: string;
+  label: string;
+  vendor: string;
+  kind: AiReferrerMatch["kind"];
+}
+
+/** Distinct AI referrer sources we detect — powers the admin coverage view. */
+export function listAiReferrerSources(): AiReferrerSourceInfo[] {
+  const seen = new Set<string>();
+  const out: AiReferrerSourceInfo[] = [];
+  for (const rule of REFERRER_RULES) {
+    if (seen.has(rule.source)) continue;
+    seen.add(rule.source);
+    out.push({ source: rule.source, label: rule.label, vendor: rule.vendor, kind: rule.kind });
+  }
+  return out;
+}
+
+/** Every AI crawler token we detect — powers the admin coverage view. */
+export function listAiCrawlers(): AiCrawlerMatch[] {
+  return CRAWLER_RULES.map((rule) => ({ bot: rule.bot, vendor: rule.vendor, purpose: rule.purpose }));
+}

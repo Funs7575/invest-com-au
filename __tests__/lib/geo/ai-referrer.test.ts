@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { classifyAiReferrer, classifyAiCrawler } from "@/lib/geo/ai-referrer";
+import {
+  classifyAiReferrer,
+  classifyAiCrawler,
+  aiReferralEventProps,
+  listAiReferrerSources,
+  listAiCrawlers,
+} from "@/lib/geo/ai-referrer";
 
 describe("classifyAiReferrer", () => {
   it("matches ChatGPT from a full URL", () => {
@@ -87,5 +93,38 @@ describe("classifyAiCrawler", () => {
     expect(classifyAiCrawler("")).toBeNull();
     expect(classifyAiCrawler(null)).toBeNull();
     expect(classifyAiCrawler(undefined)).toBeNull();
+  });
+});
+
+describe("aiReferralEventProps", () => {
+  it("attaches the landing path to a matched source", () => {
+    expect(aiReferralEventProps("https://chatgpt.com/c/x", "/glossary/etf")).toEqual({
+      source: "chatgpt",
+      label: "ChatGPT",
+      vendor: "OpenAI",
+      kind: "assistant",
+      landing_path: "/glossary/etf",
+    });
+  });
+
+  it("returns null for non-AI referrers", () => {
+    expect(aiReferralEventProps("https://www.google.com/search", "/x")).toBeNull();
+    expect(aiReferralEventProps(null, "/x")).toBeNull();
+  });
+});
+
+describe("coverage lists", () => {
+  it("lists distinct referrer sources with no duplicate source keys", () => {
+    const keys = listAiReferrerSources().map((s) => s.source);
+    expect(new Set(keys).size).toBe(keys.length);
+    expect(keys).toContain("chatgpt");
+    expect(keys).toContain("perplexity");
+  });
+
+  it("lists the crawler tokens we detect", () => {
+    const bots = listAiCrawlers().map((c) => c.bot);
+    expect(bots).toContain("GPTBot");
+    expect(bots).toContain("ClaudeBot");
+    expect(bots).toContain("PerplexityBot");
   });
 });

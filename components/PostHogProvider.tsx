@@ -4,6 +4,8 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 import { initClientPostHog, getClientPostHog } from '@/lib/posthog/client'
 import { hasAnalyticsConsent } from '@/lib/consent'
+import { trackEvent } from '@/lib/posthog/events'
+import { aiReferralEventProps } from '@/lib/geo/ai-referrer'
 
 function PostHogPageviewTracker() {
   const pathname = usePathname()
@@ -54,6 +56,21 @@ function PostHogPageviewTracker() {
       : pathname
     ph.capture('$pageview', { $current_url: url })
   }, [ready, pathname, searchParams])
+
+  // Record arrivals from AI assistants / answer engines exactly once per
+  // session. Rides PostHog's consent + init gate (only fires once `ready`),
+  // and reads the arrival referrer, which SPA navigations don't overwrite.
+  useEffect(() => {
+    if (!ready || typeof window === 'undefined') return
+    try {
+      if (window.sessionStorage.getItem('ai_referral_captured')) return
+      const props = aiReferralEventProps(document.referrer, window.location.pathname)
+      if (props) trackEvent('ai_referral', props)
+      window.sessionStorage.setItem('ai_referral_captured', '1')
+    } catch {
+      // sessionStorage / referrer access can throw under strict privacy modes.
+    }
+  }, [ready])
 
   return null
 }
