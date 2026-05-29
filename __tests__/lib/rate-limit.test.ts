@@ -149,6 +149,14 @@ describe("isRateLimited", () => {
     expect(blocked).toBe(false);
   });
 
+  it("fails closed (blocks) when RATE_LIMIT_HARD_FAIL=true and the DB throws", async () => {
+    vi.stubEnv("RATE_LIMIT_HARD_FAIL", "true");
+    throwOnNextSelect = true;
+    const blocked = await isRateLimited("dbfail-hard", 5, 60);
+    expect(blocked).toBe(true);
+    vi.unstubAllEnvs();
+  });
+
   it("uses defaults when called without max/window args", async () => {
     // Default is 10 req per 60 min — first call should be allowed
     const blocked = await isRateLimited("defaults");

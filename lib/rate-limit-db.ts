@@ -27,6 +27,7 @@
  *     if (!allowed) return NextResponse.json({ error: "rate_limited" }, { status: 429 });
  */
 
+// eslint-disable-next-line no-restricted-imports -- rate_limit_buckets is a service_role-only operational table (ARCHITECTURE.md §Data model); the limiter runs in proxy.ts + public endpoints with no user JWT, so an RLS-scoped client doesn't apply.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
@@ -124,21 +125,23 @@ export async function isAllowed(
       .eq("scope", scope)
       .eq("key", key);
     if (updErr) {
-      log.warn("rate_limit_buckets update failed (fail-open)", {
+      log.warn("rate_limit_buckets update failed (fail-open unless RATE_LIMIT_HARD_FAIL)", {
         scope,
         key,
         error: updErr.message,
       });
-      return true;
+      // Fail open (allow) by default; fail closed (deny) when RATE_LIMIT_HARD_FAIL=true.
+      return process.env.RATE_LIMIT_HARD_FAIL !== "true";
     }
     return true;
   } catch (err) {
-    log.warn("rate limiter threw (fail-open)", {
+    log.warn("rate limiter threw (fail-open unless RATE_LIMIT_HARD_FAIL)", {
       scope,
       key,
       err: err instanceof Error ? err.message : String(err),
     });
-    return true;
+    // Fail open (allow) by default; fail closed (deny) when RATE_LIMIT_HARD_FAIL=true.
+    return process.env.RATE_LIMIT_HARD_FAIL !== "true";
   }
 }
 

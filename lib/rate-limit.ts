@@ -39,7 +39,8 @@ export async function isRateLimited(
 
     return newCount > maxRequests;
   } catch {
-    // If rate limiting fails, allow the request (fail open)
-    return false;
+    // Fail open (allow) by default; fail closed (block) when RATE_LIMIT_HARD_FAIL=true.
+    // isRateLimited returns true = blocked. See CLAUDE.md / ARCHITECTURE.md.
+    return process.env.RATE_LIMIT_HARD_FAIL === "true";
   }
 }
