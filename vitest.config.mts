@@ -95,24 +95,29 @@ export default defineConfig({
         // build-everything-queue merge (#07a634a) added ~146 brand-new routes
         // at <40% coverage faster than behavioural tests could follow.
         //
-        // 2026-05-29 (restore): RATCHET BACK TO 75 — done. The §6
-        // coverage-recovery pass landed real (non-theater) behavioural tests
-        // for the top uncovered routes the merge dropped in: v1/tax/treaties,
-        // v1/widget-licenses, admin/ai-chat (its 511-line streaming agent loop
-        // + all 13 tools), 9 cron/portal/v1 routes (morning-brief,
-        // decisions-digest, seasonal-emails, ipo-alerts, td-maturity-reminders,
-        // firm-portal/lead-quality, v1/verify, v1/fee-changes, org-auth/courses)
-        // and deepened marketplace-stats + quiz-follow-up. Scoped re-measure
-        // (__tests__/api + __tests__/integration, coverage.include=app/api/**):
-        // lines/statements 75.88%, branches 78.07%, functions 84.89%. That run
-        // is a LOWER BOUND on CI (which also runs security-fixes and other
-        // suites that touch app/api), so these floors sit ~1-2pp under the
-        // scoped numbers. See docs/audits/2026-05-29-fresh-audit.md §6.
+        // 2026-05-29 (restore): RATCHET BACK TO 75 — done, then a full
+        // zero-coverage sweep took it further. Real (non-theater) behavioural
+        // tests now cover every previously-0% app/api route: v1/tax/treaties,
+        // v1/widget-licenses, admin/ai-chat (511-line streaming agent loop +
+        // all 13 tools), webhooks/telegram, and the 92-route sweep
+        // (cron lifecycle/ops, advisor-auth, org-auth, advisor-portal, clubs,
+        // account, widgets, social/office-hours/follows, admin, rba-polls,
+        // misc) plus deepened marketplace-stats + quiz-follow-up. The sweep
+        // also surfaced + fixed a real bug: withValidatedBody never forwarded
+        // Next's route context, so dynamic-route POSTs reading ctx.params
+        // crashed in prod (clubs/* + advisor-auth case-studies).
+        //
+        // Scoped re-measure (__tests__/api + __tests__/integration,
+        // coverage.include=app/api/**): lines/statements 86.24%, branches
+        // 79.43%, functions 90.45%; ZERO files left at 0%. That run is a LOWER
+        // BOUND on CI (which also runs security-fixes + other suites touching
+        // app/api), so floors sit ~1-1.5pp under the scoped numbers.
+        // See docs/audits/2026-05-29-fresh-audit.md §6.
         "app/api/**/*.ts": {
-          lines: 75,
-          branches: 76,
-          functions: 83,
-          statements: 75,
+          lines: 85,
+          branches: 78,
+          functions: 89,
+          statements: 85,
         },
       },
     },
