@@ -18,7 +18,7 @@ const NAV_GROUPS = [
       { href: "/admin/finance", icon: "wallet", label: "Finance" },
       { href: "/admin/funnel", icon: "filter", label: "Funnel" },
       { href: "/admin/analytics", icon: "trending-up", label: "Traffic" },
-      { href: "/admin/geo", icon: "bot", label: "GEO / AI Traffic" },
+      { href: "/admin/geo", icon: "zap", label: "GEO / AI Traffic" },
     ],
   },
   {
