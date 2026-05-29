@@ -1194,8 +1194,15 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                       {/* Name + badges row */}
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="font-bold text-[15px] md:text-base text-slate-900 leading-tight">{pro.name}</span>
+                          {/* Name on its own line, above firm — never inline with the badge cluster */}
+                          <span className="block font-bold text-[15px] md:text-base text-slate-900 leading-tight truncate">{pro.name}</span>
+                          {pro.firm_name && (
+                            <p className="text-[0.68rem] md:text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                              <Icon name="building" size={10} className="text-slate-400 shrink-0" />
+                              <span className="truncate">{pro.firm_name}</span>
+                            </p>
+                          )}
+                          <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
                             {pro.verified && (
                               <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-0.5">
                                 <svg className="w-2 h-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
@@ -1251,12 +1258,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                               </span>
                             )}
                           </div>
-                          {pro.firm_name && (
-                            <p className="text-[0.68rem] md:text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                              <Icon name="building" size={10} className="text-slate-400 shrink-0" />
-                              <span className="truncate">{pro.firm_name}</span>
-                            </p>
-                          )}
                         </div>
                         <div className="flex items-center gap-1">
                           <BookmarkButton
