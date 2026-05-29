@@ -18,7 +18,7 @@ const PatchBody = z.object({
   status: z.enum(["draft", "published"]).optional(),
 });
 
-export const PATCH = withValidatedBody(PatchBody, async (request, body, context?: RouteContext) => {
+export const PATCH = withValidatedBody(PatchBody, async (request, body, context?: unknown) => {
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
