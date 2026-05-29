@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import DividendCalendar from "@/components/DividendCalendar";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "ETF Dividend Calendar | Invest.com.au",
@@ -12,6 +14,13 @@ export const metadata: Metadata = {
 export default function DividendCalendarPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", url: absoluteUrl("/") },
+          { name: "Tools", url: absoluteUrl("/tools") },
+          { name: "ETF Dividend Calendar" },
+        ])}
+      />
       <nav className="text-xs text-slate-400">
         <Link href="/tools" className="hover:text-violet-700">Tools</Link>
         <span className="mx-1">›</span>

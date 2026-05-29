@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import Link from "next/link";
 import { Suspense } from "react";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
@@ -223,6 +224,7 @@ export default async function FundsPage() {
           </div>
         </section>
       </div>
+      <ComplianceFooter />
     </>
   );
 }

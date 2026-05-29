@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
@@ -376,6 +377,7 @@ export default async function DigitalInfrastructurePage() {
           </div>
         </div>
       </section>
+      <ComplianceFooter />
     </div>
   );
 }

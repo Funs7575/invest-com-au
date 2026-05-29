@@ -4,6 +4,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import ListFollowButton from "./ListFollowButton";
+import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 // Revalidate every 60s — list edits are infrequent, no need for force-dynamic.
 export const revalidate = 60;
@@ -120,6 +122,13 @@ export default async function PublicListPage({ params }: Params) {
 
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", url: absoluteUrl("/") },
+          { name: "Lists", url: absoluteUrl("/lists") },
+          { name: list.title },
+        ])}
+      />
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-start justify-between gap-4">

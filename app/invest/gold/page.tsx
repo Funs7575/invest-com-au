@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import type { Metadata } from "next";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
@@ -494,6 +495,7 @@ export default function GoldPage() {
           </div>
         </div>
       </section>
+      <ComplianceFooter />
     </div>
   );
 }

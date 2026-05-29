@@ -3,6 +3,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import PollWidget from "./PollWidget";
+import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 export const dynamic = "force-dynamic";
 
@@ -145,6 +147,12 @@ export default async function RbaPollPage() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", url: absoluteUrl("/") },
+          { name: "RBA Rate Prediction" },
+        ])}
+      />
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900">RBA Rate Prediction</h1>
         <p className="text-slate-600 mt-2">

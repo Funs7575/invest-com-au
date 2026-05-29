@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
@@ -236,6 +237,7 @@ export default function StartupsPage() {
           </div>
         </div>
       </section>
+      <ComplianceFooter />
     </div>
   );
 }

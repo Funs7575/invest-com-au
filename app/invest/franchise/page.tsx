@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
@@ -139,7 +140,7 @@ export default function FranchisePage() {
           <div className="prose prose-slate max-w-none mb-12">
             <h3>The Franchise Disclosure Document (FDD)</h3>
             <p>
-              All Australian franchisors must provide a Franchise Disclosure Document at least 14 days before signing. The FDD includes: franchisor's financial history, litigation history, list of existing franchisees, marketing fund details, territory rights, and renewal terms.
+              All Australian franchisors must provide a Franchise Disclosure Document at least 14 days before signing. The FDD includes: franchisor&rsquo;s financial history, litigation history, list of existing franchisees, marketing fund details, territory rights, and renewal terms.
             </p>
 
             <h3>Franchise Agreement Key Terms</h3>
@@ -157,8 +158,8 @@ export default function FranchisePage() {
               <li>Talk to existing and former franchisees (list provided in FDD)</li>
               <li>Have a franchise lawyer review the agreement</li>
               <li>Have an accountant review the financial model</li>
-              <li>Review the franchisor's own financial accounts</li>
-              <li>Research the brand's reputation and competitive position</li>
+              <li>Review the franchisor&rsquo;s own financial accounts</li>
+              <li>Research the brand&rsquo;s reputation and competitive position</li>
               <li>Understand the support, training, and ongoing assistance provided</li>
             </ul>
 
@@ -217,6 +218,7 @@ export default function FranchisePage() {
           </div>
         </div>
       </section>
+      <ComplianceFooter />
     </div>
   );
 }

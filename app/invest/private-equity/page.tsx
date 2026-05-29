@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
 
@@ -382,6 +383,7 @@ export default function PrivateEquityPage() {
           </div>
         </div>
       </section>
+      <ComplianceFooter />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
@@ -500,6 +501,7 @@ export default async function PrivateCreditPage() {
           </div>
         </div>
       </section>
+      <ComplianceFooter />
     </div>
   );
 }

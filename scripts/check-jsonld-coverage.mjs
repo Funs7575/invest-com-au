@@ -141,6 +141,7 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "find-advisor", category: "FORM" }, // interactive quiz; OG/metadata cover SERP
   { prefix: "quick-audit", category: "FORM" },
   { prefix: "quiz", category: "FORM" },
+  { prefix: "clubs/[clubId]/join", category: "FORM" }, // interactive ("use client") membership form; noindex via layout
   { prefix: "certificate", category: "FORM" }, // /certificate is a lookup-form entry point; /certificate/[number] is the public content page that carries JSON-LD
   // UTILITY
   { prefix: "newsletter/confirm", category: "UTILITY" },

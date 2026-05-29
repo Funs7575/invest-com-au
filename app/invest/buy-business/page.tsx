@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
@@ -161,7 +162,7 @@ export default function BuyBusinessPage() {
           <div className="prose prose-slate max-w-none mb-10">
             <h3>Earnings-Based Valuation (Most Common)</h3>
             <p>
-              Australian businesses are typically valued as a multiple of EBITDA (Earnings Before Interest, Tax, Depreciation, and Amortisation) or SDE (Seller's Discretionary Earnings). Multiples range from 1.5x–3x for small businesses to 5x–10x+ for larger, established businesses.
+              Australian businesses are typically valued as a multiple of EBITDA (Earnings Before Interest, Tax, Depreciation, and Amortisation) or SDE (Seller&rsquo;s Discretionary Earnings). Multiples range from 1.5x–3x for small businesses to 5x–10x+ for larger, established businesses.
             </p>
             <ul>
               <li><strong>Small business (&lt;$500K revenue)</strong> — 1.5x–2.5x SDE</li>
@@ -326,6 +327,7 @@ export default function BuyBusinessPage() {
           </div>
         </div>
       </section>
+      <ComplianceFooter />
     </div>
   );
 }

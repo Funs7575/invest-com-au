@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
@@ -180,7 +181,7 @@ export default function RenewableEnergyPage() {
 
             <h3>5. Critical Minerals</h3>
             <p>
-              Investing in Australian lithium, cobalt, nickel, and rare earth companies provides indirect exposure to the energy transition supply chain. The "picks and shovels" approach to clean energy.
+              Investing in Australian lithium, cobalt, nickel, and rare earth companies provides indirect exposure to the energy transition supply chain. The &ldquo;picks and shovels&rdquo; approach to clean energy.
             </p>
 
             <h3>FIRB for Energy Infrastructure</h3>
@@ -217,6 +218,7 @@ export default function RenewableEnergyPage() {
           </div>
         </div>
       </section>
+      <ComplianceFooter />
     </div>
   );
 }
