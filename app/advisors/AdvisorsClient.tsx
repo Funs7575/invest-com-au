@@ -129,7 +129,7 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
           onChange={e => { setQuery(e.target.value); search(e.target.value); }}
           onFocus={() => results.length > 0 && setOpen(true)}
           placeholder="Suburb or postcode..."
-          className="w-full pl-8 pr-8 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+          className="w-full pl-8 pr-8 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30"
         />
         {selected && (
           <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -143,7 +143,7 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
             <button
               key={p.postcode}
               onClick={() => { onSelect(p); setQuery(`${p.locality}, ${p.state}`); setOpen(false); }}
-              className="w-full text-left px-3 py-2 hover:bg-amber-50 text-sm text-slate-700 flex items-center justify-between"
+              className="w-full text-left px-3 py-2 hover:bg-coral-50 text-sm text-slate-700 flex items-center justify-between"
             >
               <span>{p.locality}, {p.state}</span>
               <span className="text-xs text-slate-400">{p.postcode}</span>
@@ -173,7 +173,7 @@ function UseMyLocation({ onLocate }: { onLocate: (lat: number, lng: number) => v
           { enableHighAccuracy: false, timeout: 10000 }
         );
       }}
-      className="flex items-center gap-1 text-[0.65rem] font-semibold text-amber-600 hover:text-amber-800 transition-colors"
+      className="flex items-center gap-1 text-[0.65rem] font-semibold text-coral-600 hover:text-coral-800 transition-colors"
     >
       <Icon name="navigation" size={12} />
       {loading ? "Locating..." : "Use my location"}
@@ -596,8 +596,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <span className="text-slate-700">{activeTypeLabel || "Find an Advisor"}</span>
         </nav>
 
-        <div className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-white to-slate-50/80 border border-slate-200 rounded-2xl p-4 md:p-8 mb-4 md:mb-6 shadow-sm">
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-300 via-amber-500 to-amber-300" />
+        <div className="relative overflow-hidden bg-gradient-to-br from-coral-50 via-white to-slate-50/80 border border-slate-200 rounded-2xl p-4 md:p-8 mb-4 md:mb-6 shadow-sm">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-coral-300 via-coral-500 to-coral-300" />
           <h1 className="text-xl md:text-4xl font-extrabold mb-1.5 md:mb-3 text-slate-900 tracking-tight">{dynamicTitle}</h1>
           <p className="text-xs md:text-base text-slate-500 mb-4 max-w-2xl leading-relaxed">
             <span className="md:hidden">{dynamicDescription.slice(0, 70)}…</span>
@@ -609,10 +609,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <span className="font-bold text-slate-900">{providerTypeCounts.all}</span> listings
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
-              <Icon name="shield" size={13} className="text-amber-500" />ASIC verified
+              <Icon name="shield" size={13} className="text-coral-500" />ASIC verified
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
-              <Icon name="clock" size={13} className="text-amber-500" />Free consultation
+              <Icon name="clock" size={13} className="text-coral-500" />Free consultation
             </div>
           </div>
           <GetMatchedEmbed context="advisor_directory" />
@@ -626,7 +626,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   source: "advisors_hero",
                 })
               }
-              className="font-semibold text-slate-700 hover:text-amber-700 underline-offset-2 hover:underline"
+              className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
             >
               Ask the AI concierge →
             </Link>
@@ -687,7 +687,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   }`}
                 >
                   {label}
-                  <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-500"}`}>
+                  <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-coral-100 text-coral-700" : "bg-slate-200 text-slate-500"}`}>
                     {count}
                   </span>
                 </button>
@@ -700,19 +700,19 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         <div className="flex gap-2 mb-3 md:mb-4">
           <div className="relative flex-1">
             <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input type="text" placeholder="Search name, firm, team, specialty, suburb..." value={search} onChange={e => setSearch(e.target.value)} aria-label="Search advisors" className="w-full pl-9 pr-4 py-2.5 md:py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 transition-all" />
+            <input type="text" placeholder="Search name, firm, team, specialty, suburb..." value={search} onChange={e => setSearch(e.target.value)} aria-label="Search advisors" className="w-full pl-9 pr-4 py-2.5 md:py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-coral-500/30 focus:border-coral-400 transition-all" />
             {search && <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"><Icon name="x" size={16} /></button>}
           </div>
-          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2.5 border rounded-xl text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2.5 border rounded-xl text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-coral-50 border-coral-300 text-coral-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
             <Icon name="sliders" size={16} />
             <span className="hidden md:inline">Filters</span>
-            {activeFilterCount > 0 && <span className="w-5 h-5 bg-amber-600 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{activeFilterCount}</span>}
+            {activeFilterCount > 0 && <span className="w-5 h-5 bg-coral-600 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{activeFilterCount}</span>}
           </button>
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as SortKey)}
             aria-label="Sort results"
-            className="hidden md:block px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+            className="hidden md:block px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-coral-500/30"
           >
             {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
           </select>
@@ -724,7 +724,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             {/* Location / Near me */}
             <div>
               <label className="text-xs font-bold text-slate-700 mb-2 block flex items-center gap-1.5">
-                <Icon name="map-pin" size={13} className="text-amber-500" />
+                <Icon name="map-pin" size={13} className="text-coral-500" />
                 Location
               </label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -732,7 +732,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   <LocationSearch selected={locationSearch} onSelect={(p) => { setLocationSearch(p); if (!p) { setUserLat(null); setUserLng(null); } }} />
                 </div>
                 <div className="flex items-center gap-2">
-                  <select value={radius} onChange={e => setRadius(Number(e.target.value))} className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={!isLocationActive}>
+                  <select value={radius} onChange={e => setRadius(Number(e.target.value))} className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30" disabled={!isLocationActive}>
                     {RADIUS_OPTIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                   </select>
                   <UseMyLocation onLocate={(lat, lng) => { setUserLat(lat); setUserLng(lng); setSortBy("distance"); setLocationSearch({ postcode: "", locality: "My location", state: "", latitude: lat, longitude: lng }); }} />
@@ -745,10 +745,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <label className="text-xs font-bold text-slate-700 mb-2 block">Advisor Type</label>
               <div className="flex flex-wrap gap-1.5">
                 {TYPE_FILTERS.map(f => (
-                  <button key={f.key} onClick={() => toggleType(f.key)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "bg-amber-600 text-white shadow-sm" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
-                    <Icon name={f.icon} size={13} className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"} />
+                  <button key={f.key} onClick={() => toggleType(f.key)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "bg-coral-600 text-white shadow-sm" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
+                    <Icon name={f.icon} size={13} className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-coral-200" : "text-slate-400"} />
                     {f.label}
-                    {typeCounts[f.key] ? <span className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"}>({typeCounts[f.key]})</span> : null}
+                    {typeCounts[f.key] ? <span className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-coral-200" : "text-slate-400"}>({typeCounts[f.key]})</span> : null}
                   </button>
                 ))}
               </div>
@@ -757,14 +757,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">State</label>
-                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={isLocationActive}>
+                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30" disabled={isLocationActive}>
                   <option value="all">All States</option>
                   {AU_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Fee Structure</label>
-                <select value={feeFilter} onChange={e => setFeeFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+                <select value={feeFilter} onChange={e => setFeeFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30">
                   <option value="all">Any</option>
                   <option value="fee-for-service">Fee for Service</option>
                   <option value="commission">Commission</option>
@@ -774,14 +774,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Advisory Firm</label>
-                <select value={firmFilter} onChange={e => setFirmFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+                <select value={firmFilter} onChange={e => setFirmFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30">
                   <option value="all">All Firms</option>
                   {allFirmNames.map(f => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Min Rating</label>
-                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30">
                   <option value={0}>Any</option>
                   <option value={4.5}>4.5+ ★</option>
                   <option value={4.0}>4.0+ ★</option>
@@ -791,14 +791,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Language</label>
-                <select value={languageFilter} onChange={e => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+                <select value={languageFilter} onChange={e => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30">
                   <option value="all">Any</option>
                   {allLanguages.map(l => <option key={l} value={l}>{l}</option>)}
                 </select>
               </div>
               <div className="flex items-end">
                 <label className="flex items-center gap-2 cursor-pointer py-2">
-                  <input type="checkbox" checked={verifiedOnly} onChange={() => setVerifiedOnly(!verifiedOnly)} className="w-4 h-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500" />
+                  <input type="checkbox" checked={verifiedOnly} onChange={() => setVerifiedOnly(!verifiedOnly)} className="w-4 h-4 rounded border-slate-300 text-coral-600 focus:ring-coral-500" />
                   <span className="text-xs font-semibold text-slate-700">Verified only</span>
                 </label>
               </div>
@@ -852,17 +852,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
             {/* Specialties */}
             <div>
-              <label className="text-xs font-bold text-slate-700 mb-2 block">Specialties {specialtyFilters.length > 0 && <span className="text-amber-600">({specialtyFilters.length} selected)</span>}</label>
+              <label className="text-xs font-bold text-slate-700 mb-2 block">Specialties {specialtyFilters.length > 0 && <span className="text-coral-600">({specialtyFilters.length} selected)</span>}</label>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
                 {allSpecialties.map(s => (
-                  <button key={s} onClick={() => toggleSpecialty(s)} className={`px-2.5 py-1 text-[0.65rem] font-medium rounded-full transition-all ${specialtyFilters.includes(s) ? "bg-amber-100 text-amber-700 border border-amber-300" : "bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100"}`}>{s}</button>
+                  <button key={s} onClick={() => toggleSpecialty(s)} className={`px-2.5 py-1 text-[0.65rem] font-medium rounded-full transition-all ${specialtyFilters.includes(s) ? "bg-coral-100 text-coral-700 border border-coral-300" : "bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100"}`}>{s}</button>
                 ))}
               </div>
             </div>
 
             <div className="flex items-center justify-between pt-2 border-t border-slate-100">
               <button onClick={clearAll} className="text-xs text-slate-500 hover:text-slate-700 font-medium">Clear all filters</button>
-              <button onClick={() => setFiltersOpen(false)} className="px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">
+              <button onClick={() => setFiltersOpen(false)} className="px-4 py-2 bg-coral-600 text-white text-xs font-bold rounded-lg hover:bg-coral-700 transition-colors">
                 {nearbyLoading ? "Searching..." : `Show ${feed.length} result${feed.length !== 1 ? "s" : ""}`}
               </button>
             </div>
@@ -873,16 +873,16 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {activeFilterCount > 0 && !filtersOpen && (
           <div className="flex flex-wrap items-center gap-1.5 mb-3">
             {isLocationActive && locationSearch && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-coral-100 text-coral-700 text-[0.65rem] font-semibold rounded-full">
                 <Icon name="map-pin" size={11} />
                 {radius > 0 ? `${radius}km from ` : "Near "}{locationSearch.locality}
-                <button onClick={() => { setLocationSearch(null); setUserLat(null); setUserLng(null); }} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
+                <button onClick={() => { setLocationSearch(null); setUserLat(null); setUserLng(null); }} className="hover:text-coral-900"><Icon name="x" size={12} /></button>
               </span>
             )}
             {Array.from(typeFilters).map(t => (
-              <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
+              <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 bg-coral-100 text-coral-700 text-[0.65rem] font-semibold rounded-full">
                 {TYPE_FILTERS.find(f => f.key === t)?.label}
-                <button onClick={() => toggleType(t)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
+                <button onClick={() => toggleType(t)} className="hover:text-coral-900"><Icon name="x" size={12} /></button>
               </span>
             ))}
             {stateFilter !== "all" && (
@@ -898,9 +898,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </span>
             ))}
             {feeFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-coral-100 text-coral-700 text-[0.65rem] font-semibold rounded-full">
                 {feeFilter}
-                <button onClick={() => setFeeFilter("all")} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
+                <button onClick={() => setFeeFilter("all")} className="hover:text-coral-900"><Icon name="x" size={12} /></button>
               </span>
             )}
             {firmFilter !== "all" && (
@@ -910,9 +910,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </span>
             )}
             {minRating > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-coral-100 text-coral-700 text-[0.65rem] font-semibold rounded-full">
                 {minRating}+ ★
-                <button onClick={() => setMinRating(0)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
+                <button onClick={() => setMinRating(0)} className="hover:text-coral-900"><Icon name="x" size={12} /></button>
               </span>
             )}
             {verifiedOnly && (
@@ -993,7 +993,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     firmFilter === firm.name ? "bg-slate-900 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
                   }`}
                 >
-                  <span className={`w-4 h-4 rounded flex items-center justify-center text-[0.5rem] font-bold shrink-0 ${firmFilter === firm.name ? "bg-white/20 text-white" : "bg-amber-100 text-amber-600"}`}>
+                  <span className={`w-4 h-4 rounded flex items-center justify-center text-[0.5rem] font-bold shrink-0 ${firmFilter === firm.name ? "bg-white/20 text-white" : "bg-coral-100 text-coral-600"}`}>
                     {firm.name.split(/\s+/).slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()}
                   </span>
                   {firm.name}
@@ -1063,7 +1063,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             Firm
                           </span>
                           {firm.afsl_number && (
-                            <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-coral-50 text-coral-700 border border-coral-200">
                               AFSL {firm.afsl_number}
                             </span>
                           )}
@@ -1136,7 +1136,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                           </Link>
                           <Link
                             href={`/briefs/new?team=${encodeURIComponent(team.slug)}`}
-                            className="text-[0.7rem] md:text-xs font-bold text-slate-900 bg-amber-500 hover:bg-amber-400 rounded-md px-3 py-1.5 inline-flex items-center gap-1"
+                            className="text-[0.7rem] md:text-xs font-bold text-slate-900 bg-coral-500 hover:bg-coral-400 rounded-md px-3 py-1.5 inline-flex items-center gap-1"
                           >
                             Create brief
                             <Icon name="arrow-right" size={11} />
@@ -1153,11 +1153,11 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               return (
                 <Link key={item.key} href={`/advisor/${pro.slug}`} className={`group block bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
                   isFeatured
-                    ? "shadow-md shadow-amber-50 hover:shadow-xl hover:shadow-amber-100/50 hover:-translate-y-0.5 ring-1 ring-amber-200/80 border border-amber-200"
+                    ? "shadow-md shadow-coral-50 hover:shadow-xl hover:shadow-coral-100/50 hover:-translate-y-0.5 ring-1 ring-coral-200/80 border border-coral-200"
                     : "shadow-sm border border-slate-100 hover:shadow-md hover:shadow-slate-100 hover:-translate-y-0.5 hover:border-slate-200"
                 }`}>
                   {isFeatured && (
-                    <div className="h-0.5 bg-gradient-to-r from-amber-300 via-amber-500 to-amber-300" />
+                    <div className="h-0.5 bg-gradient-to-r from-coral-300 via-coral-500 to-coral-300" />
                   )}
                   <div className="p-4 md:p-5 flex gap-4">
                     {/* Photo */}
@@ -1176,12 +1176,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                           />
                         </div>
                       ) : (
-                        <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-amber-200/60 select-none">
+                        <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-coral-200/60 select-none">
                           {pro.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                         </div>
                       )}
                       {pro.verified && (
-                        <div className="absolute -bottom-1 -right-1 w-4.5 h-4.5 bg-amber-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                        <div className="absolute -bottom-1 -right-1 w-4.5 h-4.5 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
                           <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
@@ -1204,7 +1204,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                           )}
                           <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
                             {pro.verified && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-0.5">
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-0.5">
                                 <svg className="w-2 h-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                                 Verified
                               </span>
@@ -1218,7 +1218,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             {isFeatured && (
                               <span
                                 title={SPONSORED_DISCLOSURE_SHORT}
-                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm cursor-help"
+                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-coral-600 text-white flex items-center gap-0.5 shadow-sm cursor-help"
                               >
                                 <Icon name="star" size={9} />
                                 Featured · Paid
@@ -1264,7 +1264,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             type="advisor"
                             ref={pro.slug}
                             label={pro.name}
-                            className="shrink-0 p-1.5 rounded-lg text-slate-300 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                            className="shrink-0 p-1.5 rounded-lg text-slate-300 hover:text-coral-600 hover:bg-coral-50 transition-colors"
                           />
                           <button
                             onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
@@ -1279,7 +1279,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
                       {/* Type + Location row */}
                       <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        <span className="shrink-0 text-[0.65rem] text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full font-semibold">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
+                        <span className="shrink-0 text-[0.65rem] text-coral-700 bg-coral-50 border border-coral-100 px-2 py-0.5 rounded-full font-semibold">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
                         {pro.account_type === "firm_member" ? (
                           <span className="shrink-0 text-[0.6rem] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
                             <Icon name="users" size={9} className="text-blue-400" />Firm
@@ -1363,18 +1363,19 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
                       {/* Offer */}
                       {pro.offer_active && pro.offer_text && (
-                        <div className="mt-2 bg-gradient-to-r from-amber-50 to-amber-50/0 border border-amber-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
-                          <Icon name="tag" size={11} className="text-amber-500 shrink-0" />
-                          <span className="text-[0.6rem] md:text-[0.65rem] font-bold text-amber-700 truncate">{pro.offer_text}</span>
+                        <div className="mt-2 bg-gradient-to-r from-coral-50 to-coral-50/0 border border-coral-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
+                          <Icon name="tag" size={11} className="text-coral-500 shrink-0" />
+                          <span className="text-[0.6rem] md:text-[0.65rem] font-bold text-coral-700 truncate">{pro.offer_text}</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Right arrow */}
+                    {/* View profile CTA */}
                     <div className="shrink-0 self-center hidden md:flex ml-1">
-                      <div className="w-8 h-8 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center group-hover:bg-amber-50 group-hover:border-amber-200 transition-all">
-                        <Icon name="chevron-right" size={14} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
-                      </div>
+                      <span className="inline-flex items-center gap-1 rounded-lg bg-coral-600 px-3.5 py-2 text-xs font-semibold text-white whitespace-nowrap shadow-sm transition-colors group-hover:bg-coral-700">
+                        View profile
+                        <Icon name="chevron-right" size={13} />
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -1389,13 +1390,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <p className="text-xs text-slate-400 mb-3">
                 {isLocationActive ? `No advisors within ${radius}km. Try a larger radius.` : search ? `No results for "${search}".` : "Try adjusting your filters."}
               </p>
-              <button onClick={clearAll} className="text-xs text-amber-600 font-semibold hover:text-amber-800">Clear all filters</button>
+              <button onClick={clearAll} className="text-xs text-coral-600 font-semibold hover:text-coral-800">Clear all filters</button>
             </div>
             {/* Alert capture */}
-            <div className="px-5 py-5 bg-amber-50">
+            <div className="px-5 py-5 bg-coral-50">
               <div className="flex items-start gap-3 mb-3">
-                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
-                  <Icon name="bell" size={16} className="text-amber-600" />
+                <div className="w-8 h-8 bg-coral-100 rounded-lg flex items-center justify-center shrink-0">
+                  <Icon name="bell" size={16} className="text-coral-600" />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-800">Get notified when one joins</p>
@@ -1414,13 +1415,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     value={alertEmail}
                     onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
                     placeholder="your@email.com"
-                    className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                    className="flex-1 px-3 py-2 border border-coral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-400 bg-white"
                     onKeyDown={(e) => e.key === "Enter" && saveAlert()}
                   />
                   <button
                     onClick={saveAlert}
                     disabled={alertStatus === "submitting"}
-                    className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                    className="px-4 py-2 bg-coral-600 text-white text-sm font-semibold rounded-lg hover:bg-coral-600 disabled:opacity-60 transition-colors whitespace-nowrap"
                   >
                     {alertStatus === "submitting" ? "Saving..." : "Notify Me"}
                   </button>
@@ -1441,7 +1442,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               else if (page <= 4) pn = i + 1;
               else if (page >= totalPages - 3) pn = totalPages - 6 + i;
               else pn = page - 3 + i;
-              return <button key={pn} onClick={() => setPage(pn)} className={`w-9 h-9 text-xs font-semibold rounded-lg transition-all ${page === pn ? "bg-amber-600 text-white" : "border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>{pn}</button>;
+              return <button key={pn} onClick={() => setPage(pn)} className={`w-9 h-9 text-xs font-semibold rounded-lg transition-all ${page === pn ? "bg-coral-600 text-white" : "border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>{pn}</button>;
             })}
             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-3 py-2 text-xs font-semibold border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">Next {"\u2192"}</button>
           </div>
@@ -1467,10 +1468,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </ul>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-gradient-to-br from-amber-50/80 via-white to-white border border-amber-100 rounded-2xl p-5 md:p-6 shadow-sm">
+              <div className="bg-gradient-to-br from-coral-50/80 via-white to-white border border-coral-100 rounded-2xl p-5 md:p-6 shadow-sm">
                 <div className="flex items-center gap-2.5 mb-3">
-                  <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                    <Icon name="dollar-sign" size={15} className="text-amber-700" />
+                  <div className="w-8 h-8 rounded-xl bg-coral-100 flex items-center justify-center shrink-0">
+                    <Icon name="dollar-sign" size={15} className="text-coral-700" />
                   </div>
                   <h2 className="text-base md:text-lg font-extrabold text-slate-900">Cost Guide</h2>
                 </div>
@@ -1498,7 +1499,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 <details key={i} className="group">
                   <summary className="px-4 py-3.5 md:px-5 md:py-4 font-semibold text-xs md:text-sm text-slate-800 cursor-pointer hover:bg-slate-50/80 transition-colors list-none flex items-center justify-between gap-3">
                     <span>{faq.q}</span>
-                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-400 group-open:bg-amber-50 group-open:border-amber-200 group-open:text-amber-600 transition-all">
+                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-400 group-open:bg-coral-50 group-open:border-coral-200 group-open:text-coral-600 transition-all">
                       <svg className="w-2.5 h-2.5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                     </span>
                   </summary>
@@ -1527,9 +1528,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               { title: "Crypto Advisor", href: "/advisor-guides/how-to-choose-crypto-advisor", icon: "bitcoin" },
               { title: "Debt Counsellor", href: "/advisor-guides/how-to-choose-debt-counsellor", icon: "credit-card" },
             ].map(g => (
-              <Link key={g.href} href={g.href} className="group flex items-center gap-2.5 p-3 bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md hover:border-amber-100 hover:bg-amber-50/30 transition-all">
-                <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:bg-amber-100 group-hover:border-amber-200 transition-all">
-                  <Icon name={g.icon} size={14} className="text-slate-500 group-hover:text-amber-600 transition-colors" />
+              <Link key={g.href} href={g.href} className="group flex items-center gap-2.5 p-3 bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md hover:border-coral-100 hover:bg-coral-50/30 transition-all">
+                <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:bg-coral-100 group-hover:border-coral-200 transition-all">
+                  <Icon name={g.icon} size={14} className="text-slate-500 group-hover:text-coral-600 transition-colors" />
                 </div>
                 <span className="text-xs font-semibold text-slate-600 group-hover:text-slate-800 leading-tight">How to Choose: {g.title}</span>
               </Link>
@@ -1538,10 +1539,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         </div>
 
         {/* Saved search / alert widget */}
-        <div className="mt-6 md:mt-8 bg-gradient-to-br from-amber-50/80 via-white to-white border border-amber-100 rounded-2xl p-4 md:p-6 shadow-sm">
+        <div className="mt-6 md:mt-8 bg-gradient-to-br from-coral-50/80 via-white to-white border border-coral-100 rounded-2xl p-4 md:p-6 shadow-sm">
           <div className="flex items-start gap-3 mb-3.5">
-            <div className="w-10 h-10 bg-amber-100 border border-amber-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-amber-100">
-              <Icon name="bell" size={18} className="text-amber-600" />
+            <div className="w-10 h-10 bg-coral-100 border border-coral-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-coral-100">
+              <Icon name="bell" size={18} className="text-coral-600" />
             </div>
             <div>
               <h3 className="text-sm font-extrabold text-slate-800">Can&apos;t find the right advisor?</h3>
@@ -1560,13 +1561,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 value={alertEmail}
                 onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
                 placeholder="your@email.com"
-                className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                className="flex-1 px-3 py-2 border border-coral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-400 bg-white"
                 onKeyDown={(e) => e.key === "Enter" && saveAlert()}
               />
               <button
                 onClick={saveAlert}
                 disabled={alertStatus === "submitting"}
-                className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                className="px-4 py-2 bg-coral-600 text-white text-sm font-semibold rounded-lg hover:bg-coral-600 disabled:opacity-60 transition-colors whitespace-nowrap"
               >
                 {alertStatus === "submitting" ? "Saving..." : "Set Alert"}
               </button>
@@ -1578,11 +1579,11 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         <div className="mt-6 md:mt-10 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 md:p-8 text-center shadow-xl shadow-slate-900/10">
           <div className="absolute inset-0 opacity-5" style={{backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '32px 32px'}} />
           <div className="relative">
-            <p className="text-[0.65rem] font-bold uppercase tracking-widest text-amber-400 mb-2">For Professionals</p>
+            <p className="text-[0.65rem] font-bold uppercase tracking-widest text-coral-400 mb-2">For Professionals</p>
             <h3 className="text-base md:text-xl font-extrabold text-white mb-1.5 md:mb-2">Are you a financial professional?</h3>
             <p className="text-xs md:text-sm text-slate-400 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/25">
+              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-coral-600 text-white text-sm font-bold rounded-xl hover:bg-coral-400 transition-colors shadow-lg shadow-coral-500/25">
                 Get Listed Free
                 <Icon name="arrow-right" size={15} />
               </Link>
