@@ -265,6 +265,19 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 585 — 2026-05-29 — STATUS: CI-RESCUE · stream=NF+MAIN-RESCUE · re-trigger all 4 PRs
+
+- **Phase 0:** Lock held (batch fire, iter 2 of up to 5). Synced main to `9c554d5`.
+- **Phase 2 (CI rescue):** iter 584 pushed `94ec94f` (a11y fix) to main. Now pushing empty commits to 4 in-flight PR branches so CI runs against the fixed main:
+  - **#1176** (NF-03): `946ef39` pushed → `Lint · Build` ✅ from prior run, re-triggering to clear a11y ❌.
+  - **#1268** (MAIN-RESCUE): `bd6fcd8` pushed → same, clear a11y ❌.
+  - **#1269** (NF-16 v2): `8bfaef1` pushed → same, clear a11y ❌.
+  - **#1180** (NF-20): `390c522` pushed → re-trigger `Lint · Build` CANCELLED (2nd runner-timeout attempt). Stuck-detection: only 1 prior CI-RESCUE within 24h (iter 583) — guard doesn't fire.
+- **STATUS: CI-RESCUE · stream=NF+MAIN-RESCUE · prs=#1176+#1268+#1269+#1180 · re-triggered**
+- **Next:** All 4 CI runs in progress. If #1176/#1268/#1269 pass a11y (expected), they'll be ready for founder merge. #1180 may pass or hit 20-min timeout again.
+
+---
+
 ### iter 584 — 2026-05-29 — STATUS: MAIN-RESCUE · a11y fix on main · commit=94ec94f
 
 - **Phase 0:** Lock acquired (batch fire, this iteration is iter 1 of up to 5).
