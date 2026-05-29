@@ -141,9 +141,12 @@ describe("getCategoryBySlug", () => {
 
 describe("getAllCategorySlugs", () => {
   it("matches getAllCategories().map(c => c.slug)", () => {
-    expect(getAllCategorySlugs()).toEqual(
-      getAllCategories().map((c) => c.slug),
-    );
+    // getAllCategorySlugs() de-duplicates (a long-standing options-trading dup
+    // exists, capped by the "slugs are mostly unique" test above), so compare
+    // against the de-duplicated slug list rather than the raw 1:1 mapping.
+    expect(getAllCategorySlugs()).toEqual([
+      ...new Set(getAllCategories().map((c) => c.slug)),
+    ]);
   });
 });
 

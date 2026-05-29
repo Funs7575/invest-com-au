@@ -18,6 +18,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { escapeHtml } from "@/lib/html-escape";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendEmail } from "@/lib/resend";
 import { requireCronAuth } from "@/lib/cron-auth";
@@ -31,14 +32,6 @@ export const maxDuration = 60;
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://invest.com.au";
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
 
 interface IpoOffer {
   id: number;

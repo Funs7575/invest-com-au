@@ -123,11 +123,19 @@ describe("GET /api/cron/advisor-match-scores", () => {
       upsert: vi.fn(() => Promise.resolve({ error: null })),
     };
 
+    // 3rd .from() call loads advisor_ideal_clients criteria (.select() awaited
+    // directly). Without this chain the call falls through to upsertChain, whose
+    // .select is undefined → "admin.from(...).select is not a function".
+    const criteriaChain = {
+      select: vi.fn(() => Promise.resolve({ data: [], error: null })),
+    };
+
     let callIndex = 0;
     mockFrom.mockImplementation(() => {
       callIndex++;
       if (callIndex === 1) return profileChain;
       if (callIndex === 2) return advChain;
+      if (callIndex === 3) return criteriaChain;
       return upsertChain;
     });
 

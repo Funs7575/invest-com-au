@@ -76,6 +76,10 @@ vi.mock("@/lib/supabase/admin", () => ({
 
 // ─── Import route after mocks ─────────────────────────────────────────────────
 
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: vi.fn(),
+}));
+
 import { GET as _GET, runtime, maxDuration } from "@/app/api/cron/refresh-savings-rates/route";
 import type { NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";

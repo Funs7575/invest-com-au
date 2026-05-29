@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { personaFromType, type PersonaType } from "@/lib/persona";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 const SLUG_TO_TYPE: Record<string, PersonaType> = {
   "accumulator":       "Accumulator",
@@ -92,6 +93,13 @@ export default async function PersonaTypePage({
 
   return (
     <div style={{ background: "var(--color-ink-50)", minHeight: "100vh", paddingTop: 48, paddingBottom: 72 }}>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Invest.com.au", url: absoluteUrl("/") },
+          { name: "Investor Personas" },
+          { name: personaType },
+        ])}
+      />
       <div className="container-custom" style={{ maxWidth: 680 }}>
 
         <nav style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 28 }}>

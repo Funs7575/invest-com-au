@@ -37,7 +37,7 @@ function formatValue(value: number, format: DeltaRow["format"]): string {
   }
 }
 
-function formatDelta(delta: number, pct: number | null, format: DeltaRow["format"]): string {
+function formatDeltaCell(delta: number, pct: number | null, format: DeltaRow["format"]): string {
   const sign = delta > 0 ? "+" : "";
   const absFormatted =
     format === "currency"
@@ -317,7 +317,7 @@ export default function PresetCompareClient({
                     >
                       {Math.abs(d.absoluteDelta) < 0.005
                         ? "—"
-                        : formatDelta(d.absoluteDelta, d.pctDelta, d.format)}
+                        : formatDeltaCell(d.absoluteDelta, d.pctDelta, d.format)}
                     </div>
 
                     {/* Size indicator */}

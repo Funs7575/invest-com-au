@@ -97,7 +97,7 @@ function fmtDate(iso: string | null): string {
 
 // ─── JSON-LD ──────────────────────────────────────────────────────────────────
 
-function articleJsonLd(publishedPeriod: string | null) {
+function reportArticleJsonLd(publishedPeriod: string | null) {
   const now = new Date().toISOString().slice(0, 10);
   return {
     "@context": "https://schema.org",
@@ -225,7 +225,7 @@ export default async function StateOfAustralianInvestingPage() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd(snapshot.period)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(reportArticleJsonLd(snapshot.period)) }}
       />
       <script
         type="application/ld+json"

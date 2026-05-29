@@ -138,6 +138,41 @@ const ALLOWED_NAMES = new Set([
   // swapping would double-divide amounts already in the DB.
   "formatAUD",
 
+  // components/FeeImpactVisualiser.tsx: formatAud(dollars) — compact chart-axis labels
+  // ($100k, $1.50M). lib/first-home-buyer/state-grants.ts: formatAud(cents) — full
+  // Intl.NumberFormat AUD string. Different units + output format; not substitutable.
+  "formatAud",
+
+  // app/investment-income-tax-calculator/InvestmentIncomeTaxClient.tsx: parseMoney(s) —
+  // strips non-digit/dot chars, returns 0 for invalid/negative (form-field semantics).
+  // lib/holdings/csv-import/_utils.ts: parseMoney(s) — preserves the minus sign, returns
+  // NaN for empty (CSV-import semantics). Different invalid sentinel + sign handling.
+  "parseMoney",
+
+  // 7 calculator UIs: parseFee(feeStr) → {flat, pct} — regex-extracts a single % or $
+  // from a display string for live preview. lib/switching/savings.ts: parseFee trims
+  // commas and handles the switching-flow fee shapes. UI-tuned variants, not substitutable.
+  "parseFee",
+
+  // app/account/dashboard/page.tsx: formatDollars(cents) — compact $X.XM/$XK/$X.
+  // lib/switching-tracker.ts: formatDollars(cents) — full Intl.NumberFormat AUD.
+  // Different output format (compact vs full).
+  "formatDollars",
+
+  // app/admin/disputes/page.tsx: formatAge(iso) → "Xd/Xh/Xm" relative age.
+  // lib/rate-ingest.ts: formatAge(lastCapturedAt, now) → "never"/day-based. Different
+  // signature + output granularity.
+  "formatAge",
+
+  // app/api/advisor-auth/leaderboard/route.ts: currentYearMonth() — no-arg, uses now().
+  // lib/firm-performance.ts: currentYearMonth(d: Date) — takes a Date. Different arity.
+  "currentYearMonth",
+
+  // app/api/cron/content-staleness/route.ts: daysSinceUpdate — cron-local article-
+  // freshness helper. lib/rate-ingest.ts: daysSinceUpdate(updatedAt, now) — rate-data
+  // variant. Kept local to the cron's staleness thresholds.
+  "daysSinceUpdate",
+
   // 3 calculator files: storeQualificationData(data) — single-arg wrapper that
   // hard-codes the source key locally.
   // lib/qualification-store.ts: storeQualificationData(source, data) — two args.

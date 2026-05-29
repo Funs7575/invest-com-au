@@ -64,7 +64,7 @@ const QUICK_LINKS: QuickLink[] = [
 ];
 
 /** Derive a checklist item's done state from org + stats. */
-function buildChecklist(org: Organisation | null, stats: OrgStats | null) {
+function buildOrgChecklist(org: Organisation | null, stats: OrgStats | null) {
   const teamCount = stats?.team_member_count ?? 0;
   return [
     {
@@ -141,7 +141,7 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
       ? `$${(totalRevenueCents / totalEnrollments / 100).toFixed(0)}`
       : "$0";
 
-  const checklist = buildChecklist(org, stats);
+  const checklist = buildOrgChecklist(org, stats);
   const completedSteps = checklist.filter((c) => c.done).length;
   const allDone = completedSteps === checklist.length;
 

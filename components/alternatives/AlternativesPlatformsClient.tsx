@@ -22,6 +22,7 @@ import FacetGroup from "@/components/directory/FacetGroup";
 import FilterChips from "@/components/directory/FilterChips";
 import ResultCount from "@/components/directory/ResultCount";
 import ScrollReveal from "@/components/ScrollReveal";
+import { renderStars } from "@/lib/tracking";
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
 
@@ -59,15 +60,6 @@ const ASSET_CLASS_OPTIONS = [
   { value: "Collectibles", label: "Collectibles" },
   { value: "Luxury goods", label: "Luxury goods" },
 ] as const;
-
-/* ── Helpers ──────────────────────────────────────────────────────────────── */
-
-function renderStars(rating: number): string {
-  const full = Math.floor(rating);
-  const half = rating % 1 >= 0.5;
-  const empty = 5 - full - (half ? 1 : 0);
-  return "★".repeat(full) + (half ? "½" : "") + "☆".repeat(empty);
-}
 
 /* ── Component ────────────────────────────────────────────────────────────── */
 

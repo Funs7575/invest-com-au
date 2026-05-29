@@ -14,20 +14,13 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { escapeHtml } from "@/lib/html-escape";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendEmail } from "@/lib/resend";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { withCronRunLog } from "@/lib/cron-run-log";
 import { logger } from "@/lib/logger";
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
