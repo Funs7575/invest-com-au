@@ -42,7 +42,7 @@ const FAQS: FaqItem[] = [
   },
   {
     q: "How long is a W-8BEN valid for?",
-    a: "A W-8BEN is valid for three calendar years from the date of signature, expiring on 31 December of the third year. For example, a form signed on 15 March 2024 remains valid until 31 December 2026. After expiry, most brokers will continue sending renewal reminders, but if you fail to re-submit, they revert to withholding 30% on US dividends until a new valid form is on file. Set a calendar reminder roughly 60 days before expiry to allow time for your broker to process the updated form.",
+    a: "A W-8BEN is valid for three calendar years from the date of signature, expiring on 31 December of the third year. For example, a form signed on 15 March 2024 remains valid until 31 December 2026. After expiry, most brokers will continue sending renewal reminders, but if you fail to re-submit, they revert to withholding 30% on US dividends until a new valid form is on file. Set a calendar reminder roughly 60 days before expiry to allow time for your broker to process the updated form.", // dated-ok — illustrative W-8BEN example dates
   },
   {
     q: "Do I need a W-8BEN if I only invest in Australian ETFs that hold US shares?",
@@ -552,6 +552,7 @@ export default function W8BENPage() {
             <p className="text-sm text-slate-800 leading-relaxed">
               A W-8BEN is valid from the date of signature until{" "}
               <strong>31 December of the third calendar year</strong> following the year it was
+              {/* // dated-ok — illustrative W-8BEN example dates */}
               signed. A form signed on 10 June 2024 expires on 31 December 2026. After that date,
               the broker reverts to the 30% default withholding rate on all US dividends until a
               new, valid form is submitted and processed.

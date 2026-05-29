@@ -77,6 +77,7 @@ export default function ForeignInvestmentPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
               <p className="text-sm font-semibold leading-snug">
+                {/* // dated-ok — legislated foreign-buyer ban dates (1 Apr 2025 – 31 Mar 2027) */}
                 <strong>Established Dwelling Ban — Active:</strong> Foreign persons cannot purchase existing homes in Australia from 1 April 2025 to 31 March 2027.
                 New dwellings and off-the-plan properties are still available.
               </p>
