@@ -23,7 +23,28 @@ npm run bots                  # drive a local dev server (auto-started)
 BOTS_BASE_URL=https://my-preview.vercel.app npm run bots
 ```
 
-The run writes a report to `bots/.runs/<runId>/report.html` (+ `findings.json`).
+The run writes `bots/.runs/<runId>/report.html` (visual report), `summary.md`
+(plain-English digest), and `findings.json`.
+
+## Hands-off mode (recommended — no terminal)
+
+You don't need to run anything yourself. A GitHub Actions workflow
+(`.github/workflows/bots.yml`) runs the fleet for you:
+
+- **One click:** repo → **Actions** tab → **Bot fleet** → **Run workflow**
+  (optionally paste a URL to test).
+- **Automatically:** every night on a schedule.
+
+One-time setup: set a repo **Variable** `BOTS_TARGET_URL` to your
+preview/staging URL (Settings → Secrets and variables → Actions → Variables).
+Then every run:
+
+- uploads the full visual report as a downloadable **bot-report** artifact, and
+- creates/updates a single issue, **"🤖 Bot fleet — latest results"**, with a
+  plain-English summary of what was found.
+
+To turn on the AI bots in CI, add a secret `BOTS_ANTHROPIC_API_KEY` (its own
+billing line) and set the `BOTS_AI_TOKEN_BUDGET` variable above 0.
 
 ## Why this is safe
 

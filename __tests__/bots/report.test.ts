@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { renderHtmlReport, summarize, type RunMeta } from "../../bots/findings/report";
+import {
+  renderHtmlReport,
+  renderMarkdownSummary,
+  summarize,
+  verdict,
+  type RunMeta,
+} from "../../bots/findings/report";
 import type { Finding } from "../../bots/findings/types";
 
 const META: RunMeta = {
@@ -72,5 +78,49 @@ describe("renderHtmlReport", () => {
     expect(html).toContain("AI cost");
     expect(html).toContain("$0.1234");
     expect(html).toContain("3 calls");
+  });
+
+  it("shows a plain-English verdict and 'what this means' explainer", () => {
+    const html = renderHtmlReport([finding({ category: "a11y", severity: "high" })], META);
+    expect(html).toMatch(/important issue/i); // verdict for a high finding
+    expect(html).toContain("What this means");
+    expect(html).toContain("accessibility"); // a11y category help text
+  });
+});
+
+describe("verdict", () => {
+  it("is all-clear when empty", () => {
+    expect(verdict(summarize([])).text).toMatch(/all clear/i);
+  });
+  it("flags serious issues when criticals are present", () => {
+    const v = verdict(summarize([finding({ severity: "critical" })]));
+    expect(v.text).toMatch(/serious/i);
+    expect(v.emoji).toBe("🛑");
+  });
+  it("flags minor when only low/medium are present", () => {
+    expect(verdict(summarize([finding({ severity: "low" })])).text).toMatch(/minor/i);
+  });
+});
+
+describe("renderMarkdownSummary", () => {
+  it("leads with the verdict and a severity table", () => {
+    const md = renderMarkdownSummary(
+      [finding({ severity: "critical", title: "500 on /x" })],
+      META,
+    );
+    expect(md).toContain("# 🤖 Bot fleet — latest results");
+    expect(md).toMatch(/serious issue/i);
+    expect(md).toContain("| Severity | Count |");
+    expect(md).toContain("500 on /x");
+  });
+  it("says nothing-to-action on a clean run", () => {
+    expect(renderMarkdownSummary([], META)).toMatch(/no problems|nothing to action/i);
+  });
+  it("omits info-level findings from the action list", () => {
+    const md = renderMarkdownSummary(
+      [finding({ severity: "info", category: "safety", title: "safety-net-summary" })],
+      META,
+    );
+    expect(md).not.toContain("safety-net-summary");
   });
 });
