@@ -1,3 +1,4 @@
+import AdminShell from "@/components/AdminShell";
 import { listAiReferrerSources, listAiCrawlers } from "@/lib/geo/ai-referrer";
 
 export const dynamic = "force-dynamic";
@@ -24,8 +25,11 @@ export default function GeoMeasurementPage() {
   const crawlers = listAiCrawlers();
 
   return (
-    <div className="p-6">
-      <h1 className="mb-1 text-2xl font-bold">GEO / AI Traffic</h1>
+    <AdminShell
+      title="GEO / AI Traffic"
+      subtitle="Whether generative-AI engines cite us and send traffic"
+    >
+      <div className="p-6">
       <p className="mb-6 max-w-3xl text-sm text-gray-600">
         Measures whether generative-AI engines send us traffic. When a visitor
         arrives from an AI assistant or answer engine we capture an{" "}
@@ -133,6 +137,7 @@ export default function GeoMeasurementPage() {
           </li>
         </ul>
       </section>
-    </div>
+      </div>
+    </AdminShell>
   );
 }
