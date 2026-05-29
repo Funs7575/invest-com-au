@@ -37,6 +37,11 @@ export interface RunMeta {
 export interface Shard {
   persona: string;
   findings: Finding[];
+  cost?: CostTotals;
+}
+
+function emptyCost(): CostTotals {
+  return { inputTokens: 0, outputTokens: 0, usd: 0, calls: 0 };
 }
 
 const SEVERITIES: Severity[] = ["critical", "high", "medium", "low", "info"];
@@ -368,16 +373,17 @@ export async function writeReport(
 /** Read all `${runDir}/shards/*.json` and merge into one finding set. */
 export async function aggregateShards(
   runDir: string,
-): Promise<{ findings: Finding[]; sessions: number; personas: string[] }> {
+): Promise<{ findings: Finding[]; sessions: number; personas: string[]; cost: CostTotals }> {
   const shardsDir = path.join(runDir, "shards");
   let entries: string[] = [];
   try {
     entries = (await fs.readdir(shardsDir)).filter((f) => f.endsWith(".json"));
   } catch {
-    return { findings: [], sessions: 0, personas: [] };
+    return { findings: [], sessions: 0, personas: [], cost: emptyCost() };
   }
   const store = new FindingStore();
   const personas = new Set<string>();
+  const cost = emptyCost();
   let sessions = 0;
   for (const entry of entries) {
     try {
@@ -385,10 +391,16 @@ export async function aggregateShards(
       const shard = JSON.parse(raw) as Shard;
       store.merge(shard.findings ?? []);
       if (shard.persona) personas.add(shard.persona);
+      if (shard.cost) {
+        cost.inputTokens += shard.cost.inputTokens;
+        cost.outputTokens += shard.cost.outputTokens;
+        cost.usd += shard.cost.usd;
+        cost.calls += shard.cost.calls;
+      }
       sessions += 1;
     } catch {
       // Skip unreadable/partial shards rather than failing the whole report.
     }
   }
-  return { findings: store.all(), sessions, personas: [...personas] };
+  return { findings: store.all(), sessions, personas: [...personas], cost };
 }

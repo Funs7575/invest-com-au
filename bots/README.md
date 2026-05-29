@@ -116,9 +116,11 @@ $5/IP/day, $200/day global), so even allowed AI traffic can't run away.
 | `BOTS_TARGET_CLASS` | derived from host | Force `sandbox` / `protected` |
 | `BOTS_CONCURRENCY` | `4` | Parallel sessions (Playwright workers) |
 | `BOTS_MAX_STEPS` | `40` | Max actions per AI session |
-| `BOTS_AI_TOKEN_BUDGET` | `0` (AI off) | Hard token cap for the run |
-| `BOTS_AI_COST_BUDGET_USD` | `20` | Hard dollar cap for the run |
-| `BOTS_MOCK_AI` | `true` | Mock AI endpoints to save tokens |
+| `BOTS_AI_TOKEN_BUDGET` | `0` (AI off) | Hard token cap for the run; > 0 enables AI bots |
+| `BOTS_AI_COST_BUDGET_USD` | `20` | Hard dollar cap per AI session |
+| `BOTS_ANTHROPIC_API_KEY` | — | Anthropic key for AI bots (own billing line; falls back to `ANTHROPIC_API_KEY`) |
+| `BOTS_AI_MODEL` | `claude-sonnet-4-6` | Model the AI bots use |
+| `BOTS_MOCK_AI` | `true` | Mock the app's own AI endpoints to save tokens |
 | `BOTS_ALLOW_DESTRUCTIVE` | `false` | Permit destructive account writes on a sandbox |
 | `BOTS_PROD_OVERRIDE` | `false` | Required to point at a prod host |
 | `BOTS_SKIP_WEBSERVER` | — | Don't auto-start a local dev server |
@@ -149,17 +151,33 @@ Pure modules carry no Playwright import and are unit-tested under
 `__tests__/bots/` (run with the normal `npm test`). Browser-driving modules are
 exercised by `npm run bots`.
 
-## Roadmap
+## AI-driven bots
 
-- **Phase 1** — deterministic critical/money-path flows (get-matched → action
-  plan, advisor lead, compare → affiliate (mocked), signup/login, top
-  calculators), reusing the existing auth scaffold for logged-in personas.
-- **Phase 2** — AI driver: Claude observes a compact a11y-tree snapshot, picks
-  the next action, and judges UX + that required financial disclosures are
-  present. Budget-capped and prompt-cached.
-- **Phase 3** — full-surface coverage: auto-discover all routes and let
-  persona+goal-driven AI bots roam, so we cover ~220 routes without
-  hand-writing specs.
-- **Phase 4** — opt-in GitHub issue filing for high-severity findings (deduped),
-  then a non-gating nightly CI workflow.
+When enabled, AI personas (`AI_PERSONAS` in `personas.ts`) pursue a goal like a
+real user — they observe the page, decide the next action, and **judge** the
+experience (flagging confusing/broken UX and missing financial disclosures).
+The loop is in `ai/driver.ts`; the model is wrapped in `ai/anthropic-client.ts`.
+
+Enable it:
+
+```bash
+BOTS_AI_TOKEN_BUDGET=50000 BOTS_ANTHROPIC_API_KEY=sk-ant-... \
+  BOTS_BASE_URL=https://my-preview.vercel.app npm run bots
+```
+
+Spend is bounded by a per-session dollar ledger (`BOTS_AI_COST_BUDGET_USD`) and
+reported on every run. In CI, set the `BOTS_ANTHROPIC_API_KEY` secret and the
+`BOTS_AI_TOKEN_BUDGET` variable.
+
+## Status & roadmap
+
+- ✅ **Foundation** — safety net, cross-cutting checks, findings, report.
+- ✅ **Hands-off ops** — one-click/nightly workflow, plain-English report +
+  rolling results issue.
+- ✅ **AI driver** — observe→act→judge loop, action model, budget guard, live
+  Playwright + Anthropic implementations, AI personas wired into the fleet.
+- **Next** — deterministic critical/money-path flows (get-matched → action plan,
+  advisor lead, signup/login) and authenticated personas via the existing auth
+  scaffold; auto-discovered full-surface coverage; opt-in per-finding GitHub
+  issues.
 ```

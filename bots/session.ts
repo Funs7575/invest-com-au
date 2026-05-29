@@ -17,6 +17,10 @@ import { attachConsole } from "./checks/console";
 import { attachNetwork } from "./checks/network";
 import { runAxe } from "./checks/a11y";
 import { checkInternalLinks } from "./checks/links";
+import { CostLedger } from "./ai/cost";
+import { PlaywrightPageDriver } from "./ai/playwright-page-driver";
+import { makeAnthropicClient } from "./ai/anthropic-client";
+import { runAiSession, type AiSessionResult } from "./ai/driver";
 
 export interface SessionOptions {
   persona: string;
@@ -28,6 +32,7 @@ export class BotSession {
   readonly store = new FindingStore();
   private readonly checkedLinks = new Set<string>();
   private net: SafetyNet | null = null;
+  private ledger: CostLedger | null = null;
 
   private constructor(
     readonly context: BrowserContext,
@@ -112,6 +117,28 @@ export class BotSession {
     }
   }
 
+  /**
+   * Let an AI bot pursue a goal on this session's page. Findings (including the
+   * AI's judgement calls) land in the same store; spend is bounded by a
+   * per-session cost ledger. Requires an Anthropic key (caller should gate on
+   * that). Cross-cutting checks still apply via the page collectors.
+   */
+  async runAiGoal(goal: string, startPath: string): Promise<AiSessionResult> {
+    const driver = new PlaywrightPageDriver(this.page, this.config.baseUrl);
+    const llm = makeAnthropicClient();
+    if (!this.ledger) this.ledger = new CostLedger(this.config.aiCostBudgetUsd);
+    return runAiSession({
+      persona: this.persona,
+      goal,
+      startPath,
+      driver,
+      llm,
+      store: this.store,
+      ledger: this.ledger,
+      maxSteps: this.config.maxStepsPerSession,
+    });
+  }
+
   /** Persist this session's findings as a shard for run-level aggregation. */
   async persist(): Promise<void> {
     if (this.net && this.net.intercepted.length > 0) {
@@ -132,7 +159,15 @@ export class BotSession {
     const file = path.join(shardsDir, `${safePersona}-${rand}.json`);
     await fs.writeFile(
       file,
-      JSON.stringify({ persona: this.persona, findings: this.store.all() }, null, 2),
+      JSON.stringify(
+        {
+          persona: this.persona,
+          findings: this.store.all(),
+          cost: this.ledger ? this.ledger.totals : undefined,
+        },
+        null,
+        2,
+      ),
       "utf8",
     );
   }

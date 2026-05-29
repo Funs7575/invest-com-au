@@ -10,7 +10,7 @@
 
 import type { FindingStore } from "../findings/store";
 import type { CostLedger } from "./cost";
-import type { ConversationTurn, LlmClient, PageDriver } from "./types";
+import type { ConversationTurn, LlmClient, PageDriver, PageObservation } from "./types";
 import { buildSystemPrompt, formatObservation, firstUserTurn } from "./prompt";
 import { parseAction } from "./actions";
 
@@ -72,7 +72,7 @@ export async function runAiSession(opts: AiSessionOptions): Promise<AiSessionRes
       return { steps: step, outcome: "blocked", stopReason: "budget", issuesReported };
     }
 
-    let observation;
+    let observation: PageObservation;
     try {
       observation = await driver.observe();
     } catch (err) {

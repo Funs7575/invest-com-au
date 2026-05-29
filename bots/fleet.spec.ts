@@ -1,7 +1,8 @@
 import { test } from "@playwright/test";
 import { loadConfig } from "./config";
 import { BotSession } from "./session";
-import { PHASE0_PERSONAS } from "./personas";
+import { PHASE0_PERSONAS, AI_PERSONAS } from "./personas";
+import { resolveAiKey } from "./ai/anthropic-client";
 
 /**
  * Fleet entrypoint.
@@ -25,7 +26,7 @@ for (const persona of PHASE0_PERSONAS) {
       storageStateFile: persona.storageStateFile,
     });
     try {
-      for (const route of persona.routes) {
+      for (const route of persona.routes ?? []) {
         await session.visit(route);
         await session.audit({ links: true });
       }
@@ -34,4 +35,31 @@ for (const persona of PHASE0_PERSONAS) {
       await session.close();
     }
   });
+}
+
+// AI-driven personas — only when AI is enabled (a budget is set AND a key is
+// present). Each pursues a goal like a real user and judges the experience.
+const aiEnabled = config.aiTokenBudget > 0 && resolveAiKey() !== null;
+
+if (aiEnabled) {
+  for (const persona of AI_PERSONAS) {
+    test(`AI bot: ${persona.name}`, async ({ browser }) => {
+      const session = await BotSession.create(browser, config, {
+        persona: persona.name,
+        storageStateFile: persona.storageStateFile,
+      });
+      try {
+        await session.runAiGoal(
+          persona.goal ??
+            "Explore the site like a real user; report anything broken, confusing, or non-compliant.",
+          persona.startPath ?? "/",
+        );
+        // Run the mechanical checks on wherever the bot ended up.
+        await session.audit();
+      } finally {
+        await session.persist();
+        await session.close();
+      }
+    });
+  }
 }
