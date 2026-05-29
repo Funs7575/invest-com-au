@@ -28,9 +28,6 @@ vi.mock("@/lib/tracking", async (importOriginal) => ({
 vi.mock("@/lib/hooks/useAdvisorShortlist", () => ({
   useAdvisorShortlist: () => ({ toggle: vi.fn(), has: () => false, count: 0, max: 3 }),
 }));
-vi.mock("@/lib/hooks/useUser", () => ({
-  useUser: () => ({ user: null, loading: false }),
-}));
 
 function pro(overrides: Partial<Professional> = {}): Professional {
   return {

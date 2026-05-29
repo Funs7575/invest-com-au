@@ -7,7 +7,6 @@ import { createStaticClient } from "@/lib/supabase/static";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import FollowAdvisorButton from "@/components/FollowAdvisorButton";
-import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 1800;
 
@@ -206,7 +205,6 @@ export default async function AdvisorInsightsPage({ params }: { params: Promise<
           )}
         </div>
       </div>
-      <ComplianceFooter />
     </>
   );
 }
