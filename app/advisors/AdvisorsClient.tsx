@@ -1153,11 +1153,11 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               return (
                 <Link key={item.key} href={`/advisor/${pro.slug}`} className={`group block bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
                   isFeatured
-                    ? "shadow-md shadow-amber-50 hover:shadow-xl hover:shadow-amber-100/50 hover:-translate-y-0.5 ring-1 ring-amber-200/80 border border-amber-200"
+                    ? "shadow-md shadow-coral-50 hover:shadow-xl hover:shadow-coral-100/50 hover:-translate-y-0.5 ring-1 ring-coral-200/80 border border-coral-200"
                     : "shadow-sm border border-slate-100 hover:shadow-md hover:shadow-slate-100 hover:-translate-y-0.5 hover:border-slate-200"
                 }`}>
                   {isFeatured && (
-                    <div className="h-0.5 bg-gradient-to-r from-amber-300 via-amber-500 to-amber-300" />
+                    <div className="h-0.5 bg-gradient-to-r from-coral-300 via-coral-500 to-coral-300" />
                   )}
                   <div className="p-4 md:p-5 flex gap-4">
                     {/* Photo */}
@@ -1176,12 +1176,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                           />
                         </div>
                       ) : (
-                        <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-amber-200/60 select-none">
+                        <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-coral-200/60 select-none">
                           {pro.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                         </div>
                       )}
                       {pro.verified && (
-                        <div className="absolute -bottom-1 -right-1 w-4.5 h-4.5 bg-amber-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                        <div className="absolute -bottom-1 -right-1 w-4.5 h-4.5 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
                           <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
@@ -1204,7 +1204,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                           )}
                           <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
                             {pro.verified && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-0.5">
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-0.5">
                                 <svg className="w-2 h-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                                 Verified
                               </span>
@@ -1218,7 +1218,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             {isFeatured && (
                               <span
                                 title={SPONSORED_DISCLOSURE_SHORT}
-                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm cursor-help"
+                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-coral-500 text-white flex items-center gap-0.5 shadow-sm cursor-help"
                               >
                                 <Icon name="star" size={9} />
                                 Featured · Paid
@@ -1264,7 +1264,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             type="advisor"
                             ref={pro.slug}
                             label={pro.name}
-                            className="shrink-0 p-1.5 rounded-lg text-slate-300 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                            className="shrink-0 p-1.5 rounded-lg text-slate-300 hover:text-coral-600 hover:bg-coral-50 transition-colors"
                           />
                           <button
                             onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
@@ -1279,7 +1279,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
                       {/* Type + Location row */}
                       <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        <span className="shrink-0 text-[0.65rem] text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full font-semibold">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
+                        <span className="shrink-0 text-[0.65rem] text-coral-700 bg-coral-50 border border-coral-100 px-2 py-0.5 rounded-full font-semibold">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
                         {pro.account_type === "firm_member" ? (
                           <span className="shrink-0 text-[0.6rem] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
                             <Icon name="users" size={9} className="text-blue-400" />Firm
@@ -1363,18 +1363,19 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
                       {/* Offer */}
                       {pro.offer_active && pro.offer_text && (
-                        <div className="mt-2 bg-gradient-to-r from-amber-50 to-amber-50/0 border border-amber-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
-                          <Icon name="tag" size={11} className="text-amber-500 shrink-0" />
-                          <span className="text-[0.6rem] md:text-[0.65rem] font-bold text-amber-700 truncate">{pro.offer_text}</span>
+                        <div className="mt-2 bg-gradient-to-r from-coral-50 to-coral-50/0 border border-coral-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
+                          <Icon name="tag" size={11} className="text-coral-500 shrink-0" />
+                          <span className="text-[0.6rem] md:text-[0.65rem] font-bold text-coral-700 truncate">{pro.offer_text}</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Right arrow */}
+                    {/* View profile CTA */}
                     <div className="shrink-0 self-center hidden md:flex ml-1">
-                      <div className="w-8 h-8 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center group-hover:bg-amber-50 group-hover:border-amber-200 transition-all">
-                        <Icon name="chevron-right" size={14} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
-                      </div>
+                      <span className="inline-flex items-center gap-1 rounded-lg bg-coral-500 px-3.5 py-2 text-xs font-semibold text-white whitespace-nowrap shadow-sm transition-colors group-hover:bg-coral-600">
+                        View profile
+                        <Icon name="chevron-right" size={13} />
+                      </span>
                     </div>
                   </div>
                 </Link>

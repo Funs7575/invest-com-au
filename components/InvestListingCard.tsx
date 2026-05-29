@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { InvestmentListing } from "@/lib/types";
+import type { InvestmentListing, ListingKind } from "@/lib/types";
 import { listingUrl } from "@/lib/listing-url";
 import { getListingHeroImage } from "@/lib/listing-vertical-images";
 import {
@@ -50,6 +50,22 @@ const VERTICAL_ICON: Record<string, string> = {
 };
 
 /**
+ * Per-kind hue for the 3px colour strip across the top of the card hero
+ * (the marketplace "vstrip" signature from the v2 design language). Mirrors
+ * the hue of `meta.accent` so the strip + kind badge read as one system.
+ */
+const KIND_STRIP: Record<ListingKind, string> = {
+  for_sale_business: "bg-blue-600",
+  for_sale_asset: "bg-slate-600",
+  equity_raise: "bg-indigo-600",
+  project_equity: "bg-amber-600",
+  royalty: "bg-rose-600",
+  fund: "bg-violet-600",
+  physical_asset: "bg-fuchsia-600",
+  listed_security: "bg-sky-600",
+};
+
+/**
  * Card variants:
  *   - `grid` (default): full card with hero image (the marketplace grid)
  *   - `list`: horizontal layout, denser, no large hero
@@ -59,6 +75,10 @@ const VERTICAL_ICON: Record<string, string> = {
  *   - Price label ("Asking" / "Min investment" / "Raising" / "ASX")
  *   - CTA verb ("Enquire" / "Request IM" / "Buy via broker" / "Express interest")
  *   - Kind chip colour + icon
+ *
+ * Visual language: v2 "confident fintech" — coral action accent, deep-ink
+ * titles, sand-neutral surfaces, big tabular price (`.iv2-bignum`), pill
+ * trust chips. Tokens live in `globals.css` (`--color-coral-*`, `--color-ink-*`).
  *
  * The blanket "FIRB" badge that used to fire on every row is now gated
  * to listings where the visitor's intent country matters AND the listing
@@ -98,6 +118,7 @@ export default function InvestListingCard({
   const fresh = freshnessSignal(listing);
   const price = formatListingPrice(listing);
   const location = formatLocation(listing.location_state, listing.location_city);
+  const stripColor = KIND_STRIP[kind];
 
   const metricEntries = listing.key_metrics
     ? Object.entries(listing.key_metrics).slice(0, 3)
@@ -118,57 +139,97 @@ export default function InvestListingCard({
   const fallbackIcon = VERTICAL_ICON[listing.vertical] ?? "📊";
   const isFeatured = listing.listing_type === "featured" || listing.listing_type === "premium";
 
+  // Reusable kind badge (white pill over the hero image).
+  const kindBadge = (
+    <span className="iv2-pill bg-white/95 text-ink-800 shadow-sm backdrop-blur-sm" style={{ fontSize: "10px", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+      <Icon name={meta.icon} size={11} />
+      {meta.label}
+    </span>
+  );
+
+  // Inline metric line ("$720k EBITDA · 3.6× · 18.8% margin").
+  const metricLine = metricEntries.length > 0 && (
+    <p className="text-xs leading-relaxed text-slate-600">
+      {metricEntries.map(([k, v], i) => (
+        <span key={k}>
+          {i > 0 && <span className="text-slate-300"> · </span>}
+          <span className="font-bold text-ink-800">{formatKeyMetricValue(v)}</span>{" "}
+          <span className="text-slate-400">{k.replace(/_/g, " ")}</span>
+        </span>
+      ))}
+    </p>
+  );
+
+  // Trust chips (Featured / FIRB / SIV) — shared by both variants.
+  const trustChips = (
+    <>
+      {isFeatured && (
+        <span className="iv2-pill border border-coral-100 bg-coral-50 text-coral-700" style={{ fontSize: "10.5px" }}>
+          <Icon name="star" size={10} />
+          Featured
+        </span>
+      )}
+      {showFirbBadge && listing.firb_eligible && (
+        <span className="iv2-pill border border-blue-100 bg-blue-50 text-blue-700" style={{ fontSize: "10.5px" }}>
+          FIRB eligible
+        </span>
+      )}
+      {listing.siv_complying && (
+        <span className="iv2-pill border border-emerald-100 bg-emerald-50 text-emerald-700" style={{ fontSize: "10.5px" }}>
+          SIV-complying
+        </span>
+      )}
+    </>
+  );
+
   // ── List variant ──────────────────────────────────────────────────
   if (variant === "list") {
     return (
       <Link
         href={listingUrl(listing)}
-        className={`group flex gap-4 rounded-xl border bg-white p-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ${meta.accent.border}`}
+        className={`group flex gap-4 rounded-[14px] border bg-white p-3 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink-200 hover:shadow-lg ${
+          isFeatured ? "border-coral-200 ring-1 ring-coral-100" : "border-slate-200"
+        }`}
       >
         {/* Compact thumb */}
-        <div className="relative w-32 h-24 sm:w-40 sm:h-28 rounded-lg overflow-hidden shrink-0 bg-slate-100">
+        <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-lg bg-ink-900 sm:h-28 sm:w-40">
           {heroImage ? (
             <Image
               src={heroImage}
               alt={listing.title}
               fill
               sizes="160px"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover opacity-95 transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
           ) : (
-            <div className={`absolute inset-0 bg-gradient-to-br ${fallbackGradient} flex items-center justify-center text-3xl opacity-40`}>
+            <div className={`absolute inset-0 bg-gradient-to-br ${fallbackGradient} flex items-center justify-center text-3xl opacity-50`}>
               {fallbackIcon}
             </div>
           )}
           {heroImage && heroIsSeed && (
             <div className={`absolute inset-0 bg-gradient-to-br ${fallbackGradient} opacity-30 mix-blend-multiply`} />
           )}
+          <div className={`absolute inset-x-0 top-0 h-[3px] ${stripColor}`} />
           {/* Top-left kind badge */}
-          <span className={`absolute top-1.5 left-1.5 inline-flex items-center gap-1 ${meta.accent.badge} text-[0.55rem] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded shadow-sm`}>
-            <Icon name={meta.icon} size={9} />
-            {meta.label}
-          </span>
+          <span className="absolute left-1.5 top-1.5">{kindBadge}</span>
+          {matchScore != null && (
+            <span className="iv2-pill absolute bottom-1.5 left-1.5 bg-emerald-500 text-white" style={{ fontSize: "10px" }}>
+              {matchScore}% match
+            </span>
+          )}
           {/* Top-right shortlist button */}
-          <div className="absolute top-1 right-1">
+          <div className="absolute right-1 top-1">
             <ListingShortlistButton slug={listing.slug} size="sm" />
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0 flex flex-col">
-          <div className="flex items-start justify-between gap-2">
-            <h3 className={`font-bold text-sm md:text-base text-slate-900 line-clamp-2 leading-snug ${meta.accent.text.replace("text-", "group-hover:text-")}`}>
-              {listing.title}
-            </h3>
-            {price && (
-              <div className="shrink-0 text-right">
-                <div className="text-[0.55rem] text-slate-400 uppercase tracking-wide font-semibold">{price.label}</div>
-                <div className="text-sm font-extrabold text-slate-900">{price.value}</div>
-              </div>
-            )}
-          </div>
-          <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 flex-wrap">
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+          <h3 className="line-clamp-2 text-sm font-bold leading-snug text-ink-800 group-hover:text-coral-700 md:text-base">
+            {listing.title}
+          </h3>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
             {location && (
               <span className="inline-flex items-center gap-0.5">
                 <Icon name="map-pin" size={11} className="text-slate-400" />
@@ -177,36 +238,38 @@ export default function InvestListingCard({
             )}
             {listing.industry && <span>· {listing.industry}</span>}
             {fresh === "new_this_week" && (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[0.55rem] font-bold uppercase tracking-wide">
-                New
-              </span>
+              <span className="iv2-pill bg-emerald-50 text-emerald-700" style={{ fontSize: "10px" }}>New this week</span>
             )}
             {fresh === "closing_soon" && (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[0.55rem] font-bold uppercase tracking-wide">
-                Closing soon
-              </span>
+              <span className="iv2-pill bg-rose-50 text-rose-600" style={{ fontSize: "10px" }}>Closing soon</span>
             )}
-            {isFeatured && (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[0.55rem] font-bold uppercase tracking-wide">
-                ★ Featured
-              </span>
-            )}
-            {matchScore != null && (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[0.55rem] font-bold uppercase tracking-wide">
-                {matchScore}% match
+          </div>
+          {metricLine}
+          <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-1">
+            {trustChips}
+            {advisorOptInCount > 0 && (
+              <span className="iv2-pill border border-emerald-200 bg-emerald-50 text-emerald-700" style={{ fontSize: "10px" }}>
+                <Icon name="user-check" size={10} />
+                {advisorOptInCount} can assess
               </span>
             )}
           </div>
-          {metricEntries.length > 0 && (
-            <div className="mt-auto pt-2 flex gap-3 text-[0.62rem] text-slate-600">
-              {metricEntries.map(([k, v]) => (
-                <span key={k}>
-                  <span className="text-slate-400 capitalize">{k.replace(/_/g, " ")}: </span>
-                  <span className="font-semibold text-slate-800">{formatKeyMetricValue(v)}</span>
-                </span>
-              ))}
+        </div>
+
+        {/* Right rail — price + CTA */}
+        <div className="flex shrink-0 flex-col items-end justify-between gap-2 text-right">
+          {price ? (
+            <div>
+              <div className="iv2-mini">{price.label}</div>
+              <div className="iv2-bignum text-xl text-ink-900">{price.value}</div>
             </div>
+          ) : (
+            <span />
           )}
+          <span className="inline-flex items-center gap-1 rounded-lg bg-coral-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors group-hover:bg-coral-600">
+            View
+            <Icon name="chevron-right" size={12} />
+          </span>
         </div>
       </Link>
     );
@@ -216,12 +279,12 @@ export default function InvestListingCard({
   return (
     <Link
       href={listingUrl(listing)}
-      className={`group relative block overflow-hidden rounded-2xl border bg-white shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 hover:-translate-y-0.5 ${meta.accent.border} ${
-        isFeatured ? "ring-1 ring-amber-200/80 shadow-amber-50" : ""
+      className={`group relative flex h-full flex-col overflow-hidden rounded-[14px] border bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl ${
+        isFeatured ? "border-coral-200 ring-1 ring-coral-100" : "border-slate-200 hover:border-ink-200"
       }`}
     >
       {/* Hero image */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+      <div className="relative aspect-[16/10] overflow-hidden bg-ink-900">
         {heroImage ? (
           <>
             <Image
@@ -229,7 +292,7 @@ export default function InvestListingCard({
               alt={listing.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover opacity-95 transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
             {heroIsSeed && (
@@ -241,129 +304,91 @@ export default function InvestListingCard({
           </>
         ) : (
           <div className={`absolute inset-0 bg-gradient-to-br ${fallbackGradient} flex items-center justify-center`}>
-            <div className="text-6xl opacity-40 group-hover:scale-110 transition-transform duration-500">
+            <div className="text-6xl opacity-40 transition-transform duration-500 group-hover:scale-110">
               {fallbackIcon}
             </div>
           </div>
         )}
 
+        {/* Gradient scrim so the location/strip read over any photo */}
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink-900/65 via-transparent to-transparent" />
+
+        {/* Category colour strip */}
+        <div className={`absolute inset-x-0 top-0 h-[3px] ${stripColor}`} />
+
         {/* Top-left badges: kind + featured + provided badge */}
-        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[70%]">
-          <span className={`inline-flex items-center gap-1 ${meta.accent.badge} text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm`}>
-            <Icon name={meta.icon} size={10} />
-            {meta.label}
-          </span>
-          {isFeatured && (
-            <span className="bg-amber-500 text-slate-900 text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-              ★ Featured
-            </span>
-          )}
+        <div className="absolute left-3 top-3 flex max-w-[72%] flex-wrap items-center gap-1.5">
+          {kindBadge}
           {badge && (
-            <span className="bg-white/95 backdrop-blur text-slate-800 text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
+            <span className="iv2-pill bg-white/95 text-ink-800 shadow-sm backdrop-blur-sm" style={{ fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
               {badge}
             </span>
           )}
         </div>
 
-        {/* Top-right: shortlist bookmark + compliance + freshness */}
-        <div className="absolute top-3 right-3 flex flex-wrap gap-1.5 justify-end items-start max-w-[55%]">
+        {/* Top-right: shortlist bookmark + match */}
+        <div className="absolute right-3 top-3 flex flex-col items-end gap-1.5">
           <ListingShortlistButton slug={listing.slug} />
-          {showFirbBadge && listing.firb_eligible && (
-            <span className="bg-blue-600 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-              FIRB
-            </span>
-          )}
-          {listing.siv_complying && (
-            <span className="bg-emerald-600 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-              SIV
-            </span>
-          )}
-          {fresh === "new_this_week" && (
-            <span className="bg-emerald-500 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-              New
-            </span>
-          )}
-          {fresh === "closing_soon" && (
-            <span className="bg-rose-500 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-              Closing
+          {matchScore != null && (
+            <span className="iv2-pill bg-emerald-500 text-white shadow-sm" style={{ fontSize: "10px" }}>
+              {matchScore}% match
             </span>
           )}
         </div>
 
-        {/* Bottom price overlay */}
-        {price && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3">
-            <div className="flex items-end justify-between gap-2">
-              <div>
-                <div className="text-white text-[0.65rem] font-semibold opacity-80 uppercase tracking-wide">{price.label}</div>
-                <div className="text-white text-lg font-extrabold leading-tight">{price.value}</div>
-              </div>
-              {matchScore != null && (
-                <span className="bg-emerald-500 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-                  {matchScore}% match
-                </span>
-              )}
-            </div>
+        {/* Bottom-left: location */}
+        {location && (
+          <div className="absolute bottom-2.5 left-3 flex items-center gap-1 text-[11px] font-semibold text-white drop-shadow">
+            <Icon name="map-pin" size={11} />
+            {location}
           </div>
+        )}
+        {/* Bottom-right: freshness flag */}
+        {fresh === "new_this_week" && (
+          <span className="iv2-pill absolute bottom-2.5 right-3 bg-emerald-500 text-white shadow-sm" style={{ fontSize: "10px" }}>New</span>
+        )}
+        {fresh === "closing_soon" && (
+          <span className="iv2-pill absolute bottom-2.5 right-3 bg-rose-500 text-white shadow-sm" style={{ fontSize: "10px" }}>Closing soon</span>
         )}
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className={`font-bold text-base text-slate-900 transition-colors line-clamp-2 mb-1.5 leading-snug ${meta.accent.text.replace("text-", "group-hover:text-")}`}>
+      <div className="flex flex-1 flex-col gap-2.5 p-4">
+        <h3 className="line-clamp-2 text-[15px] font-bold leading-snug text-ink-800 transition-colors group-hover:text-coral-700">
           {listing.title}
         </h3>
 
-        {location && (
-          <p className="flex items-center gap-1 text-xs text-slate-500 mb-3">
-            <Icon name="map-pin" size={11} className="text-slate-400" />
-            {location}
+        {(listing.industry || listing.sub_category) && (
+          <p className="-mt-1 text-xs capitalize text-slate-500">
+            {[listing.industry, listing.sub_category?.replace(/_/g, " ")].filter(Boolean).join(" · ")}
           </p>
         )}
 
-        {(listing.industry || listing.sub_category) && (
-          <div className="flex flex-wrap items-center gap-1 mb-3">
-            {listing.industry && (
-              <span className="text-[0.62rem] px-2 py-0.5 bg-slate-100 rounded-full font-semibold text-slate-600">
-                {listing.industry}
-              </span>
-            )}
-            {listing.sub_category && (
-              <span className="text-[0.62rem] px-2 py-0.5 bg-slate-100 rounded-full font-semibold text-slate-600 capitalize">
-                {listing.sub_category.replace(/_/g, " ")}
-              </span>
-            )}
+        {/* Price — the hero number */}
+        {price && (
+          <div className="flex items-end justify-between gap-2">
+            <div>
+              <div className="iv2-mini">{price.label}</div>
+              <div className="iv2-bignum text-2xl text-ink-900">{price.value}</div>
+            </div>
           </div>
         )}
 
-        {metricEntries.length > 0 && (
-          <div className="grid grid-cols-3 gap-2 pt-3 mt-2 border-t border-slate-100">
-            {metricEntries.map(([key, value]) => (
-              <div key={key} className="text-center">
-                <div className="text-[0.6rem] text-slate-400 uppercase tracking-wide font-medium truncate">
-                  {key.replace(/_/g, " ")}
-                </div>
-                <div className="text-xs font-bold text-slate-900 truncate">
-                  {formatKeyMetricValue(value)}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* Key metrics line */}
+        {metricLine}
 
-        {/* Advisor opt-in pill — surfaces "X advisors can assess this"
-            when listing_advisor_opt_ins has rows for this listing. Closes
-            the loop with /advisors. */}
+        {/* Trust chips */}
+        <div className="flex flex-wrap items-center gap-1.5">{trustChips}</div>
+
+        {/* Advisor opt-in pill — "X advisors can assess this" */}
         {advisorOptInCount > 0 && (
-          <div className="mt-3 inline-flex items-center gap-1.5 text-[0.62rem] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-1">
+          <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[0.62rem] font-semibold text-emerald-700">
             <Icon name="user-check" size={11} />
             {advisorOptInCount} advisor{advisorOptInCount !== 1 ? "s" : ""} can assess this
           </div>
         )}
 
-        {/* Claim-your-listing prompt — shown when the listing has no
-            approved row in listing_claims. Routes to the existing claim
-            flow with target_slug pre-filled. */}
+        {/* Claim-your-listing prompt */}
         {showClaimBadge && (
           <ListingClaimLink
             slug={listing.slug}
@@ -371,11 +396,10 @@ export default function InvestListingCard({
           />
         )}
 
-        {/* CTA row — kind-aware verb. Listed securities use an external
-            "Buy via broker" link to /compare instead of the Enquire flow. */}
-        <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100">
+        {/* CTA row — kind-aware verb. Listed securities route externally. */}
+        <div className="mt-auto flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
           {meta.externalCta ? (
-            <span className={`inline-flex items-center gap-1 text-xs font-bold ${meta.accent.text}`}>
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-ink-500">
               <Icon name="external-link" size={12} />
               {meta.ctaLabel}
             </span>
@@ -383,12 +407,12 @@ export default function InvestListingCard({
             <EnquireButton
               listingId={listing.id}
               listingTitle={listing.title}
-              buttonCls="bg-amber-500 hover:bg-amber-600 text-white"
+              buttonCls="bg-coral-500 hover:bg-coral-600 text-white"
             />
           )}
-          <span className={`flex-1 inline-flex items-center justify-end gap-1 text-xs font-bold ${meta.accent.text} group-hover:gap-2 transition-all`}>
-            View Details
-            <Icon name="chevron-right" size={12} />
+          <span className="inline-flex items-center gap-1 text-sm font-semibold text-coral-600 transition-all group-hover:gap-1.5">
+            View
+            <Icon name="chevron-right" size={13} />
           </span>
         </div>
       </div>
