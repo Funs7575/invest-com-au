@@ -70,6 +70,12 @@ const mockMaybySingle = vi.fn();
 const mockInsert = vi.fn();
 const mockFrom = vi.fn();
 
+// Cron route tests don't exercise consumer webhook dispatch (it has its own
+// tests + queries api_consumer_webhooks, a table these route mocks don't model).
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockFrom })),
 }));

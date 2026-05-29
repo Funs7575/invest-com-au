@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import EtfOverlapDetector from "@/components/EtfOverlapDetector";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { calculatorJsonLd } from "@/lib/schema-markup";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "ETF Overlap Detector | Invest.com.au",
@@ -9,9 +12,24 @@ export const metadata: Metadata = {
   openGraph: { title: "ETF Overlap Detector", description: "Check for unintentional concentration across your ETFs." },
 };
 
+const breadcrumbLd = breadcrumbJsonLd([
+  { name: "Home", url: SITE_URL },
+  { name: "Tools", url: `${SITE_URL}/tools` },
+  { name: "ETF Overlap Detector", url: `${SITE_URL}/tools/etf-overlap` },
+]);
+
+const toolLd = calculatorJsonLd({
+  name: "ETF Overlap Detector",
+  description:
+    "See how much your ETFs overlap. Holding VGS and NDQ? You may have more US tech concentration than you realise.",
+  path: "/tools/etf-overlap",
+});
+
 export default function EtfOverlapPage() {
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
+    <>
+      <JsonLd data={[breadcrumbLd, toolLd]} />
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
       <nav className="text-xs text-slate-400">
         <Link href="/tools" className="hover:text-violet-700">Tools</Link>
         <span className="mx-1">›</span>
@@ -30,6 +48,7 @@ export default function EtfOverlapPage() {
       <EtfOverlapDetector />
 
       <p className="text-[11px] text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
-    </div>
+      </div>
+    </>
   );
 }
