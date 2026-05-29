@@ -266,7 +266,7 @@ export default function InvestListingCard({
           ) : (
             <span />
           )}
-          <span className="inline-flex items-center gap-1 rounded-lg bg-coral-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors group-hover:bg-coral-600">
+          <span className="inline-flex items-center gap-1 rounded-lg bg-coral-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors group-hover:bg-coral-700">
             View
             <Icon name="chevron-right" size={12} />
           </span>
@@ -407,7 +407,7 @@ export default function InvestListingCard({
             <EnquireButton
               listingId={listing.id}
               listingTitle={listing.title}
-              buttonCls="bg-coral-500 hover:bg-coral-600 text-white"
+              buttonCls="bg-coral-600 hover:bg-coral-700 text-white"
             />
           )}
           <span className="inline-flex items-center gap-1 text-sm font-semibold text-coral-600 transition-all group-hover:gap-1.5">

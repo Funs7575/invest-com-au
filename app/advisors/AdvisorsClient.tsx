@@ -1218,7 +1218,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             {isFeatured && (
                               <span
                                 title={SPONSORED_DISCLOSURE_SHORT}
-                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-coral-500 text-white flex items-center gap-0.5 shadow-sm cursor-help"
+                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-coral-600 text-white flex items-center gap-0.5 shadow-sm cursor-help"
                               >
                                 <Icon name="star" size={9} />
                                 Featured · Paid
@@ -1372,7 +1372,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
                     {/* View profile CTA */}
                     <div className="shrink-0 self-center hidden md:flex ml-1">
-                      <span className="inline-flex items-center gap-1 rounded-lg bg-coral-500 px-3.5 py-2 text-xs font-semibold text-white whitespace-nowrap shadow-sm transition-colors group-hover:bg-coral-600">
+                      <span className="inline-flex items-center gap-1 rounded-lg bg-coral-600 px-3.5 py-2 text-xs font-semibold text-white whitespace-nowrap shadow-sm transition-colors group-hover:bg-coral-700">
                         View profile
                         <Icon name="chevron-right" size={13} />
                       </span>
@@ -1421,7 +1421,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   <button
                     onClick={saveAlert}
                     disabled={alertStatus === "submitting"}
-                    className="px-4 py-2 bg-coral-500 text-white text-sm font-semibold rounded-lg hover:bg-coral-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                    className="px-4 py-2 bg-coral-600 text-white text-sm font-semibold rounded-lg hover:bg-coral-600 disabled:opacity-60 transition-colors whitespace-nowrap"
                   >
                     {alertStatus === "submitting" ? "Saving..." : "Notify Me"}
                   </button>
@@ -1567,7 +1567,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <button
                 onClick={saveAlert}
                 disabled={alertStatus === "submitting"}
-                className="px-4 py-2 bg-coral-500 text-white text-sm font-semibold rounded-lg hover:bg-coral-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                className="px-4 py-2 bg-coral-600 text-white text-sm font-semibold rounded-lg hover:bg-coral-600 disabled:opacity-60 transition-colors whitespace-nowrap"
               >
                 {alertStatus === "submitting" ? "Saving..." : "Set Alert"}
               </button>
@@ -1583,7 +1583,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             <h3 className="text-base md:text-xl font-extrabold text-white mb-1.5 md:mb-2">Are you a financial professional?</h3>
             <p className="text-xs md:text-sm text-slate-400 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-coral-500 text-white text-sm font-bold rounded-xl hover:bg-coral-400 transition-colors shadow-lg shadow-coral-500/25">
+              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-coral-600 text-white text-sm font-bold rounded-xl hover:bg-coral-400 transition-colors shadow-lg shadow-coral-500/25">
                 Get Listed Free
                 <Icon name="arrow-right" size={15} />
               </Link>
