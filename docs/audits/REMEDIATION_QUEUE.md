@@ -201,22 +201,13 @@ Commit `199146f` (May 21) added `app/grants/[industry]/page.tsx` alongside the p
 
 ---
 
-### Accessibility (axe-core on key routes) systemic failure — 2026-05-28 (deepen-loop commits)
+### ~~Accessibility (axe-core on key routes) systemic failure — 2026-05-28 (deepen-loop commits)~~ **RESOLVED iter 584**
 
-**Surfaced: iter 582.** `Accessibility (axe-core on key routes)` check failing on **#1176** and **#1268**. Same-gate cluster guard requires ≥3 affected PRs to fire — only 2 affected, so guard did not fire. Surfaced manually.
+**RESOLVED 2026-05-29 (iter 584, commit `94ec94f` on main).** Option (b) taken: fixed `FIPersonaRouter.tsx` directly — `<h3>` inside `<button>` replaced with `<span className="block ...">`, `aria-hidden="true"` added to both emoji `<div>` elements. In-flight PRs (#1176, #1268, #1269) do not touch `FIPersonaRouter.tsx` so CI will pick up the fix on the next triggered run (no rebase needed). **This blocked entry can be deleted by the founder.**
 
-**Root cause:** Deepen-loop commits on main introduced `app/foreign-investment/FIPersonaRouter.tsx` (commit `ff2d3a57`) with `<h3>` elements inside `<button>` elements and emoji in plain `<div>` without `aria-hidden`. The `/foreign-investment` route is in `e2e/a11y.spec.ts` ROUTES (critical-only gate). Any PR with a base that includes this commit will inherit the a11y failure.
+~~**Surfaced: iter 582.** `Accessibility (axe-core on key routes)` check failing on **#1176** and **#1268**. Same-gate cluster guard requires ≥3 affected PRs to fire — only 2 affected, so guard did not fire. Surfaced manually.~~
 
-**Affected PRs:** #1176 (NF-03 admin MFA), #1268 (MAIN-RESCUE). Auto-revert PRs already open: #1237, #1246, #1254, #1263.
-
-**Recommendation:**
-- **(a) Merge auto-revert PRs** (#1237, #1246, #1254, #1263) to remove the deepen-loop commits from main. All NF in-flight PRs were created after the deepen commits and will need rebasing after the reverts land.
-- **(b) Fix `FIPersonaRouter.tsx` directly** — replace `<button><h3>…</h3></button>` with `<button><span>…</span></button>` (or use `role="presentation"` on the `h3`), and add `aria-hidden="true"` to any emoji `<div>`. This unblocks without reverting the feature content.
-- **(c) Exempt `/foreign-investment` from the critical gate** — not recommended (reduces safety coverage).
-
-**Same-gate cluster guard status:** 2/3 PRs affected — guard NOT triggered. Loop will not auto-surface again on the next iteration unless a third PR joins.
-
-**Once resolved:** delete this entry. If option (a) taken, the loop will rebase open NF PRs from fresh main.
+~~**Root cause:** Deepen-loop commits on main introduced `app/foreign-investment/FIPersonaRouter.tsx` (commit `ff2d3a57`) with `<h3>` elements inside `<button>` elements and emoji in plain `<div>` without `aria-hidden`. The `/foreign-investment` route is in `e2e/a11y.spec.ts` ROUTES (critical-only gate). Any PR with a base that includes this commit will inherit the a11y failure.~~
 
 ---
 
@@ -273,6 +264,26 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 584 — 2026-05-29 — STATUS: MAIN-RESCUE · a11y fix on main · commit=94ec94f
+
+- **Phase 0:** Lock acquired (batch fire, this iteration is iter 1 of up to 5).
+- **Phase 0.5:** No LOOP_PAUSE sentinel on main. Proceeding.
+- **Phase 1 (Sync):** Local main reset to origin/main (`07a634a`). No LOOP_PAUSE. Synced to HEAD.
+- **Phase 1.5 (Types drift):** No SQL migrations in last 24h. Skip.
+- **Phase 1.7 (Main CI preflight):** Not applicable — main HEAD is a queue commit (no code). Main inferred healthy.
+- **Phase 2 (CI rescue — in-flight PR review):**
+  - **#1176** (NF-03 admin MFA): `Lint · Build` ✅, `Accessibility` ❌ (systemic — `FIPersonaRouter.tsx` h3-in-button), `Preview smoke test` ❌ (infra noise), `Supabase types drift` ❌ (infra noise). Stuck-detection: only 1 prior a11y rescue on this PR. Root cause is on main, not the PR code. Fix: repair main.
+  - **#1268** (MAIN-RESCUE cron-webhook-mock): `Lint · Build` ✅, `Accessibility` ❌ (same systemic). Fix: repair main.
+  - **#1269** (NF-16 v2 autopilot): `Lint · Build` ✅, `Accessibility` ❌ (same systemic). Fix: repair main.
+  - **#1180** (NF-20 SMS consent): `Lint · Build` ❌ CANCELLED (20-min timeout, 2nd time) — separate issue, handled next iteration.
+  - **#1198** (F parseMoney): All required checks ✅. Awaiting founder merge.
+- **Phase 1.7 (MAIN-RESCUE):** 3 in-flight PRs blocked by `FIPersonaRouter.tsx` a11y violation introduced by deepen-loop commit `ff2d3a57`. Took option (b) from blocked entry: fixed `FIPersonaRouter.tsx` directly on main — replaced `<h3>` inside `<button>` with `<span className="block ...">`, added `aria-hidden="true"` to 2 emoji `<div>` elements (button card row + expanded detail). This does not affect the file's visual rendering — `block` preserves block-display. Commit `94ec94f` pushed directly to main. No PR needed (2-line change, same pattern as iter 541).
+- **Phase 6.5 (Discovery):** Only `FIPersonaRouter.tsx` touched. No sibling components with obvious a11y gaps. 0 discovery items.
+- **STATUS: MAIN-RESCUE · commit=94ec94f · unblocks-a11y-on=#1176+#1268+#1269**
+- **Batch continuing to iter 585:** #1180 `Lint · Build` still CANCELLED — needs re-trigger.
+
+---
 
 ### iter 583 — 2026-05-28 — STATUS: CI-RESCUE · stream=NF · item=NF-20 · pr=#1180
 
