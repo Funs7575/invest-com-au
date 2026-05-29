@@ -265,6 +265,24 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 588 — 2026-05-29 — STATUS: ALL-BLOCKED · CI running on all 4 PRs post-main-fix
+
+- **Phase 0:** Lock held (batch fire, iter 2 of up to 5). LOOP_PAUSE present — founder direct invocation overrides.
+- **Phase 1 (Sync):** On main, `d3ad6af` (iter 587 queue update). Synced.
+- **Phase 2 (CI rescue):** All 4 in-flight PRs CI queued/in_progress (started 04:22-04:23Z after iter 587 main fix + re-triggers):
+  - **#1268** (MAIN-RESCUE): `Lint · Build` in_progress, fast gates mostly ✅.
+  - **#1176** (NF-03): `Lint · Build` queued, fast gates queued.
+  - **#1269** (NF-16 v2): `Lint · Build` queued, fast gates queued.
+  - **#1180** (NF-20): `Lint · Build` queued, fast gates queued.
+- **Phase 3:** No pending engineering items in any non-blocked stream.
+- **STATUS: ALL-BLOCKED · CI-running-on-all-4-PRs**
+- **Batch stop condition reached** (ALL-BLOCKED). Total iterations this fire: 2 (587 MAIN-RESCUE + 588 ALL-BLOCKED).
+- **Expected next fire outcome:** All 4 Lint/Build should pass (main CI fix `1cbb001` resolves the test failures). Infra noise (Preview smoke, Supabase types drift, Bundle size) remain ❌ but excluded by EXCLUDED_CHECK_NAMES in auto-merge.js.
+- **Pending founder actions after CI green:**
+  - Merge **#1268** (Tier A — tests-only, CI expected ✅) → **#1176** (Tier C, NF-03 admin MFA — announce before merge) → **#1180** (Tier C, NF-20 SMS consent — announce before merge) → **#1269** (Tier B, NF-16 autopilot, 15-min obs window).
+
+---
+
 ### iter 587 — 2026-05-29 — STATUS: MAIN-RESCUE · build-everything test breakage · commit=1cbb001
 
 - **Phase 0:** Lock acquired (batch fire, iter 1 of up to 5 this fire).
