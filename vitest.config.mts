@@ -91,20 +91,28 @@ export default defineConfig({
         // measured (wider than the global 1pp because the audit loop adds
         // brand-new untested routes between PRs, which transiently dip the
         // %): lines/statements 75, branches 74, functions 82.
-        // 2026-05-29: reset lines/statements 75 -> 70 (current measured
-        // app/api/** = 70.91%). The build-everything-queue merge (#07a634a)
-        // added ~146 brand-new routes at <40% coverage (e.g. v1/tax/treaties,
-        // v1/widget-licenses, many cron/* email pipelines) faster than
-        // behavioural tests — the "transient dip" foreseen above, but a large
-        // one. Floor set ~1pp under current to catch regressions while
-        // unblocking. RATCHET BACK TO 75 with real (non-theater) tests for the
-        // top uncovered routes — see docs/audits/2026-05-29-fresh-audit.md §6.
-        // branches (74) / functions (82) held — both still pass.
+        // 2026-05-29 (reset): lines/statements 75 -> 70 after the
+        // build-everything-queue merge (#07a634a) added ~146 brand-new routes
+        // at <40% coverage faster than behavioural tests could follow.
+        //
+        // 2026-05-29 (restore): RATCHET BACK TO 75 — done. The §6
+        // coverage-recovery pass landed real (non-theater) behavioural tests
+        // for the top uncovered routes the merge dropped in: v1/tax/treaties,
+        // v1/widget-licenses, admin/ai-chat (its 511-line streaming agent loop
+        // + all 13 tools), 9 cron/portal/v1 routes (morning-brief,
+        // decisions-digest, seasonal-emails, ipo-alerts, td-maturity-reminders,
+        // firm-portal/lead-quality, v1/verify, v1/fee-changes, org-auth/courses)
+        // and deepened marketplace-stats + quiz-follow-up. Scoped re-measure
+        // (__tests__/api + __tests__/integration, coverage.include=app/api/**):
+        // lines/statements 75.88%, branches 78.07%, functions 84.89%. That run
+        // is a LOWER BOUND on CI (which also runs security-fixes and other
+        // suites that touch app/api), so these floors sit ~1-2pp under the
+        // scoped numbers. See docs/audits/2026-05-29-fresh-audit.md §6.
         "app/api/**/*.ts": {
-          lines: 70,
-          branches: 74,
-          functions: 82,
-          statements: 70,
+          lines: 75,
+          branches: 76,
+          functions: 83,
+          statements: 75,
         },
       },
     },
