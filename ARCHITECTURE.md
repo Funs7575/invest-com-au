@@ -270,7 +270,7 @@ Where we are now and the signals that say "time to invest in scaling".
 | API requests | bounded by Vercel function invocations | 1M/day (consider Edge Functions for hot paths) |
 | Cron jobs | 18 scheduled | 30+ (consider Inngest or Trigger.dev for orchestration) |
 | Test suite | 6,109 unit/integration tests, ~7 min | 15k tests (must shard across runners or runtime > 15 min) |
-| `lib/database.types.ts` | ~13,300 lines, 138 tables | 200 tables (consider splitting per-domain types files) |
+| `lib/database.types.ts` | ~19,100 lines, ~290 tables (already past the 200-table plateau; ~95% to the 20k-line split trigger) | split per-domain types files now |
 
 ### Signals to watch
 
