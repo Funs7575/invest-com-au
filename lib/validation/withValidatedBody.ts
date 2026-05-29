@@ -70,15 +70,23 @@ export interface InvalidJsonBody {
  *   generic explicitly.
  * - Falls through to a 400 with a stable error envelope on JSON-parse
  *   failure or schema mismatch; never invokes the handler in those cases.
+ * - Forwards the Next.js route context (the 2nd handler arg, `{ params }`)
+ *   through as the handler's 3rd parameter, so dynamic routes
+ *   (`app/api/x/[id]/route.ts`) can `await ctx.params` after validation.
+ *   Static routes simply ignore it.
  */
 export function withValidatedBody<Schema extends z.ZodType>(
   schema: Schema,
   handler: (
     req: NextRequest,
     body: z.infer<Schema>,
+    ctx?: unknown,
   ) => Promise<NextResponse> | NextResponse,
-): (req: NextRequest) => Promise<NextResponse> {
-  return async function validatedRoute(req: NextRequest): Promise<NextResponse> {
+): (req: NextRequest, ctx?: unknown) => Promise<NextResponse> {
+  return async function validatedRoute(
+    req: NextRequest,
+    ctx?: unknown,
+  ): Promise<NextResponse> {
     let raw: unknown;
     try {
       raw = await req.json();
@@ -109,7 +117,8 @@ export function withValidatedBody<Schema extends z.ZodType>(
     }
 
     // `parsed.data` is `z.infer<Schema>`; the handler's `body` parameter
-    // type is preserved end-to-end without a cast.
-    return handler(req, parsed.data);
+    // type is preserved end-to-end without a cast. `ctx` is the Next.js
+    // route context ({ params }) so dynamic routes can read their params.
+    return handler(req, parsed.data, ctx);
   };
 }
