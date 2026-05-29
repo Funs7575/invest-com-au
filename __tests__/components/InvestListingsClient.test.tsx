@@ -62,8 +62,11 @@ describe("InvestListingsClient — filter primitives wiring", () => {
     mockReplace.mockClear();
   });
 
-  it("renders the compliance FacetGroup options in the inline filter panel", () => {
+  it("exposes the compliance FacetGroup options via the All filters drawer", async () => {
+    const user = userEvent.setup();
     render(<InvestListingsClient listings={[makeListing()]} categories={categories} />);
+    // Primary facets live in the pill bar; the long tail opens from "All filters".
+    await user.click(screen.getByRole("button", { name: /All filters/i }));
     expect(screen.getByRole("checkbox", { name: /FIRB-eligible/i })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: /SIV-complying/i })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: /Wholesale only/i })).toBeInTheDocument();
@@ -74,6 +77,7 @@ describe("InvestListingsClient — filter primitives wiring", () => {
     // FIRB-eligible listing so the facet's live count is > 0 and the option
     // is enabled (FacetGroup disables zero-count facets — Session 5.5).
     render(<InvestListingsClient listings={[makeListing({ firb_eligible: true })]} categories={categories} />);
+    await user.click(screen.getByRole("button", { name: /All filters/i }));
     await user.click(screen.getByRole("checkbox", { name: /FIRB-eligible/i }));
     expect(mockReplace).toHaveBeenCalled();
     expect(mockReplace.mock.calls.at(-1)?.[0]).toContain("firb=eligible");
@@ -82,8 +86,28 @@ describe("InvestListingsClient — filter primitives wiring", () => {
   it("toggling the Featured checkbox writes featured=true", async () => {
     const user = userEvent.setup();
     render(<InvestListingsClient listings={[makeListing()]} categories={categories} />);
+    await user.click(screen.getByRole("button", { name: /All filters/i }));
     await user.click(screen.getByRole("checkbox", { name: /Featured \/ Premium only/i }));
     expect(mockReplace.mock.calls.at(-1)?.[0]).toContain("featured=true");
+  });
+
+  it("selecting a ticket bucket from the Budget pill writes the price param", async () => {
+    const user = userEvent.setup();
+    render(<InvestListingsClient listings={[makeListing()]} categories={categories} />);
+    await user.click(screen.getByRole("button", { name: /Budget/i }));
+    await user.click(screen.getByRole("button", { name: /Under \$10k/i }));
+    expect(mockReplace.mock.calls.at(-1)?.[0]).toContain("price=under-10k");
+  });
+
+  it("applying the wholesale 'Growth & raises' quick start keeps the s708 gate", async () => {
+    const user = userEvent.setup();
+    render(<InvestListingsClient listings={[makeListing()]} categories={categories} />);
+    await user.click(screen.getByRole("button", { name: /Quick starts/i }));
+    await user.click(screen.getByRole("button", { name: /Growth & raises/i }));
+    const url = mockReplace.mock.calls.at(-1)?.[0] as string;
+    // Compliance gate: the equity quick start must retain wholesale=true.
+    expect(url).toContain("wholesale=true");
+    expect(url).toContain("equity_raise");
   });
 
   it("renders no active-filter chips when nothing is filtered", () => {
