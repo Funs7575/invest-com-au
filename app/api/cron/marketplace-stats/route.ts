@@ -6,8 +6,12 @@ import { requireCronAuth } from "@/lib/cron-auth";
 
 const log = logger("cron-marketplace-stats");
 
-export const runtime = "edge";
-export const maxDuration = 60;
+// nodejs (not edge): this cron fans out per-broker count queries + Resend
+// emails; the 60s edge wall-clock budget risked silent timeouts and partial
+// re-sends as the broker set grows. nodejs gives the 300s Vercel cron ceiling
+// and connection reuse. (Batching the per-broker N+1 is a further follow-up.)
+export const runtime = "nodejs";
+export const maxDuration = 300;
 
 /**
  * Cron: Daily marketplace stats aggregation + budget enforcement.

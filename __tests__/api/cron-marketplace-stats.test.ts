@@ -61,9 +61,9 @@ describe("GET /api/cron/marketplace-stats", () => {
     delete process.env.RESEND_API_KEY;
   });
 
-  it("exports edge runtime and maxDuration = 60", () => {
-    expect(runtime).toBe("edge");
-    expect(maxDuration).toBe(60);
+  it("exports nodejs runtime and maxDuration = 300", () => {
+    expect(runtime).toBe("nodejs");
+    expect(maxDuration).toBe(300);
   });
 
   it("returns 500 when CRON_SECRET is unset", async () => {
