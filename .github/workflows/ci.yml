@@ -37,7 +37,10 @@ jobs:
   ci:
     name: Lint · Type-check · Test · Build
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Full job (install + tsc + lint + jsonld + ~16k-test coverage run + cold
+    # Next build + bundle-size gate) runs ~24 min on a cold runner; 20 was too
+    # tight and the job was being cancelled mid-build.
+    timeout-minutes: 30
 
     env:
       # Stub required env vars so imports resolve without crashing
