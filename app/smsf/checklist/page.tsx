@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
 import SmsfChecklistClient from "./SmsfChecklistClient";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -49,6 +50,7 @@ export default function SmsfChecklistPage() {
           </div>
         </section>
       </div>
+      <ComplianceFooter />
     </>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
 import FrankingCalculatorClient from "./FrankingCalculatorClient";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 86400;
 
@@ -46,6 +47,7 @@ export default function FrankingCalculatorPage() {
             <FrankingCalculatorClient />
           </div>
         </section>
+        <ComplianceFooter variant="calculator" />
       </div>
     </>
   );

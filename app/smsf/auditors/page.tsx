@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
@@ -109,6 +110,7 @@ export default async function SmsfAuditorsPage() {
           </div>
         </section>
       </div>
+      <ComplianceFooter />
     </>
   );
 }

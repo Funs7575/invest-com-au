@@ -8,6 +8,7 @@ import {
   type ScenarioInput,
 } from "@/lib/best-for-scorer";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const revalidate = 3600;
 
@@ -242,8 +243,8 @@ export default async function BestForPage({
                 >
                   /editorial-policy
                 </Link>
-                . This page is general advice only and does not take into
-                account your personal circumstances.
+                .{" "}
+                {GENERAL_ADVICE_WARNING}
               </p>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
@@ -206,6 +207,7 @@ export default async function SmsfSetupPage() {
           </section>
         )}
       </div>
+      <ComplianceFooter />
     </>
   );
 }

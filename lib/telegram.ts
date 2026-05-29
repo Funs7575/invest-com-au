@@ -16,6 +16,7 @@
  * Distribution — E1 (BUILD-EVERYTHING-QUEUE.md)
  */
 
+import { timingSafeEqual } from "node:crypto";
 import { logger } from "@/lib/logger";
 
 const log = logger("telegram");
@@ -41,8 +42,11 @@ export function isTelegramConfigured(): boolean {
  */
 export function verifyTelegramWebhookSecret(headerValue: string | null): boolean {
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET?.trim();
-  if (!secret) return false;
-  return headerValue === secret;
+  if (!secret || !headerValue) return false;
+  // Constant-time comparison — avoid a timing oracle on the shared secret.
+  const a = Buffer.from(headerValue);
+  const b = Buffer.from(secret);
+  return a.length === b.length && timingSafeEqual(a, b);
 }
 
 /**
