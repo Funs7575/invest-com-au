@@ -143,7 +143,7 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
             <button
               key={p.postcode}
               onClick={() => { onSelect(p); setQuery(`${p.locality}, ${p.state}`); setOpen(false); }}
-              className="w-full text-left px-3 py-2 hover:bg-amber-50 text-sm text-slate-700 flex items-center justify-between"
+              className="w-full text-left px-3 py-2 hover:bg-coral-50 text-sm text-slate-700 flex items-center justify-between"
             >
               <span>{p.locality}, {p.state}</span>
               <span className="text-xs text-slate-400">{p.postcode}</span>
@@ -687,7 +687,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   }`}
                 >
                   {label}
-                  <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-500"}`}>
+                  <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-coral-100 text-coral-700" : "bg-slate-200 text-slate-500"}`}>
                     {count}
                   </span>
                 </button>
@@ -798,7 +798,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
               <div className="flex items-end">
                 <label className="flex items-center gap-2 cursor-pointer py-2">
-                  <input type="checkbox" checked={verifiedOnly} onChange={() => setVerifiedOnly(!verifiedOnly)} className="w-4 h-4 rounded border-slate-300 text-coral-600 focus:ring-amber-500" />
+                  <input type="checkbox" checked={verifiedOnly} onChange={() => setVerifiedOnly(!verifiedOnly)} className="w-4 h-4 rounded border-slate-300 text-coral-600 focus:ring-coral-500" />
                   <span className="text-xs font-semibold text-slate-700">Verified only</span>
                 </label>
               </div>
@@ -1063,7 +1063,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             Firm
                           </span>
                           {firm.afsl_number && (
-                            <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-coral-50 text-coral-700 border border-coral-200">
                               AFSL {firm.afsl_number}
                             </span>
                           )}
@@ -1393,9 +1393,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <button onClick={clearAll} className="text-xs text-coral-600 font-semibold hover:text-coral-800">Clear all filters</button>
             </div>
             {/* Alert capture */}
-            <div className="px-5 py-5 bg-amber-50">
+            <div className="px-5 py-5 bg-coral-50">
               <div className="flex items-start gap-3 mb-3">
-                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 bg-coral-100 rounded-lg flex items-center justify-center shrink-0">
                   <Icon name="bell" size={16} className="text-coral-600" />
                 </div>
                 <div>
@@ -1415,7 +1415,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     value={alertEmail}
                     onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
                     placeholder="your@email.com"
-                    className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                    className="flex-1 px-3 py-2 border border-coral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-400 bg-white"
                     onKeyDown={(e) => e.key === "Enter" && saveAlert()}
                   />
                   <button
@@ -1468,10 +1468,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </ul>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-gradient-to-br from-coral-50/80 via-white to-white border border-amber-100 rounded-2xl p-5 md:p-6 shadow-sm">
+              <div className="bg-gradient-to-br from-coral-50/80 via-white to-white border border-coral-100 rounded-2xl p-5 md:p-6 shadow-sm">
                 <div className="flex items-center gap-2.5 mb-3">
-                  <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                    <Icon name="dollar-sign" size={15} className="text-amber-700" />
+                  <div className="w-8 h-8 rounded-xl bg-coral-100 flex items-center justify-center shrink-0">
+                    <Icon name="dollar-sign" size={15} className="text-coral-700" />
                   </div>
                   <h2 className="text-base md:text-lg font-extrabold text-slate-900">Cost Guide</h2>
                 </div>
@@ -1499,7 +1499,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 <details key={i} className="group">
                   <summary className="px-4 py-3.5 md:px-5 md:py-4 font-semibold text-xs md:text-sm text-slate-800 cursor-pointer hover:bg-slate-50/80 transition-colors list-none flex items-center justify-between gap-3">
                     <span>{faq.q}</span>
-                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-400 group-open:bg-amber-50 group-open:border-amber-200 group-open:text-coral-600 transition-all">
+                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-400 group-open:bg-coral-50 group-open:border-coral-200 group-open:text-coral-600 transition-all">
                       <svg className="w-2.5 h-2.5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                     </span>
                   </summary>
@@ -1528,8 +1528,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               { title: "Crypto Advisor", href: "/advisor-guides/how-to-choose-crypto-advisor", icon: "bitcoin" },
               { title: "Debt Counsellor", href: "/advisor-guides/how-to-choose-debt-counsellor", icon: "credit-card" },
             ].map(g => (
-              <Link key={g.href} href={g.href} className="group flex items-center gap-2.5 p-3 bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md hover:border-amber-100 hover:bg-amber-50/30 transition-all">
-                <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:bg-amber-100 group-hover:border-amber-200 transition-all">
+              <Link key={g.href} href={g.href} className="group flex items-center gap-2.5 p-3 bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md hover:border-coral-100 hover:bg-coral-50/30 transition-all">
+                <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:bg-coral-100 group-hover:border-coral-200 transition-all">
                   <Icon name={g.icon} size={14} className="text-slate-500 group-hover:text-coral-600 transition-colors" />
                 </div>
                 <span className="text-xs font-semibold text-slate-600 group-hover:text-slate-800 leading-tight">How to Choose: {g.title}</span>
@@ -1539,9 +1539,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         </div>
 
         {/* Saved search / alert widget */}
-        <div className="mt-6 md:mt-8 bg-gradient-to-br from-coral-50/80 via-white to-white border border-amber-100 rounded-2xl p-4 md:p-6 shadow-sm">
+        <div className="mt-6 md:mt-8 bg-gradient-to-br from-coral-50/80 via-white to-white border border-coral-100 rounded-2xl p-4 md:p-6 shadow-sm">
           <div className="flex items-start gap-3 mb-3.5">
-            <div className="w-10 h-10 bg-amber-100 border border-amber-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-amber-100">
+            <div className="w-10 h-10 bg-coral-100 border border-coral-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-coral-100">
               <Icon name="bell" size={18} className="text-coral-600" />
             </div>
             <div>
@@ -1561,7 +1561,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 value={alertEmail}
                 onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
                 placeholder="your@email.com"
-                className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                className="flex-1 px-3 py-2 border border-coral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-400 bg-white"
                 onKeyDown={(e) => e.key === "Enter" && saveAlert()}
               />
               <button
@@ -1579,11 +1579,11 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         <div className="mt-6 md:mt-10 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 md:p-8 text-center shadow-xl shadow-slate-900/10">
           <div className="absolute inset-0 opacity-5" style={{backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '32px 32px'}} />
           <div className="relative">
-            <p className="text-[0.65rem] font-bold uppercase tracking-widest text-amber-400 mb-2">For Professionals</p>
+            <p className="text-[0.65rem] font-bold uppercase tracking-widest text-coral-400 mb-2">For Professionals</p>
             <h3 className="text-base md:text-xl font-extrabold text-white mb-1.5 md:mb-2">Are you a financial professional?</h3>
             <p className="text-xs md:text-sm text-slate-400 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-coral-500 text-white text-sm font-bold rounded-xl hover:bg-coral-400 transition-colors shadow-lg shadow-amber-500/25">
+              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-coral-500 text-white text-sm font-bold rounded-xl hover:bg-coral-400 transition-colors shadow-lg shadow-coral-500/25">
                 Get Listed Free
                 <Icon name="arrow-right" size={15} />
               </Link>
