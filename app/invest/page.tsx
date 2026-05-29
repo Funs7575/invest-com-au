@@ -140,11 +140,13 @@ export default async function InvestMarketplacePage() {
   const verticalCounts: Record<string, number> = {};
   let firbCount = 0;
   let sivCount = 0;
+  let aggregateAskCents = 0;
   for (const l of listings) {
     const v = l.vertical as string;
     if (v) verticalCounts[v] = (verticalCounts[v] || 0) + 1;
     if (l.firb_eligible) firbCount++;
     if (l.siv_complying) sivCount++;
+    if (l.asking_price_cents) aggregateAskCents += l.asking_price_cents;
   }
 
   // Wave 3 — load page-side context (advisor opt-in counts, claimed
@@ -202,59 +204,90 @@ export default async function InvestMarketplacePage() {
     isPartOf: { "@type": "WebSite", name: SITE_NAME, url: absoluteUrl("/") },
   };
 
+  // Hero stat tiles — all derived from the live listing set (no invented
+  // figures). Compact billions-aware AUD formatter for the aggregate ask.
+  const sectorCount = Object.keys(verticalCounts).length;
+  const formatAudBig = (cents: number): string => {
+    const d = cents / 100;
+    if (d >= 1e9) return `$${(d / 1e9).toFixed(1).replace(/\.0$/, "")}B`;
+    if (d >= 1e6) return `$${Math.round(d / 1e6)}M`;
+    if (d >= 1e3) return `$${Math.round(d / 1e3)}k`;
+    return `$${Math.round(d)}`;
+  };
+  const heroStats = (
+    [
+      aggregateAskCents > 0 ? { v: formatAudBig(aggregateAskCents), l: "Aggregate ask" } : null,
+      { v: listings.length.toLocaleString("en-AU"), l: "Live opportunities" },
+      { v: String(sectorCount), l: "Sectors" },
+      firbCount > 0 ? { v: String(firbCount), l: "FIRB-eligible" } : null,
+      sivCount > 0 ? { v: String(sivCount), l: "SIV-complying" } : null,
+    ].filter(Boolean) as { v: string; l: string }[]
+  ).slice(0, 4);
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
 
-      {/* ── Slim hero (was 40% of fold, now ~15%) ────────────────── */}
-      <div className="container-custom max-w-6xl pt-5 md:pt-8 pb-3">
-        <nav className="text-xs md:text-sm text-slate-500 mb-2">
-          <Link href="/" className="hover:text-slate-900">Home</Link>
-          <span className="mx-2">/</span>
-          <span className="text-slate-700">Opportunities</span>
-        </nav>
-
-        <DirectoryBanners surface="invest" />
-
-        <h1 className="text-2xl md:text-4xl font-extrabold mb-2 text-slate-900 tracking-tight">
-          Australian Investment Opportunities
-        </h1>
-        <p className="text-sm md:text-base text-slate-600 mb-3 max-w-3xl">
-          Businesses, property, projects, funds, syndicates & collectibles — all filterable in one place.
-          To compare super funds or share-trading platforms,{" "}
-          <Link href="/compare" className="text-amber-700 underline hover:no-underline">visit Compare</Link>.
-        </p>
-
-        {/* Trust pills */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 rounded-full text-[0.65rem] md:text-xs font-semibold text-slate-700 shadow-sm">
-            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="font-bold text-slate-900">{listings.length}</span> live opportunities
-          </span>
-          {firbCount > 0 && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-blue-200 rounded-full text-[0.65rem] md:text-xs font-semibold text-blue-700 shadow-sm">
-              <Icon name="globe" size={11} />
-              <span className="font-bold">{firbCount}</span> FIRB-eligible
-            </span>
-          )}
-          {sivCount > 0 && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-emerald-200 rounded-full text-[0.65rem] md:text-xs font-semibold text-emerald-700 shadow-sm">
-              <Icon name="shield-check" size={11} />
-              <span className="font-bold">{sivCount}</span> SIV-complying
-            </span>
-          )}
-          {ctx.isListingOwner && (
-            <Link
-              href="/account/my-listings"
-              className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-[0.65rem] md:text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors shadow-sm"
-            >
-              <Icon name="user-check" size={11} />
-              My listings →
-            </Link>
-          )}
+      {/* ── Dark marketplace hero (v2 confident-fintech) ─────────── */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-ink-900 to-ink-800 text-white">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(242,88,34,.18), transparent 65%)" }}
+        />
+        <div className="container-custom max-w-6xl relative py-8 md:py-12">
+          <nav className="text-xs md:text-sm text-white/55 mb-3">
+            <Link href="/" className="hover:text-white">Home</Link>
+            <span className="mx-2">/</span>
+            <span className="text-white/80">Opportunities</span>
+          </nav>
+          <div className="grid gap-8 md:grid-cols-[1.4fr_1fr] md:items-end">
+            <div>
+              <span className="iv2-pill border border-coral-500/30 bg-coral-500/15 text-coral-300">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coral-400" />
+                Live marketplace
+              </span>
+              <h1 className="mt-4 text-3xl font-extrabold leading-[1.04] tracking-tight md:text-5xl">
+                {listings.length.toLocaleString("en-AU")} live opportunities.
+                {aggregateAskCents > 0 && (
+                  <>
+                    <br />
+                    <span className="text-coral-400">{formatAudBig(aggregateAskCents)} in aggregate ask.</span>
+                  </>
+                )}
+              </h1>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/70 md:text-base">
+                Businesses, property, projects, funds, syndicates &amp; collectibles — all filterable in one place.
+                To compare super funds or share-trading platforms,{" "}
+                <Link href="/compare" className="text-coral-300 underline hover:no-underline">visit Compare</Link>.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {heroStats.map((s) => (
+                <div key={s.l} className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
+                  <div className="iv2-bignum text-2xl text-white md:text-3xl">{s.v}</div>
+                  <div className="mt-1 text-[11px] font-semibold text-white/55 md:text-xs">{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* Country/FIRB notices + owner link on the light band below the hero */}
+      <div className="container-custom max-w-6xl pt-4">
+        <DirectoryBanners surface="invest" />
+        {ctx.isListingOwner && (
+          <Link
+            href="/account/my-listings"
+            className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-coral-200 bg-coral-50 px-3 py-1 text-[0.65rem] font-semibold text-coral-700 shadow-sm transition-colors hover:bg-coral-100 md:text-xs"
+          >
+            <Icon name="user-check" size={11} />
+            My listings →
+          </Link>
+        )}
       </div>
 
       {/* ── Marketplace (primary — no two-step) ───────────────── */}
