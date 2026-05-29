@@ -53,7 +53,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07 done (iter 492): data room upload + per-investor access grants + revoke (`d036cf47`). SP-08 done (iter 493): wholesale cert flow — /account/wholesale-cert + /api/wholesale-investor-cert/{submit,verify} + 14 tests (`60e4ca9`). SP-09 done (iter 494): ESIC verification — /startup-portal/esic-verification + /api/startups/esic-verify + 15 tests (`3d11fd6`). SP-10 done (iter 495): investor sector-thesis profile — /account/startup-thesis + /api/account/startup-thesis + 173 LOC tests (`42c58f03`). SP-11 done (iter 496): personalised deal feed — /invest/startups/for-you + lib/startup-match.ts scoring + 23 tests (`4df3145`). SP-11 merge conflict resolved (iter 497). SP-12 engineering done (iter 498): admin startup review UI — /admin/startups + /api/admin/startups/[id]/review + 9 tests (`3a0bc96`). SP-12 compliance signoff BLOCKED (see Blocked). SP-13 done (iter 499): Playwright E2E — 20 tests across 12 startup-portal routes + 5 API auth gates (`df18e10a`). Branch synced with main (merge `e6f14476`). CI rescue (iter 503): Zod v4 .issues migration + vi.hoisted() fix (`e41e72f`). SP-DISC-07 (iter 505): `app/api/startups/round/route.ts` unit tests — 9 cases (`dc3daef`). CI rescue (iter 506): AccountKind TS gaps — `startup` entry missing from KIND_META in 2 components, `Stats.startups` field, BriefForm kind union (`7ceefa5` + `6e27699`). CI rescue (iter 508): lint 18→0 warnings (`fffeba1`). CI rescue (iter 509): async params build fix (`0e13cbc`). CI rescue (iter 511): metadata-coverage gate — add `app/startup-signup/layout.tsx` (`41bc52c`). CI rescue (iter 515): JSON-LD exemption gate (`fdd8f37`). CI rescue (iter 519): add 56 tests for 4 uncovered data-room + esic-verify routes (`ba50786`) — pending CI re-run. | All SP tasks merged + compliance signoff |
 | CO | `claude/audit-remediation/co-cutover-prep` | **#1046 MERGED 2026-05-20** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485+486): sitemap finalisation. CO-04 blocked (DNS — registrar access). CO-05 done (iter 487): pre-launch QA automation suite (30 Playwright tests). CO-06 done (iter 482): apex domain cutover runbook. CO-07 done (iter 483): final anonymity audit — CL-09 PASSED. **#1046 merged by founder 2026-05-20.** CO-01/CO-02/CO-04 remain blocked (external credentials/registrar action). | All CO tasks done + compliance signoff |
-| MAIN-RESCUE | `fix/main-rescue-cron-webhook-mock` | **#793 MERGED** · **#1268 OPEN** | next 16.2.4→16.2.6 patch merged. iter 576 (2026-05-27): mocked consumer-webhook-dispatch in 4 cron tests — unblocks main CI + #1176/#1180. iter 580 (2026-05-27): also fixed `getAllCategorySlugs` test (expects deduped slugs now that `getAllCategorySlugs()` uses Set — broken since ffb1b74). Commit `8ddb849` on fix branch; cherry-picked `0ad2574` to #1176 and `e28153c` to #1180. All 3 CI re-triggered. Non-loop auto-revert PRs still open: **#827** · **#843** · **#1237** · **#1246** · **#1254** · **#1263** — founder-action items. | #1268 CI in_progress; #1176/#1180 CI in_progress |
+| MAIN-RESCUE | `fix/main-rescue-cron-webhook-mock` | **#793 MERGED** · **#1268 OPEN** | next 16.2.4→16.2.6 patch merged. iter 576 (2026-05-27): mocked consumer-webhook-dispatch in 4 cron tests — unblocks main CI + #1176/#1180. iter 580 (2026-05-27): also fixed `getAllCategorySlugs` test. **iter 587 (2026-05-29) MAIN-RESCUE:** build-everything push broke 4 test files on main — `BrokerCard.test.tsx` + `AdvisorsClient.test.tsx` (missing `useUser` mock for `BookmarkButton`), `afsl-compliance-coverage.test.ts` (insights page missing ComplianceFooter), `metadata-coverage.test.ts` (clubs join page missing metadata). Fixed in commit `1cbb001` on main. All 4 in-flight PRs re-triggered: #1268 (`ce0a5a4`), #1176 (`9128050`), #1269 (`f17c217`), #1180 (`6526cb5`). | CI re-triggered post-main-fix `1cbb001` |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 MERGED 2026-05-17** | LL-01..LL-04 done. LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). **Stream stalled at LL-05 (blocked).** | All LL tasks merged (LL-05 blocked) |
 | RR | _complete_ | **#847 MERGED 2026-05-17** | RR-01 false-positive. RR-02 done. **Stream complete.** | All RR tasks merged ✓ |
@@ -264,6 +264,37 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 587 — 2026-05-29 — STATUS: MAIN-RESCUE · build-everything test breakage · commit=1cbb001
+
+- **Phase 0:** Lock acquired (batch fire, iter 1 of up to 5 this fire).
+- **Phase 0.5:** No LOOP_PAUSE sentinel. Proceeding.
+- **Phase 1 (Sync):** Local main stale (diverged). Reset to `origin/main HEAD=acebf4d`.
+- **Phase 1.5 (Types drift):** No SQL migrations in last 24h on main. Skip.
+- **Phase 1.7 (Main CI preflight):** Main HEAD is a queue commit, inferred healthy — BUT Phase 2 check revealed the truth.
+- **Phase 2 (CI rescue — in-flight PR review):**
+  - **#1176, #1268, #1269, #1180**: All showing `Lint · Type-check · Test · Build` FAILURE. CI timestamps ~03:09-03:15Z (from iter 585 re-trigger).
+  - All 4 branches are 53-58 commits behind main (missing `07a634a` build-everything + 56 subsequent).
+  - Root-cause investigation: ran `npx vitest run` on main HEAD — found 4 test files failing on main itself (not just PRs):
+    1. `__tests__/components/BrokerCard.test.tsx` — 21 failures: `BookmarkButton` → `useUser` → real Supabase client (no env). `DealExpiryCountdown` added to `BrokerCard.tsx` in build-everything; `BookmarkButton` was already imported. Missing `useUser` mock in component test setup.
+    2. `__tests__/components/AdvisorsClient.test.tsx` — 5 failures: same cause (`AdvisorsClient.tsx` imports `BookmarkButton`).
+    3. `__tests__/lib/afsl-compliance-coverage.test.ts` — 1 failure: `app/advisor/[slug]/insights/page.tsx` added without `<ComplianceFooter />`.
+    4. `__tests__/lib/metadata-coverage.test.ts` — 1 failure: `app/clubs/[clubId]/join/page.tsx` is "use client" with no metadata and no ancestor layout.
+- **Phase 1.7 (MAIN-RESCUE):** Fixed all 4 on main directly (precedent: iter 541, iter 584):
+  1. `__tests__/components/setup.tsx`: Added `vi.mock("@/lib/hooks/useUser", ...)` returning `{ user: null, loading: false }`.
+  2. `__tests__/components/AdvisorsClient.test.tsx`: Same `vi.mock("@/lib/hooks/useUser")` (doesn't import from setup.tsx).
+  3. `app/advisor/[slug]/insights/page.tsx`: Added `import ComplianceFooter` + `<ComplianceFooter />` at page bottom.
+  4. `app/clubs/[clubId]/layout.tsx`: Created with `metadata: { robots: "noindex, nofollow" }` — ancestor-walk picks this up for `join/page.tsx`.
+  - Lint: exit 0. All 4 fixed test files: 774 tests green. Commit `1cbb001` pushed to main.
+- **Phase 6.5 (Discovery):** 0 items — all touched files were test/coverage infrastructure.
+- **Phase 7 (Re-trigger 4 in-flight PRs):** Empty commits pushed to all 4 branches:
+  - #1268 (`ce0a5a4`), #1176 (`9128050`), #1269 (`f17c217`), #1180 (`6526cb5`).
+- **STATUS: MAIN-RESCUE · commit=1cbb001 · unblocks-all-4-PRs**
+- **Next (iter 588):** All 4 CI runs now in-progress against fixed main. Expected outcome: Lint/Build ✅ on all 4. Infra noise (Preview smoke, Supabase types drift) remain ❌ but excluded by auto-merge.js EXCLUDED_CHECK_NAMES.
+- **Pending founder actions after CI green:**
+  - Merge **#1268** (Tier A — tests-only, no code) → **#1176** (Tier C, NF-03 admin MFA — announce intent before merge) → **#1180** (Tier C, NF-20 SMS consent — announce intent) → **#1269** (Tier B, NF-16 autopilot, 15-min obs window).
+
+---
 
 ### iter 586 — 2026-05-29 — STATUS: ALL-BLOCKED · CI in-progress on all 4 PRs
 
