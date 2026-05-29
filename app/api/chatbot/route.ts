@@ -76,20 +76,25 @@ export async function POST(request: NextRequest) {
   // block we replace the reply with a compliant fallback rather than break the
   // chat. Other rejected rules are logged for audit, not blocked.
   const filter = filterFactualOutput(result.reply);
-  const blockingSpans = filter.rejectedSpans.filter(
-    (s) => s.rule === "personal-advice-phrase" || s.rule === "unsafe-markdown-link",
-  );
   let safeReply = result.reply;
-  if (blockingSpans.length > 0) {
-    log.warn("chatbot_reply_filtered", {
-      sessionId,
-      rules: [...new Set(blockingSpans.map((s) => s.rule))],
-    });
-    safeReply =
-      "I can share factual, general information about brokers, fees, and investing concepts, " +
-      "but I can't tell you what you personally should buy or do. " +
-      GENERAL_ADVICE_WARNING +
-      " For advice tailored to your situation, consider speaking with an ASIC-registered financial adviser.";
+  // rejectedSpans only exists on the failure variant. The chatbot's GAW-closer
+  // format always trips the GAW-prefix rule, so filter.ok is ~always false; we
+  // only BLOCK on a personal-advice phrase or unsafe link, logging the rest.
+  if (!filter.ok) {
+    const blockingSpans = filter.rejectedSpans.filter(
+      (s) => s.rule === "personal-advice-phrase" || s.rule === "unsafe-markdown-link",
+    );
+    if (blockingSpans.length > 0) {
+      log.warn("chatbot_reply_filtered", {
+        sessionId,
+        rules: [...new Set(blockingSpans.map((s) => s.rule))],
+      });
+      safeReply =
+        "I can share factual, general information about brokers, fees, and investing concepts, " +
+        "but I can't tell you what you personally should buy or do. " +
+        GENERAL_ADVICE_WARNING +
+        " For advice tailored to your situation, consider speaking with an ASIC-registered financial adviser.";
+    }
   }
 
   // Persist both turns (user + assistant) for audit
