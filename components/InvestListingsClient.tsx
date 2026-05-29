@@ -28,6 +28,7 @@ import FilterPanel from "@/components/directory/FilterPanel";
 import FacetGroup from "@/components/directory/FacetGroup";
 import RangeSlider from "@/components/directory/RangeSlider";
 import FilterChips from "@/components/directory/FilterChips";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 // ─── Props ───────────────────────────────────────────────────────────
 export interface InvestListingsClientProps {
@@ -715,6 +716,7 @@ export default function InvestListingsClient({
 
       {/* Sticky compare bar — renders nothing when shortlist is empty */}
       <ListingCompareBar />
+      <ComplianceFooter />
     </div>
   );
 }

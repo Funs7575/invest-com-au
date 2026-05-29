@@ -4,6 +4,7 @@ import type { InvestSubcategory } from "@/lib/invest-categories";
 import Icon from "@/components/Icon";
 import ListingCard from "@/components/ListingCard";
 import ListingsEmptyState from "@/components/ListingsEmptyState";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 interface SubCategoryListingsViewProps {
   /** Listings that matched the sub-category filter. */
@@ -94,6 +95,7 @@ export default function SubCategoryListingsView({
           </div>
         </section>
       )}
+      <ComplianceFooter />
     </div>
   );
 }
