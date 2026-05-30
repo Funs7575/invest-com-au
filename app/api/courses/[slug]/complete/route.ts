@@ -1,5 +1,10 @@
 /**
- * POST /api/courses/[courseId]/complete
+ * POST /api/courses/[slug]/complete
+ *
+ * NOTE: the dynamic segment is named `[slug]` to match the sibling
+ * `[slug]/reviews` route — Next.js requires a single param name per path
+ * position. The value passed here is actually a course UUID (callers build
+ * the URL directly), so it's aliased back to `courseId` below.
  *
  * Marks a course enrollment as completed for the authenticated user and
  * issues a completion certificate. If the course is CPD-eligible and the
@@ -21,7 +26,7 @@ import { logger } from "@/lib/logger";
 const log = logger("courses:complete");
 
 interface RouteContext {
-  params: Promise<{ courseId: string }>;
+  params: Promise<{ slug: string }>;
 }
 
 export async function POST(req: NextRequest, ctx: RouteContext) {
@@ -41,7 +46,7 @@ export async function POST(req: NextRequest, ctx: RouteContext) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const { courseId } = await ctx.params;
+    const { slug: courseId } = await ctx.params;
 
     // ── Verify enrollment via admin client ────────────────────────────────────
     // Use admin client so we avoid RLS complications on course_enrollments.
