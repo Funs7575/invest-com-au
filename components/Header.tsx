@@ -33,7 +33,7 @@ const propertyDropdown = [
 // guides" pointer at the bottom and via /share-trading + /super.
 const investMegaMenu = [
   {
-    title: "Browse Opportunities",
+    title: "Marketplace",
     items: [
       { label: "All Opportunities", href: "/invest", desc: "Australian investment marketplace" },
       { label: "Investment Funds", href: "/invest/funds", desc: "Managed, syndicated, infrastructure, wholesale" },
@@ -193,7 +193,7 @@ const popularLinks = [
 
 const mobileNavSections = [
   {
-    title: "Browse Opportunities",
+    title: "Marketplace",
     items: [
       { name: "All Opportunities", href: "/invest" },
       { name: "Investment Funds", href: "/invest/funds" },

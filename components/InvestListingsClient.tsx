@@ -598,12 +598,16 @@ export default function InvestListingsClient({
 
         <div className="lg:grid lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8 lg:items-start">
           {/* ── Sticky LEFT facet rail (desktop / lg+ only) ──────────
-              The HTML `hidden` attribute keeps this out of the a11y tree on
-              mobile (and in jsdom — so its controls don't collide with the
-              mobile pill bar + drawer); `lg:!block` re-shows it at ≥1024px,
-              overriding the attribute. Every control is wired to the SAME
-              state + setParams the mobile chrome uses. */}
-          <aside hidden className="hidden lg:!block lg:sticky lg:top-4 self-start">
+              `hidden lg:block` (Tailwind classes — NOT the HTML `hidden`
+              attribute): in Tailwind v4 preflight `[hidden]` is `display:none
+              !important` in @layer base, which (per CSS cascade-layer important
+              reversal) can't be overridden by any `lg:block`/`lg:block!`
+              utility in @layer utilities — so the attribute would pin the rail
+              hidden at every width. The class form cascades normally. Every
+              control is wired to the SAME state + setParams the mobile chrome
+              uses; the test scopes its queries to the open dialog so the rail's
+              duplicate controls don't collide. */}
+          <aside className="hidden lg:block lg:sticky lg:top-4 self-start">
             <DesktopFilterRail
               categories={categories}
               categoryCounts={categoryCounts}
@@ -973,8 +977,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 // A v2-styled `.iv2-card` panel that hosts every filter dimension wired to
 // the SAME state + setParams the mobile pill bar / drawer use. This is a
 // LAYOUT surface only — no new filter logic. Hidden on mobile (the pill
-// bar + bottom-sheet drawer drive filters there); see the `hidden` attr +
-// `lg:!block` on the wrapping <aside>.
+// bar + bottom-sheet drawer drive filters there) via `hidden lg:block`
+// classes on the wrapping <aside>.
 interface DesktopFilterRailProps {
   categories: { slug: string; label: string }[];
   categoryCounts: Record<string, number>;

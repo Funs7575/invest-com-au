@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { InvestmentListing } from "@/lib/types";
 
@@ -62,14 +62,19 @@ describe("InvestListingsClient — filter primitives wiring", () => {
     mockReplace.mockClear();
   });
 
+  // The desktop sticky filter rail renders the SAME controls as the mobile
+  // pill-bar + drawer. In jsdom there's no CSS, so both are in the DOM — scope
+  // post-open assertions to the open role="dialog" (drawer or popover) so the
+  // rail's duplicate controls don't make getByRole ambiguous.
   it("exposes the compliance FacetGroup options via the All filters drawer", async () => {
     const user = userEvent.setup();
     render(<InvestListingsClient listings={[makeListing()]} categories={categories} />);
     // Primary facets live in the pill bar; the long tail opens from "All filters".
     await user.click(screen.getByRole("button", { name: /All filters/i }));
-    expect(screen.getByRole("checkbox", { name: /FIRB-eligible/i })).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: /SIV-complying/i })).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: /Wholesale only/i })).toBeInTheDocument();
+    const drawer = within(screen.getByRole("dialog"));
+    expect(drawer.getByRole("checkbox", { name: /FIRB-eligible/i })).toBeInTheDocument();
+    expect(drawer.getByRole("checkbox", { name: /SIV-complying/i })).toBeInTheDocument();
+    expect(drawer.getByRole("checkbox", { name: /Wholesale only/i })).toBeInTheDocument();
   });
 
   it("toggling a compliance facet writes the matching URL param", async () => {
@@ -78,7 +83,7 @@ describe("InvestListingsClient — filter primitives wiring", () => {
     // is enabled (FacetGroup disables zero-count facets — Session 5.5).
     render(<InvestListingsClient listings={[makeListing({ firb_eligible: true })]} categories={categories} />);
     await user.click(screen.getByRole("button", { name: /All filters/i }));
-    await user.click(screen.getByRole("checkbox", { name: /FIRB-eligible/i }));
+    await user.click(within(screen.getByRole("dialog")).getByRole("checkbox", { name: /FIRB-eligible/i }));
     expect(mockReplace).toHaveBeenCalled();
     expect(mockReplace.mock.calls.at(-1)?.[0]).toContain("firb=eligible");
   });
@@ -87,7 +92,7 @@ describe("InvestListingsClient — filter primitives wiring", () => {
     const user = userEvent.setup();
     render(<InvestListingsClient listings={[makeListing()]} categories={categories} />);
     await user.click(screen.getByRole("button", { name: /All filters/i }));
-    await user.click(screen.getByRole("checkbox", { name: /Featured \/ Premium only/i }));
+    await user.click(within(screen.getByRole("dialog")).getByRole("checkbox", { name: /Featured \/ Premium only/i }));
     expect(mockReplace.mock.calls.at(-1)?.[0]).toContain("featured=true");
   });
 
@@ -95,7 +100,7 @@ describe("InvestListingsClient — filter primitives wiring", () => {
     const user = userEvent.setup();
     render(<InvestListingsClient listings={[makeListing()]} categories={categories} />);
     await user.click(screen.getByRole("button", { name: /Budget/i }));
-    await user.click(screen.getByRole("button", { name: /Under \$10k/i }));
+    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: /Under \$10k/i }));
     expect(mockReplace.mock.calls.at(-1)?.[0]).toContain("price=under-10k");
   });
 
@@ -103,7 +108,7 @@ describe("InvestListingsClient — filter primitives wiring", () => {
     const user = userEvent.setup();
     render(<InvestListingsClient listings={[makeListing()]} categories={categories} />);
     await user.click(screen.getByRole("button", { name: /Quick starts/i }));
-    await user.click(screen.getByRole("button", { name: /Growth & raises/i }));
+    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: /Growth & raises/i }));
     const url = mockReplace.mock.calls.at(-1)?.[0] as string;
     // Compliance gate: the equity quick start must retain wholesale=true.
     expect(url).toContain("wholesale=true");
