@@ -14,6 +14,17 @@ const nextConfig: NextConfig = {
   // past 60s. 180s leaves headroom without masking a genuinely-broken
   // page (Next.js still retries 3 times before failing).
   staticPageGenerationTimeout: 180,
+  // Netlify mirror builds (NETLIFY=true) OOM during `next build` type-checking
+  // on Netlify's small build VMs. Skip type-check + lint ONLY on Netlify so the
+  // temporary mirror can build while Vercel is paused. Vercel + CI run with
+  // NETLIFY unset, and the gating `tsc --noEmit` CI job is unaffected — the
+  // primary pipeline keeps its strict, no-escape-hatch guarantee.
+  typescript: {
+    ignoreBuildErrors: process.env.NETLIFY === "true",
+  },
+  eslint: {
+    ignoreDuringBuilds: process.env.NETLIFY === "true",
+  },
   experimental: {
     // Reduce aggressive prefetching — only prefetch on hover, not on viewport
     optimisticClientCache: false,
