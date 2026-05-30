@@ -129,7 +129,7 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
           onChange={e => { setQuery(e.target.value); search(e.target.value); }}
           onFocus={() => results.length > 0 && setOpen(true)}
           placeholder="Suburb or postcode..."
-          className="w-full pl-8 pr-8 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30"
+          className="w-full pl-8 pr-8 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30"
         />
         {selected && (
           <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -143,7 +143,7 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
             <button
               key={p.postcode}
               onClick={() => { onSelect(p); setQuery(`${p.locality}, ${p.state}`); setOpen(false); }}
-              className="w-full text-left px-3 py-2 hover:bg-coral-50 text-sm text-slate-700 flex items-center justify-between"
+              className="w-full text-left px-3 py-2 hover:bg-amber-50 text-sm text-slate-700 flex items-center justify-between"
             >
               <span>{p.locality}, {p.state}</span>
               <span className="text-xs text-slate-400">{p.postcode}</span>
@@ -173,7 +173,7 @@ function UseMyLocation({ onLocate }: { onLocate: (lat: number, lng: number) => v
           { enableHighAccuracy: false, timeout: 10000 }
         );
       }}
-      className="flex items-center gap-1 text-[0.65rem] font-semibold text-coral-600 hover:text-coral-800 transition-colors"
+      className="flex items-center gap-1 text-[0.65rem] font-semibold text-amber-600 hover:text-amber-800 transition-colors"
     >
       <Icon name="navigation" size={12} />
       {loading ? "Locating..." : "Use my location"}
@@ -589,48 +589,66 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
   return (
     <div className="py-5 md:py-12">
-      <div className="container-custom max-w-5xl">
+      <div className="container-custom max-w-7xl">
         <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <span className="text-slate-700">{activeTypeLabel || "Find an Advisor"}</span>
         </nav>
 
-        <div className="relative overflow-hidden bg-gradient-to-br from-coral-50 via-white to-slate-50/80 border border-slate-200 rounded-2xl p-4 md:p-8 mb-4 md:mb-6 shadow-sm">
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-coral-300 via-coral-500 to-coral-300" />
-          <h1 className="text-xl md:text-4xl font-extrabold mb-1.5 md:mb-3 text-slate-900 tracking-tight">{dynamicTitle}</h1>
-          <p className="text-xs md:text-base text-slate-500 mb-4 max-w-2xl leading-relaxed">
-            <span className="md:hidden">{dynamicDescription.slice(0, 70)}…</span>
-            <span className="hidden md:inline">{dynamicDescription}</span>
-          </p>
-          <div className="flex items-center gap-1.5 md:gap-2 flex-wrap mb-4 md:mb-5">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-700">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="font-bold text-slate-900">{providerTypeCounts.all}</span> listings
+        <div className="relative overflow-hidden bg-gradient-to-br from-coral-100 via-coral-50 to-white border border-coral-200 rounded-2xl p-4 md:p-8 mb-4 md:mb-6 shadow-sm">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-coral-400 via-coral-600 to-coral-400" />
+          <div
+            className="pointer-events-none absolute -top-16 -right-12 h-48 w-48 rounded-full bg-coral-400/20 blur-3xl"
+            aria-hidden
+          />
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-2.5 flex-wrap">
+              <span className="iv2-mini flex items-center gap-1.5 text-coral-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-coral-600 animate-pulse" />
+                Advisors
+              </span>
+              <span className="iv2-pill bg-white/80 text-coral-700 border border-coral-200">
+                {providerTypeCounts.all} verified · 24h match
+              </span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
-              <Icon name="shield" size={13} className="text-coral-500" />ASIC verified
+            <h1 className="text-2xl md:text-5xl font-extrabold mb-1.5 md:mb-3 text-slate-900 tracking-tight leading-[1.05]">
+              <span className="text-coral-600">{providerTypeCounts.all}</span> {activeTypeLabel ? dynamicTitle.replace(/^Find\s+/, "").toLowerCase() : "licensed advisors."}
+              <span className="hidden md:inline"><br />Three free intros.</span>
+            </h1>
+            <p className="text-xs md:text-base text-slate-600 mb-4 max-w-2xl leading-relaxed">
+              <span className="md:hidden">{dynamicDescription.slice(0, 70)}…</span>
+              <span className="hidden md:inline">{dynamicDescription}</span>
+            </p>
+            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap mb-4 md:mb-5">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-coral-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-700">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="font-bold text-slate-900">{providerTypeCounts.all}</span> listings
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-coral-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
+                <Icon name="shield" size={13} className="text-coral-600" />ASIC verified
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-coral-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
+                <Icon name="clock" size={13} className="text-coral-600" />Free consultation
+              </div>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
-              <Icon name="clock" size={13} className="text-coral-500" />Free consultation
-            </div>
+            <GetMatchedEmbed context="advisor_directory" />
+            <p className="text-[0.65rem] md:text-xs text-slate-500 mt-3 text-center">
+              Prefer to chat?{" "}
+              <Link
+                href="/concierge?finder=advisor-finder"
+                onClick={() =>
+                  trackEvent("concierge_seed_clicked", {
+                    finder: "advisor-finder",
+                    source: "advisors_hero",
+                  })
+                }
+                className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
+              >
+                Ask the AI concierge →
+              </Link>
+            </p>
           </div>
-          <GetMatchedEmbed context="advisor_directory" />
-          <p className="text-[0.65rem] md:text-xs text-slate-500 mt-3 text-center">
-            Prefer to chat?{" "}
-            <Link
-              href="/concierge?finder=advisor-finder"
-              onClick={() =>
-                trackEvent("concierge_seed_clicked", {
-                  finder: "advisor-finder",
-                  source: "advisors_hero",
-                })
-              }
-              className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
-            >
-              Ask the AI concierge →
-            </Link>
-          </p>
         </div>
 
         {/* Compare bar */}
@@ -687,7 +705,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   }`}
                 >
                   {label}
-                  <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-coral-100 text-coral-700" : "bg-slate-200 text-slate-500"}`}>
+                  <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-500"}`}>
                     {count}
                   </span>
                 </button>
@@ -700,19 +718,19 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         <div className="flex gap-2 mb-3 md:mb-4">
           <div className="relative flex-1">
             <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input type="text" placeholder="Search name, firm, team, specialty, suburb..." value={search} onChange={e => setSearch(e.target.value)} aria-label="Search advisors" className="w-full pl-9 pr-4 py-2.5 md:py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-coral-500/30 focus:border-coral-400 transition-all" />
+            <input type="text" placeholder="Search name, firm, team, specialty, suburb..." value={search} onChange={e => setSearch(e.target.value)} aria-label="Search advisors" className="w-full pl-9 pr-4 py-2.5 md:py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 transition-all" />
             {search && <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"><Icon name="x" size={16} /></button>}
           </div>
-          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2.5 border rounded-xl text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-coral-50 border-coral-300 text-coral-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2.5 border rounded-xl text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
             <Icon name="sliders" size={16} />
             <span className="hidden md:inline">Filters</span>
-            {activeFilterCount > 0 && <span className="w-5 h-5 bg-coral-600 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{activeFilterCount}</span>}
+            {activeFilterCount > 0 && <span className="w-5 h-5 bg-amber-600 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{activeFilterCount}</span>}
           </button>
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as SortKey)}
             aria-label="Sort results"
-            className="hidden md:block px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-coral-500/30"
+            className="hidden md:block px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
           >
             {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
           </select>
@@ -724,7 +742,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             {/* Location / Near me */}
             <div>
               <label className="text-xs font-bold text-slate-700 mb-2 block flex items-center gap-1.5">
-                <Icon name="map-pin" size={13} className="text-coral-500" />
+                <Icon name="map-pin" size={13} className="text-amber-500" />
                 Location
               </label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -732,7 +750,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   <LocationSearch selected={locationSearch} onSelect={(p) => { setLocationSearch(p); if (!p) { setUserLat(null); setUserLng(null); } }} />
                 </div>
                 <div className="flex items-center gap-2">
-                  <select value={radius} onChange={e => setRadius(Number(e.target.value))} className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30" disabled={!isLocationActive}>
+                  <select value={radius} onChange={e => setRadius(Number(e.target.value))} className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={!isLocationActive}>
                     {RADIUS_OPTIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
                   </select>
                   <UseMyLocation onLocate={(lat, lng) => { setUserLat(lat); setUserLng(lng); setSortBy("distance"); setLocationSearch({ postcode: "", locality: "My location", state: "", latitude: lat, longitude: lng }); }} />
@@ -745,10 +763,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <label className="text-xs font-bold text-slate-700 mb-2 block">Advisor Type</label>
               <div className="flex flex-wrap gap-1.5">
                 {TYPE_FILTERS.map(f => (
-                  <button key={f.key} onClick={() => toggleType(f.key)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "bg-coral-600 text-white shadow-sm" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
-                    <Icon name={f.icon} size={13} className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-coral-200" : "text-slate-400"} />
+                  <button key={f.key} onClick={() => toggleType(f.key)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "bg-amber-600 text-white shadow-sm" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
+                    <Icon name={f.icon} size={13} className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"} />
                     {f.label}
-                    {typeCounts[f.key] ? <span className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-coral-200" : "text-slate-400"}>({typeCounts[f.key]})</span> : null}
+                    {typeCounts[f.key] ? <span className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"}>({typeCounts[f.key]})</span> : null}
                   </button>
                 ))}
               </div>
@@ -757,14 +775,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">State</label>
-                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30" disabled={isLocationActive}>
+                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={isLocationActive}>
                   <option value="all">All States</option>
                   {AU_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Fee Structure</label>
-                <select value={feeFilter} onChange={e => setFeeFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30">
+                <select value={feeFilter} onChange={e => setFeeFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                   <option value="all">Any</option>
                   <option value="fee-for-service">Fee for Service</option>
                   <option value="commission">Commission</option>
@@ -774,14 +792,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Advisory Firm</label>
-                <select value={firmFilter} onChange={e => setFirmFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30">
+                <select value={firmFilter} onChange={e => setFirmFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                   <option value="all">All Firms</option>
                   {allFirmNames.map(f => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Min Rating</label>
-                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30">
+                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                   <option value={0}>Any</option>
                   <option value={4.5}>4.5+ ★</option>
                   <option value={4.0}>4.0+ ★</option>
@@ -791,14 +809,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Language</label>
-                <select value={languageFilter} onChange={e => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/30">
+                <select value={languageFilter} onChange={e => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                   <option value="all">Any</option>
                   {allLanguages.map(l => <option key={l} value={l}>{l}</option>)}
                 </select>
               </div>
               <div className="flex items-end">
                 <label className="flex items-center gap-2 cursor-pointer py-2">
-                  <input type="checkbox" checked={verifiedOnly} onChange={() => setVerifiedOnly(!verifiedOnly)} className="w-4 h-4 rounded border-slate-300 text-coral-600 focus:ring-coral-500" />
+                  <input type="checkbox" checked={verifiedOnly} onChange={() => setVerifiedOnly(!verifiedOnly)} className="w-4 h-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500" />
                   <span className="text-xs font-semibold text-slate-700">Verified only</span>
                 </label>
               </div>
@@ -852,17 +870,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
             {/* Specialties */}
             <div>
-              <label className="text-xs font-bold text-slate-700 mb-2 block">Specialties {specialtyFilters.length > 0 && <span className="text-coral-600">({specialtyFilters.length} selected)</span>}</label>
+              <label className="text-xs font-bold text-slate-700 mb-2 block">Specialties {specialtyFilters.length > 0 && <span className="text-amber-600">({specialtyFilters.length} selected)</span>}</label>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
                 {allSpecialties.map(s => (
-                  <button key={s} onClick={() => toggleSpecialty(s)} className={`px-2.5 py-1 text-[0.65rem] font-medium rounded-full transition-all ${specialtyFilters.includes(s) ? "bg-coral-100 text-coral-700 border border-coral-300" : "bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100"}`}>{s}</button>
+                  <button key={s} onClick={() => toggleSpecialty(s)} className={`px-2.5 py-1 text-[0.65rem] font-medium rounded-full transition-all ${specialtyFilters.includes(s) ? "bg-amber-100 text-amber-700 border border-amber-300" : "bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100"}`}>{s}</button>
                 ))}
               </div>
             </div>
 
             <div className="flex items-center justify-between pt-2 border-t border-slate-100">
               <button onClick={clearAll} className="text-xs text-slate-500 hover:text-slate-700 font-medium">Clear all filters</button>
-              <button onClick={() => setFiltersOpen(false)} className="px-4 py-2 bg-coral-600 text-white text-xs font-bold rounded-lg hover:bg-coral-700 transition-colors">
+              <button onClick={() => setFiltersOpen(false)} className="px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">
                 {nearbyLoading ? "Searching..." : `Show ${feed.length} result${feed.length !== 1 ? "s" : ""}`}
               </button>
             </div>
@@ -873,16 +891,16 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {activeFilterCount > 0 && !filtersOpen && (
           <div className="flex flex-wrap items-center gap-1.5 mb-3">
             {isLocationActive && locationSearch && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-coral-100 text-coral-700 text-[0.65rem] font-semibold rounded-full">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
                 <Icon name="map-pin" size={11} />
                 {radius > 0 ? `${radius}km from ` : "Near "}{locationSearch.locality}
-                <button onClick={() => { setLocationSearch(null); setUserLat(null); setUserLng(null); }} className="hover:text-coral-900"><Icon name="x" size={12} /></button>
+                <button onClick={() => { setLocationSearch(null); setUserLat(null); setUserLng(null); }} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
               </span>
             )}
             {Array.from(typeFilters).map(t => (
-              <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 bg-coral-100 text-coral-700 text-[0.65rem] font-semibold rounded-full">
+              <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
                 {TYPE_FILTERS.find(f => f.key === t)?.label}
-                <button onClick={() => toggleType(t)} className="hover:text-coral-900"><Icon name="x" size={12} /></button>
+                <button onClick={() => toggleType(t)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
               </span>
             ))}
             {stateFilter !== "all" && (
@@ -898,9 +916,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </span>
             ))}
             {feeFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-coral-100 text-coral-700 text-[0.65rem] font-semibold rounded-full">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
                 {feeFilter}
-                <button onClick={() => setFeeFilter("all")} className="hover:text-coral-900"><Icon name="x" size={12} /></button>
+                <button onClick={() => setFeeFilter("all")} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
               </span>
             )}
             {firmFilter !== "all" && (
@@ -910,9 +928,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </span>
             )}
             {minRating > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-coral-100 text-coral-700 text-[0.65rem] font-semibold rounded-full">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
                 {minRating}+ ★
-                <button onClick={() => setMinRating(0)} className="hover:text-coral-900"><Icon name="x" size={12} /></button>
+                <button onClick={() => setMinRating(0)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
               </span>
             )}
             {verifiedOnly && (
@@ -993,7 +1011,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     firmFilter === firm.name ? "bg-slate-900 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
                   }`}
                 >
-                  <span className={`w-4 h-4 rounded flex items-center justify-center text-[0.5rem] font-bold shrink-0 ${firmFilter === firm.name ? "bg-white/20 text-white" : "bg-coral-100 text-coral-600"}`}>
+                  <span className={`w-4 h-4 rounded flex items-center justify-center text-[0.5rem] font-bold shrink-0 ${firmFilter === firm.name ? "bg-white/20 text-white" : "bg-amber-100 text-amber-600"}`}>
                     {firm.name.split(/\s+/).slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()}
                   </span>
                   {firm.name}
@@ -1006,33 +1024,34 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
         {/* Results */}
         {nearbyLoading ? (
-          <div className="space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white border border-slate-100 rounded-2xl p-4 md:p-5 animate-pulse shadow-sm">
-                <div className="flex gap-4">
-                  <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-slate-100 shrink-0" />
-                  <div className="flex-1 space-y-2.5 py-1">
-                    <div className="flex items-center gap-2">
-                      <div className="h-4 w-36 bg-slate-100 rounded-full" />
-                      <div className="h-4 w-16 bg-slate-50 rounded-full" />
-                    </div>
-                    <div className="h-3 w-24 bg-slate-50 rounded-full" />
-                    <div className="flex gap-1.5">
-                      <div className="h-5 w-20 bg-slate-50 rounded-full" />
-                      <div className="h-5 w-28 bg-slate-50 rounded-full" />
-                    </div>
-                    <div className="flex gap-1">
-                      <div className="h-4 w-16 bg-slate-50 rounded-full" />
-                      <div className="h-4 w-20 bg-slate-50 rounded-full" />
-                      <div className="h-4 w-14 bg-slate-50 rounded-full" />
-                    </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-white border border-slate-100 rounded-2xl overflow-hidden animate-pulse shadow-sm flex flex-col">
+                <div className="h-44 bg-slate-100" />
+                <div className="p-4 flex-1 space-y-3">
+                  <div className="flex gap-1.5">
+                    <div className="h-5 w-16 bg-slate-100 rounded-full" />
+                    <div className="h-5 w-20 bg-slate-50 rounded-full" />
+                  </div>
+                  <div className="flex gap-1.5">
+                    <div className="h-5 w-14 bg-slate-50 rounded-full" />
+                    <div className="h-5 w-16 bg-slate-50 rounded-full" />
+                    <div className="h-5 w-12 bg-slate-50 rounded-full" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="h-10 bg-slate-50 rounded-lg" />
+                    <div className="h-10 bg-slate-50 rounded-lg" />
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                    <div className="h-3 w-20 bg-slate-50 rounded-full" />
+                    <div className="h-7 w-24 bg-slate-100 rounded-lg" />
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : paginatedFeed.length > 0 ? (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {paginatedFeed.map((item, index) => {
               if (item.kind === "firm") {
                 const firm = item.firm;
@@ -1040,58 +1059,55 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   <Link
                     key={item.key}
                     href={`/firm/${firm.slug}`}
-                    className="group block bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+                    className="group flex flex-col bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
                   >
-                    <div className="h-0.5 bg-gradient-to-r from-blue-300 via-blue-500 to-blue-300" />
-                    <div className="p-4 md:p-5 flex gap-4">
-                      <div className="relative shrink-0">
-                        {firm.logo_url ? (
-                          <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl overflow-hidden ring-2 ring-slate-100 shadow-sm bg-white flex items-center justify-center">
-                            <Image src={firm.logo_url} alt={firm.name} width={80} height={80} className="w-full h-full object-contain" />
-                          </div>
-                        ) : (
-                          <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-blue-200/60 select-none">
-                            {firm.name.split(/\s+/).slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()}
-                          </div>
-                        )}
+                    {/* Logo / icon header on a blue gradient */}
+                    <div className="relative h-44 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                      <div className="absolute top-3 left-3 flex gap-1.5">
+                        <span className="shrink-0 text-[0.58rem] font-bold px-2 py-0.5 rounded-full bg-white/90 text-blue-700 flex items-center gap-1 shadow-sm">
+                          <Icon name="building" size={9} />
+                          Firm
+                        </span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-bold text-[15px] md:text-base text-slate-900 leading-tight">{firm.name}</span>
-                          <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-0.5">
-                            <Icon name="building" size={9} />
-                            Firm
-                          </span>
-                          {firm.afsl_number && (
-                            <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-coral-50 text-coral-700 border border-coral-200">
-                              AFSL {firm.afsl_number}
-                            </span>
-                          )}
+                      {firm.afsl_number && (
+                        <span className="absolute top-3 right-3 shrink-0 text-[0.58rem] font-bold px-2 py-0.5 rounded-full bg-black/45 backdrop-blur text-white border border-white/20">
+                          AFSL {firm.afsl_number}
+                        </span>
+                      )}
+                      {firm.logo_url ? (
+                        <div className="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-white/80 shadow-lg bg-white flex items-center justify-center">
+                          <Image src={firm.logo_url} alt={firm.name} width={80} height={80} className="w-full h-full object-contain" />
                         </div>
-                        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap text-[0.65rem] text-slate-500">
+                      ) : (
+                        <div className="w-20 h-20 rounded-2xl bg-white/15 ring-2 ring-white/40 flex items-center justify-center text-white font-bold text-2xl select-none">
+                          {firm.name.split(/\s+/).slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    {/* Body */}
+                    <div className="p-4 flex flex-col flex-1">
+                      <span className="font-bold text-[15px] md:text-base text-slate-900 leading-tight line-clamp-2">{firm.name}</span>
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap text-[0.65rem] text-slate-500">
+                        <span className="flex items-center gap-0.5">
+                          <Icon name="users" size={10} className="text-blue-400" />
+                          {item.memberCount} advisor{item.memberCount === 1 ? "" : "s"}
+                        </span>
+                        {firm.location_display && (
                           <span className="flex items-center gap-0.5">
-                            <Icon name="users" size={10} className="text-blue-400" />
-                            {item.memberCount} advisor{item.memberCount === 1 ? "" : "s"}
+                            <Icon name="map-pin" size={10} className="text-slate-400" />
+                            {firm.location_display}
                           </span>
-                          {firm.location_display && (
-                            <span className="flex items-center gap-0.5">
-                              <Icon name="map-pin" size={10} className="text-slate-400" />
-                              {firm.location_display}
-                            </span>
-                          )}
-                        </div>
-                        {firm.bio && (
-                          <p className="text-[0.7rem] md:text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">{firm.bio}</p>
                         )}
-                        <div className="mt-2.5 inline-flex items-center gap-1 text-xs font-bold text-blue-700">
-                          View firm profile
-                          <Icon name="arrow-right" size={11} />
-                        </div>
                       </div>
-                      <div className="shrink-0 self-center hidden md:flex ml-1">
-                        <div className="w-8 h-8 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-200 transition-all">
-                          <Icon name="chevron-right" size={14} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
-                        </div>
+                      {firm.bio && (
+                        <p className="text-[0.7rem] md:text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">{firm.bio}</p>
+                      )}
+                      <div className="mt-auto pt-3 flex items-center justify-between border-t border-slate-100">
+                        <span className="text-[0.62rem] text-slate-400">{item.memberCount} advisor{item.memberCount === 1 ? "" : "s"}</span>
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-700 group-hover:text-blue-800">
+                          View firm
+                          <Icon name="arrow-right" size={11} />
+                        </span>
                       </div>
                     </div>
                   </Link>
@@ -1103,45 +1119,44 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 return (
                   <div
                     key={item.key}
-                    className="group block bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all duration-200 overflow-hidden"
+                    className="group flex flex-col bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-emerald-200 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
                   >
-                    <div className="h-0.5 bg-gradient-to-r from-emerald-300 via-emerald-500 to-emerald-300" />
-                    <div className="p-4 md:p-5 flex gap-4">
-                      <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-200/60 shrink-0">
-                        <Icon name="users" size={28} className="text-white" />
+                    {/* Icon header on an emerald gradient */}
+                    <div className="relative h-44 bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
+                      <span className="absolute top-3 left-3 shrink-0 text-[0.58rem] font-bold px-2 py-0.5 rounded-full bg-white/90 text-emerald-700 flex items-center gap-1 shadow-sm">
+                        <Icon name="users" size={9} />
+                        Expert Team
+                      </span>
+                      <div className="w-20 h-20 rounded-2xl bg-white/15 ring-2 ring-white/40 flex items-center justify-center text-white select-none">
+                        <Icon name="users" size={34} className="text-white" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <Link href={`/teams/${team.slug}`} className="font-bold text-[15px] md:text-base text-slate-900 leading-tight hover:underline">
-                            {team.name}
-                          </Link>
-                          <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-0.5">
-                            <Icon name="users" size={9} />
-                            Expert Team
-                          </span>
-                        </div>
-                        <p className="text-[0.65rem] text-slate-500 mt-1 capitalize">
-                          {team.team_category.replace(/_/g, " ")} · {team.team_type.replace(/_/g, " ")}
-                          {team.location_state ? ` · ${team.location_state}` : ""}
-                        </p>
-                        {team.description && (
-                          <p className="text-[0.7rem] md:text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">{team.description}</p>
-                        )}
-                        <div className="flex gap-2 mt-2.5">
-                          <Link
-                            href={`/teams/${team.slug}`}
-                            className="text-[0.7rem] md:text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-md px-3 py-1.5 hover:border-slate-300"
-                          >
-                            View team
-                          </Link>
-                          <Link
-                            href={`/briefs/new?team=${encodeURIComponent(team.slug)}`}
-                            className="text-[0.7rem] md:text-xs font-bold text-slate-900 bg-coral-500 hover:bg-coral-400 rounded-md px-3 py-1.5 inline-flex items-center gap-1"
-                          >
-                            Create brief
-                            <Icon name="arrow-right" size={11} />
-                          </Link>
-                        </div>
+                    </div>
+                    {/* Body */}
+                    <div className="p-4 flex flex-col flex-1">
+                      <Link href={`/teams/${team.slug}`} className="font-bold text-[15px] md:text-base text-slate-900 leading-tight hover:underline line-clamp-2">
+                        {team.name}
+                      </Link>
+                      <p className="text-[0.65rem] text-slate-500 mt-1 capitalize">
+                        {team.team_category.replace(/_/g, " ")} · {team.team_type.replace(/_/g, " ")}
+                        {team.location_state ? ` · ${team.location_state}` : ""}
+                      </p>
+                      {team.description && (
+                        <p className="text-[0.7rem] md:text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">{team.description}</p>
+                      )}
+                      <div className="flex gap-2 mt-auto pt-3 border-t border-slate-100">
+                        <Link
+                          href={`/teams/${team.slug}`}
+                          className="flex-1 text-center text-[0.7rem] md:text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-lg px-3 py-2 hover:border-slate-300"
+                        >
+                          View team
+                        </Link>
+                        <Link
+                          href={`/briefs/new?team=${encodeURIComponent(team.slug)}`}
+                          className="flex-1 text-center text-[0.7rem] md:text-xs font-bold text-white bg-coral-600 hover:bg-coral-700 rounded-lg px-3 py-2 inline-flex items-center justify-center gap-1"
+                        >
+                          Create brief
+                          <Icon name="arrow-right" size={11} />
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -1150,231 +1165,202 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
               const pro = item.pro;
               const isFeatured = !!(pro.featured_until && new Date(pro.featured_until) > new Date());
+              const initials = pro.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+              const feeText = pro.fee_description
+                ? pro.fee_description
+                : pro.flat_fee_cents
+                  ? `${formatCents(pro.flat_fee_cents)} flat`
+                  : pro.hourly_rate_cents
+                    ? `${formatCents(pro.hourly_rate_cents)}/hr`
+                    : pro.aum_percentage
+                      ? `${pro.aum_percentage}% AUM`
+                      : "On enquiry";
+              const availability = pro.availability_status ?? "open";
               return (
-                <Link key={item.key} href={`/advisor/${pro.slug}`} className={`group block bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
+                <Link key={item.key} href={`/advisor/${pro.slug}`} className={`group flex flex-col bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
                   isFeatured
                     ? "shadow-md shadow-coral-50 hover:shadow-xl hover:shadow-coral-100/50 hover:-translate-y-0.5 ring-1 ring-coral-200/80 border border-coral-200"
-                    : "shadow-sm border border-slate-100 hover:shadow-md hover:shadow-slate-100 hover:-translate-y-0.5 hover:border-slate-200"
+                    : "shadow-sm border border-slate-100 hover:shadow-lg hover:shadow-slate-100 hover:-translate-y-0.5 hover:border-slate-200"
                 }`}>
-                  {isFeatured && (
-                    <div className="h-0.5 bg-gradient-to-r from-coral-300 via-coral-500 to-coral-300" />
-                  )}
-                  <div className="p-4 md:p-5 flex gap-4">
-                    {/* Photo */}
-                    <div className="relative shrink-0">
-                      {pro.photo_url ? (
-                        <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl overflow-hidden ring-2 ring-slate-100 shadow-sm">
-                          <Image
-                            src={pro.photo_url}
-                            alt={pro.name}
-                            width={80}
-                            height={80}
-                            className="w-full h-full object-cover"
-                            priority={index < 3}
-                            placeholder="blur"
-                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
-                          />
-                        </div>
-                      ) : (
-                        <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-coral-200/60 select-none">
-                          {pro.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
-                        </div>
+                  {/* Photo-led header */}
+                  <div className="relative h-44 bg-ink-900 overflow-hidden">
+                    {pro.photo_url ? (
+                      <Image
+                        src={pro.photo_url}
+                        alt={pro.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 320px"
+                        className="object-cover"
+                        priority={index < 4}
+                        placeholder="blur"
+                        blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-white font-extrabold text-4xl select-none">
+                        {initials}
+                      </div>
+                    )}
+                    {/* legibility scrim */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/70" />
+
+                    {/* top-left status pills */}
+                    <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[60%]">
+                      {isFeatured && (
+                        <span
+                          title={SPONSORED_DISCLOSURE_SHORT}
+                          className="shrink-0 text-[0.58rem] font-bold px-2 py-0.5 rounded-full bg-coral-600 text-white flex items-center gap-1 shadow-sm cursor-help"
+                        >
+                          <Icon name="star" size={9} />
+                          Featured · Paid
+                        </span>
                       )}
-                      {pro.verified && (
-                        <div className="absolute -bottom-1 -right-1 w-4.5 h-4.5 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
-                          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </div>
+                      {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
+                        <span className="shrink-0 text-[0.58rem] font-bold px-2 py-0.5 rounded-full bg-black/45 backdrop-blur text-white border border-white/20 flex items-center gap-1">
+                          <Icon name="zap" size={9} className="text-emerald-300" />
+                          Fast reply
+                        </span>
                       )}
                     </div>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      {/* Name + badges row */}
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0 flex-1">
-                          {/* Name on its own line, above firm — never inline with the badge cluster */}
-                          <span className="block font-bold text-[15px] md:text-base text-slate-900 leading-tight truncate">{pro.name}</span>
-                          {pro.firm_name && (
-                            <p className="text-[0.68rem] md:text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                              <Icon name="building" size={10} className="text-slate-400 shrink-0" />
-                              <span className="truncate">{pro.firm_name}</span>
-                            </p>
-                          )}
-                          <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
-                            {pro.verified && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-0.5">
-                                <svg className="w-2 h-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                                Verified
-                              </span>
-                            )}
-                            <VerifiedBadge
-                              method={pro.verification_method ?? null}
-                              abn={pro.abn ?? null}
-                              afsl={pro.afsl_number ?? null}
-                              compact
-                            />
-                            {isFeatured && (
-                              <span
-                                title={SPONSORED_DISCLOSURE_SHORT}
-                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-coral-600 text-white flex items-center gap-0.5 shadow-sm cursor-help"
-                              >
-                                <Icon name="star" size={9} />
-                                Featured · Paid
-                              </span>
-                            )}
-                            {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-0.5">
-                                <Icon name="zap" size={9} className="text-emerald-500" />
-                                Fast reply
-                              </span>
-                            )}
-                            {/* PR queue #12.5 — eligibility badge per visitor's intent country */}
-                            <EligibilityBadge entity={pro} intentCountry={intentCountry} compact />
-                            {pro.accepts_international_clients && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">🌏 Intl</span>
-                            )}
-                            {pro.firb_specialist && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">FIRB</span>
-                            )}
-                            {/* Availability status badge */}
-                            {(pro.availability_status === 'open' || !pro.availability_status) && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 border border-green-200 flex items-center gap-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
-                                Accepting Clients
-                              </span>
-                            )}
-                            {pro.availability_status === 'waitlist' && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200 flex items-center gap-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-                                Waitlist Open
-                              </span>
-                            )}
-                            {pro.availability_status === 'closed' && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200 flex items-center gap-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
-                                Not Taking New Clients
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <BookmarkButton
-                            type="advisor"
-                            ref={pro.slug}
-                            label={pro.name}
-                            className="shrink-0 p-1.5 rounded-lg text-slate-300 hover:text-coral-600 hover:bg-coral-50 transition-colors"
-                          />
-                          <button
-                            onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
-                            disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
-                            title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
-                            className={`shrink-0 p-1.5 rounded-lg transition-colors ${inShortlist(pro.slug) ? "text-violet-600 bg-violet-50 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "text-slate-200 cursor-not-allowed" : "text-slate-300 hover:text-violet-500 hover:bg-violet-50"}`}
-                          >
-                            <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
-                          </button>
-                        </div>
-                      </div>
+                    {/* top-right rating + actions */}
+                    <div className="absolute top-3 right-3 flex items-center gap-1">
+                      {pro.rating > 0 && pro.review_count > 0 && (
+                        <span className="shrink-0 text-[0.62rem] font-bold px-2 py-0.5 rounded-full bg-black/55 backdrop-blur text-white border border-white/20 flex items-center gap-1">
+                          <svg className="w-2.5 h-2.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                          {pro.rating}
+                          <span className="opacity-70 font-semibold">({pro.review_count})</span>
+                        </span>
+                      )}
+                      <BookmarkButton
+                        type="advisor"
+                        ref={pro.slug}
+                        label={pro.name}
+                        className="shrink-0 p-1.5 rounded-lg bg-black/45 backdrop-blur text-white/90 hover:text-white hover:bg-black/60 transition-colors"
+                      />
+                      <button
+                        onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
+                        disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
+                        title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
+                        className={`shrink-0 p-1.5 rounded-lg backdrop-blur transition-colors ${inShortlist(pro.slug) ? "text-white bg-violet-600 hover:bg-violet-700" : shortlistCount >= shortlistMax ? "text-white/40 bg-black/30 cursor-not-allowed" : "text-white/90 bg-black/45 hover:text-white hover:bg-black/60"}`}
+                      >
+                        <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
+                      </button>
+                    </div>
 
-                      {/* Type + Location row */}
-                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        <span className="shrink-0 text-[0.65rem] text-coral-700 bg-coral-50 border border-coral-100 px-2 py-0.5 rounded-full font-semibold">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
-                        {pro.account_type === "firm_member" ? (
-                          <span className="shrink-0 text-[0.6rem] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                            <Icon name="users" size={9} className="text-blue-400" />Firm
+                    {/* bottom identity overlay */}
+                    <div className="absolute bottom-2.5 left-3 right-3 text-white">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-bold text-base leading-tight truncate drop-shadow">{pro.name}</span>
+                        {pro.verified && (
+                          <span className="shrink-0 w-4 h-4 bg-emerald-500 rounded-full border border-white/80 flex items-center justify-center shadow-sm" title="Verified">
+                            <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
                           </span>
-                        ) : !pro.firm_name ? (
-                          <span className="shrink-0 text-[0.6rem] font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-full">Independent</span>
-                        ) : null}
+                        )}
+                      </div>
+                      <div className="text-[0.68rem] text-white/85 mt-0.5 flex items-center gap-1 truncate">
+                        <span className="font-semibold">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
                         {pro.location_display && (
-                          <span className="text-[0.65rem] text-slate-500 flex items-center gap-0.5">
-                            <Icon name="map-pin" size={10} className="text-slate-400" />{pro.location_display}
-                          </span>
+                          <>
+                            <span className="opacity-60">·</span>
+                            <Icon name="map-pin" size={10} className="text-white/70 shrink-0" />
+                            <span className="truncate">{pro.location_display}</span>
+                          </>
                         )}
                         {pro.distance_km !== undefined && pro.distance_km !== null && (
-                          <span className="shrink-0 text-[0.65rem] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">
-                            {pro.distance_km < 1 ? "<1 km" : `${pro.distance_km} km`}
-                          </span>
+                          <span className="shrink-0 opacity-80">· {pro.distance_km < 1 ? "<1 km" : `${pro.distance_km} km`}</span>
                         )}
                       </div>
+                    </div>
+                  </div>
 
-                      {/* Rating */}
-                      {pro.rating > 0 && pro.review_count > 0 && (
-                        <div className="flex items-center gap-1.5 mt-1.5">
-                          <div className="flex items-center gap-0.5">
-                            {[1, 2, 3, 4, 5].map(star => (
-                              <svg key={star} className={`w-3 h-3 md:w-3.5 md:h-3.5 ${star <= Math.round(pro.rating) ? "text-amber-400" : "text-slate-200"}`} fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                              </svg>
-                            ))}
-                          </div>
-                          <span className="text-[0.68rem] md:text-xs font-semibold text-slate-700">{pro.rating}</span>
-                          <span className="text-[0.62rem] text-slate-400">({pro.review_count} review{pro.review_count !== 1 ? "s" : ""})</span>
-                        </div>
+                  {/* Body */}
+                  <div className="p-3.5 md:p-4 flex flex-col flex-1">
+                    {/* Badge row */}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <VerifiedBadge
+                        method={pro.verification_method ?? null}
+                        abn={pro.abn ?? null}
+                        afsl={pro.afsl_number ?? null}
+                        compact
+                      />
+                      {/* PR queue #12.5 — eligibility badge per visitor's intent country */}
+                      <EligibilityBadge entity={pro} intentCountry={intentCountry} compact />
+                      {pro.accepts_international_clients && (
+                        <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">🌏 Intl</span>
                       )}
-
-                      {/* Fee description */}
-                      {pro.fee_description && (
-                        <p className="text-[0.65rem] md:text-xs text-slate-500 mt-1.5 line-clamp-1 leading-relaxed">{pro.fee_description}</p>
+                      {pro.firb_specialist && (
+                        <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">FIRB</span>
                       )}
-
-                      {/* Structured fees */}
-                      {(pro.hourly_rate_cents || pro.flat_fee_cents || pro.aum_percentage || pro.initial_consultation_free) && (
-                        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                          {pro.hourly_rate_cents && (
-                            <span className="text-[0.6rem] text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
-                              {formatCents(pro.hourly_rate_cents)}/hr
-                            </span>
-                          )}
-                          {pro.flat_fee_cents && (
-                            <span className="text-[0.6rem] text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
-                              {formatCents(pro.flat_fee_cents)} flat
-                            </span>
-                          )}
-                          {pro.aum_percentage && (
-                            <span className="text-[0.6rem] text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
-                              {pro.aum_percentage}% AUM
-                            </span>
-                          )}
-                          {pro.initial_consultation_free && (
-                            <span className="text-[0.6rem] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">
-                              Free consult
-                            </span>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Specialties */}
-                      {pro.specialties.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {pro.specialties.slice(0, 4).map(s => (
-                            <span key={s} className={`text-[0.6rem] font-medium px-2 py-0.5 rounded-full border ${
-                              specialtyFilters.includes(s)
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                : "bg-slate-50 text-slate-500 border-slate-200"
-                            }`}>{s}</span>
-                          ))}
-                          {pro.specialties.length > 4 && (
-                            <span className="text-[0.6rem] text-slate-400 self-center">+{pro.specialties.length - 4} more</span>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Offer */}
-                      {pro.offer_active && pro.offer_text && (
-                        <div className="mt-2 bg-gradient-to-r from-coral-50 to-coral-50/0 border border-coral-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
-                          <Icon name="tag" size={11} className="text-coral-500 shrink-0" />
-                          <span className="text-[0.6rem] md:text-[0.65rem] font-bold text-coral-700 truncate">{pro.offer_text}</span>
-                        </div>
+                      {pro.account_type === "firm_member" && pro.firm_name ? (
+                        <span className="shrink-0 text-[0.58rem] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded-full flex items-center gap-0.5 max-w-[10rem]">
+                          <Icon name="building" size={9} className="text-blue-400 shrink-0" />
+                          <span className="truncate">{pro.firm_name}</span>
+                        </span>
+                      ) : !pro.firm_name ? (
+                        <span className="shrink-0 text-[0.58rem] font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-full">Independent</span>
+                      ) : (
+                        <span className="shrink-0 text-[0.58rem] font-semibold text-slate-600 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-full flex items-center gap-0.5 max-w-[10rem]">
+                          <Icon name="building" size={9} className="text-slate-400 shrink-0" />
+                          <span className="truncate">{pro.firm_name}</span>
+                        </span>
                       )}
                     </div>
 
-                    {/* View profile CTA */}
-                    <div className="shrink-0 self-center hidden md:flex ml-1">
-                      <span className="inline-flex items-center gap-1 rounded-lg bg-coral-600 px-3.5 py-2 text-xs font-semibold text-white whitespace-nowrap shadow-sm transition-colors group-hover:bg-coral-700">
+                    {/* Specialties */}
+                    {pro.specialties.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2.5">
+                        {pro.specialties.slice(0, 3).map(s => (
+                          <span key={s} className={`text-[0.6rem] font-medium px-2 py-0.5 rounded-full border ${
+                            specialtyFilters.includes(s)
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : "bg-slate-50 text-slate-500 border-slate-200"
+                          }`}>{s}</span>
+                        ))}
+                        {pro.specialties.length > 3 && (
+                          <span className="text-[0.6rem] text-slate-400 self-center">+{pro.specialties.length - 3}</span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Fees + Availability stat grid */}
+                    <div className="grid grid-cols-2 gap-2 mt-3">
+                      <div className="rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1.5">
+                        <div className="iv2-mini text-[0.55rem] text-slate-400">Fees</div>
+                        <div className="text-[0.68rem] font-bold text-slate-800 truncate" title={feeText}>{feeText}</div>
+                      </div>
+                      <div className="rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1.5">
+                        <div className="iv2-mini text-[0.55rem] text-slate-400">Availability</div>
+                        <div className={`text-[0.68rem] font-bold flex items-center gap-1 ${
+                          availability === "open" ? "text-emerald-600" : availability === "waitlist" ? "text-amber-600" : "text-red-600"
+                        }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                            availability === "open" ? "bg-emerald-500" : availability === "waitlist" ? "bg-amber-500" : "bg-red-500"
+                          }`} />
+                          {availability === "open" ? "Accepting" : availability === "waitlist" ? "Waitlist" : "Closed"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Offer */}
+                    {pro.offer_active && pro.offer_text && (
+                      <div className="mt-2.5 bg-gradient-to-r from-coral-50 to-coral-50/0 border border-coral-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
+                        <Icon name="tag" size={11} className="text-coral-600 shrink-0" />
+                        <span className="text-[0.6rem] md:text-[0.65rem] font-bold text-coral-700 truncate">{pro.offer_text}</span>
+                      </div>
+                    )}
+
+                    {/* Footer: AFSL + View profile CTA */}
+                    <div className="mt-auto pt-3 flex items-center justify-between gap-2 border-t border-slate-100">
+                      <span className="text-[0.6rem] text-slate-400 truncate">
+                        {pro.afsl_number ? `AFSL ${pro.afsl_number}` : " "}
+                      </span>
+                      <span className="shrink-0 inline-flex items-center gap-1 rounded-lg bg-coral-600 px-3 py-1.5 text-[0.7rem] font-bold text-white whitespace-nowrap shadow-sm transition-colors group-hover:bg-coral-700">
                         View profile
-                        <Icon name="chevron-right" size={13} />
+                        <Icon name="arrow-right" size={11} />
                       </span>
                     </div>
                   </div>
@@ -1390,13 +1376,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <p className="text-xs text-slate-400 mb-3">
                 {isLocationActive ? `No advisors within ${radius}km. Try a larger radius.` : search ? `No results for "${search}".` : "Try adjusting your filters."}
               </p>
-              <button onClick={clearAll} className="text-xs text-coral-600 font-semibold hover:text-coral-800">Clear all filters</button>
+              <button onClick={clearAll} className="text-xs text-amber-600 font-semibold hover:text-amber-800">Clear all filters</button>
             </div>
             {/* Alert capture */}
-            <div className="px-5 py-5 bg-coral-50">
+            <div className="px-5 py-5 bg-amber-50">
               <div className="flex items-start gap-3 mb-3">
-                <div className="w-8 h-8 bg-coral-100 rounded-lg flex items-center justify-center shrink-0">
-                  <Icon name="bell" size={16} className="text-coral-600" />
+                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                  <Icon name="bell" size={16} className="text-amber-600" />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-800">Get notified when one joins</p>
@@ -1415,13 +1401,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     value={alertEmail}
                     onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
                     placeholder="your@email.com"
-                    className="flex-1 px-3 py-2 border border-coral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-400 bg-white"
+                    className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
                     onKeyDown={(e) => e.key === "Enter" && saveAlert()}
                   />
                   <button
                     onClick={saveAlert}
                     disabled={alertStatus === "submitting"}
-                    className="px-4 py-2 bg-coral-600 text-white text-sm font-semibold rounded-lg hover:bg-coral-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                    className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
                   >
                     {alertStatus === "submitting" ? "Saving..." : "Notify Me"}
                   </button>
@@ -1442,7 +1428,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               else if (page <= 4) pn = i + 1;
               else if (page >= totalPages - 3) pn = totalPages - 6 + i;
               else pn = page - 3 + i;
-              return <button key={pn} onClick={() => setPage(pn)} className={`w-9 h-9 text-xs font-semibold rounded-lg transition-all ${page === pn ? "bg-coral-600 text-white" : "border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>{pn}</button>;
+              return <button key={pn} onClick={() => setPage(pn)} className={`w-9 h-9 text-xs font-semibold rounded-lg transition-all ${page === pn ? "bg-amber-600 text-white" : "border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>{pn}</button>;
             })}
             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-3 py-2 text-xs font-semibold border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">Next {"\u2192"}</button>
           </div>
@@ -1468,10 +1454,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </ul>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-gradient-to-br from-coral-50/80 via-white to-white border border-coral-100 rounded-2xl p-5 md:p-6 shadow-sm">
+              <div className="bg-gradient-to-br from-amber-50/80 via-white to-white border border-amber-100 rounded-2xl p-5 md:p-6 shadow-sm">
                 <div className="flex items-center gap-2.5 mb-3">
-                  <div className="w-8 h-8 rounded-xl bg-coral-100 flex items-center justify-center shrink-0">
-                    <Icon name="dollar-sign" size={15} className="text-coral-700" />
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                    <Icon name="dollar-sign" size={15} className="text-amber-700" />
                   </div>
                   <h2 className="text-base md:text-lg font-extrabold text-slate-900">Cost Guide</h2>
                 </div>
@@ -1499,7 +1485,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 <details key={i} className="group">
                   <summary className="px-4 py-3.5 md:px-5 md:py-4 font-semibold text-xs md:text-sm text-slate-800 cursor-pointer hover:bg-slate-50/80 transition-colors list-none flex items-center justify-between gap-3">
                     <span>{faq.q}</span>
-                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-400 group-open:bg-coral-50 group-open:border-coral-200 group-open:text-coral-600 transition-all">
+                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-400 group-open:bg-amber-50 group-open:border-amber-200 group-open:text-amber-600 transition-all">
                       <svg className="w-2.5 h-2.5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                     </span>
                   </summary>
@@ -1528,9 +1514,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               { title: "Crypto Advisor", href: "/advisor-guides/how-to-choose-crypto-advisor", icon: "bitcoin" },
               { title: "Debt Counsellor", href: "/advisor-guides/how-to-choose-debt-counsellor", icon: "credit-card" },
             ].map(g => (
-              <Link key={g.href} href={g.href} className="group flex items-center gap-2.5 p-3 bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md hover:border-coral-100 hover:bg-coral-50/30 transition-all">
-                <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:bg-coral-100 group-hover:border-coral-200 transition-all">
-                  <Icon name={g.icon} size={14} className="text-slate-500 group-hover:text-coral-600 transition-colors" />
+              <Link key={g.href} href={g.href} className="group flex items-center gap-2.5 p-3 bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md hover:border-amber-100 hover:bg-amber-50/30 transition-all">
+                <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:bg-amber-100 group-hover:border-amber-200 transition-all">
+                  <Icon name={g.icon} size={14} className="text-slate-500 group-hover:text-amber-600 transition-colors" />
                 </div>
                 <span className="text-xs font-semibold text-slate-600 group-hover:text-slate-800 leading-tight">How to Choose: {g.title}</span>
               </Link>
@@ -1539,10 +1525,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         </div>
 
         {/* Saved search / alert widget */}
-        <div className="mt-6 md:mt-8 bg-gradient-to-br from-coral-50/80 via-white to-white border border-coral-100 rounded-2xl p-4 md:p-6 shadow-sm">
+        <div className="mt-6 md:mt-8 bg-gradient-to-br from-amber-50/80 via-white to-white border border-amber-100 rounded-2xl p-4 md:p-6 shadow-sm">
           <div className="flex items-start gap-3 mb-3.5">
-            <div className="w-10 h-10 bg-coral-100 border border-coral-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-coral-100">
-              <Icon name="bell" size={18} className="text-coral-600" />
+            <div className="w-10 h-10 bg-amber-100 border border-amber-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-amber-100">
+              <Icon name="bell" size={18} className="text-amber-600" />
             </div>
             <div>
               <h3 className="text-sm font-extrabold text-slate-800">Can&apos;t find the right advisor?</h3>
@@ -1561,13 +1547,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 value={alertEmail}
                 onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
                 placeholder="your@email.com"
-                className="flex-1 px-3 py-2 border border-coral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-coral-400 bg-white"
+                className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
                 onKeyDown={(e) => e.key === "Enter" && saveAlert()}
               />
               <button
                 onClick={saveAlert}
                 disabled={alertStatus === "submitting"}
-                className="px-4 py-2 bg-coral-600 text-white text-sm font-semibold rounded-lg hover:bg-coral-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
               >
                 {alertStatus === "submitting" ? "Saving..." : "Set Alert"}
               </button>
@@ -1579,11 +1565,11 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         <div className="mt-6 md:mt-10 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 md:p-8 text-center shadow-xl shadow-slate-900/10">
           <div className="absolute inset-0 opacity-5" style={{backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '32px 32px'}} />
           <div className="relative">
-            <p className="text-[0.65rem] font-bold uppercase tracking-widest text-coral-400 mb-2">For Professionals</p>
+            <p className="text-[0.65rem] font-bold uppercase tracking-widest text-amber-400 mb-2">For Professionals</p>
             <h3 className="text-base md:text-xl font-extrabold text-white mb-1.5 md:mb-2">Are you a financial professional?</h3>
             <p className="text-xs md:text-sm text-slate-400 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-coral-600 text-white text-sm font-bold rounded-xl hover:bg-coral-400 transition-colors shadow-lg shadow-coral-500/25">
+              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/25">
                 Get Listed Free
                 <Icon name="arrow-right" size={15} />
               </Link>
