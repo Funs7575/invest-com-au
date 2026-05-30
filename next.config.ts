@@ -22,6 +22,38 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: process.env.NETLIFY === "true",
   },
+  // Netlify bundles the whole server into ONE function with a hard 250MB limit,
+  // which this app blows past. Trim build-only / test-only / client-only /
+  // CDN-handled deps out of the function trace so it fits. NETLIFY-gated so
+  // Vercel's trace is untouched (Vercel DOES need sharp in-function for
+  // next/image; Netlify serves /_next/image via its own Image CDN instead).
+  // Biggest offenders excluded: @next/swc (~200MB of build-time Rust binaries),
+  // @img/sharp (~33MB), posthog-js (client-only, ~37MB), typescript (~23MB),
+  // plus test + CSS/JS build tooling. Nothing runtime-critical (next, @sentry,
+  // @opentelemetry, yahoo-finance2, @anthropic-ai, supabase) is excluded.
+  ...(process.env.NETLIFY === "true"
+    ? {
+        outputFileTracingExcludes: {
+          "*": [
+            "node_modules/@next/swc-*/**/*",
+            "node_modules/@img/**/*",
+            "node_modules/sharp/**/*",
+            "node_modules/posthog-js/**/*",
+            "node_modules/typescript/**/*",
+            "node_modules/playwright-core/**/*",
+            "node_modules/jsdom/**/*",
+            "node_modules/@testing-library/**/*",
+            "node_modules/@esbuild/**/*",
+            "node_modules/esbuild/**/*",
+            "node_modules/lightningcss-*/**/*",
+            "node_modules/@babel/**/*",
+            "node_modules/@typescript-eslint/**/*",
+            "node_modules/eslint/**/*",
+            "node_modules/terser/**/*",
+          ],
+        },
+      }
+    : {}),
   experimental: {
     // Reduce aggressive prefetching — only prefetch on hover, not on viewport
     optimisticClientCache: false,
