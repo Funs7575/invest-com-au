@@ -181,6 +181,46 @@ function UseMyLocation({ onLocate }: { onLocate: (lat: number, lng: number) => v
   );
 }
 
+/**
+ * Advisor photo for the photo-led card header. Seed photos come from a
+ * third-party CDN (randomuser.me) that can be unreachable on some networks;
+ * on a load error we fall back to the coral initials tile so the header
+ * never renders blank. Also used when a professional has no photo_url.
+ */
+function AdvisorPhoto({
+  src,
+  alt,
+  initials,
+  priority,
+}: {
+  src: string | null | undefined;
+  alt: string;
+  initials: string;
+  priority: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) {
+    return (
+      <div className="absolute inset-0 bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-white font-extrabold text-4xl select-none">
+        {initials}
+      </div>
+    );
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 320px"
+      className="object-cover"
+      priority={priority}
+      onError={() => setFailed(true)}
+      placeholder="blur"
+      blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
+    />
+  );
+}
+
 export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [], editorial, firms = [], firmMemberCounts = {}, expertTeams = [], intentCountry = null }: {
   professionals: Professional[];
   initialType?: ProfessionalType;
@@ -1184,22 +1224,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 }`}>
                   {/* Photo-led header */}
                   <div className="relative h-44 bg-ink-900 overflow-hidden">
-                    {pro.photo_url ? (
-                      <Image
-                        src={pro.photo_url}
-                        alt={pro.name}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 320px"
-                        className="object-cover"
-                        priority={index < 4}
-                        placeholder="blur"
-                        blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-white font-extrabold text-4xl select-none">
-                        {initials}
-                      </div>
-                    )}
+                    <AdvisorPhoto
+                      src={pro.photo_url}
+                      alt={pro.name}
+                      initials={initials}
+                      priority={index < 4}
+                    />
                     {/* legibility scrim */}
                     <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/70" />
 
