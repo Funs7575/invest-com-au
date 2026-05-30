@@ -22,9 +22,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: process.env.NETLIFY === "true",
   },
-  eslint: {
-    ignoreDuringBuilds: process.env.NETLIFY === "true",
-  },
   experimental: {
     // Reduce aggressive prefetching — only prefetch on hover, not on viewport
     optimisticClientCache: false,
