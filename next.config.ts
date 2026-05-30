@@ -35,6 +35,18 @@ const nextConfig: NextConfig = {
     ? {
         outputFileTracingExcludes: {
           "*": [
+            // Project dirs the serverless function never needs — the REAL bloat:
+            // e2e/ alone is ~119MB of committed Playwright visual snapshots.
+            // (coverage/ is gitignored so it's local-only, but exclude anyway.)
+            "e2e/**/*",
+            "coverage/**/*",
+            "__tests__/**/*",
+            "docs/**/*",
+            "scripts/**/*",
+            "supabase/**/*",
+            "tsconfig.tsbuildinfo",
+            ".next/cache/**/*",
+            // Build-only / client-only / CDN-handled node_modules:
             "node_modules/@next/swc-*/**/*",
             "node_modules/@img/**/*",
             "node_modules/sharp/**/*",
