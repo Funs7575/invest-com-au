@@ -277,7 +277,7 @@ const mobileSections = [
     ],
   },
   {
-    title: "Browse Opportunities",
+    title: "Marketplace",
     items: [
       { name: "All Opportunities", href: "/invest" },
       { name: "Investment Funds", href: "/invest/funds" },
@@ -601,7 +601,7 @@ export function Navigation() {
                 to /quotes/post for visitors who land on Experts first. */}
 
             {/* ─── 4. Browse Opportunities ─────────────────────────────────────── */}
-            <MegaMenuDropdown label="Browse Opportunities" isActive={isListingsActive} menuWidth="min-w-[800px]">
+            <MegaMenuDropdown label="Marketplace" isActive={isListingsActive} menuWidth="min-w-[800px]">
               <div className="p-5">
                 <Link
                   href="/invest"
