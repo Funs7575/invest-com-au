@@ -9,7 +9,6 @@ import {
   TICKET_BUCKETS,
   ticketBucketByKey,
   INVESTOR_TYPES,
-  ALL_LISTING_KINDS,
   type InvestorType,
   deriveListingKind,
   listingKindMeta,
@@ -539,11 +538,11 @@ export default function InvestListingsClient({
             />
           </div>
 
-          {/* Primary facet pill-bar + active-filter chips (compliance-safe).
-              Reads/writes the SAME URL params as the "All filters" drawer.
-              Desktop (lg+) drives filters from the sticky left rail below,
-              so the pill bar is mobile/tablet-only there. */}
-          <div className="lg:hidden">
+          {/* Primary facet pill-bar + active-filter chips (compliance-safe),
+              shown on ALL breakpoints — this is now the single filter
+              surface; the long-tail facets open from its "All filters"
+              button. Reads/writes the SAME URL params as the drawer. */}
+          <div>
             <MarketplaceFilterBar
               params={new URLSearchParams(searchParams.toString())}
               setParams={setParams}
@@ -563,13 +562,12 @@ export default function InvestListingsClient({
         </div>
       </div>
 
-      {/* ── Two-column marketplace: sticky filter rail (lg+) + results ── */}
+      {/* ── Marketplace results — all filters live in the top bar above ── */}
       <div className="container-custom py-5 md:py-8">
-        {/* Long-tail facets — bottom-sheet drawer on mobile/tablet, opened
-            from the pill bar's "All filters" button. On lg+ the same filter
-            dimensions live in the sticky left rail, so the drawer is the
-            small-screen entry point only. Both read/write the SAME URL
-            params, so the filter pipeline downstream is untouched. */}
+        {/* Long-tail facets — slide-over drawer (all breakpoints), opened from
+            the top bar's "All filters" button. Reads/writes the SAME URL
+            params as the pill bar, so the filter pipeline downstream is
+            untouched. */}
         <FilterPanel
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
@@ -596,45 +594,7 @@ export default function InvestListingsClient({
               />
         </FilterPanel>
 
-        <div className="lg:grid lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-8 lg:items-start">
-          {/* ── Sticky LEFT facet rail (desktop / lg+ only) ──────────
-              `hidden lg:block` (Tailwind classes — NOT the HTML `hidden`
-              attribute): in Tailwind v4 preflight `[hidden]` is `display:none
-              !important` in @layer base, which (per CSS cascade-layer important
-              reversal) can't be overridden by any `lg:block`/`lg:block!`
-              utility in @layer utilities — so the attribute would pin the rail
-              hidden at every width. The class form cascades normally. Every
-              control is wired to the SAME state + setParams the mobile chrome
-              uses; the test scopes its queries to the open dialog so the rail's
-              duplicate controls don't collide. */}
-          <aside className="hidden lg:block lg:sticky lg:top-4 self-start">
-            <DesktopFilterRail
-              categories={categories}
-              categoryCounts={categoryCounts}
-              kindCounts={kindCounts}
-              stateCounts={stateCounts}
-              complianceCounts={complianceCounts}
-              activeCategory={lockedCategory ? "" : activeCategory}
-              activeKinds={activeKinds}
-              activeState={activeState}
-              activeTicket={activeTicket}
-              activeInvestorType={activeInvestorType}
-              activeFirbOnly={activeFirbOnly}
-              activeSivOnly={activeSivOnly}
-              activeWholesaleOnly={activeWholesaleOnly}
-              activeFreshness={activeFreshness}
-              activeFeaturedOnly={activeFeaturedOnly}
-              activeMinYield={activeMinYield}
-              activeEsicOnly={activeEsicOnly}
-              kindSpec={kindSpec}
-              intentCountry={intentCountry ?? null}
-              activeChipsCount={activeChips.length}
-              showSector={!lockedCategory}
-              onToggleKind={toggleKind}
-              onClearAll={clearAllFilters}
-              setParams={setParams}
-            />
-          </aside>
+        <div>
 
           {/* Results */}
           <div className="min-w-0">
@@ -687,7 +647,7 @@ export default function InvestListingsClient({
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
                 {filtered.map((l) => (
                   <InvestListingCard
                     key={l.id}
@@ -970,281 +930,5 @@ function Section({ title, children }: { title: string; children: React.ReactNode
       <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-2">{title}</h3>
       {children}
     </section>
-  );
-}
-
-// ─── Desktop sticky LEFT facet rail (lg+) ─────────────────────────────
-// A v2-styled `.iv2-card` panel that hosts every filter dimension wired to
-// the SAME state + setParams the mobile pill bar / drawer use. This is a
-// LAYOUT surface only — no new filter logic. Hidden on mobile (the pill
-// bar + bottom-sheet drawer drive filters there) via `hidden lg:block`
-// classes on the wrapping <aside>.
-interface DesktopFilterRailProps {
-  categories: { slug: string; label: string }[];
-  categoryCounts: Record<string, number>;
-  kindCounts: Record<string, number>;
-  stateCounts: Record<string, number>;
-  complianceCounts: Record<string, number>;
-  activeCategory: string;
-  activeKinds: ReadonlySet<ListingKind>;
-  activeState: string;
-  activeTicket: string;
-  activeInvestorType: InvestorType;
-  activeFirbOnly: boolean;
-  activeSivOnly: boolean;
-  activeWholesaleOnly: boolean;
-  activeFreshness: string;
-  activeFeaturedOnly: boolean;
-  activeMinYield: string;
-  activeEsicOnly: boolean;
-  kindSpec: ReturnType<typeof filterSpecForKind>;
-  intentCountry: string | null;
-  activeChipsCount: number;
-  showSector: boolean;
-  onToggleKind: (k: ListingKind) => void;
-  onClearAll: () => void;
-  setParams: (updates: Record<string, string>) => void;
-}
-
-/** Small uppercase section label (v2 `.iv2-mini`). */
-function RailLabel({ children }: { children: React.ReactNode }) {
-  return <p className="iv2-mini mb-2">{children}</p>;
-}
-
-function DesktopFilterRail({
-  categories, categoryCounts, kindCounts, stateCounts, complianceCounts,
-  activeCategory, activeKinds, activeState, activeTicket, activeInvestorType,
-  activeFirbOnly, activeSivOnly, activeWholesaleOnly, activeFreshness,
-  activeFeaturedOnly, activeMinYield, activeEsicOnly, kindSpec, intentCountry,
-  activeChipsCount, showSector, onToggleKind, onClearAll, setParams,
-}: DesktopFilterRailProps) {
-  const complianceOptions = [
-    { value: "firb", label: "FIRB-eligible" },
-    { value: "siv", label: "SIV-complying" },
-    { value: "wholesale", label: "Wholesale only" },
-    ...(kindSpec.showEsicToggle ? [{ value: "esic", label: "ESIC-eligible" }] : []),
-  ];
-  const complianceSelected = new Set<string>();
-  if (activeFirbOnly) complianceSelected.add("firb");
-  if (activeSivOnly) complianceSelected.add("siv");
-  if (activeWholesaleOnly) complianceSelected.add("wholesale");
-  if (activeEsicOnly) complianceSelected.add("esic");
-  const minYieldValue = Number(activeMinYield) || 0;
-
-  return (
-    <div className="iv2-card p-4 space-y-5">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-extrabold text-ink-900">Filters</h2>
-        {activeChipsCount > 0 && (
-          <span className="text-[11px] font-semibold text-coral-700">{activeChipsCount} active</span>
-        )}
-      </div>
-
-      {/* Category / vertical facet list */}
-      {showSector && categories.length > 0 && (
-        <section>
-          <RailLabel>Category</RailLabel>
-          <ul className="space-y-0.5">
-            {[{ slug: "all", label: "All categories" }, ...categories].map((c) => {
-              const count = c.slug === "all" ? (categoryCounts["all"] ?? 0) : (categoryCounts[c.slug] ?? 0);
-              const isActive = c.slug === "all" ? activeCategory === "all" : activeCategory === c.slug;
-              const isDisabled = c.slug !== "all" && count === 0 && !isActive;
-              return (
-                <li key={c.slug}>
-                  <button
-                    type="button"
-                    disabled={isDisabled}
-                    aria-pressed={isActive}
-                    onClick={() => setParams({ category: c.slug === "all" ? "" : c.slug, sub: "" })}
-                    className={`flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 text-left text-[13px] font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
-                      isActive ? "bg-ink-900 text-white" : "text-ink-700 hover:bg-ink-50"
-                    }`}
-                  >
-                    <span className="truncate">{c.label}</span>
-                    <span
-                      className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${
-                        isActive ? "bg-white/20 text-white" : "bg-ink-50 text-ink-400"
-                      }`}
-                    >
-                      {count}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
-
-      {/* Kind (listing-kind) */}
-      <section>
-        <RailLabel>Kind</RailLabel>
-        <div className="flex flex-wrap gap-1.5">
-          {ALL_LISTING_KINDS.map((k) => {
-            const meta = listingKindMeta(k);
-            const count = kindCounts[k] ?? 0;
-            const selected = activeKinds.has(k);
-            const disabled = count === 0 && !selected;
-            return (
-              <button
-                key={k}
-                type="button"
-                disabled={disabled}
-                aria-pressed={selected}
-                onClick={() => onToggleKind(k)}
-                className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
-                  selected
-                    ? "border-ink-900 bg-ink-900 text-white"
-                    : "border-ink-100 bg-white text-ink-700 hover:border-ink-300"
-                }`}
-              >
-                <Icon name={meta.icon} size={11} />
-                {meta.label}
-                <span className={`tabular-nums text-[10px] ${selected ? "text-white/70" : "text-ink-400"}`}>{count}</span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Ticket size */}
-      <section>
-        <RailLabel>Ticket size</RailLabel>
-        <div className="grid grid-cols-2 gap-1.5">
-          {TICKET_BUCKETS.map((b) => (
-            <button
-              key={b.key || "any"}
-              type="button"
-              onClick={() => setParams({ price: b.key })}
-              aria-pressed={activeTicket === b.key}
-              className={`rounded-lg px-2 py-1.5 text-[11px] font-semibold transition-colors ${
-                activeTicket === b.key
-                  ? "bg-ink-900 text-white shadow-sm"
-                  : "bg-ink-50 text-ink-600 hover:bg-ink-100"
-              }`}
-            >
-              {b.label}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* Investor type */}
-      <section>
-        <RailLabel>Investor type</RailLabel>
-        <select
-          value={activeInvestorType}
-          onChange={(e) => setParams({ investor: e.target.value })}
-          aria-label="Investor type"
-          className="w-full rounded-lg border border-ink-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-coral-400"
-        >
-          {INVESTOR_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-        </select>
-        <p className="mt-1.5 text-[10px] leading-snug text-ink-400">
-          Narrows out listings restricted to a category you don&apos;t qualify for. Doesn&apos;t verify status — that happens at enquiry.
-        </p>
-      </section>
-
-      {/* State chips */}
-      <section>
-        <RailLabel>State</RailLabel>
-        <div className="flex flex-wrap gap-1.5">
-          {STATES.map((s) => {
-            const count = stateCounts[s] ?? 0;
-            const selected = activeState === s;
-            const disabled = count === 0 && !selected;
-            return (
-              <button
-                key={s}
-                type="button"
-                disabled={disabled}
-                aria-pressed={selected}
-                onClick={() => setParams({ state: selected ? "" : s })}
-                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
-                  selected
-                    ? "border-coral-100 bg-coral-50 text-coral-700"
-                    : "border-ink-100 bg-white text-ink-600 hover:border-ink-300"
-                }`}
-              >
-                {s}
-                <span className={`tabular-nums text-[10px] ${selected ? "text-coral-700/70" : "text-ink-400"}`}>{count}</span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Compliance & structure */}
-      <section>
-        <FacetGroup
-          label="Compliance & structure"
-          options={complianceOptions}
-          selected={complianceSelected}
-          counts={complianceCounts}
-          onChange={(next) =>
-            setParams({
-              firb: next.has("firb") ? "eligible" : "",
-              siv: next.has("siv") ? "complying" : "",
-              wholesale: next.has("wholesale") ? "true" : "",
-              ...(kindSpec.showEsicToggle ? { esic: next.has("esic") ? "true" : "" } : {}),
-            })
-          }
-        />
-        <p className="mt-1.5 text-[10px] leading-snug text-ink-400">
-          {intentCountry ? "FIRB-eligible recommended — your visit comes via a foreign-investment page. " : ""}
-          SIV = $5M+ across complying assets. Wholesale = s708 / sophisticated-investor only.
-        </p>
-      </section>
-
-      {/* Yield / return (kind-aware) */}
-      {kindSpec.showYield && (
-        <section>
-          <RangeSlider
-            label="Minimum yield / return"
-            min={0}
-            max={15}
-            step={1}
-            value={minYieldValue}
-            onChange={(v) => setParams({ min_yield: v === 0 ? "" : String(v) })}
-            formatValue={(v) => (v === 0 ? "Any" : `${v}%`)}
-            presets={YIELD_PRESETS}
-          />
-        </section>
-      )}
-
-      {/* Listing status + featured */}
-      <section>
-        <RailLabel>Listing status</RailLabel>
-        <select
-          value={activeFreshness}
-          onChange={(e) => setParams({ fresh: e.target.value })}
-          aria-label="Listing freshness"
-          className="w-full rounded-lg border border-ink-100 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-coral-400"
-        >
-          <option value="">Any status</option>
-          <option value="new_this_week">New this week</option>
-          <option value="closing_soon">Closing soon</option>
-        </select>
-        <label className="mt-2.5 flex cursor-pointer items-center gap-2 text-sm text-ink-700">
-          <input
-            type="checkbox"
-            checked={activeFeaturedOnly}
-            onChange={(e) => setParams({ featured: e.target.checked ? "true" : "" })}
-            className="h-4 w-4 shrink-0 accent-coral-500"
-          />
-          Featured / Premium only
-        </label>
-      </section>
-
-      {/* Reset — full-width ghost */}
-      <button
-        type="button"
-        onClick={onClearAll}
-        disabled={activeChipsCount === 0}
-        className="iv2-cta-ghost w-full justify-center disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        Reset filters
-      </button>
-    </div>
   );
 }

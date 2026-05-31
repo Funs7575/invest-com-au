@@ -62,10 +62,10 @@ describe("InvestListingsClient — filter primitives wiring", () => {
     mockReplace.mockClear();
   });
 
-  // The desktop sticky filter rail renders the SAME controls as the mobile
-  // pill-bar + drawer. In jsdom there's no CSS, so both are in the DOM — scope
-  // post-open assertions to the open role="dialog" (drawer or popover) so the
-  // rail's duplicate controls don't make getByRole ambiguous.
+  // Filters live in a single top bar on all breakpoints: a pill-popover bar
+  // (primary facets) plus an "All filters" slide-over drawer (the long tail).
+  // Both render role="dialog" surfaces; scope post-open assertions to the open
+  // dialog so getByRole stays unambiguous.
   it("exposes the compliance FacetGroup options via the All filters drawer", async () => {
     const user = userEvent.setup();
     render(<InvestListingsClient listings={[makeListing()]} categories={categories} />);
