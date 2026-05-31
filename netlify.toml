@@ -1,0 +1,46 @@
+# Netlify configuration — temporary production mirror while Vercel is parked.
+#
+# Why this file exists: the site was deploying on Netlify via pure
+# auto-detection (no committed config). That left two things to chance:
+#   1. Node version. This project requires Node 20+ (CLAUDE.md: Node 18
+#      "silently installs but builds break at runtime"). Vercel ran Node 24;
+#      an unpinned Netlify build could land on anything. Pin it to 20 to match
+#      the bundle-size / e2e CI jobs.
+#   2. Asset post-processing. Netlify's legacy post-processing re-minifies
+#      JS that Next.js has *already* minified+fingerprinted. That re-bundling
+#      is the most likely cause of `/_next/static/chunks/*.js` returning 503
+#      while same-folder CSS returns 200. Next output is immutable and
+#      content-hashed — never let Netlify touch it.
+#
+# next.config.ts already keys its mirror-only behaviour (ignoreBuildErrors,
+# outputFileTracingExcludes) off NETLIFY=true, which Netlify sets in its build
+# environment automatically — no need to set it here.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+  # Belt-and-braces: legacy-peer-deps is also set in .npmrc, but pin it here
+  # so the Netlify build's npm install can't drift.
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# The Next.js runtime (v5). Netlify auto-installs it on Next detection;
+# declaring it explicitly removes the "did it detect Next?" ambiguity.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Do NOT let Netlify re-process the build output. Next.js already minifies JS
+# and CSS and fingerprints every static asset; a second pass only risks
+# corrupting chunks. This is the direct mitigation for the JS-chunk 503s.
+[build.processing]
+  skip_processing = true
+
+# Long-lived immutable caching for fingerprinted static assets. These paths
+# are content-hashed by Next, so they can be cached forever and safely.
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
