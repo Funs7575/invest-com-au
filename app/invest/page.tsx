@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
@@ -291,13 +292,32 @@ export default async function InvestMarketplacePage() {
       </div>
 
       {/* ── Marketplace (primary — no two-step) ───────────────── */}
-      <InvestListingsClient
-        listings={listings}
-        categories={categoryTabs}
-        matchScores={matchScores}
-        advisorOptInCounts={ctx.advisorOptInCounts}
-        claimedSlugs={ctx.claimedSlugs}
-      />
+      {/* Suspense required: InvestListingsClient calls useSearchParams(), which
+          causes Next.js to bail out of SSR for the whole page when unwrapped.
+          The fallback keeps the listings area visible while the client hydrates. */}
+      <Suspense
+        fallback={
+          <div className="container-custom max-w-6xl py-6 animate-pulse">
+            <div className="flex gap-2 mb-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-8 w-24 bg-slate-100 rounded-full" />
+              ))}
+            </div>
+            <div className="h-10 bg-slate-100 rounded-xl mb-4" />
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="h-14 bg-white border-b border-slate-100 rounded mb-1" />
+            ))}
+          </div>
+        }
+      >
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          matchScores={matchScores}
+          advisorOptInCounts={ctx.advisorOptInCounts}
+          claimedSlugs={ctx.claimedSlugs}
+        />
+      </Suspense>
 
       {/* ── "Not sure?" CTA — moved BELOW results per UX rebuild.
             Wedging this between filters and results was an anti-pattern
