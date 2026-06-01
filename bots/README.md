@@ -123,6 +123,7 @@ $5/IP/day, $200/day global), so even allowed AI traffic can't run away.
 | `BOTS_MOCK_AI` | `true` | Mock the app's own AI endpoints to save tokens |
 | `BOTS_ALLOW_DESTRUCTIVE` | `false` | Permit destructive account writes on a sandbox |
 | `BOTS_PROD_OVERRIDE` | `false` | Required to point at a prod host |
+| `BOTS_IGNORE_HTTPS_ERRORS` | `false` | Trust a self-signed/MITM cert (TLS-intercepting sandboxes only; never for real runs) |
 | `BOTS_SKIP_WEBSERVER` | — | Don't auto-start a local dev server |
 | `BOTS_WEBSERVER_CMD` | `npm run dev` | Command to auto-start a local target (e.g. `npm run start` for the prod build) |
 

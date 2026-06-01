@@ -42,9 +42,10 @@ export class BotSession {
   ) {}
 
   static async create(browser: Browser, config: BotConfig, opts: SessionOptions): Promise<BotSession> {
-    const context = await browser.newContext(
-      opts.storageStateFile ? { storageState: opts.storageStateFile } : undefined,
-    );
+    const context = await browser.newContext({
+      ...(opts.storageStateFile ? { storageState: opts.storageStateFile } : {}),
+      ...(config.ignoreHttpsErrors ? { ignoreHTTPSErrors: true } : {}),
+    });
     const page = await context.newPage();
     const session = new BotSession(context, page, config, opts.persona);
     session.net = await installSafetyNet(page, config);

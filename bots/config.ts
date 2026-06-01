@@ -52,6 +52,11 @@ export interface BotConfig {
   allowDestructive: boolean;
   /** Loud, explicit override required to point at a prod-looking host. */
   prodOverride: boolean;
+  /**
+   * Trust an intercepting-proxy / self-signed cert. Sandbox-only escape hatch
+   * for TLS-MITM environments (e.g. this workspace); leave off for real runs.
+   */
+  ignoreHttpsErrors: boolean;
   /** Absolute-ish directory (relative to repo root) for this run's artifacts. */
   runDir: string;
   /** Unique id for this fleet run. */
@@ -136,6 +141,8 @@ export function loadConfig(overrides: Partial<BotConfig> = {}, now: Date = new D
     allowDestructive:
       overrides.allowDestructive ?? boolEnv("BOTS_ALLOW_DESTRUCTIVE", false),
     prodOverride: overrides.prodOverride ?? boolEnv("BOTS_PROD_OVERRIDE", false),
+    ignoreHttpsErrors:
+      overrides.ignoreHttpsErrors ?? boolEnv("BOTS_IGNORE_HTTPS_ERRORS", false),
     runDir: overrides.runDir ?? process.env.BOTS_RUN_DIR ?? `bots/.runs/${runId}`,
     runId,
   };

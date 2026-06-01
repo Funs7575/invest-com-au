@@ -41,6 +41,7 @@ describe("loadConfig", () => {
     expect(cfg.targetClass).toBe("sandbox");
     expect(cfg.runDir.startsWith("bots/.runs/")).toBe(true);
     expect(cfg.aiCostBudgetUsd).toBeGreaterThanOrEqual(0);
+    expect(cfg.ignoreHttpsErrors).toBe(false);
   });
   it("derives a deterministic runId from the clock", () => {
     const cfg = loadConfig({ baseUrl: "http://localhost:3000" }, new Date("2026-05-29T12:34:56Z"));
