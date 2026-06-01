@@ -66,7 +66,7 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
       {/* Pro upsell hidden for launch */}
 
       {/* Trust signals */}
-      <div className="mt-4 md:mt-8 text-[0.62rem] md:text-xs text-slate-400 text-center">
+      <div className="mt-4 md:mt-8 text-[0.62rem] md:text-xs text-slate-600 text-center">
         <p>
           Fees verified against official pricing.{" "}
           <Link href="/how-we-verify" className="underline hover:text-slate-600">Verification</Link>
@@ -78,18 +78,18 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
       </div>
 
       {/* General Advice Warning */}
-      <p className="mt-2 md:mt-3 text-[0.69rem] md:text-xs text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
+      <p className="mt-2 md:mt-3 text-[0.69rem] md:text-xs text-slate-600 text-center leading-relaxed max-w-3xl mx-auto">
         {GENERAL_ADVICE_WARNING}
       </p>
 
       {/* Contextual risk warnings based on active filter */}
-      <div className="mt-2 text-[0.65rem] md:text-[0.72rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto space-y-1.5">
+      <div className="mt-2 text-[0.65rem] md:text-[0.72rem] text-slate-600 text-center leading-relaxed max-w-3xl mx-auto space-y-1.5">
         <p>{PDS_CONSIDERATION} {FSG_NOTE}</p>
         {(activeFilter === 'cfd' || activeFilter === 'cfd-forex' || activeFilter === 'all') && (
-          <p className="text-red-400/80">{CFD_WARNING_SHORT}</p>
+          <p className="text-red-600">{CFD_WARNING_SHORT}</p>
         )}
         {(activeFilter === 'crypto' || activeFilter === 'crypto-exchanges' || activeFilter === 'all') && (
-          <p className="text-amber-500/80">{CRYPTO_WARNING}</p>
+          <p className="text-amber-700">{CRYPTO_WARNING}</p>
         )}
         {(activeFilter === 'super' || activeFilter === 'super-funds' || activeFilter === 'all') && (
           <p>{SUPER_WARNING_SHORT}</p>
