@@ -69,28 +69,29 @@ describe("AdvisorsClient — filter panel wiring", () => {
     paramsRef.current = new URLSearchParams();
   });
 
-  it("renders the Advisor Type toggle buttons in the filter panel", () => {
+  it("exposes the Advisor Type facet (checkboxes) via the All-filters drawer", () => {
     render(<AdvisorsClient professionals={professionals} />);
-    // Filter panel is hidden until the Filters toggle is clicked
-    fireEvent.click(screen.getByRole("button", { name: /Filters/i }));
-    expect(screen.getByText("Advisor Type")).toBeInTheDocument();
-    // Component uses toggle buttons (not checkboxes) for type filtering
-    expect(screen.getByRole("button", { name: /^Financial Planners/ })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /^SMSF Accountants/ })).toBeInTheDocument();
+    // Long-tail facets open from the canonical "All filters" drawer.
+    fireEvent.click(screen.getByRole("button", { name: /All filters/i }));
+    // FacetGroup renders a labelled checkbox group ("Advisor type").
+    expect(screen.getByText("Advisor type")).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: /^Financial Planners/ })).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: /^SMSF Accountants/ })).toBeInTheDocument();
   });
 
-  it("renders the Min Rating filter select in the filter panel", () => {
+  it("renders the primary facet pills (Type · Location · Fee · Rating)", () => {
     render(<AdvisorsClient professionals={professionals} />);
-    fireEvent.click(screen.getByRole("button", { name: /Filters/i }));
-    expect(screen.getByText("Min Rating")).toBeInTheDocument();
-    // Component uses <select> elements for rating/state/fee filters
-    expect(screen.getAllByRole("combobox").length).toBeGreaterThanOrEqual(1);
+    // Primary filters are on display as pill-popovers (mirrors /invest + /compare).
+    expect(screen.getByRole("button", { name: /^Type/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Location/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Fee/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Rating/ })).toBeInTheDocument();
   });
 
-  it("toggling a type button writes the matching URL param (URL-first)", async () => {
+  it("toggling a type facet writes the matching URL param (URL-first)", async () => {
     render(<AdvisorsClient professionals={professionals} />);
-    fireEvent.click(screen.getByRole("button", { name: /Filters/i }));
-    fireEvent.click(screen.getByRole("button", { name: /^Financial Planners/ }));
+    fireEvent.click(screen.getByRole("button", { name: /All filters/i }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /^Financial Planners/ }));
     // URL update is debounced 300ms; waitFor retries until the assertion passes
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalled();

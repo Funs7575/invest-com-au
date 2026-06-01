@@ -6,7 +6,6 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { InvestmentListing, ListingKind } from "@/lib/types";
 import { categoryForListing } from "@/lib/listing-url";
 import {
-  ALL_LISTING_KINDS,
   TICKET_BUCKETS,
   ticketBucketByKey,
   INVESTOR_TYPES,
@@ -21,13 +20,12 @@ import InvestListingCard from "@/components/InvestListingCard";
 import ListingCompareBar from "@/components/invest/ListingCompareBar";
 import SaveSearchButton from "@/components/invest/SaveSearchButton";
 import Icon from "@/components/Icon";
-import TabBar from "@/components/directory/TabBar";
+import MarketplaceFilterBar from "@/components/invest/MarketplaceFilterBar";
 import SearchInput from "@/components/directory/SearchInput";
 import SortDropdown from "@/components/directory/SortDropdown";
 import FilterPanel from "@/components/directory/FilterPanel";
 import FacetGroup from "@/components/directory/FacetGroup";
 import RangeSlider from "@/components/directory/RangeSlider";
-import FilterChips from "@/components/directory/FilterChips";
 
 // ─── Props ───────────────────────────────────────────────────────────
 export interface InvestListingsClientProps {
@@ -211,6 +209,15 @@ export default function InvestListingsClient({
     for (const l of listings) {
       const c = categoryForListing(l);
       if (c) counts[c] = (counts[c] ?? 0) + 1;
+    }
+    return counts;
+  }, [listings]);
+
+  // ── Per-state counts (for the Location pill in the filter bar) ──
+  const stateCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const l of listings) {
+      if (l.location_state) counts[l.location_state] = (counts[l.location_state] ?? 0) + 1;
     }
     return counts;
   }, [listings]);
@@ -440,14 +447,22 @@ export default function InvestListingsClient({
     });
   }
 
+  // Count of active advanced (drawer-only) filters — drives the
+  // "All filters" badge in the pill bar.
+  const advancedCount = [
+    activeInvestorType,
+    activeFirbOnly,
+    activeSivOnly,
+    activeWholesaleOnly,
+    activeEsicOnly,
+    activeMinYield,
+    activeFreshness,
+    activeFeaturedOnly,
+  ].filter(Boolean).length;
+
   // Drive kind-specific filters off the active narrowed kind.
   const narrowedKind: ListingKind | null = activeKinds.size === 1 ? Array.from(activeKinds)[0] : null;
   const kindSpec = filterSpecForKind(narrowedKind);
-
-  const tabs = useMemo(
-    () => [{ slug: "all", label: "All" }, ...categories],
-    [categories],
-  );
 
   const lockedCategoryLabel = lockedCategory ? prettyCategory(lockedCategory, categories) : null;
 
@@ -492,24 +507,6 @@ export default function InvestListingsClient({
               suggestions={searchSuggestions}
             />
 
-            <button
-              type="button"
-              onClick={() => setDrawerOpen(true)}
-              className={`md:hidden shrink-0 inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold transition-all ${
-                activeChips.length > 0
-                  ? "bg-amber-50 border-amber-300 text-amber-700"
-                  : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <Icon name="sliders" size={16} />
-              <span className="hidden sm:inline">Filters</span>
-              {activeChips.length > 0 && (
-                <span className="bg-amber-600 text-white text-[0.6rem] font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {activeChips.length}
-                </span>
-              )}
-            </button>
-
             <SortDropdown
               options={SORT_OPTIONS}
               value={activeSort}
@@ -541,91 +538,44 @@ export default function InvestListingsClient({
             />
           </div>
 
-          {/* Row 2: kind segmented control */}
-          {!lockedCategory && (
-            <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
-              <div className="flex items-center gap-1.5 min-w-max">
-                <button
-                  type="button"
-                  onClick={() => setParams({ kind: "" })}
-                  aria-pressed={activeKinds.size === 0}
-                  className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
-                    activeKinds.size === 0 ? "bg-slate-900 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  All kinds
-                  <span className={`text-[0.6rem] font-bold px-1.5 py-0.5 rounded ${
-                    activeKinds.size === 0 ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
-                  }`}>
-                    {kindCounts.all ?? 0}
-                  </span>
-                </button>
-                {ALL_LISTING_KINDS
-                  .filter((k) => (kindCounts[k] ?? 0) > 0)
-                  .map((k) => {
-                    const meta = listingKindMeta(k);
-                    const count = kindCounts[k] ?? 0;
-                    const isActive = activeKinds.has(k);
-                    return (
-                      <button
-                        key={k}
-                        type="button"
-                        onClick={() => toggleKind(k)}
-                        aria-pressed={isActive}
-                        className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
-                          isActive
-                            ? `${meta.accent.badge} shadow-sm`
-                            : `bg-white border border-slate-200 text-slate-600 hover:bg-slate-50`
-                        }`}
-                        title={meta.blurb}
-                      >
-                        <Icon name={meta.icon} size={11} />
-                        {meta.label}
-                        <span className={`text-[0.6rem] font-bold px-1.5 py-0.5 rounded ${
-                          isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
-                        }`}>
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-              </div>
-            </div>
-          )}
-
-          {/* Row 3: category chips (secondary narrow by sector) */}
-          {!lockedCategory && (
-            <TabBar
-              ariaLabel="Category"
-              variant="chip"
-              value={activeCategory}
-              onChange={(id) => setParams({ category: id === "all" ? "" : id, sub: "" })}
-              alwaysShow="all"
-              tabs={tabs.map((tab) => ({
-                id: tab.slug,
-                label: tab.label,
-                count: tab.slug === "all" ? undefined : (categoryCounts[tab.slug] ?? 0),
-              }))}
+          {/* Primary facet pill-bar + active-filter chips (compliance-safe),
+              shown on ALL breakpoints — this is now the single filter
+              surface; the long-tail facets open from its "All filters"
+              button. Reads/writes the SAME URL params as the drawer. */}
+          <div>
+            <MarketplaceFilterBar
+              params={new URLSearchParams(searchParams.toString())}
+              setParams={setParams}
+              onOpenAllFilters={() => setDrawerOpen(true)}
+              advancedCount={advancedCount}
+              resultCount={filtered.length}
+              categories={categories}
+              categoryCounts={categoryCounts}
+              kindCounts={kindCounts}
+              stateCounts={stateCounts}
+              activeChips={activeChips}
+              onClearAll={clearAllFilters}
+              showSector={!lockedCategory}
             />
-          )}
+          </div>
 
-          {/* Active-filter chips */}
-          <FilterChips chips={activeChips} onClearAll={clearAllFilters} />
         </div>
       </div>
 
-      {/* ── Results + filter sidebar ──────────────────────────────── */}
+      {/* ── Marketplace results — all filters live in the top bar above ── */}
       <div className="container-custom py-5 md:py-8">
-        <div className="md:grid md:grid-cols-[260px_minmax(0,1fr)] md:gap-6 lg:gap-8">
-          {/* Filters — inline sidebar on desktop, bottom-sheet drawer on mobile */}
-          <aside className="md:self-start">
-            <FilterPanel
-              open={drawerOpen}
-              onClose={() => setDrawerOpen(false)}
-              onClearAll={clearAllFilters}
-              activeCount={activeChips.length}
-              resultCount={filtered.length}
-            >
+        {/* Long-tail facets — slide-over drawer (all breakpoints), opened from
+            the top bar's "All filters" button. Reads/writes the SAME URL
+            params as the pill bar, so the filter pipeline downstream is
+            untouched. */}
+        <FilterPanel
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          onClearAll={clearAllFilters}
+          activeCount={activeChips.length}
+          resultCount={filtered.length}
+          variant="drawer"
+        >
               <InvestFilterFields
                 activeState={activeState}
                 activeTicket={activeTicket}
@@ -642,10 +592,11 @@ export default function InvestListingsClient({
                 complianceCounts={complianceCounts}
                 setParams={setParams}
               />
-            </FilterPanel>
-          </aside>
+        </FilterPanel>
 
-          {/* Results column */}
+        <div>
+
+          {/* Results */}
           <div className="min-w-0">
             {subCategories.length > 0 && (
               <div className="mb-5">
@@ -696,7 +647,7 @@ export default function InvestListingsClient({
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
                 {filtered.map((l) => (
                   <InvestListingCard
                     key={l.id}

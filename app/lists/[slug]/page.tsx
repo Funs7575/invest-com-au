@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { itemListJsonLd } from "@/lib/schema-markup";
+import JsonLd from "@/components/JsonLd";
 import ListFollowButton from "./ListFollowButton";
 
 // Revalidate every 60s — list edits are infrequent, no need for force-dynamic.
@@ -118,8 +121,27 @@ export default async function PublicListPage({ params }: Params) {
     return acc;
   }, {});
 
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: "Home", url: SITE_URL },
+    { name: "Lists", url: `${SITE_URL}/lists` },
+    { name: list.title, url: `${SITE_URL}/lists/${slug}` },
+  ]);
+  const itemListLd = itemListJsonLd(
+    list.title,
+    items.map((item, i) => {
+      const cfg = ITEM_TYPE_CONFIG[item.item_type];
+      return {
+        position: i + 1,
+        name: item.label || item.item_ref,
+        url: cfg ? cfg.href(item.item_ref) : `/${item.item_ref}`,
+        description: item.notes || undefined,
+      };
+    }),
+  );
+
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+      <JsonLd data={items.length > 0 ? [breadcrumbLd, itemListLd] : breadcrumbLd} />
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-start justify-between gap-4">

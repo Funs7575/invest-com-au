@@ -14,6 +14,58 @@ const nextConfig: NextConfig = {
   // past 60s. 180s leaves headroom without masking a genuinely-broken
   // page (Next.js still retries 3 times before failing).
   staticPageGenerationTimeout: 180,
+  // Netlify mirror builds (NETLIFY=true) OOM during `next build` type-checking
+  // on Netlify's small build VMs. Skip type-check + lint ONLY on Netlify so the
+  // temporary mirror can build while Vercel is paused. Vercel + CI run with
+  // NETLIFY unset, and the gating `tsc --noEmit` CI job is unaffected — the
+  // primary pipeline keeps its strict, no-escape-hatch guarantee.
+  typescript: {
+    ignoreBuildErrors: process.env.NETLIFY === "true",
+  },
+  // Netlify bundles the whole server into ONE function with a hard 250MB limit,
+  // which this app blows past. Trim build-only / test-only / client-only /
+  // CDN-handled deps out of the function trace so it fits. NETLIFY-gated so
+  // Vercel's trace is untouched (Vercel DOES need sharp in-function for
+  // next/image; Netlify serves /_next/image via its own Image CDN instead).
+  // Biggest offenders excluded: @next/swc (~200MB of build-time Rust binaries),
+  // @img/sharp (~33MB), posthog-js (client-only, ~37MB), typescript (~23MB),
+  // plus test + CSS/JS build tooling. Nothing runtime-critical (next, @sentry,
+  // @opentelemetry, yahoo-finance2, @anthropic-ai, supabase) is excluded.
+  ...(process.env.NETLIFY === "true"
+    ? {
+        outputFileTracingExcludes: {
+          "*": [
+            // Project dirs the serverless function never needs — the REAL bloat:
+            // e2e/ alone is ~119MB of committed Playwright visual snapshots.
+            // (coverage/ is gitignored so it's local-only, but exclude anyway.)
+            "e2e/**/*",
+            "coverage/**/*",
+            "__tests__/**/*",
+            "docs/**/*",
+            "scripts/**/*",
+            "supabase/**/*",
+            "tsconfig.tsbuildinfo",
+            ".next/cache/**/*",
+            // Build-only / client-only / CDN-handled node_modules:
+            "node_modules/@next/swc-*/**/*",
+            "node_modules/@img/**/*",
+            "node_modules/sharp/**/*",
+            "node_modules/posthog-js/**/*",
+            "node_modules/typescript/**/*",
+            "node_modules/playwright-core/**/*",
+            "node_modules/jsdom/**/*",
+            "node_modules/@testing-library/**/*",
+            "node_modules/@esbuild/**/*",
+            "node_modules/esbuild/**/*",
+            "node_modules/lightningcss-*/**/*",
+            "node_modules/@babel/**/*",
+            "node_modules/@typescript-eslint/**/*",
+            "node_modules/eslint/**/*",
+            "node_modules/terser/**/*",
+          ],
+        },
+      }
+    : {}),
   experimental: {
     // Reduce aggressive prefetching — only prefetch on hover, not on viewport
     optimisticClientCache: false,

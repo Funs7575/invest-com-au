@@ -1,0 +1,47 @@
+# Netlify configuration — temporary production mirror while Vercel is parked.
+#
+# Scope deliberately minimal: pin the Node version and declare the Next.js
+# runtime. Everything else about serving a Next app — routing, static-asset
+# headers, caching of /_next/static/* — is owned by @netlify/plugin-nextjs.
+# We do NOT add custom rules on those paths (see the header note below).
+#
+#   Node version. This project requires Node 20+ (CLAUDE.md: Node 18
+#   "silently installs but builds break at runtime" via
+#   globalThis.AbortSignal.timeout). An unpinned Netlify build could land on
+#   any default; pin it to 20 to match the bundle-size / e2e CI jobs.
+#
+# next.config.ts keys its mirror-only behaviour (ignoreBuildErrors,
+# outputFileTracingExcludes) off NETLIFY=true, which Netlify sets in its build
+# environment automatically — no need to set it here.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+  # Belt-and-braces: legacy-peer-deps is also set in .npmrc, but pin it here
+  # so the Netlify build's npm install can't drift.
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# The Next.js runtime (v5). Netlify auto-installs it on Next detection;
+# declaring it explicitly removes the "did it detect Next?" ambiguity.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# NOTE: no custom [[headers]] rule for /_next/static/*. PR #1288 added one
+# (immutable Cache-Control), and the deploy log responded with:
+#   "Warning: Custom Cache-Control headers detected for the following routes:
+#      - /_next/static/(.*)"
+# The Next.js runtime already serves /_next/static/* directly from the CDN with
+# the correct immutable Cache-Control AND excludes those paths from the
+# catch-all server function. Layering a custom header rule on the same path can
+# disturb that exclusion and route cold-cache asset requests through the SSR
+# function instead of the CDN — exactly the surface that returned intermittent
+# 503s on JS chunks. Let the runtime own it. (The framework already sets
+# `public, max-age=31536000, immutable` on fingerprinted assets.)
+#
+# Likewise no [build.processing] override: skip_processing is the legacy
+# post-processor toggle and does not apply to Next-runtime output, so it was
+# noise. Removing it keeps this file to only what actually changes behaviour.
