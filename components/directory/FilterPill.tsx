@@ -25,6 +25,7 @@ export function FilterPill({
   active,
   open,
   onClick,
+  disabled = false,
 }: {
   icon: string;
   label: string;
@@ -32,14 +33,17 @@ export function FilterPill({
   active: boolean;
   open: boolean;
   onClick: () => void;
+  /** Greyed-out + non-interactive (e.g. a State pill while proximity search is active). */
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-haspopup="dialog"
       aria-expanded={open}
-      className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-semibold whitespace-nowrap transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400/50 ${
+      className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-semibold whitespace-nowrap transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-slate-200 ${
         active
           ? "border-amber-400 bg-amber-50 text-amber-800"
           : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"

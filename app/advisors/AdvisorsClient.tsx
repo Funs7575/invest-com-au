@@ -25,6 +25,7 @@ import FacetGroup from "@/components/directory/FacetGroup";
 import ResultCount from "@/components/directory/ResultCount";
 import EmptyState from "@/components/directory/EmptyState";
 import CompareBar from "@/components/directory/CompareBar";
+import { FilterPill, FilterPopover } from "@/components/directory/FilterPill";
 
 export interface ExpertTeamCard {
   id: number;
@@ -85,6 +86,21 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
 ];
 
 const RESULTS_PER_PAGE = 12;
+
+const FEE_OPTIONS = [
+  { value: "all", label: "Any fee" },
+  { value: "fee-for-service", label: "Fee for Service" },
+  { value: "commission", label: "Commission" },
+  { value: "hybrid", label: "Hybrid" },
+  { value: "percentage of AUM", label: "% of AUM" },
+];
+const RATING_OPTIONS: { value: number; label: string }[] = [
+  { value: 0, label: "Any rating" },
+  { value: 4.5, label: "4.5+ ★" },
+  { value: 4, label: "4.0+ ★" },
+  { value: 3.5, label: "3.5+ ★" },
+  { value: 3, label: "3.0+ ★" },
+];
 
 function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`;
@@ -290,6 +306,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const [sortBy, setSortBy] = useState<SortKey>("rating");
   const [page, setPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [openPill, setOpenPill] = useState<string | null>(null);
 
   // Location/proximity state
   const [locationSearch, setLocationSearch] = useState<PostcodeResult | null>(null);
@@ -439,6 +456,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     return counts;
   }, [professionals]);
 
+  const stateCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const bump = (s?: string | null) => { if (s) counts[s] = (counts[s] || 0) + 1; };
+    // Count every provider type the Location pill can surface — a state with
+    // only firms or expert teams (no individual advisors) stays selectable.
+    professionals.forEach((p) => bump(p.location_state));
+    firms.forEach((f) => bump(f.location_state));
+    expertTeams.forEach((t) => bump(t.location_state));
+    return counts;
+  }, [professionals, firms, expertTeams]);
+
   // Use nearby results when location active, otherwise client-side filter
   const filtered = useMemo(() => {
     if (isLocationActive && nearbyResults) {
@@ -575,6 +603,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     team: filteredTeams.length,
   };
 
+  const advisorHeroStats = ([
+    { v: String(providerTypeCounts.individual), l: "Advisors" },
+    firms.length > 0 ? { v: String(providerTypeCounts.firm), l: "Firms" } : null,
+    expertTeams.length > 0 ? { v: String(providerTypeCounts.team), l: "Expert teams" } : null,
+    { v: "3", l: "Free intros" },
+  ].filter(Boolean) as { v: string; l: string }[]).slice(0, 4);
+
   const activeFilterCount = [
     providerType !== "all",
     typeFilters.size > 0,
@@ -645,59 +680,58 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <span className="text-slate-700">{activeTypeLabel || "Find an Advisor"}</span>
         </nav>
 
-        <div className="relative overflow-hidden bg-gradient-to-br from-coral-100 via-coral-50 to-white border border-coral-200 rounded-2xl p-4 md:p-8 mb-4 md:mb-6 shadow-sm">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-coral-400 via-coral-600 to-coral-400" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-ink-900 to-ink-800 text-white p-5 md:p-8 mb-4 md:mb-6 shadow-sm">
           <div
-            className="pointer-events-none absolute -top-16 -right-12 h-48 w-48 rounded-full bg-coral-400/20 blur-3xl"
             aria-hidden
+            className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full"
+            style={{ background: "radial-gradient(circle, rgba(242,88,34,.20), transparent 65%)" }}
           />
-          <div className="relative">
-            <div className="flex items-center gap-2 mb-2.5 flex-wrap">
-              <span className="iv2-mini flex items-center gap-1.5 text-coral-700">
-                <span className="w-1.5 h-1.5 rounded-full bg-coral-600 animate-pulse" />
-                Advisors
+          <div className="relative grid gap-6 md:grid-cols-[1.4fr_1fr] md:items-end">
+            <div>
+              <span className="iv2-pill border border-coral-500/30 bg-coral-500/15 text-coral-300">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coral-400" />
+                Verified advisors
               </span>
-              <span className="iv2-pill bg-white/80 text-coral-700 border border-coral-200">
-                {providerTypeCounts.all} verified · 24h match
-              </span>
+              <h1 className="mt-3 md:mt-4 text-2xl md:text-5xl font-extrabold leading-[1.04] tracking-tight">
+                {activeTypeLabel
+                  ? <>{providerTypeCounts.all} {dynamicTitle.replace(/^Find\s+/, "").toLowerCase()}</>
+                  : <>{providerTypeCounts.all} licensed advisors.</>}
+                <span className="hidden md:inline"><br /><span className="text-coral-400">Three free intros.</span></span>
+              </h1>
+              <p className="mt-3 md:mt-4 max-w-xl text-xs md:text-base leading-relaxed text-white/70">
+                <span className="md:hidden">{dynamicDescription.slice(0, 80)}…</span>
+                <span className="hidden md:inline">{dynamicDescription}</span>
+              </p>
             </div>
-            <h1 className="text-2xl md:text-5xl font-extrabold mb-1.5 md:mb-3 text-slate-900 tracking-tight leading-[1.05]">
-              <span className="text-coral-600">{providerTypeCounts.all}</span> {activeTypeLabel ? dynamicTitle.replace(/^Find\s+/, "").toLowerCase() : "licensed advisors."}
-              <span className="hidden md:inline"><br />Three free intros.</span>
-            </h1>
-            <p className="text-xs md:text-base text-slate-600 mb-4 max-w-2xl leading-relaxed">
-              <span className="md:hidden">{dynamicDescription.slice(0, 70)}…</span>
-              <span className="hidden md:inline">{dynamicDescription}</span>
-            </p>
-            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap mb-4 md:mb-5">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-coral-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-700">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                <span className="font-bold text-slate-900">{providerTypeCounts.all}</span> listings
-              </div>
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-coral-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
-                <Icon name="shield" size={13} className="text-coral-600" />ASIC verified
-              </div>
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-coral-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
-                <Icon name="clock" size={13} className="text-coral-600" />Free consultation
-              </div>
+            <div className="grid grid-cols-2 gap-2.5 md:gap-3">
+              {advisorHeroStats.map((s) => (
+                <div key={s.l} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 md:px-4 md:py-3">
+                  <div className="iv2-bignum text-xl text-white md:text-3xl">{s.v}</div>
+                  <div className="mt-1 text-[11px] font-semibold text-white/55 md:text-xs">{s.l}</div>
+                </div>
+              ))}
             </div>
-            <GetMatchedEmbed context="advisor_directory" />
-            <p className="text-[0.65rem] md:text-xs text-slate-500 mt-3 text-center">
-              Prefer to chat?{" "}
-              <Link
-                href="/concierge?finder=advisor-finder"
-                onClick={() =>
-                  trackEvent("concierge_seed_clicked", {
-                    finder: "advisor-finder",
-                    source: "advisors_hero",
-                  })
-                }
-                className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
-              >
-                Ask the AI concierge →
-              </Link>
-            </p>
           </div>
+        </div>
+
+        {/* Advisor matching + concierge — light band below the hero */}
+        <div className="mb-4 md:mb-6">
+          <GetMatchedEmbed context="advisor_directory" />
+          <p className="text-[0.65rem] md:text-xs text-slate-500 mt-3 text-center">
+            Prefer to chat?{" "}
+            <Link
+              href="/concierge?finder=advisor-finder"
+              onClick={() =>
+                trackEvent("concierge_seed_clicked", {
+                  finder: "advisor-finder",
+                  source: "advisors_hero",
+                })
+              }
+              className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
+            >
+              Ask the AI concierge →
+            </Link>
+          </p>
         </div>
 
         {/* Compare/shortlist bar — canonical primitive (slate/amber). Replaces
@@ -757,27 +791,88 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           />
         </div>
 
-        {/* Primary filters on display (State · Fee · Rating); the long tail
-            lives in the All-filters drawer. */}
-        <div className="flex flex-wrap gap-2 mb-3">
-          <select value={stateFilter} onChange={(e) => setStateFilter(e.target.value)} disabled={isLocationActive} aria-label="State" className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50">
-            <option value="all">All states</option>
-            {AU_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <select value={feeFilter} onChange={(e) => setFeeFilter(e.target.value)} aria-label="Fee structure" className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400">
-            <option value="all">Any fee</option>
-            <option value="fee-for-service">Fee for Service</option>
-            <option value="commission">Commission</option>
-            <option value="hybrid">Hybrid</option>
-            <option value="percentage of AUM">% of AUM</option>
-          </select>
-          <select value={minRating} onChange={(e) => setMinRating(Number(e.target.value))} aria-label="Minimum rating" className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400">
-            <option value={0}>Any rating</option>
-            <option value={4.5}>4.5+ ★</option>
-            <option value={4.0}>4.0+ ★</option>
-            <option value={3.5}>3.5+ ★</option>
-            <option value={3.0}>3.0+ ★</option>
-          </select>
+        {/* Primary facet pills — mirrors /invest + /compare (shared FilterPill). */}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          {/* Type */}
+          <div className="relative">
+            <FilterPill icon="users" label="Type" active={typeFilters.size > 0} open={openPill === "type"}
+              value={typeFilters.size === 1 ? TYPE_FILTERS.find((f) => f.key === Array.from(typeFilters)[0])?.label : typeFilters.size > 1 ? `${typeFilters.size} types` : undefined}
+              onClick={() => setOpenPill((o) => (o === "type" ? null : "type"))} />
+            <FilterPopover open={openPill === "type"} onClose={() => setOpenPill(null)} label="Advisor type">
+              <p className="text-xs font-bold text-slate-900 mb-2">Advisor type</p>
+              <div className="flex flex-wrap gap-1.5 max-h-72 overflow-y-auto">
+                {TYPE_FILTERS.filter((f) => f.key !== "all").map((f) => {
+                  const count = typeCounts[f.key] ?? 0;
+                  const selected = typeFilters.has(f.key as ProfessionalType);
+                  return (
+                    <button key={f.key} type="button" disabled={count === 0 && !selected} onClick={() => toggleType(f.key)}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-semibold disabled:opacity-40 transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                      <Icon name={f.icon} size={11} />
+                      {f.label}
+                      <span className="font-mono text-[10px] text-slate-400">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </FilterPopover>
+          </div>
+          {/* Location */}
+          <div className="relative">
+            <FilterPill icon="map-pin" label="Location" active={stateFilter !== "all"} open={openPill === "state"}
+              value={stateFilter !== "all" ? stateFilter : undefined}
+              disabled={isLocationActive}
+              onClick={() => setOpenPill((o) => (o === "state" ? null : "state"))} />
+            <FilterPopover open={openPill === "state"} onClose={() => setOpenPill(null)} label="Location">
+              <p className="text-xs font-bold text-slate-900 mb-2">State</p>
+              <div className="grid grid-cols-4 gap-1.5">
+                {AU_STATES.map((s) => {
+                  const count = stateCounts[s] ?? 0;
+                  const selected = stateFilter === s;
+                  return (
+                    <button key={s} type="button" disabled={count === 0 && !selected} onClick={() => { setStateFilter(selected ? "all" : s); setOpenPill(null); }}
+                      className={`py-2 rounded-lg border text-xs font-bold disabled:opacity-40 transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                      {s}
+                      <span className="block text-[9px] font-mono text-slate-400">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </FilterPopover>
+          </div>
+          {/* Fee */}
+          <div className="relative">
+            <FilterPill icon="wallet" label="Fee" active={feeFilter !== "all"} open={openPill === "fee"}
+              value={feeFilter !== "all" ? FEE_OPTIONS.find((o) => o.value === feeFilter)?.label : undefined}
+              onClick={() => setOpenPill((o) => (o === "fee" ? null : "fee"))} />
+            <FilterPopover open={openPill === "fee"} onClose={() => setOpenPill(null)} label="Fee structure">
+              <p className="text-xs font-bold text-slate-900 mb-2">Fee structure</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {FEE_OPTIONS.map((o) => (
+                  <button key={o.value} type="button" onClick={() => { setFeeFilter(o.value); setOpenPill(null); }}
+                    className={`px-2.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${feeFilter === o.value ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </FilterPopover>
+          </div>
+          {/* Rating */}
+          <div className="relative">
+            <FilterPill icon="star" label="Rating" active={minRating > 0} open={openPill === "rating"}
+              value={minRating > 0 ? RATING_OPTIONS.find((o) => o.value === minRating)?.label : undefined}
+              onClick={() => setOpenPill((o) => (o === "rating" ? null : "rating"))} />
+            <FilterPopover open={openPill === "rating"} onClose={() => setOpenPill(null)} label="Minimum rating">
+              <p className="text-xs font-bold text-slate-900 mb-2">Minimum rating</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {RATING_OPTIONS.map((o) => (
+                  <button key={o.value} type="button" onClick={() => { setMinRating(o.value); setOpenPill(null); }}
+                    className={`px-2.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${minRating === o.value ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </FilterPopover>
+          </div>
         </div>
 
         {/* All-filters drawer — canonical FilterPanel; opens on every breakpoint. */}
