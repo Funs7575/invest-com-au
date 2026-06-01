@@ -6,6 +6,7 @@ import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 import ResultCount from "@/components/directory/ResultCount";
+import TabBar from "@/components/directory/TabBar";
 
 /* ─── Types ─── */
 
@@ -200,6 +201,12 @@ const CATEGORY_COLORS: Record<InsuranceCategory, string> = {
 export default function InsuranceCompareClient() {
   const [category, setCategory] = useState<FilterCategory>("All");
 
+  const insuranceCounts = useMemo(() => {
+    const c: Record<string, number> = { All: INSURERS.length };
+    for (const cat of CATEGORIES) if (cat !== "All") c[cat] = INSURERS.filter((i) => i.categories.includes(cat as InsuranceCategory)).length;
+    return c;
+  }, []);
+
   const filtered = useMemo(() => {
     if (category === "All") return INSURERS;
     return INSURERS.filter((ins) => ins.categories.includes(category as InsuranceCategory));
@@ -208,12 +215,12 @@ export default function InsuranceCompareClient() {
   return (
     <div>
       {/* ─── Hero ─── */}
-      <section className="bg-gradient-to-br from-sky-600 to-sky-800 text-white py-14 md:py-20">
+      <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-14 md:py-20">
         <div className="container-custom text-center">
           <h1 className="text-3xl md:text-5xl font-extrabold mb-3">
             Compare Insurance in Australia
           </h1>
-          <p className="text-sky-200 text-lg md:text-xl max-w-2xl mx-auto mb-4">
+          <p className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-4">
             Life insurance, income protection, home &amp; contents, and health insurance &mdash;
             compare Australia&rsquo;s leading insurers side by side.
           </p>
@@ -223,22 +230,17 @@ export default function InsuranceCompareClient() {
 
       {/* ─── Main content ─── */}
       <div className="container-custom py-8 md:py-12">
-        {/* Category filter tabs */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                category === cat
-                  ? "bg-sky-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        {/* Category filter tabs — canonical TabBar primitive */}
+        <TabBar
+          variant="chip"
+          ariaLabel="Insurance category"
+          className="mb-6"
+          value={category}
+          onChange={setCategory}
+          zeroCountBehavior="show"
+          alwaysShow="All"
+          tabs={CATEGORIES.map((cat) => ({ id: cat, label: cat, count: insuranceCounts[cat] ?? 0 }))}
+        />
 
         <ResultCount
           total={filtered.length}
@@ -284,7 +286,7 @@ export default function InsuranceCompareClient() {
               {/* CTA */}
               <Link
                 href={`/find-advisor?need=insurance`}
-                className="block w-full text-center px-4 py-2.5 bg-sky-600 text-white font-semibold rounded-lg hover:bg-sky-700 transition-colors text-sm"
+                className="block w-full text-center px-4 py-2.5 bg-coral-600 text-white font-semibold rounded-lg hover:bg-coral-700 transition-colors text-sm"
               >
                 Get a Quote
               </Link>
