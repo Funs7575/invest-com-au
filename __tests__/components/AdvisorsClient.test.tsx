@@ -79,11 +79,13 @@ describe("AdvisorsClient — filter panel wiring", () => {
     expect(screen.getByRole("checkbox", { name: /^SMSF Accountants/ })).toBeInTheDocument();
   });
 
-  it("renders the Minimum Rating select in the always-visible primary row", () => {
+  it("renders the primary facet pills (Type · Location · Fee · Rating)", () => {
     render(<AdvisorsClient professionals={professionals} />);
-    // Primary filters (State · Fee · Rating) are on display without opening the drawer.
-    expect(screen.getByLabelText("Minimum rating")).toBeInTheDocument();
-    expect(screen.getAllByRole("combobox").length).toBeGreaterThanOrEqual(3);
+    // Primary filters are on display as pill-popovers (mirrors /invest + /compare).
+    expect(screen.getByRole("button", { name: /^Type/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Location/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Fee/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Rating/ })).toBeInTheDocument();
   });
 
   it("toggling a type facet writes the matching URL param (URL-first)", async () => {
