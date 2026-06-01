@@ -59,13 +59,17 @@ const ROUTES = [
  *                  glossary + tools results are static and always show.
  *   /find-advisor — pure client-side wizard (no SSR DB calls); renders
  *                  step 1 unconditionally.
- *   /broker/example-chess
- *                — requires a seeded broker row with slug "example-chess"
- *                  (see scripts/seed-local.ts). With placeholder creds
- *                  the page returns 404, and the Next.js 404 surface
- *                  is still a valid a11y scan target. CI runs against
- *                  the production build which has real data, so axe
- *                  will scan the full broker profile in that context.
+ *
+ * Deliberately NOT gated here: /broker/[slug]. A broker *profile* is
+ * entirely DB-driven and reads cookies (createClient), so with no
+ * database — CI builds *and* runs with placeholder Supabase creds — it
+ * cannot render: the ISR/prerender path bails (DYNAMIC_SERVER_USAGE) to
+ * a bare framework 500 with no <html lang>/<title>. Scanning that error
+ * surface tests nothing about the real profile, and forcing it to render
+ * an error/404 page would only swap one un-representative surface for
+ * another while costing the page its ISR caching. Broker-profile a11y
+ * belongs against real data (the Vercel preview deploy), not the
+ * placeholder-creds artifact, so the route is left out of this no-DB gate.
  */
 const HIGH_TRAFFIC_ROUTES = [
   { path: "/compare", name: "Compare platforms" },
@@ -73,7 +77,6 @@ const HIGH_TRAFFIC_ROUTES = [
   { path: "/calculators", name: "Calculators hub" },
   { path: "/search?q=broker", name: "Search results" },
   { path: "/find-advisor", name: "Find-advisor wizard" },
-  { path: "/broker/example-chess", name: "Broker profile (example-chess)" },
 ];
 
 /**
