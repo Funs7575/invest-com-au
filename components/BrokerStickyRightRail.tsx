@@ -53,7 +53,7 @@ export default function BrokerStickyRightRail({
         <button
           onClick={dismiss}
           aria-label="Dismiss"
-          className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white border border-slate-200 shadow text-slate-400 hover:text-slate-700 flex items-center justify-center"
+          className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white border border-slate-200 shadow text-slate-600 hover:text-slate-700 flex items-center justify-center"
         >
           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
             <path

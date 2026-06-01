@@ -188,7 +188,7 @@ export default function FirbApplicationGuidePage() {
                 <div className="flex-1">
                   <div className="flex items-start justify-between gap-4 mb-1.5">
                     <h3 className="font-bold text-slate-800">{s.title}</h3>
-                    <span className="shrink-0 text-xs text-slate-400 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full whitespace-nowrap">{s.timeframe}</span>
+                    <span className="shrink-0 text-xs text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full whitespace-nowrap">{s.timeframe}</span>
                   </div>
                   <p className="text-sm text-slate-600 leading-relaxed">{s.description}</p>
                 </div>

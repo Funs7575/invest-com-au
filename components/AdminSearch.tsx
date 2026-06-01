@@ -262,7 +262,7 @@ export default function AdminSearch() {
             placeholder="Search pages, brokers, articles, courses..."
             className="flex-1 bg-transparent text-slate-900 text-sm placeholder-slate-400 focus:outline-none"
           />
-          <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-medium text-slate-400 bg-slate-100 border border-slate-200 rounded">
+          <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-medium text-slate-600 bg-slate-100 border border-slate-200 rounded">
             ESC
           </kbd>
         </div>
@@ -286,7 +286,7 @@ export default function AdminSearch() {
           {/* DB results section */}
           {dbResults.length > 0 && (
             <div>
-              <div className="px-4 py-2 text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
+              <div className="px-4 py-2 text-[0.65rem] font-bold text-slate-600 uppercase tracking-wider bg-slate-50">
                 Content
               </div>
               {dbResults.map((result, i) => (
@@ -316,7 +316,7 @@ export default function AdminSearch() {
           {/* Page results section */}
           {results.length > 0 && (
             <div>
-              <div className="px-4 py-2 text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider bg-slate-50">
+              <div className="px-4 py-2 text-[0.65rem] font-bold text-slate-600 uppercase tracking-wider bg-slate-50">
                 Pages
               </div>
               {results.map((result, i) => {
@@ -349,7 +349,7 @@ export default function AdminSearch() {
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2 border-t border-slate-200 bg-slate-50 flex items-center gap-4 text-[0.6rem] text-slate-400">
+        <div className="px-4 py-2 border-t border-slate-200 bg-slate-50 flex items-center gap-4 text-[0.6rem] text-slate-600">
           <span className="flex items-center gap-1">
             <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[0.55rem]">↑↓</kbd> Navigate
           </span>

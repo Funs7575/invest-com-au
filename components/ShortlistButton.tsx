@@ -36,7 +36,7 @@ export default memo(function ShortlistButton({
       className={`${sizeClasses} flex items-center justify-center rounded-full transition-all duration-200 shrink-0 ${
         saved
           ? "bg-red-50 text-red-500 hover:bg-red-100"
-          : "bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+          : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-600"
       }`}
       aria-label={saved ? `Remove ${name} from shortlist` : `Save ${name} to shortlist`}
       title={saved ? "Remove from My Platforms" : "Save to My Platforms"}

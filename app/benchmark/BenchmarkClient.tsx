@@ -402,7 +402,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
             </div>
           </div>
         ) : (
-          <div className="bg-white border border-slate-200 rounded-2xl p-12 mb-8 text-center text-slate-400">
+          <div className="bg-white border border-slate-200 rounded-2xl p-12 mb-8 text-center text-slate-600">
             <Icon name="bar-chart-3" size={48} className="mx-auto mb-4 opacity-30" />
             <p className="text-lg mb-1">Select a platform to see their radar chart</p>
             <p className="text-sm">
