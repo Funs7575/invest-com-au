@@ -45,8 +45,12 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   // Shared cache() hit with the page body — single DB round-trip
-  // per render instead of two.
-  const broker = await getBrokerBySlug(slug);
+  // per render instead of two. `.catch` because generateMetadata runs
+  // *outside* the route error boundary: an unguarded DB throw here
+  // (transient outage, or CI's placeholder creds) escalates to a bare
+  // 500 with no <html lang>/<title>. Degrade to fallback metadata and
+  // let the page body's error.tsx render the friendly retry surface.
+  const broker = await getBrokerBySlug(slug).catch(() => null);
 
   if (!broker) return { title: 'Broker Not Found' };
 
