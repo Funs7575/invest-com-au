@@ -86,7 +86,7 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
       <div className="mt-2 text-[0.65rem] md:text-[0.72rem] text-slate-600 text-center leading-relaxed max-w-3xl mx-auto space-y-1.5">
         <p>{PDS_CONSIDERATION} {FSG_NOTE}</p>
         {(activeFilter === 'cfd' || activeFilter === 'cfd-forex' || activeFilter === 'all') && (
-          <p className="text-red-700">{CFD_WARNING_SHORT}</p>
+          <p className="text-red-600">{CFD_WARNING_SHORT}</p>
         )}
         {(activeFilter === 'crypto' || activeFilter === 'crypto-exchanges' || activeFilter === 'all') && (
           <p className="text-amber-700">{CRYPTO_WARNING}</p>
