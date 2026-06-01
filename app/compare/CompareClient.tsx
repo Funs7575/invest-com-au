@@ -22,6 +22,7 @@ import SearchInput from "@/components/directory/SearchInput";
 import FilterChips, { type FilterChip } from "@/components/directory/FilterChips";
 import EmptyState from "@/components/directory/EmptyState";
 import ResultCount from "@/components/directory/ResultCount";
+import { FilterPill, FilterPopover } from "@/components/directory/FilterPill";
 import type { ABTestConfig } from "@/lib/ab-test";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -166,6 +167,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [selected, setSelected] = useState<Set<string>>(initialSelected);
   const [showMobileCompare, setShowMobileCompare] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [openPill, setOpenPill] = useState<string | null>(null);
   // Track which filter the user last expanded mobile columns for — comparing
   // to activeFilter gives derived "showAllMobileColumns" that auto-resets on
   // category change without a useEffect.
@@ -444,40 +446,30 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <span className="text-slate-700">Compare Platforms</span>
         </nav>
 
-        {/* Header */}
-        <div className="bg-gradient-to-r from-slate-50 to-white border border-slate-200 rounded-2xl p-4 md:p-6 mb-3 md:mb-6">
-          <div className="flex items-start justify-between gap-2 mb-1 md:mb-2">
-            <h1 className="text-xl md:text-4xl font-extrabold text-slate-900">Compare Platforms</h1>
-            <span className="hidden md:inline">
-              <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
-            </span>
-          </div>
-          <p className="text-xs md:text-base text-slate-500 mb-1.5 md:mb-2">
-            <span className="hidden md:inline">Side-by-side comparison of fees, features, and safety across {brokers.length}+ Australian platforms.</span>
-            <span className="md:hidden">Fees, features &amp; safety side-by-side.</span>
-            <span className="md:hidden ml-1"><FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" /></span>
-          </p>
-          <div className="flex items-center gap-3 text-[0.62rem] md:text-xs text-slate-400">
-            <SocialProofCounter />
-            <span>·</span>
-            <Link href="/methodology" className="underline hover:text-slate-600">Methodology</Link>
-            <span>·</span>
-            <button
-              onClick={() => {
-                const url = typeof window !== 'undefined' ? window.location.href : '';
-                if (navigator.share) {
-                  navigator.share({ title: 'Compare Platforms — invest.com.au', url }).catch(() => {});
-                } else {
-                  navigator.clipboard.writeText(url).then(() => alert('Link copied!')).catch(() => {});
-                }
-              }}
-              className="underline hover:text-slate-600"
-            >
-              Share this view
-            </button>
-            <span>·</span>
-            <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn</Link>
-          </div>
+        {/* Meta row — the H1 + subhead live in page.tsx (single source, streamed
+            for crawlers); here we keep only freshness + trust/utility links. */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-3 md:mb-5 text-[0.62rem] md:text-xs text-slate-500">
+          <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
+          <span className="text-slate-300">·</span>
+          <SocialProofCounter />
+          <span className="text-slate-300">·</span>
+          <Link href="/methodology" className="underline hover:text-slate-700">Methodology</Link>
+          <span className="text-slate-300">·</span>
+          <button
+            onClick={() => {
+              const url = typeof window !== 'undefined' ? window.location.href : '';
+              if (navigator.share) {
+                navigator.share({ title: 'Compare Platforms — invest.com.au', url }).catch(() => {});
+              } else {
+                navigator.clipboard.writeText(url).then(() => alert('Link copied!')).catch(() => {});
+              }
+            }}
+            className="underline hover:text-slate-700"
+          >
+            Share this view
+          </button>
+          <span className="text-slate-300">·</span>
+          <Link href="/how-we-earn" className="underline hover:text-slate-700">How we earn</Link>
         </div>
 
         {/* Deal of the Month — compact on mobile */}
@@ -510,7 +502,21 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           );
         })()}
 
-        <section className="mb-4 grid gap-3 lg:grid-cols-[1.1fr_0.9fr]" aria-label="Scenario and true-cost calculator">
+        <details className="group mb-4">
+          <summary className="flex items-center justify-between gap-2 cursor-pointer list-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm hover:border-slate-300">
+            <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
+              <Icon name="sliders" size={15} className="text-blue-700" />
+              Rank by scenario &amp; estimate true cost
+              <span className="hidden sm:inline text-[0.62rem] font-semibold text-slate-400">— optional power tools</span>
+              {scenario !== 'none' && (
+                <span className="rounded-full bg-slate-900 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-white">
+                  {SCENARIOS.find((s) => s.key === scenario)?.label}
+                </span>
+              )}
+            </span>
+            <Icon name="chevron-down" size={16} className="text-slate-400 transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="mt-3 grid gap-3 lg:grid-cols-[1.1fr_0.9fr]" aria-label="Scenario and true-cost calculator">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex items-start justify-between gap-3 mb-3">
               <div>
@@ -567,12 +573,23 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               ))}
             </div>
           </div>
-        </section>
+        </div>
+        </details>
 
         {/* Desktop Filter System */}
         <div className="hidden md:block mb-4 space-y-3">
+          {/* Search leads the toolbar (mirrors /invest /advisors) */}
+          <div className="max-w-md">
+            <SearchInput
+              id="compare-search"
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search platforms by name..."
+              ariaLabel="Search platforms by name"
+            />
+          </div>
           {/* Row 1: Platform type pills with logos */}
-          <div className="flex flex-wrap gap-2" role="tablist" aria-label="Platform type">
+          <div className="flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1" role="tablist" aria-label="Platform type">
             {platformTypes.map(f => (
               <button
                 key={f.key}
@@ -581,7 +598,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 aria-selected={activeFilter === f.key}
                 className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full transition-all inline-flex items-center gap-0.5 ${
                   activeFilter === f.key
-                    ? 'bg-blue-700 text-white shadow-sm scale-105'
+                    ? 'bg-slate-900 text-white shadow-sm scale-105'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'
                 }`}
               >
@@ -597,61 +614,64 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             ))}
           </div>
           
-          {/* Row 2: Feature toggles + Advanced filters */}
-          <div className="flex items-center gap-2 flex-wrap">
-            {schema.featureFilters.map(key => {
-              const f = featureFilterMeta[key];
-              return (
-              <button
-                key={key}
-                onClick={() => setActiveFeatures(prev => {
-                  const next = new Set(prev);
-                  if (next.has(key)) next.delete(key); else next.add(key);
-                  return next;
-                })}
-                className={`shrink-0 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all flex items-center gap-1.5 ${
-                  activeFeatures.has(key)
-                    ? 'bg-emerald-50 border-emerald-300 text-emerald-700 shadow-sm'
-                    : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700'
-                }`}
-              >
-                <Icon name={f.icon} size={12} />
-                {f.label}
-              </button>
-            );})}
-            
-            <span className="w-px h-5 bg-slate-200 mx-1" />
-            
-            {/* Max Fee dropdown */}
-            <select
-              value={maxFee}
-              onChange={e => setMaxFee(Number(e.target.value))}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${
-                maxFee < 999
-                  ? 'bg-blue-50 border-blue-300 text-blue-700'
-                  : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
-              }`}
-            >
-              {maxFeeOptions.map(o => (
-                <option key={o.value} value={o.value}>ASX Fee: {o.label}</option>
-              ))}
-            </select>
-            
-            {/* Min Rating dropdown */}
-            <select
-              value={minRating}
-              onChange={e => setMinRating(Number(e.target.value))}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${
-                minRating > 0
-                  ? 'bg-amber-50 border-amber-300 text-amber-700'
-                  : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
-              }`}
-            >
-              {minRatingOptions.map(o => (
-                <option key={o.value} value={o.value}>Rating: {o.label}</option>
-              ))}
-            </select>
-            
+          {/* Row 2: compact facet pills — features · max fee · rating (de-bloated
+              from 6 inline toggles + 2 dropdowns into popovers, mirroring /invest) */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative">
+              <FilterPill icon="sliders" label="Features" active={activeFeatures.size > 0} open={openPill === "features"}
+                value={activeFeatures.size > 0 ? String(activeFeatures.size) : undefined}
+                onClick={() => setOpenPill((o) => (o === "features" ? null : "features"))} />
+              <FilterPopover open={openPill === "features"} onClose={() => setOpenPill(null)} label="Features">
+                <p className="text-xs font-bold text-slate-900 mb-2">Features</p>
+                <div className="flex flex-col gap-1.5">
+                  {schema.featureFilters.map((key) => {
+                    const f = featureFilterMeta[key];
+                    const on = activeFeatures.has(key);
+                    return (
+                      <button key={key} type="button"
+                        onClick={() => setActiveFeatures((prev) => { const next = new Set(prev); if (next.has(key)) next.delete(key); else next.add(key); return next; })}
+                        className={`flex items-center gap-2 px-2.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${on ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                        <Icon name={f.icon} size={13} className={on ? "text-amber-600" : "text-slate-400"} />
+                        <span className="flex-1 text-left">{f.label}</span>
+                        {on && <Icon name="check" size={13} className="text-amber-600" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </FilterPopover>
+            </div>
+            <div className="relative">
+              <FilterPill icon="dollar-sign" label="Max fee" active={maxFee < 999} open={openPill === "fee"}
+                value={maxFee < 999 ? maxFeeOptions.find((o) => o.value === maxFee)?.label : undefined}
+                onClick={() => setOpenPill((o) => (o === "fee" ? null : "fee"))} />
+              <FilterPopover open={openPill === "fee"} onClose={() => setOpenPill(null)} label="Max ASX fee">
+                <p className="text-xs font-bold text-slate-900 mb-2">Max ASX brokerage</p>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {maxFeeOptions.map((o) => (
+                    <button key={o.value} type="button" onClick={() => { setMaxFee(o.value); setOpenPill(null); }}
+                      className={`px-2 py-2 rounded-lg border text-xs font-semibold transition-colors ${maxFee === o.value ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                      {o.label}
+                    </button>
+                  ))}
+                </div>
+              </FilterPopover>
+            </div>
+            <div className="relative">
+              <FilterPill icon="star" label="Rating" active={minRating > 0} open={openPill === "rating"}
+                value={minRating > 0 ? minRatingOptions.find((o) => o.value === minRating)?.label : undefined}
+                onClick={() => setOpenPill((o) => (o === "rating" ? null : "rating"))} />
+              <FilterPopover open={openPill === "rating"} onClose={() => setOpenPill(null)} label="Minimum rating">
+                <p className="text-xs font-bold text-slate-900 mb-2">Minimum rating</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {minRatingOptions.map((o) => (
+                    <button key={o.value} type="button" onClick={() => { setMinRating(o.value); setOpenPill(null); }}
+                      className={`px-2.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${minRating === o.value ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                      {o.label}
+                    </button>
+                  ))}
+                </div>
+              </FilterPopover>
+            </div>
           </div>
           {/* Active filter chips — one removable chip per active filter */}
           <FilterChips
@@ -718,7 +738,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                     onClick={() => setActiveFilter(f.key)}
                     className={`px-3 py-2 text-sm font-medium rounded-full inline-flex items-center gap-0.5 ${
                       activeFilter === f.key
-                        ? 'bg-blue-700 text-white shadow-sm'
+                        ? 'bg-slate-900 text-white shadow-sm'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
@@ -785,17 +805,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               </button>
             </div>
           </BottomSheet>
-        </div>
-
-        {/* Desktop Search Input */}
-        <div className="hidden md:block mb-4 w-80">
-          <SearchInput
-            id="compare-search"
-            value={searchQuery}
-            onChange={setSearchQuery}
-            placeholder="Search platforms by name..."
-            ariaLabel="Search platforms by name"
-          />
         </div>
 
         {/* Result count — sr-only aria-live for all sizes; ResultCount visible on mobile */}
