@@ -1,3 +1,4 @@
+import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 import { loadConfig, assertTargetAllowed } from "./config";
 
@@ -27,8 +28,10 @@ export default defineConfig({
   testDir: ".",
   testMatch: /.*\.spec\.ts$/,
   // Keep Playwright artifacts inside the (gitignored) run dir so bot runs never
-  // dirty the tracked tree.
-  outputDir: `${config.runDir}/artifacts`,
+  // dirty the tracked tree. Absolute path because Playwright resolves a
+  // relative outputDir against the config's dir (bots/), which would otherwise
+  // produce bots/bots/.runs/… and escape .gitignore.
+  outputDir: path.resolve(process.cwd(), config.runDir, "artifacts"),
   // Sessions visit several routes and run axe + link checks; give them room.
   timeout: 180_000,
   fullyParallel: true,
