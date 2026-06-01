@@ -458,9 +458,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
   const stateCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    professionals.forEach(p => { if (p.location_state) counts[p.location_state] = (counts[p.location_state] || 0) + 1; });
+    const bump = (s?: string | null) => { if (s) counts[s] = (counts[s] || 0) + 1; };
+    // Count every provider type the Location pill can surface — a state with
+    // only firms or expert teams (no individual advisors) stays selectable.
+    professionals.forEach((p) => bump(p.location_state));
+    firms.forEach((f) => bump(f.location_state));
+    expertTeams.forEach((t) => bump(t.location_state));
     return counts;
-  }, [professionals]);
+  }, [professionals, firms, expertTeams]);
 
   // Use nearby results when location active, otherwise client-side filter
   const filtered = useMemo(() => {
@@ -815,6 +820,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <div className="relative">
             <FilterPill icon="map-pin" label="Location" active={stateFilter !== "all"} open={openPill === "state"}
               value={stateFilter !== "all" ? stateFilter : undefined}
+              disabled={isLocationActive}
               onClick={() => setOpenPill((o) => (o === "state" ? null : "state"))} />
             <FilterPopover open={openPill === "state"} onClose={() => setOpenPill(null)} label="Location">
               <p className="text-xs font-bold text-slate-900 mb-2">State</p>
