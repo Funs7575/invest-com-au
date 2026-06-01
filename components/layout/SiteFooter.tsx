@@ -164,7 +164,7 @@ export function SiteFooter() {
               </p>
             </div>
 
-            <nav className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500" aria-label="Legal links">
+            <nav className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-400" aria-label="Legal links">
               {[
                 { label: "Privacy", href: "/privacy" },
                 { label: "Terms", href: "/terms" },

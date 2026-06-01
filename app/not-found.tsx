@@ -16,7 +16,7 @@ export default function NotFound() {
           <Icon name="search" size={36} className="text-slate-300" />
         </div>
 
-        <p className="text-6xl md:text-7xl font-extrabold text-slate-200 mb-3">404</p>
+        <p aria-hidden="true" className="text-6xl md:text-7xl font-extrabold text-slate-500 mb-3">404</p>
         <h1 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">
           Page Not Found
         </h1>
@@ -43,7 +43,7 @@ export default function NotFound() {
 
         {/* Suggested popular pages */}
         <div className="border-t border-slate-100 pt-6">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-4">Popular Pages</p>
+          <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-4">Popular Pages</p>
           <div className="grid grid-cols-2 gap-2 text-left max-w-sm mx-auto">
             <Link href="/quiz" className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group">
               <Icon name="target" size={16} className="text-slate-400 group-hover:text-amber-500 transition-colors shrink-0" />

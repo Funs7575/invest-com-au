@@ -927,7 +927,7 @@ function Step1({ onSelect }: { onSelect: (intent: Intent) => void }) {
         ))}
       </div>
       <div className="mt-4 text-center">
-        <Link href="/find-advisor/life-event" className="text-xs text-amber-600 hover:text-amber-700 font-semibold">
+        <Link href="/find-advisor/life-event" className="text-xs text-amber-700 hover:text-amber-800 font-semibold">
           Find by life event instead (getting married, new baby, selling a business\u2026) &rarr;
         </Link>
       </div>

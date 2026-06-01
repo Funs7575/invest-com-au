@@ -31,7 +31,7 @@ export default function GetMatchedEmbed({ context, listingId }: Props) {
     return (
       <section className="bg-gradient-to-b from-white to-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-amber-600 text-[11px] font-bold uppercase tracking-widest mb-2">
+          <p className="text-amber-700 text-[11px] font-bold uppercase tracking-widest mb-2">
             Start with your goal
           </p>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-2">
@@ -81,7 +81,7 @@ export default function GetMatchedEmbed({ context, listingId }: Props) {
     <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1">
-          <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest mb-1">
+          <p className="text-amber-700 text-[10px] font-bold uppercase tracking-widest mb-1">
             Get Matched
           </p>
           <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 mb-1">

@@ -48,7 +48,7 @@ function ResultSection({
       <h2 className="flex items-center gap-2 text-base font-bold text-slate-900 mb-4">
         <Icon name={icon} size={16} className="text-amber-500" />
         {title}
-        <span className="text-sm font-normal text-slate-400">({count})</span>
+        <span className="text-sm font-normal text-slate-600">({count})</span>
       </h2>
       <div className="space-y-2">{children}</div>
     </section>
@@ -134,7 +134,7 @@ export default async function SearchPage({
                     ? `No results found for "${query}"`
                     : `${totalHits} result${totalHits !== 1 ? "s" : ""} for "${query}"`}
                   {results.durationMs > 0 && (
-                    <span className="ml-2 text-slate-400">
+                    <span className="ml-2 text-slate-600">
                       ({results.durationMs}ms)
                     </span>
                   )}
@@ -282,7 +282,7 @@ export default async function SearchPage({
               <p className="text-slate-600 font-semibold mb-1">
                 No results for &ldquo;{query}&rdquo;
               </p>
-              <p className="text-sm text-slate-400 mb-6">
+              <p className="text-sm text-slate-600 mb-6">
                 Try a broader search term, or browse these sections:
               </p>
               <div className="flex flex-wrap justify-center gap-3">
