@@ -68,7 +68,14 @@ export function FilterPopover({
   useEffect(() => {
     if (!open) return;
     const onDoc = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+      // Close-boundary is the `.relative` wrapper (panel's parent) — which also
+      // holds the trigger pill — NOT just the panel. If we tested the panel
+      // alone, a mousedown on the trigger would count as "outside" and close
+      // the popover before the trigger's own click re-opened it, so an open
+      // pill could never be toggled shut. Consumers must render <FilterPill>
+      // and <FilterPopover> as siblings inside one positioned wrapper.
+      const boundary = ref.current?.parentElement ?? ref.current;
+      if (boundary && !boundary.contains(e.target as Node)) onClose();
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
