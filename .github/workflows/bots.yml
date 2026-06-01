@@ -47,6 +47,10 @@ jobs:
         run: |
           URL="${{ github.event.inputs.target_url }}"
           if [ -z "$URL" ]; then URL="${{ vars.BOTS_TARGET_URL }}"; fi
+          # Default target: the current Netlify preview, so the fleet works with
+          # zero setup. Override any time by setting the BOTS_TARGET_URL repo
+          # variable — switch it to the Vercel production URL at launch.
+          if [ -z "$URL" ]; then URL="https://lambent-sawine-17c3dd.netlify.app"; fi
           if [ -z "$URL" ]; then
             echo "run=false" >> "$GITHUB_OUTPUT"
             echo "::notice::No target URL. Set the BOTS_TARGET_URL repo variable, or paste a URL when running this workflow."
