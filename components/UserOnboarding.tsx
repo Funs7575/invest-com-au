@@ -145,7 +145,7 @@ export default function UserOnboarding() {
 
         {/* Skip */}
         <div className="flex justify-end px-5 pt-2">
-          <button onClick={dismissPermanent} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+          <button onClick={dismissPermanent} className="text-xs text-slate-600 hover:text-slate-800 transition-colors">
             Skip
           </button>
         </div>
@@ -299,7 +299,7 @@ export default function UserOnboarding() {
           <div className="px-6 pb-5">
             <button
               onClick={() => setStep(step - 1)}
-              className="text-sm text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1"
+              className="text-sm text-slate-600 hover:text-slate-800 transition-colors flex items-center gap-1"
             >
               <Icon name="arrow-left" size={14} />
               Back

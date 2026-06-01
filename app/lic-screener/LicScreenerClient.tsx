@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { LIC_DATA, ntaPremiumDiscount, type LIC, type LICFocus } from "@/lib/lic-data";
+import ResultCount from "@/components/directory/ResultCount";
 
 type SortKey = "ticker" | "dividendYield" | "frankingPct" | "managementCostPct" | "aumMillions" | "ntaDiscount";
 type SortDir = "asc" | "desc";
@@ -146,7 +147,7 @@ export default function LicScreenerClient() {
               <select
                 value={focus}
                 onChange={(e) => setFocus(e.target.value as LICFocus | "all")}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
               >
                 {FOCUS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
@@ -156,7 +157,7 @@ export default function LicScreenerClient() {
               <select
                 value={franking}
                 onChange={(e) => setFranking(e.target.value as typeof franking)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
               >
                 {FRANKING_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
@@ -171,7 +172,7 @@ export default function LicScreenerClient() {
                 value={maxMer}
                 onChange={(e) => setMaxMer(e.target.value ? parseFloat(e.target.value) : "")}
                 placeholder="e.g. 0.5"
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
               />
             </div>
             <div className="flex items-end">
@@ -188,9 +189,7 @@ export default function LicScreenerClient() {
               </label>
             </div>
           </div>
-          {sorted.length !== LIC_DATA.length && (
-            <p className="text-xs text-slate-400 mt-3">Showing {sorted.length} of {LIC_DATA.length} LICs</p>
-          )}
+<ResultCount total={sorted.length} noun={`of ${LIC_DATA.length} LICs`} className="mt-3 !text-xs" />
         </div>
 
         {/* Table */}
