@@ -421,7 +421,7 @@ export default function ForeignInvestmentPage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
                   href="/property/listings?firb=true"
-                  className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm rounded-xl transition-colors text-center shadow-lg shadow-amber-500/20"
+                  className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm rounded-xl transition-colors text-center shadow-lg shadow-amber-500/20"
                 >
                   FIRB-Approved Listings &rarr;
                 </Link>
