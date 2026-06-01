@@ -507,7 +507,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
               <Icon name="sliders" size={15} className="text-blue-700" />
               Rank by scenario &amp; estimate true cost
-              <span className="hidden sm:inline text-[0.62rem] font-semibold text-slate-400">— optional power tools</span>
+              <span className="hidden sm:inline text-[0.62rem] font-semibold text-slate-600">— optional power tools</span>
               {scenario !== 'none' && (
                 <span className="rounded-full bg-slate-900 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-white">
                   {SCENARIOS.find((s) => s.key === scenario)?.label}

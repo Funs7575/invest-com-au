@@ -58,7 +58,7 @@ export default function SocialProofCounter({ variant = "inline" }: { variant?: "
   return (
     <p
       className={`text-[0.62rem] flex items-center gap-1.5 transition-opacity duration-300 ${
-        count === 0 ? "opacity-0 text-transparent" : "opacity-100 text-slate-400"
+        count === 0 ? "opacity-0 text-transparent" : "opacity-100 text-slate-600"
       }`}
       // Reserve space with min-height to prevent CLS
       style={{ minHeight: "1.125rem" }}

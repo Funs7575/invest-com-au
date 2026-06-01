@@ -145,7 +145,7 @@ export default function UserOnboarding() {
 
         {/* Skip */}
         <div className="flex justify-end px-5 pt-2">
-          <button onClick={dismissPermanent} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+          <button onClick={dismissPermanent} className="text-xs text-slate-600 hover:text-slate-800 transition-colors">
             Skip
           </button>
         </div>
@@ -162,7 +162,7 @@ export default function UserOnboarding() {
               </p>
               <button
                 onClick={() => setStep(1)}
-                className="mt-5 px-7 py-3 bg-amber-500 text-white font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
+                className="mt-5 px-7 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
               >
                 See How It Works
               </button>
@@ -263,7 +263,7 @@ export default function UserOnboarding() {
               <div className="flex flex-col gap-2.5">
                 <button
                   onClick={() => navigateAndClose("/quiz")}
-                  className="w-full px-6 py-3 bg-amber-500 text-white font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
+                  className="w-full px-6 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
                 >
                   Take the Quiz
                 </button>
@@ -299,7 +299,7 @@ export default function UserOnboarding() {
           <div className="px-6 pb-5">
             <button
               onClick={() => setStep(step - 1)}
-              className="text-sm text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1"
+              className="text-sm text-slate-600 hover:text-slate-800 transition-colors flex items-center gap-1"
             >
               <Icon name="arrow-left" size={14} />
               Back

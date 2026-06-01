@@ -59,13 +59,17 @@ const ROUTES = [
  *                  glossary + tools results are static and always show.
  *   /find-advisor — pure client-side wizard (no SSR DB calls); renders
  *                  step 1 unconditionally.
- *   /broker/example-chess
- *                — requires a seeded broker row with slug "example-chess"
- *                  (see scripts/seed-local.ts). With placeholder creds
- *                  the page returns 404, and the Next.js 404 surface
- *                  is still a valid a11y scan target. CI runs against
- *                  the production build which has real data, so axe
- *                  will scan the full broker profile in that context.
+ *
+ * Deliberately NOT gated here: /broker/[slug]. A broker *profile* is
+ * entirely DB-driven and reads cookies (createClient), so with no
+ * database — CI builds *and* runs with placeholder Supabase creds — it
+ * cannot render: the ISR/prerender path bails (DYNAMIC_SERVER_USAGE) to
+ * a bare framework 500 with no <html lang>/<title>. Scanning that error
+ * surface tests nothing about the real profile, and forcing it to render
+ * an error/404 page would only swap one un-representative surface for
+ * another while costing the page its ISR caching. Broker-profile a11y
+ * belongs against real data (the Vercel preview deploy), not the
+ * placeholder-creds artifact, so the route is left out of this no-DB gate.
  */
 const HIGH_TRAFFIC_ROUTES = [
   { path: "/compare", name: "Compare platforms" },
@@ -73,7 +77,6 @@ const HIGH_TRAFFIC_ROUTES = [
   { path: "/calculators", name: "Calculators hub" },
   { path: "/search?q=broker", name: "Search results" },
   { path: "/find-advisor", name: "Find-advisor wizard" },
-  { path: "/broker/example-chess", name: "Broker profile (example-chess)" },
 ];
 
 /**
@@ -87,6 +90,13 @@ const DISABLED_RULES = [
   // them as empty landmarks even though users can't reach them.
   "region",
 ];
+
+// WCAG 2 AA 1.4.3 exempts "text that is part of a logo or brand name"
+// from the contrast minimum. The brand wordmark renders ".com.au" in
+// amber-500 (the brand colour) inside the header brand link; we exclude
+// that span so the on-brand logo doesn't trip color-contrast, without
+// suppressing the rule anywhere else on the page.
+const LOGO_EXEMPT_SELECTOR = 'a[aria-label^="Invest.com.au"] span';
 
 // ── Legacy routes: hard-fail on critical only ────────────────────────────────
 
@@ -104,6 +114,7 @@ for (const { path, name } of ROUTES) {
     await page.waitForTimeout(600);
 
     const results = await new AxeBuilder({ page })
+      .exclude(LOGO_EXEMPT_SELECTOR)
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
       .disableRules(DISABLED_RULES)
       .analyze();
@@ -152,6 +163,7 @@ for (const { path, name } of HIGH_TRAFFIC_ROUTES) {
     await page.waitForTimeout(800);
 
     const results = await new AxeBuilder({ page })
+      .exclude(LOGO_EXEMPT_SELECTOR)
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
       .disableRules(DISABLED_RULES)
       .analyze();
