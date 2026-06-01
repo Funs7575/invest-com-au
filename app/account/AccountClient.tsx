@@ -323,7 +323,7 @@ export default function AccountClient() {
                 </div>
                 <Link
                   href="/compare"
-                  className="shrink-0 px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
+                  className="shrink-0 px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
                 >
                   Compare
                 </Link>
@@ -503,7 +503,7 @@ export default function AccountClient() {
                   <button
                     onClick={handleRefundSubscription}
                     disabled={refundLoading}
-                    className="px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-xl hover:bg-amber-700 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-amber-600 text-slate-900 text-sm font-semibold rounded-xl hover:bg-amber-700 transition-colors disabled:opacity-50"
                   >
                     {refundLoading ? "Processing..." : "Yes, Refund & Cancel"}
                   </button>

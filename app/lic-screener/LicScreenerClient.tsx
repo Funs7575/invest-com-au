@@ -355,7 +355,7 @@ export default function LicScreenerClient() {
           </div>
           <Link
             href="/advisors/financial-planners"
-            className="shrink-0 px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+            className="shrink-0 px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
           >
             Find an Adviser
           </Link>

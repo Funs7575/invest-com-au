@@ -570,7 +570,7 @@ export default async function PropertyHubPage() {
                     ))}
                   </div>
                 </div>
-                <Link href="/property/buyer-agents" className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm rounded-xl transition-colors shadow-lg shadow-amber-500/20">
+                <Link href="/property/buyer-agents" className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-lg shadow-amber-500/20">
                   Browse Verified Agents &rarr;
                 </Link>
               </div>

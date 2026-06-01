@@ -139,7 +139,7 @@ export default function LifecycleJourneyRail({ hubSlug }: LifecycleJourneyRailPr
             return isCurrent ? (
               <span
                 key={stage.hubSlug}
-                className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-500 text-white"
+                className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-500 text-slate-900"
                 aria-current="step"
               >
                 {stage.label}

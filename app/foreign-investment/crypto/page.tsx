@@ -197,7 +197,7 @@ export default async function ForeignCryptoPage() {
                     <p className="text-xs text-slate-500 leading-relaxed">{b.foreign_investor_notes}</p>
                   )}
                   {b.affiliate_url && (
-                    <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
+                    <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-xs font-bold text-slate-900 bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
                       Visit {b.name}
                     </Link>
                   )}
@@ -259,7 +259,7 @@ export default async function ForeignCryptoPage() {
             <p className="text-slate-400 text-sm">Full comparison of AUSTRAC-registered exchanges with fees, features, and supported assets.</p>
           </div>
           <div className="flex gap-3 shrink-0">
-            <Link href="/crypto" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
+            <Link href="/crypto" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
               Compare Exchanges
             </Link>
             <Link href="/foreign-investment" className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap">

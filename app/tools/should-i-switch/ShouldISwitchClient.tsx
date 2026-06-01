@@ -312,7 +312,7 @@ export default function ShouldISwitchClient({
                       href={getAffiliateLink(r.broker)}
                       target="_blank"
                       rel="sponsored noopener noreferrer"
-                      className="text-xs md:text-sm font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded-lg px-3 py-2 transition"
+                      className="text-xs md:text-sm font-semibold bg-amber-500 hover:bg-amber-600 text-slate-900 rounded-lg px-3 py-2 transition"
                     >
                       {r.broker.cta_text || "Visit broker"}
                     </a>

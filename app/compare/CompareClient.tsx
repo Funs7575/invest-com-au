@@ -494,7 +494,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 target="_blank"
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(dealBroker.slug, dealBroker.name, 'compare-deal-banner', '/compare', 'compare')}
-                className="shrink-0 px-3 md:px-4 py-1.5 md:py-2 bg-amber-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
+                className="shrink-0 px-3 md:px-4 py-1.5 md:py-2 bg-amber-600 text-slate-900 text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
               >
                 Claim →
               </a>

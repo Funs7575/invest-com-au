@@ -384,7 +384,7 @@ export default function FirbFeeEstimatorClient() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/foreign-investment/energy"
-              className="inline-flex items-center gap-1.5 text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white px-4 py-2.5 rounded-lg transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-bold bg-amber-500 hover:bg-amber-600 text-slate-900 px-4 py-2.5 rounded-lg transition-colors"
             >
               Read the energy foreign-investment guide
               <Icon name="arrow-right" size={14} />

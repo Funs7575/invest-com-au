@@ -143,7 +143,7 @@ export default function QuizTopMatch({ topMatch, answers, getMatchReasons }: Pro
         target="_blank"
         rel={AFFILIATE_REL}
         onClick={() => trackClick(broker.slug, broker.name, 'quiz-result-1', '/quiz', 'quiz')}
-        className="block w-full text-center px-5 py-3 md:px-6 md:py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg transition-all text-sm md:text-lg shadow-lg hover:shadow-xl hover:scale-[1.02]"
+        className="block w-full text-center px-5 py-3 md:px-6 md:py-3.5 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg transition-all text-sm md:text-lg shadow-lg hover:shadow-xl hover:scale-[1.02]"
       >
         {getBenefitCta(broker, 'quiz')}
       </a>

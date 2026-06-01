@@ -339,7 +339,7 @@ export default async function TransferFromPage({
                 )}
                 <Link
                   href="/compare?category=shares"
-                  className="mt-4 inline-flex items-center justify-center gap-2 w-full bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-4 py-2.5 rounded-lg"
+                  className="mt-4 inline-flex items-center justify-center gap-2 w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-4 py-2.5 rounded-lg"
                 >
                   Compare all brokers
                   <Icon name="arrow-right" size={14} />

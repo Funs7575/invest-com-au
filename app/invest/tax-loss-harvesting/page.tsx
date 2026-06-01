@@ -126,23 +126,23 @@ export default function TaxLossHarvestingPage() {
                 <h3 className="font-extrabold text-amber-900 mb-4">Key facts at a glance</h3>
                 <ul className="space-y-3 text-sm text-slate-700">
                   <li className="flex items-start gap-2">
-                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center font-bold">1</span>
+                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-500 text-slate-900 text-xs flex items-center justify-center font-bold">1</span>
                     <span>Capital losses offset capital gains — reducing your assessable income dollar for dollar</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center font-bold">2</span>
+                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-500 text-slate-900 text-xs flex items-center justify-center font-bold">2</span>
                     <span>Excess losses carry forward to future years — they never expire</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center font-bold">3</span>
+                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-500 text-slate-900 text-xs flex items-center justify-center font-bold">3</span>
                     <span>Capital losses cannot offset ordinary income (salary, dividends, rent) — only capital gains</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center font-bold">4</span>
+                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-500 text-slate-900 text-xs flex items-center justify-center font-bold">4</span>
                     <span>Timing: most effective before 30 June each financial year when you have gains to offset</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-500 text-white text-xs flex items-center justify-center font-bold">5</span>
+                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-amber-500 text-slate-900 text-xs flex items-center justify-center font-bold">5</span>
                     <span>Australia has no formal wash sale rule, but the ATO&apos;s Part IVA anti-avoidance rules apply</span>
                   </li>
                 </ul>
@@ -276,7 +276,7 @@ export default function TaxLossHarvestingPage() {
               {/* Example 1 */}
               <div className="rounded-xl border border-amber-200 bg-white p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="shrink-0 w-7 h-7 rounded-full bg-amber-500 text-white text-xs font-extrabold flex items-center justify-center">1</span>
+                  <span className="shrink-0 w-7 h-7 rounded-full bg-amber-500 text-slate-900 text-xs font-extrabold flex items-center justify-center">1</span>
                   <h3 className="font-extrabold text-slate-900">Gain + loss offset (with CGT discount)</h3>
                 </div>
                 <div className="space-y-2 text-sm">

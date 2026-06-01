@@ -207,7 +207,7 @@ export default function SMSFPage() {
           <div className="flex gap-3 shrink-0 flex-wrap">
             <Link
               href="/compare?filter=smsf"
-              className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
+              className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
             >
               Compare SMSF Platforms
             </Link>

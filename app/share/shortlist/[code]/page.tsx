@@ -143,7 +143,7 @@ export default async function SharedShortlistPage({
             <div className="flex flex-wrap gap-3 mt-5">
               <Link
                 href="/compare"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-sm transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg text-sm transition-colors"
               >
                 Compare all brokers
               </Link>

@@ -26,7 +26,7 @@ export default function ForeignInvestorCallout({ href, verticalName, keyRule }: 
           </div>
           <Link
             href={href}
-            className="shrink-0 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-lg text-xs transition-colors whitespace-nowrap"
+            className="shrink-0 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-lg text-xs transition-colors whitespace-nowrap"
           >
             Foreign Investor Guide &rarr;
           </Link>

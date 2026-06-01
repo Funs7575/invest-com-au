@@ -398,7 +398,7 @@ export default function QuizResultsScreen({
                     <div className="flex flex-wrap gap-2">
                       <Link
                         href={match.advisorHref}
-                        className="px-3 py-1.5 md:px-4 md:py-2 bg-amber-500 text-white text-[0.65rem] md:text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
+                        className="px-3 py-1.5 md:px-4 md:py-2 bg-amber-500 text-slate-900 text-[0.65rem] md:text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
                         onClick={() => trackEvent("quiz_advisor_click", { type: match.type, context: match.context })}
                       >
                         Browse Verified Professionals →

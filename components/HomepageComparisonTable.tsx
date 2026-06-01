@@ -341,7 +341,7 @@ export default function HomepageComparisonTable({
                       href={brokerLink}
                       target="_blank"
                       rel={AFFILIATE_REL}
-                      className="inline-block whitespace-nowrap text-center px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(217,119,6,0.3)]"
+                      className="inline-block whitespace-nowrap text-center px-3 py-1.5 bg-amber-600 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-700 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(217,119,6,0.3)]"
                     >
                       {getBenefitCta(broker, "compare")}
                     </a>

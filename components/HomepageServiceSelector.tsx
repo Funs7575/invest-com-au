@@ -294,7 +294,7 @@ export default function HomepageServiceSelector({ compact = false }: { compact?:
       <div className="text-center mt-5">
         <Link
           href="/find-advisor"
-          className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-600 shadow-sm hover:shadow-md transition-all"
+          className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-xl hover:bg-amber-600 shadow-sm hover:shadow-md transition-all"
         >
           Take the Full Matching Quiz &rarr;
         </Link>

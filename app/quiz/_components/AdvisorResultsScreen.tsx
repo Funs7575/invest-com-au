@@ -389,7 +389,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                 <Link
                   href={`/quotes/post?context=quiz&type=${advisorType}`}
                   onClick={() => trackEvent("advisor_no_match_post_job", { advisor_type: advisorType }, "/quiz")}
-                  className="px-4 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+                  className="px-4 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
                 >
                   Post your situation →
                 </Link>
@@ -634,7 +634,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           <button
             onClick={handleContactNext}
             disabled={!canSubmitContact}
-            className="w-full mt-4 py-3 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
+            className="w-full mt-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
           >
             Continue — choose my location →
           </button>

@@ -782,7 +782,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           >
             <Icon name="sliders" size={14} />
             <span className="hidden sm:inline">All filters</span>
-            {activeFilterCount > 0 && <span className="ml-0.5 text-[10px] font-mono bg-amber-500 text-white rounded-full px-1.5 py-0.5">{activeFilterCount}</span>}
+            {activeFilterCount > 0 && <span className="ml-0.5 text-[10px] font-mono bg-amber-500 text-slate-900 rounded-full px-1.5 py-0.5">{activeFilterCount}</span>}
           </button>
           <SortDropdown
             options={SORT_OPTIONS.map((o) => ({ value: o.key, label: o.label }))}
@@ -1409,7 +1409,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   <button
                     onClick={saveAlert}
                     disabled={alertStatus === "submitting"}
-                    className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                    className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
                   >
                     {alertStatus === "submitting" ? "Saving..." : "Notify Me"}
                   </button>
@@ -1555,7 +1555,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <button
                 onClick={saveAlert}
                 disabled={alertStatus === "submitting"}
-                className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
               >
                 {alertStatus === "submitting" ? "Saving..." : "Set Alert"}
               </button>
@@ -1571,7 +1571,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             <h3 className="text-base md:text-xl font-extrabold text-white mb-1.5 md:mb-2">Are you a financial professional?</h3>
             <p className="text-xs md:text-sm text-slate-400 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/25">
+              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/25">
                 Get Listed Free
                 <Icon name="arrow-right" size={15} />
               </Link>

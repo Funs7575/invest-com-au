@@ -59,7 +59,7 @@ export default function QuizRunnerUps({ runnerUps, answers, getMatchReasons }: P
                 target="_blank"
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
-                className="hidden sm:inline-flex shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+                className="hidden sm:inline-flex shrink-0 px-4 py-2 bg-amber-600 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
               >
                 {getBenefitCta(r.broker, 'quiz')}
               </a>
@@ -69,7 +69,7 @@ export default function QuizRunnerUps({ runnerUps, answers, getMatchReasons }: P
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
-              className="sm:hidden block w-full text-center mt-2 px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors"
+              className="sm:hidden block w-full text-center mt-2 px-3 py-1.5 bg-amber-600 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors"
             >
               {getBenefitCta(r.broker, 'quiz')}
             </a>

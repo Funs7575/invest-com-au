@@ -153,7 +153,7 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
               </p>
               <button
                 onClick={next}
-                className="mt-6 px-8 py-3 bg-amber-500 text-white font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
+                className="mt-6 px-8 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
               >
                 Get Started
               </button>

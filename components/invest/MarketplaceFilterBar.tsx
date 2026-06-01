@@ -347,7 +347,7 @@ export default function MarketplaceFilterBar({
           <Icon name="sliders" size={13} />
           All filters
           {advancedCount > 0 && (
-            <span className="ml-0.5 text-[10px] font-mono bg-amber-500 text-white rounded-full px-1.5 py-0.5">{advancedCount}</span>
+            <span className="ml-0.5 text-[10px] font-mono bg-amber-500 text-slate-900 rounded-full px-1.5 py-0.5">{advancedCount}</span>
           )}
         </button>
 

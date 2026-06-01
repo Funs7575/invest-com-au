@@ -32,7 +32,7 @@ export default function AdvisorDirectory() {
             onClick={() => setActiveTab("property")}
             className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all min-h-9 md:min-h-10 ${
               isProperty
-                ? "bg-amber-500 text-white shadow-sm"
+                ? "bg-amber-500 text-slate-900 shadow-sm"
                 : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
@@ -42,7 +42,7 @@ export default function AdvisorDirectory() {
             onClick={() => setActiveTab("wealth")}
             className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all min-h-9 md:min-h-10 ${
               !isProperty
-                ? "bg-amber-500 text-white shadow-sm"
+                ? "bg-amber-500 text-slate-900 shadow-sm"
                 : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
             }`}
           >

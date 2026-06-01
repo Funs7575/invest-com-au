@@ -129,7 +129,7 @@ export default function FxFeeCalculator({ brokers, searchParams }: Props) {
                   onClick={() => trackClick(broker.slug, broker.name, "calculator-fx", "/calculators", "cta")}
                   className={`inline-block px-2.5 py-1 text-[0.69rem] font-bold rounded-md transition-all duration-200 whitespace-nowrap active:scale-[0.97] ${
                     isCheapest
-                      ? "bg-amber-600 text-white hover:bg-amber-700"
+                      ? "bg-amber-600 text-slate-900 hover:bg-amber-700"
                       : "bg-slate-100 text-slate-600 hover:bg-amber-600 hover:text-white"
                   }`}
                 >
@@ -155,7 +155,7 @@ export default function FxFeeCalculator({ brokers, searchParams }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackClick(fxBrokers[0].broker.slug, fxBrokers[0].broker.name, "calculator-fx", "/calculators", "cta")}
-            className="w-full md:w-auto text-center px-5 py-2.5 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors text-sm whitespace-nowrap"
+            className="w-full md:w-auto text-center px-5 py-2.5 bg-amber-600 text-slate-900 font-semibold rounded-lg hover:bg-amber-700 transition-colors text-sm whitespace-nowrap"
           >
             {getBenefitCta(fxBrokers[0].broker, "calculator")}
           </a>

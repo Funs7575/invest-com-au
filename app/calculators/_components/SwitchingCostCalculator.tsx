@@ -118,7 +118,7 @@ export default function SwitchingCostCalculator({ brokers, searchParams }: Props
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => trackClick(cheaperBroker.slug, cheaperBroker.name, "calculator-switching", "/calculators", "cta")}
-                    className="w-full md:w-auto text-center px-5 py-2.5 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors text-sm whitespace-nowrap"
+                    className="w-full md:w-auto text-center px-5 py-2.5 bg-amber-600 text-slate-900 font-semibold rounded-lg hover:bg-amber-700 transition-colors text-sm whitespace-nowrap"
                   >
                     {getBenefitCta(cheaperBroker, "calculator")}
                   </a>

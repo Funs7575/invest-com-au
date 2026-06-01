@@ -99,7 +99,7 @@ export default function BrokerStickyRightRail({
               context,
             )
           }
-          className="group flex items-center justify-center gap-2 w-full px-4 py-3 bg-amber-600 text-white text-sm font-bold rounded-xl hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-600/30 active:bg-amber-800 active:scale-[0.98] transition-all"
+          className="group flex items-center justify-center gap-2 w-full px-4 py-3 bg-amber-600 text-slate-900 text-sm font-bold rounded-xl hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-600/30 active:bg-amber-800 active:scale-[0.98] transition-all"
         >
           <span>{getBenefitCta(broker, context)}</span>
           <svg

@@ -68,7 +68,7 @@ export default async function HomeRateOfTheDay() {
         {/* CTA */}
         <Link
           href={`/broker/${broker.slug}`}
-          className="shrink-0 px-3 py-1.5 text-[0.69rem] font-bold rounded-lg bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 transition-colors"
+          className="shrink-0 px-3 py-1.5 text-[0.69rem] font-bold rounded-lg bg-amber-500 text-slate-900 hover:bg-amber-600 active:bg-amber-700 transition-colors"
         >
           View details →
         </Link>
