@@ -162,7 +162,7 @@ export default function UserOnboarding() {
               </p>
               <button
                 onClick={() => setStep(1)}
-                className="mt-5 px-7 py-3 bg-amber-500 text-white font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
+                className="mt-5 px-7 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
               >
                 See How It Works
               </button>
@@ -263,7 +263,7 @@ export default function UserOnboarding() {
               <div className="flex flex-col gap-2.5">
                 <button
                   onClick={() => navigateAndClose("/quiz")}
-                  className="w-full px-6 py-3 bg-amber-500 text-white font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
+                  className="w-full px-6 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
                 >
                   Take the Quiz
                 </button>

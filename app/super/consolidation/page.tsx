@@ -275,7 +275,7 @@ export default function SuperConsolidationPage() {
         <div className="container-custom max-w-3xl">
           <div className="flex items-start gap-4">
             <div
-              className="shrink-0 w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center text-white font-black text-base"
+              className="shrink-0 w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center text-slate-900 font-black text-base"
               aria-hidden="true"
             >
               !
@@ -406,7 +406,7 @@ export default function SuperConsolidationPage() {
                 className="bg-white rounded-2xl border border-slate-200 p-5 flex gap-5"
               >
                 <div
-                  className="shrink-0 w-9 h-9 rounded-full bg-amber-500 text-white font-black text-sm flex items-center justify-center"
+                  className="shrink-0 w-9 h-9 rounded-full bg-amber-500 text-slate-900 font-black text-sm flex items-center justify-center"
                   aria-hidden="true"
                 >
                   {s.step}
@@ -795,7 +795,7 @@ export default function SuperConsolidationPage() {
           <div className="flex gap-3 shrink-0 flex-wrap">
             <Link
               href="/compare/super"
-              className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
+              className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
             >
               Compare Super Funds
             </Link>

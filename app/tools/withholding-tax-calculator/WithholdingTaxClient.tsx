@@ -333,7 +333,7 @@ export default function WithholdingTaxClient() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/foreign-investment/tax"
-              className="inline-flex items-center gap-1.5 text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white px-4 py-2.5 rounded-lg"
+              className="inline-flex items-center gap-1.5 text-sm font-bold bg-amber-500 hover:bg-amber-600 text-slate-900 px-4 py-2.5 rounded-lg"
             >
               Full non-resident tax guide
               <Icon name="arrow-right" size={14} />

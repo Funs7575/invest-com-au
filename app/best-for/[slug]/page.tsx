@@ -213,7 +213,7 @@ export default async function BestForPage({
                     <div className="mt-3 flex items-center gap-3">
                       <Link
                         href={`/broker/${item.broker.slug}`}
-                        className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-4 py-2 rounded-lg"
+                        className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-4 py-2 rounded-lg"
                       >
                         Read the full review
                       </Link>

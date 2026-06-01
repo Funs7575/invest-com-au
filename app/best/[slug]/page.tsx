@@ -487,7 +487,7 @@ export default async function BestBrokerPage({
                   href={getAffiliateLink(topPick)}
                   target="_blank"
                   rel={AFFILIATE_REL}
-                  className="shrink-0 px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors text-center"
+                  className="shrink-0 px-6 py-3 bg-amber-600 text-slate-900 font-semibold rounded-lg hover:bg-amber-700 transition-colors text-center"
                   {...(placementExperiment && placementVariant
                     ? {
                         "data-pe-experiment-id": String(placementExperiment.id),
@@ -555,7 +555,7 @@ export default async function BestBrokerPage({
                         href={getAffiliateLink(broker)}
                         target="_blank"
                         rel={AFFILIATE_REL}
-                        className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+                        className="inline-block px-4 py-2 bg-amber-600 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
                         {...(i === 0 && placementExperiment && placementVariant
                           ? {
                               "data-pe-experiment-id": String(

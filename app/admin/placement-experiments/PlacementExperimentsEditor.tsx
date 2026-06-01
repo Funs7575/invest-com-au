@@ -338,7 +338,7 @@ function ExperimentCard({
               type="button"
               disabled={busy}
               onClick={() => onStatus("paused")}
-              className="px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-50"
+              className="px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-50"
             >
               Pause
             </button>

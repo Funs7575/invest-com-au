@@ -287,7 +287,7 @@ export default async function ForeignInvestmentHubPage() {
                   )}
                   <div className="mt-auto flex gap-2">
                     {b.affiliate_url && (
-                      <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="flex-1 text-center text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
+                      <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="flex-1 text-center text-xs font-bold text-slate-900 bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
                         Visit
                       </Link>
                     )}
@@ -502,7 +502,7 @@ export default async function ForeignInvestmentHubPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/advisors/international-tax-specialists"
-                className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm text-center transition-colors shadow-lg"
+                className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm text-center transition-colors shadow-lg"
               >
                 Find an International Tax Specialist
               </Link>

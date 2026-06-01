@@ -248,7 +248,7 @@ export default async function CostScenarioPage({
                           href={getAffiliateLink(b)}
                           target="_blank"
                           rel={AFFILIATE_REL}
-                          className="inline-block px-3 py-1.5 text-xs font-semibold bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors whitespace-nowrap"
+                          className="inline-block px-3 py-1.5 text-xs font-semibold bg-amber-500 text-slate-900 rounded-lg hover:bg-amber-600 transition-colors whitespace-nowrap"
                         >
                           {b.cta_text || "Visit Broker"}
                         </a>

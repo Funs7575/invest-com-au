@@ -254,7 +254,7 @@ export default async function OilGasPage() {
                 href={`#${w.id}`}
                 className={`inline-flex items-center gap-1.5 text-xs md:text-sm font-semibold px-3 py-1.5 rounded-full border transition-colors ${
                   i === 0
-                    ? "bg-amber-500 text-white border-amber-500"
+                    ? "bg-amber-500 text-slate-900 border-amber-500"
                     : "bg-white text-slate-700 border-slate-200 hover:border-amber-400 hover:text-amber-700"
                 }`}
               >
@@ -274,7 +274,7 @@ export default async function OilGasPage() {
                 className="bg-slate-50 border border-slate-200 rounded-xl p-5 scroll-mt-24"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="w-8 h-8 rounded-full bg-amber-500 text-white font-extrabold flex items-center justify-center">
+                  <span className="w-8 h-8 rounded-full bg-amber-500 text-slate-900 font-extrabold flex items-center justify-center">
                     {i + 1}
                   </span>
                   <h3 className="text-lg font-bold text-slate-900">{w.label}</h3>
@@ -513,7 +513,7 @@ export default async function OilGasPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/foreign-investment/energy"
-              className="inline-flex items-center gap-1.5 text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white px-4 py-2.5 rounded-lg transition-colors"
+              className="inline-flex items-center gap-1.5 text-sm font-bold bg-amber-500 hover:bg-amber-600 text-slate-900 px-4 py-2.5 rounded-lg transition-colors"
             >
               Read the full foreign-investment in energy guide
               <Icon name="arrow-right" size={14} />

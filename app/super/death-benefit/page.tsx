@@ -624,7 +624,7 @@ export default function SuperDeathBenefitPage() {
           <div className="space-y-4">
             {PROCESS_STEPS.map((s) => (
               <div key={s.step} className="bg-white rounded-2xl border border-slate-200 p-5 flex gap-5">
-                <div className="shrink-0 w-9 h-9 rounded-full bg-amber-500 text-white font-black text-sm flex items-center justify-center">
+                <div className="shrink-0 w-9 h-9 rounded-full bg-amber-500 text-slate-900 font-black text-sm flex items-center justify-center">
                   {s.step}
                 </div>
                 <div>
@@ -685,7 +685,7 @@ export default function SuperDeathBenefitPage() {
           <div className="flex gap-3 shrink-0 flex-wrap">
             <Link
               href="/advisors/financial-planners"
-              className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
+              className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
             >
               Find a Financial Planner
             </Link>

@@ -175,7 +175,7 @@ export default function LifeEventPage() {
             </p>
             <Link
               href="/find-advisor"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl transition-colors shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm font-bold rounded-xl transition-colors shadow-sm hover:shadow-md"
             >
               Find by financial goal instead
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

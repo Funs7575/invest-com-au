@@ -911,7 +911,7 @@ export function Navigation() {
               <Link
                 href={PRIMARY_CTA_HREF}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center w-full py-3.5 min-h-13 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-colors"
+                className="flex items-center justify-center w-full py-3.5 min-h-13 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm rounded-xl transition-colors"
               >
                 {PRIMARY_CTA_TEXT} &rarr;
               </Link>

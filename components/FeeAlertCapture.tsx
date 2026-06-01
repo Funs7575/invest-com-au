@@ -69,7 +69,7 @@ export default function FeeAlertCapture({ brokerSlug, brokerName, compact, class
         <button
           type="submit"
           disabled={status === "sending"}
-          className="shrink-0 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 disabled:cursor-not-allowed disabled:bg-amber-300"
+          className="shrink-0 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-600 disabled:cursor-not-allowed disabled:bg-amber-300"
         >
           {status === "sending" ? "Saving…" : "Alert me"}
         </button>
@@ -102,7 +102,7 @@ export default function FeeAlertCapture({ brokerSlug, brokerName, compact, class
         <button
           type="submit"
           disabled={status === "sending"}
-          className="shrink-0 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 disabled:cursor-not-allowed disabled:bg-amber-300"
+          className="shrink-0 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-600 disabled:cursor-not-allowed disabled:bg-amber-300"
         >
           {status === "sending" ? "Saving…" : "Alert me"}
         </button>

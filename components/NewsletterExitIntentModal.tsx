@@ -238,7 +238,7 @@ export default function NewsletterExitIntentModal({
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-bold text-sm px-4 py-2.5 rounded-lg"
+              className="w-full bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-slate-900 font-bold text-sm px-4 py-2.5 rounded-lg"
             >
               {submitting ? "Subscribing…" : "Get the weekly digest"}
             </button>

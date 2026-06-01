@@ -224,7 +224,7 @@ export default async function SectorEtfsPage({
             </p>
             <Link
               href={`/invest/${slug}/stocks`}
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 rounded-lg"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-5 py-2.5 rounded-lg"
             >
               View {sector.display_name} stocks
               <Icon name="arrow-right" size={14} />

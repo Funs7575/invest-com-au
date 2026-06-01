@@ -86,7 +86,7 @@ export default function AdvisorMatchedScreen({
           </p>
           <Link
             href="/find-advisor"
-            className="inline-block px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-600 transition-colors"
+            className="inline-block px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-xl hover:bg-amber-600 transition-colors"
           >
             Browse all advisors →
           </Link>
@@ -252,7 +252,7 @@ export default function AdvisorMatchedScreen({
             <button
               onClick={() => onConfirm(currentMatch)}
               disabled={confirming}
-              className="w-full py-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white font-bold text-sm rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-md shadow-amber-200"
+              className="w-full py-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-bold text-sm rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-md shadow-amber-200"
             >
               {confirming ? (
                 <>
@@ -312,7 +312,7 @@ export default function AdvisorMatchedScreen({
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
           <p className="text-sm font-semibold text-amber-800 mb-1">You&apos;ve seen all available matches</p>
           <p className="text-xs text-amber-700 mb-3">Our directory is growing — browse all verified advisors:</p>
-          <Link href="/advisors" className="inline-block px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors">
+          <Link href="/advisors" className="inline-block px-4 py-2 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors">
             Browse all advisors →
           </Link>
         </div>

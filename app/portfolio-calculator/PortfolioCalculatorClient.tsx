@@ -304,7 +304,7 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                     <p className="text-xs text-slate-300 mb-3">Enter your email to unlock the full comparison + get a free personalised fee report.</p>
                     <div className="flex gap-2">
                       <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm rounded-lg text-slate-900 border-0" />
-                      <button onClick={handleEmailCapture} className="px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 shrink-0">Unlock Results</button>
+                      <button onClick={handleEmailCapture} className="px-4 py-2 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600 shrink-0">Unlock Results</button>
                     </div>
                   </div>
                 </div>

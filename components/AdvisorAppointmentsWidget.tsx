@@ -366,7 +366,7 @@ export default function AdvisorAppointmentsWidget({
           <button
             type="submit"
             disabled={status === "submitting"}
-            className="w-full bg-amber-500 hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm px-5 py-3 rounded-lg transition-colors shadow-sm"
+            className="w-full bg-amber-500 hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed text-slate-900 font-bold text-sm px-5 py-3 rounded-lg transition-colors shadow-sm"
           >
             {status === "submitting" ? "Confirming…" : "Confirm appointment"}
           </button>

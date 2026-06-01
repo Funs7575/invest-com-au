@@ -106,7 +106,7 @@ export default function DashboardTab({
           </div>
           <button
             onClick={() => onNavigate("profile")}
-            className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-4 py-2 rounded-lg whitespace-nowrap"
+            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs px-4 py-2 rounded-lg whitespace-nowrap"
           >
             Add booking link
           </button>

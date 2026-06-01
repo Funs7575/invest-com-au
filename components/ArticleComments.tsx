@@ -198,7 +198,7 @@ export default function ArticleComments({ slug, initialCounts }: Props) {
           <button
             type="submit"
             disabled={submitting}
-            className="bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-bold text-sm px-4 py-2 rounded-lg transition-colors"
+            className="bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-slate-900 font-bold text-sm px-4 py-2 rounded-lg transition-colors"
           >
             {submitting ? "Posting…" : "Post comment"}
           </button>

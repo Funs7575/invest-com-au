@@ -94,7 +94,7 @@ export default function QuizPromptBar() {
             )}
             <Link
               href="/compare"
-              className="flex-1 text-center py-2.5 bg-amber-500 text-white text-[0.75rem] font-bold rounded-lg hover:bg-amber-600 active:bg-amber-700 active:scale-[0.98] transition-all min-h-10 flex items-center justify-center gap-1.5"
+              className="flex-1 text-center py-2.5 bg-amber-500 text-slate-900 text-[0.75rem] font-bold rounded-lg hover:bg-amber-600 active:bg-amber-700 active:scale-[0.98] transition-all min-h-10 flex items-center justify-center gap-1.5"
             >
               Compare Platforms →
             </Link>
@@ -116,7 +116,7 @@ export default function QuizPromptBar() {
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 href="/compare"
-                className="px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 active:bg-amber-700 active:scale-[0.97] transition-all"
+                className="px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 active:bg-amber-700 active:scale-[0.97] transition-all"
               >
                 Compare Platforms &rarr;
               </Link>

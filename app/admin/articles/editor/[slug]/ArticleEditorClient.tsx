@@ -384,7 +384,7 @@ export default function ArticleEditorClient({
                   ? "Fix the hard failures in the scorecard before publishing"
                   : "Publish immediately"
               }
-              className="bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-bold text-sm px-4 py-2 rounded-lg"
+              className="bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-slate-900 font-bold text-sm px-4 py-2 rounded-lg"
             >
               {saving ? "Saving…" : "Save + publish"}
             </button>

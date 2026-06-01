@@ -55,7 +55,7 @@ export default function AdvisorMatchCTA({
           <p className="text-xs md:text-sm text-slate-500 mb-3 leading-relaxed">{description}</p>
           <Link
             href={href}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
           >
             Get Matched Free <span>&rarr;</span>
           </Link>

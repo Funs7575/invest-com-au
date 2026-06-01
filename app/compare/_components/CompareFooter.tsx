@@ -141,7 +141,7 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
           <Icon name="target" size={18} className="text-amber-500 shrink-0 md:mb-2" />
           <h2 className="text-xs md:text-lg font-bold text-slate-900">Find Your Platform</h2>
           <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Answer 4 quick questions and narrow down platforms.</p>
-          <Link href="/quiz" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-500 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors">
+          <Link href="/quiz" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-500 text-slate-900 text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors">
             Quiz →
           </Link>
         </div>
@@ -157,7 +157,7 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
           <Icon name="calculator" size={18} className="text-amber-600 shrink-0 md:mb-2" />
           <h2 className="text-xs md:text-lg font-bold text-slate-900">Fee Calculator</h2>
           <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">See exact fees for your portfolio at every broker.</p>
-          <Link href="/portfolio-calculator" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-600 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors">
+          <Link href="/portfolio-calculator" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-600 text-slate-900 text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors">
             Calculate →
           </Link>
         </div>

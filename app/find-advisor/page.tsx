@@ -1548,7 +1548,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
                 <button
                   onClick={() => onConfirm(currentMatch)}
                   disabled={confirming}
-                  className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-slate-900 font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
                 >
                   {confirming ? "Sending request…" : `Connect with ${currentMatch.name}`}
                   {!confirming && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
@@ -1702,7 +1702,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
                 ]
             ).map((step, i) => (
               <li key={i} className="flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+                <span className="w-5 h-5 rounded-full bg-amber-500 text-slate-900 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
                 <span className="text-sm text-slate-700 leading-relaxed">{step}</span>
               </li>
             ))}

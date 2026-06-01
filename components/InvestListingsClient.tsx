@@ -687,7 +687,7 @@ function EmptyState({ onClearAll, hasFilters }: { onClearAll: () => void; hasFil
         <button
           type="button"
           onClick={onClearAll}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-5 py-2.5 transition-colors"
         >
           Clear all filters
         </button>
@@ -836,7 +836,7 @@ function InvestFilterFields({
                   aria-pressed={activeTicket === b.key}
                   className={`text-[11px] font-semibold rounded-lg px-2 py-1.5 transition-colors ${
                     activeTicket === b.key
-                      ? "bg-amber-500 text-white shadow-sm"
+                      ? "bg-amber-500 text-slate-900 shadow-sm"
                       : "bg-slate-50 text-slate-600 hover:bg-slate-100"
                   }`}
                 >

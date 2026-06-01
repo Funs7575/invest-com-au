@@ -300,7 +300,7 @@ export default function Division296Page() {
           <ol className="space-y-5">
             {CALCULATION_STEPS.map((step) => (
               <li key={step.step} className="flex gap-4">
-                <span className="flex-shrink-0 w-9 h-9 rounded-full bg-amber-600 text-white font-black text-sm flex items-center justify-center">
+                <span className="flex-shrink-0 w-9 h-9 rounded-full bg-amber-600 text-slate-900 font-black text-sm flex items-center justify-center">
                   {step.step}
                 </span>
                 <div className="flex-1">
