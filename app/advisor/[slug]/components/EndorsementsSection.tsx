@@ -108,7 +108,7 @@ export default function EndorsementsSection({ slug, initialSkills = [], isLogged
 
         {!isLoggedIn && (
           <p className="text-xs text-slate-400">
-            <a href="/login" className="text-teal-600 hover:underline font-medium">Log in</a> to endorse a skill.
+            <a href="/auth/login" className="text-teal-600 hover:underline font-medium">Log in</a> to endorse a skill.
           </p>
         )}
       </div>
