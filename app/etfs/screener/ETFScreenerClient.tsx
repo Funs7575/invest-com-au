@@ -3,6 +3,10 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { ETF_DATA, type ETF, type ETFAssetClass, type ETFProvider } from "@/lib/etf-data";
+import SearchInput from "@/components/directory/SearchInput";
+import RangeSlider from "@/components/directory/RangeSlider";
+import ResultCount from "@/components/directory/ResultCount";
+import EmptyState from "@/components/directory/EmptyState";
 
 type SortKey = "ticker" | "mer" | "aumMillions" | "distributionYield";
 type SortDir = "asc" | "desc";
@@ -122,13 +126,13 @@ export default function ETFScreenerClient() {
         <div className="container-custom">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Search</label>
-              <input
-                type="text"
+              <label htmlFor="etf-screener-search" className="block text-xs font-semibold text-slate-700 mb-1.5">Search</label>
+              <SearchInput
+                id="etf-screener-search"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={setSearch}
                 placeholder="VAS, NDQ, iShares..."
-                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+                ariaLabel="Search ETFs by ticker or name"
               />
             </div>
             <div>
@@ -156,22 +160,15 @@ export default function ETFScreenerClient() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Max MER: <span className="font-black text-amber-700">{maxMER.toFixed(2)}%</span>
-              </label>
-              <input
-                type="range"
+              <RangeSlider
+                label="Max MER"
                 min={0.03}
                 max={2.0}
                 step={0.01}
                 value={maxMER}
-                onChange={(e) => setMaxMER(parseFloat(e.target.value))}
-                className="w-full accent-amber-500"
+                onChange={setMaxMER}
+                formatValue={(v) => `${v.toFixed(2)}%`}
               />
-              <div className="flex justify-between text-xs text-slate-400 mt-0.5">
-                <span>0.03%</span>
-                <span>2.0%</span>
-              </div>
             </div>
           </div>
           <div className="mt-4 flex items-center gap-4">
@@ -184,9 +181,7 @@ export default function ETFScreenerClient() {
               />
               Franking credits only
             </label>
-            <span className="text-xs text-slate-500">
-              {filtered.length} of {ETF_DATA.length} ETFs shown
-            </span>
+            <ResultCount total={filtered.length} noun={`of ${ETF_DATA.length} ETFs shown`} className="!text-xs" />
           </div>
         </div>
       </section>
@@ -195,21 +190,11 @@ export default function ETFScreenerClient() {
       <section className="py-6">
         <div className="container-custom overflow-x-auto">
           {filtered.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-slate-500 text-sm">No ETFs match your filters.</p>
-              <button
-                onClick={() => {
-                  setAssetClass("all");
-                  setProvider("all");
-                  setMaxMER(2.0);
-                  setFrankingOnly(false);
-                  setSearch("");
-                }}
-                className="mt-3 text-sm text-amber-600 hover:text-amber-700 font-semibold"
-              >
-                Reset filters
-              </button>
-            </div>
+            <EmptyState
+              title="No ETFs match your filters"
+              body="Try widening the MER range or clearing a filter."
+              suggestions={[{ label: "Reset filters", onClick: () => { setAssetClass("all"); setProvider("all"); setMaxMER(2.0); setFrankingOnly(false); setSearch(""); } }]}
+            />
           ) : (
             <table className="w-full text-sm border-collapse min-w-[700px]">
               <thead>
