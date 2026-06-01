@@ -5,6 +5,8 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import ResultCount from "@/components/directory/ResultCount";
+import TabBar from "@/components/directory/TabBar";
+import SortDropdown from "@/components/directory/SortDropdown";
 
 /* ─── Types ─── */
 
@@ -42,6 +44,12 @@ const ETF_DATA: ETF[] = [
 
 const CATEGORIES: Category[] = ["All", "Australian Shares", "International", "Bonds", "Property", "Thematic", "Diversified"];
 
+/** Module-scoped so it isn't re-created each render (react-hooks/static-components). */
+function SortIndicator({ column, sortKey, sortAsc }: { column: SortKey; sortKey: SortKey; sortAsc: boolean }) {
+  if (sortKey !== column) return null;
+  return <Icon name={sortAsc ? "arrow-up" : "arrow-down"} size={14} className="inline ml-0.5 text-coral-600" />;
+}
+
 /* ─── Component ─── */
 
 export default function ETFCompareClient() {
@@ -61,6 +69,12 @@ export default function ETFCompareClient() {
     return list;
   }, [activeCategory, sortKey, sortAsc]);
 
+  const etfCounts = useMemo(() => {
+    const c: Record<string, number> = { All: ETF_DATA.length };
+    for (const cat of CATEGORIES) if (cat !== "All") c[cat] = ETF_DATA.filter((e) => e.category === cat).length;
+    return c;
+  }, []);
+
   function handleSort(key: SortKey) {
     if (sortKey === key) {
       setSortAsc((prev) => !prev);
@@ -70,23 +84,16 @@ export default function ETFCompareClient() {
     }
   }
 
-  const SortIndicator = ({ column }: { column: SortKey }) => {
-    if (sortKey !== column) return null;
-    return (
-      <Icon name={sortAsc ? "arrow-up" : "arrow-down"} size={14} className="inline ml-0.5 text-indigo-600" />
-    );
-  };
-
   return (
     <>
       {/* ─── Hero ─── */}
-      <section className="bg-gradient-to-br from-indigo-600 to-indigo-800 text-white">
+      <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white">
         <div className="container-custom py-10 md:py-16">
           <div className="max-w-3xl">
             <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-2 md:mb-3">
               Compare Australian ETFs
             </h1>
-            <p className="text-indigo-100 text-sm md:text-base leading-relaxed max-w-2xl mb-3">
+            <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-2xl mb-3">
               Side-by-side comparison of management fees, categories and providers for
               Australia&apos;s most popular exchange-traded funds. Filter by category and sort
               to find the right ETF for your portfolio.
@@ -98,22 +105,17 @@ export default function ETFCompareClient() {
 
       {/* ─── Main Content ─── */}
       <div className="container-custom py-6 md:py-10">
-        {/* Category Tabs */}
-        <div className="flex flex-wrap gap-2 mb-5 md:mb-6">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs md:text-sm font-semibold transition-colors ${
-                activeCategory === cat
-                  ? "bg-indigo-600 text-white shadow-sm"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        {/* Category Tabs — canonical TabBar primitive */}
+        <TabBar
+          variant="chip"
+          ariaLabel="ETF category"
+          className="mb-5 md:mb-6"
+          value={activeCategory}
+          onChange={setActiveCategory}
+          zeroCountBehavior="show"
+          alwaysShow="All"
+          tabs={CATEGORIES.map((cat) => ({ id: cat, label: cat, count: etfCounts[cat] ?? 0 }))}
+        />
 
         <ResultCount
           total={filtered.length}
@@ -127,14 +129,14 @@ export default function ETFCompareClient() {
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-left text-slate-500 text-xs uppercase tracking-wide">
                 <th className="px-4 py-3 cursor-pointer select-none hover:text-slate-900" onClick={() => handleSort("ticker")}>
-                  Ticker <SortIndicator column="ticker" />
+                  Ticker <SortIndicator column="ticker" sortKey={sortKey} sortAsc={sortAsc} />
                 </th>
                 <th className="px-4 py-3 cursor-pointer select-none hover:text-slate-900" onClick={() => handleSort("name")}>
-                  Fund Name <SortIndicator column="name" />
+                  Fund Name <SortIndicator column="name" sortKey={sortKey} sortAsc={sortAsc} />
                 </th>
                 <th className="px-4 py-3">Provider</th>
                 <th className="px-4 py-3 cursor-pointer select-none hover:text-slate-900 text-right" onClick={() => handleSort("mer")}>
-                  MER % <SortIndicator column="mer" />
+                  MER % <SortIndicator column="mer" sortKey={sortKey} sortAsc={sortAsc} />
                 </th>
                 <th className="px-4 py-3">Category</th>
               </tr>
@@ -147,7 +149,7 @@ export default function ETFCompareClient() {
                       href={`https://www.google.com/search?q=${encodeURIComponent(`${etf.ticker} ASX ETF`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-bold text-indigo-600 hover:text-indigo-800 hover:underline"
+                      className="font-bold text-coral-600 hover:text-coral-700 hover:underline"
                     >
                       {etf.ticker}
                     </Link>
@@ -175,27 +177,18 @@ export default function ETFCompareClient() {
 
         {/* ─── Mobile Cards ─── */}
         <div className="md:hidden space-y-3 mb-6">
-          {/* Mobile sort controls */}
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-xs text-slate-500 font-medium">Sort by:</span>
-            {(
-              [
-                { key: "mer" as SortKey, label: "MER" },
-                { key: "name" as SortKey, label: "Name" },
-                { key: "ticker" as SortKey, label: "Ticker" },
-              ] as const
-            ).map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => handleSort(key)}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-colors ${
-                  sortKey === key ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600"
-                }`}
-              >
-                {label} {sortKey === key && (sortAsc ? "\u2191" : "\u2193")}
-              </button>
-            ))}
-          </div>
+          {/* Mobile sort — canonical SortDropdown primitive (desktop sorts via column headers) */}
+          <SortDropdown
+            className="!block w-full mb-1"
+            ariaLabel="Sort ETFs"
+            value={sortKey}
+            onChange={(v) => { setSortKey(v as SortKey); setSortAsc(true); }}
+            options={[
+              { value: "mer", label: "Lowest fee (MER)" },
+              { value: "name", label: "Name (A\u2013Z)" },
+              { value: "ticker", label: "Ticker (A\u2013Z)" },
+            ]}
+          />
 
           {filtered.map((etf) => (
             <div key={etf.ticker} className="border border-slate-200 rounded-xl p-3">
@@ -205,7 +198,7 @@ export default function ETFCompareClient() {
                     href={`https://www.google.com/search?q=${encodeURIComponent(`${etf.ticker} ASX ETF`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-bold text-indigo-600 hover:underline text-sm"
+                    className="font-bold text-coral-600 hover:underline text-sm"
                   >
                     {etf.ticker}
                   </Link>
