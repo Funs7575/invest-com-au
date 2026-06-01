@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 
 const STORAGE_KEY = "user_onboarding_seen";
@@ -35,13 +35,11 @@ const FOCUSABLE_SELECTOR =
 
 export default function UserOnboarding() {
   const router = useRouter();
+  const pathname = usePathname();
   const dialogRef = useRef<HTMLDivElement>(null);
-  // Lazy initializer runs once on client mount — no effect needed, no SSR
-  // concerns because this component is always loaded with ssr: false.
-  const [visible, setVisible] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem(STORAGE_KEY) !== "true";
-  });
+  // The welcome is a gentle greeting, not an ambush — it stays hidden until the
+  // homepage-only trigger below decides to open it.
+  const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [notifPrefs, setNotifPrefs] = useState<NotifPrefs>({
@@ -49,6 +47,21 @@ export default function UserOnboarding() {
     weekly_digest: true,
     morning_brief: false,
   });
+
+  // Auto-open only on the homepage, after a short delay (so the hero lands
+  // first), and only once per visitor. This deliberately never fires on
+  // deep-link / content landings (e.g. /advisors, /compare): it avoids
+  // interrupting high-intent visitors, sidesteps Google's intrusive-
+  // interstitial SEO penalty on content pages, and prevents the broker-centric
+  // copy from mismatching non-broker pages. Navigating away before the delay
+  // elapses cancels it, so there's no flash on the next page.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (localStorage.getItem(STORAGE_KEY) === "true") return;
+    if (pathname !== "/") return;
+    const timer = window.setTimeout(() => setVisible(true), 1200);
+    return () => window.clearTimeout(timer);
+  }, [pathname]);
 
   // Move focus to the first focusable element whenever the step changes.
   // Calling .focus() on a DOM element is safe in an effect (not set-state-in-effect).
