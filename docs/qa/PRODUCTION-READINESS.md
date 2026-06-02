@@ -114,21 +114,39 @@ Until chosen, authed journeys are 🔒 and covered by code-review only.
 - ✅ Amber-CTA + muted-grey WCAG contrast site-wide — #1300/#1301.
 - ✅ Cookie-banner overlap, onboarding-timing, broken `/auth` links — #1299/#1300.
 - ✅ Lead-flow E2E test (get-matched + enquiry) — PR #1305.
+- ✅ **P0-1 — 14 hub-quiz funnels were crashing** (RSC #419: Server Component passed a config *with functions* to the client shell). Fixed via serialisable `configKey` + `HUB_ONBOARDING_CONFIGS` registry — `994fa9cd`.
+- ✅ **P0-2 — `/savings-calculator` crash** (`null.match` on a broker with null `asx_fee`). Guarded — `994fa9cd`.
 
-### Open — from code inventory (to verify/triage; priority)
-| ID | Sev | Finding | Action |
+### P0 — launch blockers
+| ID | Finding | Owner | Status |
 |---|---|---|---|
-| F1 | low | `/account/privacy` deletion-error page links `/account/login?redirect=` (works via redirect, but inconsistent with `?next=`) | tidy to `/auth/login?next=` |
-| F2 | med | `/api/teams/[slug]/ops-settings` route.ts may be missing (page posts to it) | verify exists; if not, build or disable the form |
-| F3 | med | `/api/org-auth/team/invite` inserts invite row but **no email send** visible | confirm invite email is sent; else wire it |
-| F4 | med | `team_brief_assignments` table — dashboard falls back to zero if missing (migration may be unmerged) | confirm migration landed |
-| F5 | low | Community **report** action has no clear handler in `/api/community/moderate` | confirm report path or wire it |
-| F6 | low | Dispute system + consultation booking — endpoints exist, workflow sparse | review completeness |
-| F7 | info | AI stubs (`/api/calculator/explain`, `/api/advisor/fee-opinion`) return placeholder when `ANTHROPIC_API_KEY` unset | confirm prod key set or graceful copy |
-| F8 | info | HubConfig not fully rolled out (`/smsf`, `/grants` etc. still VerticalConfig) | scope-decision, not a bug |
-| F9 | tbd | **Live audit findings** (broken links / empty / console errors) | populate from `site-audit.json` |
+| P0-1 | 14 quiz funnels RSC crash | code | ✅ fixed `994fa9cd` |
+| P0-2 | savings-calculator null crash | code | ✅ fixed `994fa9cd` |
+| **P0-3** | **LIVE-DB / STORAGE DRIFT (DB-verified).** Repo migrations NOT applied to live → (a) account-deletion **purge** cron (`redact-deleted-users`) + day-25 **reminder** cron both 500 on missing columns `pii_redacted_at` / `reminder_sent_at` → **GDPR/APP 11 erasure silently never runs**; (b) `manual_balances`, `user_documents`, `user_lists`/`user_list_items`, `investor_handoffs`, `profile_share_tokens` tables + `user-documents` & `data-exports` storage buckets missing → net-worth, vault, lists, advisor-handoff, profile-share, automated data-export all 500. | **founder / ops** | 🔴 apply migrations `20260523_account_deletion_requests_reminder`, `20260801000800_gdpr_soft_delete`, `20260525_manual_balances` (+ lists/handoff/profile-share); create 2 private buckets. Then re-verify. |
 
-> Compliance guardrail: F2–F6 touch advice/marketplace/money surfaces — anything that builds or un-gates a regulated capability must clear `docs/strategy/REGULATORY-AVOID-LIST.md` (CSF/securities, client-money, personal advice are **never-autonomous**).
+### P1 — security / correctness (code-fixable; this QA branch)
+| ID | Sev | Finding (file) | Status |
+|---|---|---|---|
+| P1-1 | high | **IDOR** `app/api/advisor-auction/route.ts` GET resolves advisor from client `?advisor_id=` without checking `user.email` → any advisor reads competitors' bids + won-leads | ⬜ fix: derive advisor from session email |
+| P1-2 | high | **Admin MFA not enforced on `/api/admin/*`** (`proxy.ts` gates only `/admin` pages; `requireAdmin` checks session+allowlist, not the MFA cookie) → a session without MFA can call destructive admin APIs | ⬜ fix: assert MFA cookie in `requireAdmin` (exempt mfa/login) — *careful, test for lockout* |
+| P1-3 | med | **Org team invite half-wired** `app/api/org-auth/team/invite` — inserts pending row, **no email**, and **no accept endpoint** (nothing flips pending→active / sets `user_id`) | ⬜ wire invite email + accept route |
+| P1-4 | med | **Community "Report" = silent no-op** — client sets `reported=true` then POSTs an `action`/shape `/api/community/moderate` rejects (mod-gated, enum lacks `report`) | ⬜ add authed `report` → moderation queue |
+| P1-5 | med | **Org `viewer` can write** courses/events (`org-auth/courses`,`events` POST/PATCH lack a role check) | ⬜ add `role==="viewer" → 403` |
+| P1-6 | med | **5 admin routes don't lowercase `user.email`** (`advisor-refund`, `regulatory-impacts`×3, `rba-polls/[id]/reveal`) vs lowercased `ADMIN_EMAILS` → admin lockout risk | ⬜ `.toLowerCase()` |
+
+### P2 — lower / by-design / verify-on-Vercel
+- Brief owner view gated by plaintext `?email=` (magic-link tradeoff; weak slug entropy) → mint HMAC token like the review flow.
+- Bulk squad actions + `decisions` route skip the brief-belongs-to-team check the single-brief routes enforce (data-integrity).
+- Bid route: no Zod + no rate-limit; `advisor-auction` POST parses body before the internal-secret check; FI `seed`/`revalidate` trust body `adminEmail` behind a shared key.
+- M1: re-requesting deletion after a cancel can 500 (RLS UPDATE `USING status='scheduled'`).
+- `/firm-portal` and `/pros` bare paths → 404 (no index route) → add index/redirect.
+- `/quiz`,`/get-matched`,`/start` have no `<h1>` (a11y/SEO).
+- Site-wide `_vercel/speed-insights/script.js` 404 → self-resolves on the Vercel move.
+
+### Verified GOOD (no action) — from the reviews
+Credit atomicity (optimistic-lock + idempotent ledger), contact-unlock authz, brief messaging authz (real session, email-matched), team claim/handoff/complete (membership + brief-ownership re-checked), firm-portal authz (server-side `is_firm_admin`, no IDOR), community vote/threads/posts (auth + rate-limit + author/mod gates), CSV import (capped, no formula-injection), document-upload validation, auth callback open-redirect guard, account-API RLS owner-scoping, `expert_team_invitations` deny-all (256-bit token). **F2** (`ops-settings` route) and **F4** (`team_brief_assignments` migration) both **exist — not bugs**.
+
+> Compliance guardrail: P1-3/P1-4 + any marketplace/advice/money surface must clear `docs/strategy/REGULATORY-AVOID-LIST.md` (CSF/securities, client-money, personal advice are **never-autonomous**). P0-3 migrations are user-data tables → RLS must be verified post-apply.
 
 ---
 

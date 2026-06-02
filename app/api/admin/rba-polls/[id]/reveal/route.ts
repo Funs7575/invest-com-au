@@ -30,8 +30,8 @@ export const POST = withValidatedBody(RevealBody, async (req: NextRequest, body)
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((s) => s.trim());
-  if (!user.email || !adminEmails.includes(user.email)) {
+  const adminEmails = (process.env.ADMIN_EMAILS ?? "").split(",").map((s) => s.trim().toLowerCase());
+  if (!user.email || !adminEmails.includes(user.email.toLowerCase())) {
     log.warn("non-admin reveal attempt", { userId: user.id });
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
