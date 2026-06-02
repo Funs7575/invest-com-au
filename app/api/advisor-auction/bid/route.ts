@@ -1,12 +1,22 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
+import { isAllowed } from "@/lib/rate-limit-db";
 import { sendConsumerBidReceivedEmail } from "@/lib/quote-emails";
 
 const log = logger("advisor-auction-bid");
 
 const MINIMUM_BID_CENTS = 50_00; // $50 minimum bid
+
+const BidBody = z.object({
+  auction_id: z.number().int().positive(),
+  bid_amount: z
+    .number()
+    .int()
+    .min(MINIMUM_BID_CENTS, `Minimum bid is $${(MINIMUM_BID_CENTS / 100).toFixed(2)}.`),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,24 +33,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { auction_id, bid_amount } = body;
-
-    if (!auction_id || typeof auction_id !== "number") {
-      return NextResponse.json(
-        { error: "auction_id is required." },
-        { status: 400 }
-      );
+    // Rate-limit per advisor — bidding is a write that also fires a consumer
+    // notification email; cap repeated submissions.
+    if (!(await isAllowed("advisor_auction_bid", `u:${user.id}`, { max: 30, refillPerSec: 0.5 }))) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
     }
 
-    if (!bid_amount || typeof bid_amount !== "number" || bid_amount < MINIMUM_BID_CENTS) {
+    let rawBody: unknown;
+    try {
+      rawBody = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    }
+    const parsed = BidBody.safeParse(rawBody);
+    if (!parsed.success) {
       return NextResponse.json(
-        {
-          error: `Minimum bid is $${(MINIMUM_BID_CENTS / 100).toFixed(2)}.`,
-        },
-        { status: 400 }
+        { error: parsed.error.issues[0]?.message ?? "Invalid body." },
+        { status: 400 },
       );
     }
+    const { auction_id, bid_amount } = parsed.data;
 
     const admin = createAdminClient();
 

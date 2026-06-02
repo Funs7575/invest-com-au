@@ -177,9 +177,11 @@ export default function BriefsInboxClient() {
                 </p>
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="text-xs text-slate-500">
-                    Accept cost: {" "}
+                    Accept cost:{" "}
                     <strong className="text-slate-900">
-                      {b.accept_credits_cost ?? "?"} credits
+                      {typeof b.accept_credits_cost === "number"
+                        ? `${b.accept_credits_cost} credits`
+                        : "set on accept"}
                     </strong>
                   </span>
                   {b.provider_preference === "expert_team" &&

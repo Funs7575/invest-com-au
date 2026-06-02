@@ -150,7 +150,7 @@ All these migrations existed in `supabase/migrations/` but were never applied to
 ### P2 — lower / by-design / verify-on-Vercel
 - Brief owner view gated by plaintext `?email=` (magic-link tradeoff; weak slug entropy) → mint HMAC token like the review flow.
 - 🟡 Bulk squad actions + `decisions` route skip the brief-belongs-to-team check the single-brief routes enforce (data-integrity). ✅ **CLAIM fixed** (`claimBriefForMember` now verifies `accepted_by_team_id === teamId` — matches the single-claim route via `resolveSquadRouteContext`; closes the bulk-claim path; +2 tests). ⬜ **Task:** `decline` (`recordDecision`) + `refer` (`createReferral`) + the `decisions` route still lack a routed-to-team check — needs a shared inbox-eligibility helper that also covers `provider_preference=expert_team` **broadcast** briefs (a blind `target_team_id`/`accepted_by_team_id` guard would wrongly reject legitimate declines of broadcast briefs, so it can't be done blind).
-- Bid route: no Zod + no rate-limit; `advisor-auction` POST parses body before the internal-secret check; FI `seed`/`revalidate` trust body `adminEmail` behind a shared key.
+- 🟡 Bid route — ✅ **Zod + per-advisor rate-limit added** to `advisor-auction/bid`. ⬜ Lower-priority remaining: `advisor-auction` POST still parses the body before the internal-secret check; FI `seed`/`revalidate` trust body `adminEmail` behind a shared key.
 - ✅ **M1 fixed** — re-requesting deletion after a cancel 500'd: the UPDATE policy's `USING` required the existing row to be `status='scheduled'`, so the re-request upsert couldn't touch a `cancelled` row. Relaxed `USING` to also match `cancelled` (applied live + migration `20260602020000`; WITH CHECK still constrains the result to scheduled/cancelled, and fulfilled/redacted rows stay untouchable).
 - ✅ **fixed** — `/firm-portal` → `/firm-portal/performance` and `/pros` → `/pros/join` index redirects added (were bare-path 404s).
 - ✅ **fixed** — `/quiz` now carries an `sr-only <h1>`; `/get-matched` already has an `<h1>` in its client component; `/start` is a redirect to `/quiz` (no h1 needed). (Original finding grepped only `page.tsx`, missing the client-component h1.)
@@ -170,7 +170,7 @@ All these migrations existed in `supabase/migrations/` but were never applied to
 - **AJ-8** — ✅ **fixed** `0d54e622` — a lost squad claim race now `router.refresh()`es the row to show the actual owner instead of a stale "Unclaimed" state.
 - **AJ-9** — ✅ **fixed** `0d54e622` — inbox renders a skeleton (not bare "Loading…") and the "accept as team" picker shows team **names** (`/api/briefs/inbox` now returns `teams:{id,name}`).
 
-**LOW (polish)** — join-wizard success dead-ends to homepage (no portal CTA); `window.prompt` for handoff/retract notes; expired-auction bid errors vs greys out; non-owner tracker tells user to hand-edit `?email=`; `accept_credits_cost` renders `?`.
+**LOW (polish)** — join-wizard success dead-ends to homepage (no portal CTA); `window.prompt` for handoff/retract notes; expired-auction bid errors vs greys out; non-owner tracker tells user to hand-edit `?email=`. (✅ `accept_credits_cost` no longer renders `?` — now "set on accept".)
 
 **Journey 4 (client account): SOLID** — delete/privacy (30-day grace, cancel, states), goals (optimistic + rollback), holdings (empty + price-down fallback), dashboard all well-built. Only minor polish (mixed-currency holdings sum; account page renders empty for anon vs redirect).
 
