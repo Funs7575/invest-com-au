@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
+// eslint-disable-next-line no-restricted-imports -- the consumer brief tracker is an anonymous email-link surface; accept-flow briefs (and brief_messages / brief_outcomes) are service-role-only under RLS, so the page reads via admin and gates ALL PII display by emailMatches — the same email-as-key model the brief write routes (withdraw/accept/book) use. The lone viewer-session check below stays on createClient (it needs the caller's JWT).
+import { createAdminClient } from "@/lib/supabase/admin";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
 import type { BriefRow, TrackerStatus } from "@/lib/briefs/types";
@@ -54,7 +56,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const admin = await createClient();
+  const admin = createAdminClient();
   const { data } = await admin
     .from("advisor_auctions")
     .select("job_title")
@@ -75,7 +77,7 @@ interface AcceptedInfo {
 }
 
 async function loadAccepted(brief: BriefRow): Promise<AcceptedInfo> {
-  const admin = await createClient();
+  const admin = createAdminClient();
   const info: AcceptedInfo = {};
   if (brief.accepted_by_professional_id) {
     const { data } = await admin
@@ -118,7 +120,7 @@ export default async function BriefTrackerPage({
   const sp = (await searchParams) ?? {};
   const email = typeof sp.email === "string" ? sp.email.toLowerCase().trim() : "";
 
-  const admin = await createClient();
+  const admin = createAdminClient();
   const { data } = await admin
     .from("advisor_auctions")
     .select("*")
@@ -161,7 +163,7 @@ export default async function BriefTrackerPage({
       disputeMessages = existing.messages;
     } else {
       // Check whether the brief is in a state where opening a dispute is allowed.
-      const adminRead = await createClient();
+      const adminRead = createAdminClient();
       const { data: outcomeRow } = await adminRead
         .from("brief_outcomes")
         .select("submitted_at")
@@ -183,7 +185,7 @@ export default async function BriefTrackerPage({
   let intakeOutstanding = 0;
   if (brief.accepted_at) {
     try {
-      const intakeAdmin = await createClient();
+      const intakeAdmin = createAdminClient();
       const targetTeam = brief.accepted_by_team_id;
       const targetPro = brief.accepted_by_professional_id;
       let questionFilter = intakeAdmin
@@ -210,7 +212,7 @@ export default async function BriefTrackerPage({
   let unreadFromPro = 0;
   if (brief.accepted_at && emailMatches) {
     try {
-      const msgAdmin = await createClient();
+      const msgAdmin = createAdminClient();
       const { count } = await msgAdmin
         .from("brief_messages")
         .select("id", { count: "exact", head: true })
@@ -230,7 +232,7 @@ export default async function BriefTrackerPage({
   let outcomeReviewToken: string | null = null;
   if (brief.accepted_at && (brief.tracker_status === "won" || emailMatches)) {
     try {
-      const outcomeAdmin = await createClient();
+      const outcomeAdmin = createAdminClient();
       const { data: outcomeRow } = await outcomeAdmin
         .from("brief_outcomes")
         .select("review_token, submitted_at")
