@@ -73,6 +73,9 @@ export const POST = withValidatedBody(CreateEventSchema, async (request, body) =
     }
 
     const session = await requireOrgSession();
+    if (session.role === "viewer") {
+      return NextResponse.json({ error: "Forbidden — viewers cannot create events." }, { status: 403 });
+    }
     const admin = createAdminClient();
 
     const { data: event, error } = await admin
