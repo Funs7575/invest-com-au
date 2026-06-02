@@ -170,7 +170,7 @@ All these migrations existed in `supabase/migrations/` but were never applied to
 - **AJ-8** — ✅ **fixed** `0d54e622` — a lost squad claim race now `router.refresh()`es the row to show the actual owner instead of a stale "Unclaimed" state.
 - **AJ-9** — ✅ **fixed** `0d54e622` — inbox renders a skeleton (not bare "Loading…") and the "accept as team" picker shows team **names** (`/api/briefs/inbox` now returns `teams:{id,name}`).
 
-**LOW (polish)** — join-wizard success dead-ends to homepage (no portal CTA); `window.prompt` for handoff/retract notes; expired-auction bid errors vs greys out; non-owner tracker tells user to hand-edit `?email=`. (✅ `accept_credits_cost` no longer renders `?` — now "set on accept".)
+**LOW (polish)** — remaining: `window.prompt` for handoff/retract notes; expired-auction bid errors vs greys out; non-owner tracker tells user to hand-edit `?email=`. (✅ join-wizard success now offers a "Go to the provider portal" CTA instead of a back-to-home dead-end; ✅ `accept_credits_cost` no longer renders `?` — now "set on accept".)
 
 **Journey 4 (client account): SOLID** — delete/privacy (30-day grace, cancel, states), goals (optimistic + rollback), holdings (empty + price-down fallback), dashboard all well-built. Only minor polish (mixed-currency holdings sum; account page renders empty for anon vs redirect).
 

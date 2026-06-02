@@ -307,12 +307,20 @@ export default function ProsJoinWizard() {
         <p className="text-xs text-slate-500 mt-4">
           Once verified, you can be matched to incoming consumer requests.
         </p>
-        <Link
-          href="/"
-          className="inline-block mt-6 text-sm font-semibold text-violet-600 hover:text-violet-700"
-        >
-          &larr; Back to Invest.com.au
-        </Link>
+        <div className="mt-6 flex flex-col items-center gap-3">
+          <Link
+            href="/advisor-portal"
+            className="inline-block rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold px-5 py-2.5"
+          >
+            Go to the provider portal &rarr;
+          </Link>
+          <Link
+            href="/"
+            className="text-sm font-semibold text-slate-500 hover:text-slate-700"
+          >
+            &larr; Back to Invest.com.au
+          </Link>
+        </div>
       </div>
     );
   }
