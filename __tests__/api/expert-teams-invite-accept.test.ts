@@ -96,6 +96,12 @@ describe("POST /api/expert-teams/invite/accept", () => {
     expect(res.status).toBe(410);
   });
 
+  it("maps invitation_email_mismatch to 403 (accept must match the invited identity)", async () => {
+    mockAcceptInvitation.mockRejectedValueOnce(new Error("invitation_email_mismatch"));
+    const res = await POST(makeReq({ token: TOKEN }));
+    expect(res.status).toBe(403);
+  });
+
   it("returns 500 on an unmapped error", async () => {
     mockAcceptInvitation.mockRejectedValueOnce(new Error("boom"));
     const res = await POST(makeReq({ token: TOKEN }));

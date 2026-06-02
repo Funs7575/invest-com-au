@@ -273,6 +273,27 @@ export async function acceptInvitation({
     throw new Error("invitation_expired");
   }
 
+  // Bind the accept to the invited identity. A valid token alone must NOT let
+  // an arbitrary advisor join the team — match the invited professional id
+  // when the invite targeted an existing pro, otherwise match the invited
+  // email (case-insensitive). Prevents token replay / cross-account joins.
+  const { data: acceptingPro } = await admin
+    .from("professionals")
+    .select("id, email")
+    .eq("id", professionalId)
+    .maybeSingle();
+  if (!acceptingPro) throw new Error("invalid_invitation");
+  const idMatches =
+    invite.invited_professional_id != null &&
+    invite.invited_professional_id === professionalId;
+  const emailMatches =
+    !!invite.email &&
+    !!acceptingPro.email &&
+    acceptingPro.email.trim().toLowerCase() === invite.email.trim().toLowerCase();
+  if (!idMatches && !emailMatches) {
+    throw new Error("invitation_email_mismatch");
+  }
+
   // Promote/insert the membership.
   const { data: existing } = await admin
     .from("expert_team_members")

@@ -45,6 +45,10 @@ export async function POST(request: NextRequest) {
           message: "This invitation has already been used or revoked.",
         },
         invitation_expired: { code: 410, message: "This invitation has expired." },
+        invitation_email_mismatch: {
+          code: 403,
+          message: "This invitation was sent to a different account.",
+        },
       };
       const m = map[msg];
       if (m) return NextResponse.json({ error: m.message }, { status: m.code });
