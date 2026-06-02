@@ -124,6 +124,17 @@ Until chosen, authed journeys are 🔒 and covered by code-review only.
 | P0-2 | savings-calculator null crash | code | ✅ fixed `994fa9cd` |
 | **P0-3** | **LIVE-DB / STORAGE DRIFT (DB-verified).** Repo migrations NOT applied to live → (a) account-deletion **purge** cron (`redact-deleted-users`) + day-25 **reminder** cron both 500 on missing columns `pii_redacted_at` / `reminder_sent_at` → **GDPR/APP 11 erasure silently never runs**; (b) `manual_balances`, `user_documents`, `user_lists`/`user_list_items`, `investor_handoffs`, `profile_share_tokens` tables + `user-documents` & `data-exports` storage buckets missing → net-worth, vault, lists, advisor-handoff, profile-share, automated data-export all 500. | **founder / ops** | 🔴 apply migrations `20260523_account_deletion_requests_reminder`, `20260801000800_gdpr_soft_delete`, `20260525_manual_balances` (+ lists/handoff/profile-share); create 2 private buckets. Then re-verify. |
 
+### P0-3 remediation runbook (founder / ops — ~15 min; can't be done from here safely)
+All these migrations exist in `supabase/migrations/` but were never applied to **live** (Netlify deploy doesn't run migrations). Apply to the live Supabase project, then create 2 private buckets. Forward-only + idempotent (`IF NOT EXISTS`).
+1. **Apply migrations** (the two GDPR ones are the legally-urgent pair):
+   - `20260801000800_gdpr_soft_delete.sql` — adds `pii_redacted_at` → unblocks the deletion **purge** cron (erasure).
+   - `20260523_account_deletion_requests_reminder.sql` — adds `reminder_sent_at` → unblocks the day-25 reminder cron.
+   - `20260520_dv01_user_documents.sql` + `20260520_dv02_user_documents_storage.sql` — vault table + bucket.
+   - `20260525_manual_balances.sql` (net-worth), `20260525_investor_handoffs.sql` (advisor handoff), `20260825160000_user_lists.sql` (lists), `20260826170000_profile_share_tokens.sql` (profile share).
+2. **Create private storage buckets:** `user-documents` and `data-exports` (the latter is a documented manual step in `app/api/cron/process-data-exports/route.ts`).
+3. **Verify:** `\d account_deletion_requests` shows both new columns; re-run the delete + export flows; confirm RLS enabled on each new table (the RLS-isolation CI gate covers them).
+> Why not automated here: applying forward-only schema migrations to the production DB is hard-to-reverse + outside the firewall — founder/ops action by design.
+
 ### P1 — security / correctness (code-fixable; this QA branch)
 | ID | Sev | Finding (file) | Status |
 |---|---|---|---|
