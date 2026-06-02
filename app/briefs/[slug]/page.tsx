@@ -24,6 +24,7 @@ import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 import BookConsultationPanel from "./BookConsultationPanel";
 import BriefChatPanel from "./BriefChatPanel";
+import WithdrawBriefButton from "./WithdrawBriefButton";
 import DisputePanel from "./DisputePanel";
 
 export const dynamic = "force-dynamic";
@@ -364,6 +365,14 @@ export default async function BriefTrackerPage({
               })}
             </ol>
           </div>
+
+          {/* Withdraw — the verified owner can close an open request (AJ-3).
+              Email-as-key auth on the route; hidden once closed/withdrawn. */}
+          {emailMatches &&
+            brief.status !== "closed" &&
+            brief.status !== "withdrawn" && (
+              <WithdrawBriefButton slug={slug} contactEmail={email} />
+            )}
 
           {/* Intake-question prompt — surfaces unanswered required questions
               that the accepting provider published. Skipped silently when
