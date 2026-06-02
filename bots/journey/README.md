@@ -59,21 +59,29 @@ driver retries navigation, and any candidate finding **must be re-checked with
 retries** (a *consistent* status across several tries) before it's called a real
 bug. The first run rejected ~6 false positives this way.
 
-## Two scripts
+## Three scripts
 
 - **`ai-journey.cjs`** — the goal-directed best-first **link crawler** (above).
-- **`ai-form.cjs`** — the **form-driver**: completes a multi-step flow (answer →
-  advance → judge), e.g. the get-matched quiz. Firewall-aware, but it **allows the
-  feature-under-test's own endpoints** (`/api/get-matched/*` etc.) — you can't
-  drive a quiz whose own start/answer calls you mock — while still blocking
-  payments / affiliate / PII-leads. Stops gracefully on error/fallback/nav-only
-  states. Run it like the crawler but with `FORM_*` env vars (`FORM_START`,
-  `FORM_GOAL`, `FORM_KEYWORDS`, `FORM_STEPS`).
+- **`ai-form.cjs`** — a **generic form-driver**: completes a multi-step flow
+  (answer → advance → judge). Firewall-aware (allows the feature-under-test's own
+  endpoints, blocks payments / affiliate / PII-leads), stops gracefully on
+  error/fallback/nav-only states. `FORM_*` env vars.
+- **`lead-flows.cjs`** — launch-readiness **test #3** (the lead/revenue flows),
+  purpose-built so it's reliable enough to gate a launch:
+  - **get-matched quiz** — answers every `QuestionCard` (`role=radio` options
+    auto-advance; multiselect/text/number use *Continue*), waits through the
+    "Building your action plan" interstitial, and asserts the real result screen.
+  - **adviser enquiry** — finds an adviser, fills the Contact form, submits, and
+    asserts the "Enquiry Sent!" confirmation.
+  - **lead capture** — enquiry/booking writes are mocked *locally* but their
+    payloads are **captured and verified well-formed** (right ids + email): it
+    proves a valid lead *would* be created without creating one. `LEAD_BASE` /
+    `LEAD_STEPS` env vars.
 
 ## Known limitation / next step
 
-Driving a multi-step form to a **result** needs a real network: in this sandbox
-the TLS-MITM proxy drops the quiz's async question fetches, so it renders a
-partial fallback. Point `FORM_BASE` at the Vercel deploy to run a flow end-to-end.
-Selectors are heuristic — a bespoke quiz with unusual markup may need its
-option/advance selectors tuned.
+Driving a multi-step form to a **result** is most reliable against a real network:
+in this sandbox the TLS-MITM proxy intermittently drops the quiz's async fetches
+(`start`/`resolve`), so a run can stall on the "Building your action plan" screen.
+Point `LEAD_BASE` / `FORM_BASE` at the Vercel deploy for deterministic runs. (The
+adviser-enquiry half always works here — its lead write is mocked locally.)
