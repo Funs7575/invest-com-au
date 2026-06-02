@@ -59,8 +59,21 @@ driver retries navigation, and any candidate finding **must be re-checked with
 retries** (a *consistent* status across several tries) before it's called a real
 bug. The first run rejected ~6 false positives this way.
 
+## Two scripts
+
+- **`ai-journey.cjs`** — the goal-directed best-first **link crawler** (above).
+- **`ai-form.cjs`** — the **form-driver**: completes a multi-step flow (answer →
+  advance → judge), e.g. the get-matched quiz. Firewall-aware, but it **allows the
+  feature-under-test's own endpoints** (`/api/get-matched/*` etc.) — you can't
+  drive a quiz whose own start/answer calls you mock — while still blocking
+  payments / affiliate / PII-leads. Stops gracefully on error/fallback/nav-only
+  states. Run it like the crawler but with `FORM_*` env vars (`FORM_START`,
+  `FORM_GOAL`, `FORM_KEYWORDS`, `FORM_STEPS`).
+
 ## Known limitation / next step
 
-Follows **links**; does not yet drive **multi-step forms** (the get-matched quiz,
-adviser-contact). Interactive form completion — so a persona can finish the quiz
-and judge the resulting action plan — is the next capability.
+Driving a multi-step form to a **result** needs a real network: in this sandbox
+the TLS-MITM proxy drops the quiz's async question fetches, so it renders a
+partial fallback. Point `FORM_BASE` at the Vercel deploy to run a flow end-to-end.
+Selectors are heuristic — a bespoke quiz with unusual markup may need its
+option/advance selectors tuned.
