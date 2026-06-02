@@ -40,6 +40,8 @@ export default function BookConsultationPanel({
     existingSlot,
   );
   const [pickedSlotId, setPickedSlotId] = useState<number | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -117,6 +119,38 @@ export default function BookConsultationPanel({
     });
   }
 
+  function handleCancel() {
+    if (!booking || cancelling) return;
+    setCancelError(null);
+    setCancelling(true);
+    startTransition(async () => {
+      try {
+        const body: Record<string, unknown> = { booking_id: booking.id };
+        if (contactEmail) body.contact_email = contactEmail;
+        const res = await fetch(`/api/briefs/${briefSlug}/booking/cancel`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const parsed = (await res.json().catch(() => ({}))) as {
+          success?: boolean;
+          error?: string;
+        };
+        if (!res.ok || !parsed.success) {
+          throw new Error(parsed.error ?? `HTTP ${res.status}`);
+        }
+        // Free the panel back to the slot picker so they can rebook (reschedule).
+        setBooking(null);
+        setBookedSlot(null);
+        setPickedSlotId(null);
+      } catch (err) {
+        setCancelError(err instanceof Error ? err.message : "Failed to cancel.");
+      } finally {
+        setCancelling(false);
+      }
+    });
+  }
+
   if (booking) {
     return (
       <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
@@ -146,6 +180,26 @@ export default function BookConsultationPanel({
           <p className="text-xs text-emerald-700 mt-3">
             {proName} will confirm shortly and share a meeting link.
           </p>
+        )}
+        {(booking.status === "pending" || booking.status === "confirmed") && (
+          <div className="mt-4 pt-3 border-t border-emerald-200">
+            <button
+              type="button"
+              onClick={handleCancel}
+              disabled={cancelling || pending}
+              className="text-xs font-semibold text-rose-600 hover:text-rose-700 disabled:opacity-50"
+            >
+              {cancelling ? "Cancelling…" : "Cancel / reschedule"}
+            </button>
+            <p className="text-[11px] text-emerald-700 mt-1">
+              Cancelling frees the time so you can pick another slot.
+            </p>
+            {cancelError && (
+              <p className="text-xs text-rose-600 mt-1" role="alert">
+                {cancelError}
+              </p>
+            )}
+          </div>
         )}
       </div>
     );
