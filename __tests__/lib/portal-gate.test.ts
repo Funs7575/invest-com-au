@@ -68,4 +68,23 @@ describe("enforcePortalKind", () => {
     await expect(enforcePortalKind("investor")).resolves.toBeUndefined();
     expect(mockSetActiveKind).toHaveBeenCalledWith("investor");
   });
+
+  // AJ-12 real root cause: setActiveKind writes a cookie, which throws during a
+  // Server Component render. The gate must NOT crash — it should still allow the
+  // entitled user through (best-effort cookie write).
+  it("does NOT crash the portal when the cookie write is blocked during render (AJ-12)", async () => {
+    mockGetActiveKind.mockResolvedValue(null);
+    mockGetKindsForUser.mockResolvedValue([{ kind: "advisor" }]);
+    mockSetActiveKind.mockRejectedValue(
+      new Error("Cookies can only be modified in a Server Action or Route Handler"),
+    );
+    await expect(enforcePortalKind("advisor")).resolves.toBeUndefined();
+  });
+
+  it("0-kind investor default survives a blocked cookie write (AJ-10 + AJ-12)", async () => {
+    mockGetActiveKind.mockResolvedValue(null);
+    mockGetKindsForUser.mockResolvedValue([]);
+    mockSetActiveKind.mockRejectedValue(new Error("blocked"));
+    await expect(enforcePortalKind("investor")).resolves.toBeUndefined();
+  });
 });

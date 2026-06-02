@@ -38,6 +38,26 @@ import {
 
 const CHOOSER = "/account/select-workspace";
 
+/**
+ * `setActiveKind` writes the `iv_active_kind` cookie — but `enforcePortalKind`
+ * runs inside layout/page *renders*, and the App Router only permits cookie
+ * writes in Server Actions / Route Handlers. Calling it during render throws
+ * ("Cookies can only be modified in a Server Action or Route Handler"), which
+ * previously crashed the whole `/advisor-portal` with a "Server Components
+ * render" error for any user without a pre-set cookie (password login, expired
+ * cookie, new device). The cookie-set is therefore best-effort: if it can't be
+ * written now it's a no-op (the auth callback / a later write sets it) and we
+ * still let the entitled user through. RLS remains the data boundary; this gate
+ * is UX-only.
+ */
+async function bestEffortSetActiveKind(kind: WorkspaceKind): Promise<void> {
+  try {
+    await setActiveKind(kind);
+  } catch {
+    /* render-context cookie write not permitted — proceed without persisting */
+  }
+}
+
 export async function enforcePortalKind(expected: WorkspaceKind): Promise<void> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -57,7 +77,7 @@ export async function enforcePortalKind(expected: WorkspaceKind): Promise<void> 
 
   if (active === null && holdsExpected) {
     // First visit since cookie expired or new device. Set + allow.
-    await setActiveKind(expected);
+    await bestEffortSetActiveKind(expected);
     return;
   }
 
@@ -69,7 +89,7 @@ export async function enforcePortalKind(expected: WorkspaceKind): Promise<void> 
     // Strictly scoped to "no kinds at all" — a user who holds other kinds but
     // not investor still goes to the chooser, preserving strict separation.
     if (expected === "investor" && memberships.length === 0) {
-      await setActiveKind("investor");
+      await bestEffortSetActiveKind("investor");
       return;
     }
     // User isn't entitled to this portal at all. Send to chooser; the
