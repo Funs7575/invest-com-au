@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
-import { FOREIGN_INVESTMENT_ONBOARDING_CONFIG } from "@/lib/hub-onboarding-configs";
 import HubOnboardingShell from "@/components/HubOnboardingShell";
 
 export const revalidate = 86400;
@@ -33,7 +32,7 @@ export default function ForeignInvestmentQuizPage() {
           </div>
         }
       >
-        <HubOnboardingShell config={FOREIGN_INVESTMENT_ONBOARDING_CONFIG} />
+        <HubOnboardingShell configKey="foreign-investment" />
       </Suspense>
     </>
   );

@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { INSURANCE_ONBOARDING_CONFIG } from "@/lib/hub-onboarding-configs";
 import HubOnboardingShell from "@/components/HubOnboardingShell";
 
 export const revalidate = 86400;
@@ -39,7 +38,7 @@ export default function InsuranceQuizPage() {
           </div>
         }
       >
-        <HubOnboardingShell config={INSURANCE_ONBOARDING_CONFIG} />
+        <HubOnboardingShell configKey="insurance" />
       </Suspense>
     </>
   );

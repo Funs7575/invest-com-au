@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
-import { ETF_ONBOARDING_CONFIG } from "@/lib/hub-onboarding-configs";
 import HubOnboardingShell from "@/components/HubOnboardingShell";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -34,7 +33,7 @@ export default function EtfQuizPage() {
           </div>
         }
       >
-        <HubOnboardingShell config={ETF_ONBOARDING_CONFIG} />
+        <HubOnboardingShell configKey="etfs" />
       </Suspense>
       <ComplianceFooter className="mt-8 mx-4" />
     </>

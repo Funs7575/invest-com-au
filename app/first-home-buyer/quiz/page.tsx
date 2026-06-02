@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
-import { FIRST_HOME_BUYER_ONBOARDING_CONFIG } from "@/lib/hub-onboarding-configs";
 import HubOnboardingShell from "@/components/HubOnboardingShell";
 
 export const revalidate = 86400;
@@ -34,7 +33,7 @@ export default function FirstHomeBuyerQuizPage() {
           </div>
         }
       >
-        <HubOnboardingShell config={FIRST_HOME_BUYER_ONBOARDING_CONFIG} />
+        <HubOnboardingShell configKey="first-home-buyer" />
       </Suspense>
     </>
   );
