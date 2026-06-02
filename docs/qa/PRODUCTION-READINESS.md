@@ -152,8 +152,8 @@ All these migrations existed in `supabase/migrations/` but were never applied to
 - 🟡 Bulk squad actions + `decisions` route skip the brief-belongs-to-team check the single-brief routes enforce (data-integrity). ✅ **CLAIM fixed** (`claimBriefForMember` now verifies `accepted_by_team_id === teamId` — matches the single-claim route via `resolveSquadRouteContext`; closes the bulk-claim path; +2 tests). ⬜ **Task:** `decline` (`recordDecision`) + `refer` (`createReferral`) + the `decisions` route still lack a routed-to-team check — needs a shared inbox-eligibility helper that also covers `provider_preference=expert_team` **broadcast** briefs (a blind `target_team_id`/`accepted_by_team_id` guard would wrongly reject legitimate declines of broadcast briefs, so it can't be done blind).
 - Bid route: no Zod + no rate-limit; `advisor-auction` POST parses body before the internal-secret check; FI `seed`/`revalidate` trust body `adminEmail` behind a shared key.
 - M1: re-requesting deletion after a cancel can 500 (RLS UPDATE `USING status='scheduled'`).
-- `/firm-portal` and `/pros` bare paths → 404 (no index route) → add index/redirect.
-- `/quiz`,`/get-matched`,`/start` have no `<h1>` (a11y/SEO).
+- ✅ **fixed** — `/firm-portal` → `/firm-portal/performance` and `/pros` → `/pros/join` index redirects added (were bare-path 404s).
+- ✅ **fixed** — `/quiz` now carries an `sr-only <h1>`; `/get-matched` already has an `<h1>` in its client component; `/start` is a redirect to `/quiz` (no h1 needed). (Original finding grepped only `page.tsx`, missing the client-component h1.)
 - Site-wide `_vercel/speed-insights/script.js` 404 → self-resolves on the Vercel move.
 
 ### Authed-journey gaps (code-traced UX/logic/completeness — need test creds to click-verify, so tasked not blind-shipped)
