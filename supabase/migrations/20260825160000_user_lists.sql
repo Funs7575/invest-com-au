@@ -189,6 +189,7 @@ CREATE OR REPLACE FUNCTION public.user_lists_update_item_count()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = ''
 AS $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
@@ -209,6 +210,7 @@ CREATE OR REPLACE FUNCTION public.user_lists_update_follower_count()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = ''
 AS $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
@@ -224,5 +226,12 @@ DROP TRIGGER IF EXISTS trg_user_list_follows_count ON public.user_list_follows;
 CREATE TRIGGER trg_user_list_follows_count
   AFTER INSERT OR DELETE ON public.user_list_follows
   FOR EACH ROW EXECUTE FUNCTION public.user_lists_update_follower_count();
+
+-- These are RETURNS TRIGGER functions (Postgres forbids calling them directly)
+-- and the triggers fire regardless of the invoking role's EXECUTE grant. Revoke
+-- the default PUBLIC EXECUTE so the security advisor's
+-- {anon,authenticated}_security_definer_function_executable warnings stay clear.
+REVOKE EXECUTE ON FUNCTION public.user_lists_update_item_count() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.user_lists_update_follower_count() FROM PUBLIC, anon, authenticated;
 
 COMMIT;

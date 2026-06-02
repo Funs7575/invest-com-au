@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.user_current_products (
                               CHECK (product_kind IN (
                                 'broker', 'savings_account', 'term_deposit', 'super', 'crypto'
                               )),
-  broker_id                   integer     REFERENCES public.brokers(id) ON DELETE SET NULL,
+  broker_id                   bigint      REFERENCES public.brokers(id) ON DELETE SET NULL,
   broker_name                 text        NOT NULL,
   started_at                  date        NOT NULL,
   fee_text                    text        CHECK (fee_text IS NULL OR char_length(fee_text) <= 100),
@@ -33,22 +33,26 @@ ALTER TABLE public.user_current_products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_current_products FORCE ROW LEVEL SECURITY;
 
 -- Users can only see and manage their own records
+DROP POLICY IF EXISTS "user_own_products_select" ON public.user_current_products;
 CREATE POLICY "user_own_products_select"
   ON public.user_current_products FOR SELECT
   TO authenticated
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "user_own_products_insert" ON public.user_current_products;
 CREATE POLICY "user_own_products_insert"
   ON public.user_current_products FOR INSERT
   TO authenticated
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "user_own_products_update" ON public.user_current_products;
 CREATE POLICY "user_own_products_update"
   ON public.user_current_products FOR UPDATE
   TO authenticated
   USING (user_id = auth.uid())
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "service_role_products" ON public.user_current_products;
 CREATE POLICY "service_role_products"
   ON public.user_current_products FOR ALL
   TO service_role USING (true) WITH CHECK (true);
