@@ -75,11 +75,11 @@ Until chosen, authed journeys are 🔒 and covered by code-review only.
 | A7 | Unified `/quiz` → results → CTA | form-driver | ⬜ |
 | A8 | `/find-advisor` 5-step → up to OTP step | form-driver | ⬜ (OTP blocks final) |
 | A9 | **Adviser enquiry → "Enquiry Sent!" + well-formed lead** | lead-flows | 🟢 **pass** |
-| A10 | **Marketplace: post a public job** `/quotes/post` → `/quotes/[slug]` | form-driver (mock+capture write) | ⬜ |
-| A11 | **Marketplace: post a private brief** `/briefs/new` → `/briefs/[slug]?email=` | form-driver (mock+capture) | ⬜ |
+| A10 | Post a public job `/quotes/post` | n/a | ℹ️ 308→`/briefs/new` (consolidated, PMP-01); `JobPostForm` + `app/quotes/post` now **dead code** → P2 cleanup |
+| A11 | **Post a private brief** `/briefs/new` | marketplace-flows | 🟢 "Match Request sent" + well-formed `/api/briefs` (consent/routing) + status link wired |
 | A12 | Browse `/quotes`, `/marketplace`, `/teams`, `/community` | site-audit + journey | 🟡 |
-| A13 | **Submit broker review** `/reviews/write` (+ Q on broker page) — well-formed | form-driver (mock+capture) | ⬜ |
-| A14 | **Submit advisor review** `/advisor/[slug]` — well-formed | form-driver (mock+capture) | ⬜ |
+| A13 | **Broker review** (anon `UserReviewForm` on `/broker/[slug]`; `/reviews/write` is auth-gated) | marketplace-flows | 🟢 "Check your inbox!" + well-formed `/api/user-review` |
+| A14 | **Advisor review** `/advisor/[slug]` | marketplace-flows | 🟢 "Review submitted!" + well-formed `/api/advisor-review` (professional_id 276) |
 | A15 | Foreign-investment / country-mode banners + disclaimers per persona | journey | ⬜ |
 | A16 | Gated routes redirect logged-out → `/auth/login?next=` (not 404/500) | site-audit | 🟡 |
 | A17 | Mobile viewport pass of A1/A2/A6/A9/A10 | journey (mobile vp) | ⬜ |
@@ -205,3 +205,4 @@ Ship-ready when: every A-row 🟢; B-rows either 🟢 (click-through) or code-re
 - 2026-06-02 — Campaign opened. 5-domain inventory complete (auth wall identified). `site-audit.cjs` + `lead-flows.cjs` built. A6/A9 verified passing. This plan committed.
 - 2026-06-02 (cont.) — **Public surface verified healthy.** 65-route `site-audit` (broken-link/console false-alarms triaged out — sandbox WAF 403s the non-browser probe + the `speed-insights` 404 self-resolves on Vercel). **All 24 calculators ✅** (no crashes; the lone `/compound-interest-calculator` 403 was transient proxy — 200×5 on re-verify). **All 14 quiz funnels ✅ + savings-calculator ✅** — P0-1/P0-2 fixed and **verified live on the deploy-preview**. get-matched + adviser-enquiry E2E ✅. Marketplace post-job/brief + write-review entry forms render ✅.
   **3 security holes fixed** from the code-reviews: P1-1 (advisor-auction IDOR), P1-5 (org-viewer write), P1-6 (admin email case-fold). **Top open item → P0-3** (live-DB/storage drift breaking the GDPR deletion crons + vault/lists/net-worth/handoff/profile-share/export — founder/ops). Larger fixes P1-2/P1-3/P1-4 master-planned. All shipped on **PR #1305**.
+- 2026-06-02 (cont.2) — **Authed surface code-traced** (UX/logic) → backlog AJ-1..9; **AJ-1 fixed** (advisor-portal Briefs/Auctions nav discoverability). **Marketplace + review conversion flows E2E-verified** (`marketplace-flows.cjs`, all writes mocked → **0 real writes**): post-a-brief, broker review, advisor review all reach confirmation with well-formed payloads; `/quotes/post` is a 308→`/briefs/new` consolidation (its `JobPostForm` is now dead code). **No new site bugs.** Public + conversion surface now comprehensively verified; remaining work is the founder-gated backlog (P0-3, test creds, AJ-2/3, P1-2/3/4) + Vercel.

@@ -130,12 +130,20 @@ async function runPostJob(page) {
     r.note = "page did not load after retries (proxy)";
     return r;
   }
+  // PMP-01: /quotes/post is a permanent 308 redirect to /briefs/new — the
+  // JobPostForm is no longer served. Detect that explicitly so we don't
+  // misreport it as a render failure.
+  r.landedUrl = page.url();
+  r.redirectedToBriefs = /\/briefs\/new/.test(r.landedUrl);
   await page.screenshot({ path: `${OUT}/job-1-details.png`, fullPage: true }).catch(() => {});
 
-  // Step 1 — details
-  const titleI = page.locator('input[placeholder*="Refinance"], input[type="text"]').first();
+  // Step 1 — details (JobPostForm). On the live preview this never renders
+  // because of the redirect; we record that as the finding.
+  const titleI = page.locator('input[placeholder*="Refinance"]').first();
   if ((await titleI.count().catch(() => 0)) === 0) {
-    r.note = "title input not found — form did not render";
+    r.note = r.redirectedToBriefs
+      ? "/quotes/post 308-redirects to /briefs/new (PMP-01) — the public JobPostForm is no longer reachable anonymously; the brief flow replaces it (see Flow 2)."
+      : "JobPostForm title input not found — form did not render";
     return r;
   }
   r.rendered = true;
@@ -326,25 +334,59 @@ async function runBrokerReview(page) {
     r.note = "broker profile did not load after retries (proxy)";
     return r;
   }
-  // Jump to the reviews section so the collapsed form is in view.
-  await gotoWithRetry(page, profile + "#reviews", 2);
-  await page.waitForTimeout(1200);
+  // Settle. NOTE: do NOT re-navigate to `${profile}#reviews` — a second
+  // same-URL navigation (hash jump) was observed to desync React's controlled
+  // form state from the DOM inputs (fields visually filled but useState empty),
+  // which makes the form's own validation silently block submit. The opener is
+  // scrolled into view below instead, which is what a real user does.
+  await page.waitForTimeout(1000);
   await page.screenshot({ path: `${OUT}/brokerreview-1-profile.png`, fullPage: true }).catch(() => {});
 
-  // The form is collapsed behind "Write a Review of <broker>".
-  const opener = page.getByRole("button", { name: /write a review/i });
-  if ((await opener.count().catch(() => 0)) > 0) {
-    await opener.first().scrollIntoViewIfNeeded().catch(() => {});
-    await opener.first().click({ timeout: 5000 }).catch(() => {});
-    r.formOpened = true;
-    await page.waitForTimeout(800);
+  // The form is collapsed behind the inline opener button whose text is
+  // "Write a Review of <broker>". NOTE: the page ALSO has a sidebar jump-link
+  // button + a header/footer link both reading just "Write a Review" — those
+  // do NOT open the form. Target the specific "...of <broker>" opener.
+  // The opener sits low on a tall page; nudge a scroll so any lazy content
+  // mounts, then open it. Retry once if the form doesn't render.
+  let formUp = false;
+  for (let attempt = 0; attempt < 2 && !formUp; attempt++) {
+    let opener = page.getByRole("button", { name: /write a review of/i });
+    if ((await opener.count().catch(() => 0)) === 0) {
+      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight)).catch(() => {});
+      await page.waitForTimeout(700);
+      opener = page.getByRole("button", { name: /write a review of/i });
+    }
+    if ((await opener.count().catch(() => 0)) === 0) {
+      opener = page.getByRole("button", { name: /^write a review$/i });
+    }
+    if ((await opener.count().catch(() => 0)) > 0) {
+      const target = opener.last();
+      await target.scrollIntoViewIfNeeded().catch(() => {});
+      await target.click({ timeout: 5000 }).catch(() => {});
+      r.formOpened = true;
+      await page.waitForTimeout(900);
+      formUp = await page
+        .evaluate(() => !!document.querySelector("#review-body"))
+        .catch(() => false);
+    } else {
+      break;
+    }
   }
-  // Star rating: the StarRatingInput exposes role=radio buttons; click the 5th.
-  const stars = page.locator('[role="radio"]');
-  const starCount = await stars.count().catch(() => 0);
+  {
+    r.formRendered = formUp;
+  }
+  // Star rating: scope to the review form's StarRatingInput (role=radiogroup
+  // of 5 role=radio stars). Scoping avoids matching any other radiogroup on
+  // the page. Click the 5th star (= 5/5) and confirm it registered.
+  const starScope = page.locator("form:has(#review-body) [role=radio]");
+  const starCount = await starScope.count().catch(() => 0);
   if (starCount >= 5) {
-    await stars.nth(4).click({ timeout: 4000 }).catch(() => {});
+    await starScope.nth(4).click({ timeout: 4000 }).catch(() => {});
+  } else {
+    // Fallback to page-wide if the form-scoped query found nothing.
+    await page.locator('[role="radio"]').nth(4).click({ timeout: 4000 }).catch(() => {});
   }
+  await page.waitForTimeout(250);
   // Required fields by id.
   const fill = async (sel, val) => {
     const loc = page.locator(sel);
@@ -357,10 +399,37 @@ async function runBrokerReview(page) {
     "#review-body",
     "Automated pre-launch QA review — please ignore. Testing the broker review submission path end to end.",
   );
-  // Consent checkbox (last checkbox in the form).
-  const consents = page.locator('form input[type="checkbox"]');
-  if ((await consents.count().catch(() => 0)) > 0)
-    await consents.last().check({ timeout: 4000 }).catch(() => {});
+  // Consent checkbox — MUST be scoped to the review form. The page has other
+  // <form>s (search/newsletter) with their own checkboxes; a page-wide
+  // 'form input[type=checkbox]' selector checks the wrong box and the review's
+  // own consent stays unticked → "Please agree to the terms" blocks submit.
+  // The review consent is the only checkbox inside the form that holds
+  // #review-body.
+  const consent = page.locator("form:has(#review-body) input[type=checkbox]");
+  if ((await consent.count().catch(() => 0)) > 0) {
+    await consent.first().check({ timeout: 4000 }).catch(() => {});
+  } else {
+    // Fallback: the checkbox immediately following the review body textarea.
+    await page.locator("#review-body ~ * input[type=checkbox]").first().check({ timeout: 3000 }).catch(() => {});
+  }
+  // Capture consent state for the report.
+  r.consentChecked = await page
+    .evaluate(() => {
+      const ta = document.querySelector("#review-body");
+      const form = ta ? ta.closest("form") : null;
+      const cb = form ? form.querySelector('input[type=checkbox]') : null;
+      return cb ? cb.checked : null;
+    })
+    .catch(() => null);
+
+  // Confirm the star registered before submitting (UserReviewForm blocks
+  // submit with "Please select a star rating" if rating === 0).
+  r.starChecked = await page
+    .evaluate(() => {
+      const form = document.querySelector("#review-body")?.closest("form");
+      return form ? !!form.querySelector('[role="radio"][aria-checked="true"]') : null;
+    })
+    .catch(() => null);
 
   const submit = page.getByRole("button", { name: /submit review/i });
   if ((await submit.count().catch(() => 0)) === 0) {
@@ -369,13 +438,31 @@ async function runBrokerReview(page) {
   }
   await submit.first().click({ timeout: 6000 }).catch(() => {});
   r.submitted = true;
-  await page.waitForTimeout(2500);
+  // Poll for the success panel — the "Check your inbox!" state renders after
+  // the (mocked) POST resolves, which can be a beat after the click.
+  const CONF = /check your inbox|sent a verification email|appear on this page once approved/i;
+  await page
+    .waitForFunction(
+      (re) => new RegExp(re, "i").test(document.body.textContent || ""),
+      "check your inbox|sent a verification email|appear on this page once approved",
+      { timeout: 6000 },
+    )
+    .catch(() => {});
   await page.screenshot({ path: `${OUT}/brokerreview-2-result.png`, fullPage: true }).catch(() => {});
   const txt = await bodyText(page);
-  r.confirmation = /check your inbox|sent a verification email|appear on this page once approved/i.test(txt);
+  r.confirmation = CONF.test(txt);
   if (!r.confirmation) {
-    const errTxt = await page.locator("[class*='red']").allInnerTexts().catch(() => []);
-    r.note = "no confirmation; visible text/error(s): " + JSON.stringify(errTxt.slice(0, 3));
+    // Surface the inline form error (if any) to distinguish a real validation
+    // block from a timing miss. The conversion payload capture is the
+    // authoritative proof the submit reached the API regardless.
+    const errTxt = await page
+      .locator("form:has(#review-body) p.text-red-600, form:has(#review-body) [role=alert]")
+      .allInnerTexts()
+      .catch(() => []);
+    r.note =
+      "success panel not detected in 6s; inline form error(s): " +
+      JSON.stringify(errTxt.slice(0, 3)) +
+      " (check captured /api/user-review payload for authoritative result)";
   }
   return r;
 }
@@ -589,9 +676,9 @@ async function runAdvisorReview(page) {
   const summary = {
     base: BASE,
     flows: {
-      postJob: { rendered: results.postJob.rendered, submitted: results.postJob.submitted, confirmation: results.postJob.confirmation, note: results.postJob.note },
+      postJob: { rendered: results.postJob.rendered, redirectedToBriefs: results.postJob.redirectedToBriefs, landedUrl: results.postJob.landedUrl, submitted: results.postJob.submitted, confirmation: results.postJob.confirmation, note: results.postJob.note },
       postBrief: { rendered: results.postBrief.rendered, submitted: results.postBrief.submitted, confirmation: results.postBrief.confirmation, statusLinkHref: results.postBrief.statusLinkHref, note: results.postBrief.note },
-      brokerReview: { opened: results.brokerReview.formOpened, submitted: results.brokerReview.submitted, confirmation: results.brokerReview.confirmation, profile: results.brokerReview.profileUrl, note: results.brokerReview.note },
+      brokerReview: { opened: results.brokerReview.formOpened, formRendered: results.brokerReview.formRendered, starChecked: results.brokerReview.starChecked, consentChecked: results.brokerReview.consentChecked, submitted: results.brokerReview.submitted, confirmation: results.brokerReview.confirmation, profile: results.brokerReview.profileUrl, note: results.brokerReview.note },
       advisorReview: { opened: results.advisorReview.formOpened, submitted: results.advisorReview.submitted, confirmation: results.advisorReview.confirmation, profile: results.advisorReview.profileUrl, note: results.advisorReview.note },
     },
     payloads: {
