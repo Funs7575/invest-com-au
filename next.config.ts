@@ -181,6 +181,29 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // ── Auth-redirect fix (pre-launch AI bot QA sweep, 2026-06-02) ──────────
+      // 20+ gated surfaces (pros/, teams/, firm-portal/, account/, admin/)
+      // server-redirect unauthenticated users to `/account/login?redirect=…`,
+      // but that route does not exist — the real sign-in page is `/auth/login`,
+      // which reads `?next=`. So every logged-out visitor to a gated page hit a
+      // 404 instead of a login prompt (caught by the quiz-taker persona landing
+      // on /account/login from /invest/startups). These two rules un-break it:
+      // the first preserves the deep link by mapping the legacy `redirect` query
+      // onto `next`; the second covers the param-less case. Internal callers
+      // should migrate to `/auth/login?next=` over time, but this guarantees no
+      // 404 from any source (including old bookmarks / external links).
+      {
+        source: "/account/login",
+        has: [{ type: "query", key: "redirect", value: "(?<dest>.*)" }],
+        destination: "/auth/login?next=:dest",
+        permanent: false,
+      },
+      {
+        source: "/account/login",
+        destination: "/auth/login",
+        permanent: false,
+      },
+
       // /brokers (plural) used to 404 even though every natural link,
       // internal nav, and Google result expects the plural. The actual
       // broker comparison surface lives at /compare; the singular
