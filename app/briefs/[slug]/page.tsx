@@ -25,6 +25,7 @@ import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import BookConsultationPanel from "./BookConsultationPanel";
 import BriefChatPanel from "./BriefChatPanel";
 import WithdrawBriefButton from "./WithdrawBriefButton";
+import MarkCompleteButton from "./MarkCompleteButton";
 import DisputePanel from "./DisputePanel";
 
 export const dynamic = "force-dynamic";
@@ -410,6 +411,15 @@ export default async function BriefTrackerPage({
               </div>
             </div>
           )}
+
+          {/* Consumer "mark complete" → opens the review immediately (AJ-6),
+              shown only to the verified owner of an accepted brief that doesn't
+              already have a review request (else the banner below covers it). */}
+          {emailMatches &&
+            !outcomeReviewToken &&
+            (accepted.professional || accepted.team) && (
+              <MarkCompleteButton slug={slug} contactEmail={email} />
+            )}
 
           {/* Outcome review prompt — once the 4-week cron has issued a
               review_token for this brief, surface a small banner so the
