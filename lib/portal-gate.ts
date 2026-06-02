@@ -62,6 +62,16 @@ export async function enforcePortalKind(expected: WorkspaceKind): Promise<void> 
   }
 
   if (!holdsExpected) {
+    // Brand-new user with no resolved kinds yet: investor is the implicit
+    // default workspace (the post-login callback already routes 0-kind users
+    // to /account, and RLS isolates all data by auth.uid()). Allow them into
+    // the investor workspace instead of bouncing to an empty chooser (AJ-10).
+    // Strictly scoped to "no kinds at all" — a user who holds other kinds but
+    // not investor still goes to the chooser, preserving strict separation.
+    if (expected === "investor" && memberships.length === 0) {
+      await setActiveKind("investor");
+      return;
+    }
     // User isn't entitled to this portal at all. Send to chooser; the
     // chooser will only surface kinds they actually hold.
     redirect(CHOOSER);
