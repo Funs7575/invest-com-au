@@ -1487,7 +1487,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 <details key={i} className="group">
                   <summary className="px-4 py-3.5 md:px-5 md:py-4 font-semibold text-xs md:text-sm text-slate-800 cursor-pointer hover:bg-slate-50/80 transition-colors list-none flex items-center justify-between gap-3">
                     <span>{faq.q}</span>
-                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-400 group-open:bg-amber-50 group-open:border-amber-200 group-open:text-amber-600 transition-all">
+                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-600 group-open:bg-amber-50 group-open:border-amber-200 group-open:text-amber-600 transition-all">
                       <svg className="w-2.5 h-2.5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                     </span>
                   </summary>

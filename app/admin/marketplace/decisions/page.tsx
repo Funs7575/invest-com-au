@@ -360,7 +360,7 @@ export default function AllocationDecisionsPage() {
                                 Y
                               </span>
                             ) : (
-                              <span className="inline-block w-5 h-5 bg-slate-100 text-slate-400 rounded-full text-xs leading-5">
+                              <span className="inline-block w-5 h-5 bg-slate-100 text-slate-600 rounded-full text-xs leading-5">
                                 N
                               </span>
                             )}

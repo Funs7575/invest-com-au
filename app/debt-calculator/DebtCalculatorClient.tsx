@@ -267,7 +267,7 @@ export default function DebtCalculatorClient() {
                 {debts.length > 1 && (
                   <button
                     onClick={() => removeDebt(debt.id)}
-                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-slate-100 hover:bg-red-100 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors"
+                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-slate-100 hover:bg-red-100 flex items-center justify-center text-slate-600 hover:text-red-500 transition-colors"
                     aria-label="Remove debt"
                   >
                     <Icon name="x" size={14} />

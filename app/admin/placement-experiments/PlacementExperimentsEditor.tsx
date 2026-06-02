@@ -261,7 +261,7 @@ export default function PlacementExperimentsEditor() {
       )}
 
       {rows.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-slate-400">
+        <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-slate-600">
           No experiments match the filter.
         </div>
       ) : (

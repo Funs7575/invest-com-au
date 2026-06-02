@@ -113,7 +113,7 @@ export default function ApplyClient({ broker }: { broker: ApplyBroker }) {
                 />
               </div>
             ) : (
-              <div className="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-400 shrink-0">
+              <div className="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-600 shrink-0">
                 {broker.name.charAt(0)}
               </div>
             )}

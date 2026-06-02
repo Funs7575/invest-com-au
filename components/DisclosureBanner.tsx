@@ -19,7 +19,7 @@ export default function DisclosureBanner({
   if (variant === "header") {
     if (dismissed) return null;
     return (
-      <div className="bg-slate-50 border-b border-slate-200 py-1 md:py-2 text-center text-[0.6rem] md:text-xs text-slate-400 md:text-slate-500">
+      <div className="bg-slate-50 border-b border-slate-200 py-1 md:py-2 text-center text-[0.6rem] md:text-xs text-slate-600">
         <div className="container-custom flex items-center justify-center gap-2">
           {/* Mobile: short one-liner + dismiss */}
           <span className="md:hidden">

@@ -440,7 +440,7 @@ export default async function PropertyHubPage() {
                           </td>
                           <td className="px-2 py-3.5">
                             <span className="font-bold text-slate-900">{s.suburb}</span>
-                            <span className="text-xs text-slate-400 ml-1.5 bg-slate-100 px-1.5 py-0.5 rounded-md">{s.state}</span>
+                            <span className="text-xs text-slate-600 ml-1.5 bg-slate-100 px-1.5 py-0.5 rounded-md">{s.state}</span>
                           </td>
                           <td className="text-right px-3 py-3.5 text-slate-700 font-medium hidden md:table-cell">
                             {s.median_price_house ? formatPrice(s.median_price_house) : <span className="text-slate-300">—</span>}

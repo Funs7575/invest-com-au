@@ -427,7 +427,7 @@ export default function AdvisorProfileClient({
                         navigator.clipboard.writeText(window.location.href);
                       }
                     }}
-                    className="px-4 py-3 bg-white border border-slate-200 text-slate-400 text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all"
+                    className="px-4 py-3 bg-white border border-slate-200 text-slate-600 text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all"
                     title="Share profile"
                   >
                     <Icon name="share-2" size={15} />
@@ -436,7 +436,7 @@ export default function AdvisorProfileClient({
                     onClick={() => toggleShortlist(pro.slug)}
                     disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
                     title={inShortlist(pro.slug) ? "Remove from compare list" : shortlistCount >= shortlistMax ? `Compare list full (${shortlistMax} max)` : "Save to compare list"}
-                    className={`px-4 py-3 border text-sm rounded-xl transition-all ${inShortlist(pro.slug) ? "bg-violet-50 border-violet-300 text-violet-700 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "bg-white border-slate-100 text-slate-300 cursor-not-allowed" : "bg-white border-slate-200 text-slate-400 hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50"}`}
+                    className={`px-4 py-3 border text-sm rounded-xl transition-all ${inShortlist(pro.slug) ? "bg-violet-50 border-violet-300 text-violet-700 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "bg-white border-slate-100 text-slate-300 cursor-not-allowed" : "bg-white border-slate-200 text-slate-600 hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50"}`}
                   >
                     <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
                   </button>

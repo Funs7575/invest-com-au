@@ -113,7 +113,7 @@ export default function UpgradeClient({ currentTier, tiers }: Props) {
                 <button
                   type="button"
                   disabled
-                  className="w-full py-2 rounded bg-slate-100 text-slate-400 text-sm font-semibold cursor-not-allowed"
+                  className="w-full py-2 rounded bg-slate-100 text-slate-600 text-sm font-semibold cursor-not-allowed"
                 >
                   Current plan
                 </button>

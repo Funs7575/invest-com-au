@@ -241,8 +241,8 @@ export default function HomepageComparisonTable({
         <table className="w-full compare-table">
           <thead>
             <tr className="border-y border-slate-100">
-              <th scope="col" className="sticky left-0 z-10 bg-white pl-5 pr-2 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-10">#</th>
-              <th scope="col" className="sticky left-10 z-10 bg-white px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[28%]">Platform</th>
+              <th scope="col" className="sticky left-0 z-10 bg-white pl-5 pr-2 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-600 w-10">#</th>
+              <th scope="col" className="sticky left-10 z-10 bg-white px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-600 w-[28%]">Platform</th>
               {activeColumns.map((col, ci) => (
                 <th key={ci} scope="col" className={`px-3 py-2 font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 whitespace-nowrap ${col.align === "center" ? "text-center" : "text-left"}`}>
                   <JargonTooltip term={col.header} />

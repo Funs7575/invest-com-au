@@ -265,7 +265,7 @@ export default async function HowToGuidePage({
                                 {broker.name}
                               </Link>
                               {isSponsored(broker) && (
-                                <span className="text-[0.5rem] md:text-[0.6rem] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                                <span className="text-[0.5rem] md:text-[0.6rem] text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
                                   Promoted
                                 </span>
                               )}
