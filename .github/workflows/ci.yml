@@ -320,20 +320,21 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium-webkit
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium
 
       - name: Install Playwright browsers
-        # Install chromium + webkit for cross-browser coverage. Firefox
-        # is omitted to keep the install under 90s on cold cache; the
-        # Blink/WebKit pair catches the vast majority of engine bugs.
-        # On cache hit, skip the browser download (saves ~60–90s) but
-        # still install OS-level deps because those live outside the
-        # cached path.
+        # Chromium only. WebKit + mobile-safari were dropped from this
+        # placeholder-creds smoke after repeated 25-min CANCELLED runs
+        # caused by WebKit's flaky networkidle timeouts (see CLAUDE.md).
+        # The a11y job already runs chromium-only for the same reason;
+        # genuine cross-browser coverage runs against real data in
+        # e2e-preview.yml. On cache hit, skip the browser download but
+        # still install OS-level deps (they live outside the cached path).
         run: |
           if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
-            npx playwright install-deps chromium webkit
+            npx playwright install-deps chromium
           else
-            npx playwright install --with-deps chromium webkit
+            npx playwright install --with-deps chromium
           fi
 
       - name: Download .next build from ci job
@@ -352,7 +353,7 @@ jobs:
         # screen. Flip back to hard-fail once staging creds are
         # wired into CI (see docs/staging-environment.md).
         continue-on-error: true
-        run: npx playwright test --retries=2 --reporter=blob,github
+        run: npx playwright test --project=chromium --retries=2 --reporter=blob,github
 
       - name: Upload report
         if: always()
