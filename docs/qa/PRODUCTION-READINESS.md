@@ -70,7 +70,7 @@ Until chosen, authed journeys are 🔒 and covered by code-review only.
 | A2 | `/compare` table: filter/sort/sponsorship, outbound `/go/` CTAs | journey + money-path | ⬜ |
 | A3 | `/best/[slug]` category pages | site-audit | 🟡 |
 | A4 | `/broker/[slug]` review pages + Q&A read | journey | ⬜ |
-| A5 | Calculators (20+): inputs → sane outputs, no NaN | form-driver | ⬜ |
+| A5 | Calculators (24): render + inputs, no crash | calc sweep | 🟢 24/24 render clean (output-value correctness still ⬜) |
 | A6 | **Get-matched quiz → action plan** | lead-flows | 🟢 **pass** |
 | A7 | Unified `/quiz` → results → CTA | form-driver | ⬜ |
 | A8 | `/find-advisor` 5-step → up to OTP step | form-driver | ⬜ (OTP blocks final) |
@@ -174,3 +174,5 @@ Ship-ready when: every A-row 🟢; B-rows either 🟢 (click-through) or code-re
 
 ## 8. Log
 - 2026-06-02 — Campaign opened. 5-domain inventory complete (auth wall identified). `site-audit.cjs` + `lead-flows.cjs` built. A6/A9 verified passing. This plan committed.
+- 2026-06-02 (cont.) — **Public surface verified healthy.** 65-route `site-audit` (broken-link/console false-alarms triaged out — sandbox WAF 403s the non-browser probe + the `speed-insights` 404 self-resolves on Vercel). **All 24 calculators ✅** (no crashes; the lone `/compound-interest-calculator` 403 was transient proxy — 200×5 on re-verify). **All 14 quiz funnels ✅ + savings-calculator ✅** — P0-1/P0-2 fixed and **verified live on the deploy-preview**. get-matched + adviser-enquiry E2E ✅. Marketplace post-job/brief + write-review entry forms render ✅.
+  **3 security holes fixed** from the code-reviews: P1-1 (advisor-auction IDOR), P1-5 (org-viewer write), P1-6 (admin email case-fold). **Top open item → P0-3** (live-DB/storage drift breaking the GDPR deletion crons + vault/lists/net-worth/handoff/profile-share/export — founder/ops). Larger fixes P1-2/P1-3/P1-4 master-planned. All shipped on **PR #1305**.
