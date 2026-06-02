@@ -364,6 +364,19 @@ export default async function BriefTrackerPage({
                 );
               })}
             </ol>
+
+            {emailMatches &&
+              !accepted.professional &&
+              brief.status !== "closed" &&
+              brief.status !== "withdrawn" && (
+                <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600">
+                  <span className="font-semibold text-slate-700">What happens next:</span>{" "}
+                  Verified providers who match your request are reviewing it now. You&apos;ll
+                  get an email the moment one accepts — their contact details then appear
+                  here and you can message them or book a call. Most requests see a
+                  response within a couple of business days.
+                </div>
+              )}
           </div>
 
           {/* Withdraw — the verified owner can close an open request (AJ-3).

@@ -23,6 +23,7 @@ interface InboxData {
   available: MaskedBrief[];
   accepted: AcceptedBrief[];
   teamIds: number[];
+  teams: { id: number; name: string }[];
 }
 
 const STATUSES = [
@@ -40,6 +41,7 @@ export default function BriefsInboxClient() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [statusBusy, setStatusBusy] = useState<string | null>(null);
+  const [topUpNeeded, setTopUpNeeded] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -62,6 +64,7 @@ export default function BriefsInboxClient() {
   async function accept(slug: string, teamId?: number) {
     setBusy(slug);
     setError(null);
+    setTopUpNeeded(false);
     try {
       const res = await fetch(`/api/briefs/${slug}/accept`, {
         method: "POST",
@@ -69,7 +72,11 @@ export default function BriefsInboxClient() {
         body: JSON.stringify({ team_id: teamId }),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json?.error ?? "Could not accept");
+      if (!res.ok) {
+        // Surface a real "Top up" link instead of dead-end plain text (AJ-5).
+        if (json?.reason === "insufficient_credits") setTopUpNeeded(true);
+        throw new Error(json?.error ?? "Could not accept");
+      }
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not accept");
@@ -93,9 +100,25 @@ export default function BriefsInboxClient() {
   }
 
   if (loading) {
-    return <p className="text-sm text-slate-500">Loading…</p>;
+    return (
+      <div className="space-y-3" aria-busy="true" aria-label="Loading your brief inbox">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="bg-white border border-slate-200 rounded-2xl p-5 animate-pulse"
+          >
+            <div className="h-3 w-24 bg-slate-100 rounded mb-2" />
+            <div className="h-4 w-2/3 bg-slate-200 rounded mb-3" />
+            <div className="h-3 w-full bg-slate-100 rounded mb-1.5" />
+            <div className="h-3 w-1/2 bg-slate-100 rounded" />
+          </div>
+        ))}
+      </div>
+    );
   }
-  if (error) {
+  // Only a LOAD failure (no data yet) replaces the whole view; action errors
+  // (e.g. a failed accept) render inline below so the inbox stays visible.
+  if (error && !data) {
     return (
       <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
         {error}
@@ -106,6 +129,20 @@ export default function BriefsInboxClient() {
 
   return (
     <div className="space-y-12">
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 flex items-center justify-between gap-3">
+          <span>{error}</span>
+          {topUpNeeded && (
+            <a
+              href="/advisor-portal/billing"
+              className="inline-flex items-center gap-1 font-semibold text-amber-700 hover:text-amber-600 whitespace-nowrap"
+            >
+              Top up credits
+              <Icon name="arrow-right" size={14} />
+            </a>
+          )}
+        </div>
+      )}
       <section>
         <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">
           Available briefs ({data.available.length})
@@ -146,7 +183,7 @@ export default function BriefsInboxClient() {
                     </strong>
                   </span>
                   {b.provider_preference === "expert_team" &&
-                    data.teamIds.length > 0 && (
+                    data.teams.length > 0 && (
                       <select
                         className="text-xs border border-slate-200 rounded-md px-2 py-1"
                         onChange={(e) => {
@@ -159,9 +196,9 @@ export default function BriefsInboxClient() {
                         <option value="" disabled>
                           Accept as team…
                         </option>
-                        {data.teamIds.map((t) => (
-                          <option key={t} value={t}>
-                            Team #{t}
+                        {data.teams.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.name}
                           </option>
                         ))}
                       </select>
