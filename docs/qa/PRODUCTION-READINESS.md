@@ -156,7 +156,7 @@ All these migrations exist in `supabase/migrations/` but were never applied to *
 
 ### Authed-journey gaps (code-traced UX/logic/completeness — need test creds to click-verify, so tasked not blind-shipped)
 **HIGH — broken / dead-end journeys**
-- **AJ-1** — Advisor portal nav has **no Briefs/Auctions entry**; the core "win work" inbox (`/advisor-portal/briefs` + `/auctions`) is reachable only by direct URL / email link → the monetised funnel is invisible in-product. `app/advisor-portal/types.ts:1` (ViewType), `page.tsx:203` (navItems). Fix: add nav entries or a dashboard "Investor Briefs" CTA + unread badge.
+- **AJ-1** ✅ **fixed** — Advisor portal nav had **no Briefs/Auctions entry** (the core "win work" inbox was reachable only by direct URL / email → monetised funnel invisible in-product). Added Briefs + Auctions nav links to `app/advisor-portal/page.tsx` → the existing `/advisor-portal/briefs` + `/auctions` routes. (Authed UI — founder to click-verify placement on the preview.)
 - **AJ-2** (= P1-3, expanded) — **Team-invite acceptance impossible via UI**: `acceptInvitation()` + `/api/expert-teams/invite/accept` are orphaned; existing-pro invite links to a `pending` team page that `notFound()`s with no accept control; new-pro invite link `/pros/join?invitation=` is ignored. Journey 3 can't complete. Fix: invite-accept landing page + read `?invitation=` in `/pros/join`.
 - **AJ-3** — **Consumer can't withdraw a brief**: `/api/briefs/[slug]/withdraw` exists, no UI calls it → dead-end + wasted pro credits. Fix: "Withdraw request" on the tracker / `my-briefs`.
 

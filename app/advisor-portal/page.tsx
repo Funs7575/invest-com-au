@@ -258,6 +258,24 @@ export default function AdvisorPortalPage() {
               )}
             </button>
           ))}
+          {/* AJ-1: the brief/auction inbox (the core "win work" funnel) lives on
+              separate routes, not SPA views — surface it in the nav so advisors
+              who log in organically can find incoming work (was only reachable
+              via direct URL / email links). */}
+          <Link
+            href="/advisor-portal/briefs"
+            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+          >
+            <Icon name="briefcase" size={16} />
+            Briefs
+          </Link>
+          <Link
+            href="/advisor-portal/auctions"
+            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+          >
+            <Icon name="activity" size={16} />
+            Auctions
+          </Link>
         </div>
       </div>
 
