@@ -86,6 +86,7 @@ describe("claimBriefForMember", () => {
     };
     const insert = chain({ single: { data: insertRow } });
     mockFrom
+      .mockReturnValueOnce(chain({ maybeSingle: { data: { accepted_by_team_id: 7 } } })) // owner-check guard
       .mockReturnValueOnce(activeLookup)
       .mockReturnValueOnce(priorOwn)
       .mockReturnValueOnce(insert);
@@ -115,7 +116,9 @@ describe("claimBriefForMember", () => {
       claimed_at: "2026-05-14T00:00:00Z",
       released_at: null,
     };
-    mockFrom.mockReturnValueOnce(chain({ maybeSingle: { data: existing } }));
+    mockFrom
+      .mockReturnValueOnce(chain({ maybeSingle: { data: { accepted_by_team_id: 7 } } })) // owner-check guard
+      .mockReturnValueOnce(chain({ maybeSingle: { data: existing } }));
 
     const result = await claimBriefForMember({
       briefId: 10,
@@ -128,8 +131,8 @@ describe("claimBriefForMember", () => {
       expect(result.created).toBe(false);
       expect(result.row.id).toBe(1);
     }
-    // Only the initial active-lookup call — no insert / no update.
-    expect(mockFrom).toHaveBeenCalledTimes(1);
+    // Owner-check guard + active-lookup — no insert / no update.
+    expect(mockFrom).toHaveBeenCalledTimes(2);
   });
 
   it("returns already_claimed_by_other when another member has the active claim", async () => {
@@ -143,7 +146,9 @@ describe("claimBriefForMember", () => {
       claimed_at: "2026-05-14T00:00:00Z",
       released_at: null,
     };
-    mockFrom.mockReturnValueOnce(chain({ maybeSingle: { data: someoneElse } }));
+    mockFrom
+      .mockReturnValueOnce(chain({ maybeSingle: { data: { accepted_by_team_id: 7 } } })) // owner-check guard
+      .mockReturnValueOnce(chain({ maybeSingle: { data: someoneElse } }));
 
     const result = await claimBriefForMember({
       briefId: 10,
@@ -174,6 +179,7 @@ describe("claimBriefForMember", () => {
     };
     const updatedRow = { ...prior, status: "claimed", released_at: null };
     mockFrom
+      .mockReturnValueOnce(chain({ maybeSingle: { data: { accepted_by_team_id: 7 } } })) // owner-check guard
       .mockReturnValueOnce(chain({ maybeSingle: { data: null } })) // active lookup
       .mockReturnValueOnce(chain({ maybeSingle: { data: prior } })) // prior own
       .mockReturnValueOnce(chain({ single: { data: updatedRow } })); // update
@@ -190,6 +196,22 @@ describe("claimBriefForMember", () => {
       expect(result.row.status).toBe("claimed");
       expect(result.row.id).toBe(3);
     }
+  });
+
+  it("rejects claiming a brief not accepted by this team (bulk-path integrity guard)", async () => {
+    // Owner-check returns a different team — must throw before any assignment write.
+    mockFrom.mockReturnValueOnce(chain({ maybeSingle: { data: { accepted_by_team_id: 999 } } }));
+    await expect(
+      claimBriefForMember({ briefId: 10, teamId: 7, professionalId: 42 }),
+    ).rejects.toThrow(/brief_not_for_team/);
+    expect(mockFrom).toHaveBeenCalledTimes(1); // only the owner-check ran
+  });
+
+  it("rejects claiming a brief that doesn't exist", async () => {
+    mockFrom.mockReturnValueOnce(chain({ maybeSingle: { data: null } }));
+    await expect(
+      claimBriefForMember({ briefId: 10, teamId: 7, professionalId: 42 }),
+    ).rejects.toThrow(/brief_not_for_team/);
   });
 });
 

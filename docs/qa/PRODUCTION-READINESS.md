@@ -149,7 +149,7 @@ All these migrations existed in `supabase/migrations/` but were never applied to
 
 ### P2 — lower / by-design / verify-on-Vercel
 - Brief owner view gated by plaintext `?email=` (magic-link tradeoff; weak slug entropy) → mint HMAC token like the review flow.
-- Bulk squad actions + `decisions` route skip the brief-belongs-to-team check the single-brief routes enforce (data-integrity).
+- 🟡 Bulk squad actions + `decisions` route skip the brief-belongs-to-team check the single-brief routes enforce (data-integrity). ✅ **CLAIM fixed** (`claimBriefForMember` now verifies `accepted_by_team_id === teamId` — matches the single-claim route via `resolveSquadRouteContext`; closes the bulk-claim path; +2 tests). ⬜ **Task:** `decline` (`recordDecision`) + `refer` (`createReferral`) + the `decisions` route still lack a routed-to-team check — needs a shared inbox-eligibility helper that also covers `provider_preference=expert_team` **broadcast** briefs (a blind `target_team_id`/`accepted_by_team_id` guard would wrongly reject legitimate declines of broadcast briefs, so it can't be done blind).
 - Bid route: no Zod + no rate-limit; `advisor-auction` POST parses body before the internal-secret check; FI `seed`/`revalidate` trust body `adminEmail` behind a shared key.
 - M1: re-requesting deletion after a cancel can 500 (RLS UPDATE `USING status='scheduled'`).
 - `/firm-portal` and `/pros` bare paths → 404 (no index route) → add index/redirect.

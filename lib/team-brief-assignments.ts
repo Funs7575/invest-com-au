@@ -53,6 +53,22 @@ export async function claimBriefForMember(input: {
 }): Promise<ClaimOutcome> {
   const admin = createAdminClient();
 
+  // Integrity guard: only a brief accepted by THIS team may be claimed by its
+  // members. The single-claim route already enforces this via
+  // resolveSquadRouteContext before calling here; enforcing it inside the
+  // helper closes the bulk-claim path too (the bulk route only checks team
+  // membership, so a member could otherwise pass arbitrary brief_ids). This
+  // matches the single route's check exactly, so legitimate claims are
+  // unaffected; ineligible ids surface as a per-brief failure in bulk results.
+  const { data: ownerCheck } = await admin
+    .from("advisor_auctions")
+    .select("accepted_by_team_id")
+    .eq("id", input.briefId)
+    .maybeSingle();
+  if (!ownerCheck || (ownerCheck.accepted_by_team_id as number | null) !== input.teamId) {
+    throw new Error("brief_not_for_team");
+  }
+
   // Is there already an active claim on this brief by ANY member?
   const { data: active } = await admin
     .from("team_brief_assignments")
