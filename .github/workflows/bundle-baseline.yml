@@ -1,0 +1,74 @@
+name: Bundle size baseline (main)
+
+# Builds main once per push and caches the bundle-size summary so the
+# per-PR "Bundle size budget" job (bundle-size.yml) can diff against it
+# WITHOUT rebuilding the base branch. The old per-PR job built base +
+# head (~13 min each) and blew its timeout, showing CANCELLED on every
+# code PR. This moves the base build here — once per main commit —
+# instead of once per PR.
+
+on:
+  push:
+    branches: [main]
+    # Mirror bundle-size.yml's filter: only refresh the baseline when
+    # something that affects the bundle actually changed.
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "public/**"
+      - "next.config.ts"
+      - "package-lock.json"
+      - "package.json"
+      - "scripts/bundle-size-summary.mjs"
+  # Manual seed — prime the cache the first time, before any qualifying
+  # push to main has run this workflow.
+  workflow_dispatch: {}
+
+concurrency:
+  group: bundle-baseline-main
+  cancel-in-progress: true
+
+jobs:
+  baseline:
+    name: Build + cache main bundle baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+
+    env:
+      # Placeholder secrets — we only measure JS output, nothing runs.
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: https://invest.com.au
+      CRON_SECRET: placeholder
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Build + summarise
+        run: |
+          npm ci
+          npm run build
+          mkdir -p bundle-baseline-out
+          node scripts/bundle-size-summary.mjs > bundle-baseline-out/summary.json
+          cat bundle-baseline-out/summary.json
+
+      - name: Cache baseline for PRs to diff against
+        uses: actions/cache/save@v5
+        with:
+          # Keyed per-commit; bundle-size.yml restores the newest match
+          # via the `bundle-baseline-` restore-key prefix. Caches written
+          # on the default branch are readable from PR runs.
+          path: bundle-baseline-out
+          key: bundle-baseline-${{ github.sha }}

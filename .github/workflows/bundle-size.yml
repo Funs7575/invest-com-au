@@ -6,9 +6,13 @@ name: Bundle size budget
 # a hard gate (regression can sometimes be justified).
 #
 # How it works:
-#   1. Check out base branch, build, capture .next/app-build-manifest
-#      + per-route chunk sizes into a JSON summary.
-#   2. Check out PR head, build, capture the same summary.
+#   1. Build PR head once, capture per-route chunk sizes into a JSON
+#      summary.
+#   2. Restore the base-branch summary from the cache that
+#      bundle-baseline.yml writes on every push to main — NO second
+#      build on the common path. Falls back to building the base branch
+#      only when no baseline is cached yet (the first main run after
+#      this lands, or a 7-day cache eviction).
 #   3. Diff the two summaries per route. Output table formatted
 #      markdown and post it as a sticky PR comment (same comment
 #      updated every run — the thread doesn't fill with noise).
@@ -45,12 +49,13 @@ jobs:
   bundle-size:
     name: Bundle size diff vs base
     runs-on: ubuntu-latest
-    # Two full Next.js builds (base + head) take ~13 min each on this
-    # codebase. 15 min was guaranteed to timeout and showed CANCELLED
-    # on every wave-3 PR. 30 min gives a comfortable buffer without
-    # ballooning cost — the job is already path-filtered to skip
-    # docs-only / config-only PRs.
-    timeout-minutes: 30
+    # Common path builds head ONCE and diffs against the cached main
+    # baseline (bundle-baseline.yml) → ~13 min. The 45-min budget only
+    # matters for the rare cold-cache fallback that also builds the base
+    # branch (~26 min of builds); kept generous so that path finishes
+    # instead of showing CANCELLED like the old 30-min cap did. The job
+    # is already path-filtered to skip docs-only / config-only PRs.
+    timeout-minutes: 45
     permissions:
       contents: read
       pull-requests: write
@@ -95,13 +100,42 @@ jobs:
           node /tmp/bundle-scripts/bundle-size-summary.mjs > /tmp/bundle-size/head.json
           cat /tmp/bundle-size/head.json
 
-      - name: Checkout base branch
+      - name: Restore base baseline (from main)
+        id: restore-baseline
+        uses: actions/cache/restore@v5
+        with:
+          # bundle-baseline.yml saves one summary per main commit under
+          # bundle-baseline-<sha>; restore-keys grabs the most recent
+          # baseline when the PR's exact base SHA isn't cached.
+          path: bundle-baseline-out
+          key: bundle-baseline-${{ github.event.pull_request.base.sha }}
+          restore-keys: |
+            bundle-baseline-
+
+      - name: Resolve base summary
+        id: baseline
+        run: |
+          mkdir -p /tmp/bundle-size
+          if [ -f bundle-baseline-out/summary.json ]; then
+            cp bundle-baseline-out/summary.json /tmp/bundle-size/base.json
+            echo "has_baseline=true" >> "$GITHUB_OUTPUT"
+            echo "Using cached main baseline — skipping the base rebuild."
+          else
+            echo "has_baseline=false" >> "$GITHUB_OUTPUT"
+            echo "No cached baseline yet — falling back to building the base branch."
+          fi
+
+      # Fallback only: build the base branch when no baseline is cached.
+      # Skipped on the common path (saves ~13 min + the second npm ci).
+      - name: Checkout base branch (fallback)
+        if: steps.baseline.outputs.has_baseline != 'true'
         run: |
           git fetch origin ${{ github.base_ref }}:base-ref
           git checkout base-ref
           git reset --hard origin/${{ github.base_ref }}
 
-      - name: Build base branch
+      - name: Build base branch (fallback)
+        if: steps.baseline.outputs.has_baseline != 'true'
         run: |
           npm ci
           npm run build
