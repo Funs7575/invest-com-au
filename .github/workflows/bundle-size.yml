@@ -61,6 +61,9 @@ jobs:
       pull-requests: write
 
     env:
+      # next build's TypeScript phase OOMs at Node's default ~4 GB heap
+      # on the runner (SIGABRT mid-build). Match ci.yml's main build job.
+      NODE_OPTIONS: "--max-old-space-size=6144"
       # Placeholder secrets for the build; we're only measuring
       # JS output, not executing anything.
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
