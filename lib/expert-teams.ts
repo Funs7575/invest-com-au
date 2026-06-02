@@ -10,6 +10,7 @@
 
 // eslint-disable-next-line no-restricted-imports -- multi-row writes across professionals/teams; service-role legitimate per CLAUDE.md.
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendTeamInvitation } from "@/lib/marketplace-emails";
 import { randomBytes } from "crypto";
 import { logger } from "@/lib/logger";
 
@@ -237,6 +238,32 @@ export async function inviteMember(input: InviteMemberInput): Promise<ExpertTeam
     .single();
 
   if (error || !data) throw new Error(`inviteMember failed: ${error?.message ?? "no row"}`);
+
+  // Notify the invitee so they actually learn about the invite (AJ-2). The
+  // invite row is already committed; the email is best-effort and must never
+  // break invite creation — fire-and-forget with a swallowed catch.
+  void (async () => {
+    try {
+      const [{ data: team }, { data: inviter }] = await Promise.all([
+        admin.from("expert_teams").select("name").eq("id", input.teamId).maybeSingle(),
+        admin
+          .from("professionals")
+          .select("name")
+          .eq("id", input.invitedByProfessionalId)
+          .maybeSingle(),
+      ]);
+      await sendTeamInvitation({
+        email,
+        inviteeName: input.name ?? null,
+        teamName: (team?.name as string) ?? "an Invest.com.au team",
+        inviterName: (inviter?.name as string) ?? null,
+        token,
+      });
+    } catch {
+      /* swallowed — invite already created; email is best-effort */
+    }
+  })();
+
   return data as ExpertTeamInvitation;
 }
 

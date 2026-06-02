@@ -78,6 +78,40 @@ export async function sendProviderNewMatchRequest(input: {
 }
 
 /**
+ * Invite a provider to join an expert team (AJ-2). Sent on invite creation so
+ * the invitee actually learns they were invited — previously no email was sent,
+ * so invitations were undiscoverable. Links to the accept landing page, which
+ * works for existing pros (accept directly) and new pros (sign up, then accept).
+ */
+export async function sendTeamInvitation(input: {
+  email: string;
+  inviteeName: string | null;
+  teamName: string;
+  inviterName: string | null;
+  token: string;
+}): Promise<boolean> {
+  const acceptUrl = `${SITE_URL}/teams/accept-invite?token=${encodeURIComponent(input.token)}`;
+  const greeting = input.inviteeName ? `Hi ${input.inviteeName},` : "Hi,";
+  const inviter = input.inviterName
+    ? `${input.inviterName} has invited you`
+    : "You've been invited";
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.email,
+    subject: `You're invited to join ${input.teamName} on Invest.com.au`,
+    html: wrap(
+      `Join ${input.teamName}`,
+      `<p style="font-size:15px">${greeting}</p>
+      <p style="font-size:14px;color:#475569">${inviter} to join the team <strong>${input.teamName}</strong> as a provider on Invest.com.au. Team members receive matched client Match Requests in the team's shared inbox.</p>
+      ${btn(acceptUrl, "View &amp; accept invitation →")}
+      <p style="font-size:12px;color:#64748b">This invitation expires in 7 days. If you weren't expecting it, you can safely ignore this email.</p>
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
+}
+
+/**
  * 24-hour digest: unaccepted Match Requests still in the provider's
  * inbox. Sent by daily cron. Only fired when count > 0.
  */
