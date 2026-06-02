@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
  * the stored copy stays encrypted.
  */
 export default async function AdminMfaPage() {
-  const guard = await requireAdmin();
+  const guard = await requireAdmin({ requireMfa: false }); // MFA enroll/manage page — exempt like proxy.ts (else lockout)
   if (!guard.ok) {
     // Non-admins go home rather than being shown the page
     redirect("/admin/login");

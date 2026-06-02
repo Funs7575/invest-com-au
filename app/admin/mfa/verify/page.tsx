@@ -19,7 +19,7 @@ export default async function AdminMfaVerifyPage({
 }: {
   searchParams: Promise<{ redirect?: string }>;
 }) {
-  const guard = await requireAdmin();
+  const guard = await requireAdmin({ requireMfa: false }); // this page IS the MFA flow — exempt like proxy.ts
   if (!guard.ok) {
     redirect("/admin/login");
   }

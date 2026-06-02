@@ -27,8 +27,10 @@
  */
 
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminEmails } from "@/lib/admin";
+import { verifyMfaCookie, MFA_COOKIE_NAME } from "@/lib/admin-mfa-cookie";
 
 export interface AdminGuardOk {
   ok: true;
@@ -41,7 +43,34 @@ export interface AdminGuardDeny {
 }
 export type AdminGuardResult = AdminGuardOk | AdminGuardDeny;
 
-export async function requireAdmin(): Promise<AdminGuardResult> {
+export interface RequireAdminOptions {
+  /**
+   * When false, skips the MFA step-up cookie check. ONLY the MFA
+   * enroll/verify routes may set this — they are how an admin obtains
+   * the `admin_mfa_verified` cookie, so requiring it there is a
+   * permanent lockout. Everything else must keep the default (true).
+   */
+  requireMfa?: boolean;
+}
+
+/**
+ * Whether the MFA step-up gate is active. Mirrors proxy.ts's /admin
+ * page-gate logic exactly so the API gate and the page gate switch on
+ * together: enforce when the signing secret is configured, and always
+ * in production (fail-closed — matches the page gate, which redirects
+ * every request to /admin/mfa/verify when the secret is missing in
+ * prod). In dev/test without the secret, the gate is off.
+ */
+function mfaEnforced(): boolean {
+  const secret = process.env.ADMIN_MFA_COOKIE_SECRET;
+  const secretSet = !!secret && secret.length >= 32;
+  return secretSet || process.env.NODE_ENV === "production";
+}
+
+export async function requireAdmin(
+  options: RequireAdminOptions = {},
+): Promise<AdminGuardResult> {
+  const { requireMfa = true } = options;
   const supabase = await createClient();
   const {
     data: { user },
@@ -60,5 +89,26 @@ export async function requireAdmin(): Promise<AdminGuardResult> {
       response: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
     };
   }
+
+  // ── MFA step-up gate (parity with proxy.ts's /admin page gate) ──
+  // proxy.ts only gates admin *pages*; without this, a session that
+  // cleared password auth but never passed MFA could call destructive
+  // /api/admin/* routes directly. Enforced under the same env conditions
+  // as the page gate. The MFA enroll/verify routes pass requireMfa:false
+  // (they establish the cookie).
+  if (requireMfa && mfaEnforced()) {
+    const cookieStore = await cookies();
+    const mfa = verifyMfaCookie(cookieStore.get(MFA_COOKIE_NAME)?.value);
+    if (!mfa.ok) {
+      return {
+        ok: false,
+        response: NextResponse.json(
+          { error: "MFA verification required", code: "mfa_required" },
+          { status: 403 },
+        ),
+      };
+    }
+  }
+
   return { ok: true, email: user.email, userId: user.id };
 }

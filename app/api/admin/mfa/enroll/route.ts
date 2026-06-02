@@ -42,7 +42,7 @@ export const runtime = "nodejs";
  */
 
 export async function GET() {
-  const guard = await requireAdmin();
+  const guard = await requireAdmin({ requireMfa: false }); // enroll establishes MFA — never gate it on the MFA cookie
   if (!guard.ok) return guard.response;
   const enrolled = await isAdminMfaEnrolled(guard.email);
   return NextResponse.json({ enrolled, email: guard.email });
@@ -52,7 +52,7 @@ export async function POST() {
   const envProblem = envGate();
   if (envProblem) return envProblem;
 
-  const guard = await requireAdmin();
+  const guard = await requireAdmin({ requireMfa: false }); // enroll establishes MFA — never gate it on the MFA cookie
   if (!guard.ok) return guard.response;
 
   try {
@@ -89,7 +89,7 @@ export async function POST() {
 }
 
 export async function DELETE(request: Request) {
-  const guard = await requireAdmin();
+  const guard = await requireAdmin({ requireMfa: false }); // enroll establishes MFA — never gate it on the MFA cookie
   if (!guard.ok) return guard.response;
 
   // eslint-disable-next-line invest/no-unvalidated-req-json -- single optional field; below check is the contract.
