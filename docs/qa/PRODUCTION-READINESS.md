@@ -154,6 +154,24 @@ All these migrations exist in `supabase/migrations/` but were never applied to *
 - `/quiz`,`/get-matched`,`/start` have no `<h1>` (a11y/SEO).
 - Site-wide `_vercel/speed-insights/script.js` 404 → self-resolves on the Vercel move.
 
+### Authed-journey gaps (code-traced UX/logic/completeness — need test creds to click-verify, so tasked not blind-shipped)
+**HIGH — broken / dead-end journeys**
+- **AJ-1** — Advisor portal nav has **no Briefs/Auctions entry**; the core "win work" inbox (`/advisor-portal/briefs` + `/auctions`) is reachable only by direct URL / email link → the monetised funnel is invisible in-product. `app/advisor-portal/types.ts:1` (ViewType), `page.tsx:203` (navItems). Fix: add nav entries or a dashboard "Investor Briefs" CTA + unread badge.
+- **AJ-2** (= P1-3, expanded) — **Team-invite acceptance impossible via UI**: `acceptInvitation()` + `/api/expert-teams/invite/accept` are orphaned; existing-pro invite links to a `pending` team page that `notFound()`s with no accept control; new-pro invite link `/pros/join?invitation=` is ignored. Journey 3 can't complete. Fix: invite-accept landing page + read `?invitation=` in `/pros/join`.
+- **AJ-3** — **Consumer can't withdraw a brief**: `/api/briefs/[slug]/withdraw` exists, no UI calls it → dead-end + wasted pro credits. Fix: "Withdraw request" on the tracker / `my-briefs`.
+
+**MED**
+- **AJ-4** — Brief tracker pre-accept "waiting" state has no expectation-setting / next step (commercially weakest moment). `app/briefs/[slug]/page.tsx:323`.
+- **AJ-5** — Insufficient-credits on accept: no balance shown, "Top up" is plain text (not a link). `app/advisor-portal/briefs/BriefsInboxClient.tsx:62-145`.
+- **AJ-6** — No consumer "mark complete" → reviews delayed ≤4 wks + disputes hidden with no explanation. `app/briefs/[slug]/page.tsx:224`.
+- **AJ-7** — Booking panel has no cancel/reschedule. `BookConsultationPanel.tsx:120`.
+- **AJ-8** — Squad claim-race loser's row doesn't refresh to show the winner. `SquadInboxClaimRow.tsx:51-76`.
+- **AJ-9** — Inbox: bare `Loading…`; team picker shows `Team #<id>` not names. `BriefsInboxClient.tsx:95-166` + `api/briefs/inbox`.
+
+**LOW (polish)** — join-wizard success dead-ends to homepage (no portal CTA); `window.prompt` for handoff/retract notes; expired-auction bid errors vs greys out; non-owner tracker tells user to hand-edit `?email=`; `accept_credits_cost` renders `?`.
+
+**Journey 4 (client account): SOLID** — delete/privacy (30-day grace, cancel, states), goals (optimistic + rollback), holdings (empty + price-down fallback), dashboard all well-built. Only minor polish (mixed-currency holdings sum; account page renders empty for anon vs redirect).
+
 ### Verified GOOD (no action) — from the reviews
 Credit atomicity (optimistic-lock + idempotent ledger), contact-unlock authz, brief messaging authz (real session, email-matched), team claim/handoff/complete (membership + brief-ownership re-checked), firm-portal authz (server-side `is_firm_admin`, no IDOR), community vote/threads/posts (auth + rate-limit + author/mod gates), CSV import (capped, no formula-injection), document-upload validation, auth callback open-redirect guard, account-API RLS owner-scoping, `expert_team_invitations` deny-all (256-bit token). **F2** (`ops-settings` route) and **F4** (`team_brief_assignments` migration) both **exist — not bugs**.
 
