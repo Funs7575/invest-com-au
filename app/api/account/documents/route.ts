@@ -37,14 +37,24 @@ export async function GET(): Promise<NextResponse> {
     return NextResponse.json({ error: "Failed to load documents" }, { status: 500 });
   }
 
-  const documents = await Promise.all(
-    (rows ?? []).map(async (row) => {
-      const { data: signed } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .createSignedUrl(row.file_path, SIGNED_URL_EXPIRY_SECONDS);
-      return { ...row, download_url: signed?.signedUrl ?? null };
-    }),
-  );
+  // Batch the signed-URL generation into a single storage round-trip
+  // (createSignedUrls preserves input order) instead of one call per document.
+  const rowList = rows ?? [];
+  const signed =
+    rowList.length === 0
+      ? []
+      : (
+          await supabase.storage
+            .from(STORAGE_BUCKET)
+            .createSignedUrls(
+              rowList.map((r) => r.file_path),
+              SIGNED_URL_EXPIRY_SECONDS,
+            )
+        ).data ?? [];
+  const documents = rowList.map((row, i) => ({
+    ...row,
+    download_url: signed[i]?.signedUrl ?? null,
+  }));
 
   return NextResponse.json({ documents });
 }
