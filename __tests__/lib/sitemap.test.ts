@@ -89,12 +89,28 @@ async function getAllUrls(): Promise<string[]> {
 
 describe("sitemap shard id coercion (Netlify passes string ids)", () => {
   it("populates the shard for a string id instead of returning an empty []", async () => {
-    // @netlify/plugin-nextjs passes the shard id as "0"; before the Number(id)
-    // coercion this fell through to `default: []` and served empty sitemaps.
     const asString = await sitemap({ id: "0" as unknown as number });
     const asNumber = await sitemap({ id: 0 });
     expect(asString.length).toBeGreaterThan(0);
     expect(asString.length).toBe(asNumber.length);
+  });
+
+  it("populates the shard when Netlify passes the FILENAME id ('0.xml')", async () => {
+    // The real prod failure: @netlify/plugin-nextjs passes "0.xml", not "0", so
+    // Number("0.xml") was NaN → default:[] → empty sitemaps in production while
+    // CI (which only tested "0") stayed green. parseInt("0.xml",10) === 0.
+    const withExtension = await sitemap({ id: "0.xml" as unknown as number });
+    const asNumber = await sitemap({ id: 0 });
+    expect(withExtension.length).toBeGreaterThan(0);
+    expect(withExtension.length).toBe(asNumber.length);
+  });
+
+  it("each shard's filename id ('N.xml') resolves to that shard", async () => {
+    for (let i = 0; i < 8; i++) {
+      const byFilename = await sitemap({ id: `${i}.xml` as unknown as number });
+      const byNumber = await sitemap({ id: i });
+      expect(byFilename.length).toBe(byNumber.length);
+    }
   });
 });
 
