@@ -198,6 +198,23 @@ describe("renderStars", () => {
   it("renders 4 full + half at 4.7", () => {
     expect(renderStars(4.7)).toBe("★★★★½");
   });
+
+  // Defensive clamp: out-of-range / NaN input must degrade, not throw
+  // RangeError ('☆'.repeat(negative)) — that previously crashed SSR.
+  it("clamps a rating above 5 to 5 full stars (no RangeError)", () => {
+    expect(() => renderStars(7)).not.toThrow();
+    expect(renderStars(7)).toBe("★★★★★");
+  });
+
+  it("clamps a negative rating to 0 stars (no RangeError)", () => {
+    expect(() => renderStars(-3)).not.toThrow();
+    expect(renderStars(-3)).toBe("☆☆☆☆☆");
+  });
+
+  it("treats NaN as 0 stars", () => {
+    expect(() => renderStars(NaN)).not.toThrow();
+    expect(renderStars(NaN)).toBe("☆☆☆☆☆");
+  });
 });
 
 // ─── Browser-API functions ────────────────────────────────────────────────────
