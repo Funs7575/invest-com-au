@@ -77,8 +77,16 @@ export async function GET(request: NextRequest) {
       if (specialty) query = query.contains("specialties", [specialty]);
       if (verified === "true") query = query.eq("verified", true);
       if (q) {
-        const term = `%${q}%`;
-        query = query.or(`name.ilike.${term},firm_name.ilike.${term},location_display.ilike.${term},location_suburb.ilike.${term}`);
+        // Sanitize before interpolating into the PostgREST `.or()` filter
+        // string: postgrest-js does NOT escape `.or()` contents, so a crafted
+        // `q` containing the grammar metacharacters `,` (condition separator)
+        // or `()` (grouping) could inject arbitrary filter predicates. Strip
+        // them and cap length; legitimate names/suburbs don't need them.
+        const safe = q.replace(/[,()]/g, " ").slice(0, 100).trim();
+        if (safe) {
+          const term = `%${safe}%`;
+          query = query.or(`name.ilike.${term},firm_name.ilike.${term},location_display.ilike.${term},location_suburb.ilike.${term}`);
+        }
       }
 
       // For "relevance" sort, fetch more and re-rank client-side with composite score.

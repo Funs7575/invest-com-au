@@ -198,4 +198,19 @@ describe("GET /api/advisor-search", () => {
     const res = await GET(makeGet());
     expect(res.status).toBe(500);
   });
+
+  it("sanitizes q before the .or() filter — strips injection metacharacters", async () => {
+    const chain = makeProfessionalsChain({ data: [], error: null, count: 0 });
+    mockServerFrom.mockReturnValue(chain);
+    // A crafted q that, unsanitized, would inject a PostgREST OR predicate.
+    await GET(makeGet({ q: "x),verified.is.true,name.ilike.(y" }));
+    const orCalls = (chain.or as ReturnType<typeof vi.fn>).mock.calls;
+    expect(orCalls).toHaveLength(1);
+    const filter = orCalls[0][0] as string;
+    // No parens survive from q, and only the 3 clause-separator commas remain
+    // (4 ilike clauses) — the injected `,`/`()` can't break out of the value.
+    expect(filter).not.toMatch(/[()]/);
+    expect(filter.split(",")).toHaveLength(4);
+    expect(filter).toContain("name.ilike.");
+  });
 });
