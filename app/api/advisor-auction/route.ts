@@ -119,10 +119,13 @@ async function getAuctions(_request: NextRequest) {
     // client-supplied ?advisor_id=. Trusting that param was an IDOR that let any
     // logged-in advisor read competitors' bid amounts and won-lead history.
     // Mirrors the public-bids handler, which scopes to the caller's own email.
+    // `professionals` is the canonical table; `advisors` does not exist (this
+    // lookup always returned null, so the auctions surface 404'd for everyone).
     const { data: advisor } = await admin
-      .from("advisors")
+      .from("professionals")
       .select("id, type, location_state, location_suburb")
       .eq("email", user.email ?? "")
+      .eq("status", "active")
       .single();
 
     if (!advisor) {

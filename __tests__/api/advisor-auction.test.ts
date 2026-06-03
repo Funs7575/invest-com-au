@@ -195,10 +195,9 @@ describe("GET /api/advisor-auction (getAuctions)", () => {
     expect(res.status).toBe(401);
   });
 
-  it("returns 400 when advisor_id is missing", async () => {
-    const res = await GET(new NextRequest("http://localhost/api/advisor-auction"));
-    expect(res.status).toBe(400);
-  });
+  // NB: there is intentionally no "advisor_id is required" test — the handler
+  // resolves the advisor from the authenticated session and ignores any
+  // client-supplied ?advisor_id= (that param was an IDOR; see route comment).
 
   it("returns 404 when advisor profile not found", async () => {
     mockAdminFrom.mockReturnValue(makeSelectChain([{ data: null, error: null }]));
@@ -260,6 +259,9 @@ describe("GET /api/advisor-auction (getAuctions)", () => {
     expect(json).toHaveProperty("won");
     expect(Array.isArray(json.active)).toBe(true);
     expect(Array.isArray(json.won)).toBe(true);
+    // Regression guard: advisor resolved from `professionals`, not `advisors`.
+    expect(mockAdminFrom).toHaveBeenCalledWith("professionals");
+    expect(mockAdminFrom).not.toHaveBeenCalledWith("advisors");
   });
 
   it("enriches active auctions with bid_count and my_bid_cents", async () => {

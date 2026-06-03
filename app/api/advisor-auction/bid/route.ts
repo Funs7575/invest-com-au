@@ -56,11 +56,14 @@ export async function POST(request: NextRequest) {
 
     const admin = createAdminClient();
 
-    // Look up advisor by user email
+    // Look up advisor by user email. `professionals` is the canonical advisor
+    // table (the whole portal queries it) — `advisors` does not exist, so this
+    // lookup always returned null and the bid surface 404'd for every advisor.
     const { data: advisor } = await admin
-      .from("advisors")
+      .from("professionals")
       .select("id, name, email, type, credit_balance_cents")
       .eq("email", user.email)
+      .eq("status", "active")
       .single();
 
     if (!advisor) {
