@@ -202,6 +202,31 @@ describe("POST /api/marketplace/postback", () => {
     expect(body.conversion_id).toBe("conv-1");
   });
 
+  it("records the conversion when conversion_value_cents is a string (S2S postbacks serialise numbers as strings)", async () => {
+    // Regression: a strict z.number() on conversion_value_cents previously
+    // failed the whole-body parse, collapsing click_id/event_type to undefined
+    // and returning a spurious 400 — dropping the conversion entirely.
+    const res = await POST(
+      makePost(
+        { ...VALID_BODY, conversion_value_cents: "500" },
+        VALID_API_KEY
+      )
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.success).toBe(true);
+    expect(body.conversion_id).toBe("conv-1");
+  });
+
+  it("records the conversion when conversion_value_cents is omitted entirely", async () => {
+    const { conversion_value_cents: _omit, ...noValue } = VALID_BODY;
+    const res = await POST(makePost(noValue, VALID_API_KEY));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.success).toBe(true);
+    expect(body.conversion_id).toBe("conv-1");
+  });
+
   it("returns 200 already_recorded on 23505 unique constraint race", async () => {
     setupFromMock({
       insertError: { code: "23505", message: "unique violation" },

@@ -13,7 +13,13 @@ const Body = z
   .object({
     click_id: z.string().optional(),
     event_type: z.string().optional(),
-    conversion_value_cents: z.number().optional(),
+    // Accept any type here — partner S2S postbacks routinely serialise every
+    // field as a string (e.g. "500"). A strict `z.number()` would fail the
+    // whole-body parse, collapsing click_id/event_type to undefined and
+    // returning a spurious 400 (dropping the conversion). The downstream
+    // `typeof … === "number" ? … : 0` guard already coerces a non-number to 0,
+    // matching the documented "never rejected" contract.
+    conversion_value_cents: z.unknown().optional(),
     metadata: z.record(z.string(), z.unknown()).optional(),
   })
   .passthrough();
