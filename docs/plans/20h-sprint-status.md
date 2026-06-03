@@ -107,3 +107,34 @@ survives terminal close) — state lives here, so either driver resumes identica
     billing OR a working Netlify build) → turns the live-bots vision back on. Until
     then the loop's real options are: stand up **local-bots** (run the app in-sandbox)
     or clear the **safe backlog** (#1198/#1269) + reconcile bookkeeping.
+- **2026-06-03 ~05:30–06:35 — Cycles 3–6 (Netlify came back; bots + fixes shipping):**
+  - **Netlify recovered** (root/`/invest`/`/best` → 200) → **live-bots unblocked**;
+    chromium found at `/opt/pw-browsers` (env-redirected). Local-bots now moot.
+  - **Merged to main:** **#1269** (autopilot cron gate, Tier B) ✅, **#1274** (GEO
+    AI-traffic measurement) ✅ — both verified locally (tsc + full suites) then merged
+    via API on core-gate-green (ignoring the 3 infra reds, as designed).
+  - **Backlog grind:** **#1271** (15-wave hardening, ~950 tests) — rebased onto main
+    (12 conflicts resolved toward main's correct versions), full suite **16,776 tests**
+    green; CI flagged its `no-unvalidated-req-json` error-promotion (37 pre-existing
+    main violations) → reverted the severity bump to `warn`, re-pushed. **#1272/#1273
+    HELD** (carry DB migrations).
+  - **Bots (live Netlify):** 4 personas. `/invest` → **5 listing-detail 500s**
+    (`funds` + `digital-infrastructure` verticals — 11 verticals lack a `listings/[slug]`
+    route; likely a stale-deploy 500 since the code path should 404). **Documented for
+    founder, NOT auto-fixed** — architectural + the wholesale verticals are avoid-list
+    (C8 wants them gated/unpublished). `/best`, `/compare`, `/advisors` → **healthy**
+    (the `/advisors/financial-planners` 403 was transient proxy noise — 200×4 on retry).
+  - **3 parallel review agents → real, untracked bugs fixed (each verified + PR'd):**
+    - **#1307** — 7 dead auth-link 404s (`/sign-in`, `/auth/sign-up`, `/login?redirect=`
+      → `/auth/login?next=` / `/auth/signup`) + next.config redirect net. (CI caught a
+      test asserting an old URL → fixed the assertion.)
+    - **#1308** — `clubs/[clubId]/messages` POST 500 on every send: `withValidatedBody`
+      dropped Next's route ctx → fixed at the wrapper (forwards ctx; hardens ~47 routes)
+      + added the missing test.
+    - **#1309** — get-matched top-match scoring silently zeroed (quiz_weights `*_weight`
+      columns vs unsuffixed `WeightKey`s) → typed remap helper + regression test.
+  - **HELD for founder:** `advisor-credit-ledger` optimistic-lock retry uses a stale
+    balance (Tier C / financial) — surfaced, not auto-fixed.
+  - **Process note:** local `tsc+lint` missed 2 CI failures (full suite + build catch
+    more) → now running related/full tests before pushing.
+  - **In CI, verified, auto-merge on green:** #1271, #1307, #1308, #1309.
