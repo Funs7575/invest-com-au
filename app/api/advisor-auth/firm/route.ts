@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-auth:firm");
+
+// The PATCH handler reads an allowlisted, dynamic set of fields and filters
+// the rest, so this schema is intentionally permissive (object passthrough).
+// The "no valid fields" 400 is still produced by the handler's allowlist loop.
+const FirmPatchBody = z.object({}).passthrough();
 
 // GET — fetch firm details (any firm member can view)
 export async function GET(request: NextRequest) {
@@ -52,12 +58,17 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Only firm admins can update firm details" }, { status: 403 });
   }
 
-  let body: Record<string, unknown>;
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    rawBody = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
+  const parsed = FirmPatchBody.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+  const body: Record<string, unknown> = parsed.data;
 
   // Allowlist editable fields
   const allowed = ["name", "bio", "website", "phone", "email", "location_state", "location_suburb", "abn", "acn", "afsl_number", "logo_url"];

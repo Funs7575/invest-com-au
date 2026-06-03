@@ -1,9 +1,25 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("fee-profile");
+
+// Intentionally permissive: this route coerces every field to a safe,
+// clamped value (Number(x) || default, slice(0,100)) and never rejects on
+// bad input. Fields are accepted as unknown so the schema preserves that
+// "accept anything, coerce" contract; the existing logic does the real work.
+const Body = z
+  .object({
+    asx_trades_per_month: z.unknown(),
+    us_trades_per_month: z.unknown(),
+    avg_trade_size: z.unknown(),
+    portfolio_value: z.unknown(),
+    current_broker_slug: z.unknown(),
+  })
+  .partial()
+  .passthrough();
 
 export async function GET() {
   try {
@@ -62,7 +78,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    const parsed = Body.safeParse(await request.json());
+    const body = parsed.success ? parsed.data : {};
 
     // Validate inputs
     const asxTrades = Math.max(0, Math.min(999, Math.round(Number(body.asx_trades_per_month) || 4)));

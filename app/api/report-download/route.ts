@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("report-download");
+
+// `email` is validated by the presence/length/format guards below (→ the
+// "valid email" / "invalid email" 400s). It stays optional in the schema so a
+// missing email falls through to those guards rather than a schema error, and
+// `.passthrough()` keeps the diff behaviourally identical.
+const Body = z.object({ email: z.string().optional() }).passthrough();
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,8 +29,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
-    const rawEmail = (body as { email?: unknown }).email;
+    const body = Body.parse(await request.json());
+    const rawEmail = body.email;
     const email = typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : "";
 
     if (!email || !email.includes("@") || email.length > 320) {

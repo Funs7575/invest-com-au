@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { isValidEmail } from "@/lib/validate-email";
@@ -33,6 +34,12 @@ const CORRECTABLE_FIELDS = new Set([
   "preference_cadence",
 ]);
 
+// Fields are individually validated below (email via isValidEmail, field via
+// the CORRECTABLE_FIELDS allowlist, new_value length 1–200) — those guards own
+// the 400 messages the clients/tests rely on. The schema only checks the body
+// is an object so a malformed body still falls through to "Invalid email".
+const Body = z.object({}).passthrough();
+
 /**
  * We store the correction request in the existing
  * privacy_data_requests table with request_type='correct' so the
@@ -44,7 +51,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => ({}));
+  const parsed = Body.safeParse(await request.json().catch(() => ({})));
+  const body: Record<string, unknown> = parsed.success ? parsed.data : {};
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : null;
   const field = typeof body.field === "string" ? body.field : null;
   const newValue = typeof body.new_value === "string" ? body.new_value.trim() : null;

@@ -1,10 +1,24 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { isValidEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("quick-audit");
+
+// Email is validated by isValidEmail and the numeric context fields are
+// clamped individually below. The schema is permissive (everything optional,
+// `.passthrough()`) so it never rejects a body the old destructure accepted;
+// invalid JSON is still caught above and returns the same 400.
+const Body = z
+  .object({
+    email: z.string().optional(),
+    current_broker: z.string().optional(),
+    trades_per_year: z.number().optional(),
+    avg_trade_size: z.number().optional(),
+  })
+  .passthrough();
 
 /**
  * POST /api/quick-audit
@@ -20,19 +34,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
   }
 
-  let body: Record<string, unknown>;
+  let raw: unknown;
   try {
-    body = await request.json();
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { email, current_broker, trades_per_year, avg_trade_size } = body as {
-    email?: string;
-    current_broker?: string;
-    trades_per_year?: number;
-    avg_trade_size?: number;
-  };
+  const parsed = Body.safeParse(raw);
+  const { email, current_broker, trades_per_year, avg_trade_size } = parsed.success
+    ? parsed.data
+    : {};
 
   // Validate email
   if (!isValidEmail(email as string)) {

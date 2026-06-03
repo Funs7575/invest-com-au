@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { isRateLimited } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminEmails } from "@/lib/admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-welcome");
+
+const Body = z.object({
+  name: z.string(),
+  email: z.string(),
+  slug: z.string(),
+  firm_name: z.string().optional(),
+  type: z.string().optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,8 +28,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
-    const body = await request.json();
-    const { name, email, firm_name, slug, type } = body;
+    const parsed = Body.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+    const { name, email, firm_name, slug, type } = parsed.data;
 
     if (!name || !email || !slug) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -40,7 +52,7 @@ export async function POST(request: NextRequest) {
       mortgage_broker: "Mortgage Broker",
       estate_planner: "Estate Planner",
     };
-    const typeLabel = typeLabels[type] || "Financial Professional";
+    const typeLabel = (type ? typeLabels[type] : undefined) || "Financial Professional";
 
     await fetch("https://api.resend.com/emails", {
       method: "POST",

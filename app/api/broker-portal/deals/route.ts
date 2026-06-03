@@ -1,10 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/client";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { getAdminEmails } from "@/lib/admin";
 
 const log = logger("broker-deals");
+
+// All fields optional — the handler guards on `deal_enabled` and trims the
+// string fields itself. String typing matches existing `.trim()` usage; a
+// request that previously succeeded always sent strings (or omitted them).
+const Body = z
+  .object({
+    deal_text: z.string().optional(),
+    deal_expiry: z.string().optional(),
+    deal_terms: z.string().optional(),
+    deal_category: z.string().optional(),
+    deal_enabled: z.boolean().optional(),
+  })
+  .passthrough();
 
 /** Get the broker slug from the authenticated user */
 async function getBrokerSlug(request: NextRequest): Promise<{ slug: string; accountId: string } | null> {
@@ -64,8 +77,11 @@ export async function PUT(request: NextRequest) {
   const broker = await getBrokerSlug(request);
   if (!broker) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await request.json();
-  const { deal_text, deal_expiry, deal_terms, deal_category, deal_enabled } = body;
+  const parsed = Body.safeParse(await request.json());
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+  const { deal_text, deal_expiry, deal_terms, deal_category, deal_enabled } = parsed.data;
 
   // Validation
   if (deal_enabled && !deal_text?.trim()) {

@@ -1,11 +1,25 @@
 import { isRateLimited } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createServerClient } from "@supabase/ssr";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
 
 const log = logger("payment-setup");
+
+// PATCH body for saving a confirmed payment method + auto-topup settings.
+// Every field is optional and only applied when present / the right type
+// (matching the existing guards below); `.passthrough()` keeps the diff
+// behaviourally identical.
+const PatchBody = z
+  .object({
+    payment_method_id: z.string().optional(),
+    auto_topup_enabled: z.boolean().optional(),
+    threshold_cents: z.number().optional(),
+    amount_cents: z.number().optional(),
+  })
+  .passthrough();
 
 /**
  * POST /api/marketplace/setup-payment-method
@@ -63,7 +77,7 @@ export async function POST(request: NextRequest) {
     const stripe = getStripe();
 
     // Get or create Stripe customer for this broker
-    const { data: wallet } = await supabase
+    const { data: _wallet } = await supabase
       .from("broker_wallets")
       .select("stripe_payment_method_id")
       .eq("broker_slug", account.broker_slug)
@@ -160,8 +174,15 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    const parsed = PatchBody.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message ?? "Invalid body" },
+        { status: 400 },
+      );
+    }
     const { payment_method_id, auto_topup_enabled, threshold_cents, amount_cents } =
-      await request.json();
+      parsed.data;
 
     const updates: Record<string, unknown> = {
       updated_at: new Date().toISOString(),

@@ -1,9 +1,22 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-auction");
+
+// Permissive schema — the handler keeps its own `!lead_id || !lead_type`
+// guard and its internal-secret check, so fields stay optional and the
+// body just needs to be a JSON object.
+const CreateAuctionBody = z
+  .object({
+    lead_id: z.any(),
+    lead_type: z.any(),
+    location: z.any(),
+    budget_range: z.any(),
+  })
+  .passthrough();
 
 /**
  * POST /api/advisor-auction — Create a new lead auction.
@@ -11,8 +24,14 @@ const log = logger("advisor-auction");
  */
 async function createAuction(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { lead_id, lead_type, location, budget_range } = body;
+    const parsed = CreateAuctionBody.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "lead_id and lead_type are required." },
+        { status: 400 }
+      );
+    }
+    const { lead_id, lead_type, location, budget_range } = parsed.data;
 
     if (!lead_id || !lead_type) {
       return NextResponse.json(

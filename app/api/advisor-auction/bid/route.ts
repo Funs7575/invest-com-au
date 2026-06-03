@@ -1,12 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { sendConsumerBidReceivedEmail } from "@/lib/quote-emails";
 
 const log = logger("advisor-auction-bid");
 
 const MINIMUM_BID_CENTS = 50_00; // $50 minimum bid
+
+// auction_id / bid_amount must be numbers (matches the existing type guards).
+// The $50 minimum is intentionally NOT enforced here so the handler keeps its
+// dynamic "Minimum bid is $50.00" message.
+const Body = z.object({
+  auction_id: z.number(),
+  bid_amount: z.number(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,17 +32,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { auction_id, bid_amount } = body;
+    const parsed = Body.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "auction_id is required." },
+        { status: 400 }
+      );
+    }
+    const { auction_id, bid_amount } = parsed.data;
 
-    if (!auction_id || typeof auction_id !== "number") {
+    if (!auction_id) {
       return NextResponse.json(
         { error: "auction_id is required." },
         { status: 400 }
       );
     }
 
-    if (!bid_amount || typeof bid_amount !== "number" || bid_amount < MINIMUM_BID_CENTS) {
+    if (!bid_amount || bid_amount < MINIMUM_BID_CENTS) {
       return NextResponse.json(
         {
           error: `Minimum bid is $${(MINIMUM_BID_CENTS / 100).toFixed(2)}.`,

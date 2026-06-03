@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -7,6 +8,12 @@ import { timingSafeEqual } from "crypto";
 const log = logger("listings-crud");
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// contact_email must be a string (the EMAIL_REGEX guard below enforces
+// format, matching the prior `typeof body.contact_email === "string"`
+// check). `.passthrough()` keeps the UPDATABLE_FIELDS the loop reads off the
+// body — they're typed/whitelisted there, not here.
+const BodySchema = z.object({ contact_email: z.string() }).passthrough();
 
 /**
  * Constant-time email comparison. Prevents timing-channel enumeration where
@@ -121,9 +128,9 @@ export async function PUT(
       );
     }
 
-    let body: Record<string, unknown>;
+    let raw: unknown;
     try {
-      body = await request.json();
+      raw = await request.json();
     } catch {
       return NextResponse.json(
         { error: "Invalid JSON body." },
@@ -132,17 +139,19 @@ export async function PUT(
     }
 
     // Validate contact_email for ownership check
-    const contactEmail =
-      typeof body.contact_email === "string"
-        ? body.contact_email.trim().toLowerCase()
-        : null;
+    const parsed = BodySchema.safeParse(raw);
+    const contactEmail = parsed.success
+      ? parsed.data.contact_email.trim().toLowerCase()
+      : null;
 
-    if (!contactEmail || !EMAIL_REGEX.test(contactEmail)) {
+    if (!parsed.success || !contactEmail || !EMAIL_REGEX.test(contactEmail)) {
       return NextResponse.json(
         { error: "A valid contact_email is required for verification." },
         { status: 400 },
       );
     }
+
+    const body = parsed.data;
 
     const admin = createAdminClient();
 
@@ -237,9 +246,9 @@ export async function DELETE(
       );
     }
 
-    let body: Record<string, unknown>;
+    let raw: unknown;
     try {
-      body = await request.json();
+      raw = await request.json();
     } catch {
       return NextResponse.json(
         { error: "Invalid JSON body." },
@@ -247,10 +256,10 @@ export async function DELETE(
       );
     }
 
-    const contactEmail =
-      typeof body.contact_email === "string"
-        ? body.contact_email.trim().toLowerCase()
-        : null;
+    const parsed = BodySchema.safeParse(raw);
+    const contactEmail = parsed.success
+      ? parsed.data.contact_email.trim().toLowerCase()
+      : null;
 
     if (!contactEmail || !EMAIL_REGEX.test(contactEmail)) {
       return NextResponse.json(

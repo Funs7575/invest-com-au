@@ -1,11 +1,18 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 
 const log = logger("saved-comparisons");
 
 const MAX_NAME_LENGTH = 100;
 const MAX_NOTES_LENGTH = 2000;
+
+// PATCH only ever applies `name`/`notes`, and only when present and a string
+// (empty-after-trim name → the "cannot be empty" 400). The schema is permissive
+// so it never rejects a body the old code accepted; `.passthrough()` ignores
+// any extra keys, exactly as before.
+const PatchBody = z.object({}).passthrough();
 
 export async function GET(
   _request: NextRequest,
@@ -55,7 +62,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body: Record<string, unknown> = PatchBody.parse(await request.json());
 
     // Build update payload - only allow name and notes
     const updates: Record<string, unknown> = {

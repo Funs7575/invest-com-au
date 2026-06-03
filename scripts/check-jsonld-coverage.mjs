@@ -140,6 +140,7 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "quotes", category: "FORM" }, // /quotes/[slug]/review
   { prefix: "feedback", category: "FORM" },
   { prefix: "find-advisor", category: "FORM" }, // interactive quiz; OG/metadata cover SERP
+  { prefix: "clubs/[clubId]/join", category: "FORM" }, // "use client" invite-acceptance form; no metadata export, not indexed
   { prefix: "quick-audit", category: "FORM" },
   { prefix: "quiz", category: "FORM" },
   { prefix: "certificate", category: "FORM" }, // /certificate is a lookup-form entry point; /certificate/[number] is the public content page that carries JSON-LD

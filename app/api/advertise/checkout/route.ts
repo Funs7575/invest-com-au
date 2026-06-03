@@ -1,9 +1,11 @@
 import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
 import { isValidEmail } from "@/lib/validate-email";
+import { isRateLimited } from "@/lib/rate-limit";
 import {
   SELF_SERVE_TIER_PRICES_CENTS,
   SELF_SERVE_TIERS,
@@ -31,9 +33,36 @@ function isSelfServeTierId(v: unknown): v is SelfServeTierId {
   return typeof v === "string" && v in TIER_PRICES;
 }
 
+// Permissive schema — the handler below keeps its own field-level guards
+// (custom 400 messages for tier / duration / company / email), so every
+// field is optional here and behaviour is unchanged. Validation simply
+// confirms the body is a JSON object; the field types preserved the
+// original (untyped) `await request.json()` ergonomics.
+const Body = z
+  .object({
+    tier: z.any(),
+    category_slug: z.any(),
+    duration_months: z.any(),
+    company_name: z.any(),
+    contact_email: z.any(),
+  })
+  .passthrough();
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (await isRateLimited(`advertise_checkout:${ip}`, 5, 60)) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
+    const parsed = Body.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0]?.message ?? "Invalid request body." },
+        { status: 400 }
+      );
+    }
+    const body = parsed.data;
     const { tier, category_slug, duration_months, company_name, contact_email } = body;
 
     // Validate tier

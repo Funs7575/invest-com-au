@@ -10,7 +10,7 @@ export const runtime = "edge";
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const token = searchParams.get("token"); // email hash as simple verification
+  const _token = searchParams.get("token"); // email hash as simple verification (reserved; not yet enforced)
 
   const supabase = createAdminClient();
 

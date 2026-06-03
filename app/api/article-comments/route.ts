@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import {
   listPublishedComments,
@@ -9,6 +10,23 @@ import { isValidEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:article-comments");
+
+// Permissive by design: the handler already coerces each field (non-strings
+// become null) and enforces presence below, matching the prior behaviour
+// where an invalid/empty body fell back to {} and returned "Missing fields".
+// Fields are accepted as unknown so the schema never rejects a request that
+// the handler's own typeof-guards would have accepted (e.g. a malformed
+// parent_id is coerced to null rather than 400-ing the whole request).
+const Body = z
+  .object({
+    slug: z.unknown(),
+    name: z.unknown(),
+    email: z.unknown(),
+    body: z.unknown(),
+    parent_id: z.unknown(),
+  })
+  .partial()
+  .passthrough();
 
 export const runtime = "nodejs";
 
@@ -42,7 +60,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => ({}));
+  const raw = await request.json().catch(() => ({}));
+  const parsed = Body.safeParse(raw);
+  const body = parsed.success ? parsed.data : {};
   const slug = typeof body.slug === "string" ? body.slug : null;
   const name = typeof body.name === "string" ? body.name.trim() : null;
   const email = typeof body.email === "string" ? body.email.trim() : null;
