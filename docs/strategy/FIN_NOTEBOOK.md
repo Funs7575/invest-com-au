@@ -14,6 +14,55 @@
 
 ## Active strategic decisions log
 
+### 2026-05-29 — GEO measurement built; GEO "supply floor" found already-shipped
+
+Picked up the GEO thread to build the **measurement** side (the one piece the
+2026-05-21 GEO entry left unbuilt). Grounding the codebase first changed the
+picture twice — logging both as corrections so future sessions don't re-scope
+from stale notes:
+
+**Correction 1 — the GEO "to-do" list is mostly already shipped.** Contrary to
+the 2026-05-21 open items: `public/llms.txt` + `public/llms-full.txt` exist
+(served, curated, compliance-aware); `public/robots.txt` was dropped so
+`app/robots.ts` is the single robots source (caveat (a) resolved); `Speakable`
++ answer-first schema now extend to articles, `/questions/[slug]`, and versus
+(not just glossary); articles emit a real `dateModified` from `updated_at`; FAQ
+schema is on the calculators (commit `c918cd7` "answer-engine v2"). The cheap
+structural GEO floor is **done** — don't rebuild it.
+
+**Correction 2 — golden-flow E2E already exists.** `T-TESTS-02` was tracked as
+"`__tests__/e2e/` doesn't exist". True about that path but misleading: the
+suite lives in `e2e/` (15 specs incl. `critical-path-get-matched-to-brief`,
+`smoke`, `pre-launch-qa`). Golden flows are covered; don't duplicate.
+
+**What was genuinely missing → built (PR #1274, branch `claude/sleepy-dirac-gTZXz`):**
+measurement — there was zero AI-referrer/crawler instrumentation.
+- `lib/geo/ai-referrer.ts` — pure, tested classifier for AI referrers
+  (ChatGPT/Perplexity/Gemini/Claude/Copilot/…) + AI crawlers
+  (GPTBot/ClaudeBot/PerplexityBot/…). google.com/bing.com excluded on purpose
+  (AI Overviews / Bing chat share the search host — that's a GSC signal).
+- `ai_referral` PostHog event, fired once/session, consent-gated.
+- `/admin/geo` page: live detection coverage + a ready-to-paste HogQL insight.
+
+**Decision — schema-markup.ts / seo.ts consolidation: NOT doing it.** The
+2026-05-21 deep-dive item #1 mused about merging the two JSON-LD modules.
+Rejected: `CLAUDE.md` documents `breadcrumbJsonLd` + SEO helpers as living in
+`seo.ts` and schema.org builders in `schema-markup.ts`, so "one module"
+contradicts documented ownership; it's hundreds of import sites for low payoff;
+bundling a big refactor with a feature hurts reviewability. The only real smell
+is `qaPageJsonLd` + `howToJsonLd` being defined in **both** files — worth a
+small, separate dedup PR if/when someone touches them.
+
+**Flagged next steps (deliberately deferred):** server-side crawler capture in
+`proxy.ts` (Tier C); Search Console ingestion for the AI-Overview
+impressions-vs-clicks gap (the part referrers can't see); optional Supabase
+table for in-app charts (deferred until the pre-existing "Supabase types drift"
+CI check is green, to avoid compounding it).
+
+**Revisit:** 2026-06-29 — are `ai_referral` events actually landing in PostHog,
+and which AI sources dominate? If volume is real, do crawler capture + the GSC
+gap next.
+
 ### 2026-05-21 — Platform Expansion (PX stream) shipped
 
 Seven features that turn the platform from comparison directory into practice management tool for advisors and financial dashboard for investors.
