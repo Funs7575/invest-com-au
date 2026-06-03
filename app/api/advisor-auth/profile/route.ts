@@ -12,8 +12,17 @@ export async function PATCH(request: NextRequest) {
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-  // eslint-disable-next-line invest/no-unvalidated-req-json -- field-level allowlist below enforces the contract; full Zod schema would duplicate that list.
-  const body = await request.json();
+  let raw: unknown;
+  try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- field-level allowlist below enforces the contract; full Zod schema would duplicate that list.
+    raw = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+  const body = raw as Record<string, unknown>;
 
   // Only allow updating specific fields (not status, verified, rating, etc.)
   // available_in_countries is the advisor's self-asserted corridor coverage
