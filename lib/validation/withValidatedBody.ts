@@ -70,15 +70,24 @@ export interface InvalidJsonBody {
  *   generic explicitly.
  * - Falls through to a 400 with a stable error envelope on JSON-parse
  *   failure or schema mismatch; never invokes the handler in those cases.
+ * - Next's route context (the handler's 2nd arg in an unwrapped route, e.g.
+ *   `{ params }`) is forwarded as the wrapped handler's **3rd** parameter, so
+ *   dynamic routes can `await ctx.params`. Static routes just ignore it.
+ *   (Without this, dynamic `app/api/.../[id]/route.ts` POSTs using the wrapper
+ *   crash — the context was previously dropped.)
  */
-export function withValidatedBody<Schema extends z.ZodType>(
+export function withValidatedBody<Schema extends z.ZodType, Ctx = unknown>(
   schema: Schema,
   handler: (
     req: NextRequest,
     body: z.infer<Schema>,
+    ctx: Ctx,
   ) => Promise<NextResponse> | NextResponse,
-): (req: NextRequest) => Promise<NextResponse> {
-  return async function validatedRoute(req: NextRequest): Promise<NextResponse> {
+): (req: NextRequest, ctx?: Ctx) => Promise<NextResponse> {
+  return async function validatedRoute(
+    req: NextRequest,
+    ctx?: Ctx,
+  ): Promise<NextResponse> {
     let raw: unknown;
     try {
       raw = await req.json();
@@ -109,7 +118,8 @@ export function withValidatedBody<Schema extends z.ZodType>(
     }
 
     // `parsed.data` is `z.infer<Schema>`; the handler's `body` parameter
-    // type is preserved end-to-end without a cast.
-    return handler(req, parsed.data);
+    // type is preserved end-to-end without a cast. `ctx` is Next's route
+    // context (e.g. `{ params }`), forwarded so dynamic routes work.
+    return handler(req, parsed.data, ctx as Ctx);
   };
 }
