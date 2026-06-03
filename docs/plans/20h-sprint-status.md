@@ -189,3 +189,28 @@ survives terminal close) — state lives here, so either driver resumes identica
   - **Honest read:** the live site + code are in good shape (bots + 2 independent
     review agents agree). Cycle 2 = polish, not a bug pile — shipped the clean fix,
     documented the modest/risky items for a deliberate pass rather than churning.
+- **2026-06-03 ~07:15 — Cycle 9 (Vercel + Supabase MCP became available — diagnostics):**
+  - **Bots:** beginner conversion funnel (home → broker → open account) → **0 dead-ends**.
+    10 personas total; live site healthy bar the documented `/invest` 500s.
+  - **Vercel (the #1 gate, diagnosed):** account is **billing-blocked** — last 20 deploys
+    `CANCELED`/`ERROR`, last production deploy 2026-05-23. **Founder-only fix** (resolve
+    billing in the Vercel dashboard). Can't be cleared autonomously; a new deploy just
+    cancels. Netlify mirror is the live site meanwhile.
+  - **Supabase advisories (read-only via MCP — all founder-gated to fix; SURFACED):**
+    - **PERF: 788 advisories.** 135 `auth_rls_initplan` + 40 `unindexed_foreign_keys` are
+      **exactly what the held #1273 migration fixes** (`rls_initplan_select_wrap`,
+      `unindexed_fk_indexes`) → **applying #1273 clears ~175 of them** (data-backed reason
+      to review+apply #1273). Also 141 `multiple_permissive_policies` (WARN, RLS perf),
+      470 `unused_index` (INFO — low-pri cleanup, defer).
+    - **SECURITY: 86 (4 ERROR / 82 WARN).** Real: 3× `security_definer_view`
+      (`firm_credit_balance_summary`, `account_kind_membership`, `posthog_daily_funnel`) →
+      recreate with `security_invoker` (migration). Easy win: `auth_leaked_password_protection`
+      is **OFF** → enable HaveIBeenPwned check (1-click Auth dashboard toggle). Likely
+      benign: the 4th "ERROR" `rls_disabled spatial_ref_sys` is a PostGIS system-table
+      false-positive; the 19 `rls_policy_always_true` are mostly intentional (service-role
+      management + anon-insert lead-capture by design).
+  - **Founder unblock list (prioritized):** (1) Vercel billing → live canonical site +
+    live-bots; (2) review+apply **#1273** → clears ~175 perf advisories; (3) toggle
+    leaked-password protection; (4) review the 3 definer views; (5) the held **#1272**
+    (RLS PII hardening) likely addresses more of the security set. All founder-gated —
+    the loop can't (and shouldn't) action migrations/auth-config autonomously.
