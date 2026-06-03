@@ -227,6 +227,78 @@ describe("POST /api/marketplace/postback", () => {
     expect(body.conversion_id).toBe("conv-1");
   });
 
+  it("enqueues the broker webhook with next_retry_at set so the retry cron can pick it up", async () => {
+    // Regression: the enqueue omitted next_retry_at (nullable, no DB default).
+    // The retry-webhooks cron selects `.lte("next_retry_at", now)`, and in
+    // Postgres `NULL <= now()` is NULL — so the row was never delivered.
+    const webhookInsert = vi.fn().mockResolvedValue({ data: null, error: null });
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "broker_accounts") {
+        // One object serves both the API-key lookup (broker_slug/status) and
+        // the webhook_url lookup, so the enqueue branch is exercised.
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          not: vi.fn().mockReturnThis(),
+          limit: vi.fn().mockReturnThis(),
+          maybeSingle: vi.fn().mockResolvedValue({
+            data: {
+              broker_slug: "commsec",
+              status: "active",
+              webhook_url: "https://broker.example/hook",
+            },
+            error: null,
+          }),
+        };
+      }
+      if (table === "affiliate_clicks") {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          maybeSingle: vi.fn().mockResolvedValue({ data: CLICK, error: null }),
+        };
+      }
+      if (table === "conversion_events") {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          insert: vi.fn().mockReturnThis(),
+          maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          single: vi.fn().mockResolvedValue({ data: CONVERSION, error: null }),
+        };
+      }
+      if (table === "campaign_events") {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          limit: vi.fn().mockReturnThis(),
+          maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+        };
+      }
+      if (table === "webhook_delivery_queue") {
+        return { insert: webhookInsert };
+      }
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        update: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+      };
+    });
+
+    const before = Date.now();
+    const res = await POST(makePost(VALID_BODY, VALID_API_KEY));
+    expect(res.status).toBe(200);
+    expect(webhookInsert).toHaveBeenCalledTimes(1);
+    const row = webhookInsert.mock.calls[0]![0] as { next_retry_at?: string };
+    expect(row.next_retry_at).toBeTruthy();
+    const dueAt = new Date(row.next_retry_at!).getTime();
+    expect(Number.isNaN(dueAt)).toBe(false);
+    // Due immediately (at or before "now"), so the very next cron run picks it up.
+    expect(dueAt).toBeGreaterThanOrEqual(before - 1000);
+    expect(dueAt).toBeLessThanOrEqual(Date.now() + 1000);
+  });
+
   it("returns 200 already_recorded on 23505 unique constraint race", async () => {
     setupFromMock({
       insertError: { code: "23505", message: "unique violation" },
