@@ -144,19 +144,22 @@ export function computeTrueCost(
   }
 
   // --- FX spread on USD volume ---
-  // Only relevant when there's USD volume. fx_rate is a decimal (0.006 = 0.6%).
+  // Only relevant when there's USD volume. fx_rate is a PERCENTAGE number
+  // (0.6 = 0.6%), matching the brokers.fx_rate NUMERIC(5,3) column and every
+  // other consumer (compare-engine, cost-scenarios, EmbeddedFxCalc, …) — so
+  // divide by 100 to get the fraction applied to USD volume.
   const usdVolumeYr =
     (p.us_trades_per_month ?? 0) * 12 * (p.avg_us_trade_amount_usd ?? 0);
   if (usdVolumeYr > 0) {
     totalApplicable += 1;
     if (broker.fx_rate !== null && broker.fx_rate !== undefined) {
       knownApplicable += 1;
-      const fxCostUsd = usdVolumeYr * broker.fx_rate;
+      const fxCostUsd = usdVolumeYr * (broker.fx_rate / 100);
       // Keep the math intuitive — caller can convert USD→AUD with their own
       // rate; for the headline figure we treat 1 USD ≈ 1 AUD so the "FX cost"
       // line stays in AUD-equivalents. (Spread itself is the dominant variable.)
       components.push({
-        label: `FX spread (${(broker.fx_rate * 100).toFixed(2)}% on ~$${Math.round(usdVolumeYr).toLocaleString()} USD)`,
+        label: `FX spread (${broker.fx_rate.toFixed(2)}% on ~$${Math.round(usdVolumeYr).toLocaleString()} USD)`,
         amount: fxCostUsd,
         sourceField: "fx_rate",
         fromKnownData: true,
