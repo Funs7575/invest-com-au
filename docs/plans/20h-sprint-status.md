@@ -77,3 +77,13 @@ survives terminal close) — state lives here, so either driver resumes identica
     (carries "DO NOT APPLY" migrations = Tier D), **#1180** (`needs-human-review`,
     Tier C SMS-consent), **#1271 / #1273 / #1274** (large drafts — triage per item).
   - Control doc created; sprint loop armed.
+- **2026-06-03 ~04:45 — Cycle 1 (build-everything fire → finding):** the build queue
+  has **0 unbuilt `[ ]` items** — 43 are `[~]` (open PRs), 7 `[x]`, 7 `[!]` blocked.
+  Nothing new to build. The real lever is the **40+ open-PR backlog**, which is
+  mostly **stale** (old base → needs rebase), **mixed-risk** (Tier C/D, "DO NOT
+  APPLY" migrations, 950-test PRs), and is the founder's deliberate review pile
+  (#1197 manual-merge). **Recalibration:** loop pivots to (a) **bots find NEW
+  issues** (`/ai-journey` vs Netlify) → I build + merge those (additive, safe,
+  on-brief); (b) a **selective** merge of only clearly-safe small Tier-A/B PRs after
+  local re-verify; **(c) the large/risky/migration-bearing backlog stays for the
+  founder** unless they say otherwise. Sprint home PR opened: **#1306**.
