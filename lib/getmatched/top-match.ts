@@ -27,6 +27,41 @@ import type { ActionPlanAnswers, TopMatch, Vertical } from "./types";
 
 const log = logger("getmatched:top-match");
 
+/** A `quiz_weights` row as Supabase returns it — flat, suffixed `*_weight` columns. */
+export type QuizWeightRow = {
+  broker_slug: string;
+  beginner_weight: number | null;
+  low_fee_weight: number | null;
+  us_shares_weight: number | null;
+  smsf_weight: number | null;
+  crypto_weight: number | null;
+  advanced_weight: number | null;
+  property_weight: number | null;
+  robo_weight: number | null;
+};
+
+/**
+ * Remap a flat `quiz_weights` row onto the scorer's `QuizWeights` shape.
+ * The DB columns are suffixed (`beginner_weight`) but `QuizWeights`/`WeightKey`
+ * are unsuffixed (`beginner`). The previous `{ broker_slug, ...weights } as
+ * QuizWeights` produced an object keyed by `*_weight`, so the scorer read
+ * `scores["beginner"]` → `undefined` → `0` for EVERY category — silently
+ * dropping the user's quiz answers and collapsing the match to the rating
+ * tiebreaker. The `as QuizWeights` cast hid the mismatch from the type-checker.
+ */
+export function reshapeWeightRow(row: QuizWeightRow): QuizWeights {
+  return {
+    beginner: row.beginner_weight ?? 0,
+    low_fee: row.low_fee_weight ?? 0,
+    us_shares: row.us_shares_weight ?? 0,
+    smsf: row.smsf_weight ?? 0,
+    crypto: row.crypto_weight ?? 0,
+    advanced: row.advanced_weight ?? 0,
+    property: row.property_weight ?? 0,
+    robo: row.robo_weight ?? 0,
+  };
+}
+
 /**
  * The new quiz uses different budget bucket labels than the legacy
  * `AmountKey` enum the scorer expects. Map them.
@@ -92,17 +127,14 @@ export async function computeTopMatch(
     if (weightsRes.error) throw weightsRes.error;
 
     const brokers = (brokersRes.data ?? []) as Broker[];
-    const weightRows = (weightsRes.data ?? []) as Array<{
-      broker_slug: string;
-    } & QuizWeights>;
+    const weightRows = (weightsRes.data ?? []) as QuizWeightRow[];
 
     if (brokers.length === 0 || weightRows.length === 0) return null;
 
     // Reshape `quiz_weights` rows → `Record<slug, QuizWeights>`
     const weightsMap: Record<string, QuizWeights> = {};
     for (const row of weightRows) {
-      const { broker_slug, ...weights } = row;
-      weightsMap[broker_slug] = weights as QuizWeights;
+      weightsMap[row.broker_slug] = reshapeWeightRow(row);
     }
 
     const answersList = buildAnswersList(answers);
@@ -169,15 +201,12 @@ export async function computeTopMatches(
     if (weightsRes.error) throw weightsRes.error;
 
     const brokers = (brokersRes.data ?? []) as Broker[];
-    const weightRows = (weightsRes.data ?? []) as Array<{
-      broker_slug: string;
-    } & QuizWeights>;
+    const weightRows = (weightsRes.data ?? []) as QuizWeightRow[];
     if (brokers.length === 0 || weightRows.length === 0) return [];
 
     const weightsMap: Record<string, QuizWeights> = {};
     for (const row of weightRows) {
-      const { broker_slug, ...weights } = row;
-      weightsMap[broker_slug] = weights as QuizWeights;
+      weightsMap[row.broker_slug] = reshapeWeightRow(row);
     }
 
     const answersList = buildAnswersList(answers);
