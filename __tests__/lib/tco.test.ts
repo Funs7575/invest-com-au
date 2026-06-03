@@ -9,7 +9,7 @@ const FULL_BROKER: BrokerFeeProfile = {
   slug: "full",
   asx_fee_value: 5,
   us_fee_value: 10,
-  fx_rate: 0.006,
+  fx_rate: 0.6, // percentage number (0.6 = 0.6%), matching the brokers.fx_rate column
   inactivity_fee_value: 50,
   account_transfer_out_fee: 100,
   inactivity_threshold_balance: 10_000,
@@ -50,7 +50,7 @@ describe("computeTrueCost — happy path", () => {
       us_trades_per_month: 5,
       avg_us_trade_amount_usd: 1000,
     });
-    // USD volume / yr = 5*12*1000 = $60,000; spread 0.6% = $360
+    // USD volume/yr = 5*12*1000 = $60,000; fx_rate 0.6 (i.e. 0.6%) → $360
     const fx = out.components.find((c) => c.sourceField === "fx_rate");
     expect(fx?.amount).toBe(360);
   });
