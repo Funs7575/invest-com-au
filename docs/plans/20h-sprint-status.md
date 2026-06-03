@@ -157,3 +157,35 @@ survives terminal close) — state lives here, so either driver resumes identica
     (0.006)"; the math is now percentage-correct — tidy the comment.
   - **Net:** main is green and materially better (4 real user-facing/security fixes +
     1 big hardening PR live); the remaining backlog is founder-gated.
+- **2026-06-03 ~07:05 — Cycle 8 (review wave 2 + bots; codebase confirmed mature):**
+  - **Bots (4 more personas):** `/account`, `/tax`, `/quiz` healthy (0 dead-ends; the
+    recurring `/_vercel/speed-insights` 404 is a harmless Vercel-only-script Netlify
+    mirror artifact; `/advisors/[type]` 403s re-verified as transient proxy noise).
+  - **2 review agents (perf + resilience)** both concluded the codebase is
+    **mature / well-hardened** — findings are genuine but modest outliers.
+  - **Shipped — #1312** (resilience): guard unvalidated `request.json()` (advisor-auth
+    profile, 500→400 + null-body guard) + `JSON.parse` (broker-portal invoices, render
+    crash → graceful) — mirrors the safe PDF-route sibling.
+  - **Documented for careful follow-up (real but modest / refactor-risky — NOT rushed):**
+    - **PERF-1 (P2)** `app/advisors/[type]/page.tsx:582` — unbounded `.select("*")` on
+      `professionals` shipped into the 1592-LOC AdvisorsClient. Project to the ~27
+      listing columns (mirror `app/api/advisor-search/route.ts`) + `.limit(200)` + the
+      `cached()` helper. *Deferred:* narrowing a PUBLIC page's columns needs careful
+      field-enumeration (a `Professional` cast can hide a dropped column — see the
+      get-matched bug) — verify by rendering, not just tsc.
+    - **PERF-2 (P3)** `app/quick-audit/page.tsx:48` — `.select("*")` on brokers → reuse
+      `getActiveBrokersListing()`.
+    - **PERF-3 (P3)** `app/api/switching-tracker/route.ts:98,147` — best-in-class
+      broker/rate query repeated per-product (both broker + savings paths) → hoist
+      cheapest-per-kind before the loop.
+    - **PERF-4 (P3)** `app/account/vault/page.tsx` + `app/api/account/documents/route.ts`
+      → batch `createSignedUrls(paths)`. **PERF-5 (P3)** admin FunnelTab N count() → one
+      grouped aggregate (admin-only).
+    - **RES-1 (P3)** `app/api/admin/regulatory-impacts/route.ts:50` — unguarded
+      `request.json()` (admin-only); add the try/catch + a Zod schema.
+    - **PATTERN (P3 hygiene)** ~40 admin client-component writes drop `{ error }` (no
+      toast/revert on failure) across `app/admin/marketplace/*`, finance, legal,
+      advisors — candidate for a sweep.
+  - **Honest read:** the live site + code are in good shape (bots + 2 independent
+    review agents agree). Cycle 2 = polish, not a bug pile — shipped the clean fix,
+    documented the modest/risky items for a deliberate pass rather than churning.
