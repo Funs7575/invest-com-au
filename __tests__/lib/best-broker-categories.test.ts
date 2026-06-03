@@ -140,10 +140,13 @@ describe("getCategoryBySlug", () => {
 });
 
 describe("getAllCategorySlugs", () => {
-  it("matches getAllCategories().map(c => c.slug)", () => {
-    expect(getAllCategorySlugs()).toEqual(
-      [...new Set(getAllCategories().map((c) => c.slug))],
-    );
+  it("returns the de-duplicated slug set of getAllCategories()", () => {
+    // getAllCategorySlugs() intentionally de-dupes — `options-trading` has a
+    // long-standing shared slug (see the uniqueness-cap test above), so the
+    // routable set equals the *unique* slugs, not the raw with-duplicate list.
+    expect(getAllCategorySlugs()).toEqual([
+      ...new Set(getAllCategories().map((c) => c.slug)),
+    ]);
   });
 });
 

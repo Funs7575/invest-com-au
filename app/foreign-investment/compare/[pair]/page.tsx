@@ -502,7 +502,7 @@ export default async function ComparePairPage({
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
                 href="/advisors/international-tax-specialists"
-                className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm text-center transition-colors shadow-lg"
+                className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm text-center transition-colors shadow-lg"
               >
                 Find an International Tax Specialist
               </Link>

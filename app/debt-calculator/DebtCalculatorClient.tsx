@@ -267,7 +267,7 @@ export default function DebtCalculatorClient() {
                 {debts.length > 1 && (
                   <button
                     onClick={() => removeDebt(debt.id)}
-                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-slate-100 hover:bg-red-100 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors"
+                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-slate-100 hover:bg-red-100 flex items-center justify-center text-slate-600 hover:text-red-500 transition-colors"
                     aria-label="Remove debt"
                   >
                     <Icon name="x" size={14} />
@@ -386,7 +386,7 @@ export default function DebtCalculatorClient() {
 
           <button
             onClick={handleCalculate}
-            className="w-full mt-6 px-6 py-3.5 bg-amber-600 text-white text-base font-bold rounded-xl hover:bg-amber-700 transition-all shadow-lg hover:shadow-xl"
+            className="w-full mt-6 px-6 py-3.5 bg-amber-600 text-slate-900 text-base font-bold rounded-xl hover:bg-amber-700 transition-all shadow-lg hover:shadow-xl"
           >
             Calculate Consolidation Savings →
           </button>
@@ -562,7 +562,7 @@ export default function DebtCalculatorClient() {
                     <p className="text-xs text-slate-300 mb-3">Enter your email to receive a personalised breakdown with month-by-month repayment schedule.</p>
                     <div className="flex gap-2">
                       <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm rounded-lg text-slate-900 border-0" />
-                      <button onClick={handleEmailSubmit} className="px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 shrink-0">Send Plan</button>
+                      <button onClick={handleEmailSubmit} className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 shrink-0">Send Plan</button>
                     </div>
                   </div>
                 </div>

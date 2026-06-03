@@ -181,7 +181,7 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
           </div>
           <button
             onClick={() => onNavigate("billing")}
-            className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-4 py-2 rounded-lg whitespace-nowrap transition-colors"
+            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs px-4 py-2 rounded-lg whitespace-nowrap transition-colors"
           >
             Connect Stripe
           </button>

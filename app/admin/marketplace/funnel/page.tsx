@@ -475,7 +475,7 @@ export default function FunnelAnalyticsPage() {
 
   const BrokerFunnelCard = ({ broker, label }: { broker: BrokerFunnel | undefined; label: string }) => {
     if (!broker) return (
-      <div className="bg-white border border-slate-200 rounded-lg p-6 text-center text-sm text-slate-400">
+      <div className="bg-white border border-slate-200 rounded-lg p-6 text-center text-sm text-slate-600">
         Select a broker to view funnel
       </div>
     );

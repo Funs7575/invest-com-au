@@ -428,7 +428,7 @@ export default function ListingsClient() {
                         <span className="text-[0.6rem] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1 rounded-full">Sponsored</span>
                       )}
                       {heroListing.featured && (
-                        <span className="text-[0.6rem] font-bold uppercase tracking-wider text-white bg-amber-500 px-2 py-1 rounded-full">Featured</span>
+                        <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-900 bg-amber-500 px-2 py-1 rounded-full">Featured</span>
                       )}
                       {heroListing.property_type && (
                         <span className={`text-[0.6rem] font-bold uppercase tracking-wider text-white px-2 py-1 rounded-full ${TYPE_COLORS[heroListing.property_type] || "bg-slate-600"}`}>
@@ -469,7 +469,7 @@ export default function ListingsClient() {
                         {heroListing.completion_date && (
                           <div className="text-xs text-white/50 mt-0.5">Completion: {heroListing.completion_date}</div>
                         )}
-                        <div className="mt-3 inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-white text-sm font-bold rounded-xl transition-colors">
+                        <div className="mt-3 inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 text-sm font-bold rounded-xl transition-colors">
                           View Details &rarr;
                         </div>
                       </div>
@@ -617,7 +617,7 @@ export default function ListingsClient() {
                 <p className="text-xs text-slate-400">Off-market access · Negotiation · Due diligence · Free consultation</p>
               </div>
             </div>
-            <Link href="/property/buyer-agents" className="shrink-0 px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white text-sm font-bold rounded-xl transition-colors shadow-lg shadow-amber-500/20 whitespace-nowrap">
+            <Link href="/property/buyer-agents" className="shrink-0 px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 text-sm font-bold rounded-xl transition-colors shadow-lg shadow-amber-500/20 whitespace-nowrap">
               Find an Agent &rarr;
             </Link>
           </div>

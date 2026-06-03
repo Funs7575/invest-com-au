@@ -88,7 +88,7 @@ function MockupShell({ title, url, children }: { title: string; url: string; chi
           <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
         </div>
-        <div className="flex-1 bg-white rounded-md px-3 py-1 text-[0.6rem] text-slate-400 font-mono truncate border border-slate-200">
+        <div className="flex-1 bg-white rounded-md px-3 py-1 text-[0.6rem] text-slate-600 font-mono truncate border border-slate-200">
           {url}
         </div>
       </div>
@@ -165,7 +165,7 @@ function CompareMockup({ brokerName, isHighlighted, logoUrl }: { brokerName: str
           </div>
           <span className="text-[0.6rem] text-slate-300">$X.XX</span>
           <div className="flex gap-0.5">{[1,2,3].map(j => <div key={j} className="w-1.5 h-1.5 rounded-full bg-slate-200" />)}</div>
-          <div className="text-[0.5rem] bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded text-center">Visit</div>
+          <div className="text-[0.5rem] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-center">Visit</div>
         </div>
       ))}
     </MockupShell>
@@ -880,7 +880,7 @@ export default function NewCampaignPage() {
                         prev.includes(i) ? prev.filter(d => d !== i) : [...prev, i].sort()
                       )}
                       className={`w-9 h-9 rounded-lg text-[0.62rem] font-bold transition-colors ${
-                        activeDays.includes(i) ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-400 hover:bg-slate-200"
+                        activeDays.includes(i) ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       }`}
                     >
                       {day}

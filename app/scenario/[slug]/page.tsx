@@ -271,7 +271,7 @@ export default async function ScenarioPage({
                       href={getAffiliateLink(b)}
                       target="_blank"
                       rel={AFFILIATE_REL}
-                      className="flex-1 sm:flex-initial text-center px-3 py-2.5 md:py-2 text-xs md:text-sm bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors min-h-11 inline-flex items-center justify-center"
+                      className="flex-1 sm:flex-initial text-center px-3 py-2.5 md:py-2 text-xs md:text-sm bg-amber-600 text-slate-900 rounded-lg hover:bg-amber-700 transition-colors min-h-11 inline-flex items-center justify-center"
                     >
                       {b.cta_text || `Visit ${b.name}`}
                     </a>

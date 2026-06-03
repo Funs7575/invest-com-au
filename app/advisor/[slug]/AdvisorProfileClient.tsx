@@ -427,7 +427,7 @@ export default function AdvisorProfileClient({
                         navigator.clipboard.writeText(window.location.href);
                       }
                     }}
-                    className="px-4 py-3 bg-white border border-slate-200 text-slate-400 text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all"
+                    className="px-4 py-3 bg-white border border-slate-200 text-slate-600 text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all"
                     title="Share profile"
                   >
                     <Icon name="share-2" size={15} />
@@ -436,7 +436,7 @@ export default function AdvisorProfileClient({
                     onClick={() => toggleShortlist(pro.slug)}
                     disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
                     title={inShortlist(pro.slug) ? "Remove from compare list" : shortlistCount >= shortlistMax ? `Compare list full (${shortlistMax} max)` : "Save to compare list"}
-                    className={`px-4 py-3 border text-sm rounded-xl transition-all ${inShortlist(pro.slug) ? "bg-violet-50 border-violet-300 text-violet-700 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "bg-white border-slate-100 text-slate-300 cursor-not-allowed" : "bg-white border-slate-200 text-slate-400 hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50"}`}
+                    className={`px-4 py-3 border text-sm rounded-xl transition-all ${inShortlist(pro.slug) ? "bg-violet-50 border-violet-300 text-violet-700 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "bg-white border-slate-100 text-slate-300 cursor-not-allowed" : "bg-white border-slate-200 text-slate-600 hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50"}`}
                   >
                     <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
                   </button>
@@ -1015,7 +1015,7 @@ export default function AdvisorProfileClient({
                     </p>
                     <button
                       onClick={() => setReviewFormOpen(true)}
-                      className="px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-xl hover:bg-amber-500 transition-colors"
+                      className="px-5 py-2.5 bg-amber-600 text-slate-900 text-sm font-bold rounded-xl hover:bg-amber-500 transition-colors"
                     >
                       Write a Review
                     </button>
@@ -1262,7 +1262,7 @@ export default function AdvisorProfileClient({
                     <button
                       onClick={handleSubmit}
                       disabled={formState === "submitting"}
-                      className="w-full py-3.5 bg-amber-600 text-white font-black text-sm rounded-xl hover:bg-amber-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] shadow-lg shadow-amber-200/60"
+                      className="w-full py-3.5 bg-amber-600 text-slate-900 font-black text-sm rounded-xl hover:bg-amber-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] shadow-lg shadow-amber-200/60"
                     >
                       {formState === "submitting" ? (
                         <span className="flex items-center justify-center gap-2">
@@ -1398,7 +1398,7 @@ export default function AdvisorProfileClient({
           </div>
           <a
             href="#contact"
-            className="shrink-0 px-5 py-2.5 bg-amber-600 text-white text-sm font-black rounded-xl hover:bg-amber-500 transition-colors active:scale-[0.98]"
+            className="shrink-0 px-5 py-2.5 bg-amber-600 text-slate-900 text-sm font-black rounded-xl hover:bg-amber-500 transition-colors active:scale-[0.98]"
           >
             Enquire Free
           </a>

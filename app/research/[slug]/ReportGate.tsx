@@ -50,7 +50,7 @@ export default function ReportGate({ slug, gated, directUrl }: Props) {
           href={directUrl}
           target="_blank"
           rel="noreferrer noopener"
-          className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm md:text-base px-6 py-3 rounded-lg"
+          className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-sm md:text-base px-6 py-3 rounded-lg"
         >
           Download PDF
           <Icon name="download" size={16} />
@@ -77,7 +77,7 @@ export default function ReportGate({ slug, gated, directUrl }: Props) {
           href={downloadUrl}
           target="_blank"
           rel="noreferrer noopener"
-          className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm md:text-base px-6 py-3 rounded-lg"
+          className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-sm md:text-base px-6 py-3 rounded-lg"
         >
           Download PDF
           <Icon name="download" size={16} />
@@ -166,7 +166,7 @@ export default function ReportGate({ slug, gated, directUrl }: Props) {
       <button
         type="submit"
         disabled={submitting}
-        className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm px-4 py-3 rounded-lg disabled:bg-slate-400"
+        className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-sm px-4 py-3 rounded-lg disabled:bg-slate-400"
       >
         {submitting ? "Submitting..." : "Get the report"}
         {!submitting && <Icon name="arrow-right" size={14} />}

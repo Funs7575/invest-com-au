@@ -16,6 +16,12 @@ function makeBuilder(result: unknown = { data: [], error: null, count: 0 }) {
   return builder;
 }
 
+// Cron route tests don't exercise consumer webhook dispatch (it has its own
+// tests + queries api_consumer_webhooks, a table these route mocks don't model).
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: vi.fn().mockResolvedValue(undefined),
+}));
+
 const mockFrom = vi.fn(() => makeBuilder());
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockFrom, rpc: vi.fn(() => makeBuilder()) })),

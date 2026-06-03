@@ -517,7 +517,7 @@ export default function EditCampaignPage() {
                   className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors ${
                     isActive
                       ? "bg-slate-900 text-white"
-                      : "bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-600"
                   }`}
                 >
                   {label}

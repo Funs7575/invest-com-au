@@ -62,7 +62,7 @@ function nextMonthLabel(ym: string): string {
 }
 
 function RankBadge({ rank }: { rank: number }) {
-  if (rank === 1) return <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-amber-400 text-white font-extrabold text-lg shadow-md">1</span>;
+  if (rank === 1) return <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-amber-400 text-slate-900 font-extrabold text-lg shadow-md">1</span>;
   if (rank === 2) return <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-slate-400 text-white font-extrabold text-lg shadow-md">2</span>;
   if (rank === 3) return <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-amber-700 text-white font-extrabold text-lg shadow-md">3</span>;
   return <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold text-sm">{rank}</span>;

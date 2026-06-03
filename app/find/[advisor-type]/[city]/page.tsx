@@ -178,7 +178,7 @@ function AdvisorCard({ advisor }: { advisor: AdvisorRow }) {
           className="w-16 h-16 rounded-full object-cover shrink-0"
         />
       ) : (
-        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center shrink-0 text-slate-400 text-xl font-semibold">
+        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center shrink-0 text-slate-600 text-xl font-semibold">
           {advisor.name.charAt(0)}
         </div>
       )}

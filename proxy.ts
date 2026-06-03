@@ -102,32 +102,32 @@ export async function proxy(request: NextRequest) {
   response.headers.set('X-DNS-Prefetch-Control', 'on')
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
 
-  // ── Content Security Policy (nonce-based for scripts) ───────────
-  // Per-request nonce so inline <script> from the Next.js runtime and
-  // our own <Script nonce={...} /> tags can execute while still
-  // blocking arbitrary injected scripts. 'strict-dynamic' means any
-  // script loaded by a nonce'd script is also trusted, so we don't
-  // need to allowlist every analytics/gtm/Sentry origin individually.
+  // ── Content Security Policy (scripts) ──────────────────────────
+  // script-src is cache-compatible: 'self' for same-origin /_next/static
+  // chunks, 'unsafe-inline' for the Next.js runtime's inline bootstrap +
+  // RSC flight scripts (self.__next_f.push(...)) and the streaming
+  // suspense-reveal scripts, and `https:` for first-party analytics/
+  // payments loaded by <script src>.
   //
-  // K-04 (audit 2026-04-26 §7 SEC-04): dropped 'unsafe-inline' from
-  // script-src. Modern browsers (CSP3 — Chrome 52+, Firefox 52+,
-  // Edge 79+, Safari 15.4+) ignore 'unsafe-inline' when 'strict-dynamic'
-  // is present, so it was already a no-op for >95% of AU traffic. In
-  // legacy CSP2 browsers (Safari < 15.4 etc.), the `https:` host-source
-  // fallback still permits any HTTPS-served script; only TRULY inline
-  // <script>…</script> blocks without a nonce are now blocked. Next.js
-  // 16 auto-nonces framework-emitted inline scripts via the x-nonce
-  // header propagation below, and our own <Script /> usages all carry
-  // an explicit nonce, so there is no expected breakage path.
+  // HISTORY — why this is NOT nonce + 'strict-dynamic' anymore:
+  // A per-request nonce with 'strict-dynamic' (audit item K-04) is
+  // fundamentally incompatible with this site's ISR/SSG caching. Next.js
+  // only stamps a nonce onto framework <script> tags when it can read a
+  // per-request CSP off the *request* AND the page renders dynamically;
+  // nonces force dynamic rendering. Our content pages set `revalidate`
+  // and are served from cache, so their HTML is static — the cached body
+  // has no nonce (or a stale one) while the response header carried a
+  // fresh per-request nonce. With 'strict-dynamic', 'self'/https: are
+  // ignored, so EVERY script (including the inline streaming-reveal
+  // script that swaps a Suspense fallback for its content) was blocked —
+  // a site-wide JS outage that froze /invest on its loading skeleton.
+  // 'unsafe-inline' is the only script-src that works with cached HTML
+  // short of per-route hash injection (impractical for page-specific RSC
+  // flight scripts). See docs/runbooks/ if reintroducing strict CSP.
   //
   // style-src keeps 'unsafe-inline' because Tailwind JIT + the
-  // Next.js runtime emit inline style blocks that we can't nonce
-  // without rewriting every component. This is a known, documented
-  // residual risk — XSS via style injection is much narrower than
-  // script injection and doesn't give code execution.
-  const nonceBytes = new Uint8Array(16)
-  crypto.getRandomValues(nonceBytes)
-  const nonce = Buffer.from(nonceBytes).toString('base64')
+  // Next.js runtime emit inline style blocks. XSS via style injection is
+  // much narrower than script injection and doesn't give code execution.
 
   // K-15 (audit 2026-04-26 §7 SEC-04 follow-up): CSP violation reporting.
   // The Report-To header defines a named endpoint group; the `report-to`
@@ -148,10 +148,11 @@ export async function proxy(request: NextRequest) {
 
   const cspDirectives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`,
-    // The `https:` host-source above is the fallback for legacy CSP2
-    // browsers that don't understand 'strict-dynamic'. CSP3 browsers
-    // ignore both `https:` and the strict-dynamic-shadowed sources.
+    `script-src 'self' 'unsafe-inline' https:${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
+    // 'self'  → same-origin /_next/static chunks
+    // 'unsafe-inline' → Next.js inline bootstrap + RSC flight + streaming
+    //                   reveal scripts (cache-safe; no nonce to mismatch)
+    // https:  → first-party analytics / Stripe / Sentry loaded by src
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
@@ -171,11 +172,6 @@ export async function proxy(request: NextRequest) {
     `report-uri ${cspReportEndpoint}`,
   ]
   response.headers.set('Content-Security-Policy', cspDirectives.join('; '))
-
-  // Make the nonce available to React Server Components via request
-  // header. Next.js 16's <Script nonce={headers().get('x-nonce')} />
-  // pattern reads it from here.
-  forwardedHeaders.set('x-nonce', nonce)
 
   // ── Preview deploy protection ──────────────────────────────────
   // Vercel sets VERCEL_ENV to 'preview' on non-production branches.

@@ -100,7 +100,7 @@ export default function CalculatorShell({
                   <button
                     onClick={handleEmailSubmit}
                     data-testid="email-submit"
-                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg shrink-0 transition-colors"
+                    className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs font-bold rounded-lg shrink-0 transition-colors"
                   >
                     {emailGate.ctaLabel ?? "Send Results"}
                   </button>

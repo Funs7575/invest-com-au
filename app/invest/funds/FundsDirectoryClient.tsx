@@ -252,7 +252,7 @@ function FundCard({ fund }: { fund: FundListing }) {
             {typeLabel}
           </span>
           {isFeatured && (
-            <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-amber-500 text-white">
+            <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-amber-500 text-slate-900">
               Featured
             </span>
           )}
@@ -302,7 +302,7 @@ function FundCard({ fund }: { fund: FundListing }) {
 
         <Link
           href={`/invest/funds/${fund.slug}`}
-          className="inline-flex items-center justify-center gap-1.5 w-full bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-4 py-2.5 rounded-lg transition-colors"
+          className="inline-flex items-center justify-center gap-1.5 w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-4 py-2.5 rounded-lg transition-colors"
         >
           Register interest
           <Icon name="arrow-right" size={14} />

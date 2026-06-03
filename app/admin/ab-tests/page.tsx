@@ -405,7 +405,7 @@ export default function ABTestsPage() {
                         <button
                           onClick={() => updateStatus(test.id, "paused")}
                           disabled={saving}
-                          className="px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
+                          className="px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-semibold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
                         >
                           Pause
                         </button>

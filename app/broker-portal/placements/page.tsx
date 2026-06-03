@@ -353,7 +353,7 @@ export default function PlacementsPage() {
                   className={`block w-full text-center px-4 py-2.5 rounded-lg text-sm font-bold transition-colors ${
                     available > 0
                       ? "bg-slate-900 text-white hover:bg-slate-800"
-                      : "bg-slate-100 text-slate-400 pointer-events-none"
+                      : "bg-slate-100 text-slate-600 pointer-events-none"
                   }`}
                   aria-disabled={available <= 0}
                   tabIndex={available <= 0 ? -1 : undefined}

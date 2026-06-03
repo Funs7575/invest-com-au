@@ -250,7 +250,7 @@ export default function CommodityHub({
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href={`/find-advisor?focus=${sector.slug}`}
-              className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm md:text-base px-6 py-3 rounded-lg transition-colors"
+              className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm md:text-base px-6 py-3 rounded-lg transition-colors"
             >
               Find a specialist advisor →
             </Link>

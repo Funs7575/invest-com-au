@@ -78,7 +78,7 @@ export default function InvestCompareClient({ initialListings, initialSlugs }: P
         </p>
         <Link
           href="/invest"
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm"
         >
           Browse marketplace
         </Link>

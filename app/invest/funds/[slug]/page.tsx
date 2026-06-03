@@ -189,7 +189,7 @@ export default async function FundDetailPage({
                 {typeLabel}
               </span>
               {fund.featured && (
-                <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-amber-500 text-white">
+                <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-900">
                   Featured
                 </span>
               )}

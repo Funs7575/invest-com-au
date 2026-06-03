@@ -389,7 +389,7 @@ export default function ForProvidersPage() {
               </ul>
               <Link
                 href="/provider-apply"
-                className="block w-full text-center py-2.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 text-xs"
+                className="block w-full text-center py-2.5 bg-amber-500 text-slate-900 font-bold rounded-xl hover:bg-amber-600 text-xs"
               >
                 Apply Now
               </Link>

@@ -72,7 +72,7 @@ export default function ABTestCTA({ broker, activeTests, page, cpcCampaignLink }
           });
           trackEvent("affiliate_click", { broker_slug: broker.slug, source: "compare-table" }, page);
         }}
-        className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
+        className="inline-block px-4 py-2 bg-amber-600 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-700 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
       >
         {getBenefitCta(broker as Parameters<typeof getBenefitCta>[0], "compare")}
       </a>

@@ -89,7 +89,7 @@ vi.mock("@/lib/course-certificates", () => ({
 
 // ─── Route under test ─────────────────────────────────────────────────────────
 
-import { POST } from "@/app/api/courses/[courseId]/complete/route";
+import { POST } from "@/app/api/courses/[slug]/complete/route";
 import { isRateLimited } from "@/lib/rate-limit";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -111,11 +111,13 @@ function makeRequest(
   );
 }
 
-const PARAMS = { params: Promise.resolve({ courseId: "course-abc" }) };
+// Route segment is [slug] (shared path position with [slug]/reviews); the
+// handler aliases it back to courseId. The value is still a course UUID.
+const PARAMS = { params: Promise.resolve({ slug: "course-abc" }) };
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-describe("POST /api/courses/[courseId]/complete", () => {
+describe("POST /api/courses/[slug]/complete", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Restore the default admin.from implementation after any per-test override

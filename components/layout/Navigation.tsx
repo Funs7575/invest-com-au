@@ -277,7 +277,7 @@ const mobileSections = [
     ],
   },
   {
-    title: "Browse Opportunities",
+    title: "Marketplace",
     items: [
       { name: "All Opportunities", href: "/invest" },
       { name: "Investment Funds", href: "/invest/funds" },
@@ -601,7 +601,7 @@ export function Navigation() {
                 to /quotes/post for visitors who land on Experts first. */}
 
             {/* ─── 4. Browse Opportunities ─────────────────────────────────────── */}
-            <MegaMenuDropdown label="Browse Opportunities" isActive={isListingsActive} menuWidth="min-w-[800px]">
+            <MegaMenuDropdown label="Marketplace" isActive={isListingsActive} menuWidth="min-w-[800px]">
               <div className="p-5">
                 <Link
                   href="/invest"
@@ -911,7 +911,7 @@ export function Navigation() {
               <Link
                 href={PRIMARY_CTA_HREF}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center w-full py-3.5 min-h-13 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-colors"
+                className="flex items-center justify-center w-full py-3.5 min-h-13 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm rounded-xl transition-colors"
               >
                 {PRIMARY_CTA_TEXT} &rarr;
               </Link>

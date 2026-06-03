@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { buildConsentCookie } from "@/lib/consent";
 
@@ -29,6 +29,7 @@ export default function CookieBanner() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [showPrefs, setShowPrefs] = useState(false);
   const [prefs, setPrefs] = useState<CookiePreferences>(DEFAULT_PREFS);
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const consent = localStorage.getItem("cookie-consent");
@@ -40,6 +41,26 @@ export default function CookieBanner() {
       }, 1000);
     }
   }, []);
+
+  // Reserve space for the fixed banner so it never covers page content (e.g.
+  // the lower options of a long quiz step). Re-measures on resize and when the
+  // preferences panel expands; clears the padding when the banner closes.
+  useEffect(() => {
+    if (!isVisible) {
+      document.body.style.paddingBottom = "";
+      return;
+    }
+    const apply = () => {
+      const h = bannerRef.current?.offsetHeight ?? 0;
+      document.body.style.paddingBottom = h > 0 ? `${h}px` : "";
+    };
+    apply();
+    window.addEventListener("resize", apply);
+    return () => {
+      window.removeEventListener("resize", apply);
+      document.body.style.paddingBottom = "";
+    };
+  }, [isVisible, showPrefs]);
 
   const saveAndClose = (preferences: CookiePreferences) => {
     localStorage.setItem("cookie-preferences", JSON.stringify(preferences));
@@ -67,6 +88,7 @@ export default function CookieBanner() {
 
   return (
     <div
+      ref={bannerRef}
       role="dialog"
       aria-modal="false"
       aria-label="Cookie consent"

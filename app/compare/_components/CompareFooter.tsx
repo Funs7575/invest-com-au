@@ -66,7 +66,7 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
       {/* Pro upsell hidden for launch */}
 
       {/* Trust signals */}
-      <div className="mt-4 md:mt-8 text-[0.62rem] md:text-xs text-slate-400 text-center">
+      <div className="mt-4 md:mt-8 text-[0.62rem] md:text-xs text-slate-600 text-center">
         <p>
           Fees verified against official pricing.{" "}
           <Link href="/how-we-verify" className="underline hover:text-slate-600">Verification</Link>
@@ -78,18 +78,18 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
       </div>
 
       {/* General Advice Warning */}
-      <p className="mt-2 md:mt-3 text-[0.69rem] md:text-xs text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
+      <p className="mt-2 md:mt-3 text-[0.69rem] md:text-xs text-slate-600 text-center leading-relaxed max-w-3xl mx-auto">
         {GENERAL_ADVICE_WARNING}
       </p>
 
       {/* Contextual risk warnings based on active filter */}
-      <div className="mt-2 text-[0.65rem] md:text-[0.72rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto space-y-1.5">
+      <div className="mt-2 text-[0.65rem] md:text-[0.72rem] text-slate-600 text-center leading-relaxed max-w-3xl mx-auto space-y-1.5">
         <p>{PDS_CONSIDERATION} {FSG_NOTE}</p>
         {(activeFilter === 'cfd' || activeFilter === 'cfd-forex' || activeFilter === 'all') && (
-          <p className="text-red-400/80">{CFD_WARNING_SHORT}</p>
+          <p className="text-red-600">{CFD_WARNING_SHORT}</p>
         )}
         {(activeFilter === 'crypto' || activeFilter === 'crypto-exchanges' || activeFilter === 'all') && (
-          <p className="text-amber-500/80">{CRYPTO_WARNING}</p>
+          <p className="text-amber-700">{CRYPTO_WARNING}</p>
         )}
         {(activeFilter === 'super' || activeFilter === 'super-funds' || activeFilter === 'all') && (
           <p>{SUPER_WARNING_SHORT}</p>
@@ -141,7 +141,7 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
           <Icon name="target" size={18} className="text-amber-500 shrink-0 md:mb-2" />
           <h2 className="text-xs md:text-lg font-bold text-slate-900">Find Your Platform</h2>
           <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Answer 4 quick questions and narrow down platforms.</p>
-          <Link href="/quiz" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-500 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors">
+          <Link href="/quiz" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-500 text-slate-900 text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors">
             Quiz →
           </Link>
         </div>
@@ -157,7 +157,7 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
           <Icon name="calculator" size={18} className="text-amber-600 shrink-0 md:mb-2" />
           <h2 className="text-xs md:text-lg font-bold text-slate-900">Fee Calculator</h2>
           <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">See exact fees for your portfolio at every broker.</p>
-          <Link href="/portfolio-calculator" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-600 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors">
+          <Link href="/portfolio-calculator" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-600 text-slate-900 text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors">
             Calculate →
           </Link>
         </div>

@@ -171,7 +171,7 @@ export default function AlternativesPlatformsClient({ platforms }: Props) {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h18M7 8h10M11 12h2" /></svg>
           Filters
           {activeFilterCount > 0 && (
-            <span className="w-4 h-4 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center">
+            <span className="w-4 h-4 rounded-full bg-amber-500 text-slate-900 text-[9px] font-bold flex items-center justify-center">
               {activeFilterCount}
             </span>
           )}

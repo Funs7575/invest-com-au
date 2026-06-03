@@ -261,7 +261,7 @@ export default function PlacementExperimentsEditor() {
       )}
 
       {rows.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-slate-400">
+        <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-slate-600">
           No experiments match the filter.
         </div>
       ) : (
@@ -338,7 +338,7 @@ function ExperimentCard({
               type="button"
               disabled={busy}
               onClick={() => onStatus("paused")}
-              className="px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-50"
+              className="px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-50"
             >
               Pause
             </button>
