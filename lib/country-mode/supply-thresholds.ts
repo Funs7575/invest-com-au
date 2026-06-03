@@ -34,7 +34,13 @@ export type SupplyKind = keyof typeof SUPPLY_THRESHOLDS;
 export const PER_COUNTRY_THRESHOLDS: Partial<
   Record<string, Partial<Record<SupplyKind, number>>>
 > = {
-  NZ: { experts: 1 },
+  // Keyed by IntentCountryCode (lowercase) — that is what every caller passes
+  // (`getIntentCountry()` returns a lowercase `IntentCountryCode`). The lookup
+  // in applySupplyThresholds lowercases the incoming code so either casing
+  // works. (Previously keyed "NZ"; the lowercase intent code never matched, so
+  // this override was dead and a country with a single expert had its strip
+  // wrongly hidden.)
+  nz: { experts: 1 },
 };
 
 export interface SupplyResult<T> {
@@ -66,7 +72,9 @@ export function applySupplyThresholds<T>(
   kind: SupplyKind,
   countryCode?: string | null,
 ): SupplyResult<T> {
-  const perCountry = countryCode ? PER_COUNTRY_THRESHOLDS[countryCode] : undefined;
+  const perCountry = countryCode
+    ? PER_COUNTRY_THRESHOLDS[countryCode.toLowerCase()]
+    : undefined;
   const threshold = perCountry?.[kind] ?? SUPPLY_THRESHOLDS[kind];
   if (rows.length < threshold) {
     return { rows: [], didFallback: true };
