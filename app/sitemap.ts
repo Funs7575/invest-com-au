@@ -1194,7 +1194,11 @@ async function buildShard7(): Promise<MetadataRoute.Sitemap> {
 // robots.ts already points to `/sitemap.xml` so no change is needed there.
 
 export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
-  switch (id) {
+  // The @netlify/plugin-nextjs runtime passes the shard `id` as a STRING ("0"),
+  // so a numeric `switch (id)` fell through to `default: []` — EVERY shard served
+  // an empty <urlset> on the live mirror (Google was getting empty sitemaps).
+  // Vercel passes a number. Coerce so both platforms populate the shards.
+  switch (Number(id)) {
     case 0: return buildShard0();
     case 1: return buildShard1();
     case 2: return buildShard2();

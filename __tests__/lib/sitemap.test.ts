@@ -87,6 +87,17 @@ async function getAllUrls(): Promise<string[]> {
   return shards.flat().map((e) => e.url);
 }
 
+describe("sitemap shard id coercion (Netlify passes string ids)", () => {
+  it("populates the shard for a string id instead of returning an empty []", async () => {
+    // @netlify/plugin-nextjs passes the shard id as "0"; before the Number(id)
+    // coercion this fell through to `default: []` and served empty sitemaps.
+    const asString = await sitemap({ id: "0" as unknown as number });
+    const asNumber = await sitemap({ id: 0 });
+    expect(asString.length).toBeGreaterThan(0);
+    expect(asString.length).toBe(asNumber.length);
+  });
+});
+
 /** Build a single shard and return its URLs. */
 async function getShardUrls(id: number): Promise<string[]> {
   const entries = await sitemap({ id });

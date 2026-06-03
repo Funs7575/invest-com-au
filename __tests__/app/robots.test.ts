@@ -28,7 +28,11 @@ describe("app/robots.ts", () => {
     }
   });
 
-  it("points at the sitemap", () => {
-    expect(String(out.sitemap)).toMatch(/\/sitemap\.xml$/);
+  it("points crawlers at all 8 sitemap shards (the /sitemap.xml index 404s on the Netlify runtime)", () => {
+    const sitemaps = Array.isArray(out.sitemap) ? out.sitemap : [out.sitemap];
+    expect(sitemaps).toHaveLength(8);
+    sitemaps.forEach((url, i) =>
+      expect(url).toMatch(new RegExp(`/sitemap/${i}\\.xml$`)),
+    );
   });
 });
