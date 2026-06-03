@@ -138,3 +138,22 @@ survives terminal close) — state lives here, so either driver resumes identica
   - **Process note:** local `tsc+lint` missed 2 CI failures (full suite + build catch
     more) → now running related/full tests before pushing.
   - **In CI, verified, auto-merge on green:** #1271, #1307, #1308, #1309.
+- **2026-06-03 ~06:50 — Cycle 7 (merge sweep + review-fix queue complete):**
+  - **Merged to main — 5 total:** #1269, #1274, #1271, **#1309** (get-matched scoring),
+    **#1308** (clubs/messages 500 + `withValidatedBody` ctx hardening across ~47 routes).
+    Each merged on core-gate-green (`Lint·Type·Test·Build`) via API, ignoring the 3
+    environmental reds.
+  - **Review-fix queue COMPLETE** — every clean, in-scope review/bot finding is shipped
+    or in-CI: **#1307** (7 dead auth 404s + redirect net), **#1310** (advisor-search
+    `.or()` injection), **#1311** (tco `fx_rate` ÷100). Finishing CI → merge on green.
+  - **Process correction (learned):** local `tsc+lint` missed 2 CI failures — #1271's
+    lint-rule error-promotion (full `eslint .` catches it) and #1307's test asserting an
+    old URL. Now running full/related tests + grepping for asserted values before push.
+  - **Still HELD for founder:** #1272/#1273 (DB migrations), `advisor-credit-ledger`
+    optimistic-lock retry (Tier C / financial), and the `/invest` listing-detail 500s
+    (11 verticals lack a `listings/[slug]` route; capital-raise verticals among them →
+    C8 wants gate/unpublish, not "fix the link").
+  - **Tiny follow-up:** `tco.ts BrokerFeeProfile.fx_rate` field-doc still reads "decimal
+    (0.006)"; the math is now percentage-correct — tidy the comment.
+  - **Net:** main is green and materially better (4 real user-facing/security fixes +
+    1 big hardening PR live); the remaining backlog is founder-gated.
