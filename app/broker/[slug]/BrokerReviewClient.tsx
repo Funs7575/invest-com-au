@@ -317,7 +317,7 @@ export default function BrokerReviewClient({
             target="_blank"
             rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
-            className="block md:inline-block w-full md:w-auto text-center px-6 py-3 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-600/20 transition-all"
+            className="block md:inline-block w-full md:w-auto text-center px-6 py-3 bg-amber-600 text-slate-900 font-bold rounded-xl hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-600/20 transition-all"
           >
             {getBenefitCta(b, 'review')}
           </a>
@@ -408,7 +408,7 @@ export default function BrokerReviewClient({
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-deal-banner', `/broker/${b.slug}`, 'review')}
-              className="shrink-0 w-full sm:w-auto text-center px-4 py-2 md:px-5 md:py-2.5 bg-amber-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-all"
+              className="shrink-0 w-full sm:w-auto text-center px-4 py-2 md:px-5 md:py-2.5 bg-amber-600 text-slate-900 text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-all"
             >
               Claim Deal →
             </a>
@@ -479,7 +479,7 @@ export default function BrokerReviewClient({
                 target="_blank"
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(b.slug, b.name, 'review-verdict', `/broker/${b.slug}`, 'review')}
-                className="ml-auto px-5 py-2.5 bg-amber-500 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 hover:shadow-lg hover:shadow-amber-500/20 transition-all"
+                className="ml-auto px-5 py-2.5 bg-amber-500 text-slate-900 text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 hover:shadow-lg hover:shadow-amber-500/20 transition-all"
               >
                 {getBenefitCta(b, 'review')}
               </a>
@@ -674,7 +674,7 @@ export default function BrokerReviewClient({
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-inline-1', `/broker/${b.slug}`, 'review')}
-              className="shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+              className="shrink-0 px-4 py-2 bg-amber-600 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
             >
               {getBenefitCta(b, 'review')}
             </a>
@@ -954,7 +954,7 @@ export default function BrokerReviewClient({
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-inline-2', `/broker/${b.slug}`, 'review')}
-              className="shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+              className="shrink-0 px-4 py-2 bg-amber-600 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
             >
               {getBenefitCta(b, 'review')}
             </a>
@@ -1016,7 +1016,7 @@ export default function BrokerReviewClient({
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(d.slug, d.name, "review-related-deal", `/broker/${b.slug}`, "review")}
-                      className="inline-block text-xs px-3 py-1.5 bg-amber-600 text-white font-semibold rounded-md hover:bg-amber-700 transition-colors"
+                      className="inline-block text-xs px-3 py-1.5 bg-amber-600 text-slate-900 font-semibold rounded-md hover:bg-amber-700 transition-colors"
                     >
                       Claim Deal →
                     </a>
@@ -1174,7 +1174,7 @@ export default function BrokerReviewClient({
             target="_blank"
             rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-bottom', `/broker/${b.slug}`, 'review')}
-            className="inline-block px-6 py-3 md:px-8 md:py-3.5 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 hover:shadow-lg transition-all active:scale-[0.98] text-sm md:text-lg"
+            className="inline-block px-6 py-3 md:px-8 md:py-3.5 bg-amber-600 text-slate-900 font-bold rounded-lg hover:bg-amber-700 hover:shadow-lg transition-all active:scale-[0.98] text-sm md:text-lg"
           >
             {getBenefitCta(b, 'review')}
           </a>

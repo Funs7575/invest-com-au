@@ -225,7 +225,7 @@ export default function SuburbsClient() {
 
                   <Link
                     href={`/property/buyer-agents`}
-                    className="block w-full text-center py-2.5 mt-4 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-all"
+                    className="block w-full text-center py-2.5 mt-4 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-all"
                   >
                     Find an Agent in {selected.suburb}
                   </Link>

@@ -224,7 +224,7 @@ export default function CurrencyConverterPage() {
             </p>
             <Link
               href="/foreign-investment/send-money-australia"
-              className="inline-block bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium px-4 py-2 rounded-lg"
+              className="inline-block bg-amber-600 hover:bg-amber-700 text-slate-900 text-sm font-medium px-4 py-2 rounded-lg"
             >
               Compare FX providers →
             </Link>

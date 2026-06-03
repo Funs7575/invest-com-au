@@ -91,7 +91,7 @@ export default function ArticleSidebar({
                   "article"
                 )
               }
-              className="block w-full text-center px-4 py-3 bg-amber-600 text-white font-bold text-sm rounded-lg hover:bg-amber-700 hover:scale-[1.02] transition-all"
+              className="block w-full text-center px-4 py-3 bg-amber-600 text-slate-900 font-bold text-sm rounded-lg hover:bg-amber-700 hover:scale-[1.02] transition-all"
             >
               Open Account &rarr;
             </a>

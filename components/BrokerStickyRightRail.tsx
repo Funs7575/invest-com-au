@@ -53,7 +53,7 @@ export default function BrokerStickyRightRail({
         <button
           onClick={dismiss}
           aria-label="Dismiss"
-          className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white border border-slate-200 shadow text-slate-400 hover:text-slate-700 flex items-center justify-center"
+          className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white border border-slate-200 shadow text-slate-600 hover:text-slate-700 flex items-center justify-center"
         >
           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
             <path
@@ -99,7 +99,7 @@ export default function BrokerStickyRightRail({
               context,
             )
           }
-          className="group flex items-center justify-center gap-2 w-full px-4 py-3 bg-amber-600 text-white text-sm font-bold rounded-xl hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-600/30 active:bg-amber-800 active:scale-[0.98] transition-all"
+          className="group flex items-center justify-center gap-2 w-full px-4 py-3 bg-amber-600 text-slate-900 text-sm font-bold rounded-xl hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-600/30 active:bg-amber-800 active:scale-[0.98] transition-all"
         >
           <span>{getBenefitCta(broker, context)}</span>
           <svg

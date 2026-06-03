@@ -154,7 +154,7 @@ export default function SaveSearchButton({
                           aria-pressed={frequency === f}
                           className={`text-xs font-semibold rounded-lg px-2 py-2 transition-colors ${
                             frequency === f
-                              ? "bg-amber-500 text-white shadow-sm"
+                              ? "bg-amber-500 text-slate-900 shadow-sm"
                               : "bg-slate-50 text-slate-600 hover:bg-slate-100"
                           }`}
                         >

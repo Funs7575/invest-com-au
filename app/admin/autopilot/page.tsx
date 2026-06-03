@@ -584,7 +584,7 @@ export default function AutopilotPage() {
                           ? "bg-amber-100 text-amber-700 cursor-wait"
                           : enabled
                             ? "bg-amber-500 hover:bg-amber-600 text-white"
-                            : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                            : "bg-slate-100 text-slate-600 cursor-not-allowed"
                       }`}
                     >
                       {running ? (

@@ -140,7 +140,7 @@ export default function SmsfPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/smsf/setup"
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
             >
               How to set up an SMSF
             </Link>
@@ -542,7 +542,7 @@ export default function SmsfPage() {
                 key={step}
                 className="flex gap-4 p-5 border border-slate-200 rounded-xl"
               >
-                <span className="w-8 h-8 rounded-full bg-amber-500 text-white font-extrabold text-sm flex items-center justify-center shrink-0 mt-0.5">
+                <span className="w-8 h-8 rounded-full bg-amber-500 text-slate-900 font-extrabold text-sm flex items-center justify-center shrink-0 mt-0.5">
                   {step}
                 </span>
                 <div>

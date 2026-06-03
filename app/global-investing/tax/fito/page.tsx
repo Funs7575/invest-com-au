@@ -99,7 +99,7 @@ export default function FitoPage() {
               { n: "3", title: "Claim the offset", body: "At Item 20, enter the foreign tax paid as a FITO. It reduces your Australian tax on that income, dollar for dollar, up to the FITO cap." },
             ].map(step => (
               <div key={step.n} className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                <div className="w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-extrabold mb-3">{step.n}</div>
+                <div className="w-7 h-7 rounded-full bg-amber-500 text-slate-900 flex items-center justify-center text-sm font-extrabold mb-3">{step.n}</div>
                 <p className="text-sm font-extrabold text-slate-900 mb-1.5">{step.title}</p>
                 <p className="text-sm text-slate-600 leading-relaxed">{step.body}</p>
               </div>

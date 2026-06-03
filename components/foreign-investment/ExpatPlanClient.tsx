@@ -172,7 +172,7 @@ function PlanItemCard({
         {/* Step number + content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500 text-white text-[0.6rem] font-extrabold shrink-0">
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500 text-slate-900 text-[0.6rem] font-extrabold shrink-0">
               {item.stepNumber}
             </span>
             <CategoryBadge category={item.category} />

@@ -74,13 +74,20 @@ describe("proxy.ts — security headers (TT-02)", () => {
     expect(csp).toContain("us.i.posthog.com");
   });
 
-  it("CSP uses nonce-based strict-dynamic (no unsafe-inline in script-src)", async () => {
+  it("CSP script-src is cache-compatible (self + unsafe-inline + https:, NO nonce/strict-dynamic)", async () => {
+    // Regression guard: a per-request nonce with 'strict-dynamic' is
+    // incompatible with this site's ISR/SSG caching — cached HTML has no
+    // matching nonce, so 'strict-dynamic' shadows 'self'/https: and blocks
+    // every script (site-wide JS outage; froze /invest on its skeleton).
+    // Do NOT reintroduce nonce/strict-dynamic without per-route hashing.
     const headers = await getHeaders();
     const csp = headers.get("Content-Security-Policy") ?? "";
-    expect(csp).toContain("strict-dynamic");
-    // nonce= is present (unique per request so we just check prefix)
-    expect(csp).toMatch(/nonce-[A-Za-z0-9+/]+=*'/);
-    expect(csp).not.toMatch(/script-src[^;]*'unsafe-inline'/);
+    const scriptSrc = csp.split(";").find((d) => d.trim().startsWith("script-src")) ?? "";
+    expect(scriptSrc).toContain("'self'");
+    expect(scriptSrc).toContain("'unsafe-inline'");
+    expect(scriptSrc).toContain("https:");
+    expect(scriptSrc).not.toContain("strict-dynamic");
+    expect(scriptSrc).not.toContain("nonce-");
   });
 
   it("CSP sets frame-ancestors none to block embedding", async () => {

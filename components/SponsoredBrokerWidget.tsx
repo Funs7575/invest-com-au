@@ -159,8 +159,8 @@ export default function SponsoredBrokerWidget({
               }
               className={`block w-full text-center px-4 py-3 font-bold text-sm rounded-lg transition-all hover:scale-[1.02] ${
                 isCampaign
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "bg-amber-600 text-white hover:bg-amber-700"
+                  ? "bg-blue-600 text-slate-900 hover:bg-blue-700"
+                  : "bg-amber-600 text-slate-900 hover:bg-amber-700"
               }`}
             >
               Open Account &rarr;

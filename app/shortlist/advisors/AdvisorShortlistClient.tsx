@@ -113,7 +113,7 @@ export default function AdvisorShortlistClient() {
           )}
           <button
             onClick={clear}
-            className="text-xs text-slate-400 hover:text-slate-600 px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+            className="text-xs text-slate-600 hover:text-slate-600 px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
           >
             Clear all
           </button>

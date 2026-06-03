@@ -56,7 +56,7 @@ export default async function AccountQuizHistoryPage() {
             </p>
             <Link
               href="/quiz"
-              className="mt-4 inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
+              className="mt-4 inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
             >
               Take the quiz →
             </Link>

@@ -470,10 +470,10 @@ export default function PackagesPage() {
                 disabled={confirming || (dialogAction !== "upgrade" && !cancelReason) || (cancelReason === "Other" && !cancelReasonOther.trim())}
                 className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors disabled:opacity-50 ${
                   dialogAction === "cancel"
-                    ? "bg-red-600 text-white hover:bg-red-700"
+                    ? "bg-red-600 text-slate-900 hover:bg-red-700"
                     : dialogAction === "downgrade"
                     ? "bg-amber-500 text-slate-900 hover:bg-amber-600"
-                    : "bg-slate-900 text-white hover:bg-slate-800"
+                    : "bg-slate-900 text-slate-900 hover:bg-slate-800"
                 }`}
               >
                 {confirming

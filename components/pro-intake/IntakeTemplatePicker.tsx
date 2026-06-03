@@ -135,7 +135,7 @@ export default function IntakeTemplatePicker({
                 disabled={pending || wouldExceed}
                 className={`mt-auto rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
                   wouldExceed
-                    ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                    ? "bg-slate-100 text-slate-600 cursor-not-allowed"
                     : "bg-violet-600 hover:bg-violet-500 text-white"
                 } disabled:opacity-50`}
                 title={

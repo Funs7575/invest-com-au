@@ -1168,7 +1168,7 @@ export default async function IndexFundsPage() {
                     i === 0 ? "border-amber-300 ring-1 ring-amber-100" : "border-slate-200"
                   }`}
                 >
-                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 text-sm font-bold text-slate-400">
+                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 text-sm font-bold text-slate-600">
                     {i + 1}
                   </div>
                   <div className="flex-1 min-w-0">

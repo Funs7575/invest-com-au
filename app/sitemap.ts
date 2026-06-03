@@ -169,7 +169,7 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     "/sell-business", "/sell-business/valuation", "/sell-business/checklist",
     "/visa-investment",
     "/dividends", "/dividends/franking-credits", "/dividends/calculator", "/dividends/quiz",
-    "/wholesale/quiz",
+    "/wholesale", "/wholesale/quiz",
     "/property/quiz",
     "/etfs/quiz",
     "/insurance/quiz",

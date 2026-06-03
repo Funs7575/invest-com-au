@@ -16,6 +16,16 @@ import { trackEvent } from "@/lib/tracking";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 import { SPONSORED_DISCLOSURE_SHORT } from "@/lib/compliance";
 import BookmarkButton from "@/components/BookmarkButton";
+import SearchInput from "@/components/directory/SearchInput";
+import SortDropdown from "@/components/directory/SortDropdown";
+import TabBar from "@/components/directory/TabBar";
+import FilterChips from "@/components/directory/FilterChips";
+import FilterPanel from "@/components/directory/FilterPanel";
+import FacetGroup from "@/components/directory/FacetGroup";
+import ResultCount from "@/components/directory/ResultCount";
+import EmptyState from "@/components/directory/EmptyState";
+import CompareBar from "@/components/directory/CompareBar";
+import { FilterPill, FilterPopover } from "@/components/directory/FilterPill";
 
 export interface ExpertTeamCard {
   id: number;
@@ -76,6 +86,21 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
 ];
 
 const RESULTS_PER_PAGE = 12;
+
+const FEE_OPTIONS = [
+  { value: "all", label: "Any fee" },
+  { value: "fee-for-service", label: "Fee for Service" },
+  { value: "commission", label: "Commission" },
+  { value: "hybrid", label: "Hybrid" },
+  { value: "percentage of AUM", label: "% of AUM" },
+];
+const RATING_OPTIONS: { value: number; label: string }[] = [
+  { value: 0, label: "Any rating" },
+  { value: 4.5, label: "4.5+ ★" },
+  { value: 4, label: "4.0+ ★" },
+  { value: 3.5, label: "3.5+ ★" },
+  { value: 3, label: "3.0+ ★" },
+];
 
 function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`;
@@ -181,6 +206,46 @@ function UseMyLocation({ onLocate }: { onLocate: (lat: number, lng: number) => v
   );
 }
 
+/**
+ * Advisor photo for the photo-led card header. Seed photos come from a
+ * third-party CDN (randomuser.me) that can be unreachable on some networks;
+ * on a load error we fall back to the coral initials tile so the header
+ * never renders blank. Also used when a professional has no photo_url.
+ */
+function AdvisorPhoto({
+  src,
+  alt,
+  initials,
+  priority,
+}: {
+  src: string | null | undefined;
+  alt: string;
+  initials: string;
+  priority: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) {
+    return (
+      <div className="absolute inset-0 bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-white font-extrabold text-4xl select-none">
+        {initials}
+      </div>
+    );
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 320px"
+      className="object-cover"
+      priority={priority}
+      onError={() => setFailed(true)}
+      placeholder="blur"
+      blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
+    />
+  );
+}
+
 export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [], editorial, firms = [], firmMemberCounts = {}, expertTeams = [], intentCountry = null }: {
   professionals: Professional[];
   initialType?: ProfessionalType;
@@ -241,6 +306,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const [sortBy, setSortBy] = useState<SortKey>("rating");
   const [page, setPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [openPill, setOpenPill] = useState<string | null>(null);
 
   // Location/proximity state
   const [locationSearch, setLocationSearch] = useState<PostcodeResult | null>(null);
@@ -390,6 +456,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     return counts;
   }, [professionals]);
 
+  const stateCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const bump = (s?: string | null) => { if (s) counts[s] = (counts[s] || 0) + 1; };
+    // Count every provider type the Location pill can surface — a state with
+    // only firms or expert teams (no individual advisors) stays selectable.
+    professionals.forEach((p) => bump(p.location_state));
+    firms.forEach((f) => bump(f.location_state));
+    expertTeams.forEach((t) => bump(t.location_state));
+    return counts;
+  }, [professionals, firms, expertTeams]);
+
   // Use nearby results when location active, otherwise client-side filter
   const filtered = useMemo(() => {
     if (isLocationActive && nearbyResults) {
@@ -526,6 +603,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     team: filteredTeams.length,
   };
 
+  const advisorHeroStats = ([
+    { v: String(providerTypeCounts.individual), l: "Advisors" },
+    firms.length > 0 ? { v: String(providerTypeCounts.firm), l: "Firms" } : null,
+    expertTeams.length > 0 ? { v: String(providerTypeCounts.team), l: "Expert teams" } : null,
+    { v: "3", l: "Free intros" },
+  ].filter(Boolean) as { v: string; l: string }[]).slice(0, 4);
+
   const activeFilterCount = [
     providerType !== "all",
     typeFilters.size > 0,
@@ -589,32 +673,49 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
   return (
     <div className="py-5 md:py-12">
-      <div className="container-custom max-w-5xl">
+      <div className="container-custom">
         <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <span className="text-slate-700">{activeTypeLabel || "Find an Advisor"}</span>
         </nav>
 
-        <div className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-white to-slate-50/80 border border-slate-200 rounded-2xl p-4 md:p-8 mb-4 md:mb-6 shadow-sm">
-          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-300 via-amber-500 to-amber-300" />
-          <h1 className="text-xl md:text-4xl font-extrabold mb-1.5 md:mb-3 text-slate-900 tracking-tight">{dynamicTitle}</h1>
-          <p className="text-xs md:text-base text-slate-500 mb-4 max-w-2xl leading-relaxed">
-            <span className="md:hidden">{dynamicDescription.slice(0, 70)}…</span>
-            <span className="hidden md:inline">{dynamicDescription}</span>
-          </p>
-          <div className="flex items-center gap-1.5 md:gap-2 flex-wrap mb-4 md:mb-5">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-700">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="font-bold text-slate-900">{providerTypeCounts.all}</span> listings
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-ink-900 to-ink-800 text-white p-5 md:p-8 mb-4 md:mb-6 shadow-sm">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full"
+            style={{ background: "radial-gradient(circle, rgba(242,88,34,.20), transparent 65%)" }}
+          />
+          <div className="relative grid gap-6 md:grid-cols-[1.4fr_1fr] md:items-end">
+            <div>
+              <span className="iv2-pill border border-coral-500/30 bg-coral-500/15 text-coral-300">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coral-400" />
+                Verified advisors
+              </span>
+              <h1 className="mt-3 md:mt-4 text-2xl md:text-5xl font-extrabold leading-[1.04] tracking-tight">
+                {activeTypeLabel
+                  ? <>{providerTypeCounts.all} {dynamicTitle.replace(/^Find\s+/, "").toLowerCase()}</>
+                  : <>{providerTypeCounts.all} licensed advisors.</>}
+                <span className="hidden md:inline"><br /><span className="text-coral-400">Three free intros.</span></span>
+              </h1>
+              <p className="mt-3 md:mt-4 max-w-xl text-xs md:text-base leading-relaxed text-white/70">
+                <span className="md:hidden">{dynamicDescription.slice(0, 80)}…</span>
+                <span className="hidden md:inline">{dynamicDescription}</span>
+              </p>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
-              <Icon name="shield" size={13} className="text-amber-500" />ASIC verified
-            </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
-              <Icon name="clock" size={13} className="text-amber-500" />Free consultation
+            <div className="grid grid-cols-2 gap-2.5 md:gap-3">
+              {advisorHeroStats.map((s) => (
+                <div key={s.l} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 md:px-4 md:py-3">
+                  <div className="iv2-bignum text-xl text-white md:text-3xl">{s.v}</div>
+                  <div className="mt-1 text-[11px] font-semibold text-white/55 md:text-xs">{s.l}</div>
+                </div>
+              ))}
             </div>
           </div>
+        </div>
+
+        {/* Advisor matching + concierge — light band below the hero */}
+        <div className="mb-4 md:mb-6">
           <GetMatchedEmbed context="advisor_directory" />
           <p className="text-[0.65rem] md:text-xs text-slate-500 mt-3 text-center">
             Prefer to chat?{" "}
@@ -626,145 +727,197 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   source: "advisors_hero",
                 })
               }
-              className="font-semibold text-slate-700 hover:text-amber-700 underline-offset-2 hover:underline"
+              className="font-semibold text-slate-700 hover:text-coral-700 underline-offset-2 hover:underline"
             >
               Ask the AI concierge →
             </Link>
           </p>
         </div>
 
-        {/* Compare bar */}
-        {shortlistCount > 0 && (
-          <div className="sticky top-16 z-30 mb-3">
-            <div className="bg-violet-600 text-white rounded-xl px-4 py-2.5 flex items-center justify-between shadow-lg shadow-violet-200">
-              <span className="text-sm font-semibold">
-                {shortlistCount} advisor{shortlistCount !== 1 ? "s" : ""} saved
-                {shortlistCount === 1 && <span className="text-violet-200 font-normal"> — save 1 more to compare</span>}
-              </span>
-              <div className="flex items-center gap-2">
-                <Link href="/shortlist/advisors" className="px-3 py-1.5 text-violet-200 text-xs font-semibold hover:text-white transition-colors">
-                  View saved
-                </Link>
-                {shortlistCount >= 2 ? (
-                  <Link href="/advisors/compare" className="px-3 py-1.5 bg-white text-violet-700 text-xs font-bold rounded-lg hover:bg-violet-50 transition-colors">
-                    Compare {shortlistCount} →
-                  </Link>
-                ) : (
-                  <span className="text-xs text-violet-200">{shortlistMax - shortlistCount} more to compare</span>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Compare/shortlist bar — canonical primitive (slate/amber). Replaces
+            the bespoke violet bar that broke the design system. */}
+        <CompareBar
+          count={shortlistCount}
+          max={shortlistMax}
+          noun="advisor"
+          compareHref="/advisors/compare"
+          viewHref="/shortlist/advisors"
+        />
 
-        {/* Provider type segmented control — replaces the broken top tabs.
+        {/* Provider-type segmentation — canonical TabBar primitive.
             Hidden when sub-pages call AdvisorsClient with no firms/teams
             (e.g. /advisors/financial-planners). */}
         {(firms.length > 0 || expertTeams.length > 0) && (
-          <div
-            role="tablist"
-            aria-label="Provider type"
-            className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl mb-3 md:mb-4 overflow-x-auto"
-          >
-            {(["all", "individual", "firm", "team"] as const).map(pt => {
-              const label = pt === "all" ? "All" : PROVIDER_TYPE_LABELS[pt];
-              const count = providerTypeCounts[pt];
-              const active = providerType === pt;
-              const disabled = pt !== "all" && count === 0;
-              return (
-                <button
-                  key={pt}
-                  role="tab"
-                  aria-selected={active}
-                  disabled={disabled}
-                  onClick={() => setProviderType(pt)}
-                  className={`flex items-center gap-1.5 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold rounded-lg transition-all whitespace-nowrap ${
-                    active
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : disabled
-                        ? "text-slate-300 cursor-not-allowed"
-                        : "text-slate-600 hover:bg-white/60"
-                  }`}
-                >
-                  {label}
-                  <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-500"}`}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+          <TabBar
+            variant="segmented"
+            ariaLabel="Provider type"
+            className="mb-3 md:mb-4"
+            value={providerType}
+            onChange={(id) => setProviderType(id)}
+            zeroCountBehavior="disable"
+            alwaysShow="all"
+            tabs={[
+              { id: "all", label: "All", count: providerTypeCounts.all },
+              { id: "individual", label: PROVIDER_TYPE_LABELS.individual, count: providerTypeCounts.individual },
+              { id: "firm", label: PROVIDER_TYPE_LABELS.firm, count: providerTypeCounts.firm },
+              { id: "team", label: PROVIDER_TYPE_LABELS.team, count: providerTypeCounts.team },
+            ]}
+          />
         )}
 
-        {/* Search + Filter bar */}
-        <div className="flex gap-2 mb-3 md:mb-4">
-          <div className="relative flex-1">
-            <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input type="text" placeholder="Search name, firm, team, specialty, suburb..." value={search} onChange={e => setSearch(e.target.value)} aria-label="Search advisors" className="w-full pl-9 pr-4 py-2.5 md:py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 transition-all" />
-            {search && <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"><Icon name="x" size={16} /></button>}
-          </div>
-          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2.5 border rounded-xl text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
-            <Icon name="sliders" size={16} />
-            <span className="hidden md:inline">Filters</span>
-            {activeFilterCount > 0 && <span className="w-5 h-5 bg-amber-600 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{activeFilterCount}</span>}
-          </button>
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value as SortKey)}
-            aria-label="Sort results"
-            className="hidden md:block px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+        {/* Toolbar: search · all-filters · sort (mirrors /invest) */}
+        <div className="flex gap-2 mb-3 items-center">
+          <SearchInput
+            className="flex-1"
+            value={search}
+            onChange={setSearch}
+            placeholder="Search name, firm, team, specialty, suburb…"
+            ariaLabel="Search advisors"
+            id="advisor-search"
+          />
+          <button
+            type="button"
+            onClick={() => setFiltersOpen(true)}
+            className={`inline-flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg border text-sm font-bold whitespace-nowrap transition-colors shrink-0 ${activeFilterCount > 0 ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-800 border-slate-300 hover:border-slate-400"}`}
           >
-            {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
-          </select>
+            <Icon name="sliders" size={14} />
+            <span className="hidden sm:inline">All filters</span>
+            {activeFilterCount > 0 && <span className="ml-0.5 text-[10px] font-mono bg-amber-500 text-slate-900 rounded-full px-1.5 py-0.5">{activeFilterCount}</span>}
+          </button>
+          <SortDropdown
+            options={SORT_OPTIONS.map((o) => ({ value: o.key, label: o.label }))}
+            value={sortBy}
+            onChange={(v) => setSortBy(v as SortKey)}
+          />
         </div>
 
-        {/* Filter panel */}
-        {filtersOpen && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 mb-4 md:mb-6 space-y-4">
-            {/* Location / Near me */}
-            <div>
-              <label className="text-xs font-bold text-slate-700 mb-2 block flex items-center gap-1.5">
-                <Icon name="map-pin" size={13} className="text-amber-500" />
-                Location
-              </label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                <div className="md:col-span-2">
-                  <LocationSearch selected={locationSearch} onSelect={(p) => { setLocationSearch(p); if (!p) { setUserLat(null); setUserLng(null); } }} />
-                </div>
-                <div className="flex items-center gap-2">
-                  <select value={radius} onChange={e => setRadius(Number(e.target.value))} className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={!isLocationActive}>
-                    {RADIUS_OPTIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-                  </select>
-                  <UseMyLocation onLocate={(lat, lng) => { setUserLat(lat); setUserLng(lng); setSortBy("distance"); setLocationSearch({ postcode: "", locality: "My location", state: "", latitude: lat, longitude: lng }); }} />
-                </div>
+        {/* Primary facet pills — mirrors /invest + /compare (shared FilterPill). */}
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          {/* Type */}
+          <div className="relative">
+            <FilterPill icon="users" label="Type" active={typeFilters.size > 0} open={openPill === "type"}
+              value={typeFilters.size === 1 ? TYPE_FILTERS.find((f) => f.key === Array.from(typeFilters)[0])?.label : typeFilters.size > 1 ? `${typeFilters.size} types` : undefined}
+              onClick={() => setOpenPill((o) => (o === "type" ? null : "type"))} />
+            <FilterPopover open={openPill === "type"} onClose={() => setOpenPill(null)} label="Advisor type">
+              <p className="text-xs font-bold text-slate-900 mb-2">Advisor type</p>
+              <div className="flex flex-wrap gap-1.5 max-h-72 overflow-y-auto">
+                {TYPE_FILTERS.filter((f) => f.key !== "all").map((f) => {
+                  const count = typeCounts[f.key] ?? 0;
+                  const selected = typeFilters.has(f.key as ProfessionalType);
+                  return (
+                    <button key={f.key} type="button" disabled={count === 0 && !selected} onClick={() => toggleType(f.key)}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-semibold disabled:opacity-40 transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                      <Icon name={f.icon} size={11} />
+                      {f.label}
+                      <span className="font-mono text-[10px] text-slate-400">{count}</span>
+                    </button>
+                  );
+                })}
               </div>
-            </div>
-
-            {/* Advisor Type */}
-            <div>
-              <label className="text-xs font-bold text-slate-700 mb-2 block">Advisor Type</label>
-              <div className="flex flex-wrap gap-1.5">
-                {TYPE_FILTERS.map(f => (
-                  <button key={f.key} onClick={() => toggleType(f.key)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "bg-amber-600 text-white shadow-sm" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
-                    <Icon name={f.icon} size={13} className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"} />
-                    {f.label}
-                    {typeCounts[f.key] ? <span className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"}>({typeCounts[f.key]})</span> : null}
+            </FilterPopover>
+          </div>
+          {/* Location */}
+          <div className="relative">
+            <FilterPill icon="map-pin" label="Location" active={stateFilter !== "all"} open={openPill === "state"}
+              value={stateFilter !== "all" ? stateFilter : undefined}
+              disabled={isLocationActive}
+              onClick={() => setOpenPill((o) => (o === "state" ? null : "state"))} />
+            <FilterPopover open={openPill === "state"} onClose={() => setOpenPill(null)} label="Location">
+              <p className="text-xs font-bold text-slate-900 mb-2">State</p>
+              <div className="grid grid-cols-4 gap-1.5">
+                {AU_STATES.map((s) => {
+                  const count = stateCounts[s] ?? 0;
+                  const selected = stateFilter === s;
+                  return (
+                    <button key={s} type="button" disabled={count === 0 && !selected} onClick={() => { setStateFilter(selected ? "all" : s); setOpenPill(null); }}
+                      className={`py-2 rounded-lg border text-xs font-bold disabled:opacity-40 transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                      {s}
+                      <span className="block text-[9px] font-mono text-slate-400">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </FilterPopover>
+          </div>
+          {/* Fee */}
+          <div className="relative">
+            <FilterPill icon="wallet" label="Fee" active={feeFilter !== "all"} open={openPill === "fee"}
+              value={feeFilter !== "all" ? FEE_OPTIONS.find((o) => o.value === feeFilter)?.label : undefined}
+              onClick={() => setOpenPill((o) => (o === "fee" ? null : "fee"))} />
+            <FilterPopover open={openPill === "fee"} onClose={() => setOpenPill(null)} label="Fee structure">
+              <p className="text-xs font-bold text-slate-900 mb-2">Fee structure</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {FEE_OPTIONS.map((o) => (
+                  <button key={o.value} type="button" onClick={() => { setFeeFilter(o.value); setOpenPill(null); }}
+                    className={`px-2.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${feeFilter === o.value ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                    {o.label}
                   </button>
                 ))}
               </div>
+            </FilterPopover>
+          </div>
+          {/* Rating */}
+          <div className="relative">
+            <FilterPill icon="star" label="Rating" active={minRating > 0} open={openPill === "rating"}
+              value={minRating > 0 ? RATING_OPTIONS.find((o) => o.value === minRating)?.label : undefined}
+              onClick={() => setOpenPill((o) => (o === "rating" ? null : "rating"))} />
+            <FilterPopover open={openPill === "rating"} onClose={() => setOpenPill(null)} label="Minimum rating">
+              <p className="text-xs font-bold text-slate-900 mb-2">Minimum rating</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {RATING_OPTIONS.map((o) => (
+                  <button key={o.value} type="button" onClick={() => { setMinRating(o.value); setOpenPill(null); }}
+                    className={`px-2.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${minRating === o.value ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </FilterPopover>
+          </div>
+        </div>
+
+        {/* All-filters drawer — canonical FilterPanel; opens on every breakpoint. */}
+        <FilterPanel
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+          onClearAll={clearAll}
+          activeCount={activeFilterCount}
+          resultCount={feed.length}
+          variant="drawer"
+        >
+          <div className="space-y-5">
+            {/* Sort — mobile-reachable (toolbar SortDropdown is desktop-only) */}
+            <div className="md:hidden">
+              <label htmlFor="advisor-sort-m" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Sort</label>
+              <select id="advisor-sort-m" value={sortBy} onChange={(e) => setSortBy(e.target.value as SortKey)} className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                {SORT_OPTIONS.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
+              </select>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-              <div>
-                <label className="text-xs font-bold text-slate-700 mb-1.5 block">State</label>
-                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={isLocationActive}>
-                  <option value="all">All States</option>
-                  {AU_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+            {/* Location / near me */}
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5"><Icon name="map-pin" size={13} className="text-amber-500" />Location</span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="sm:col-span-2"><LocationSearch selected={locationSearch} onSelect={(p) => { setLocationSearch(p); if (!p) { setUserLat(null); setUserLng(null); } }} /></div>
+                <select value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" disabled={!isLocationActive}>
+                  {RADIUS_OPTIONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
                 </select>
               </div>
+              <div className="mt-1.5"><UseMyLocation onLocate={(lat, lng) => { setUserLat(lat); setUserLng(lng); setSortBy("distance"); setLocationSearch({ postcode: "", locality: "My location", state: "", latitude: lat, longitude: lng }); }} /></div>
+            </div>
+
+            <FacetGroup
+              label="Advisor type"
+              layout="grid"
+              counts={typeCounts}
+              selected={typeFilters}
+              onChange={(next) => setTypeFilters(next)}
+              options={TYPE_FILTERS.filter((f) => f.key !== "all").map((f) => ({ value: f.key as ProfessionalType, label: f.label }))}
+            />
+
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Fee Structure</label>
-                <select value={feeFilter} onChange={e => setFeeFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+                <label htmlFor="adv-fee" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Fee structure</label>
+                <select id="adv-fee" value={feeFilter} onChange={(e) => setFeeFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
                   <option value="all">Any</option>
                   <option value="fee-for-service">Fee for Service</option>
                   <option value="commission">Commission</option>
@@ -773,200 +926,82 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Advisory Firm</label>
-                <select value={firmFilter} onChange={e => setFirmFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+                <label htmlFor="adv-firm" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Advisory firm</label>
+                <select id="adv-firm" value={firmFilter} onChange={(e) => setFirmFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
                   <option value="all">All Firms</option>
-                  {allFirmNames.map(f => <option key={f} value={f}>{f}</option>)}
+                  {allFirmNames.map((f) => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Min Rating</label>
-                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
-                  <option value={0}>Any</option>
-                  <option value={4.5}>4.5+ ★</option>
-                  <option value={4.0}>4.0+ ★</option>
-                  <option value={3.5}>3.5+ ★</option>
-                  <option value={3.0}>3.0+ ★</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Language</label>
-                <select value={languageFilter} onChange={e => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+                <label htmlFor="adv-lang" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">Language</label>
+                <select id="adv-lang" value={languageFilter} onChange={(e) => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
                   <option value="all">Any</option>
-                  {allLanguages.map(l => <option key={l} value={l}>{l}</option>)}
+                  {allLanguages.map((l) => <option key={l} value={l}>{l}</option>)}
                 </select>
               </div>
-              <div className="flex items-end">
-                <label className="flex items-center gap-2 cursor-pointer py-2">
-                  <input type="checkbox" checked={verifiedOnly} onChange={() => setVerifiedOnly(!verifiedOnly)} className="w-4 h-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500" />
-                  <span className="text-xs font-semibold text-slate-700">Verified only</span>
-                </label>
+              <div>
+                <label htmlFor="adv-state" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">State</label>
+                <select id="adv-state" value={stateFilter} onChange={(e) => setStateFilter(e.target.value)} disabled={isLocationActive} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50">
+                  <option value="all">All States</option>
+                  {AU_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
               </div>
             </div>
 
-            {/* Toggle row — International, Accepting new, Intro video */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => setInternationalOnly(!internationalOnly)}
-                aria-pressed={internationalOnly}
-                className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg border transition-all text-left ${internationalOnly ? "border-blue-300 bg-blue-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-base leading-none">🌏</span>
-                  <span className={`text-xs font-bold truncate ${internationalOnly ? "text-blue-900" : "text-slate-700"}`}>International clients</span>
-                </div>
-                <span className={`relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors ${internationalOnly ? "bg-blue-600" : "bg-slate-300"}`}>
-                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform mt-0.5 ${internationalOnly ? "translate-x-3.5" : "translate-x-0.5"}`} />
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setAcceptingOnly(!acceptingOnly)}
-                aria-pressed={acceptingOnly}
-                className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg border transition-all text-left ${acceptingOnly ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <Icon name="check-circle" size={14} className={acceptingOnly ? "text-emerald-600" : "text-slate-400"} />
-                  <span className={`text-xs font-bold truncate ${acceptingOnly ? "text-emerald-900" : "text-slate-700"}`}>Accepting new clients</span>
-                </div>
-                <span className={`relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors ${acceptingOnly ? "bg-emerald-600" : "bg-slate-300"}`}>
-                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform mt-0.5 ${acceptingOnly ? "translate-x-3.5" : "translate-x-0.5"}`} />
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setVideoOnly(!videoOnly)}
-                aria-pressed={videoOnly}
-                className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg border transition-all text-left ${videoOnly ? "border-indigo-300 bg-indigo-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <Icon name="video" size={14} className={videoOnly ? "text-indigo-600" : "text-slate-400"} />
-                  <span className={`text-xs font-bold truncate ${videoOnly ? "text-indigo-900" : "text-slate-700"}`}>With intro video</span>
-                </div>
-                <span className={`relative inline-flex h-4 w-7 shrink-0 rounded-full transition-colors ${videoOnly ? "bg-indigo-600" : "bg-slate-300"}`}>
-                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white shadow transition-transform mt-0.5 ${videoOnly ? "translate-x-3.5" : "translate-x-0.5"}`} />
-                </span>
-              </button>
-            </div>
+            <FacetGroup
+              label="Availability & focus"
+              selected={new Set([verifiedOnly ? "verified" : "", internationalOnly ? "international" : "", acceptingOnly ? "accepting" : "", videoOnly ? "video" : ""].filter(Boolean))}
+              onChange={(next) => { setVerifiedOnly(next.has("verified")); setInternationalOnly(next.has("international")); setAcceptingOnly(next.has("accepting")); setVideoOnly(next.has("video")); }}
+              options={[{ value: "verified", label: "Verified only" }, { value: "international", label: "International clients" }, { value: "accepting", label: "Accepting new clients" }, { value: "video", label: "Has intro video" }]}
+            />
 
-            {/* Specialties */}
-            <div>
-              <label className="text-xs font-bold text-slate-700 mb-2 block">Specialties {specialtyFilters.length > 0 && <span className="text-amber-600">({specialtyFilters.length} selected)</span>}</label>
-              <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
-                {allSpecialties.map(s => (
-                  <button key={s} onClick={() => toggleSpecialty(s)} className={`px-2.5 py-1 text-[0.65rem] font-medium rounded-full transition-all ${specialtyFilters.includes(s) ? "bg-amber-100 text-amber-700 border border-amber-300" : "bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100"}`}>{s}</button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-              <button onClick={clearAll} className="text-xs text-slate-500 hover:text-slate-700 font-medium">Clear all filters</button>
-              <button onClick={() => setFiltersOpen(false)} className="px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">
-                {nearbyLoading ? "Searching..." : `Show ${feed.length} result${feed.length !== 1 ? "s" : ""}`}
-              </button>
-            </div>
+            {allSpecialties.length > 0 && (
+              <FacetGroup
+                label="Specialties"
+                layout="grid"
+                selected={new Set(specialtyFilters)}
+                onChange={(next) => setSpecialtyFilters(Array.from(next))}
+                options={allSpecialties.map((s) => ({ value: s, label: s }))}
+              />
+            )}
           </div>
-        )}
+        </FilterPanel>
 
-        {/* Active filter chips */}
-        {activeFilterCount > 0 && !filtersOpen && (
-          <div className="flex flex-wrap items-center gap-1.5 mb-3">
-            {isLocationActive && locationSearch && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                <Icon name="map-pin" size={11} />
-                {radius > 0 ? `${radius}km from ` : "Near "}{locationSearch.locality}
-                <button onClick={() => { setLocationSearch(null); setUserLat(null); setUserLng(null); }} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {Array.from(typeFilters).map(t => (
-              <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {TYPE_FILTERS.find(f => f.key === t)?.label}
-                <button onClick={() => toggleType(t)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            ))}
-            {stateFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 text-[0.65rem] font-semibold rounded-full">
-                {stateFilter}
-                <button onClick={() => setStateFilter("all")} className="hover:text-blue-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {specialtyFilters.map(s => (
-              <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[0.65rem] font-semibold rounded-full">
-                {s}
-                <button onClick={() => toggleSpecialty(s)} className="hover:text-emerald-900"><Icon name="x" size={12} /></button>
-              </span>
-            ))}
-            {feeFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {feeFilter}
-                <button onClick={() => setFeeFilter("all")} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {firmFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                {firmFilter}
-                <button onClick={() => setFirmFilter("all")} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {minRating > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {minRating}+ ★
-                <button onClick={() => setMinRating(0)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {verifiedOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-700 text-[0.65rem] font-semibold rounded-full">
-                Verified
-                <button onClick={() => setVerifiedOnly(false)} className="hover:text-slate-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {internationalOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 text-[0.65rem] font-semibold rounded-full">
-                🌏 International clients
-                <button onClick={() => setInternationalOnly(false)} className="hover:text-blue-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {languageFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                Speaks {languageFilter}
-                <button onClick={() => setLanguageFilter("all")} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {acceptingOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[0.65rem] font-semibold rounded-full">
-                ✓ Accepting new
-                <button onClick={() => setAcceptingOnly(false)} className="hover:text-emerald-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {videoOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                ▶ Intro video
-                <button onClick={() => setVideoOnly(false)} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            <button onClick={clearAll} className="text-[0.62rem] text-slate-400 hover:text-slate-600 font-medium ml-1">Clear all</button>
-          </div>
-        )}
+        {/* Active filter chips — canonical primitive */}
+        <FilterChips
+          className="mb-3"
+          onClearAll={clearAll}
+          chips={[
+            ...(isLocationActive && locationSearch ? [{ label: `${radius > 0 ? `${radius}km from ` : "Near "}${locationSearch.locality}`, onClear: () => { setLocationSearch(null); setUserLat(null); setUserLng(null); } }] : []),
+            ...Array.from(typeFilters).map((tf) => ({ label: TYPE_FILTERS.find((f) => f.key === tf)?.label ?? String(tf), onClear: () => toggleType(tf) })),
+            ...(stateFilter !== "all" ? [{ label: stateFilter, onClear: () => setStateFilter("all") }] : []),
+            ...specialtyFilters.map((s) => ({ label: s, onClear: () => toggleSpecialty(s) })),
+            ...(feeFilter !== "all" ? [{ label: feeFilter, onClear: () => setFeeFilter("all") }] : []),
+            ...(firmFilter !== "all" ? [{ label: firmFilter, onClear: () => setFirmFilter("all") }] : []),
+            ...(minRating > 0 ? [{ label: `${minRating}+ stars`, onClear: () => setMinRating(0) }] : []),
+            ...(verifiedOnly ? [{ label: "Verified", onClear: () => setVerifiedOnly(false) }] : []),
+            ...(internationalOnly ? [{ label: "International clients", onClear: () => setInternationalOnly(false) }] : []),
+            ...(languageFilter !== "all" ? [{ label: `Speaks ${languageFilter}`, onClear: () => setLanguageFilter("all") }] : []),
+            ...(acceptingOnly ? [{ label: "Accepting new", onClear: () => setAcceptingOnly(false) }] : []),
+            ...(videoOnly ? [{ label: "Intro video", onClear: () => setVideoOnly(false) }] : []),
+          ]}
+        />
 
-        {/* Result count */}
+        {/* Result count — canonical primitive */}
         <div className="flex items-center justify-between mb-3 md:mb-4">
-          <p className="text-xs md:text-sm text-slate-500">
-            {nearbyLoading ? (
-              <span className="text-slate-400">Searching nearby advisors...</span>
-            ) : (
-              <>
-                <span className="font-bold text-slate-700">{feed.length}</span>{" "}
-                {(() => {
-                  const noun = providerType === "firm" ? "firm" : providerType === "team" ? "expert team" : providerType === "individual" ? "advisor" : "listing";
-                  const plural = feed.length !== 1;
-                  const base = `${noun}${plural ? (noun === "expert team" ? "s" : noun === "firm" ? "s" : noun === "advisor" ? "s" : "s") : ""}`;
-                  return contextParts.length > 0 ? `${base} ${contextParts.join(" ")}` : base;
-                })()}
-                {search && <span className="text-slate-400"> matching &ldquo;{search}&rdquo;</span>}
-              </>
-            )}
-          </p>
+          {nearbyLoading ? (
+            <span className="text-sm text-slate-400">Searching nearby advisors…</span>
+          ) : (
+            <ResultCount
+              total={feed.length}
+              noun={(() => {
+                const base = providerType === "firm" ? "firm" : providerType === "team" ? "expert team" : providerType === "individual" ? "advisor" : "listing";
+                const noun = `${base}${feed.length !== 1 ? "s" : ""}`;
+                const ctx = contextParts.length > 0 ? `${noun} ${contextParts.join(" ")}` : noun;
+                return search ? `${ctx} matching “${search}”` : ctx;
+              })()}
+            />
+          )}
           {totalPages > 1 && <p className="text-[0.62rem] md:text-xs text-slate-400">Page {page} of {totalPages}</p>}
         </div>
 
@@ -1006,33 +1041,34 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
         {/* Results */}
         {nearbyLoading ? (
-          <div className="space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-white border border-slate-100 rounded-2xl p-4 md:p-5 animate-pulse shadow-sm">
-                <div className="flex gap-4">
-                  <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-slate-100 shrink-0" />
-                  <div className="flex-1 space-y-2.5 py-1">
-                    <div className="flex items-center gap-2">
-                      <div className="h-4 w-36 bg-slate-100 rounded-full" />
-                      <div className="h-4 w-16 bg-slate-50 rounded-full" />
-                    </div>
-                    <div className="h-3 w-24 bg-slate-50 rounded-full" />
-                    <div className="flex gap-1.5">
-                      <div className="h-5 w-20 bg-slate-50 rounded-full" />
-                      <div className="h-5 w-28 bg-slate-50 rounded-full" />
-                    </div>
-                    <div className="flex gap-1">
-                      <div className="h-4 w-16 bg-slate-50 rounded-full" />
-                      <div className="h-4 w-20 bg-slate-50 rounded-full" />
-                      <div className="h-4 w-14 bg-slate-50 rounded-full" />
-                    </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-white border border-slate-100 rounded-2xl overflow-hidden animate-pulse shadow-sm flex flex-col">
+                <div className="h-44 bg-slate-100" />
+                <div className="p-4 flex-1 space-y-3">
+                  <div className="flex gap-1.5">
+                    <div className="h-5 w-16 bg-slate-100 rounded-full" />
+                    <div className="h-5 w-20 bg-slate-50 rounded-full" />
+                  </div>
+                  <div className="flex gap-1.5">
+                    <div className="h-5 w-14 bg-slate-50 rounded-full" />
+                    <div className="h-5 w-16 bg-slate-50 rounded-full" />
+                    <div className="h-5 w-12 bg-slate-50 rounded-full" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div className="h-10 bg-slate-50 rounded-lg" />
+                    <div className="h-10 bg-slate-50 rounded-lg" />
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                    <div className="h-3 w-20 bg-slate-50 rounded-full" />
+                    <div className="h-7 w-24 bg-slate-100 rounded-lg" />
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : paginatedFeed.length > 0 ? (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
             {paginatedFeed.map((item, index) => {
               if (item.kind === "firm") {
                 const firm = item.firm;
@@ -1040,58 +1076,55 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   <Link
                     key={item.key}
                     href={`/firm/${firm.slug}`}
-                    className="group block bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
+                    className="group flex flex-col bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
                   >
-                    <div className="h-0.5 bg-gradient-to-r from-blue-300 via-blue-500 to-blue-300" />
-                    <div className="p-4 md:p-5 flex gap-4">
-                      <div className="relative shrink-0">
-                        {firm.logo_url ? (
-                          <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl overflow-hidden ring-2 ring-slate-100 shadow-sm bg-white flex items-center justify-center">
-                            <Image src={firm.logo_url} alt={firm.name} width={80} height={80} className="w-full h-full object-contain" />
-                          </div>
-                        ) : (
-                          <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-blue-200/60 select-none">
-                            {firm.name.split(/\s+/).slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()}
-                          </div>
-                        )}
+                    {/* Logo / icon header on a blue gradient */}
+                    <div className="relative h-44 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                      <div className="absolute top-3 left-3 flex gap-1.5">
+                        <span className="shrink-0 text-[0.58rem] font-bold px-2 py-0.5 rounded-full bg-white/90 text-blue-700 flex items-center gap-1 shadow-sm">
+                          <Icon name="building" size={9} />
+                          Firm
+                        </span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-bold text-[15px] md:text-base text-slate-900 leading-tight">{firm.name}</span>
-                          <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-0.5">
-                            <Icon name="building" size={9} />
-                            Firm
-                          </span>
-                          {firm.afsl_number && (
-                            <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                              AFSL {firm.afsl_number}
-                            </span>
-                          )}
+                      {firm.afsl_number && (
+                        <span className="absolute top-3 right-3 shrink-0 text-[0.58rem] font-bold px-2 py-0.5 rounded-full bg-black/45 backdrop-blur text-white border border-white/20">
+                          AFSL {firm.afsl_number}
+                        </span>
+                      )}
+                      {firm.logo_url ? (
+                        <div className="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-white/80 shadow-lg bg-white flex items-center justify-center">
+                          <Image src={firm.logo_url} alt={firm.name} width={80} height={80} className="w-full h-full object-contain" />
                         </div>
-                        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap text-[0.65rem] text-slate-500">
+                      ) : (
+                        <div className="w-20 h-20 rounded-2xl bg-white/15 ring-2 ring-white/40 flex items-center justify-center text-white font-bold text-2xl select-none">
+                          {firm.name.split(/\s+/).slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    {/* Body */}
+                    <div className="p-4 flex flex-col flex-1">
+                      <span className="font-bold text-[15px] md:text-base text-slate-900 leading-tight line-clamp-2">{firm.name}</span>
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap text-[0.65rem] text-slate-500">
+                        <span className="flex items-center gap-0.5">
+                          <Icon name="users" size={10} className="text-blue-400" />
+                          {item.memberCount} advisor{item.memberCount === 1 ? "" : "s"}
+                        </span>
+                        {firm.location_display && (
                           <span className="flex items-center gap-0.5">
-                            <Icon name="users" size={10} className="text-blue-400" />
-                            {item.memberCount} advisor{item.memberCount === 1 ? "" : "s"}
+                            <Icon name="map-pin" size={10} className="text-slate-400" />
+                            {firm.location_display}
                           </span>
-                          {firm.location_display && (
-                            <span className="flex items-center gap-0.5">
-                              <Icon name="map-pin" size={10} className="text-slate-400" />
-                              {firm.location_display}
-                            </span>
-                          )}
-                        </div>
-                        {firm.bio && (
-                          <p className="text-[0.7rem] md:text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">{firm.bio}</p>
                         )}
-                        <div className="mt-2.5 inline-flex items-center gap-1 text-xs font-bold text-blue-700">
-                          View firm profile
-                          <Icon name="arrow-right" size={11} />
-                        </div>
                       </div>
-                      <div className="shrink-0 self-center hidden md:flex ml-1">
-                        <div className="w-8 h-8 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 group-hover:border-blue-200 transition-all">
-                          <Icon name="chevron-right" size={14} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
-                        </div>
+                      {firm.bio && (
+                        <p className="text-[0.7rem] md:text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">{firm.bio}</p>
+                      )}
+                      <div className="mt-auto pt-3 flex items-center justify-between border-t border-slate-100">
+                        <span className="text-[0.62rem] text-slate-400">{item.memberCount} advisor{item.memberCount === 1 ? "" : "s"}</span>
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-700 group-hover:text-blue-800">
+                          View firm
+                          <Icon name="arrow-right" size={11} />
+                        </span>
                       </div>
                     </div>
                   </Link>
@@ -1103,45 +1136,44 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 return (
                   <div
                     key={item.key}
-                    className="group block bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all duration-200 overflow-hidden"
+                    className="group flex flex-col bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-emerald-200 hover:-translate-y-0.5 transition-all duration-200 overflow-hidden"
                   >
-                    <div className="h-0.5 bg-gradient-to-r from-emerald-300 via-emerald-500 to-emerald-300" />
-                    <div className="p-4 md:p-5 flex gap-4">
-                      <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-200/60 shrink-0">
-                        <Icon name="users" size={28} className="text-white" />
+                    {/* Icon header on an emerald gradient */}
+                    <div className="relative h-44 bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
+                      <span className="absolute top-3 left-3 shrink-0 text-[0.58rem] font-bold px-2 py-0.5 rounded-full bg-white/90 text-emerald-700 flex items-center gap-1 shadow-sm">
+                        <Icon name="users" size={9} />
+                        Expert Team
+                      </span>
+                      <div className="w-20 h-20 rounded-2xl bg-white/15 ring-2 ring-white/40 flex items-center justify-center text-white select-none">
+                        <Icon name="users" size={34} className="text-white" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <Link href={`/teams/${team.slug}`} className="font-bold text-[15px] md:text-base text-slate-900 leading-tight hover:underline">
-                            {team.name}
-                          </Link>
-                          <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-0.5">
-                            <Icon name="users" size={9} />
-                            Expert Team
-                          </span>
-                        </div>
-                        <p className="text-[0.65rem] text-slate-500 mt-1 capitalize">
-                          {team.team_category.replace(/_/g, " ")} · {team.team_type.replace(/_/g, " ")}
-                          {team.location_state ? ` · ${team.location_state}` : ""}
-                        </p>
-                        {team.description && (
-                          <p className="text-[0.7rem] md:text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">{team.description}</p>
-                        )}
-                        <div className="flex gap-2 mt-2.5">
-                          <Link
-                            href={`/teams/${team.slug}`}
-                            className="text-[0.7rem] md:text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-md px-3 py-1.5 hover:border-slate-300"
-                          >
-                            View team
-                          </Link>
-                          <Link
-                            href={`/briefs/new?team=${encodeURIComponent(team.slug)}`}
-                            className="text-[0.7rem] md:text-xs font-bold text-slate-900 bg-amber-500 hover:bg-amber-400 rounded-md px-3 py-1.5 inline-flex items-center gap-1"
-                          >
-                            Create brief
-                            <Icon name="arrow-right" size={11} />
-                          </Link>
-                        </div>
+                    </div>
+                    {/* Body */}
+                    <div className="p-4 flex flex-col flex-1">
+                      <Link href={`/teams/${team.slug}`} className="font-bold text-[15px] md:text-base text-slate-900 leading-tight hover:underline line-clamp-2">
+                        {team.name}
+                      </Link>
+                      <p className="text-[0.65rem] text-slate-500 mt-1 capitalize">
+                        {team.team_category.replace(/_/g, " ")} · {team.team_type.replace(/_/g, " ")}
+                        {team.location_state ? ` · ${team.location_state}` : ""}
+                      </p>
+                      {team.description && (
+                        <p className="text-[0.7rem] md:text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">{team.description}</p>
+                      )}
+                      <div className="flex gap-2 mt-auto pt-3 border-t border-slate-100">
+                        <Link
+                          href={`/teams/${team.slug}`}
+                          className="flex-1 text-center text-[0.7rem] md:text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-lg px-3 py-2 hover:border-slate-300"
+                        >
+                          View team
+                        </Link>
+                        <Link
+                          href={`/briefs/new?team=${encodeURIComponent(team.slug)}`}
+                          className="flex-1 text-center text-[0.7rem] md:text-xs font-bold text-white bg-coral-600 hover:bg-coral-700 rounded-lg px-3 py-2 inline-flex items-center justify-center gap-1"
+                        >
+                          Create brief
+                          <Icon name="arrow-right" size={11} />
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -1150,230 +1182,193 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
               const pro = item.pro;
               const isFeatured = !!(pro.featured_until && new Date(pro.featured_until) > new Date());
+              const initials = pro.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
+              const feeText = pro.fee_description
+                ? pro.fee_description
+                : pro.flat_fee_cents
+                  ? `${formatCents(pro.flat_fee_cents)} flat`
+                  : pro.hourly_rate_cents
+                    ? `${formatCents(pro.hourly_rate_cents)}/hr`
+                    : pro.aum_percentage
+                      ? `${pro.aum_percentage}% AUM`
+                      : "On enquiry";
+              const availability = pro.availability_status ?? "open";
               return (
-                <Link key={item.key} href={`/advisor/${pro.slug}`} className={`group block bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
+                <Link key={item.key} href={`/advisor/${pro.slug}`} className={`group flex flex-col bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
                   isFeatured
-                    ? "shadow-md shadow-amber-50 hover:shadow-xl hover:shadow-amber-100/50 hover:-translate-y-0.5 ring-1 ring-amber-200/80 border border-amber-200"
-                    : "shadow-sm border border-slate-100 hover:shadow-md hover:shadow-slate-100 hover:-translate-y-0.5 hover:border-slate-200"
+                    ? "shadow-md shadow-coral-50 hover:shadow-xl hover:shadow-coral-100/50 hover:-translate-y-0.5 ring-1 ring-coral-200/80 border border-coral-200"
+                    : "shadow-sm border border-slate-100 hover:shadow-lg hover:shadow-slate-100 hover:-translate-y-0.5 hover:border-slate-200"
                 }`}>
-                  {isFeatured && (
-                    <div className="h-0.5 bg-gradient-to-r from-amber-300 via-amber-500 to-amber-300" />
-                  )}
-                  <div className="p-4 md:p-5 flex gap-4">
-                    {/* Photo */}
-                    <div className="relative shrink-0">
-                      {pro.photo_url ? (
-                        <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl overflow-hidden ring-2 ring-slate-100 shadow-sm">
-                          <Image
-                            src={pro.photo_url}
-                            alt={pro.name}
-                            width={80}
-                            height={80}
-                            className="w-full h-full object-cover"
-                            priority={index < 3}
-                            placeholder="blur"
-                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
-                          />
-                        </div>
-                      ) : (
-                        <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-amber-200/60 select-none">
-                          {pro.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
-                        </div>
+                  {/* Photo-led header */}
+                  <div className="relative h-44 bg-ink-900 overflow-hidden">
+                    <AdvisorPhoto
+                      src={pro.photo_url}
+                      alt={pro.name}
+                      initials={initials}
+                      priority={index < 4}
+                    />
+                    {/* legibility scrim */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/70" />
+
+                    {/* top-left status pills */}
+                    <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[60%]">
+                      {isFeatured && (
+                        <span
+                          title={SPONSORED_DISCLOSURE_SHORT}
+                          className="shrink-0 text-[0.58rem] font-bold px-2 py-0.5 rounded-full bg-coral-600 text-white flex items-center gap-1 shadow-sm cursor-help"
+                        >
+                          <Icon name="star" size={9} />
+                          Featured · Paid
+                        </span>
                       )}
-                      {pro.verified && (
-                        <div className="absolute -bottom-1 -right-1 w-4.5 h-4.5 bg-amber-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
-                          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </div>
+                      {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
+                        <span className="shrink-0 text-[0.58rem] font-bold px-2 py-0.5 rounded-full bg-black/45 backdrop-blur text-white border border-white/20 flex items-center gap-1">
+                          <Icon name="zap" size={9} className="text-emerald-300" />
+                          Fast reply
+                        </span>
                       )}
                     </div>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      {/* Name + badges row */}
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="font-bold text-[15px] md:text-base text-slate-900 leading-tight">{pro.name}</span>
-                            {pro.verified && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-0.5">
-                                <svg className="w-2 h-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                                Verified
-                              </span>
-                            )}
-                            <VerifiedBadge
-                              method={pro.verification_method ?? null}
-                              abn={pro.abn ?? null}
-                              afsl={pro.afsl_number ?? null}
-                              compact
-                            />
-                            {isFeatured && (
-                              <span
-                                title={SPONSORED_DISCLOSURE_SHORT}
-                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm cursor-help"
-                              >
-                                <Icon name="star" size={9} />
-                                Featured · Paid
-                              </span>
-                            )}
-                            {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-0.5">
-                                <Icon name="zap" size={9} className="text-emerald-500" />
-                                Fast reply
-                              </span>
-                            )}
-                            {/* PR queue #12.5 — eligibility badge per visitor's intent country */}
-                            <EligibilityBadge entity={pro} intentCountry={intentCountry} compact />
-                            {pro.accepts_international_clients && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">🌏 Intl</span>
-                            )}
-                            {pro.firb_specialist && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">FIRB</span>
-                            )}
-                            {/* Availability status badge */}
-                            {(pro.availability_status === 'open' || !pro.availability_status) && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 border border-green-200 flex items-center gap-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
-                                Accepting Clients
-                              </span>
-                            )}
-                            {pro.availability_status === 'waitlist' && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200 flex items-center gap-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-                                Waitlist Open
-                              </span>
-                            )}
-                            {pro.availability_status === 'closed' && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200 flex items-center gap-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
-                                Not Taking New Clients
-                              </span>
-                            )}
-                          </div>
-                          {pro.firm_name && (
-                            <p className="text-[0.68rem] md:text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                              <Icon name="building" size={10} className="text-slate-400 shrink-0" />
-                              <span className="truncate">{pro.firm_name}</span>
-                            </p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <BookmarkButton
-                            type="advisor"
-                            ref={pro.slug}
-                            label={pro.name}
-                            className="shrink-0 p-1.5 rounded-lg text-slate-300 hover:text-amber-600 hover:bg-amber-50 transition-colors"
-                          />
-                          <button
-                            onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
-                            disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
-                            title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
-                            className={`shrink-0 p-1.5 rounded-lg transition-colors ${inShortlist(pro.slug) ? "text-violet-600 bg-violet-50 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "text-slate-200 cursor-not-allowed" : "text-slate-300 hover:text-violet-500 hover:bg-violet-50"}`}
-                          >
-                            <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
-                          </button>
-                        </div>
-                      </div>
+                    {/* top-right rating + actions */}
+                    <div className="absolute top-3 right-3 flex items-center gap-1">
+                      {pro.rating > 0 && pro.review_count > 0 && (
+                        <span className="shrink-0 text-[0.62rem] font-bold px-2 py-0.5 rounded-full bg-black/55 backdrop-blur text-white border border-white/20 flex items-center gap-1">
+                          <svg className="w-2.5 h-2.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                          {pro.rating}
+                          <span className="opacity-70 font-semibold">({pro.review_count})</span>
+                        </span>
+                      )}
+                      <BookmarkButton
+                        type="advisor"
+                        ref={pro.slug}
+                        label={pro.name}
+                        className="shrink-0 p-1.5 rounded-lg bg-black/45 backdrop-blur text-white/90 hover:text-white hover:bg-black/60 transition-colors"
+                      />
+                      <button
+                        onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
+                        disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
+                        title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
+                        className={`shrink-0 p-1.5 rounded-lg backdrop-blur transition-colors ${inShortlist(pro.slug) ? "text-white bg-violet-600 hover:bg-violet-700" : shortlistCount >= shortlistMax ? "text-white/40 bg-black/30 cursor-not-allowed" : "text-white/90 bg-black/45 hover:text-white hover:bg-black/60"}`}
+                      >
+                        <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
+                      </button>
+                    </div>
 
-                      {/* Type + Location row */}
-                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                        <span className="shrink-0 text-[0.65rem] text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full font-semibold">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
-                        {pro.account_type === "firm_member" ? (
-                          <span className="shrink-0 text-[0.6rem] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                            <Icon name="users" size={9} className="text-blue-400" />Firm
+                    {/* bottom identity overlay */}
+                    <div className="absolute bottom-2.5 left-3 right-3 text-white">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-bold text-base leading-tight truncate drop-shadow">{pro.name}</span>
+                        {pro.verified && (
+                          <span className="shrink-0 w-4 h-4 bg-emerald-500 rounded-full border border-white/80 flex items-center justify-center shadow-sm" title="Verified">
+                            <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
                           </span>
-                        ) : !pro.firm_name ? (
-                          <span className="shrink-0 text-[0.6rem] font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-full">Independent</span>
-                        ) : null}
+                        )}
+                      </div>
+                      <div className="text-[0.68rem] text-white/85 mt-0.5 flex items-center gap-1 truncate">
+                        <span className="font-semibold">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
                         {pro.location_display && (
-                          <span className="text-[0.65rem] text-slate-500 flex items-center gap-0.5">
-                            <Icon name="map-pin" size={10} className="text-slate-400" />{pro.location_display}
-                          </span>
+                          <>
+                            <span className="opacity-60">·</span>
+                            <Icon name="map-pin" size={10} className="text-white/70 shrink-0" />
+                            <span className="truncate">{pro.location_display}</span>
+                          </>
                         )}
                         {pro.distance_km !== undefined && pro.distance_km !== null && (
-                          <span className="shrink-0 text-[0.65rem] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">
-                            {pro.distance_km < 1 ? "<1 km" : `${pro.distance_km} km`}
-                          </span>
+                          <span className="shrink-0 opacity-80">· {pro.distance_km < 1 ? "<1 km" : `${pro.distance_km} km`}</span>
                         )}
                       </div>
+                    </div>
+                  </div>
 
-                      {/* Rating */}
-                      {pro.rating > 0 && pro.review_count > 0 && (
-                        <div className="flex items-center gap-1.5 mt-1.5">
-                          <div className="flex items-center gap-0.5">
-                            {[1, 2, 3, 4, 5].map(star => (
-                              <svg key={star} className={`w-3 h-3 md:w-3.5 md:h-3.5 ${star <= Math.round(pro.rating) ? "text-amber-400" : "text-slate-200"}`} fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                              </svg>
-                            ))}
-                          </div>
-                          <span className="text-[0.68rem] md:text-xs font-semibold text-slate-700">{pro.rating}</span>
-                          <span className="text-[0.62rem] text-slate-400">({pro.review_count} review{pro.review_count !== 1 ? "s" : ""})</span>
-                        </div>
+                  {/* Body */}
+                  <div className="p-3.5 md:p-4 flex flex-col flex-1">
+                    {/* Badge row */}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <VerifiedBadge
+                        method={pro.verification_method ?? null}
+                        abn={pro.abn ?? null}
+                        afsl={pro.afsl_number ?? null}
+                        compact
+                      />
+                      {/* PR queue #12.5 — eligibility badge per visitor's intent country */}
+                      <EligibilityBadge entity={pro} intentCountry={intentCountry} compact />
+                      {pro.accepts_international_clients && (
+                        <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">🌏 Intl</span>
                       )}
-
-                      {/* Fee description */}
-                      {pro.fee_description && (
-                        <p className="text-[0.65rem] md:text-xs text-slate-500 mt-1.5 line-clamp-1 leading-relaxed">{pro.fee_description}</p>
+                      {pro.firb_specialist && (
+                        <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">FIRB</span>
                       )}
-
-                      {/* Structured fees */}
-                      {(pro.hourly_rate_cents || pro.flat_fee_cents || pro.aum_percentage || pro.initial_consultation_free) && (
-                        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                          {pro.hourly_rate_cents && (
-                            <span className="text-[0.6rem] text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
-                              {formatCents(pro.hourly_rate_cents)}/hr
-                            </span>
-                          )}
-                          {pro.flat_fee_cents && (
-                            <span className="text-[0.6rem] text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
-                              {formatCents(pro.flat_fee_cents)} flat
-                            </span>
-                          )}
-                          {pro.aum_percentage && (
-                            <span className="text-[0.6rem] text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
-                              {pro.aum_percentage}% AUM
-                            </span>
-                          )}
-                          {pro.initial_consultation_free && (
-                            <span className="text-[0.6rem] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">
-                              Free consult
-                            </span>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Specialties */}
-                      {pro.specialties.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {pro.specialties.slice(0, 4).map(s => (
-                            <span key={s} className={`text-[0.6rem] font-medium px-2 py-0.5 rounded-full border ${
-                              specialtyFilters.includes(s)
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                : "bg-slate-50 text-slate-500 border-slate-200"
-                            }`}>{s}</span>
-                          ))}
-                          {pro.specialties.length > 4 && (
-                            <span className="text-[0.6rem] text-slate-400 self-center">+{pro.specialties.length - 4} more</span>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Offer */}
-                      {pro.offer_active && pro.offer_text && (
-                        <div className="mt-2 bg-gradient-to-r from-amber-50 to-amber-50/0 border border-amber-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
-                          <Icon name="tag" size={11} className="text-amber-500 shrink-0" />
-                          <span className="text-[0.6rem] md:text-[0.65rem] font-bold text-amber-700 truncate">{pro.offer_text}</span>
-                        </div>
+                      {pro.account_type === "firm_member" && pro.firm_name ? (
+                        <span className="shrink-0 text-[0.58rem] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded-full flex items-center gap-0.5 max-w-[10rem]">
+                          <Icon name="building" size={9} className="text-blue-400 shrink-0" />
+                          <span className="truncate">{pro.firm_name}</span>
+                        </span>
+                      ) : !pro.firm_name ? (
+                        <span className="shrink-0 text-[0.58rem] font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-full">Independent</span>
+                      ) : (
+                        <span className="shrink-0 text-[0.58rem] font-semibold text-slate-600 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-full flex items-center gap-0.5 max-w-[10rem]">
+                          <Icon name="building" size={9} className="text-slate-400 shrink-0" />
+                          <span className="truncate">{pro.firm_name}</span>
+                        </span>
                       )}
                     </div>
 
-                    {/* Right arrow */}
-                    <div className="shrink-0 self-center hidden md:flex ml-1">
-                      <div className="w-8 h-8 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center group-hover:bg-amber-50 group-hover:border-amber-200 transition-all">
-                        <Icon name="chevron-right" size={14} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
+                    {/* Specialties */}
+                    {pro.specialties.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2.5">
+                        {pro.specialties.slice(0, 3).map(s => (
+                          <span key={s} className={`text-[0.6rem] font-medium px-2 py-0.5 rounded-full border ${
+                            specialtyFilters.includes(s)
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              : "bg-slate-50 text-slate-500 border-slate-200"
+                          }`}>{s}</span>
+                        ))}
+                        {pro.specialties.length > 3 && (
+                          <span className="text-[0.6rem] text-slate-400 self-center">+{pro.specialties.length - 3}</span>
+                        )}
                       </div>
+                    )}
+
+                    {/* Fees + Availability stat grid */}
+                    <div className="grid grid-cols-2 gap-2 mt-3">
+                      <div className="rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1.5">
+                        <div className="iv2-mini text-[0.55rem] text-slate-400">Fees</div>
+                        <div className="text-[0.68rem] font-bold text-slate-800 truncate" title={feeText}>{feeText}</div>
+                      </div>
+                      <div className="rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1.5">
+                        <div className="iv2-mini text-[0.55rem] text-slate-400">Availability</div>
+                        <div className={`text-[0.68rem] font-bold flex items-center gap-1 ${
+                          availability === "open" ? "text-emerald-600" : availability === "waitlist" ? "text-amber-600" : "text-red-600"
+                        }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                            availability === "open" ? "bg-emerald-500" : availability === "waitlist" ? "bg-amber-500" : "bg-red-500"
+                          }`} />
+                          {availability === "open" ? "Accepting" : availability === "waitlist" ? "Waitlist" : "Closed"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Offer */}
+                    {pro.offer_active && pro.offer_text && (
+                      <div className="mt-2.5 bg-gradient-to-r from-coral-50 to-coral-50/0 border border-coral-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
+                        <Icon name="tag" size={11} className="text-coral-600 shrink-0" />
+                        <span className="text-[0.6rem] md:text-[0.65rem] font-bold text-coral-700 truncate">{pro.offer_text}</span>
+                      </div>
+                    )}
+
+                    {/* Footer: AFSL + View profile CTA */}
+                    <div className="mt-auto pt-3 flex items-center justify-between gap-2 border-t border-slate-100">
+                      <span className="text-[0.6rem] text-slate-400 truncate">
+                        {pro.afsl_number ? `AFSL ${pro.afsl_number}` : " "}
+                      </span>
+                      <span className="shrink-0 inline-flex items-center gap-1 rounded-lg bg-coral-600 px-3 py-1.5 text-[0.7rem] font-bold text-white whitespace-nowrap shadow-sm transition-colors group-hover:bg-coral-700">
+                        View profile
+                        <Icon name="arrow-right" size={11} />
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -1381,29 +1376,24 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             })}
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div className="text-center py-8 px-4 border-b border-slate-100">
-              <Icon name="search" size={32} className="text-slate-300 mx-auto mb-3" />
-              <p className="text-sm font-medium text-slate-600 mb-1">No advisors found</p>
-              <p className="text-xs text-slate-400 mb-3">
-                {isLocationActive ? `No advisors within ${radius}km. Try a larger radius.` : search ? `No results for "${search}".` : "Try adjusting your filters."}
-              </p>
-              <button onClick={clearAll} className="text-xs text-amber-600 font-semibold hover:text-amber-800">Clear all filters</button>
-            </div>
-            {/* Alert capture */}
-            <div className="px-5 py-5 bg-amber-50">
+          <EmptyState
+            title="No advisors found"
+            body={isLocationActive ? `No advisors within ${radius}km — try a larger radius or clear filters.` : search ? `No results for "${search}". Try a different search or clear filters.` : "Try adjusting or clearing your filters."}
+            suggestions={[{ label: "Clear all filters", onClick: clearAll }]}
+          >
+            <div className="mt-5 max-w-md mx-auto text-left rounded-xl border border-amber-200 bg-amber-50 p-4">
               <div className="flex items-start gap-3 mb-3">
                 <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
                   <Icon name="bell" size={16} className="text-amber-600" />
                 </div>
                 <div>
                   <p className="text-sm font-bold text-slate-800">Get notified when one joins</p>
-                  <p className="text-xs text-slate-500 mt-0.5">Enter your email and we&apos;ll alert you when a matching advisor joins Invest.com.au.</p>
+                  <p className="text-xs text-slate-500 mt-0.5">We&apos;ll email you when a matching advisor joins Invest.com.au.</p>
                 </div>
               </div>
               {alertStatus === "done" ? (
                 <div className="flex items-center gap-2 text-sm text-emerald-700 font-semibold">
-                  <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                  <Icon name="check-circle" size={16} className="text-emerald-500" />
                   Alert saved! We&apos;ll email you when a match is available.
                 </div>
               ) : (
@@ -1419,7 +1409,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   <button
                     onClick={saveAlert}
                     disabled={alertStatus === "submitting"}
-                    className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                    className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
                   >
                     {alertStatus === "submitting" ? "Saving..." : "Notify Me"}
                   </button>
@@ -1427,7 +1417,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               )}
               {alertError && <p className="text-xs text-red-600 mt-1">{alertError}</p>}
             </div>
-          </div>
+          </EmptyState>
         )}
 
         {/* Pagination */}
@@ -1497,7 +1487,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 <details key={i} className="group">
                   <summary className="px-4 py-3.5 md:px-5 md:py-4 font-semibold text-xs md:text-sm text-slate-800 cursor-pointer hover:bg-slate-50/80 transition-colors list-none flex items-center justify-between gap-3">
                     <span>{faq.q}</span>
-                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-400 group-open:bg-amber-50 group-open:border-amber-200 group-open:text-amber-600 transition-all">
+                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-600 group-open:bg-amber-50 group-open:border-amber-200 group-open:text-amber-600 transition-all">
                       <svg className="w-2.5 h-2.5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                     </span>
                   </summary>
@@ -1565,7 +1555,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <button
                 onClick={saveAlert}
                 disabled={alertStatus === "submitting"}
-                className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
               >
                 {alertStatus === "submitting" ? "Saving..." : "Set Alert"}
               </button>
@@ -1581,7 +1571,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             <h3 className="text-base md:text-xl font-extrabold text-white mb-1.5 md:mb-2">Are you a financial professional?</h3>
             <p className="text-xs md:text-sm text-slate-400 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/25">
+              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/25">
                 Get Listed Free
                 <Icon name="arrow-right" size={15} />
               </Link>

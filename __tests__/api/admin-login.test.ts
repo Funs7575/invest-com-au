@@ -3,6 +3,14 @@ import { makeRequest, createChainableBuilder } from "@/__tests__/helpers";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
+const { mockCheckAdminMfaEnv } = vi.hoisted(() => ({
+  mockCheckAdminMfaEnv: vi.fn((): { ok: boolean; missing: string[] } => ({ ok: true, missing: [] })),
+}));
+
+vi.mock("@/lib/admin-mfa-env-check", () => ({
+  checkAdminMfaEnv: mockCheckAdminMfaEnv,
+}));
+
 const mockAuth = { signInWithPassword: vi.fn() };
 const mockFrom = vi.fn();
 const mockRpc = vi.fn();
@@ -190,5 +198,18 @@ describe("POST /api/admin/login", () => {
       (call: unknown[]) => call[0] === "admin_login_attempts"
     );
     expect(fromCalls.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("returns 503 when MFA env vars are missing (fail-closed)", async () => {
+    mockCheckAdminMfaEnv.mockReturnValueOnce({
+      ok: false,
+      missing: ["ADMIN_MFA_KEY", "ADMIN_MFA_COOKIE_SECRET"],
+    });
+    const req = loginRequest({ email: "admin@invest.com.au", password: "correct" });
+    const res = await POST(req);
+    expect(res.status).toBe(503);
+    const json = await res.json();
+    expect(json.code).toBe("mfa_not_configured");
+    expect(json.missing).toContain("ADMIN_MFA_KEY");
   });
 });

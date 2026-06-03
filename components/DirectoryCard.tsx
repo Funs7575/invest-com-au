@@ -139,7 +139,7 @@ export default function DirectoryCard({ item }: DirectoryCardProps) {
 
       <Link
         href={item.ctaHref}
-        className="inline-flex items-center justify-center gap-1.5 w-full bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-4 py-2.5 rounded-lg transition-colors"
+        className="inline-flex items-center justify-center gap-1.5 w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-4 py-2.5 rounded-lg transition-colors"
         data-testid="directory-card-cta"
       >
         {item.ctaLabel ?? "View Profile"}

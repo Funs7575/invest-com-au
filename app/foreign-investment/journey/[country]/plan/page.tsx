@@ -236,7 +236,7 @@ export default async function ExpatPlanPage({
                   progress to your account.
                 </p>
                 <Link
-                  href="/login"
+                  href="/auth/login"
                   className="text-xs font-bold text-amber-800 hover:text-amber-900 shrink-0 underline"
                 >
                   Sign in

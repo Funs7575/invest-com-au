@@ -58,7 +58,7 @@ export default function CrossBorderAdvisorCTA({
             href={cta.href}
             data-specialty={cta.specialty ?? ""}
             data-country={cta.countryParam}
-            className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
+            className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
           >
             {cta.specialty ? "Find a specialist" : "Find an advisor"}
           </Link>

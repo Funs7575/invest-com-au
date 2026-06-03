@@ -190,7 +190,7 @@ export default function SponsoredSlotsPage() {
         </p>
         <Link
           href="/broker-portal/login"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-sm"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg text-sm"
         >
           Go to Broker Portal login
         </Link>
@@ -219,7 +219,7 @@ export default function SponsoredSlotsPage() {
         </div>
         <Link
           href="/advertise/featured-placement"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-lg"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm rounded-lg"
         >
           + Book another slot
         </Link>
@@ -233,7 +233,7 @@ export default function SponsoredSlotsPage() {
           </p>
           <Link
             href="/advertise/featured-placement"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-lg"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm rounded-lg"
           >
             See placement tiers →
           </Link>

@@ -100,7 +100,7 @@ export default function CostsHub() {
             </p>
             <Link
               href="/fee-impact"
-              className="inline-block px-6 py-3 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+              className="inline-block px-6 py-3 bg-amber-500 text-slate-900 font-semibold rounded-lg hover:bg-amber-600 transition-colors"
             >
               Personal Fee Calculator →
             </Link>

@@ -196,7 +196,7 @@ export default function BookingWidget({
                   }),
                 }).catch(() => {});
               }}
-              className="block w-full text-center px-4 py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 transition-all text-sm shadow-sm hover:shadow-md"
+              className="block w-full text-center px-4 py-3 bg-amber-500 text-slate-900 font-bold rounded-xl hover:bg-amber-600 transition-all text-sm shadow-sm hover:shadow-md"
             >
               Choose a Time &rarr;
             </a>

@@ -97,7 +97,7 @@ export default function QuizQuestionScreen({
             <div className="flex gap-2 shrink-0">
               <button
                 onClick={onResume}
-                className="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
+                className="px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
               >
                 Resume
               </button>

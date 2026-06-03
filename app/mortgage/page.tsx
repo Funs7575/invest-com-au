@@ -80,7 +80,7 @@ export default function MortgagePage() {
             mortgage broker for personalised advice.
           </p>
           <div className="flex flex-wrap gap-3 mt-4">
-            <Link href="/mortgage-calculator" className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors">
+            <Link href="/mortgage-calculator" className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors">
               Repayment calculator →
             </Link>
             <Link href="/find-advisor?type=mortgage" className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors">

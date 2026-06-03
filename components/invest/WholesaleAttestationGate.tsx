@@ -95,7 +95,7 @@ export default function WholesaleAttestationGate({
         type="button"
         disabled={!acknowledged}
         onClick={() => setAttested(true)}
-        className="mt-3 w-full sm:w-auto bg-amber-600 hover:bg-amber-700 disabled:bg-amber-300 disabled:cursor-not-allowed text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-1"
+        className="mt-3 w-full sm:w-auto bg-amber-600 hover:bg-amber-700 disabled:bg-amber-300 disabled:cursor-not-allowed text-slate-900 font-bold text-sm px-5 py-2.5 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-1"
       >
         View as wholesale investor
       </button>

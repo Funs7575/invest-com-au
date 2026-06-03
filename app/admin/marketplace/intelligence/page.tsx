@@ -884,7 +884,7 @@ export default function AdvertiserIntelligencePage() {
                                       />
                                       <button
                                         onClick={(e) => { e.stopPropagation(); handleSendNotification(sc.broker_slug); }}
-                                        className="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600"
+                                        className="px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600"
                                       >
                                         Send
                                       </button>
@@ -905,7 +905,7 @@ export default function AdvertiserIntelligencePage() {
                                   )}
                                   <Link
                                     href="/admin/marketplace/campaigns"
-                                    className="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600"
+                                    className="px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600"
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                     View Campaigns
@@ -1005,7 +1005,7 @@ export default function AdvertiserIntelligencePage() {
                           </div>
                           <Link
                             href={ins.actionHref}
-                            className="shrink-0 px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors whitespace-nowrap"
+                            className="shrink-0 px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors whitespace-nowrap"
                           >
                             {ins.actionLabel} →
                           </Link>

@@ -254,7 +254,7 @@ export default function HealthScoresClient({
             </div>
           </div>
         ) : (
-          <div className="bg-white border border-slate-200 rounded-2xl p-12 mb-8 text-center text-slate-400">
+          <div className="bg-white border border-slate-200 rounded-2xl p-12 mb-8 text-center text-slate-600">
             <p className="text-lg mb-1">Select a platform above to see their safety score</p>
             <p className="text-sm">{scores.length} platforms with health scores available</p>
           </div>

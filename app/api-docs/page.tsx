@@ -61,7 +61,7 @@ function EndpointCard({
           </span>
         )}
         {!auth && (
-          <span className="ml-auto text-[11px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
+          <span className="ml-auto text-[11px] font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
             Public
           </span>
         )}

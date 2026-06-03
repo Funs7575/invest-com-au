@@ -59,7 +59,7 @@ export default function ProUpsellBanner({ variant = "inline" }: { variant?: Vari
         <p className="text-xs text-slate-600 mb-3 leading-relaxed">{copy.sub}</p>
         <Link
           href="/pro"
-          className="block text-center py-2 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+          className="block text-center py-2 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
         >
           {copy.cta}
         </Link>
@@ -82,7 +82,7 @@ export default function ProUpsellBanner({ variant = "inline" }: { variant?: Vari
         </div>
         <Link
           href="/pro"
-          className="shrink-0 px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all"
+          className="shrink-0 px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all"
         >
           {copy.cta}
         </Link>

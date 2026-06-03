@@ -390,7 +390,7 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
             </div>
             <Link
               href={`/advisors/buyers-agents/${advisorStateSlug(suburb.state)}`}
-              className="shrink-0 px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-all"
+              className="shrink-0 px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-all"
             >
               Find an Agent
             </Link>

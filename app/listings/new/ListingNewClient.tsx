@@ -365,7 +365,7 @@ export default function ListingNewClient() {
             type="button"
             onClick={next}
             disabled={pending}
-            className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2 rounded-lg text-sm"
+            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2 rounded-lg text-sm"
           >
             Next →
           </button>
@@ -374,7 +374,7 @@ export default function ListingNewClient() {
             type="button"
             onClick={submit}
             disabled={pending}
-            className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2 rounded-lg text-sm disabled:opacity-60"
+            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2 rounded-lg text-sm disabled:opacity-60"
           >
             {pending ? "Submitting…" : "Submit for review"}
           </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 
 const STORAGE_KEY = "user_onboarding_seen";
@@ -35,13 +35,11 @@ const FOCUSABLE_SELECTOR =
 
 export default function UserOnboarding() {
   const router = useRouter();
+  const pathname = usePathname();
   const dialogRef = useRef<HTMLDivElement>(null);
-  // Lazy initializer runs once on client mount — no effect needed, no SSR
-  // concerns because this component is always loaded with ssr: false.
-  const [visible, setVisible] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem(STORAGE_KEY) !== "true";
-  });
+  // The welcome is a gentle greeting, not an ambush — it stays hidden until the
+  // homepage-only trigger below decides to open it.
+  const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [notifPrefs, setNotifPrefs] = useState<NotifPrefs>({
@@ -49,6 +47,21 @@ export default function UserOnboarding() {
     weekly_digest: true,
     morning_brief: false,
   });
+
+  // Auto-open only on the homepage, after a short delay (so the hero lands
+  // first), and only once per visitor. This deliberately never fires on
+  // deep-link / content landings (e.g. /advisors, /compare): it avoids
+  // interrupting high-intent visitors, sidesteps Google's intrusive-
+  // interstitial SEO penalty on content pages, and prevents the broker-centric
+  // copy from mismatching non-broker pages. Navigating away before the delay
+  // elapses cancels it, so there's no flash on the next page.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (localStorage.getItem(STORAGE_KEY) === "true") return;
+    if (pathname !== "/") return;
+    const timer = window.setTimeout(() => setVisible(true), 1200);
+    return () => window.clearTimeout(timer);
+  }, [pathname]);
 
   // Move focus to the first focusable element whenever the step changes.
   // Calling .focus() on a DOM element is safe in an effect (not set-state-in-effect).
@@ -132,7 +145,7 @@ export default function UserOnboarding() {
 
         {/* Skip */}
         <div className="flex justify-end px-5 pt-2">
-          <button onClick={dismissPermanent} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+          <button onClick={dismissPermanent} className="text-xs text-slate-600 hover:text-slate-800 transition-colors">
             Skip
           </button>
         </div>
@@ -149,7 +162,7 @@ export default function UserOnboarding() {
               </p>
               <button
                 onClick={() => setStep(1)}
-                className="mt-5 px-7 py-3 bg-amber-500 text-white font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
+                className="mt-5 px-7 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
               >
                 See How It Works
               </button>
@@ -250,7 +263,7 @@ export default function UserOnboarding() {
               <div className="flex flex-col gap-2.5">
                 <button
                   onClick={() => navigateAndClose("/quiz")}
-                  className="w-full px-6 py-3 bg-amber-500 text-white font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
+                  className="w-full px-6 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-600 transition-colors"
                 >
                   Take the Quiz
                 </button>
@@ -286,7 +299,7 @@ export default function UserOnboarding() {
           <div className="px-6 pb-5">
             <button
               onClick={() => setStep(step - 1)}
-              className="text-sm text-slate-400 hover:text-slate-600 transition-colors flex items-center gap-1"
+              className="text-sm text-slate-600 hover:text-slate-800 transition-colors flex items-center gap-1"
             >
               <Icon name="arrow-left" size={14} />
               Back

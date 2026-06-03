@@ -56,3 +56,9 @@ supabase/.temp/
 # Visual screenshot pipeline (e2e/visual)
 /e2e/visual/snapshots/
 /e2e/visual/.auth/
+
+# Bot fleet run artifacts (bots/)
+/bots/.runs/
+
+# Scratch verification scripts (local screenshot/inspect helpers)
+scripts/_*.mjs

@@ -77,7 +77,7 @@ export default function QuizComparisonTable({ allResults }: Props) {
                     target="_blank"
                     rel={AFFILIATE_REL}
                     onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-compare-${i + 1}`, '/quiz', 'quiz')}
-                    className="inline-block px-2 py-1 md:px-3 md:py-1.5 bg-amber-600 text-white text-[0.62rem] md:text-xs font-semibold rounded-md hover:bg-amber-700 transition-colors"
+                    className="inline-block px-2 py-1 md:px-3 md:py-1.5 bg-amber-600 text-slate-900 text-[0.62rem] md:text-xs font-semibold rounded-md hover:bg-amber-700 transition-colors"
                   >
                     Visit →
                   </a>

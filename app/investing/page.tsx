@@ -97,7 +97,7 @@ export default function InvestingHubPage() {
                   <h3 className="text-base md:text-lg font-bold text-slate-900 group-hover:text-slate-800">
                     {city.name}
                   </h3>
-                  <span className="text-[0.65rem] font-bold uppercase tracking-wide text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                  <span className="text-[0.65rem] font-bold uppercase tracking-wide text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">
                     {city.stateShort}
                   </span>
                 </div>

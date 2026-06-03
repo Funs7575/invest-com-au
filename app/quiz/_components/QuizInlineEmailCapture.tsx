@@ -112,7 +112,7 @@ export default function QuizInlineEmailCapture({ onSubmit, status }: Props) {
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className="px-4 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+          className="px-4 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
         >
           {isLoading ? "Sending…" : "Email me the PDF →"}
         </button>

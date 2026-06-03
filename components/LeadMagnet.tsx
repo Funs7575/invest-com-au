@@ -120,7 +120,7 @@ export default function LeadMagnet() {
           <button
             type="submit"
             disabled={status === "loading" || !consent || !!emailError}
-            className="w-full px-4 py-2.5 md:py-3 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
+            className="w-full px-4 py-2.5 md:py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
           >
             {status === "loading" ? "Sending..." : "Get My Free Fee Audit"}
           </button>

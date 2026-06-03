@@ -106,7 +106,7 @@ export default function ComplianceFooter({
           <strong className="text-slate-600">General Advice Warning:</strong>{" "}
           {GENERAL_ADVICE_WARNING}
         </p>
-        <p className="text-slate-400">{ADVERTISER_DISCLOSURE_SHORT}</p>
+        <p className="text-slate-600">{ADVERTISER_DISCLOSURE_SHORT}</p>
       </div>
     </div>
   );

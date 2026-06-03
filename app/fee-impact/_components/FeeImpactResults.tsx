@@ -246,7 +246,7 @@ export default function FeeImpactResults({
                           "calculator"
                         )
                       }
-                      className="px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 whitespace-nowrap"
+                      className="px-4 py-2 bg-amber-600 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 whitespace-nowrap"
                     >
                       {getBenefitCta(r.broker, "calculator")}
                     </a>
