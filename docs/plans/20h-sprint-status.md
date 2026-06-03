@@ -21,9 +21,7 @@ regulated or risky for the founder). Each fire reads this first, then appends on
 
 ## Open findings — next fire
 
-| Finding | File | Sev | Tier | Status |
-|---|---|---|---|---|
-| `DatedStatBadge` source-popover keyboard trap — button `onBlur` closes the popover before Tab reaches the "View source" `<a>`, so the source link is mouse-only; secondary: popover is `position:absolute` but wrapper `<span>` lacks `relative`, so it anchors to the wrong ancestor | `components/DatedStatBadge.tsx:165-188` | P2 (a11y) | A | Verified, untracked. Fix: container-scoped dismissal (check `relatedTarget` / click-outside) + add `relative` to wrapper. Existing `__tests__/components/DatedStatBadge.test.tsx` doesn't cover the keyboard path. |
+_None open. (Fire 2 resolved the DatedStatBadge a11y keyboard trap — PR #1319 — and the postback webhook-delivery P1 — PR #1320.)_
 
 ## Founder briefs — held items (need a human decision)
 
@@ -36,9 +34,48 @@ regulated or risky for the founder). Each fire reads this first, then appends on
 - **Suggested resolution:** founder decides — (a) wire it to a real count, (b) relabel it as illustrative, or
   (c) remove it. Loop will not touch it until decided.
 
+### FB-2026-06-03-03 — Sequential partial refunds under-credit the advisor (financial correctness)
+- **What:** `lib/stripe-webhook/handlers/charge-refunded.ts:231-269` (advisor billing flow). On a SECOND (or later)
+  partial refund of the same Stripe charge, the positive `deltaCents` is correctly computed but then dropped:
+  `recordLedgerEntry` (`lib/advisor-credit-ledger.ts:108-124`) is idempotent on the triple
+  `(kind, reference_type, reference_id=charge.id)` — finding the first refund's row, it returns
+  `idempotent: true` and **does not insert the delta or move the balance**. The handler's own comment (lines
+  265-268) wrongly assumes the idempotency path applies the increment.
+- **Scenario:** $300 charge → $100 partial refund (credits $100) → later another $100 partial refund
+  (cumulative $200). Second delta ($100) is silently dropped → advisor under-credited by $100.
+- **Why it's HELD (not auto-fixed):** money-correctness in the Stripe refund→advisor-credit path
+  (client-money-adjacent). The fix is **two coordinated changes** that must stay perfectly consistent or they
+  *over*-credit: (1) make the ledger `referenceId` per-cumulative-step, e.g. `` `${charge.id}:${refundedAmountCents}` ``;
+  (2) change the prior-refunds SUM query (lines 231-235) from `.eq("reference_id", charge.id)` to a prefix match
+  (`.like("reference_id", charge.id + ":%")`) so it still sums all steps. Plus an existing-row data consideration
+  (old rows keyed on bare `charge.id`). Financial logic + data migration → wants founder eyes.
+- **Suggested resolution:** founder confirms the approach; loop can then implement with full tests under Tier C.
+  Verified real (read `recordLedgerEntry` — it returns the stale row without inserting). Found by the 2026-06-03
+  marketplace code-review pass.
+
 ## Live log (most recent first)
 
-### fire 2026-06-03T14:xx — STATUS: PROGRESS · 1 PR open (Tier C, awaiting window) · 2 findings logged
+### fire 2026-06-03 (fire 2) — STATUS: PROGRESS · founder took control "do bots + ci + testing + anything good"
+- **Landed this fire:** #1313 (postback z.number→z.unknown, merged), #1314 (this control doc), #1198
+  (duplicate-function gate allowlist — reviewed prior-loop PR), #1316 (sitemap shard string-id fix — Google was
+  served EMPTY sitemaps on Netlify; reviewed + merged), #1318 (bot-QA roadmap → FIN_NOTEBOOK). #1319 (DatedStatBadge
+  a11y keyboard-trap fix +4 tests, Tier A) merging on green. #1320 (postback `next_retry_at` — broker webhooks were
+  NEVER delivered, Tier C) announced, merges after window.
+- **Bots:** 3 AI-Journey personas vs the live Netlify mirror — comparison-shopper (found `/api/versus/vote` 500),
+  advice-seeker (clean), quiz-taker (clean, but the get-matched funnel can't complete in-sandbox — TLS-MITM proxy
+  drops the form's async fetches; reinforces roadmap #1 = clean-network runner). All money paths firewall-mocked.
+- **Code-review:** 2 of 3 background agents died on a sandbox cert error (infra, not findings). The surviving
+  marketplace/webhook agent found 2 P1s: postback webhook-never-delivered (→ #1320, fixed) and the refund
+  under-credit (→ FB-2026-06-03-03, HELD).
+- **Held:** #1317 versus_votes migration (founder); FB-01 SocialProofCounter; FB-03 refund under-credit. #1180
+  (`needs-human-review`, CI red) + #1265 (CI red) left for human.
+- **versus/vote tests:** already comprehensive on main (17 cases) — no work needed; the defect was the missing
+  table, not the logic.
+- **Theme noticed:** two of this session's bugs (#1313 postback, #1316 sitemap) are the SAME class —
+  `@netlify/plugin-nextjs` / S2S clients passing values as STRINGS where numeric was assumed. Worth a grep sweep
+  for other `switch (numericId)` / `z.number()` on platform/partner-supplied inputs next fire.
+
+### fire 2026-06-03 (fire 1) — STATUS: PROGRESS · 1 PR open (Tier C, awaiting window) · 2 findings logged
 - **Pre-flight:** `origin/main` settled at `d044d4cd7` (#1311 `fix(tco)` merged on green, as expected). The chain of
   `cancelled` ci.yml runs on main is concurrency-supersession from rapid PR merges — not failures; last clean run
   was `330b2b1d8`. Bots **not run this fire** — `bots/journey/ai-journey.cjs` + `/opt/pw-browsers` absent on the
