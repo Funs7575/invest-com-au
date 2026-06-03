@@ -213,6 +213,12 @@ export async function POST(request: NextRequest) {
           metadata: metadata || {},
           timestamp: conversion?.created_at,
         },
+        // next_retry_at has no DB default, and the retry-webhooks cron selects
+        // rows with `.lte("next_retry_at", now)`. In Postgres `NULL <= now()` is
+        // NULL (not true), so a row enqueued without it is NEVER picked up — the
+        // broker receives zero conversion webhooks. Make the first attempt due
+        // immediately; the cron handles backoff/retries from there.
+        next_retry_at: new Date().toISOString(),
       });
     }
   } catch (err) {
