@@ -90,3 +90,20 @@ survives terminal close) — state lives here, so either driver resumes identica
   the superseded #1268; (c) the big drafts (#1271/#1272/#1273/#1274) + held
   (#1180/#1159 needs-review, #1272 "DO NOT APPLY" migrations) **stay for the founder**.
   Also: reconcile the stale `[~]` queue markers. Sprint home PR: **#1306**.
+- **2026-06-03 ~05:00 — Cycle 2 (infra reality → the loop has little autonomous
+  fuel):**
+  - **No reachable live site.** Vercel billing-blocked **and** the Netlify mirror
+    (`lambent-sawine-17c3dd.netlify.app`) times out (HTTP 000). Egress itself works
+    (google/example.com 200). No local env either (only `.env.local.example`). →
+    **live-bots can't run** — the headline premise is infra-blocked.
+  - **Build-Everything queue: 0 unbuilt items.** **Remediation queue: streams A–N all
+    complete**; everything remaining sits in "Blocked — needs human input" (CDR
+    accreditation, compliance signoffs, registrar/DNS, GSC/GA4 creds, Vercel billing).
+  - **Conclusion:** the autonomous build/fix fuel is nearly drained — not a failure,
+    the platform is **pre-launch-complete and waiting on founder/legal gates** (which
+    the loop is explicitly *not* allowed to action).
+  - **Actions taken:** closed superseded **#1268** (backlog 13→12).
+  - **Highest-leverage unblock (founder, ~5 min):** get one deploy live (Vercel
+    billing OR a working Netlify build) → turns the live-bots vision back on. Until
+    then the loop's real options are: stand up **local-bots** (run the app in-sandbox)
+    or clear the **safe backlog** (#1198/#1269) + reconcile bookkeeping.
