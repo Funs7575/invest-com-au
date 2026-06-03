@@ -78,12 +78,15 @@ survives terminal close) — state lives here, so either driver resumes identica
     Tier C SMS-consent), **#1271 / #1273 / #1274** (large drafts — triage per item).
   - Control doc created; sprint loop armed.
 - **2026-06-03 ~04:45 — Cycle 1 (build-everything fire → finding):** the build queue
-  has **0 unbuilt `[ ]` items** — 43 are `[~]` (open PRs), 7 `[x]`, 7 `[!]` blocked.
-  Nothing new to build. The real lever is the **40+ open-PR backlog**, which is
-  mostly **stale** (old base → needs rebase), **mixed-risk** (Tier C/D, "DO NOT
-  APPLY" migrations, 950-test PRs), and is the founder's deliberate review pile
-  (#1197 manual-merge). **Recalibration:** loop pivots to (a) **bots find NEW
-  issues** (`/ai-journey` vs Netlify) → I build + merge those (additive, safe,
-  on-brief); (b) a **selective** merge of only clearly-safe small Tier-A/B PRs after
-  local re-verify; **(c) the large/risky/migration-bearing backlog stays for the
-  founder** unless they say otherwise. Sprint home PR opened: **#1306**.
+  has **0 unbuilt `[ ]` items** — 43 are `[~]`, 7 `[x]`, 7 `[!]` blocked. **CORRECTION
+  (founder caught it):** the 43 `[~]` markers are **stale bookkeeping**, NOT 43 open
+  PRs — most of that work already merged via the big batch merges and the checkboxes
+  were never flipped. The **actual open-PR count is 13** (matches GitHub). Earlier
+  "40+ backlog" was wrong. Real substantive agent-built backlog ≈ 8 PRs; the rest are
+  mine (#1305/#1306), superseded (#1268, fixed by #1278), or automated (#1265/#1276).
+  **Recalibration:** loop pivots to (a) **bots find NEW issues** (`/ai-journey` vs
+  Netlify) → I build + merge those (additive, safe, on-brief); (b) **selective** merge
+  of only clearly-safe small Tier-A/B PRs (#1198, #1269) after local re-verify; close
+  the superseded #1268; (c) the big drafts (#1271/#1272/#1273/#1274) + held
+  (#1180/#1159 needs-review, #1272 "DO NOT APPLY" migrations) **stay for the founder**.
+  Also: reconcile the stale `[~]` queue markers. Sprint home PR: **#1306**.
