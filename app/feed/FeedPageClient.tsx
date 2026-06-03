@@ -215,7 +215,7 @@ export default function FeedPageClient({ initialPosts }: Props) {
             <div style={{ fontSize: 36, marginBottom: 16 }}>🔒</div>
             <p style={{ fontSize: 16, fontWeight: 600, color: "var(--color-ink-900)", marginBottom: 8 }}>Sign in to see your following feed</p>
             <p style={{ fontSize: 14, color: "var(--color-ink-500)", marginBottom: 24 }}>Create a free account to follow advisors and get a personalised feed.</p>
-            <Link href="/sign-in" style={{ display: "inline-block", padding: "10px 22px", borderRadius: 8, background: "var(--color-ink-900)", color: "white", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
+            <Link href="/auth/login?next=/feed" style={{ display: "inline-block", padding: "10px 22px", borderRadius: 8, background: "var(--color-ink-900)", color: "white", fontSize: 14, fontWeight: 600, textDecoration: "none" }}>
               Sign in
             </Link>
           </div>

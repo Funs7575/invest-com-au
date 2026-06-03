@@ -34,7 +34,7 @@ export default function RsvpButton({ sessionId, className = "" }: Props) {
 
   async function toggle() {
     if (!userId) {
-      window.location.href = `/login?redirect=/office-hours/${sessionId}`;
+      window.location.href = `/auth/login?next=/office-hours/${sessionId}`;
       return;
     }
     if (loading || !checked) return;

@@ -50,7 +50,7 @@ export default function IpoWatchlistButton({
 
   async function toggle() {
     if (!userId) {
-      window.location.href = "/login?redirect=/invest/ipo-calendar";
+      window.location.href = "/auth/login?next=/invest/ipo-calendar";
       return;
     }
     if (loading) return;
