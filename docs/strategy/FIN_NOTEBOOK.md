@@ -14,6 +14,50 @@
 
 ## Active strategic decisions log
 
+### 2026-06-03 — Bot-QA system: ranked roadmap for the next big projects
+
+Context: the AI-Journey bot found a real P1 in one run (`/api/versus/vote` 500s
+site-wide — `versus_votes` table was never migrated in; held draft PR #1317).
+That proved the value but also exposed the bots' structural limits. Today they
+are **one-off, browse-only, anon-only**, with a side-effect firewall. Ranked
+roadmap by leverage:
+
+1. **Funnel-completion runner (do first).** The bots cover *browsing* but never
+   *converting* — the quiz→match, lead, and account-signup flows are untested.
+   The blocker is **this Claude Code sandbox's TLS-MITM proxy** dropping async
+   fetches — **NOT** Netlify. Fix: run `ai-form.cjs` / the journey from a
+   **clean-network environment (GitHub Actions job or small cloud runner)
+   against the live Netlify mirror**, firewall still mocking the terminal money
+   action. Available now; conversion is where the revenue and the worst bugs
+   live. **Constraint: do NOT make this depend on the Vercel deploy** — Vercel is
+   launch-gated (build needs ~14 GB; only Vercel Pro ever compiled it; reserved
+   for cutover). Targeting Vercel is a *post-launch* nice-to-have, not the plan.
+2. **Cross-run regression baseline + diffing.** Fingerprint each route (status /
+   key content / JSON-LD present / console-clean / disclosures present), diff
+   every run vs last green. Would have caught BOTH the CSP/ISR outage and the
+   versus_votes 500 as regressions the moment they shipped. Backbone for the
+   post-merge-smoke cadence.
+3. **Systematic API-surface probing.** versus_votes was caught by luck. Enumerate
+   `app/api/**`, probe each read endpoint with valid inputs against live, flag
+   consistent 500s — a whole surface the UI crawler can't see.
+4. **Bots as a compliance + GEO gate.** Promote soft "fees/risk present"
+   observations into hard assertions: required `lib/compliance.ts` disclosures on
+   every advice/comparison/payment surface + avoid-list surfaces stay gated
+   (AFSL, Nov 2026); AND valid JSON-LD / answer-first / canonical (the GEO
+   citability thesis — see 2026-05-21 + 2026-05-29 entries).
+5. **Migration/cutover guardian.** During the Oct–Dec 2026 domain move: verify
+   the prior-host redirect map, canonicals→new domain, sitemap parity, zero
+   orphans, continuously. Pairs with the `CO-01` legacy-redirect-map queue item.
+
+Honorable mention: **authenticated/portal coverage** (seeded test account) — the
+advisor/startup-portal work is entirely untested by bots (anon-only today).
+
+**If only one gets funded: #1**, then #2. Together they turn the fleet from
+"is the page up?" into "does the money path still work?".
+
+**Revisit:** 2026-07-15 — has the clean-network funnel runner been stood up? If
+yes, layer #2 (regression baseline) on top.
+
 ### 2026-05-29 — GEO measurement built; GEO "supply floor" found already-shipped
 
 Picked up the GEO thread to build the **measurement** side (the one piece the
