@@ -15,6 +15,9 @@ import { generateVersusPairs } from "@/lib/versus-pairs";
 import { BCP47_TAG } from "@/lib/i18n/locales";
 import { AUSTRALIAN_STATES } from "@/lib/seo/best-pages";
 import { getEnabledIntents } from "@/lib/getmatched/intents";
+import { logger } from "@/lib/logger";
+
+const log = logger("sitemap");
 
 // Regenerate each shard at most once per day — avoids per-request DB queries
 export const revalidate = 86400;
@@ -1194,11 +1197,15 @@ async function buildShard7(): Promise<MetadataRoute.Sitemap> {
 // robots.ts already points to `/sitemap.xml` so no change is needed there.
 
 export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
-  // The @netlify/plugin-nextjs runtime passes the shard `id` as a STRING ("0"),
-  // so a numeric `switch (id)` fell through to `default: []` — EVERY shard served
-  // an empty <urlset> on the live mirror (Google was getting empty sitemaps).
-  // Vercel passes a number. Coerce so both platforms populate the shards.
-  switch (Number(id)) {
+  // The @netlify/plugin-nextjs runtime passes the shard `id` as the request
+  // FILENAME — "0.xml", not "0" — so `Number("0.xml")` is NaN and the switch
+  // fell through to `default: []`, serving an empty <urlset> for EVERY shard
+  // (Google got empty sitemaps). `parseInt` reads the leading integer from any
+  // form ("0", "0.xml", or a real number) → correct shard on both Netlify and
+  // Vercel. (#1316 used `Number(id)`, which does NOT handle the ".xml" suffix —
+  // its test only exercised "0", so CI was green while prod served empties.)
+  const shard = parseInt(String(id), 10);
+  switch (shard) {
     case 0: return buildShard0();
     case 1: return buildShard1();
     case 2: return buildShard2();
@@ -1207,6 +1214,9 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     case 5: return buildShard5();
     case 6: return buildShard6();
     case 7: return buildShard7();
-    default: return [];
+    default:
+      // Never fail silently again: an unrecognised id means empty sitemaps.
+      log.warn("sitemap: unrecognised shard id — serving empty urlset", { id, shard });
+      return [];
   }
 }
