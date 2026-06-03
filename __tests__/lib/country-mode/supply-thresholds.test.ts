@@ -80,14 +80,24 @@ describe("applySupplyThresholds", () => {
 });
 
 describe("PER_COUNTRY_THRESHOLDS", () => {
-  it("has NZ experts threshold lower than the global default", () => {
-    expect(PER_COUNTRY_THRESHOLDS["NZ"]?.experts).toBe(1);
-    expect((PER_COUNTRY_THRESHOLDS["NZ"]?.experts ?? 0) < SUPPLY_THRESHOLDS.experts).toBe(true);
+  it("has nz experts threshold lower than the global default (keyed by lowercase intent code)", () => {
+    expect(PER_COUNTRY_THRESHOLDS["nz"]?.experts).toBe(1);
+    expect((PER_COUNTRY_THRESHOLDS["nz"]?.experts ?? 0) < SUPPLY_THRESHOLDS.experts).toBe(true);
   });
 });
 
 describe("applySupplyThresholds — per-country overrides", () => {
-  it("NZ experts: one expert passes (below global threshold of 2)", () => {
+  it("nz experts: one expert passes (below global threshold of 2) — lowercase intent code, as callers pass", () => {
+    // Regression: callers pass the lowercase IntentCountryCode ("nz"), but the
+    // override was keyed "NZ", so the override was dead and this single expert
+    // was wrongly hidden. This test now uses the casing production actually uses.
+    expect(applySupplyThresholds(["nz-expert-1"], "experts", "nz")).toEqual({
+      rows: ["nz-expert-1"],
+      didFallback: false,
+    });
+  });
+
+  it("nz experts: uppercase ISO 'NZ' also resolves the override (case-insensitive lookup)", () => {
     expect(applySupplyThresholds(["nz-expert-1"], "experts", "NZ")).toEqual({
       rows: ["nz-expert-1"],
       didFallback: false,
