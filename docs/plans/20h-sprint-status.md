@@ -53,7 +53,46 @@ _None open. (Fire 2 resolved the DatedStatBadge a11y keyboard trap — PR #1319 
   Verified real (read `recordLedgerEntry` — it returns the stale row without inserting). Found by the 2026-06-03
   marketplace code-review pass.
 
+### FB-2026-06-03-04 — Security headers dropped on authenticated `/admin` + `/broker-portal` (P1 security; HELD — proxy/CSP outage-adjacent)
+- **What:** `proxy.ts` sets CSP (line ~174), the private-portal `noindex` (line ~197), X-Frame-Options, Permissions-Policy
+  and COOP on the `response` object — but for **protected** paths it takes the `if (isProtected)` branch (~214),
+  builds a separate `supabaseResponse` via `NextResponse.next(...)`, and returns *that* (~353), copying only the
+  preview `X-Robots-Tag`. So **every authenticated `/admin/**` and `/broker-portal/**` response is served with no CSP,
+  no X-Frame-Options, no Permissions-Policy, no COOP, and no `noindex`.** `next.config.ts` re-supplies HSTS / nosniff /
+  Referrer-Policy as a fallback but **deliberately not** CSP/XFO/Permissions-Policy/COOP (those are "set by proxy.ts
+  per request"). Net: the most sensitive surfaces (wallet adjust, content edit, impersonation) lack XSS/clickjacking
+  containment, and a leaked authenticated URL could be indexed. Verified against `proxy.ts:214-356`. Found by the
+  2026-06-03 edge/auth code-review pass.
+- **Why it's HELD (not auto-fixed):** the fix lives in `proxy.ts` (Tier C, middleware) and **CSP on this exact file
+  caused a site-wide JS-execution outage days ago** (the branch this work started on, `fix/csp-strict-dynamic-isr-outage`,
+  commit `2de65a9`). Newly applying CSP to `/admin` (which currently has none) could break the admin panel's JS the
+  same way. Security-sensitive + outage-adjacent = founder review before merge.
+- **Recommended fix:** in the `isProtected` branch, copy the security headers already set on `response`
+  (CSP, X-Frame-Options, Permissions-Policy, COOP, `X-Robots-Tag: noindex`) onto each returned `supabaseResponse`
+  (and the redirect responses), then layer the Supabase cookies — e.g. factor an `applySecurityHeaders(res, pathname)`
+  helper and call it on both branches. Add a proxy test asserting CSP + XFO are present on an authenticated `/admin`
+  response. **Safe-split option:** apply XFO + Permissions-Policy + COOP + `noindex` now (clickjacking/indexing, no JS
+  risk) and gate the CSP-on-admin part behind an admin-panel smoke test, since CSP is the only piece that can break
+  admin JS.
+- **Suggested resolution:** founder confirms approach + commits to an admin-panel smoke test post-merge; loop then
+  implements under Tier C with tests.
+
 ## Live log (most recent first)
+
+### fire 2026-06-03 (fire 3, continuation) — STATUS: PROGRESS · "continue" · string-class sweep + 2 P1s from retried review
+- **String-vs-number sweep (the #1313/#1316 bug class):** **clean** — no new instances. The only `switch` over an
+  id is the sitemap (already fixed, #1316) and the quiz (`switch(id)` over a typed string-union `QuestionId`, not
+  numeric). The `z.number()` API schemas are all `app/api/admin/*` (admin-UI inputs send real numbers, not the
+  external-string case). Good negative result: #1313/#1316 were isolated, not systemic.
+- **#1320 merged:** Tier C window elapsed (64 min, no STOP) + core green → broker webhook delivery fix is live.
+- **Retried the 2 code-review slices that died on the cert error** (edge/auth/cron + lib pure-logic); both completed
+  this time and each found a real P1:
+  - **F1 → fixed (#1323, Tier B):** `applySupplyThresholds` per-country override was dead — `PER_COUNTRY_THRESHOLDS`
+    keyed `"NZ"` but callers pass the lowercase `IntentCountryCode` `"nz"`, so single-expert NZ strips were wrongly
+    hidden. Re-keyed lowercase + case-insensitive lookup; test was masking it with uppercase. +case-insensitivity test.
+  - **F2 → HELD (FB-2026-06-03-04 above):** proxy.ts drops CSP/XFO/noindex on authenticated admin/broker-portal
+    responses. Held because proxy/CSP just caused a production outage.
+- **Exit:** F1 PR (#1323) merging on green. F2 + #1317 + FB-01/03/04 await founder.
 
 ### fire 2026-06-03 (fire 2) — STATUS: PROGRESS · founder took control "do bots + ci + testing + anything good"
 - **Landed this fire:** #1313 (postback z.number→z.unknown, merged), #1314 (this control doc), #1198
