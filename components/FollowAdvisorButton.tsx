@@ -45,7 +45,7 @@ export default function FollowAdvisorButton({
         // Revert optimistic update and redirect to sign-in
         setFollowing(following);
         setCount(initialCount);
-        router.push("/sign-in");
+        router.push(`/auth/login?next=${encodeURIComponent(window.location.pathname)}`);
         return;
       }
 

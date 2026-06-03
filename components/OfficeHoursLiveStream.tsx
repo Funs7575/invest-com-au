@@ -232,7 +232,7 @@ export default function OfficeHoursLiveStream({
               <span className="text-xs text-slate-400">{questionText.length}/500</span>
               {!userId ? (
                 <a
-                  href="/login?redirect=/questions"
+                  href="/auth/login?next=/questions"
                   className="text-xs font-semibold text-indigo-600 hover:underline"
                 >
                   Sign in to ask
