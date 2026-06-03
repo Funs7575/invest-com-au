@@ -59,8 +59,9 @@ interface DatedStatBadgeProps {
  *
  * When `source` or `sourceUrl` are provided, a small "i" affordance appears
  * after the value and toggles a popover with the source citation + sourcedAt
- * + stalesAt dates. The popover is keyboard-reachable (`<button>` + Enter)
- * and click-anywhere-else dismissible.
+ * + stalesAt dates. The popover is keyboard-reachable (`<button>` + Enter),
+ * stays open while focus moves into it (so the "View source" link is
+ * keyboard-reachable), and is dismissed on Escape or when focus leaves it.
  *
  * In development mode, adds a yellow ⚠ indicator when stalesAt is past today
  * so developers can notice stale values while working locally even when no
@@ -161,11 +162,27 @@ export default function DatedStatBadge({
       )}
 
       {hasPopover && (
-        <>
+        // Positioned container so the popover anchors to the badge (not an
+        // arbitrary ancestor). Dismissal is scoped to the whole control: closing
+        // only when focus leaves it (relatedTarget check) — Tabbing from the
+        // button INTO the popover's "View source" link must NOT close it — plus
+        // Escape. This replaces a button-only onBlur that trapped keyboard users.
+        <span
+          className="relative inline-flex items-baseline"
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+              setOpen(false);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape" && open) {
+              setOpen(false);
+            }
+          }}
+        >
           <button
             type="button"
             onClick={() => setOpen((prev) => !prev)}
-            onBlur={() => setOpen(false)}
             aria-expanded={open}
             aria-controls={popoverId}
             aria-label={
@@ -181,7 +198,7 @@ export default function DatedStatBadge({
             <span
               id={popoverId}
               role="tooltip"
-              className="absolute z-20 mt-5 max-w-xs rounded-md border border-slate-200 bg-white p-2 text-xs text-slate-700 shadow-lg"
+              className="absolute left-0 top-full z-20 mt-1 max-w-xs rounded-md border border-slate-200 bg-white p-2 text-xs text-slate-700 shadow-lg"
             >
               {source && <span className="block font-medium">{source}</span>}
               {sourceUrl && (
@@ -208,7 +225,7 @@ export default function DatedStatBadge({
               )}
             </span>
           )}
-        </>
+        </span>
       )}
     </span>
   );
