@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { render, screen } from "./setup";
+import { render, screen, userEvent } from "./setup";
 import DatedStatBadge from "@/components/DatedStatBadge";
 
 const FUTURE = "2099-12-31";
@@ -135,6 +135,54 @@ describe("DatedStatBadge", () => {
       render(<DatedStatBadge value="$1B" stalesAt={FUTURE} />);
       const btn = screen.queryByRole("button");
       expect(btn).toBeNull();
+    });
+
+    it("toggles the popover open and closed on button click", async () => {
+      const user = userEvent.setup();
+      render(
+        <DatedStatBadge value="$1B" stalesAt={FUTURE} source="ASIC, 2026-04-15" />
+      );
+      const btn = screen.getByRole("button", { name: /Source: ASIC/i });
+      expect(btn).toHaveAttribute("aria-expanded", "false");
+      await user.click(btn);
+      expect(btn).toHaveAttribute("aria-expanded", "true");
+      await user.click(btn);
+      expect(btn).toHaveAttribute("aria-expanded", "false");
+    });
+
+    it("keeps the popover open when keyboard focus moves from the button to the View source link (regression: no keyboard trap)", async () => {
+      // Previously the button's onBlur closed the popover before Tab could reach
+      // the link, making "View source" mouse-only. Focus must be able to enter
+      // the popover without dismissing it.
+      const user = userEvent.setup();
+      render(
+        <DatedStatBadge
+          value="$1B"
+          stalesAt={FUTURE}
+          source="ASIC, 2026-04-15"
+          sourceUrl="https://asic.gov.au/foo"
+        />
+      );
+      const btn = screen.getByRole("button", { name: /Source: ASIC/i });
+      await user.click(btn);
+      expect(screen.getByRole("link", { name: /View source/i })).toBeInTheDocument();
+      // Tab from the button into the popover — must NOT close it.
+      await user.tab();
+      const link = screen.getByRole("link", { name: /View source/i });
+      expect(link).toHaveFocus();
+      expect(btn).toHaveAttribute("aria-expanded", "true");
+    });
+
+    it("closes the popover on Escape", async () => {
+      const user = userEvent.setup();
+      render(
+        <DatedStatBadge value="$1B" stalesAt={FUTURE} source="ASIC, 2026-04-15" />
+      );
+      const btn = screen.getByRole("button", { name: /Source: ASIC/i });
+      await user.click(btn);
+      expect(btn).toHaveAttribute("aria-expanded", "true");
+      await user.keyboard("{Escape}");
+      expect(btn).toHaveAttribute("aria-expanded", "false");
     });
   });
 
