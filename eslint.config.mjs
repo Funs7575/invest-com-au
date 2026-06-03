@@ -298,14 +298,15 @@ const eslintConfig = [
       // ── Validation (Stream E) ────────────────────────────────────────────
       // Forward guardrail — every `await req.json()` / `await
       // request.json()` must be consumed by a Zod schema or wrapped in
-      // withValidatedBody. Promoted from `warn` to `error` once the last
-      // legacy routes were migrated (Stream E + the 2026-05 validation
-      // backfill) and the repo reached zero violations — so `npm run lint`
-      // now hard-fails on any new or reintroduced unvalidated body read,
-      // not just on staged files. For an unavoidable exception, opt out at
-      // the call site with `// eslint-disable-next-line
-      // invest/no-unvalidated-req-json -- <reason>`.
-      "invest/no-unvalidated-req-json": "error",
+      // withValidatedBody. Kept at `warn` (lint-staged's --max-warnings 0
+      // still blocks it on staged files). A promotion to `error` was tried
+      // here but reverted: after this branch rebased onto current main there
+      // are ~37 pre-existing unvalidated reads in routes/edge-functions added
+      // on main since the branch base, so a repo-wide `error` hard-fails
+      // `npm run lint`. Re-promote once those are validated (good follow-up).
+      // For an unavoidable exception, opt out at the call site with
+      // `// eslint-disable-next-line invest/no-unvalidated-req-json -- <reason>`.
+      "invest/no-unvalidated-req-json": "warn",
     },
   },
   {
