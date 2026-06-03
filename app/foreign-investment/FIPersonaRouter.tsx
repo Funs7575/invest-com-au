@@ -112,14 +112,14 @@ export default function FIPersonaRouter() {
                 : "border-slate-200 bg-white hover:border-slate-300 hover:shadow"
             }`}
           >
-            <div className="text-3xl mb-2">{j.emoji}</div>
-            <h3
-              className={`text-sm font-extrabold mb-1 ${
+            <div className="text-3xl mb-2" aria-hidden="true">{j.emoji}</div>
+            <span
+              className={`block text-sm font-extrabold mb-1 ${
                 selected === j.id ? "text-amber-800" : "text-slate-900"
               }`}
             >
               {j.label}
-            </h3>
+            </span>
             <p className="text-xs text-slate-500 leading-snug">
               {j.description}
             </p>
@@ -138,7 +138,7 @@ export default function FIPersonaRouter() {
       {active && (
         <div className="bg-white rounded-2xl border-2 border-amber-300 shadow-lg p-6 animate-fade-in">
           <div className="flex items-start gap-4 mb-5">
-            <div className="text-3xl">{active.emoji}</div>
+            <div className="text-3xl" aria-hidden="true">{active.emoji}</div>
             <div>
               <h3 className="text-base font-extrabold text-slate-900 mb-0.5">
                 {active.label}

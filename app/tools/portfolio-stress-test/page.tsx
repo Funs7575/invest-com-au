@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PortfolioStressTest from "@/components/PortfolioStressTest";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { calculatorJsonLd } from "@/lib/schema-markup";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Portfolio Stress Test | Invest.com.au",
@@ -10,16 +12,24 @@ export const metadata: Metadata = {
   openGraph: { title: "Portfolio Stress Test", description: "Stress-test your portfolio against historical market crises." },
 };
 
-const LD = calculatorJsonLd({
+const breadcrumbLd = breadcrumbJsonLd([
+  { name: "Home", url: SITE_URL },
+  { name: "Tools", url: `${SITE_URL}/tools` },
+  { name: "Portfolio Stress Test", url: `${SITE_URL}/tools/portfolio-stress-test` },
+]);
+
+const toolLd = calculatorJsonLd({
   name: "Portfolio Stress Test",
-  description: "See how your portfolio allocation would have fared during the GFC, COVID crash, dot-com bust and 2022 rate hike cycle.",
+  description:
+    "See how your portfolio allocation would have fared during the GFC, COVID crash, dot-com bust and 2022 rate hike cycle.",
   path: "/tools/portfolio-stress-test",
 });
 
 export default function PortfolioStressTestPage() {
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(LD) }} />
+    <>
+      <JsonLd data={[breadcrumbLd, toolLd]} />
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
       <nav className="text-xs text-slate-400">
         <Link href="/tools" className="hover:text-violet-700">Tools</Link>
         <span className="mx-1">›</span>
@@ -38,6 +48,7 @@ export default function PortfolioStressTestPage() {
       <PortfolioStressTest />
 
       <p className="text-[11px] text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
-    </div>
+      </div>
+    </>
   );
 }

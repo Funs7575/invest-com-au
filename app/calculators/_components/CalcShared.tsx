@@ -64,7 +64,7 @@ export function ShareResultsButton() {
         </svg>
         {copied ? "Copied!" : "Share Results"}
       </button>
-      <Link href="/methodology" className="text-slate-400 hover:text-slate-600 transition-colors">
+      <Link href="/methodology" className="text-slate-600 hover:text-slate-800 transition-colors">
         How we calculated this →
       </Link>
     </div>

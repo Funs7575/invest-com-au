@@ -93,7 +93,7 @@ export default function KillSwitchControls({ initialRows }: { initialRows: Row[]
                   {row.title}
                 </h3>
                 {disabled && (
-                  <span className="text-[0.6rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500 text-white">
+                  <span className="text-[0.6rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500 text-slate-900">
                     Disabled
                   </span>
                 )}

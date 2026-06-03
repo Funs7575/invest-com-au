@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import DividendCalendar from "@/components/DividendCalendar";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { calculatorJsonLd } from "@/lib/schema-markup";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "ETF Dividend Calendar | Invest.com.au",
@@ -10,16 +12,24 @@ export const metadata: Metadata = {
   openGraph: { title: "ETF Dividend Calendar", description: "Track upcoming ETF ex-dates and distribution payments." },
 };
 
-const LD = calculatorJsonLd({
+const breadcrumbLd = breadcrumbJsonLd([
+  { name: "Home", url: SITE_URL },
+  { name: "Tools", url: `${SITE_URL}/tools` },
+  { name: "ETF Dividend Calendar", url: `${SITE_URL}/tools/dividend-calendar` },
+]);
+
+const toolLd = calculatorJsonLd({
   name: "ETF Dividend Calendar",
-  description: "Upcoming ASX ETF distribution ex-dates and payment dates. Know when to own shares to receive your distribution.",
+  description:
+    "Upcoming ASX ETF distribution ex-dates and payment dates. Know when to own shares to receive your distribution.",
   path: "/tools/dividend-calendar",
 });
 
 export default function DividendCalendarPage() {
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(LD) }} />
+    <>
+      <JsonLd data={[breadcrumbLd, toolLd]} />
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
       <nav className="text-xs text-slate-400">
         <Link href="/tools" className="hover:text-violet-700">Tools</Link>
         <span className="mx-1">›</span>
@@ -38,6 +48,7 @@ export default function DividendCalendarPage() {
       <DividendCalendar />
 
       <p className="text-[11px] text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
-    </div>
+      </div>
+    </>
   );
 }

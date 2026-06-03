@@ -252,7 +252,7 @@ export default function FeedTab({ advisor }: Props) {
             <button
               type="button"
               onClick={() => setComposing(true)}
-              className="flex-1 text-left px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full text-sm text-slate-400 hover:bg-slate-100 transition-colors"
+              className="flex-1 text-left px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full text-sm text-slate-600 hover:bg-slate-100 transition-colors"
             >
               Share an update, insight or resource…
             </button>

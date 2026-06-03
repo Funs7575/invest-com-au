@@ -67,7 +67,7 @@ export default function DowngradeBanner({ summary, onCancelled }: Props) {
         type="button"
         onClick={cancelDowngrade}
         disabled={busy}
-        className="bg-amber-600 hover:bg-amber-700 disabled:bg-slate-300 text-white text-sm font-bold px-4 py-2 rounded-lg whitespace-nowrap"
+        className="bg-amber-600 hover:bg-amber-700 disabled:bg-slate-300 text-slate-900 text-sm font-bold px-4 py-2 rounded-lg whitespace-nowrap"
       >
         {busy ? "Cancelling…" : "Cancel downgrade"}
       </button>

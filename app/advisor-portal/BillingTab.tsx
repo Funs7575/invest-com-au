@@ -164,7 +164,7 @@ function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
               });
             }
           }}
-          className="w-full py-2 rounded-lg text-sm font-bold bg-amber-500 text-white hover:bg-amber-600 transition-all"
+          className="w-full py-2 rounded-lg text-sm font-bold bg-amber-500 text-slate-900 hover:bg-amber-600 transition-all"
         >
           Get Featured
         </button>

@@ -196,7 +196,7 @@ export default async function DealsPage() {
                 })}
               </div>
               <div className="text-center mt-3">
-                <Link href="/find-advisor" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">
+                <Link href="/find-advisor" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">
                   <Icon name="search" size={14} className="text-amber-200" />
                   Find Your Advisor
                 </Link>

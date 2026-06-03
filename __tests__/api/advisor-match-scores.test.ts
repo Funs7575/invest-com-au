@@ -119,7 +119,8 @@ describe("GET /api/cron/advisor-match-scores", () => {
       return advCallCount >= 2 ? Promise.resolve({ data: [ADVISOR_ROW], error: null }) : advChain;
     });
 
-    const criteriaChain = {
+    // advisor_ideal_clients lookup (3rd .from().select()) — no criteria seeded
+    const idealClientsChain = {
       select: vi.fn(() => Promise.resolve({ data: [], error: null })),
     };
 
@@ -130,10 +131,10 @@ describe("GET /api/cron/advisor-match-scores", () => {
     let callIndex = 0;
     mockFrom.mockImplementation(() => {
       callIndex++;
-      if (callIndex === 1) return profileChain;
-      if (callIndex === 2) return advChain;
-      if (callIndex === 3) return criteriaChain;
-      return upsertChain;
+      if (callIndex === 1) return profileChain;        // investor_profiles
+      if (callIndex === 2) return advChain;            // professionals
+      if (callIndex === 3) return idealClientsChain;   // advisor_ideal_clients
+      return upsertChain;                              // advisor_user_match_scores
     });
 
     const res = await GET(makeReq());

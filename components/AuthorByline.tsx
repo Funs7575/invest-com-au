@@ -86,7 +86,7 @@ export default function AuthorByline({
             className={`w-12 h-12 rounded-full flex items-center justify-center font-semibold text-sm shrink-0 ${
               isDark
                 ? "bg-white/10 text-white/70"
-                : "bg-slate-100 text-slate-500"
+                : "bg-slate-100 text-slate-600"
             }`}
           >
             {initials}

@@ -538,7 +538,7 @@ export default function ConciergeClient() {
               <button
                 type="submit"
                 disabled={!canSend}
-                className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-300 text-white font-bold text-xs px-4 py-2 rounded-lg"
+                className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-300 text-slate-900 font-bold text-xs px-4 py-2 rounded-lg"
               >
                 Send
                 <Icon name="arrow-right" size={12} />

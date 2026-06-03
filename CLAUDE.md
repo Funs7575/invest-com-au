@@ -52,6 +52,8 @@ npm run test:watch                 # watch mode
 - **Pre-push hook** (`.husky/pre-push`) runs `tsc --noEmit` + `npm run audit:rate-limits -- --strict` + `npm run test:changed -- --silent`. `tsc` on the full project OOMs at the default 4 GB heap on small dev machines — prefix with `NODE_OPTIONS="--max-old-space-size=5120"` if you hit it. The hook short-circuits when `node_modules` is missing (relevant for agent worktrees that skip `npm install` — push from the main worktree to get checks).
 - **Zod schemas reject by default.** `z.string().max(N)` returns 400 on oversized input — it does not truncate. If a route should be permissive (treat invalid input as null and proceed) read with `Schema.safeParse(...)` and use `parsed.success ? parsed.data.x : null` rather than `.parse()`.
 
+- **Pre-launch bot QA.** `bots/` exercises the live site behind a side-effect firewall (`bots/safety/money-paths.ts` mocks payments / affiliate `/go/` / leads / account writes — 0 real postbacks). Two modes: the deterministic page-sweep, and the in-session **AI journey** (`bots/journey/`, run via the `/ai-journey` slash command) where Claude is the judgment brain on the Max plan — no Anthropic API key, no separate bill. Reports land in `bots/reports/`. **Always re-verify a candidate finding with retries before reporting it** — the sandbox proxy throws transient 403/503s that are not real bugs.
+
 ## Single sources of truth — don't duplicate
 
 | Concern                                      | Module                                                    |

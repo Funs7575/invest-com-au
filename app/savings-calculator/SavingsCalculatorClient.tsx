@@ -177,7 +177,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
           </div>
           <button
             onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-amber-500 text-white text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
+            className="w-full mt-5 px-6 py-3.5 bg-amber-500 text-slate-900 text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
           >
             Calculate My Savings →
           </button>
@@ -259,7 +259,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(account.slug, account.name, "savings-calc", "/savings-calculator", "savings")}
-                      className="hidden md:inline-block px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-all"
+                      className="hidden md:inline-block px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-600 transition-all"
                     >
                       Visit →
                     </a>
@@ -274,7 +274,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                   <p className="text-xs text-slate-500 mb-3">Enter your email to unlock the full comparison</p>
                   <div className="flex gap-2 max-w-xs mx-auto">
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-                    <button onClick={handleEmailSubmit} className="px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600">Unlock</button>
+                    <button onClick={handleEmailSubmit} className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600">Unlock</button>
                   </div>
                 </div>
               )}

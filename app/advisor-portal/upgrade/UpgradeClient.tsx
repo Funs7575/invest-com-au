@@ -84,7 +84,7 @@ export default function UpgradeClient({ currentTier, tiers }: Props) {
               <div className="flex items-center justify-between mb-1">
                 <h3 className="text-sm font-bold text-slate-900">{tier.label}</h3>
                 {isCurrent && (
-                  <span className="text-[0.6rem] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500 text-white">
+                  <span className="text-[0.6rem] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500 text-slate-900">
                     Current
                   </span>
                 )}
@@ -113,7 +113,7 @@ export default function UpgradeClient({ currentTier, tiers }: Props) {
                 <button
                   type="button"
                   disabled
-                  className="w-full py-2 rounded bg-slate-100 text-slate-400 text-sm font-semibold cursor-not-allowed"
+                  className="w-full py-2 rounded bg-slate-100 text-slate-600 text-sm font-semibold cursor-not-allowed"
                 >
                   Current plan
                 </button>

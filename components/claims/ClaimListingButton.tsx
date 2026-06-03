@@ -87,7 +87,7 @@ export default function ClaimListingButton({
               ) : !open ? (
                 <button
                   onClick={() => setOpen(true)}
-                  className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-5 py-2.5 rounded-lg transition-colors"
                 >
                   Claim this listing
                   <Icon name="arrow-right" size={14} />
@@ -161,7 +161,7 @@ export default function ClaimListingButton({
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 rounded-lg disabled:bg-slate-400"
+                      className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-5 py-2.5 rounded-lg disabled:bg-slate-400"
                     >
                       {submitting ? "Submitting..." : "Submit claim"}
                     </button>

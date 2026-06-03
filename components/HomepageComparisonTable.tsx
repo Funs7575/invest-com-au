@@ -241,8 +241,8 @@ export default function HomepageComparisonTable({
         <table className="w-full compare-table">
           <thead>
             <tr className="border-y border-slate-100">
-              <th scope="col" className="sticky left-0 z-10 bg-white pl-5 pr-2 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-10">#</th>
-              <th scope="col" className="sticky left-10 z-10 bg-white px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[28%]">Platform</th>
+              <th scope="col" className="sticky left-0 z-10 bg-white pl-5 pr-2 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-600 w-10">#</th>
+              <th scope="col" className="sticky left-10 z-10 bg-white px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-600 w-[28%]">Platform</th>
               {activeColumns.map((col, ci) => (
                 <th key={ci} scope="col" className={`px-3 py-2 font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 whitespace-nowrap ${col.align === "center" ? "text-center" : "text-left"}`}>
                   <JargonTooltip term={col.header} />
@@ -341,7 +341,7 @@ export default function HomepageComparisonTable({
                       href={brokerLink}
                       target="_blank"
                       rel={AFFILIATE_REL}
-                      className="inline-block whitespace-nowrap text-center px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(217,119,6,0.3)]"
+                      className="inline-block whitespace-nowrap text-center px-3 py-1.5 bg-amber-600 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-700 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(217,119,6,0.3)]"
                     >
                       {getBenefitCta(broker, "compare")}
                     </a>

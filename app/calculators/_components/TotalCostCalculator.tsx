@@ -247,7 +247,7 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
                           onClick={() => trackClick(r.broker.slug, r.broker.name, "calculator-tco", "/calculators", "cta")}
                           className={`inline-block px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 whitespace-nowrap active:scale-[0.97] ${
                             isCheapest
-                              ? "bg-amber-600 text-white hover:bg-amber-700"
+                              ? "bg-amber-600 text-slate-900 hover:bg-amber-700"
                               : "bg-slate-100 text-slate-700 hover:bg-amber-600 hover:text-white"
                           }`}
                         >

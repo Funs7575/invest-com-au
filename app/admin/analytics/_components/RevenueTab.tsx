@@ -212,7 +212,7 @@ export default function RevenueTab({
               })}
             </tbody>
           </table>
-          <div className="px-4 py-2 bg-slate-50 text-[0.65rem] text-slate-400 border-t border-slate-200">
+          <div className="px-4 py-2 bg-slate-50 text-[0.65rem] text-slate-600 border-t border-slate-200">
             Projections based on avg. daily clicks ({avgDailyClicks.toFixed(1)} from 30d, {avgDailyClicksRecent.toFixed(1)} from last 7d) x avg. EPC (${avgEpc.toFixed(2)}).
           </div>
         </div>

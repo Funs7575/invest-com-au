@@ -213,7 +213,7 @@ export default function PropertyEnquiryForm({
         <button
           type="submit"
           disabled={submitting || !form.consent}
-          className="w-full py-3 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 transition-all text-sm"
+          className="w-full py-3 bg-amber-500 text-slate-900 font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 transition-all text-sm"
         >
           {submitting ? "Sending..." : "Send Enquiry — Free"}
         </button>

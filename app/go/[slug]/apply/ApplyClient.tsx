@@ -113,7 +113,7 @@ export default function ApplyClient({ broker }: { broker: ApplyBroker }) {
                 />
               </div>
             ) : (
-              <div className="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-400 shrink-0">
+              <div className="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-600 shrink-0">
                 {broker.name.charAt(0)}
               </div>
             )}
@@ -247,7 +247,7 @@ export default function ApplyClient({ broker }: { broker: ApplyBroker }) {
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-5">
               <div className="flex items-center gap-2">
                 {broker.deal_badge && (
-                  <span className="inline-block px-2 py-0.5 bg-amber-500 text-white text-[0.6rem] font-bold uppercase rounded">
+                  <span className="inline-block px-2 py-0.5 bg-amber-500 text-slate-900 text-[0.6rem] font-bold uppercase rounded">
                     {broker.deal_badge}
                   </span>
                 )}

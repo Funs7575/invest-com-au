@@ -102,7 +102,7 @@ export default function ConsultationsClient({ consultations }: Props) {
             </p>
             <Link
               href="/pro"
-              className="inline-block px-6 py-3 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 transition-colors"
+              className="inline-block px-6 py-3 bg-amber-600 text-slate-900 font-bold rounded-lg hover:bg-amber-700 transition-colors"
             >
               Learn About Investor Pro →
             </Link>

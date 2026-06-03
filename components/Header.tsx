@@ -33,7 +33,7 @@ const propertyDropdown = [
 // guides" pointer at the bottom and via /share-trading + /super.
 const investMegaMenu = [
   {
-    title: "Browse Opportunities",
+    title: "Marketplace",
     items: [
       { label: "All Opportunities", href: "/invest", desc: "Australian investment marketplace" },
       { label: "Investment Funds", href: "/invest/funds", desc: "Managed, syndicated, infrastructure, wholesale" },
@@ -193,7 +193,7 @@ const popularLinks = [
 
 const mobileNavSections = [
   {
-    title: "Browse Opportunities",
+    title: "Marketplace",
     items: [
       { name: "All Opportunities", href: "/invest" },
       { name: "Investment Funds", href: "/invest/funds" },
@@ -504,7 +504,7 @@ export default function Header() {
             <NotificationBell />
             <Link
               href="/quiz"
-              className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
+              className="bg-amber-500 hover:bg-amber-600 text-slate-900 px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
             >
               Get Matched
               <Icon name="arrow-right" size={16} />
@@ -564,7 +564,7 @@ export default function Header() {
               <Link
                 href="/quiz"
                 onClick={() => setMenuOpen(false)}
-                className="block w-full py-3 min-h-11 text-center text-sm font-extrabold text-white bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors"
+                className="block w-full py-3 min-h-11 text-center text-sm font-extrabold text-slate-900 bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors"
               >
                 Get Matched
               </Link>

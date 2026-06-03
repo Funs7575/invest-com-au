@@ -330,9 +330,9 @@ export default function CalculatorsClient({ brokers }: Props) {
                   <span className="sm:hidden">Prev</span>
                 </button>
               ) : <span />}
-              <span className="text-[0.56rem] text-slate-300 font-medium">
+              <span className="text-[0.56rem] text-slate-600 font-medium">
                 {currentInlineIdx + 1} / {INLINE_CALC_IDS.length}
-                <span className="md:hidden ml-1 text-slate-300">· swipe ←→</span>
+                <span className="md:hidden ml-1 text-slate-600">· swipe ←→</span>
               </span>
               {hasNext && nextCalc ? (
                 <button

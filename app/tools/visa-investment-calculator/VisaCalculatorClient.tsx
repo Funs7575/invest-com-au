@@ -353,7 +353,7 @@ export default function VisaCalculatorClient() {
 
                 <Link
                   href="/advisors/immigration-investment-lawyers"
-                  className="mt-auto inline-flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-4 py-2.5 rounded-lg"
+                  className="mt-auto inline-flex items-center justify-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs px-4 py-2.5 rounded-lg"
                 >
                   Find a migration agent
                   <Icon name="arrow-right" size={12} />
@@ -384,7 +384,7 @@ export default function VisaCalculatorClient() {
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href="/advisors/migration-agents"
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 rounded-lg"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-5 py-2.5 rounded-lg"
             >
               Browse migration agents
               <Icon name="arrow-right" size={14} />

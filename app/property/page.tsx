@@ -440,7 +440,7 @@ export default async function PropertyHubPage() {
                           </td>
                           <td className="px-2 py-3.5">
                             <span className="font-bold text-slate-900">{s.suburb}</span>
-                            <span className="text-xs text-slate-400 ml-1.5 bg-slate-100 px-1.5 py-0.5 rounded-md">{s.state}</span>
+                            <span className="text-xs text-slate-600 ml-1.5 bg-slate-100 px-1.5 py-0.5 rounded-md">{s.state}</span>
                           </td>
                           <td className="text-right px-3 py-3.5 text-slate-700 font-medium hidden md:table-cell">
                             {s.median_price_house ? formatPrice(s.median_price_house) : <span className="text-slate-300">—</span>}
@@ -570,7 +570,7 @@ export default async function PropertyHubPage() {
                     ))}
                   </div>
                 </div>
-                <Link href="/property/buyer-agents" className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold text-sm rounded-xl transition-colors shadow-lg shadow-amber-500/20">
+                <Link href="/property/buyer-agents" className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm rounded-xl transition-colors shadow-lg shadow-amber-500/20">
                   Browse Verified Agents &rarr;
                 </Link>
               </div>

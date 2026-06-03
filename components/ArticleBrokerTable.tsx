@@ -154,7 +154,7 @@ export default async function ArticleBrokerTable({
                   {...(cta.external
                     ? { target: "_blank", rel: "sponsored nofollow noopener" }
                     : {})}
-                  className="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-3 py-2 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs px-3 py-2 rounded-lg transition-colors"
                 >
                   {cta.label}
                   <Icon name="arrow-right" size={12} />

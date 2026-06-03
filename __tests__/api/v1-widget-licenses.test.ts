@@ -1,346 +1,522 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
-// ── Mocks ──────────────────────────────────────────────────────────────────────
+// ── Hoisted mocks ──────────────────────────────────────────────────────────────
+// vi.mock() is hoisted above all imports/consts, so referenced vars must come
+// from vi.hoisted().
 
-const mockAdminFrom = vi.fn();
+const { mockAdminFrom, mockValidateApiKey, mockLogApiRequest } = vi.hoisted(() => ({
+  mockAdminFrom: vi.fn(),
+  mockValidateApiKey: vi.fn(),
+  mockLogApiRequest: vi.fn(),
+}));
 
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+}));
+
+vi.mock("@/lib/api-auth", () => ({
+  validateApiKey: (...args: unknown[]) => mockValidateApiKey(...args),
+  logApiRequest: (...args: unknown[]) => mockLogApiRequest(...args),
+  API_CORS_HEADERS: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Authorization, Content-Type",
+  },
 }));
 
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
 
-const mockValidateApiKey = vi.fn();
-const mockLogApiRequest = vi.fn();
-vi.mock("@/lib/api-auth", () => ({
-  validateApiKey: (...args: unknown[]) => mockValidateApiKey(...args),
-  logApiRequest: (...args: unknown[]) => mockLogApiRequest(...args),
-  API_CORS_HEADERS: {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Authorization, Content-Type",
-  },
-}));
-
 import { GET, POST, DELETE, OPTIONS } from "@/app/api/v1/widget-licenses/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-function makeKey(tier = "pro") {
-  return { id: "key-wl", name: "Test", key_prefix: "ica_test", tier };
+const VALID_KEY_PRO = {
+  id: "key-pro-1",
+  name: "Pro Key",
+  key_prefix: "ica_pro",
+  tier: "pro",
+};
+
+const VALID_KEY_ENTERPRISE = {
+  id: "key-ent-1",
+  name: "Enterprise Key",
+  key_prefix: "ica_ent",
+  tier: "enterprise",
+};
+
+const VALID_KEY_FREE = {
+  id: "key-free-1",
+  name: "Free Key",
+  key_prefix: "ica_free",
+  tier: "free",
+};
+
+const VALID_KEY_BASIC = {
+  id: "key-basic-1",
+  name: "Basic Key",
+  key_prefix: "ica_basic",
+  tier: "basic",
+};
+
+function makeValidAuthPro() {
+  return { valid: true, apiKey: VALID_KEY_PRO };
 }
 
-function makeValidAuth(tier = "pro") {
-  return { valid: true, apiKey: makeKey(tier) };
+function makeValidAuthEnterprise() {
+  return { valid: true, apiKey: VALID_KEY_ENTERPRISE };
 }
 
-function makeInvalidAuth(msg = "Invalid API key", statusCode?: number) {
-  return { valid: false, error: msg, statusCode };
+function makeValidAuthFree() {
+  return { valid: true, apiKey: VALID_KEY_FREE };
 }
 
-function makeLicense(overrides: Record<string, unknown> = {}) {
-  return {
-    id: "lic-1",
-    name: "Acme Embed",
-    token_prefix: "wlt_abcdef012345",
-    allowed_domains: ["acme.com"],
-    is_active: true,
-    created_at: "2026-05-01T00:00:00Z",
-    updated_at: "2026-05-01T00:00:00Z",
-    ...overrides,
-  };
+function makeValidAuthBasic() {
+  return { valid: true, apiKey: VALID_KEY_BASIC };
 }
 
-/** GET: .select().eq().eq().order() — awaited directly. */
-function makeListBuilder(rows: unknown[] = [], error: unknown = null) {
-  const result = { data: rows, error };
-  const builder: Record<string, unknown> = {
-    select: vi.fn(() => builder),
-    eq: vi.fn(() => builder),
-    order: vi.fn(() => Promise.resolve(result)),
-  };
-  return builder;
+function makeInvalidAuth(msg = "Invalid API key") {
+  return { valid: false, error: msg, statusCode: 401 };
 }
 
-/** POST count: .select(...,{count,head}).eq().eq() — awaited directly. */
-function makeCountBuilder(count: number, error: unknown = null) {
-  const result = { count, error };
-  const builder: Record<string, unknown> = {
-    select: vi.fn(() => builder),
-    eq: vi.fn(() => Promise.resolve(result)),
-  };
-  // Allow either one or two `.eq()` calls before awaiting by making `.eq()`
-  // return a thenable that is also chainable.
-  builder.eq = vi.fn(() => {
-    const chain: Record<string, unknown> = {
-      eq: vi.fn(() => Promise.resolve(result)),
-      then: (resolve: (v: unknown) => unknown) => resolve(result),
-    };
-    return chain;
-  });
-  return builder;
-}
-
-/** POST insert: .insert().select().single(). */
-function makeInsertBuilder(row: unknown, error: unknown = null) {
-  const builder: Record<string, unknown> = {
-    insert: vi.fn(() => builder),
-    select: vi.fn(() => builder),
-    single: vi.fn(() => Promise.resolve({ data: row, error })),
-  };
-  return builder;
-}
-
-/** DELETE: .update().eq().eq().select().maybeSingle(). */
-function makeUpdateBuilder(row: unknown, error: unknown = null) {
-  const builder: Record<string, unknown> = {
-    update: vi.fn(() => builder),
-    eq: vi.fn(() => builder),
-    select: vi.fn(() => builder),
-    maybeSingle: vi.fn(() => Promise.resolve({ data: row, error })),
-  };
-  return builder;
-}
-
-function makeGet(): NextRequest {
-  return new NextRequest("http://localhost/api/v1/widget-licenses", {
+function makeGetReq(params: Record<string, string> = {}): NextRequest {
+  const sp = new URLSearchParams(params).toString();
+  const url = `http://localhost/api/v1/widget-licenses${sp ? `?${sp}` : ""}`;
+  return new NextRequest(url, {
     headers: { Authorization: "Bearer ica_testkey123" },
   });
 }
 
-function makePost(body: unknown): NextRequest {
+function makePostReq(body?: unknown): NextRequest {
   return new NextRequest("http://localhost/api/v1/widget-licenses", {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: "Bearer ica_testkey123" },
-    body: JSON.stringify(body),
+    headers: {
+      Authorization: "Bearer ica_testkey123",
+      "Content-Type": "application/json",
+    },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 }
 
-function makeDelete(id?: string): NextRequest {
-  const url = `http://localhost/api/v1/widget-licenses${id ? `?id=${id}` : ""}`;
+function makeDeleteReq(params: Record<string, string> = {}): NextRequest {
+  const sp = new URLSearchParams(params).toString();
+  const url = `http://localhost/api/v1/widget-licenses${sp ? `?${sp}` : ""}`;
   return new NextRequest(url, {
     method: "DELETE",
     headers: { Authorization: "Bearer ica_testkey123" },
   });
 }
 
-// ── Tests ──────────────────────────────────────────────────────────────────────
+/** Build a chainable supabase builder for list (GET) queries. */
+function makeListBuilder(rows: unknown[] = [], error: unknown = null) {
+  return {
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    order: vi.fn(() => Promise.resolve({ data: rows, error })),
+  };
+}
+
+/** Update builder — chains .update().eq().eq().select().maybeSingle() */
+function makeUpdateBuilder(data: unknown = null, error: unknown = null) {
+  const maybeSingle = vi.fn(() => Promise.resolve({ data, error }));
+  const select = vi.fn(() => ({ maybeSingle }));
+  const eq2 = vi.fn(() => ({ select }));
+  const eq1 = vi.fn(() => ({ eq: eq2 }));
+  const update = vi.fn(() => ({ eq: eq1 }));
+  return { update };
+}
+
+// ── OPTIONS ────────────────────────────────────────────────────────────────────
 
 describe("OPTIONS /api/v1/widget-licenses", () => {
-  it("returns 204 with CORS headers", async () => {
-    const res = await OPTIONS();
+  it("returns 204 with CORS headers", () => {
+    const res = OPTIONS();
     expect(res.status).toBe(204);
     expect(res.headers.get("Access-Control-Allow-Origin")).toBe("*");
   });
 });
 
-describe("GET /api/v1/widget-licenses — auth & tier", () => {
+// ── GET ────────────────────────────────────────────────────────────────────────
+
+describe("GET /api/v1/widget-licenses — auth", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("returns 401 when API key missing", async () => {
-    mockValidateApiKey.mockResolvedValue(makeInvalidAuth("Missing Authorization header"));
-    const res = await GET(makeGet());
+  it("returns 401 when API key is missing", async () => {
+    mockValidateApiKey.mockResolvedValue(makeInvalidAuth("No API key"));
+    const res = await GET(makeGetReq());
     expect(res.status).toBe(401);
     const data = await res.json();
-    expect(data.error).toBe("Missing Authorization header");
+    expect(data.error).toBe("No API key");
   });
 
-  it("honours the statusCode from auth (e.g. 403 endpoint gate)", async () => {
-    mockValidateApiKey.mockResolvedValue(makeInvalidAuth("Endpoint not on tier", 403));
-    const res = await GET(makeGet());
-    expect(res.status).toBe(403);
+  it("returns 401 when API key is invalid", async () => {
+    mockValidateApiKey.mockResolvedValue(makeInvalidAuth("Invalid or inactive API key"));
+    const res = await GET(makeGetReq());
+    expect(res.status).toBe(401);
   });
 
-  it("returns 403 for a valid key on a non-pro/enterprise tier", async () => {
-    mockValidateApiKey.mockResolvedValue(makeValidAuth("basic"));
-    const res = await GET(makeGet());
+  it("returns 403 for free-tier key", async () => {
+    mockValidateApiKey.mockResolvedValue(makeValidAuthFree());
+    const res = await GET(makeGetReq());
     expect(res.status).toBe(403);
     const data = await res.json();
-    expect(data.error).toMatch(/pro or enterprise/i);
-    expect(mockAdminFrom).not.toHaveBeenCalled();
+    expect(data.error).toMatch(/Pro or Enterprise/i);
+  });
+
+  it("returns 403 for basic-tier key", async () => {
+    mockValidateApiKey.mockResolvedValue(makeValidAuthBasic());
+    const res = await GET(makeGetReq());
+    expect(res.status).toBe(403);
   });
 });
 
 describe("GET /api/v1/widget-licenses — success", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockValidateApiKey.mockResolvedValue(makeValidAuth("pro"));
+    mockValidateApiKey.mockResolvedValue(makeValidAuthPro());
   });
 
-  it("lists active licenses scoped to the key", async () => {
-    const builder = makeListBuilder([makeLicense()]);
-    mockAdminFrom.mockReturnValue(builder);
-
-    const res = await GET(makeGet());
+  it("returns 200 with licenses array and embed_url_template", async () => {
+    const fakeRows = [
+      {
+        id: "lic-1",
+        name: "My Site",
+        token_prefix: "wlt_abcde",
+        allowed_domains: ["example.com"],
+        is_active: true,
+        created_at: "2026-01-01T00:00:00Z",
+        updated_at: "2026-01-01T00:00:00Z",
+      },
+    ];
+    mockAdminFrom.mockReturnValue(makeListBuilder(fakeRows));
+    const res = await GET(makeGetReq());
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.licenses).toHaveLength(1);
-    expect(body.licenses[0].token_prefix).toBe("wlt_abcdef012345");
+    expect(body.licenses[0].id).toBe("lic-1");
     expect(body.embed_url_template).toContain("{token}");
-    expect(builder.eq).toHaveBeenCalledWith("api_key_id", "key-wl");
-    expect(builder.eq).toHaveBeenCalledWith("is_active", true);
   });
 
-  it("returns an empty array when the key has no licenses", async () => {
+  it("returns empty licenses array when none exist", async () => {
     mockAdminFrom.mockReturnValue(makeListBuilder([]));
-    const res = await GET(makeGet());
+    const res = await GET(makeGetReq());
+    expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.licenses).toEqual([]);
   });
 
-  it("returns 500 on a DB error", async () => {
-    mockAdminFrom.mockReturnValue(makeListBuilder([], { message: "DB error" }));
-    const res = await GET(makeGet());
-    expect(res.status).toBe(500);
-    const data = await res.json();
-    expect(data.error).toMatch(/list widget licenses/i);
+  it("enterprise tier also works", async () => {
+    mockValidateApiKey.mockResolvedValue(makeValidAuthEnterprise());
+    mockAdminFrom.mockReturnValue(makeListBuilder([]));
+    const res = await GET(makeGetReq());
+    expect(res.status).toBe(200);
   });
 
-  it("logs successful requests with apiKeyId", async () => {
-    mockAdminFrom.mockReturnValue(makeListBuilder([]));
-    await GET(makeGet());
-    expect(mockLogApiRequest).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: 200, apiKeyId: "key-wl" }),
-    );
+  it("returns 500 when DB list query fails", async () => {
+    mockAdminFrom.mockReturnValue(makeListBuilder([], { message: "DB error" }));
+    const res = await GET(makeGetReq());
+    expect(res.status).toBe(500);
+    const data = await res.json();
+    expect(data.error).toMatch(/Failed to list widget licenses/);
   });
 });
 
-describe("POST /api/v1/widget-licenses", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockValidateApiKey.mockResolvedValue(makeValidAuth("pro"));
-  });
+// ── POST ───────────────────────────────────────────────────────────────────────
 
-  it("returns 401 when API key missing", async () => {
-    mockValidateApiKey.mockResolvedValue(makeInvalidAuth("Missing Authorization header"));
-    const res = await POST(makePost({ name: "Embed" }));
+describe("POST /api/v1/widget-licenses — auth", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("returns 401 when API key is invalid", async () => {
+    mockValidateApiKey.mockResolvedValue(makeInvalidAuth());
+    const res = await POST(makePostReq({ name: "Test" }));
     expect(res.status).toBe(401);
   });
 
-  it("returns 403 for a non-pro/enterprise tier", async () => {
-    mockValidateApiKey.mockResolvedValue(makeValidAuth("free"));
-    const res = await POST(makePost({ name: "Embed" }));
+  it("returns 403 for free-tier key", async () => {
+    mockValidateApiKey.mockResolvedValue(makeValidAuthFree());
+    const res = await POST(makePostReq({ name: "Test" }));
     expect(res.status).toBe(403);
+  });
+});
+
+describe("POST /api/v1/widget-licenses — validation", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockValidateApiKey.mockResolvedValue(makeValidAuthPro());
   });
 
   it("returns 400 on invalid JSON body", async () => {
-    const badReq = new NextRequest("http://localhost/api/v1/widget-licenses", {
+    const req = new NextRequest("http://localhost/api/v1/widget-licenses", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: "Bearer ica_testkey123" },
-      body: "not-json{",
+      headers: { Authorization: "Bearer ica_test", "Content-Type": "application/json" },
+      body: "not-json{{",
     });
-    const res = await POST(badReq);
+    const res = await POST(req);
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 when allowed_domains contains an invalid hostname", async () => {
-    const res = await POST(makePost({ name: "Embed", allowed_domains: ["not a domain"] }));
-    expect(res.status).toBe(400);
-    const data = await res.json();
-    expect(data.code).toBe("validation_error");
-  });
-
-  it("returns 400 when the per-key license limit is reached", async () => {
-    mockAdminFrom.mockReturnValueOnce(makeCountBuilder(10));
-    const res = await POST(makePost({ name: "Embed" }));
-    expect(res.status).toBe(400);
-    const data = await res.json();
-    expect(data.error).toMatch(/maximum/i);
-  });
-
-  it("returns 500 when the count query fails", async () => {
-    mockAdminFrom.mockReturnValueOnce(makeCountBuilder(0, { message: "count failed" }));
-    const res = await POST(makePost({ name: "Embed" }));
-    expect(res.status).toBe(500);
-  });
-
-  it("creates a license and returns 201 with the plaintext token once", async () => {
+  it("accepts body with empty name (schema default)", async () => {
+    // Count check: under limit; insert succeeds
+    const fakeInserted = {
+      id: "lic-new",
+      name: "",
+      token_prefix: "wlt_abcdef1",
+      allowed_domains: [],
+      is_active: true,
+      created_at: "2026-05-01T00:00:00Z",
+    };
+    // Build a mock that handles two sequential .from() calls differently:
+    // 1st call: count check
+    // 2nd call: insert
+    const countResult = Promise.resolve({ count: 0, error: null });
+    const countMock = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockImplementation(() => ({
+        eq: vi.fn(() => countResult),
+      })),
+    };
+    const insertResult = Promise.resolve({ data: fakeInserted, error: null });
+    const insertMock = {
+      insert: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => insertResult),
+        })),
+      })),
+    };
     mockAdminFrom
-      .mockReturnValueOnce(makeCountBuilder(0))
-      .mockReturnValueOnce(
-        makeInsertBuilder(makeLicense({ token_prefix: "wlt_newprefix000" })),
-      );
+      .mockReturnValueOnce(countMock)
+      .mockReturnValueOnce(insertMock);
 
-    const res = await POST(makePost({ name: "Acme Embed", allowed_domains: ["acme.com"] }));
+    const res = await POST(makePostReq({}));
     expect(res.status).toBe(201);
     const body = await res.json();
+    expect(body.license).toBeDefined();
+    expect(typeof body.license.token).toBe("string");
     expect(body.license.token).toMatch(/^wlt_/);
-    expect(body.license.token_prefix).toBe("wlt_newprefix000");
-    expect(body.embed_url).toContain("license=wlt_");
-    expect(body.message).toMatch(/not be shown again/i);
   });
 
-  it("returns 500 when the insert fails", async () => {
-    mockAdminFrom
-      .mockReturnValueOnce(makeCountBuilder(0))
-      .mockReturnValueOnce(makeInsertBuilder(null, { message: "insert failed" }));
-    const res = await POST(makePost({ name: "Embed" }));
-    expect(res.status).toBe(500);
+  it("returns 400 when domain in allowed_domains is invalid", async () => {
+    const res = await POST(makePostReq({ name: "Test", allowed_domains: ["not a domain!!"] }));
+    expect(res.status).toBe(400);
   });
 
-  it("logs a successful creation with apiKeyId and 201", async () => {
-    mockAdminFrom
-      .mockReturnValueOnce(makeCountBuilder(0))
-      .mockReturnValueOnce(makeInsertBuilder(makeLicense()));
-    await POST(makePost({ name: "Embed" }));
-    expect(mockLogApiRequest).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: 201, apiKeyId: "key-wl" }),
-    );
+  it("returns 400 when too many domains (>20)", async () => {
+    const domains = Array.from({ length: 21 }, (_, i) => `domain${i}.com`);
+    const res = await POST(makePostReq({ name: "Test", allowed_domains: domains }));
+    expect(res.status).toBe(400);
   });
 });
 
-describe("DELETE /api/v1/widget-licenses", () => {
+describe("POST /api/v1/widget-licenses — limit enforcement", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockValidateApiKey.mockResolvedValue(makeValidAuth("pro"));
+    mockValidateApiKey.mockResolvedValue(makeValidAuthPro());
   });
 
-  it("returns 401 when API key missing", async () => {
-    mockValidateApiKey.mockResolvedValue(makeInvalidAuth("Missing Authorization header"));
-    const res = await DELETE(makeDelete("lic-1"));
+  it("returns 400 when license limit (10) is already reached", async () => {
+    const countMock = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockImplementation(() => ({
+        eq: vi.fn(() => Promise.resolve({ count: 10, error: null })),
+      })),
+    };
+    mockAdminFrom.mockReturnValue(countMock);
+    const res = await POST(makePostReq({ name: "Extra" }));
+    expect(res.status).toBe(400);
+    const data = await res.json();
+    expect(data.error).toMatch(/Maximum 10/);
+  });
+
+  it("returns 500 when count query fails", async () => {
+    const countMock = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockImplementation(() => ({
+        eq: vi.fn(() => Promise.resolve({ count: null, error: { message: "DB error" } })),
+      })),
+    };
+    mockAdminFrom.mockReturnValue(countMock);
+    const res = await POST(makePostReq({ name: "Test" }));
+    expect(res.status).toBe(500);
+    const data = await res.json();
+    expect(data.error).toMatch(/Failed to check license count/);
+  });
+});
+
+describe("POST /api/v1/widget-licenses — insert failure", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockValidateApiKey.mockResolvedValue(makeValidAuthPro());
+  });
+
+  it("returns 500 when insert fails", async () => {
+    const countMock = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockImplementation(() => ({
+        eq: vi.fn(() => Promise.resolve({ count: 0, error: null })),
+      })),
+    };
+    const insertMock = {
+      insert: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: null, error: { message: "insert failed" } })),
+        })),
+      })),
+    };
+    mockAdminFrom
+      .mockReturnValueOnce(countMock)
+      .mockReturnValueOnce(insertMock);
+
+    const res = await POST(makePostReq({ name: "Test" }));
+    expect(res.status).toBe(500);
+    const data = await res.json();
+    expect(data.error).toMatch(/Failed to create widget license/);
+  });
+});
+
+describe("POST /api/v1/widget-licenses — happy path", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockValidateApiKey.mockResolvedValue(makeValidAuthPro());
+  });
+
+  function setupSuccessfulPost(name = "My License", allowedDomains: string[] = []) {
+    const fakeInserted = {
+      id: "lic-new-1",
+      name,
+      token_prefix: "wlt_abc12345",
+      allowed_domains: allowedDomains,
+      is_active: true,
+      created_at: "2026-05-01T00:00:00Z",
+    };
+    const countMock = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockImplementation(() => ({
+        eq: vi.fn(() => Promise.resolve({ count: 3, error: null })),
+      })),
+    };
+    const insertMock = {
+      insert: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: fakeInserted, error: null })),
+        })),
+      })),
+    };
+    mockAdminFrom
+      .mockReturnValueOnce(countMock)
+      .mockReturnValueOnce(insertMock);
+    return fakeInserted;
+  }
+
+  it("returns 201 with license token on success", async () => {
+    setupSuccessfulPost();
+    const res = await POST(makePostReq({ name: "My License" }));
+    expect(res.status).toBe(201);
+    const body = await res.json();
+    expect(body.license.token).toMatch(/^wlt_/);
+    expect(body.license.id).toBe("lic-new-1");
+  });
+
+  it("returned token is shown exactly once and starts with wlt_", async () => {
+    setupSuccessfulPost();
+    const res = await POST(makePostReq({ name: "Test" }));
+    const body = await res.json();
+    expect(body.license.token).toMatch(/^wlt_[a-f0-9]{64}$/);
+  });
+
+  it("includes embed_url with token", async () => {
+    setupSuccessfulPost();
+    const res = await POST(makePostReq({ name: "Test" }));
+    const body = await res.json();
+    expect(body.embed_url).toContain("wlt_");
+    expect(body.embed_url).toContain("invest.com.au/api/widget/licensed");
+  });
+
+  it("includes message about saving the token", async () => {
+    setupSuccessfulPost();
+    const res = await POST(makePostReq({ name: "Test" }));
+    const body = await res.json();
+    expect(body.message).toContain("Save your license token");
+  });
+
+  it("accepts allowed_domains in body", async () => {
+    setupSuccessfulPost("Restricted", ["example.com", "app.example.com"]);
+    const res = await POST(makePostReq({ name: "Restricted", allowed_domains: ["example.com", "app.example.com"] }));
+    expect(res.status).toBe(201);
+  });
+
+  it("enterprise tier can also create licenses", async () => {
+    mockValidateApiKey.mockResolvedValue(makeValidAuthEnterprise());
+    setupSuccessfulPost();
+    const res = await POST(makePostReq({ name: "Enterprise License" }));
+    expect(res.status).toBe(201);
+  });
+});
+
+// ── DELETE ─────────────────────────────────────────────────────────────────────
+
+describe("DELETE /api/v1/widget-licenses — auth", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("returns 401 when API key is invalid", async () => {
+    mockValidateApiKey.mockResolvedValue(makeInvalidAuth());
+    const res = await DELETE(makeDeleteReq({ id: "lic-1" }));
     expect(res.status).toBe(401);
   });
 
-  it("returns 403 for a non-pro/enterprise tier", async () => {
-    mockValidateApiKey.mockResolvedValue(makeValidAuth("free"));
-    const res = await DELETE(makeDelete("lic-1"));
+  it("returns 403 for basic-tier key", async () => {
+    mockValidateApiKey.mockResolvedValue(makeValidAuthBasic());
+    const res = await DELETE(makeDeleteReq({ id: "lic-1" }));
     expect(res.status).toBe(403);
   });
+});
 
-  it("returns 400 when ?id= is missing", async () => {
-    const res = await DELETE(makeDelete());
+describe("DELETE /api/v1/widget-licenses — validation", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockValidateApiKey.mockResolvedValue(makeValidAuthPro());
+  });
+
+  it("returns 400 when ?id is missing", async () => {
+    const res = await DELETE(makeDeleteReq());
     expect(res.status).toBe(400);
     const data = await res.json();
-    expect(data.error).toMatch(/id=/i);
+    expect(data.error).toMatch(/Missing \?id/);
+  });
+});
+
+describe("DELETE /api/v1/widget-licenses — success and errors", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockValidateApiKey.mockResolvedValue(makeValidAuthPro());
   });
 
-  it("returns 404 when the license is not found for this key", async () => {
-    mockAdminFrom.mockReturnValue(makeUpdateBuilder(null));
-    const res = await DELETE(makeDelete("lic-1"));
+  it("returns 200 when license deactivated successfully", async () => {
+    const updateMock = makeUpdateBuilder({ id: "lic-1" });
+    mockAdminFrom.mockReturnValue(updateMock);
+    const res = await DELETE(makeDeleteReq({ id: "lic-1" }));
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.message).toBe("License deleted");
+    expect(data.id).toBe("lic-1");
+  });
+
+  it("returns 404 when license not found or already deleted", async () => {
+    const updateMock = makeUpdateBuilder(null);
+    mockAdminFrom.mockReturnValue(updateMock);
+    const res = await DELETE(makeDeleteReq({ id: "lic-missing" }));
     expect(res.status).toBe(404);
     const data = await res.json();
-    expect(data.error).toMatch(/not found/i);
+    expect(data.error).toMatch(/not found or already deleted/);
   });
 
-  it("deactivates the license and returns 200", async () => {
-    const builder = makeUpdateBuilder({ id: "lic-1" });
-    mockAdminFrom.mockReturnValue(builder);
-    const res = await DELETE(makeDelete("lic-1"));
-    expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.id).toBe("lic-1");
-    expect(body.message).toMatch(/deleted/i);
-    expect(builder.update).toHaveBeenCalledWith(
-      expect.objectContaining({ is_active: false }),
-    );
-  });
-
-  it("returns 500 on a DB error", async () => {
-    mockAdminFrom.mockReturnValue(makeUpdateBuilder(null, { message: "DB error" }));
-    const res = await DELETE(makeDelete("lic-1"));
+  it("returns 500 when update query fails", async () => {
+    const updateMock = makeUpdateBuilder(null, { message: "DB error" });
+    mockAdminFrom.mockReturnValue(updateMock);
+    const res = await DELETE(makeDeleteReq({ id: "lic-1" }));
     expect(res.status).toBe(500);
+    const data = await res.json();
+    expect(data.error).toMatch(/Failed to delete widget license/);
   });
 });

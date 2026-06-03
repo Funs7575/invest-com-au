@@ -259,7 +259,7 @@ export default async function SectorStocksPage({
             <div className="flex flex-wrap justify-center gap-3">
               <Link
                 href="/compare?category=shares"
-                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 rounded-lg"
+                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-sm px-5 py-2.5 rounded-lg"
               >
                 Compare ASX brokers
                 <Icon name="arrow-right" size={14} />

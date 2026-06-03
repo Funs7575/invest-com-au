@@ -64,8 +64,8 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-// Mock useUser hook — prevents Supabase browser client creation in jsdom tests.
-// Any component that calls useUser() gets unauthenticated + not-loading state.
+// Mock useUser hook (used by BookmarkButton and other auth-aware components).
+// Returns unauthenticated state to keep component tests Supabase-free.
 vi.mock("@/lib/hooks/useUser", () => ({
   useUser: () => ({ user: null, loading: false }),
 }));

@@ -156,7 +156,7 @@ function StepCard({ step }: { step: JourneyStep }) {
     >
       {/* Step header */}
       <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center gap-3">
-        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-500 text-white text-xs font-extrabold shrink-0">
+        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-500 text-slate-900 text-xs font-extrabold shrink-0">
           {step.stepNumber}
         </span>
         <h2 className="font-extrabold text-slate-900 text-sm md:text-base leading-tight">

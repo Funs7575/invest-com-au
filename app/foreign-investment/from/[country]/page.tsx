@@ -250,7 +250,7 @@ export default async function CountryForeignInvestmentPage({
                   )}
                   <div className="mt-auto flex gap-2">
                     {b.affiliate_url && (
-                      <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="flex-1 text-center text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
+                      <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="flex-1 text-center text-xs font-bold text-slate-900 bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
                         Visit
                       </Link>
                     )}
@@ -395,7 +395,7 @@ export default async function CountryForeignInvestmentPage({
               <p className="text-slate-400 text-sm">International tax specialists who understand both Australian rules and {dtaCountry.country} obligations.</p>
             </div>
             <div className="flex gap-3 shrink-0">
-              <Link href="/advisors/tax-agents" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
+              <Link href="/advisors/tax-agents" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
                 Find Tax Advisor
               </Link>
               <Link href="/foreign-investment" className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap">

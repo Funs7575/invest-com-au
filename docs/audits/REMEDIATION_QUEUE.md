@@ -53,7 +53,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07 done (iter 492): data room upload + per-investor access grants + revoke (`d036cf47`). SP-08 done (iter 493): wholesale cert flow — /account/wholesale-cert + /api/wholesale-investor-cert/{submit,verify} + 14 tests (`60e4ca9`). SP-09 done (iter 494): ESIC verification — /startup-portal/esic-verification + /api/startups/esic-verify + 15 tests (`3d11fd6`). SP-10 done (iter 495): investor sector-thesis profile — /account/startup-thesis + /api/account/startup-thesis + 173 LOC tests (`42c58f03`). SP-11 done (iter 496): personalised deal feed — /invest/startups/for-you + lib/startup-match.ts scoring + 23 tests (`4df3145`). SP-11 merge conflict resolved (iter 497). SP-12 engineering done (iter 498): admin startup review UI — /admin/startups + /api/admin/startups/[id]/review + 9 tests (`3a0bc96`). SP-12 compliance signoff BLOCKED (see Blocked). SP-13 done (iter 499): Playwright E2E — 20 tests across 12 startup-portal routes + 5 API auth gates (`df18e10a`). Branch synced with main (merge `e6f14476`). CI rescue (iter 503): Zod v4 .issues migration + vi.hoisted() fix (`e41e72f`). SP-DISC-07 (iter 505): `app/api/startups/round/route.ts` unit tests — 9 cases (`dc3daef`). CI rescue (iter 506): AccountKind TS gaps — `startup` entry missing from KIND_META in 2 components, `Stats.startups` field, BriefForm kind union (`7ceefa5` + `6e27699`). CI rescue (iter 508): lint 18→0 warnings (`fffeba1`). CI rescue (iter 509): async params build fix (`0e13cbc`). CI rescue (iter 511): metadata-coverage gate — add `app/startup-signup/layout.tsx` (`41bc52c`). CI rescue (iter 515): JSON-LD exemption gate (`fdd8f37`). CI rescue (iter 519): add 56 tests for 4 uncovered data-room + esic-verify routes (`ba50786`) — pending CI re-run. | All SP tasks merged + compliance signoff |
 | CO | `claude/audit-remediation/co-cutover-prep` | **#1046 MERGED 2026-05-20** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485+486): sitemap finalisation. CO-04 blocked (DNS — registrar access). CO-05 done (iter 487): pre-launch QA automation suite (30 Playwright tests). CO-06 done (iter 482): apex domain cutover runbook. CO-07 done (iter 483): final anonymity audit — CL-09 PASSED. **#1046 merged by founder 2026-05-20.** CO-01/CO-02/CO-04 remain blocked (external credentials/registrar action). | All CO tasks done + compliance signoff |
-| MAIN-RESCUE | `fix/main-rescue-cron-webhook-mock` | **#793 MERGED** · **#1268 OPEN** | next 16.2.4→16.2.6 patch merged. iter 576 (2026-05-27): mocked consumer-webhook-dispatch in 4 cron tests — unblocks main CI + #1176/#1180. iter 580 (2026-05-27): also fixed `getAllCategorySlugs` test (expects deduped slugs now that `getAllCategorySlugs()` uses Set — broken since ffb1b74). Commit `8ddb849` on fix branch; cherry-picked `0ad2574` to #1176 and `e28153c` to #1180. All 3 CI re-triggered. Non-loop auto-revert PRs still open: **#827** · **#843** · **#1237** · **#1246** · **#1254** · **#1263** — founder-action items. | #1268 CI in_progress; #1176/#1180 CI in_progress |
+| MAIN-RESCUE | `fix/main-rescue-cron-webhook-mock` | **#793 MERGED** · **#1268 OPEN** | next 16.2.4→16.2.6 patch merged. iter 576 (2026-05-27): mocked consumer-webhook-dispatch in 4 cron tests — unblocks main CI + #1176/#1180. iter 580 (2026-05-27): also fixed `getAllCategorySlugs` test. **iter 587 (2026-05-29) MAIN-RESCUE:** build-everything push broke 4 test files on main — fixed in commit `1cbb001`. **iter 589 (2026-05-29) CI-RESCUE:** all 4 PRs still failing `Lint · Build` on old rebase base (`65e746c5`) despite iter 587/588 re-triggers. Root cause: iter 587 pushed empty commits to branches still at old base — those wouldn't include `1cbb001`'s test fixes. Fix: rebased all 4 branches fully onto current main (`52665c8`/`1cbb001`) and force-pushed: #1268 (`5d1c3bb`), #1176 (`fee9f82`), #1180 (`e7b8288`), #1269 (`faf0471`). CI re-triggered on all 4. | CI re-triggered post-rebase (iter 589) |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 MERGED 2026-05-17** | LL-01..LL-04 done. LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). **Stream stalled at LL-05 (blocked).** | All LL tasks merged (LL-05 blocked) |
 | RR | _complete_ | **#847 MERGED 2026-05-17** | RR-01 false-positive. RR-02 done. **Stream complete.** | All RR tasks merged ✓ |
@@ -201,22 +201,13 @@ Commit `199146f` (May 21) added `app/grants/[industry]/page.tsx` alongside the p
 
 ---
 
-### Accessibility (axe-core on key routes) systemic failure — 2026-05-28 (deepen-loop commits)
+### ~~Accessibility (axe-core on key routes) systemic failure — 2026-05-28 (deepen-loop commits)~~ **RESOLVED iter 584**
 
-**Surfaced: iter 582.** `Accessibility (axe-core on key routes)` check failing on **#1176** and **#1268**. Same-gate cluster guard requires ≥3 affected PRs to fire — only 2 affected, so guard did not fire. Surfaced manually.
+**RESOLVED 2026-05-29 (iter 584, commit `94ec94f` on main).** Option (b) taken: fixed `FIPersonaRouter.tsx` directly — `<h3>` inside `<button>` replaced with `<span className="block ...">`, `aria-hidden="true"` added to both emoji `<div>` elements. In-flight PRs (#1176, #1268, #1269) do not touch `FIPersonaRouter.tsx` so CI will pick up the fix on the next triggered run (no rebase needed). **This blocked entry can be deleted by the founder.**
 
-**Root cause:** Deepen-loop commits on main introduced `app/foreign-investment/FIPersonaRouter.tsx` (commit `ff2d3a57`) with `<h3>` elements inside `<button>` elements and emoji in plain `<div>` without `aria-hidden`. The `/foreign-investment` route is in `e2e/a11y.spec.ts` ROUTES (critical-only gate). Any PR with a base that includes this commit will inherit the a11y failure.
+~~**Surfaced: iter 582.** `Accessibility (axe-core on key routes)` check failing on **#1176** and **#1268**. Same-gate cluster guard requires ≥3 affected PRs to fire — only 2 affected, so guard did not fire. Surfaced manually.~~
 
-**Affected PRs:** #1176 (NF-03 admin MFA), #1268 (MAIN-RESCUE). Auto-revert PRs already open: #1237, #1246, #1254, #1263.
-
-**Recommendation:**
-- **(a) Merge auto-revert PRs** (#1237, #1246, #1254, #1263) to remove the deepen-loop commits from main. All NF in-flight PRs were created after the deepen commits and will need rebasing after the reverts land.
-- **(b) Fix `FIPersonaRouter.tsx` directly** — replace `<button><h3>…</h3></button>` with `<button><span>…</span></button>` (or use `role="presentation"` on the `h3`), and add `aria-hidden="true"` to any emoji `<div>`. This unblocks without reverting the feature content.
-- **(c) Exempt `/foreign-investment` from the critical gate** — not recommended (reduces safety coverage).
-
-**Same-gate cluster guard status:** 2/3 PRs affected — guard NOT triggered. Loop will not auto-surface again on the next iteration unless a third PR joins.
-
-**Once resolved:** delete this entry. If option (a) taken, the loop will rebase open NF PRs from fresh main.
+~~**Root cause:** Deepen-loop commits on main introduced `app/foreign-investment/FIPersonaRouter.tsx` (commit `ff2d3a57`) with `<h3>` elements inside `<button>` elements and emoji in plain `<div>` without `aria-hidden`. The `/foreign-investment` route is in `e2e/a11y.spec.ts` ROUTES (critical-only gate). Any PR with a base that includes this commit will inherit the a11y failure.~~
 
 ---
 
@@ -273,6 +264,150 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 590 — 2026-05-29 — STATUS: ALL-BLOCKED · CI in-progress on all 4 PRs post-rebase
+
+- **Phase 0:** Lock acquired (batch fire, iter 1 of up to 5 this fire). Synced main to `38b6e0e` (iter 589 queue commit).
+- **Phase 0.5:** No LOOP_PAUSE sentinel. Proceeding.
+- **Phase 1 (Sync):** On main at `38b6e0e`. No migrations in last 24h, no inflight drift-failing checks → Phase 1.5 skipped. Main HEAD is a queue commit → Phase 1.7 inferred healthy.
+- **Phase 2 (CI rescue — in-flight PR review):**
+  - **#1268** (MAIN-RESCUE): All checks `queued` — fresh CI run triggered by iter 589 rebase (`5d1c3bb`). No failures. No rescue needed.
+  - **#1176** (NF-03 admin MFA): `Lint · Type-check · Test · Build` **in_progress** (started 04:37Z). `AI factual-filter gate` ✅. `Supabase types drift` ❌ (infra noise — EXCLUDED_CHECK_NAMES). No actionable failure. No rescue needed.
+  - **#1180** (NF-20 SMS consent): `Lint · Type-check · Test · Build` **in_progress** (started 04:36Z). `AI factual-filter gate` ✅. No failures. No rescue needed.
+  - **#1269** (NF-16 v2 autopilot): `Lint · Type-check · Test · Build` **in_progress** (started 04:36Z). `AI factual-filter gate` ✅. `Stripe webhook idempotency gate` ✅. No failures. No rescue needed.
+- **Phase 3 (Item selection):** No pending engineering items in any non-blocked stream. All streams complete or blocked. No override conditions met.
+- **STATUS: ALL-BLOCKED · CI-in-progress-on-all-4-PRs**
+- **Batch stop condition reached** (ALL-BLOCKED). Total iterations this fire: 1.
+- **Pending founder actions after CI green:**
+  - Merge **#1268** (Tier A — tests-only, `auto-merge-safe`) → **#1176** (Tier C, NF-03 admin MFA — announce intent before merge) → **#1180** (Tier C, NF-20 SMS consent — announce intent before merge) → **#1269** (Tier B, NF-16 autopilot, 15-min obs window).
+  - All 4 PRs are on current main (`52665c8`/`1cbb001` base via iter 589 rebase). Expected: Lint/Build ✅ on all 4 once CI completes.
+
+---
+
+### iter 589 — 2026-05-29 — STATUS: CI-RESCUE · stream=NF+MAIN-RESCUE · rebased all 4 PRs onto main+1cbb001
+
+- **Phase 0:** Lock held (batch fire, this fire iter 1 of up to 5 — fresh session, prior fire lock released). Synced main to `52665c8`.
+- **Phase 2 (CI rescue — in-flight PR review):**
+  - **#1268** (MAIN-RESCUE): `Lint · Build` FAILURE (job started 03:10Z, completed 03:15Z — run from iter 585 re-trigger). Branch at `bd6fcd8`, 60 commits behind main at `65e746c5`. All local checks pass (tsc, lint, JSON-LD, test:coverage, rate-limits). Build can't be reproduced locally (sandbox resource limit).
+  - **#1176** (NF-03): `Lint · Build` FAILURE (03:09Z–03:13Z, 3:56 duration). Same old base.
+  - **#1180** (NF-20): `Lint · Build` FAILURE (03:13Z–03:18Z). Same old base.
+  - **#1269** (NF-16 v2): `Lint · Build` FAILURE (03:09Z–03:15Z). Same old base.
+  - **Iter 587 context:** another fire ran `MAIN-RESCUE` (`1cbb001`) fixing 4 test failures introduced by build-everything commit `07a634a`. Iter 587 then pushed EMPTY commits to re-trigger CI on all 4 PRs. But the PR branches were still at old base `65e746c5` — empty commits don't include `1cbb001`. So CI would still fail on old code.
+  - **Root-cause determination:** Branches 60 commits behind main. Investigation showed all LOCAL checks pass. The failure is in code from the stale base that only manifests in the full Next.js build (`npm run build`) + any test breakage introduced by build-everything. Rebasing onto current main resolves both: picks up all main fixes including `1cbb001`.
+- **Phase 5 (Rescue):** Rebased all 4 branches onto current main (`52665c8`, includes `1cbb001`):
+  - `fix/main-rescue-cron-webhook-mock` → `5d1c3bb` (5 test files diff vs main)
+  - `claude/audit-remediation/nf-03-admin-mfa-login-env-guard` → `fee9f82` (7 files diff vs main)
+  - `claude/audit-remediation/nf-20-part1-sms-consent` → `e7b8288` (9 files diff vs main)
+  - `claude/audit-remediation/nf-16-v2-autopilot-gate` → `faf0471` (29 files diff vs main)
+  - Verified: changed-file tests pass on NF-16 (62/62) and NF-20 (31/31).
+- **Phase 6 (Push):** All 4 force-pushed. CI re-triggered on all 4 PRs.
+- **STATUS: CI-RESCUE · stream=NF+MAIN-RESCUE · rebased-all-4-onto-1cbb001 · prs=#1268+#1176+#1180+#1269**
+- **Next:** CI running on all 4. Expected all-green once builds complete against current main base.
+- **Pending founder actions after CI green:**
+  - Merge **#1268** (Tier A — tests-only, `auto-merge-safe`) → **#1176** (Tier C, NF-03 admin MFA — announce intent) → **#1180** (Tier C, NF-20 SMS consent — announce intent) → **#1269** (Tier B, NF-16 autopilot, 15-min obs window).
+
+---
+
+### iter 588 — 2026-05-29 — STATUS: ALL-BLOCKED · CI running on all 4 PRs post-main-fix
+
+- **Phase 0:** Lock held (batch fire, iter 2 of up to 5). LOOP_PAUSE present — founder direct invocation overrides.
+- **Phase 1 (Sync):** On main, `d3ad6af` (iter 587 queue update). Synced.
+- **Phase 2 (CI rescue):** All 4 in-flight PRs CI queued/in_progress (started 04:22-04:23Z after iter 587 main fix + re-triggers):
+  - **#1268** (MAIN-RESCUE): `Lint · Build` in_progress, fast gates mostly ✅.
+  - **#1176** (NF-03): `Lint · Build` queued, fast gates queued.
+  - **#1269** (NF-16 v2): `Lint · Build` queued, fast gates queued.
+  - **#1180** (NF-20): `Lint · Build` queued, fast gates queued.
+- **Phase 3:** No pending engineering items in any non-blocked stream.
+- **STATUS: ALL-BLOCKED · CI-running-on-all-4-PRs**
+- **Batch stop condition reached** (ALL-BLOCKED). Total iterations this fire: 2 (587 MAIN-RESCUE + 588 ALL-BLOCKED).
+- **Expected next fire outcome:** All 4 Lint/Build should pass (main CI fix `1cbb001` resolves the test failures). Infra noise (Preview smoke, Supabase types drift, Bundle size) remain ❌ but excluded by EXCLUDED_CHECK_NAMES in auto-merge.js.
+- **Pending founder actions after CI green:**
+  - Merge **#1268** (Tier A — tests-only, CI expected ✅) → **#1176** (Tier C, NF-03 admin MFA — announce before merge) → **#1180** (Tier C, NF-20 SMS consent — announce before merge) → **#1269** (Tier B, NF-16 autopilot, 15-min obs window).
+
+---
+
+### iter 587 — 2026-05-29 — STATUS: MAIN-RESCUE · build-everything test breakage · commit=1cbb001
+
+- **Phase 0:** Lock acquired (batch fire, iter 1 of up to 5 this fire).
+- **Phase 0.5:** No LOOP_PAUSE sentinel. Proceeding.
+- **Phase 1 (Sync):** Local main stale (diverged). Reset to `origin/main HEAD=acebf4d`.
+- **Phase 1.5 (Types drift):** No SQL migrations in last 24h on main. Skip.
+- **Phase 1.7 (Main CI preflight):** Main HEAD is a queue commit, inferred healthy — BUT Phase 2 check revealed the truth.
+- **Phase 2 (CI rescue — in-flight PR review):**
+  - **#1176, #1268, #1269, #1180**: All showing `Lint · Type-check · Test · Build` FAILURE. CI timestamps ~03:09-03:15Z (from iter 585 re-trigger).
+  - All 4 branches are 53-58 commits behind main (missing `07a634a` build-everything + 56 subsequent).
+  - Root-cause investigation: ran `npx vitest run` on main HEAD — found 4 test files failing on main itself (not just PRs):
+    1. `__tests__/components/BrokerCard.test.tsx` — 21 failures: `BookmarkButton` → `useUser` → real Supabase client (no env). `DealExpiryCountdown` added to `BrokerCard.tsx` in build-everything; `BookmarkButton` was already imported. Missing `useUser` mock in component test setup.
+    2. `__tests__/components/AdvisorsClient.test.tsx` — 5 failures: same cause (`AdvisorsClient.tsx` imports `BookmarkButton`).
+    3. `__tests__/lib/afsl-compliance-coverage.test.ts` — 1 failure: `app/advisor/[slug]/insights/page.tsx` added without `<ComplianceFooter />`.
+    4. `__tests__/lib/metadata-coverage.test.ts` — 1 failure: `app/clubs/[clubId]/join/page.tsx` is "use client" with no metadata and no ancestor layout.
+- **Phase 1.7 (MAIN-RESCUE):** Fixed all 4 on main directly (precedent: iter 541, iter 584):
+  1. `__tests__/components/setup.tsx`: Added `vi.mock("@/lib/hooks/useUser", ...)` returning `{ user: null, loading: false }`.
+  2. `__tests__/components/AdvisorsClient.test.tsx`: Same `vi.mock("@/lib/hooks/useUser")` (doesn't import from setup.tsx).
+  3. `app/advisor/[slug]/insights/page.tsx`: Added `import ComplianceFooter` + `<ComplianceFooter />` at page bottom.
+  4. `app/clubs/[clubId]/layout.tsx`: Created with `metadata: { robots: "noindex, nofollow" }` — ancestor-walk picks this up for `join/page.tsx`.
+  - Lint: exit 0. All 4 fixed test files: 774 tests green. Commit `1cbb001` pushed to main.
+- **Phase 6.5 (Discovery):** 0 items — all touched files were test/coverage infrastructure.
+- **Phase 7 (Re-trigger 4 in-flight PRs):** Empty commits pushed to all 4 branches:
+  - #1268 (`ce0a5a4`), #1176 (`9128050`), #1269 (`f17c217`), #1180 (`6526cb5`).
+- **STATUS: MAIN-RESCUE · commit=1cbb001 · unblocks-all-4-PRs**
+- **Next (iter 588):** All 4 CI runs now in-progress against fixed main. Expected outcome: Lint/Build ✅ on all 4. Infra noise (Preview smoke, Supabase types drift) remain ❌ but excluded by auto-merge.js EXCLUDED_CHECK_NAMES.
+- **Pending founder actions after CI green:**
+  - Merge **#1268** (Tier A — tests-only, no code) → **#1176** (Tier C, NF-03 admin MFA — announce intent before merge) → **#1180** (Tier C, NF-20 SMS consent — announce intent) → **#1269** (Tier B, NF-16 autopilot, 15-min obs window).
+
+---
+
+### iter 586 — 2026-05-29 — STATUS: ALL-BLOCKED · CI in-progress on all 4 PRs
+
+- **Phase 0:** Lock held (batch fire, iter 3 of 5). Synced main to `f496ade`.
+- **Phase 2 (CI check):**
+  - **#1176** (NF-03 admin MFA): `Lint · Build` in_progress (03:09:10Z). Fast gates ✅. a11y gate hasn't run yet (depends on Lint/Build). Expected to pass since FIPersonaRouter fix is on main.
+  - **#1268** (MAIN-RESCUE cron-webhook-mock): `Lint · Build` in_progress (03:10:01Z). Fast gates ✅.
+  - **#1269** (NF-16 v2 autopilot): `Lint · Build` in_progress (03:09:30Z). Fast gates ✅.
+  - **#1180** (NF-20 SMS consent): `Lint · Build` queued (03:09:28Z). Queued, not yet started.
+  - **#1198** (F parseMoney): All required checks ✅. Awaiting founder merge.
+- **Phase 3:** No pending engineering items in any non-blocked stream.
+- **STATUS: ALL-BLOCKED · CI-running-on-all-4-PRs**
+- **Batch stop condition reached** (ALL-BLOCKED). Total iterations this fire: 3 (584 MAIN-RESCUE + 585 CI-RESCUE re-trigger + 586 ALL-BLOCKED).
+- **Pending founder actions:**
+  - Merge **#1198** (F parseMoney — Tier A, CI ✅ green, auto-merge-safe).
+  - After CI green: merge **#1268** (MAIN-RESCUE — Tier A, tests-only) → **#1176** (Tier C, NF-03 admin MFA) → **#1180** (Tier C, NF-20 SMS consent) → **#1269** (Tier B, NF-16 autopilot, 15-min obs window).
+  - Merge auto-revert PRs **#1237, #1246, #1254, #1263** (deepen-loop reverts — FIPersonaRouter.tsx a11y fix on main makes their a11y concern moot for in-flight PRs, but founder may still want to revert the feature content).
+
+---
+
+### iter 585 — 2026-05-29 — STATUS: CI-RESCUE · stream=NF+MAIN-RESCUE · re-trigger all 4 PRs
+
+- **Phase 0:** Lock held (batch fire, iter 2 of up to 5). Synced main to `9c554d5`.
+- **Phase 2 (CI rescue):** iter 584 pushed `94ec94f` (a11y fix) to main. Now pushing empty commits to 4 in-flight PR branches so CI runs against the fixed main:
+  - **#1176** (NF-03): `946ef39` pushed → `Lint · Build` ✅ from prior run, re-triggering to clear a11y ❌.
+  - **#1268** (MAIN-RESCUE): `bd6fcd8` pushed → same, clear a11y ❌.
+  - **#1269** (NF-16 v2): `8bfaef1` pushed → same, clear a11y ❌.
+  - **#1180** (NF-20): `390c522` pushed → re-trigger `Lint · Build` CANCELLED (2nd runner-timeout attempt). Stuck-detection: only 1 prior CI-RESCUE within 24h (iter 583) — guard doesn't fire.
+- **STATUS: CI-RESCUE · stream=NF+MAIN-RESCUE · prs=#1176+#1268+#1269+#1180 · re-triggered**
+- **Next:** All 4 CI runs in progress. If #1176/#1268/#1269 pass a11y (expected), they'll be ready for founder merge. #1180 may pass or hit 20-min timeout again.
+
+---
+
+### iter 584 — 2026-05-29 — STATUS: MAIN-RESCUE · a11y fix on main · commit=94ec94f
+
+- **Phase 0:** Lock acquired (batch fire, this iteration is iter 1 of up to 5).
+- **Phase 0.5:** No LOOP_PAUSE sentinel on main. Proceeding.
+- **Phase 1 (Sync):** Local main reset to origin/main (`07a634a`). No LOOP_PAUSE. Synced to HEAD.
+- **Phase 1.5 (Types drift):** No SQL migrations in last 24h. Skip.
+- **Phase 1.7 (Main CI preflight):** Not applicable — main HEAD is a queue commit (no code). Main inferred healthy.
+- **Phase 2 (CI rescue — in-flight PR review):**
+  - **#1176** (NF-03 admin MFA): `Lint · Build` ✅, `Accessibility` ❌ (systemic — `FIPersonaRouter.tsx` h3-in-button), `Preview smoke test` ❌ (infra noise), `Supabase types drift` ❌ (infra noise). Stuck-detection: only 1 prior a11y rescue on this PR. Root cause is on main, not the PR code. Fix: repair main.
+  - **#1268** (MAIN-RESCUE cron-webhook-mock): `Lint · Build` ✅, `Accessibility` ❌ (same systemic). Fix: repair main.
+  - **#1269** (NF-16 v2 autopilot): `Lint · Build` ✅, `Accessibility` ❌ (same systemic). Fix: repair main.
+  - **#1180** (NF-20 SMS consent): `Lint · Build` ❌ CANCELLED (20-min timeout, 2nd time) — separate issue, handled next iteration.
+  - **#1198** (F parseMoney): All required checks ✅. Awaiting founder merge.
+- **Phase 1.7 (MAIN-RESCUE):** 3 in-flight PRs blocked by `FIPersonaRouter.tsx` a11y violation introduced by deepen-loop commit `ff2d3a57`. Took option (b) from blocked entry: fixed `FIPersonaRouter.tsx` directly on main — replaced `<h3>` inside `<button>` with `<span className="block ...">`, added `aria-hidden="true"` to 2 emoji `<div>` elements (button card row + expanded detail). This does not affect the file's visual rendering — `block` preserves block-display. Commit `94ec94f` pushed directly to main. No PR needed (2-line change, same pattern as iter 541).
+- **Phase 6.5 (Discovery):** Only `FIPersonaRouter.tsx` touched. No sibling components with obvious a11y gaps. 0 discovery items.
+- **STATUS: MAIN-RESCUE · commit=94ec94f · unblocks-a11y-on=#1176+#1268+#1269**
+- **Batch continuing to iter 585:** #1180 `Lint · Build` still CANCELLED — needs re-trigger.
+
+---
 
 ### iter 583 — 2026-05-28 — STATUS: CI-RESCUE · stream=NF · item=NF-20 · pr=#1180
 

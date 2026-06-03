@@ -343,10 +343,10 @@ export default function SearchOverlay({
               }
             />
             <div className="hidden sm:flex items-center gap-1.5 shrink-0">
-              <kbd className="flex items-center gap-1 px-2 py-1 text-[0.6rem] font-semibold text-slate-400 bg-slate-100 rounded-md border border-slate-200">
+              <kbd className="flex items-center gap-1 px-2 py-1 text-[0.6rem] font-semibold text-slate-600 bg-slate-100 rounded-md border border-slate-200">
                 ⌘K
               </kbd>
-              <kbd className="flex items-center gap-1 px-2 py-1 text-[0.6rem] font-semibold text-slate-400 bg-slate-100 rounded-md border border-slate-200">
+              <kbd className="flex items-center gap-1 px-2 py-1 text-[0.6rem] font-semibold text-slate-600 bg-slate-100 rounded-md border border-slate-200">
                 ESC
               </kbd>
             </div>

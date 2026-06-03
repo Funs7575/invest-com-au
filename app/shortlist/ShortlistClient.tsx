@@ -296,7 +296,7 @@ export default function ShortlistClient() {
                 target="_blank"
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(broker.slug, broker.name, "shared-shortlist", "/shortlist", "compare")}
-                className="px-2.5 md:px-3 py-1.5 md:py-2 bg-amber-600 text-white text-[0.69rem] md:text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-11 inline-flex items-center"
+                className="px-2.5 md:px-3 py-1.5 md:py-2 bg-amber-600 text-slate-900 text-[0.69rem] md:text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-11 inline-flex items-center"
               >
                 <span className="hidden sm:inline">Visit Platform</span>
                 <span className="sm:hidden">Visit</span>
@@ -502,7 +502,7 @@ export default function ShortlistClient() {
                   target="_blank"
                   rel={AFFILIATE_REL}
                   onClick={() => trackClick(broker.slug, broker.name, "shortlist", "/shortlist", "compare")}
-                  className="px-2.5 md:px-3 py-1.5 md:py-2 bg-amber-600 text-white text-[0.69rem] md:text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-11 inline-flex items-center"
+                  className="px-2.5 md:px-3 py-1.5 md:py-2 bg-amber-600 text-slate-900 text-[0.69rem] md:text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-11 inline-flex items-center"
                 >
                   <span className="hidden sm:inline">Visit Platform</span>
                   <span className="sm:hidden">Visit</span>

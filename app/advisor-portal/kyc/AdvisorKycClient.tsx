@@ -172,7 +172,7 @@ export default function AdvisorKycClient() {
         </p>
         <a
           href="/advisor-portal"
-          className="mt-3 inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-3 py-2 rounded-lg transition-colors"
+          className="mt-3 inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs px-3 py-2 rounded-lg transition-colors"
         >
           Go to advisor portal →
         </a>
@@ -248,7 +248,7 @@ export default function AdvisorKycClient() {
         <button
           type="submit"
           disabled={uploading}
-          className="w-full bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-bold text-sm px-4 py-2.5 rounded-lg transition-colors"
+          className="w-full bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-slate-900 font-bold text-sm px-4 py-2.5 rounded-lg transition-colors"
         >
           {uploading ? "Uploading…" : "Upload document"}
         </button>

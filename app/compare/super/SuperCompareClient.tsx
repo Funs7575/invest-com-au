@@ -5,6 +5,8 @@ import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 import ResultCount from "@/components/directory/ResultCount";
+import TabBar from "@/components/directory/TabBar";
+import SortDropdown from "@/components/directory/SortDropdown";
 
 /* ─── Types ─── */
 
@@ -172,6 +174,14 @@ export default function SuperCompareClient() {
   const [sortKey, setSortKey] = useState<SortKey>("balanced_fee_pct");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
+  const superCounts = useMemo(() => ({
+    All: SUPER_FUNDS.length,
+    Industry: SUPER_FUNDS.filter((f) => f.type === "Industry").length,
+    Retail: SUPER_FUNDS.filter((f) => f.type === "Retail" || f.type === "Retail/Index").length,
+    Balanced: SUPER_FUNDS.filter((f) => f.balanced_fee_pct <= 0.7).length,
+    "High Growth": SUPER_FUNDS.filter((f) => f.investment_options >= 10).length,
+  } as Record<string, number>), []);
+
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
       setSortDir(sortDir === "asc" ? "desc" : "asc");
@@ -213,7 +223,7 @@ export default function SuperCompareClient() {
       <Icon
         name={sortDir === "asc" ? "arrow-up" : "arrow-down"}
         size={14}
-        className="inline ml-1 text-violet-400"
+        className="inline ml-1 text-coral-500"
       />
     );
   };
@@ -221,12 +231,12 @@ export default function SuperCompareClient() {
   return (
     <div>
       {/* ─── Hero ─── */}
-      <section className="bg-gradient-to-br from-violet-600 to-violet-800 text-white py-14 md:py-20">
+      <section className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-14 md:py-20">
         <div className="container-custom text-center">
           <h1 className="text-3xl md:text-5xl font-extrabold mb-3">
             Compare Super Funds in Australia
           </h1>
-          <p className="text-violet-200 text-lg md:text-xl max-w-2xl mx-auto mb-4">
+          <p className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-4">
             Side-by-side fees, performance, and features for Australia&rsquo;s biggest super funds
             &mdash; industry vs retail, balanced options, and insurance.
           </p>
@@ -236,22 +246,17 @@ export default function SuperCompareClient() {
 
       {/* ─── Main content ─── */}
       <div className="container-custom py-8 md:py-12">
-        {/* Category filter tabs */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                category === cat
-                  ? "bg-violet-600 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        {/* Category filter tabs — canonical TabBar primitive */}
+        <TabBar
+          variant="chip"
+          ariaLabel="Super fund category"
+          className="mb-6"
+          value={category}
+          onChange={setCategory}
+          zeroCountBehavior="show"
+          alwaysShow="All"
+          tabs={CATEGORIES.map((cat) => ({ id: cat, label: cat, count: superCounts[cat] ?? 0 }))}
+        />
 
         <ResultCount
           total={filtered.length}
@@ -330,6 +335,18 @@ export default function SuperCompareClient() {
 
         {/* ─── Mobile cards ─── */}
         <div className="md:hidden space-y-3">
+          {/* Mobile sort — canonical SortDropdown (desktop sorts via column headers) */}
+          <SortDropdown
+            className="!block w-full mb-1"
+            ariaLabel="Sort super funds"
+            value={sortKey}
+            onChange={(v) => { setSortKey(v as SortKey); setSortDir("asc"); }}
+            options={[
+              { value: "balanced_fee_pct", label: "Lowest fee" },
+              { value: "name", label: "Name (A\u2013Z)" },
+              { value: "investment_options", label: "Most options" },
+            ]}
+          />
           {filtered.map((fund) => (
             <div key={fund.name} className="border border-slate-200 rounded-xl p-4">
               <div className="flex items-start justify-between mb-2">
@@ -347,7 +364,7 @@ export default function SuperCompareClient() {
                     {fund.type}
                   </span>
                 </div>
-                <span className="font-mono text-lg font-bold text-violet-700">
+                <span className="font-mono text-lg font-bold text-coral-700">
                   {fund.balanced_fee_pct.toFixed(2)}%
                 </span>
               </div>

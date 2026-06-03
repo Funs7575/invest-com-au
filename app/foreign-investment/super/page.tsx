@@ -319,7 +319,7 @@ export default async function ForeignSuperPage() {
             <p className="text-slate-400 text-sm">A tax agent experienced in international tax can help with DASP, tax returns, and home-country obligations.</p>
           </div>
           <div className="flex gap-3 shrink-0">
-            <Link href="/advisors/tax-agents" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
+            <Link href="/advisors/tax-agents" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
               Find a Tax Agent
             </Link>
             <Link href="/foreign-investment" className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap">

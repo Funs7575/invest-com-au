@@ -88,7 +88,7 @@ export default memo(function BrokerCard({
                 {broker.name}
               </a>
               {broker.affiliate_url && !isSponsoredBroker && (
-                <span title={AFFILIATE_AD_TOOLTIP} className="text-[0.6rem] font-semibold px-1 py-0.5 bg-slate-100 text-slate-400 rounded uppercase tracking-wide shrink-0">Ad</span>
+                <span title={AFFILIATE_AD_TOOLTIP} className="text-[0.6rem] font-semibold px-1 py-0.5 bg-slate-100 text-slate-600 rounded uppercase tracking-wide shrink-0">Ad</span>
               )}
               {/* PR queue #12 — eligibility badge when visitor has intent country */}
               <EligibilityBadge entity={broker} intentCountry={intentCountry} compact />
@@ -104,14 +104,14 @@ export default memo(function BrokerCard({
               type="broker"
               ref={broker.slug}
               label={broker.name}
-              className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-amber-600 transition-all duration-200 shrink-0"
+              className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-amber-600 transition-all duration-200 shrink-0"
             />
             <a
               href={getAffiliateLink(broker)}
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
-              className="px-3 py-1.5 text-[0.69rem] font-bold rounded-lg bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 active:scale-[0.98] transition-all"
+              className="px-3 py-1.5 text-[0.69rem] font-bold rounded-lg bg-amber-500 text-slate-900 hover:bg-amber-600 active:bg-amber-700 active:scale-[0.98] transition-all"
             >
               {getBenefitCta(broker, context)}
             </a>

@@ -232,6 +232,12 @@ const investPlugin = {
 
 /** @type {import("eslint").Linter.Config[]} */
 const eslintConfig = [
+  // Standalone Node CommonJS QA scripts (bots/) carry their own
+  // `/* eslint-disable */`. ESLint can't resolve the react rules from the
+  // global block below for `.cjs` files — eslint-config-next only registers the
+  // react plugin for js/mjs/jsx/ts/tsx, so linting a `.cjs` crashes config
+  // resolution ("could not find plugin react"). Ignore them; nothing is lost.
+  { ignores: ["bots/**/*.cjs"] },
   ...nextConfig,
   ...tsConfig,
   {

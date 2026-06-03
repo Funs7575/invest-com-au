@@ -238,7 +238,7 @@ export default async function BrokerVersusPage({
                           href={broker.affiliate_url}
                           target="_blank"
                           rel="nofollow noopener noreferrer"
-                          className="w-full text-center bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-4 py-2.5 rounded-lg transition-colors"
+                          className="w-full text-center bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold text-xs px-4 py-2.5 rounded-lg transition-colors"
                         >
                           {broker.cta_text || "Open Account"}
                         </a>
@@ -414,7 +414,7 @@ export default async function BrokerVersusPage({
                           href={broker.affiliate_url}
                           target="_blank"
                           rel="nofollow noopener noreferrer"
-                          className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 px-3 py-1.5 rounded-lg w-full justify-center"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-slate-900 bg-amber-500 hover:bg-amber-600 px-3 py-1.5 rounded-lg w-full justify-center"
                         >
                           {broker.cta_text || "Open Account"}
                           <Icon name="external-link" size={10} />

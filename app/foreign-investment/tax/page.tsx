@@ -315,7 +315,7 @@ export default async function ForeignTaxPage() {
             <p className="text-slate-400 text-sm">Find a verified Australian tax agent who specialises in international tax, DTAs, and non-resident obligations.</p>
           </div>
           <div className="flex gap-3 shrink-0">
-            <Link href="/advisors/tax-agents" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
+            <Link href="/advisors/tax-agents" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
               Find a Tax Agent
             </Link>
             <Link href="/foreign-investment" className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap">

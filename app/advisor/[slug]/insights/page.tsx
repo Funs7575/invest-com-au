@@ -8,6 +8,7 @@ import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import FollowAdvisorButton from "@/components/FollowAdvisorButton";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 1800;
 
@@ -210,6 +211,7 @@ export default async function AdvisorInsightsPage({ params }: { params: Promise<
           {GENERAL_ADVICE_WARNING}
         </p>
       </div>
+      <ComplianceFooter />
     </>
   );
 }

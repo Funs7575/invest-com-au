@@ -183,7 +183,7 @@ function ListingCard({
     <article className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col hover:shadow-md transition-shadow">
       <div className="flex flex-wrap items-center gap-2 mb-2">
         {listing.listing_type === "premium" && (
-          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500 text-white">
+          <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500 text-slate-900">
             Premium
           </span>
         )}
