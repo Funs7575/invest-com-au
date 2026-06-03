@@ -80,6 +80,10 @@ vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockFrom })),
 }));
 
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: vi.fn().mockResolvedValue(undefined),
+}));
+
 // ─── Import route after mocks ─────────────────────────────────────────────────
 
 import { GET as _GET, runtime, maxDuration } from "@/app/api/cron/refresh-savings-rates/route";

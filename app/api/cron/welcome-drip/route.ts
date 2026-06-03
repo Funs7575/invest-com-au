@@ -7,6 +7,7 @@ import {
   checkInEmail,
 } from "@/lib/email-templates";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { checkAutopilotGate } from "@/lib/autopilot";
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -26,6 +27,8 @@ export const maxDuration = 60;
 export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
+  const gated = await checkAutopilotGate("welcome-drip");
+  if (gated) return gated;
 
   const supabase = createAdminClient();
 

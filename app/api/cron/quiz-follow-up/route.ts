@@ -7,6 +7,7 @@ import {
 } from "@/lib/email-templates";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { checkAutopilotGate } from "@/lib/autopilot";
 
 const log = logger("quiz-followup");
 
@@ -28,6 +29,8 @@ export const maxDuration = 60;
 export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
+  const gated = await checkAutopilotGate("quiz-follow-up");
+  if (gated) return gated;
 
   const supabase = createAdminClient();
 

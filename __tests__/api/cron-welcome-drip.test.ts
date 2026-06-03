@@ -31,6 +31,11 @@ vi.mock("@/lib/email-templates", () => ({
   checkInEmail: vi.fn(() => "<html>check-in</html>"),
 }));
 
+vi.mock("@/lib/autopilot", () => ({
+  checkAutopilotGate: vi.fn().mockResolvedValue(null),
+  _resetAutopilotCache: vi.fn(),
+}));
+
 import { GET, runtime, maxDuration } from "@/app/api/cron/welcome-drip/route";
 
 const SECRET = "test-cron-secret-1234567890";

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { calculateOptimalBids, applyBidAdjustments } from "@/lib/marketplace/auto-bid";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { checkAutopilotGate } from "@/lib/autopilot";
 
 const log = logger("cron-marketplace-stats");
 
@@ -20,6 +21,8 @@ export const maxDuration = 60;
 export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
+  const gated = await checkAutopilotGate("marketplace-stats");
+  if (gated) return gated;
 
   const supabase = createAdminClient();
 

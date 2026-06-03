@@ -31,6 +31,10 @@ vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockFrom, rpc: vi.fn(() => makeBuilder()) })),
 }));
 
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: vi.fn().mockResolvedValue(undefined),
+}));
+
 import { GET, runtime, maxDuration } from "@/app/api/cron/broker-snapshot/route";
 
 const SECRET = "test-cron-secret-1234567890";
