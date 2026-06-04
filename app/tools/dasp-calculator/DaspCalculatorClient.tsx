@@ -204,7 +204,7 @@ export default function DaspCalculatorClient() {
           {/* Rate reference */}
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
             <p className="text-[0.65rem] font-extrabold text-slate-500 uppercase tracking-wide mb-2">
-              ATO DASP withholding rates (on or after 1 July 2017)
+              ATO DASP withholding rates (on or after 1 July 2017){/* // dated-ok — fixed legislative DASP rate-change date, never changes */}
             </p>
             <table className="w-full text-xs">
               <thead>
@@ -361,7 +361,7 @@ export default function DaspCalculatorClient() {
         </p>
         <p className="text-xs text-slate-400 leading-relaxed mt-2">
           This calculator is an estimate based on ATO published rates (current
-          for DASP payments on or after 1 July 2017). It does not model
+          for DASP payments on or after 1 July 2017){/* // dated-ok — fixed legislative DASP rate-change date, never changes */}. It does not model
           low-income offsets, proportioning rules, or fund-specific fees.
           Actual withholding may differ. Verify with your super fund and the
           ATO before relying on this figure.

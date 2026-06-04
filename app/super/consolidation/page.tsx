@@ -631,7 +631,7 @@ export default function SuperConsolidationPage() {
           <p className="text-sm text-slate-600 leading-relaxed mb-4">
             Before November 2021, starting a new job typically meant your employer defaulted
             you into their chosen super fund — creating yet another account. From{" "}
-            <strong className="text-slate-800">1 November 2021</strong>, the stapling rules
+            <strong className="text-slate-800">1 November 2021</strong>, the stapling rules{/* // dated-ok — super stapling commencement date, fixed by statute */}
             changed this.
           </p>
           <p className="text-sm text-slate-600 leading-relaxed mb-4">
