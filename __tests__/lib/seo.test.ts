@@ -5,6 +5,7 @@ import {
   SITE_DESCRIPTION,
   CURRENT_YEAR,
   absoluteUrl,
+  buildTitle,
   breadcrumbJsonLd,
   websiteJsonLd,
   ORGANIZATION_JSONLD,
@@ -39,6 +40,20 @@ describe("constants", () => {
 
   it("CURRENT_YEAR is a valid year", () => {
     expect(CURRENT_YEAR).toBeGreaterThanOrEqual(2025);
+  });
+});
+
+describe("buildTitle", () => {
+  it("returns a plain string for brand-free titles so the layout template fires", () => {
+    expect(buildTitle("How to Buy Shares")).toBe("How to Buy Shares");
+  });
+
+  it("returns an absolute title when the brand is already present, preventing a doubled suffix", () => {
+    // Without this, the root template "%s — Invest.com.au" would produce
+    // "Careers | Invest.com.au — Invest.com.au".
+    expect(buildTitle(`Careers | ${SITE_NAME}`)).toEqual({
+      absolute: `Careers | ${SITE_NAME}`,
+    });
   });
 });
 
