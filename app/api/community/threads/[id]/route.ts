@@ -145,6 +145,18 @@ export async function GET(
       }
     }
 
+    // Public author profile excludes the raw user_id (used only as the map key).
+    type ForumProfile = NonNullable<typeof profiles>[number];
+    const publicProfile = (p: ForumProfile | undefined) =>
+      p
+        ? {
+            display_name: p.display_name,
+            reputation: p.reputation,
+            badge: p.badge,
+            is_moderator: p.is_moderator,
+          }
+        : null;
+
     // Strip author_id before responding — the client receives only a
     // per-row ownership boolean. For anonymous threads/posts, the author
     // profile is withheld too so it can't be used to re-identify the author.
@@ -153,7 +165,7 @@ export async function GET(
       ...threadRest,
       author_profile: thread.is_anonymous
         ? null
-        : profileMap[threadAuthorId] ?? null,
+        : publicProfile(profileMap[threadAuthorId]),
       is_own: viewerId != null && threadAuthorId === viewerId,
     };
 
@@ -163,7 +175,7 @@ export async function GET(
         ...postRest,
         author_profile: post.is_anonymous
           ? null
-          : profileMap[postAuthorId] ?? null,
+          : publicProfile(profileMap[postAuthorId]),
         is_own: viewerId != null && postAuthorId === viewerId,
       };
     });
