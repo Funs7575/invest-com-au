@@ -130,7 +130,7 @@ export default function AdvisorProfileClient({
   firm?: AdvisorFirm | null;
   expertArticles?: ExpertArticle[];
 }) {
-  const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error" | "unavailable">("idle");
   const [formError, setFormError] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -219,6 +219,9 @@ export default function AdvisorProfileClient({
           source_section: `/advisor/${pro.slug}`,
         });
         setName(""); setEmail(""); setPhone(""); setMessage(""); setTouched({});
+      } else if (res.status === 503) {
+        // Intentional kill-switch / gated window — give users an accurate signal.
+        setFormState("unavailable");
       } else {
         setFormState("error");
       }
@@ -1284,6 +1287,14 @@ export default function AdvisorProfileClient({
                     {formState === "error" && (
                       <p className="text-xs text-center text-red-500">
                         Something went wrong.{" "}
+                        <button onClick={() => setFormState("idle")} className="underline font-semibold">
+                          Try again
+                        </button>
+                      </p>
+                    )}
+                    {formState === "unavailable" && (
+                      <p className="text-xs text-center text-amber-600">
+                        Enquiries are temporarily unavailable. Please try again later.{" "}
                         <button onClick={() => setFormState("idle")} className="underline font-semibold">
                           Try again
                         </button>
