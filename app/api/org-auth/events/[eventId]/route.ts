@@ -39,6 +39,9 @@ export const PATCH = withValidatedBody(
       }
 
       const session = await requireOrgSession();
+      if (session.role === "viewer") {
+        return NextResponse.json({ error: "Forbidden — viewers cannot edit events." }, { status: 403 });
+      }
       const admin = createAdminClient();
 
       const url = new URL(request.url);
@@ -132,6 +135,9 @@ export async function DELETE(
     }
 
     const session = await requireOrgSession();
+    if (session.role === "viewer") {
+      return NextResponse.json({ error: "Forbidden — viewers cannot delete events." }, { status: 403 });
+    }
     const admin = createAdminClient();
 
     const { eventId: eventIdStr } = await params;

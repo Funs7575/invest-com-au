@@ -4,9 +4,9 @@ import type { NextRequest } from "next/server";
 // ── Hoisted mock refs (must use vi.hoisted so they're available inside vi.mock factories) ──
 
 const { mockRequireOrgSession, mockAdminFrom } = vi.hoisted(() => ({
-  mockRequireOrgSession: vi.fn<() => Promise<{ organisationId: number; email: string }>>(
-    async () => ({ organisationId: 1, email: "org@example.com" }),
-  ),
+  mockRequireOrgSession: vi.fn<
+    () => Promise<{ organisationId: number; email: string; role?: string }>
+  >(async () => ({ organisationId: 1, email: "org@example.com" })),
   mockAdminFrom: vi.fn(() => makeChain()),
 }));
 
@@ -216,6 +216,39 @@ describe("POST /api/org-auth/courses/[courseId]/lessons", () => {
     expect(json).toHaveProperty("lesson");
     expect(json.lesson.title).toBe("Intro to Investing");
   });
+
+  it("returns 403 when the session role is viewer", async () => {
+    mockRequireOrgSession.mockResolvedValue({
+      organisationId: 1,
+      email: "viewer@example.com",
+      role: "viewer",
+    });
+    const req = makeReq("POST", COURSE_URL, validCreateBody);
+    const res = await POST(req);
+    expect(res.status).toBe(403);
+    const json = await res.json();
+    expect(json.error).toMatch(/forbidden/i);
+    // Guard must short-circuit before any DB access
+    expect(mockAdminFrom).not.toHaveBeenCalled();
+  });
+
+  it.each(["editor", "admin"])("allows a %s to create a lesson", async (role) => {
+    mockRequireOrgSession.mockResolvedValue({
+      organisationId: 1,
+      email: `${role}@example.com`,
+      role,
+    });
+    const newLesson = { id: 11, title: "Intro to Investing", slug: "intro-to-investing" };
+    let callCount = 0;
+    mockAdminFrom.mockImplementation(() => {
+      callCount += 1;
+      if (callCount === 1) return makeChain({ data: { id: 42, slug: "my-course" }, error: null });
+      return makeChain({ data: newLesson, error: null });
+    });
+    const req = makeReq("POST", COURSE_URL, validCreateBody);
+    const res = await POST(req);
+    expect(res.status).toBe(201);
+  });
 });
 
 // ── PATCH ───────────────────────────────────────────────────────────────────
@@ -292,5 +325,39 @@ describe("PATCH /api/org-auth/courses/[courseId]/lessons", () => {
     const req = makeReq("PATCH", "http://localhost/api/org-auth/courses/bad/lessons", validPatchBody);
     const res = await PATCH(req);
     expect(res.status).toBe(400);
+  });
+
+  it("returns 403 when the session role is viewer", async () => {
+    mockRequireOrgSession.mockResolvedValue({
+      organisationId: 1,
+      email: "viewer@example.com",
+      role: "viewer",
+    });
+    const req = makeReq("PATCH", COURSE_URL, validPatchBody);
+    const res = await PATCH(req);
+    expect(res.status).toBe(403);
+    const json = await res.json();
+    expect(json.error).toMatch(/forbidden/i);
+    // Guard must short-circuit before any DB access
+    expect(mockAdminFrom).not.toHaveBeenCalled();
+  });
+
+  it.each(["editor", "admin"])("allows a %s to edit a lesson", async (role) => {
+    mockRequireOrgSession.mockResolvedValue({
+      organisationId: 1,
+      email: `${role}@example.com`,
+      role,
+    });
+    const updatedLesson = { id: 7, title: "Updated Title", slug: "intro-to-investing" };
+    let callCount = 0;
+    mockAdminFrom.mockImplementation(() => {
+      callCount += 1;
+      if (callCount === 1) return makeChain({ data: { id: 42, slug: "my-course" }, error: null });
+      if (callCount === 2) return makeChain({ data: { id: 7 }, error: null });
+      return makeChain({ data: updatedLesson, error: null });
+    });
+    const req = makeReq("PATCH", COURSE_URL, validPatchBody);
+    const res = await PATCH(req);
+    expect(res.status).toBe(200);
   });
 });
