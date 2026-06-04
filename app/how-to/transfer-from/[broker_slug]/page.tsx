@@ -3,9 +3,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
 import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
+
+const log = logger("how-to-transfer-from");
 
 interface Step {
   title?: string;
@@ -42,13 +45,24 @@ interface BrokerRow {
 async function fetchGuide(brokerSlug: string): Promise<GuideRow | null> {
   try {
     const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("broker_transfer_guides")
       .select("*")
       .eq("broker_slug", brokerSlug)
       .maybeSingle();
-    return (data as GuideRow | null) || null;
-  } catch {
+    if (error) {
+      log.warn("broker_transfer_guides fetch failed", {
+        broker_slug: brokerSlug,
+        error: error.message,
+      });
+      return null;
+    }
+    return (data as GuideRow | null) ?? null;
+  } catch (err) {
+    log.error("broker_transfer_guides fetch threw", {
+      broker_slug: brokerSlug,
+      err: err instanceof Error ? err.message : String(err),
+    });
     return null;
   }
 }
@@ -56,13 +70,21 @@ async function fetchGuide(brokerSlug: string): Promise<GuideRow | null> {
 async function fetchBroker(slug: string): Promise<BrokerRow | null> {
   try {
     const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("brokers")
       .select("slug, name, logo_url, rating, tagline, asx_fee, chess_sponsored, smsf_support")
       .eq("slug", slug)
       .maybeSingle();
-    return (data as BrokerRow | null) || null;
-  } catch {
+    if (error) {
+      log.warn("brokers fetch failed", { slug, error: error.message });
+      return null;
+    }
+    return (data as BrokerRow | null) ?? null;
+  } catch (err) {
+    log.error("brokers fetch threw", {
+      slug,
+      err: err instanceof Error ? err.message : String(err),
+    });
     return null;
   }
 }
@@ -70,7 +92,7 @@ async function fetchBroker(slug: string): Promise<BrokerRow | null> {
 async function fetchTopBrokers(excludeSlug: string): Promise<BrokerRow[]> {
   try {
     const supabase = await createClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("brokers")
       .select("slug, name, logo_url, rating, tagline, asx_fee, chess_sponsored, smsf_support")
       .eq("status", "active")
@@ -78,8 +100,19 @@ async function fetchTopBrokers(excludeSlug: string): Promise<BrokerRow[]> {
       .neq("slug", excludeSlug)
       .order("rating", { ascending: false })
       .limit(5);
-    return (data as BrokerRow[] | null) || [];
-  } catch {
+    if (error) {
+      log.warn("top brokers fetch failed", {
+        exclude_slug: excludeSlug,
+        error: error.message,
+      });
+      return [];
+    }
+    return (data as BrokerRow[] | null) ?? [];
+  } catch (err) {
+    log.error("top brokers fetch threw", {
+      exclude_slug: excludeSlug,
+      err: err instanceof Error ? err.message : String(err),
+    });
     return [];
   }
 }
@@ -93,7 +126,10 @@ export async function generateStaticParams() {
     return (data || []).map((row: { broker_slug: string }) => ({
       broker_slug: row.broker_slug,
     }));
-  } catch {
+  } catch (err) {
+    log.error("generateStaticParams fetch threw", {
+      err: err instanceof Error ? err.message : String(err),
+    });
     return [];
   }
 }
