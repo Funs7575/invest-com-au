@@ -136,6 +136,66 @@ function withAdvisorTier(currentTier: string) {
   });
 }
 
+/**
+ * Wire a downgrade-eligible advisor that has a Stripe customer + an active
+ * subscription with a real current_period_end, so the route resolves a
+ * concrete (subscription, billing-period-end) pair for the deterministic
+ * proration referenceId. `pendingTier` lets a test simulate the TOCTOU
+ * window (null = guard passes).
+ */
+function withSubscribedAdvisor(opts: {
+  currentTier: string;
+  subscriptionId?: string | null;
+  currentPeriodEnd: string;
+  pendingTier?: string | null;
+}) {
+  const {
+    currentTier,
+    subscriptionId = "sub_abc123",
+    currentPeriodEnd,
+    pendingTier = null,
+  } = opts;
+  mockAdminFrom.mockImplementation((table: string) => {
+    const b = createChainableBuilder(table, supabaseCalls);
+    buildSessionBuilder(table, {}, b);
+    if (table === "professionals") {
+      b.maybeSingle = vi.fn(() =>
+        Promise.resolve({
+          data: {
+            id: 42,
+            email: "advisor@test.com",
+            name: "Advisor",
+            advisor_tier: currentTier,
+            stripe_customer_id: "cus_xyz",
+            pending_tier: pendingTier,
+          },
+          error: null,
+        }),
+      );
+    }
+    if (table === "subscriptions") {
+      b.maybeSingle = vi.fn(() =>
+        Promise.resolve({
+          data: {
+            stripe_subscription_id: subscriptionId,
+            current_period_end: currentPeriodEnd,
+            status: "active",
+          },
+          error: null,
+        }),
+      );
+    }
+    return b;
+  });
+}
+
+function ledgerRefIdFromCall(callIndex = 0): string {
+  const arg = mockRecordLedgerEntry.mock.calls[callIndex]?.[0] as {
+    referenceId: string;
+  };
+  return arg.referenceId;
+}
+
 function resetCalls() {
   for (const k of Object.keys(supabaseCalls)) delete supabaseCalls[k];
 }
@@ -290,5 +350,146 @@ describe("POST /api/advisor-auth/tier-upgrade", () => {
     mockCheckoutCreate.mockRejectedValueOnce(new Error("Stripe API down"));
     const res = await POST(makePost({ target_tier: "growth" }));
     expect(res.status).toBe(500);
+  });
+
+  // ── Downgrade proration idempotency (deterministic reference_id) ──────────────
+  // Regression coverage for the Date.now()-in-reference_id defect that defeated
+  // the ledger's unique-index dedup and double-credited concurrent/retried
+  // downgrades. The key must be deterministic for a given downgrade event so
+  // recordLedgerEntry collapses a re-run into an idempotent no-op.
+  describe("downgrade proration credit reference_id", () => {
+    // ~20 days out so daysRemaining < cycleDays → a real proration credit fires.
+    const periodEnd = new Date(Date.now() + 20 * 86400_000).toISOString();
+    const expectedPeriodKey = new Date(periodEnd).toISOString().slice(0, 10);
+
+    it("is deterministic — keyed on advisor + subscription + billing period, NOT a timestamp", async () => {
+      withSubscribedAdvisor({
+        currentTier: "pro",
+        subscriptionId: "sub_abc123",
+        currentPeriodEnd: periodEnd,
+      });
+      const res = await POST(makePost({ target_tier: "growth", billing: "monthly" }));
+      expect(res.status).toBe(200);
+
+      expect(mockRecordLedgerEntry).toHaveBeenCalledTimes(1);
+      const refId = ledgerRefIdFromCall();
+      expect(refId).toBe(`pro_42_downgrade_sub_abc123_${expectedPeriodKey}`);
+      // Must NOT embed a wall-clock timestamp (the original bug).
+      expect(refId).not.toMatch(/\d{13}/); // 13-digit ms epoch
+      // referenceType still scopes the dedup triple.
+      const arg = mockRecordLedgerEntry.mock.calls[0][0] as { referenceType: string };
+      expect(arg.referenceType).toBe("tier_downgrade");
+    });
+
+    it("two sequential (retried) downgrades for the same event produce the SAME key — dedup target", async () => {
+      withSubscribedAdvisor({
+        currentTier: "pro",
+        subscriptionId: "sub_abc123",
+        currentPeriodEnd: periodEnd,
+      });
+
+      // First call records the credit.
+      await POST(makePost({ target_tier: "growth", billing: "monthly" }));
+      // Second call (retry) — model the ledger reporting the triple already
+      // exists, i.e. the unique index dedups. The route must hand it the SAME
+      // referenceId for that to be possible.
+      mockRecordLedgerEntry.mockImplementationOnce((..._args: unknown[]) =>
+        Promise.resolve({ entry: { id: 1 }, balanceAfterCents: 0, idempotent: true }),
+      );
+      await POST(makePost({ target_tier: "growth", billing: "monthly" }));
+
+      expect(mockRecordLedgerEntry).toHaveBeenCalledTimes(2);
+      const firstRef = ledgerRefIdFromCall(0);
+      const secondRef = ledgerRefIdFromCall(1);
+      expect(secondRef).toBe(firstRef);
+      // Crucially, identical across two distinct invocations → the unique
+      // (kind, reference_type, reference_id) index collapses the 2nd insert.
+    });
+
+    it("concurrent downgrades (both passing the pending_tier guard) request one idempotent key", async () => {
+      withSubscribedAdvisor({
+        currentTier: "pro",
+        subscriptionId: "sub_abc123",
+        currentPeriodEnd: periodEnd,
+        pendingTier: null, // both racers read null → both pass the TOCTOU guard
+      });
+
+      // The 2nd writer hits the 23505 race-recovery path inside the real
+      // recordLedgerEntry; here we just assert both racers compute the same key,
+      // which is what makes that recovery dedup correctly.
+      const [a, b] = await Promise.all([
+        POST(makePost({ target_tier: "growth", billing: "monthly" })),
+        POST(makePost({ target_tier: "growth", billing: "monthly" })),
+      ]);
+      expect(a.status).toBe(200);
+      expect(b.status).toBe(200);
+      expect(mockRecordLedgerEntry).toHaveBeenCalledTimes(2);
+      expect(ledgerRefIdFromCall(0)).toBe(ledgerRefIdFromCall(1));
+    });
+
+    it("falls back to a stable 'nosub' segment when no Stripe subscription is found", async () => {
+      // No stripe_customer_id → no subscription lookup → default 30-day cycle.
+      withAdvisorTier("pro");
+      const res = await POST(makePost({ target_tier: "growth", billing: "monthly" }));
+      expect(res.status).toBe(200);
+      const refId = ledgerRefIdFromCall();
+      expect(refId).toMatch(/^pro_42_downgrade_nosub_\d{4}-\d{2}-\d{2}$/);
+      expect(refId).not.toMatch(/\d{13}/);
+    });
+
+    it("returns 409 (no ledger write) when a downgrade is already pending", async () => {
+      withSubscribedAdvisor({
+        currentTier: "pro",
+        currentPeriodEnd: periodEnd,
+        pendingTier: "growth", // a downgrade is already scheduled
+      });
+      const res = await POST(makePost({ target_tier: "growth", billing: "monthly" }));
+      expect(res.status).toBe(409);
+      expect(mockRecordLedgerEntry).not.toHaveBeenCalled();
+    });
+
+    it("does not over-credit: a same-period re-run keeps the key identical (no second distinct credit)", async () => {
+      // Two separate requests for the SAME downgrade (same subscription + period)
+      // must collide on key. A change of billing period (new subscription cycle)
+      // is the only thing that should legitimately mint a new credit.
+      withSubscribedAdvisor({
+        currentTier: "elite",
+        subscriptionId: "sub_elite",
+        currentPeriodEnd: periodEnd,
+      });
+      await POST(makePost({ target_tier: "pro", billing: "monthly" }));
+      const firstRef = ledgerRefIdFromCall(0);
+
+      mockRecordLedgerEntry.mockClear();
+      withSubscribedAdvisor({
+        currentTier: "elite",
+        subscriptionId: "sub_elite",
+        currentPeriodEnd: periodEnd,
+      });
+      await POST(makePost({ target_tier: "pro", billing: "monthly" }));
+      const secondRef = ledgerRefIdFromCall(0);
+      expect(secondRef).toBe(firstRef);
+    });
+
+    it("a different billing period yields a different key (legit new credit)", async () => {
+      withSubscribedAdvisor({
+        currentTier: "pro",
+        subscriptionId: "sub_abc123",
+        currentPeriodEnd: periodEnd,
+      });
+      await POST(makePost({ target_tier: "growth", billing: "monthly" }));
+      const firstRef = ledgerRefIdFromCall(0);
+
+      mockRecordLedgerEntry.mockClear();
+      const laterPeriod = new Date(Date.now() + 20 * 86400_000 + 35 * 86400_000).toISOString();
+      withSubscribedAdvisor({
+        currentTier: "pro",
+        subscriptionId: "sub_abc123",
+        currentPeriodEnd: laterPeriod,
+      });
+      await POST(makePost({ target_tier: "growth", billing: "monthly" }));
+      const secondRef = ledgerRefIdFromCall(0);
+      expect(secondRef).not.toBe(firstRef);
+    });
   });
 });
