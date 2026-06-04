@@ -48,7 +48,7 @@ export default async function AdvisorHealthPage() {
   const advisor = await getAdvisorFromSession();
 
   if (!advisor) {
-    redirect("/advisor-portal/login?redirect=/advisor-portal/health");
+    redirect("/account/login?redirect=/advisor-portal/health");
   }
 
   const factors = (advisor.health_factors as unknown as HealthFactor[] | null) || [];

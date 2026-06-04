@@ -1,6 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import Link from "next/link";
 import AuthorByline from "@/components/AuthorByline";
 import { breadcrumbJsonLd, absoluteUrl, REVIEW_AUTHOR } from "@/lib/seo";
@@ -170,7 +168,7 @@ export default async function WhatsNewPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
         />
       )}
-      <Header />
+      {/* legacy <Header/> removed: the root layout already renders Navigation */}
       <main className="max-w-3xl mx-auto px-4 py-12">
         {/* Breadcrumbs */}
         <nav className="text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
@@ -301,7 +299,7 @@ export default async function WhatsNewPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      {/* legacy <Footer/> removed: the root layout already renders SiteFooter */}
     </>
   );
 }

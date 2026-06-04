@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useId } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 
@@ -82,6 +82,7 @@ export function AnimatedNumber({ value, prefix = "$", decimals = 2 }: { value: n
     const start = ref.current;
     const end = value;
     if (start !== end) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional flash-on-change animation trigger (external visual sync), not derived state
       setFlash(true);
       setTimeout(() => setFlash(false), 600);
     }
@@ -126,12 +127,14 @@ export function CalcSection({ id, iconName, title, desc, children }: {
 export function InputField({ label, value, onChange, placeholder, prefix, suffix }: {
   label: string; value: string; onChange: (v: string) => void; placeholder?: string; prefix?: string; suffix?: string;
 }) {
+  const id = useId();
   return (
     <div>
-      <label className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 md:mb-1.5">{label}</label>
+      <label htmlFor={id} className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 md:mb-1.5">{label}</label>
       <div className="relative">
         {prefix && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">{prefix}</div>}
         <input
+          id={id}
           type="number"
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -147,10 +150,12 @@ export function InputField({ label, value, onChange, placeholder, prefix, suffix
 export function SelectField({ label, value, onChange, placeholder, children }: {
   label: string; value: string; onChange: (v: string) => void; placeholder: string; children: React.ReactNode;
 }) {
+  const id = useId();
   return (
     <div>
-      <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">{label}</label>
+      <label htmlFor={id} className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">{label}</label>
       <select
+        id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium"

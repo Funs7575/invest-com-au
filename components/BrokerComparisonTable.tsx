@@ -24,13 +24,13 @@ function Stars({ rating }: { rating: number }) {
   const stars: React.ReactNode[] = [];
   for (let i = 0; i < full; i++)
     stars.push(
-      <span key={`f${i}`} className="text-amber">
+      <span key={`f${i}`} className="text-amber-600">
         &#9733;
       </span>
     );
   if (half)
     stars.push(
-      <span key="h" className="text-amber">
+      <span key="h" className="text-amber-600">
         &#189;
       </span>
     );
