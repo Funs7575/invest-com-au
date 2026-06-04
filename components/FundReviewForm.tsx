@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import Link from "next/link";
 import StarRatingInput from "./StarRatingInput";
 
@@ -26,6 +26,7 @@ export default function FundReviewForm({ fundSlug, fundTitle }: FundReviewFormPr
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const errorId = useId();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -175,6 +176,8 @@ export default function FundReviewForm({ fundSlug, fundTitle }: FundReviewFormPr
             placeholder="e.g. Sarah M."
             maxLength={50}
             required
+            aria-invalid={errorMsg ? true : undefined}
+            aria-describedby={errorMsg ? errorId : undefined}
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
           />
         </div>
@@ -190,6 +193,8 @@ export default function FundReviewForm({ fundSlug, fundTitle }: FundReviewFormPr
             placeholder="you@email.com"
             maxLength={254}
             required
+            aria-invalid={errorMsg ? true : undefined}
+            aria-describedby={errorMsg ? errorId : undefined}
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
           />
           <p className="text-xs text-slate-400 mt-1">For verification only — never displayed.</p>
@@ -208,6 +213,8 @@ export default function FundReviewForm({ fundSlug, fundTitle }: FundReviewFormPr
           placeholder="Summarise your experience in a few words"
           maxLength={120}
           required
+          aria-invalid={errorMsg ? true : undefined}
+          aria-describedby={errorMsg ? errorId : undefined}
           className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
         />
       </div>
@@ -224,6 +231,8 @@ export default function FundReviewForm({ fundSlug, fundTitle }: FundReviewFormPr
           rows={4}
           maxLength={2000}
           required
+          aria-invalid={errorMsg ? true : undefined}
+          aria-describedby={errorMsg ? errorId : undefined}
           className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
         />
         <p className="text-xs text-slate-400 mt-1 text-right">{body.length}/2000</p>
@@ -286,7 +295,13 @@ export default function FundReviewForm({ fundSlug, fundTitle }: FundReviewFormPr
       </label>
 
       {errorMsg && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{errorMsg}</p>
+        <p
+          id={errorId}
+          role="alert"
+          className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+        >
+          {errorMsg}
+        </p>
       )}
 
       <div className="flex items-center gap-3">

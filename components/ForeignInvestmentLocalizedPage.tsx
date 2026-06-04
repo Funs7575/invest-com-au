@@ -4,6 +4,14 @@ import { getForeignInvestmentDict } from "@/lib/i18n/dictionaries";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 
+/**
+ * Locales that have the full foreign-investment hub page.
+ * "ar" is intentionally excluded — Arabic only has country-specific pages
+ * (/ar/foreign-investment/united-arab-emirates, /ar/foreign-investment/saudi-arabia)
+ * and does NOT have a /ar/foreign-investment hub or its siv/property/tax sub-pages.
+ */
+const FI_LOCALES = LOCALES.filter((l) => l !== "ar") as Locale[];
+
 interface Props {
   locale: Locale;
 }
@@ -148,7 +156,7 @@ export default function ForeignInvestmentLocalizedPage({ locale }: Props) {
             {dict.languageSwitcher.availableIn}
           </p>
           <div className="flex flex-wrap gap-2">
-            {LOCALES.map((l) => {
+            {FI_LOCALES.map((l) => {
               const href =
                 l === "en"
                   ? "/foreign-investment"

@@ -150,7 +150,7 @@ export default function ComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
-      <Suspense><CompareNav /></Suspense>
+      <Suspense fallback={<div className="h-12 bg-slate-100 animate-pulse rounded-lg mx-4" aria-hidden />}><CompareNav /></Suspense>
       <div className="container-custom pt-5">
         <GetMatchedEmbed context="platform_compare" />
       </div>

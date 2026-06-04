@@ -105,6 +105,7 @@ export default function BusinessFinanceEnquiryForm() {
             name="business_name"
             required
             maxLength={200}
+            autoComplete="organization"
             placeholder="Acme Pty Ltd"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
@@ -119,6 +120,7 @@ export default function BusinessFinanceEnquiryForm() {
             name="contact_name"
             required
             maxLength={200}
+            autoComplete="name"
             placeholder="Jane Smith"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
@@ -133,6 +135,7 @@ export default function BusinessFinanceEnquiryForm() {
             name="email"
             required
             maxLength={254}
+            autoComplete="email"
             placeholder="jane@acme.com.au"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
@@ -144,6 +147,7 @@ export default function BusinessFinanceEnquiryForm() {
             type="tel"
             name="phone"
             maxLength={30}
+            autoComplete="tel"
             placeholder="0400 000 000"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
@@ -179,6 +183,7 @@ export default function BusinessFinanceEnquiryForm() {
             min={0}
             max={50_000_000}
             step={1000}
+            inputMode="decimal"
             placeholder="e.g. 250000"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
@@ -194,6 +199,7 @@ export default function BusinessFinanceEnquiryForm() {
             min={0}
             max={500_000_000}
             step={10000}
+            inputMode="decimal"
             placeholder="e.g. 1200000"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
