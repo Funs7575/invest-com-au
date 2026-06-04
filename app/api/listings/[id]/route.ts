@@ -121,7 +121,7 @@ export async function GET(
       .eq("listing_id", listingId);
 
     return NextResponse.json({
-      ...listing,
+      ...(listing as Record<string, unknown>),
       enquiries_count: count ?? 0,
     });
   } catch (err) {
