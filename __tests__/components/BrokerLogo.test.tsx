@@ -67,6 +67,51 @@ describe("BrokerLogo", () => {
     expect(img?.getAttribute("src")).toBe("https://x/logo.png");
   });
 
+  it("falls back to the initials avatar for the placeholder sentinel URL", () => {
+    const { container } = render(
+      <BrokerLogo
+        broker={{
+          ...baseBroker,
+          logo_url: "https://images.unsplash.com/placeholder",
+        }}
+      />,
+    );
+    // No image is routed through the optimizer — only the letter fallback shows.
+    expect(container.querySelector("img")).toBeNull();
+    expect(screen.getByText("S")).toBeInTheDocument();
+  });
+
+  it("treats the placeholder sentinel with a query string as unusable", () => {
+    const { container } = render(
+      <BrokerLogo
+        broker={{
+          ...baseBroker,
+          logo_url: "https://images.unsplash.com/placeholder?w=64&fit=crop",
+        }}
+      />,
+    );
+    expect(container.querySelector("img")).toBeNull();
+    expect(screen.getByText("S")).toBeInTheDocument();
+  });
+
+  it("falls back to the initials avatar for an empty/whitespace logo_url", () => {
+    const { container } = render(
+      <BrokerLogo broker={{ ...baseBroker, logo_url: "   " }} />,
+    );
+    expect(container.querySelector("img")).toBeNull();
+    expect(screen.getByText("S")).toBeInTheDocument();
+  });
+
+  it("trims surrounding whitespace from an otherwise valid logo_url", () => {
+    const { container } = render(
+      <BrokerLogo
+        broker={{ ...baseBroker, logo_url: "  https://x/logo.png  " }}
+      />,
+    );
+    const img = container.querySelector("img");
+    expect(img?.getAttribute("src")).toBe("https://x/logo.png");
+  });
+
   it("size=sm applies the small container classes", () => {
     const { container } = render(
       <BrokerLogo broker={baseBroker} size="sm" />,
