@@ -136,10 +136,10 @@ export default memo(function DealCard({
             )}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-amber">
+            <span className="text-xs text-amber-600">
               {renderStars(broker.rating || 0)}
             </span>
-            <span className="text-[0.69rem] text-slate-400">{broker.rating}/5</span>
+            <span className="text-[0.69rem] text-slate-500">{broker.rating}/5</span>
           </div>
         </div>
         {broker.deal_category && (

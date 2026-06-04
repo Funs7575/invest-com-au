@@ -124,7 +124,7 @@ export default async function SmsfInvestmentStrategyPage() {
                     <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                       <div>
                         <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                        <p className="text-xs text-amber-500">{renderStars(Number(b.rating ?? 0))}</p>
+                        <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating ?? 0))}</span> <span className="font-semibold text-slate-600">{Number(b.rating ?? 0).toFixed(1)}</span></p>
                         <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                       </div>
                       <div className="mt-auto">

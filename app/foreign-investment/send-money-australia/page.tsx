@@ -182,7 +182,7 @@ export default async function SendMoneyAustraliaPage() {
                       </td>
                       <td className="py-2 text-right font-bold text-slate-800">
                         ${received.toLocaleString("en-AU")}
-                        {isBest && <span className="ms-1 text-xs text-emerald-600">Best</span>}
+                        {isBest && <span className="ms-1 text-xs text-emerald-700">Best</span>}
                       </td>
                     </tr>
                   );

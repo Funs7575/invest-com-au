@@ -212,7 +212,7 @@ Superannuation: Contributions to super go in pre-tax (concessional) or post-tax 
 
 Main residence exemption: The sale of your PPOR is fully exempt from CGT while it is your main home. See the property section for the 6-year absence rule.
 
-Pre-CGT assets: Assets acquired before 20 September 1985 are exempt from CGT entirely. These "pre-CGT assets" are rare but relevant for inherited assets from older estates.
+Pre-CGT assets: Assets acquired before 20 September 1985 are exempt from CGT entirely. These "pre-CGT assets" are rare but relevant for inherited assets from older estates.${/* // dated-ok — CGT inception date, fixed by statute (never changes) */ ""}
 
 Collectibles and personal use assets under threshold: Collectibles acquired for less than $500 and personal use assets acquired for less than $10,000 are generally exempt.
 
@@ -232,7 +232,7 @@ Date of acquisition for the 50% discount:
 If the deceased held the asset for more than 12 months, the beneficiary is treated as having held the asset for more than 12 months from day one. This means the 50% discount is immediately available to the beneficiary — they do not need to wait another 12 months after inheriting.
 
 Pre-CGT assets inherited:
-If the asset was acquired by the deceased before 20 September 1985 (a "pre-CGT asset"), it retains its pre-CGT status for the beneficiary in most cases, meaning no CGT when the beneficiary sells.
+If the asset was acquired by the deceased before 20 September 1985 (a "pre-CGT asset"), it retains its pre-CGT status for the beneficiary in most cases, meaning no CGT when the beneficiary sells.${/* // dated-ok — CGT inception date, fixed by statute (never changes) */ ""}
 
 Foreign beneficiaries:
 Non-resident beneficiaries who inherit Australian taxable property may trigger different rules. CGT can apply on inherited Australian real property even for non-residents.
@@ -313,7 +313,7 @@ const FAQS = [
   },
   {
     q: "What assets are CGT-free in Australia?",
-    a: "Your principal place of residence (PPOR) is generally fully CGT-exempt on sale. Other CGT-free situations include: assets acquired before 20 September 1985 (pre-CGT assets); collectibles acquired for under $500; personal use assets acquired for under $10,000; some small business CGT concessions (15-year exemption, retirement exemption); compensation for personal injury; and investment earnings inside a superannuation fund in pension phase.",
+    a: "Your principal place of residence (PPOR) is generally fully CGT-exempt on sale. Other CGT-free situations include: assets acquired before 20 September 1985 (pre-CGT assets); collectibles acquired for under $500; personal use assets acquired for under $10,000; some small business CGT concessions (15-year exemption, retirement exemption); compensation for personal injury; and investment earnings inside a superannuation fund in pension phase.", // dated-ok — CGT inception date, fixed by statute (never changes)
   },
 ];
 
@@ -586,7 +586,7 @@ export default async function CapitalGainsTaxPage() {
                   <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                     <div>
                       <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                      <p className="text-xs text-amber-500">{renderStars(Number(b.rating))}</p>
+                      <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600">{(Number(b.rating) || 0).toFixed(1)}</span></p>
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                     </div>
                     <div className="mt-auto">

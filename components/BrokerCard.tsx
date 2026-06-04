@@ -94,7 +94,7 @@ export default memo(function BrokerCard({
               <EligibilityBadge entity={broker} intentCountry={intentCountry} compact />
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-amber-400 text-xs">{renderStars(broker.rating || 0)}</span>
+              <span className="text-amber-600 text-xs">{renderStars(broker.rating || 0)}</span>
               <span className="text-[0.65rem] font-semibold text-slate-500">{broker.rating}/5</span>
             </div>
           </div>

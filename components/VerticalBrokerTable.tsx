@@ -34,7 +34,7 @@ function getColumns(slug: string): ColumnDef[] {
         align: "center",
         render: (b) => (
           <>
-            <span className="text-amber">{renderStars(b.rating || 0)}</span>
+            <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
             <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
           </>
         ),
@@ -56,7 +56,7 @@ function getColumns(slug: string): ColumnDef[] {
         align: "center",
         render: (b) => (
           <>
-            <span className="text-amber">{renderStars(b.rating || 0)}</span>
+            <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
             <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
           </>
         ),
@@ -82,7 +82,7 @@ function getColumns(slug: string): ColumnDef[] {
         align: "center",
         render: (b) => (
           <>
-            <span className="text-amber">{renderStars(b.rating || 0)}</span>
+            <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
             <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
           </>
         ),
@@ -104,7 +104,7 @@ function getColumns(slug: string): ColumnDef[] {
         align: "center",
         render: (b) => (
           <>
-            <span className="text-amber">{renderStars(b.rating || 0)}</span>
+            <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
             <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
           </>
         ),
@@ -136,7 +136,7 @@ function getColumns(slug: string): ColumnDef[] {
       align: "center",
       render: (b) => (
         <>
-          <span className="text-amber">{renderStars(b.rating || 0)}</span>
+          <span className="text-amber-600">{renderStars(b.rating || 0)}</span>
           <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
         </>
       ),

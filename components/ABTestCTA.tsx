@@ -86,19 +86,22 @@ export default function ABTestCTA({ broker, activeTests, page, cpcCampaignLink }
   const ctaColor = variantConfig.color || "amber-600";
 
   // Map color string to Tailwind classes
+  // White CTA text needs >=4.5:1. The *-600 fills that failed AA against white
+  // (amber 3.19, emerald 3.77, green 3.30, orange 3.56) render one shade darker
+  // (-700, white >=5:1) while keeping the same hue and the DB colour key intact.
   const colorClasses: Record<string, string> = {
-    "amber-600": "bg-amber-600 hover:bg-amber-700",
+    "amber-600": "bg-amber-700 hover:bg-amber-800",
     "amber-700": "bg-amber-700 hover:bg-amber-800",
     "blue-600": "bg-blue-600 hover:bg-blue-700",
     "blue-700": "bg-blue-700 hover:bg-blue-800",
-    "emerald-600": "bg-emerald-600 hover:bg-emerald-700",
-    "green-600": "bg-green-600 hover:bg-green-700",
+    "emerald-600": "bg-emerald-700 hover:bg-emerald-800",
+    "green-600": "bg-green-700 hover:bg-green-800",
     "red-600": "bg-red-600 hover:bg-red-700",
     "violet-600": "bg-violet-600 hover:bg-violet-700",
     "slate-900": "bg-slate-900 hover:bg-slate-800",
-    "orange-600": "bg-orange-600 hover:bg-orange-700",
+    "orange-600": "bg-orange-700 hover:bg-orange-800",
   };
-  const bgClass = colorClasses[ctaColor] || "bg-amber-600 hover:bg-amber-700";
+  const bgClass = colorClasses[ctaColor] || "bg-amber-700 hover:bg-amber-800";
 
   return (
     <a

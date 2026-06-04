@@ -304,7 +304,7 @@ export default async function BestBrokerPage({
               {cat.h1}
             </h1>
             <p className="text-xs md:text-base text-slate-600 mb-2">{cat.intro}</p>
-            <p className="text-[0.56rem] md:text-xs text-slate-400">
+            <p className="text-[0.56rem] md:text-xs text-slate-500">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
             {hasSponsored && (
@@ -382,7 +382,7 @@ export default async function BestBrokerPage({
           )}
 
           {/* AFCA & FSG references */}
-          <p className="text-[0.58rem] text-slate-400 leading-relaxed mb-3">
+          <p className="text-[0.58rem] text-slate-500 leading-relaxed mb-3">
             {PDS_CONSIDERATION} {FSG_NOTE} {AFCA_REFERENCE}
           </p>
 
@@ -471,14 +471,14 @@ export default async function BestBrokerPage({
                     {topPick.tagline}
                   </p>
                   <div className="flex items-center gap-3 mt-2 text-sm">
-                    <span className="text-amber">{renderStars(topPick.rating || 0)}</span>
+                    <span className="text-amber-600">{renderStars(topPick.rating || 0)}</span>
                     <span className="text-slate-500">{topPick.rating}/5</span>
                     <span className="text-slate-400">·</span>
                     <span className="text-slate-600">{topPick.asx_fee || "N/A"} ASX</span>
                     {topPick.chess_sponsored && (
                       <>
                         <span className="text-slate-400">·</span>
-                        <span className="text-emerald-600 font-semibold text-xs">CHESS</span>
+                        <span className="text-emerald-700 font-semibold text-xs">CHESS</span>
                       </>
                     )}
                   </div>
@@ -547,7 +547,7 @@ export default async function BestBrokerPage({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="text-amber">{renderStars(broker.rating || 0)}</span>
+                      <span className="text-amber-600">{renderStars(broker.rating || 0)}</span>
                       <span className="text-sm text-slate-500 ml-1">{broker.rating}</span>
                     </td>
                     <td className="px-4 py-3 text-center">

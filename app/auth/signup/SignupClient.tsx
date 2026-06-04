@@ -156,7 +156,7 @@ export default function SignupClient() {
                 ? " Click the link in the email to confirm your account."
                 : " Click the link in the email to sign in."}
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Didn&apos;t receive it? Check your spam folder or{" "}
               <button
                 onClick={() => {
@@ -352,7 +352,7 @@ export default function SignupClient() {
                 Sign in
               </Link>
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               By creating an account, you agree to our{" "}
               <Link href="/terms" className="text-slate-700 hover:underline">Terms</Link>
               {" "}and{" "}

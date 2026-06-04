@@ -173,10 +173,10 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
             {/* Savings headline */}
             {currentBroker && currentBroker !== "_other" && savings > 0 && (
               <div className="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-2xl p-5 md:p-6 text-center">
-                <p className="text-xs text-emerald-600 font-semibold mb-1">You could save up to</p>
+                <p className="text-xs text-emerald-700 font-semibold mb-1">You could save up to</p>
                 <p className="text-4xl md:text-5xl font-extrabold text-emerald-700 mb-1">${Math.round(savings).toLocaleString()}<span className="text-lg">/year</span></p>
-                <p className="text-sm text-emerald-600">by switching from {brokers.find(b => b.slug === currentBroker)?.name} to {cheapest?.broker.name}</p>
-                <p className="text-xs text-slate-400 mt-2">Based on {tradesPerYear} trades/year at ${avgTradeSize.toLocaleString()} avg with {usAllocation}% US allocation</p>
+                <p className="text-sm text-emerald-700">by switching from {brokers.find(b => b.slug === currentBroker)?.name} to {cheapest?.broker.name}</p>
+                <p className="text-xs text-slate-500 mt-2">Based on {tradesPerYear} trades/year at ${avgTradeSize.toLocaleString()} avg with {usAllocation}% US allocation</p>
               </div>
             )}
 
@@ -276,7 +276,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                       <div className="text-right shrink-0">
                         <div className={`text-sm font-extrabold ${isCurrent ? "text-red-600" : "text-slate-900"}`}>${Math.round(r.cost).toLocaleString()}<span className="text-[0.6rem] font-normal text-slate-400">/yr</span></div>
                         {currentBroker && savingsVsCurrent > 0 && !isCurrent && (
-                          <div className="text-[0.6rem] font-bold text-emerald-600">Save ${Math.round(savingsVsCurrent).toLocaleString()}</div>
+                          <div className="text-[0.6rem] font-bold text-emerald-700">Save ${Math.round(savingsVsCurrent).toLocaleString()}</div>
                         )}
                       </div>
                       <a

@@ -116,7 +116,7 @@ export default function TradeCostCalculator({ brokers, searchParams }: Props) {
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold text-xs text-slate-900">{r.broker.name}</span>
-                      {isCheapest && <span className="text-[0.56rem] font-bold text-emerald-600 uppercase">Cheapest</span>}
+                      {isCheapest && <span className="text-[0.56rem] font-bold text-emerald-700 uppercase">Cheapest</span>}
                     </div>
                     <span className="text-sm font-bold text-slate-900">
                       <AnimatedNumber value={r.totalCost} />
@@ -173,7 +173,7 @@ export default function TradeCostCalculator({ brokers, searchParams }: Props) {
                     <tr key={r.broker.slug} className={isCheapest ? "bg-emerald-50/60" : ""}>
                       <td className="py-3 pr-4">
                         <span className="font-semibold text-sm">{r.broker.name}</span>
-                        {isCheapest && <span className="ml-2 text-[0.69rem] font-bold text-emerald-600 uppercase">Cheapest</span>}
+                        {isCheapest && <span className="ml-2 text-[0.69rem] font-bold text-emerald-700 uppercase">Cheapest</span>}
                       </td>
                       <td className="py-3 px-2 text-right text-sm font-mono">
                         <AnimatedNumber value={r.brokerage} />

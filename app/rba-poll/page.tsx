@@ -279,7 +279,7 @@ export default async function RbaPollPage() {
       </div>
 
       <footer className="mt-8 pt-4 border-t border-slate-200">
-        <p className="text-xs text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+        <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
         <p className="text-xs text-slate-400 mt-1">
           RBA meeting dates are indicative and subject to change. Community predictions are for
           entertainment and educational purposes only.

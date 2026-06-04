@@ -855,7 +855,7 @@ export default async function ArticlePage({
 
               {/* Disclaimer */}
               <div className="mt-6 md:mt-10 border-t border-slate-200 pt-4 md:pt-6">
-                <p className="text-[0.69rem] md:text-xs text-slate-400 leading-relaxed">
+                <p className="text-[0.69rem] md:text-xs text-slate-500 leading-relaxed">
                   <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}{" "}
                   <Link
                     href="/how-we-earn"

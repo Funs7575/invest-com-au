@@ -716,7 +716,7 @@ export default async function CryptoTaxPage() {
                   >
                     <div>
                       <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                      <p className="text-xs text-amber-500">{renderStars(Number(b.rating))}</p>
+                      <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600">{(Number(b.rating) || 0).toFixed(1)}</span></p>
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                     </div>
                     <div className="mt-auto">

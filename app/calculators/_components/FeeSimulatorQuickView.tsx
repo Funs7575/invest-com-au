@@ -106,7 +106,7 @@ export default function FeeSimulatorQuickView({ brokers, searchParams }: Props) 
                     <span className="font-bold text-slate-900">
                       {fmt(r.cost)}
                       {savings > 0 && i === 0 && (
-                        <span className="text-emerald-600 font-semibold ml-2">save {fmt(savings)}</span>
+                        <span className="text-emerald-700 font-semibold ml-2">save {fmt(savings)}</span>
                       )}
                     </span>
                   </div>

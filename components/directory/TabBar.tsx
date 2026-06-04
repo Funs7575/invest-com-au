@@ -155,7 +155,7 @@ function SegmentedTab<T extends string = string>({
       {typeof tab.count === "number" && (
         <span
           className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${
-            active ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-500"
+            active ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-700"
           }`}
         >
           {tab.count}
@@ -192,7 +192,7 @@ function ChipTab<T extends string = string>({
       {!isAll && typeof tab.count === "number" && (
         <span
           className={`text-[0.55rem] font-bold tabular-nums ${
-            disabled ? "text-slate-300" : "text-slate-400"
+            disabled ? "text-slate-300" : "text-slate-500"
           }`}
         >
           {tab.count}

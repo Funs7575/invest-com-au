@@ -329,7 +329,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
         <section>
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
             <p className="text-[0.65rem] md:text-xs text-slate-500 leading-relaxed">{SUBURB_DATA_DISCLAIMER}</p>
-            <p className="text-[0.65rem] md:text-xs text-slate-400 mt-2">{GENERAL_ADVICE_WARNING}</p>
+            <p className="text-[0.65rem] md:text-xs text-slate-500 mt-2">{GENERAL_ADVICE_WARNING}</p>
           </div>
         </section>
       </div>

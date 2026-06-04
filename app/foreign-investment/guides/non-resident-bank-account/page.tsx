@@ -355,7 +355,7 @@ export default async function NonResidentBankAccountPage() {
                           )}
                         </div>
                         {p.rating && (
-                          <p className="text-xs text-amber-600 font-semibold">{renderStars(p.rating)} {p.rating.toFixed(1)}</p>
+                          <p className="text-xs text-amber-700 font-semibold">{renderStars(p.rating)} {p.rating.toFixed(1)}</p>
                         )}
                       </div>
                     </div>

@@ -227,7 +227,7 @@ export default async function ScenarioPage({
             <h2 id="brokers-to-compare" className="text-lg md:text-xl font-extrabold mb-2 md:mb-3 text-brand scroll-mt-24">
               Platforms Worth Comparing
             </h2>
-            <p className="text-[0.69rem] md:text-xs text-slate-400 mb-2.5 md:mb-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
+            <p className="text-[0.69rem] md:text-xs text-slate-500 mb-2.5 md:mb-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
             <div className="space-y-2.5 md:space-y-3 mb-5 md:mb-8">
               {recBrokers.map((b) => (
                 <div

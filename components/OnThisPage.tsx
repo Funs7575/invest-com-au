@@ -62,7 +62,7 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
         className="hidden xl:block fixed top-24 right-4 w-48 2xl:w-52 max-h-[calc(100vh-120px)] overflow-y-auto z-30 scrollbar-hide"
         aria-label="On this page"
       >
-        <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400 mb-2">
+        <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-500 mb-2">
           On this page
         </p>
         <ul className="space-y-0.5 border-l-2 border-slate-100">
@@ -97,7 +97,7 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
               </svg>
               <span className="font-semibold text-slate-700">Contents</span>
             </span>
-            <span className="text-[0.69rem] text-slate-400 truncate max-w-[45%] text-right">
+            <span className="text-[0.69rem] text-slate-500 truncate max-w-[45%] text-right">
               {items.find((i) => i.id === activeId)?.label}
             </span>
           </button>
@@ -114,7 +114,7 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
             />
             <div className="bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl shadow-2xl p-3 motion-safe:animate-[fadeInUp_0.15s_ease-out]">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400">
+                <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-500">
                   On this page
                 </p>
                 <button
@@ -138,7 +138,7 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
                           : "text-slate-600 active:bg-slate-50"
                       }`}
                     >
-                      <span className={`shrink-0 text-[0.69rem] font-semibold mt-px ${activeId === id ? "text-blue-500" : "text-slate-400"}`}>
+                      <span className={`shrink-0 text-[0.69rem] font-semibold mt-px ${activeId === id ? "text-blue-700" : "text-slate-500"}`}>
                         {idx + 1}
                       </span>
                       <span className="line-clamp-2">{label}</span>

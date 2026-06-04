@@ -402,7 +402,7 @@ export default function GlobalInvestingEtfsPage() {
                 </tbody>
               </table>
             </div>
-            <p className="text-xs text-slate-400 mt-3">
+            <p className="text-xs text-slate-500 mt-3">
               {GENERAL_ADVICE_WARNING}
             </p>
           </div>

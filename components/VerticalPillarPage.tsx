@@ -335,7 +335,7 @@ export default function VerticalPillarPage({
                       {topPick.tagline}
                     </p>
                     <div className="flex items-center gap-3 mt-2 text-sm">
-                      <span className="text-amber">
+                      <span className="text-amber-600">
                         {renderStars(topPick.rating || 0)}
                       </span>
                       <span className="text-slate-500">
@@ -394,7 +394,7 @@ export default function VerticalPillarPage({
                             {broker.name}
                           </Link>
                           {broker.rating && (
-                            <span className="text-[0.62rem] text-slate-400">{renderStars(broker.rating)} {broker.rating}/5</span>
+                            <span className="text-[0.62rem] text-slate-500">{renderStars(broker.rating)} {broker.rating}/5</span>
                           )}
                         </div>
                       </div>
