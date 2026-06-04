@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 
 interface CollapsibleSectionProps {
   /** Max height in px when collapsed on mobile. Content beyond this is clipped with a fade. */
@@ -21,6 +21,7 @@ export default function CollapsibleSection({
   const [isExpanded, setIsExpanded] = useState(false);
   const [needsCollapse, setNeedsCollapse] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const panelId = useId();
 
   // Check if content is tall enough to need collapsing
   useEffect(() => {
@@ -41,11 +42,13 @@ export default function CollapsibleSection({
   // If content is short enough, just render normally
   if (!needsCollapse || isExpanded) {
     return (
-      <div ref={contentRef}>
+      <div ref={contentRef} id={panelId}>
         {children}
         {needsCollapse && isExpanded && (
           <button
             onClick={() => setIsExpanded(false)}
+            aria-expanded={true}
+            aria-controls={panelId}
             className="w-full mt-3 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-1.5"
           >
             <svg className="w-3.5 h-3.5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,6 +64,7 @@ export default function CollapsibleSection({
   return (
     <div>
       <div
+        id={panelId}
         ref={contentRef}
         className="relative overflow-hidden"
         style={{ maxHeight: `${collapsedHeight}px` }}
@@ -71,6 +75,8 @@ export default function CollapsibleSection({
       </div>
       <button
         onClick={() => setIsExpanded(true)}
+        aria-expanded={false}
+        aria-controls={panelId}
         className="w-full mt-2 py-2.5 text-sm font-semibold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1.5"
       >
         Show all {totalCount} {itemLabel}

@@ -92,6 +92,6 @@ export function feedEventHref(event: FeedEvent): string {
     case "community_thread":
       return slug ? `/community/${slug}` : "/community";
     case "article":
-      return slug ? `/articles/${slug}` : "/articles";
+      return slug ? `/article/${slug}` : "/articles";
   }
 }

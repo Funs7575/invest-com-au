@@ -143,7 +143,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
   };
 
   return (
-    <div className="border-t border-slate-100 pt-4">
+    <form className="border-t border-slate-100 pt-4" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
       <h3 className="text-xs font-bold text-slate-700 mb-3">
         Share Your Experience with {firstName}
       </h3>
@@ -260,8 +260,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
         {/* Actions */}
         <div className="flex gap-2">
           <button
-            type="button"
-            onClick={handleSubmit}
+            type="submit"
             disabled={!canSubmit}
             className="flex-1 md:flex-none px-4 py-3 min-h-11 bg-slate-900 text-white text-sm md:text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
@@ -280,6 +279,6 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
           Reviews are moderated before publication. Your name will be displayed publicly; if left blank it will show as &quot;Anonymous&quot;.
         </p>
       </div>
-    </div>
+    </form>
   );
 }

@@ -224,7 +224,7 @@ export default function MortgageCalculatorClient() {
                   type="number"
                   value={loanAmount}
                   onChange={e => setLoanAmount(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-400 outline-none"
+                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500 focus:ring-offset-1 focus:border-rose-400 outline-none"
                 />
               </div>
               <div className="flex gap-1.5 mt-2">
@@ -245,7 +245,7 @@ export default function MortgageCalculatorClient() {
                   step="0.1"
                   value={interestRate}
                   onChange={e => setInterestRate(Math.max(0, Math.min(20, parseFloat(e.target.value) || 0)))}
-                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-400 outline-none"
+                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500 focus:ring-offset-1 focus:border-rose-400 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
               </div>
@@ -304,7 +304,7 @@ export default function MortgageCalculatorClient() {
 
         {/* Results */}
         {showResults && (
-          <>
+          <div role="region" aria-live="polite" aria-atomic="true" aria-label="Calculated results">
             {/* Headline result */}
             <div className="bg-gradient-to-br from-rose-50 to-pink-50 border border-rose-200 rounded-2xl p-5 md:p-8 mb-6 text-center">
               <p className="text-sm text-rose-600 font-semibold mb-1">Your monthly repayment</p>
@@ -479,7 +479,7 @@ export default function MortgageCalculatorClient() {
                 <Link href="/switching-calculator" className="text-xs px-3 py-1.5 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">Broker Switching Calc →</Link>
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

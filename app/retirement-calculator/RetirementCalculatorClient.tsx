@@ -211,7 +211,7 @@ export default function RetirementCalculatorClient() {
                 type="number"
                 value={currentAge}
                 onChange={e => setCurrentAge(Math.max(18, Math.min(75, parseInt(e.target.value) || 18)))}
-                className="w-full px-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none"
+                className="w-full px-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
               />
             </div>
 
@@ -222,7 +222,7 @@ export default function RetirementCalculatorClient() {
                 type="number"
                 value={retirementAge}
                 onChange={e => setRetirementAge(Math.max(currentAge + 1, Math.min(80, parseInt(e.target.value) || 67)))}
-                className="w-full px-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none"
+                className="w-full px-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
               />
             </div>
 
@@ -235,7 +235,7 @@ export default function RetirementCalculatorClient() {
                   type="number"
                   value={currentSuper}
                   onChange={e => setCurrentSuper(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none"
+                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
                 />
               </div>
             </div>
@@ -249,7 +249,7 @@ export default function RetirementCalculatorClient() {
                   type="number"
                   value={annualSalary}
                   onChange={e => setAnnualSalary(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none"
+                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
                 />
               </div>
               <div className="flex gap-1.5 mt-2">
@@ -270,7 +270,7 @@ export default function RetirementCalculatorClient() {
                   step="0.5"
                   value={employerRate}
                   onChange={e => setEmployerRate(Math.max(0, Math.min(25, parseFloat(e.target.value) || 0)))}
-                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none"
+                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
               </div>
@@ -285,7 +285,7 @@ export default function RetirementCalculatorClient() {
                   type="number"
                   value={additionalContributions}
                   onChange={e => setAdditionalContributions(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none"
+                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
                 />
               </div>
             </div>
@@ -299,7 +299,7 @@ export default function RetirementCalculatorClient() {
                   step="0.5"
                   value={expectedReturn}
                   onChange={e => setExpectedReturn(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))}
-                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none"
+                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
               </div>
@@ -314,7 +314,7 @@ export default function RetirementCalculatorClient() {
                   step="0.5"
                   value={inflationRate}
                   onChange={e => setInflationRate(Math.max(0, Math.min(10, parseFloat(e.target.value) || 0)))}
-                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none"
+                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
               </div>
@@ -329,7 +329,7 @@ export default function RetirementCalculatorClient() {
                   type="number"
                   value={desiredIncome}
                   onChange={e => setDesiredIncome(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none"
+                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
                 />
               </div>
             </div>

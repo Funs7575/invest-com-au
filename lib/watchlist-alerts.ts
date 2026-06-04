@@ -122,7 +122,7 @@ export function collectChangesForUser(opts: {
           display_name: display,
           headline: `New: ${article.title}`,
           body: article.excerpt ?? `New analysis touching ${display}.`,
-          href: `/articles/${article.slug}`,
+          href: `/article/${article.slug}`,
           occurred_at: article.published_at,
         });
       }
