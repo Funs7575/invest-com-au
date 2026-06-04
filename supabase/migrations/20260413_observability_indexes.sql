@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Migration: 20260413_observability_indexes.sql
 -- Purpose: Three indexes flagged by the database query audit
---          (professional_leads.user_email, broker_signups (slug,email),
+--          (professional_leads.user_email, broker_signups (slug,external_ref),
 --          wallet_transactions partial index for refund lookup).
 -- Rollback: DROP INDEX IF EXISTS for each of the three indexes (any order;
 --           we drop in reverse-creation order for hygiene).
@@ -13,15 +13,15 @@
 -- Forward operations:
 --   1. CREATE INDEX IF NOT EXISTS idx_professional_leads_user_email
 --        ON public.professional_leads (user_email);
---   2. CREATE INDEX IF NOT EXISTS idx_broker_signups_slug_email
---        ON public.broker_signups (broker_slug, email);
+--   2. CREATE INDEX IF NOT EXISTS idx_broker_signups_slug_external_ref
+--        ON public.broker_signups (broker_slug, external_ref);
 --   3. CREATE INDEX IF NOT EXISTS idx_wallet_txn_refund_lookup
 --        ON public.wallet_transactions (broker_slug, reference_type, reference_id)
 --        WHERE reference_type IS NOT NULL;
 --
 -- Rollback (in reverse order):
 --   1. DROP INDEX IF EXISTS idx_wallet_txn_refund_lookup;
---   2. DROP INDEX IF EXISTS idx_broker_signups_slug_email;
+--   2. DROP INDEX IF EXISTS idx_broker_signups_slug_external_ref;
 --   3. DROP INDEX IF EXISTS idx_professional_leads_user_email;
 --
 
@@ -31,9 +31,13 @@
 --    to match advisor reviews against leads. Without this, the cron
 --    times out at ~600 unverified reviews.
 --
--- 2. broker_signups (broker_slug, email) — same pattern for broker
---    reviews. Composite index supports the equality-on-both lookup
---    used by the verifier.
+-- 2. broker_signups (broker_slug, external_ref) — supports the
+--    duplicate-postback guard's equality-on-both lookup
+--    (.eq("external_ref", …).eq("broker_slug", …), maybeSingle) in
+--    app/api/webhooks/broker-signup/route.ts. NOTE: broker_signups has
+--    no `email` column (it is an affiliate conversion postback that
+--    stores click_id / external_ref, never the user's email), so this
+--    index is over (broker_slug, external_ref), not (broker_slug, email).
 --
 -- 3. wallet_transactions (broker_slug, reference_type, reference_id) —
 --    used by the Stripe webhook refund handler to compute the running
@@ -43,8 +47,8 @@
 CREATE INDEX IF NOT EXISTS idx_professional_leads_user_email
   ON public.professional_leads (user_email);
 
-CREATE INDEX IF NOT EXISTS idx_broker_signups_slug_email
-  ON public.broker_signups (broker_slug, email);
+CREATE INDEX IF NOT EXISTS idx_broker_signups_slug_external_ref
+  ON public.broker_signups (broker_slug, external_ref);
 
 CREATE INDEX IF NOT EXISTS idx_wallet_txn_refund_lookup
   ON public.wallet_transactions (broker_slug, reference_type, reference_id)

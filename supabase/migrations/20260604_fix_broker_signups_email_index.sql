@@ -26,9 +26,21 @@
 --          NOTE: in prod the original CREATE INDEX over (broker_slug, email)
 --          would have failed (undefined column), so idx_broker_signups_slug_email
 --          most likely never materialised there — DROP INDEX IF EXISTS is a
---          no-op in that case and remains safe. This migration is repo-parity /
---          forward-correctness for a fresh rebuild that applies
---          20260413_observability_indexes.sql before this fix.
+--          no-op in that case and remains safe.
+--
+--          SUPERSEDED (2026-06-04): the root cause is now fixed at source —
+--          20260413_observability_indexes.sql creates
+--          idx_broker_signups_slug_external_ref directly (over the real
+--          columns) instead of the invalid (broker_slug, email) index, so a
+--          fresh rebuild no longer aborts and reaches this file with the
+--          correct index already in place. This migration is therefore kept as
+--          an idempotent NO-OP / belt-and-braces parity file:
+--            - DROP INDEX IF EXISTS idx_broker_signups_slug_email cleans up any
+--              environment where the bad index somehow materialised (none known).
+--            - CREATE INDEX IF NOT EXISTS idx_broker_signups_slug_external_ref
+--              is a no-op because 20260413 already created it.
+--          It is retained (not deleted) because it already ran on prod and
+--          dropping an applied migration from the chain is poor hygiene.
 --
 --          RLS on broker_signups is untouched (this is index-only); the
 --          "Admin read signups" / "Service insert signups" policies from

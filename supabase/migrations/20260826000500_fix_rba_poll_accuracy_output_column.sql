@@ -1,5 +1,5 @@
 -- ============================================================================
--- Migration: 20260604_fix_rba_poll_accuracy_output_column.sql
+-- Migration: 20260826000500_fix_rba_poll_accuracy_output_column.sql
 -- Purpose: Repo↔prod parity for the public.rba_poll_accuracy view.
 --
 --          Prod's rba_poll_accuracy emits `voter_user_id` (aliased from
@@ -7,20 +7,27 @@
 --            - app/rba-poll/page.tsx          → .select("voter_user_id, …")
 --            - app/api/rba-polls/leaderboard/route.ts → .select("voter_user_id, …")
 --
---          But the repo's corrected 20260825150000_rba_polls.sql defines the
---          view to emit `user_id` (and references forum_votes.voter_user_id /
---          forum_votes.vote). The canonical forum_votes table — per the
---          regenerated lib/database.types.ts which mirrors prod — actually has
---          columns `user_id` and `value`. So a fresh rebuild from
---          20260825150000_rba_polls.sql would both reference non-existent
---          forum_votes columns AND emit the wrong output column name
---          (`user_id` instead of `voter_user_id`), breaking both consumers.
+--          But the repo's 20260825150000_rba_polls.sql defines the view to emit
+--          `user_id` (not the `voter_user_id` alias prod and the app use). The
+--          canonical forum_votes table — per the regenerated
+--          lib/database.types.ts which mirrors prod — has columns `user_id` and
+--          `value`. So a fresh rebuild from 20260825150000_rba_polls.sql would
+--          emit the wrong output column name (`user_id` instead of
+--          `voter_user_id`), breaking both consumers.
 --
 --          This forward migration redefines the view to match prod: it selects
 --          forum_votes.user_id aliased to `voter_user_id`, compares
 --          forum_votes.value to rba_polls.outcome, and re-grants SELECT.
---          Applied AFTER 20260825150000_rba_polls.sql in filename order, it is
---          the last writer and therefore the source of truth for a rebuild.
+--
+--          ORDERING: this file is deliberately timestamped 20260826000500 —
+--          AFTER 20260825150000_rba_polls.sql (which CREATEs public.rba_polls,
+--          referenced in the JOIN below) and AFTER
+--          20260801000500_forum_votes_column_parity.sql (which renames
+--          forum_votes.voter_user_id→user_id and vote→value). Both are required
+--          for this CREATE VIEW to resolve. The original 20260604 timestamp
+--          sorted this file BEFORE rba_polls existed and aborted a fresh apply
+--          with "relation public.rba_polls does not exist". As the last writer
+--          of the view, this migration is the source of truth for a rebuild.
 --
 --          PARITY NOTE: prod ALREADY has this exact view definition — do NOT
 --          re-apply this migration to the live database. It exists purely so a
