@@ -84,6 +84,48 @@ describe("GET /api/marketplace/invoice/[id]", () => {
     const res = await GET(req, { params });
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.invoice).toEqual(invoice);
+    expect(body.invoice).toMatchObject(invoice);
+    expect(body.invoice.stripe_payment_reference).toBeNull();
+  });
+
+  it("never exposes raw payment-processor ids; derives a truncated reference", async () => {
+    const longIntent = "pi_" + "x".repeat(40);
+    const invoice = {
+      id: 7,
+      broker_slug: "broker-a",
+      amount_cents: 5000,
+      stripe_payment_intent_id: longIntent,
+      stripe_checkout_session_id: "cs_secret_should_never_appear",
+    };
+    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    mockAdminFrom
+      .mockReturnValueOnce(makeAccountBuilder({ broker_slug: "broker-a" }))
+      .mockReturnValueOnce(makeInvoiceBuilder(invoice));
+    const { req, params } = makeRequest("7");
+    const res = await GET(req, { params });
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    // Raw processor ids must not be present anywhere in the payload.
+    expect(body.invoice.stripe_payment_intent_id).toBeUndefined();
+    expect(body.invoice.stripe_checkout_session_id).toBeUndefined();
+    expect(JSON.stringify(body)).not.toContain(longIntent);
+    expect(JSON.stringify(body)).not.toContain("cs_secret_should_never_appear");
+    // Display-only truncated reference is derived (24 chars + ellipsis).
+    expect(body.invoice.stripe_payment_reference).toBe(
+      `${longIntent.slice(0, 24)}...`,
+    );
+  });
+
+  it("requests an explicit column list (not select *)", async () => {
+    const invoiceBuilder = makeInvoiceBuilder({ id: 5, broker_slug: "broker-a" });
+    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } } });
+    mockAdminFrom
+      .mockReturnValueOnce(makeAccountBuilder({ broker_slug: "broker-a" }))
+      .mockReturnValueOnce(invoiceBuilder);
+    const { req, params } = makeRequest("5");
+    await GET(req, { params });
+    const selectArg = invoiceBuilder.select.mock.calls[0]?.[0] as string;
+    expect(selectArg).not.toBe("*");
+    expect(selectArg).not.toContain("stripe_checkout_session_id");
   });
 });

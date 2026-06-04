@@ -57,13 +57,29 @@ export async function createPlan(input: CreatePlanInput): Promise<ActionPlan> {
   return data as ActionPlan;
 }
 
-export async function getPlanById(id: number): Promise<ActionPlan | null> {
+/**
+ * Fetch a plan by id.
+ *
+ * Pass `authUserId` to scope the read to the owning user — the query then only
+ * matches rows whose `auth_user_id` equals the caller, so the admin client
+ * (RLS bypass) cannot return another user's plan even if the id is guessed.
+ * Owner-facing read paths (e.g. `/account/plans/[id]`) MUST pass it. Anonymous
+ * / draft flows that legitimately operate on session-keyed rows with a null
+ * owner omit it and keep their existing behaviour.
+ */
+export async function getPlanById(
+  id: number,
+  authUserId?: string,
+): Promise<ActionPlan | null> {
   const admin = createAdminClient();
-  const { data } = await admin
+  let query = admin
     .from("get_matched_action_plans")
     .select("*")
-    .eq("id", id)
-    .maybeSingle();
+    .eq("id", id);
+  if (authUserId) {
+    query = query.eq("auth_user_id", authUserId);
+  }
+  const { data } = await query.maybeSingle();
   return (data as ActionPlan) ?? null;
 }
 

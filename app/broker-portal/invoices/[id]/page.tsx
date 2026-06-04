@@ -23,7 +23,9 @@ interface Invoice {
   tax_cents: number;
   amount_cents: number;
   status: "paid" | "pending" | "failed" | "refunded";
-  stripe_payment_intent_id: string | null;
+  // Server-derived, display-only truncated reference. The raw
+  // stripe_payment_intent_id is never sent to the client.
+  stripe_payment_reference: string | null;
 }
 
 export default function InvoiceDetailPage() {
@@ -117,11 +119,7 @@ export default function InvoiceDetailPage() {
     );
   };
 
-  const truncatedStripeId = invoice.stripe_payment_intent_id
-    ? invoice.stripe_payment_intent_id.length > 24
-      ? `${invoice.stripe_payment_intent_id.slice(0, 24)}...`
-      : invoice.stripe_payment_intent_id
-    : null;
+  const truncatedStripeId = invoice.stripe_payment_reference;
 
   return (
     <div className="space-y-6">

@@ -37,7 +37,7 @@ export default async function MyPlanDetailPage({
   const planId = Number(id);
   if (!Number.isFinite(planId)) notFound();
 
-  const plan = await getPlanById(planId);
+  const plan = await getPlanById(planId, user.id);
   if (!plan || plan.auth_user_id !== user.id) notFound();
 
   const template = plan.route
