@@ -128,6 +128,7 @@ export default function SmsfChecklistClient() {
               name="email"
               required
               placeholder="you@example.com"
+              aria-label="Email address"
               className="flex-1 rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
             />
             <button

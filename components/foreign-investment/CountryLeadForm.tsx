@@ -135,6 +135,7 @@ export default function CountryLeadForm({
         <input
           type="text"
           placeholder="Your name (optional)"
+          aria-label="Your name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
@@ -144,6 +145,7 @@ export default function CountryLeadForm({
           type="email"
           required
           placeholder="Your email"
+          aria-label="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300"
@@ -156,6 +158,7 @@ export default function CountryLeadForm({
               <select
                 key={field.name}
                 value={val}
+                aria-label={field.label}
                 onChange={(e) => setExtra((s) => ({ ...s, [field.name]: e.target.value }))}
                 required={field.required}
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-300"
@@ -174,6 +177,7 @@ export default function CountryLeadForm({
               key={field.name}
               type={field.type ?? "text"}
               required={field.required}
+              aria-label={field.label}
               placeholder={field.placeholder ?? field.label}
               value={val}
               onChange={(e) => setExtra((s) => ({ ...s, [field.name]: e.target.value }))}

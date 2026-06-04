@@ -79,6 +79,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
               <input
                 type="text"
                 placeholder="Search platforms..."
+                aria-label="Search for first platform"
                 value={searchA}
                 onChange={(e) => setSearchA(e.target.value)}
                 onFocus={() => setFocusA(true)}
@@ -140,6 +141,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
               <input
                 type="text"
                 placeholder="Search platforms..."
+                aria-label="Search for second platform"
                 value={searchB}
                 onChange={(e) => setSearchB(e.target.value)}
                 onFocus={() => setFocusB(true)}

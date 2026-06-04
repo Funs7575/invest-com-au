@@ -418,6 +418,7 @@ export default function ScoreClient() {
                 <input
                   type="email"
                   placeholder="you@example.com"
+                  aria-label="Email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleEmailCapture()}
