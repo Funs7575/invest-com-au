@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { enforcePortalKind } from "@/lib/portal-gate";
 import VaultClient from "./VaultClient";
@@ -36,8 +37,11 @@ export default async function VaultPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Defense-in-depth: enforcePortalKind already redirects unauthenticated
+  // visitors above; mirror holdings/net-worth and redirect to login rather
+  // than rendering a blank page if we somehow reach here without a user.
   if (!user) {
-    return null;
+    redirect("/account/login?redirect=/account/vault");
   }
 
   const { data: rows } = await supabase

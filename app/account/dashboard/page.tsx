@@ -704,7 +704,9 @@ export default async function PersonalDashboardPage() {
           <NavCard href="/account/investor-profile" emoji="🧠" label="Investor Profile" desc="Goals, experience, interests" />
           <NavCard href="/account/goals" emoji="🎯" label="Financial Goals" desc="Set targets, track progress" />
           <NavCard href="/account/holdings" emoji="💼" label="Holdings" desc="Track your portfolio positions" />
+          <NavCard href="/account/net-worth" emoji="💰" label="Net Worth" desc="Holdings + goals + manual balances" />
           <NavCard href="/account/watchlist" emoji="📈" label="Watchlist" desc="Stocks, ETFs, funds on your radar" />
+          <NavCard href="/account/alerts" emoji="📉" label="Alerts" desc="Rate & fee alerts you've set" />
           <NavCard href="/account/bookmarks" emoji="🔖" label="Reading List" desc="Saved articles and guides" />
           <NavCard href="/account/quizzes" emoji="📝" label="Quiz History" desc="Platform quiz results" />
           <NavCard href="/account/notifications" emoji="🔔" label="Notifications" desc="Email preferences and alerts" />

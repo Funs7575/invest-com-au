@@ -276,6 +276,23 @@ export default function AdvisorPortalPage() {
             <Icon name="activity" size={16} />
             Auctions
           </Link>
+          {/* P2-4: marketplace settings (bid templates / alert prefs) and the
+              Expert Teams (Pro Squad) manager were URL-only — surface them so
+              advisors can reach them without a direct link. */}
+          <Link
+            href="/advisor-portal/marketplace"
+            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+          >
+            <Icon name="store" size={16} />
+            Marketplace
+          </Link>
+          <Link
+            href="/advisor-portal/teams"
+            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+          >
+            <Icon name="users" size={16} />
+            Expert Teams
+          </Link>
         </div>
       </div>
 
