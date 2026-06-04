@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { getSessionId } from "@/lib/session";
+import { useDialogA11y } from "@/lib/hooks/useDialogA11y";
+import { Input } from "@/components/ui/Input";
 
 /**
  * Wave 16 — Newsletter-focused exit-intent modal.
@@ -36,6 +38,7 @@ export default function NewsletterExitIntentModal({
   const [msg, setMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const firedRef = useRef(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const logEvent = useCallback(
     (action: "shown" | "dismissed" | "converted_subscribe" | "converted_quiz") => {
@@ -167,6 +170,9 @@ export default function NewsletterExitIntentModal({
     logEvent("dismissed");
   }, [logEvent]);
 
+  // Escape-to-close + focus trap + initial focus + focus restoration.
+  useDialogA11y({ open, onClose: dismiss, containerRef: dialogRef });
+
   const subscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -194,6 +200,7 @@ export default function NewsletterExitIntentModal({
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label="Newsletter signup"
@@ -227,13 +234,15 @@ export default function NewsletterExitIntentModal({
           </p>
         ) : (
           <form onSubmit={subscribe} className="space-y-3">
-            <input
+            <Input
+              id="newsletter-exit-email"
+              label="Email address"
               required
               type="email"
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40"
             />
             <button
               type="submit"

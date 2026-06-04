@@ -106,4 +106,56 @@ describe("CollapsibleSection", () => {
     });
     expect(screen.queryByText(/Show all/)).not.toBeInTheDocument();
   });
+
+  // ── a11y: aria-expanded / aria-controls / inert (WCAG 2.4.3, 1.3.1) ──────────
+
+  function renderCollapsed() {
+    const utils = render(
+      <CollapsibleSection collapsedHeight={100} totalCount={12} itemLabel="reviews">
+        <div data-testid="body">
+          <a href="/hidden-link">a link clipped below the fold</a>
+        </div>
+      </CollapsibleSection>,
+    );
+    const inner = utils.container.querySelector("div");
+    Object.defineProperty(inner, "scrollHeight", { configurable: true, value: 600 });
+    act(() => {
+      window.dispatchEvent(new Event("resize"));
+    });
+    return utils;
+  }
+
+  it("the collapsed toggle exposes aria-expanded=false and aria-controls", () => {
+    renderCollapsed();
+    const toggle = screen.getByRole("button", { name: /Show all 12 reviews/ });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    const controls = toggle.getAttribute("aria-controls");
+    expect(controls).toBeTruthy();
+    // aria-controls must point at the actual content container.
+    expect(document.getElementById(controls!)).toBeInTheDocument();
+  });
+
+  it("marks the clipped content inert so it is out of the tab order while collapsed", () => {
+    renderCollapsed();
+    const toggle = screen.getByRole("button", { name: /Show all 12 reviews/ });
+    const region = document.getElementById(toggle.getAttribute("aria-controls")!);
+    // React 19 renders the boolean `inert` prop as the `inert` attribute, which
+    // takes the whole clipped subtree (and its links) out of the tab order.
+    expect(region).toHaveAttribute("inert");
+  });
+
+  it("the expanded toggle exposes aria-expanded=true after Show all is clicked", () => {
+    renderCollapsed();
+    const showAll = screen.getByRole("button", { name: /Show all 12 reviews/ });
+    act(() => {
+      showAll.click();
+    });
+    const showLess = screen.getByRole("button", { name: /Show less/ });
+    expect(showLess).toHaveAttribute("aria-expanded", "true");
+    expect(showLess).toHaveAttribute("aria-controls");
+    // Once expanded, the content is no longer inert (link is reachable).
+    const controls = showLess.getAttribute("aria-controls")!;
+    const region = document.getElementById(controls)!;
+    expect(region).not.toHaveAttribute("inert");
+  });
 });

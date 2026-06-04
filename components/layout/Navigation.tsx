@@ -168,6 +168,7 @@ function MegaMenuDropdown({
   const [open, setOpen] = useState(false);
   const timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const enter = useCallback(() => {
     clearTimeout(timeout.current);
@@ -178,6 +179,24 @@ function MegaMenuDropdown({
     timeout.current = setTimeout(() => setOpen(false), 120);
   }, []);
 
+  // Keyboard users must be able to dismiss the dropdown (WCAG 2.1.1).
+  // Escape closes it and returns focus to the trigger button.
+  const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") {
+      setOpen(false);
+      triggerRef.current?.focus();
+    }
+  }, []);
+
+  // Close when focus leaves the menu entirely (Tab past the last item).
+  // relatedTarget is the element receiving focus; if it's outside this
+  // wrapper, the menu has been tabbed out of and should collapse.
+  const onBlur = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+      setOpen(false);
+    }
+  }, []);
+
   useEffect(() => () => clearTimeout(timeout.current), []);
 
   return (
@@ -186,8 +205,11 @@ function MegaMenuDropdown({
       className="relative"
       onMouseEnter={enter}
       onMouseLeave={leave}
+      onKeyDown={onKeyDown}
+      onBlur={onBlur}
     >
       <button
+        ref={triggerRef}
         onClick={() => setOpen((v) => !v)}
         // whitespace-nowrap prevents multi-word labels ("Find an advisor",
         // "Compare platforms", "Browse listings", "Post a job") from breaking
