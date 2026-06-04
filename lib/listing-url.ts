@@ -6,8 +6,9 @@ import type { InvestmentListing, InvestListingVertical } from "@/lib/types";
  */
 export const VERTICAL_TO_CATEGORY: Record<InvestListingVertical, string> = {
   aquaculture: "aquaculture",
+  bullion: "bullion",
   business: "buy-business",
-  "carbon-environmental-markets": "carbon-environmental-markets",
+  "carbon-environmental-markets": "carbon-credits",
   commercial_property: "commercial-property",
   "digital-infrastructure": "digital-infrastructure",
   energy: "renewable-energy",
@@ -25,6 +26,7 @@ export const VERTICAL_TO_CATEGORY: Record<InvestListingVertical, string> = {
   royalties: "royalties",
   startup: "startups",
   "venture-capital": "venture-capital",
+  "water-rights": "water-rights",
 };
 
 /**
