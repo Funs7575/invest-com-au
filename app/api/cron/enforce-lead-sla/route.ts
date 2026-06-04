@@ -6,6 +6,7 @@ import { ADMIN_EMAIL } from "@/lib/admin";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { wrapCronHandler } from "@/lib/cron-run-log";
+import { enqueueJob } from "@/lib/job-queue";
 
 const log = logger("cron:enforce-lead-sla");
 
@@ -92,7 +93,9 @@ async function handler(req: NextRequest) {
           })
           .eq("id", advisor.id);
 
-        sendEmail(
+        // Reinstatement is already durable (status flipped above). The
+        // courtesy email is enqueued durably so a Resend hiccup retries.
+        await enqueueSlaEmail(
           advisor.email,
           "Your advisor profile is active again",
           `<div style="font-family:Arial,sans-serif;max-width:560px;color:#334155">
@@ -120,7 +123,11 @@ async function handler(req: NextRequest) {
           })
           .eq("id", advisor.id);
 
-        sendEmail(
+        // Pause is already durable (auto_paused_at stamped above also acts
+        // as the idempotency guard against re-pausing / re-emailing). The
+        // notifications are enqueued durably (not fire-and-forget) so a
+        // Resend hiccup retries via the worker rather than silently dropping.
+        await enqueueSlaEmail(
           advisor.email,
           "Your advisor profile has been paused",
           `<div style="font-family:Arial,sans-serif;max-width:560px;color:#334155">
@@ -132,7 +139,7 @@ async function handler(req: NextRequest) {
         );
 
         // Tell admin too
-        sendEmail(
+        await enqueueSlaEmail(
           ADMIN_EMAIL,
           `Advisor auto-paused (SLA): ${advisor.name}`,
           `<p>${escapeHtml(advisor.name || "advisor")} auto-paused with ${unrespondedCount} unresponded leads.</p>`,
@@ -154,12 +161,12 @@ async function handler(req: NextRequest) {
           : Infinity;
 
         if (hoursSinceLast >= 24) {
-          await supabase
-            .from("professionals")
-            .update({ pause_warning_sent_at: now.toISOString() })
-            .eq("id", advisor.id);
-
-          sendEmail(
+          // Enqueue durably BEFORE stamping pause_warning_sent_at. The job
+          // is retried by the worker, so a Resend hiccup no longer drops the
+          // warning. Only stamp (which would otherwise suppress re-sends for
+          // 24h) once the email is durably queued — if the enqueue fails we
+          // leave the flag so the next run retries this warning.
+          const queued = await enqueueSlaEmail(
             advisor.email,
             "Urgent: respond to your leads to avoid pausing",
             `<div style="font-family:Arial,sans-serif;max-width:560px;color:#334155">
@@ -168,7 +175,18 @@ async function handler(req: NextRequest) {
               <a href="${getSiteUrl()}/advisor-portal" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600">Respond now →</a>
             </div>`,
           );
-          stats.warned2++;
+          if (queued) {
+            await supabase
+              .from("professionals")
+              .update({ pause_warning_sent_at: now.toISOString() })
+              .eq("id", advisor.id);
+            stats.warned2++;
+          } else {
+            log.warn("SLA warning-2 enqueue failed — leaving flag for retry", {
+              advisorId: advisor.id,
+            });
+            stats.failed++;
+          }
         }
         continue;
       }
@@ -179,12 +197,10 @@ async function handler(req: NextRequest) {
           ? new Date(advisor.pause_warning_sent_at)
           : null;
         if (!lastWarned) {
-          await supabase
-            .from("professionals")
-            .update({ pause_warning_sent_at: now.toISOString() })
-            .eq("id", advisor.id);
-
-          sendEmail(
+          // Enqueue durably BEFORE stamping pause_warning_sent_at so a
+          // transient Resend failure retries instead of being swallowed
+          // while the flag (which suppresses future warning-1 sends) advances.
+          const queued = await enqueueSlaEmail(
             advisor.email,
             "You have unresponded leads",
             `<div style="font-family:Arial,sans-serif;max-width:560px;color:#334155">
@@ -193,7 +209,18 @@ async function handler(req: NextRequest) {
               <a href="${getSiteUrl()}/advisor-portal" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600">View leads →</a>
             </div>`,
           );
-          stats.warned1++;
+          if (queued) {
+            await supabase
+              .from("professionals")
+              .update({ pause_warning_sent_at: now.toISOString() })
+              .eq("id", advisor.id);
+            stats.warned1++;
+          } else {
+            log.warn("SLA warning-1 enqueue failed — leaving flag for retry", {
+              advisorId: advisor.id,
+            });
+            stats.failed++;
+          }
         }
       }
     } catch (err) {
@@ -209,22 +236,30 @@ async function handler(req: NextRequest) {
   return NextResponse.json({ ok: true, ...stats });
 }
 
-/** Fire-and-forget transactional email via Resend. */
-function sendEmail(to: string | null, subject: string, html: string): void {
-  if (!to || !process.env.RESEND_API_KEY) return;
-  fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: "Invest.com.au <system@invest.com.au>",
-      to: [to],
-      subject,
-      html,
-    }),
-  }).catch(() => {});
+/**
+ * Durably enqueue an SLA email onto the job_queue. The job-queue-worker cron
+ * sends it via Resend and retries with exponential backoff on transient
+ * failures (see lib/job-queue `send_email` handler), so the notice survives a
+ * single Resend hiccup instead of being swallowed by the old fire-and-forget
+ * `fetch().catch(() => {})`. Returns true when the job row was persisted,
+ * false when the enqueue itself failed (or there was no recipient). Warning
+ * sends gate their `pause_warning_sent_at` stamp on this so a failed enqueue
+ * retries next run; pause/unpause notifications are best-effort (the durable
+ * state change has already landed).
+ */
+async function enqueueSlaEmail(
+  to: string | null,
+  subject: string,
+  html: string,
+): Promise<boolean> {
+  if (!to) return false;
+  const jobId = await enqueueJob("send_email", {
+    to,
+    subject,
+    html,
+    from: "Invest.com.au <system@invest.com.au>",
+  });
+  return jobId !== null;
 }
 
 export const GET = wrapCronHandler("enforce-lead-sla", handler);

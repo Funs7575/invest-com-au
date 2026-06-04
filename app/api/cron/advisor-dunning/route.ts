@@ -6,6 +6,8 @@ import { getStripe } from "@/lib/stripe";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { wrapCronHandler } from "@/lib/cron-run-log";
+import { recordLedgerEntry } from "@/lib/advisor-credit-ledger";
+import { enqueueJob } from "@/lib/job-queue";
 
 const log = logger("cron:advisor-dunning");
 
@@ -119,7 +121,33 @@ async function handler(req: NextRequest) {
       }
 
       if (retrySucceeded) {
-        // Credit the advisor's balance
+        // Credit FIRST through the ledger, mark the topup completed AFTER.
+        // The ledger's (kind, reference_type, reference_id) unique index
+        // keyed to the topup id is the durable guard: if this cron crashes
+        // after crediting but before flipping status='completed', the row
+        // stays 'failed' and the next run re-records the SAME ledger triple
+        // — which is a no-op — then completes the status. No lost credit,
+        // no double credit. (Old ordering marked completed first, so a
+        // crash left the topup "done" but never credited, with no retry.)
+        // The triple matches the Stripe-webhook topup-credit path
+        // (advisor_credit_topup / topup id) so the two can never both
+        // credit the same row.
+        await recordLedgerEntry({
+          professionalId: advisor.id as number,
+          amountCents: topup.amount_cents,
+          kind: "topup",
+          description: `Dunning retry recovered — A$${(topup.amount_cents / 100).toFixed(2)}`,
+          referenceType: "advisor_credit_topup",
+          referenceId: String(topup.id),
+          metadata: {
+            dunning_recovery: true,
+            dunning_step: nextStep,
+            stripe_payment_intent_id: topup.stripe_payment_intent_id ?? null,
+          },
+          createdBy: "cron:advisor-dunning",
+          supabase,
+        });
+
         await supabase
           .from("advisor_credit_topups")
           .update({
@@ -129,14 +157,10 @@ async function handler(req: NextRequest) {
           })
           .eq("id", topup.id);
 
-        await supabase
-          .from("professionals")
-          .update({
-            credit_balance_cents: (advisor.credit_balance_cents || 0) + topup.amount_cents,
-          })
-          .eq("id", advisor.id);
-
-        sendEmail(
+        // Recovery email is informational — the credit + status flip above
+        // are already durable, so this is best-effort but still enqueued
+        // (not fire-and-forget) so a transient Resend failure gets retried.
+        await enqueueDunningEmail(
           advisor.email,
           `Payment succeeded — A$${(topup.amount_cents / 100).toFixed(2)} credited`,
           `<div style="font-family:Arial,sans-serif;max-width:560px;color:#334155">
@@ -165,7 +189,13 @@ async function handler(req: NextRequest) {
         `Your account has been paused. Update your payment method to resume receiving leads.`,
       ];
 
-      sendEmail(
+      // Enqueue the dunning email durably BEFORE advancing any state. The
+      // job_queue row is retried with backoff by the job-queue-worker, so a
+      // transient Resend hiccup no longer silently drops the notice. We only
+      // advance dunning_step (and pause at the final step) once the email is
+      // durably queued — if enqueue fails we leave the row untouched so the
+      // next daily run retries this same step rather than skipping past it.
+      const emailQueued = await enqueueDunningEmail(
         advisor.email,
         subjects[nextStep],
         `<div style="font-family:Arial,sans-serif;max-width:560px;color:#334155">
@@ -175,6 +205,15 @@ async function handler(req: NextRequest) {
           <a href="${getSiteUrl()}/advisor-portal?topup=retry" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600">Update payment method →</a>
         </div>`,
       );
+
+      if (!emailQueued) {
+        log.warn("Dunning email enqueue failed — leaving step for retry", {
+          topupId: topup.id,
+          step: nextStep,
+        });
+        stats.errored++;
+        continue;
+      }
 
       // Final step: pause the advisor if still not paid
       if (nextStep === 3 && advisor.status === "active") {
@@ -212,21 +251,27 @@ async function handler(req: NextRequest) {
   return NextResponse.json({ ok: true, ...stats });
 }
 
-function sendEmail(to: string | null, subject: string, html: string): void {
-  if (!to || !process.env.RESEND_API_KEY) return;
-  fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: "Invest.com.au <billing@invest.com.au>",
-      to: [to],
-      subject,
-      html,
-    }),
-  }).catch(() => {});
+/**
+ * Durably enqueue a dunning email onto the job_queue. The job-queue-worker
+ * cron sends it via Resend and retries with exponential backoff on a 5xx /
+ * 429 / transient failure (see lib/job-queue `send_email` handler), so the
+ * notice is no longer lost on a single Resend hiccup the way the old
+ * fire-and-forget `fetch().catch(() => {})` was. Returns true when the job
+ * row was persisted, false when the enqueue itself failed (or no recipient).
+ */
+async function enqueueDunningEmail(
+  to: string | null,
+  subject: string,
+  html: string,
+): Promise<boolean> {
+  if (!to) return false;
+  const jobId = await enqueueJob("send_email", {
+    to,
+    subject,
+    html,
+    from: "Invest.com.au <billing@invest.com.au>",
+  });
+  return jobId !== null;
 }
 
 export const GET = wrapCronHandler("advisor-dunning", handler);
