@@ -50,6 +50,7 @@ import {
   getChangeLog,
   getDefaultWHT,
 } from "@/lib/fi-data-server";
+import { DEFAULT_WHT } from "@/lib/foreign-investment-data";
 
 beforeEach(() => {
   dbData = null;
@@ -396,8 +397,68 @@ describe("getDefaultWHT", () => {
       },
     ];
     const result = await getDefaultWHT();
-    // parseInt("N/A") → NaN → falls back to DEFAULT_WHT.dividendUnfranked
-    expect(typeof result.dividendUnfranked).toBe("number");
+    // "N/A" has no numeric token → falls back to DEFAULT_WHT.dividendUnfranked
+    expect(result.dividendUnfranked).toBe(DEFAULT_WHT.dividendUnfranked);
     expect(Number.isFinite(result.dividendUnfranked)).toBe(true);
+  });
+
+  it("preserves decimal rates (12.5% must not truncate to 12)", async () => {
+    dbData = [
+      {
+        id: "wh-1",
+        income_type: "Dividends (unfranked)",
+        standard_rate: "12.5%",
+        with_dta_typical: "",
+        notes: null,
+        color: "red",
+        sort_order: 1,
+      },
+      {
+        id: "wh-2",
+        income_type: "Interest (bank deposits, bonds)",
+        standard_rate: "7.5%",
+        with_dta_typical: "",
+        notes: null,
+        color: "amber",
+        sort_order: 2,
+      },
+    ];
+    const result = await getDefaultWHT();
+    // parseInt() used to truncate these to 12 / 7.
+    expect(result.dividendUnfranked).toBe(12.5);
+    expect(result.interest).toBe(7.5);
+  });
+
+  it("keeps a legitimate 0% rate instead of falling back to the default", async () => {
+    dbData = [
+      {
+        id: "wh-1",
+        income_type: "Dividends (unfranked)",
+        standard_rate: "0%",
+        with_dta_typical: "",
+        notes: null,
+        color: "green",
+        sort_order: 1,
+      },
+    ];
+    const result = await getDefaultWHT();
+    // The old `|| DEFAULT_WHT` guard discarded a real parsed 0.
+    expect(result.dividendUnfranked).toBe(0);
+  });
+
+  it("parses the numeric prefix of free-text rates like '30% on unfranked portion'", async () => {
+    dbData = [
+      {
+        id: "wh-1",
+        income_type: "Dividends (unfranked)",
+        standard_rate: "30% on unfranked portion",
+        with_dta_typical: "",
+        notes: null,
+        color: "red",
+        sort_order: 1,
+      },
+    ];
+    const result = await getDefaultWHT();
+    expect(result.dividendUnfranked).toBe(30);
   });
 });

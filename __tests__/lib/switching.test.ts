@@ -323,6 +323,21 @@ describe("parseFee", () => {
     const result = parseFee("$1,000");
     expect(result.flat).toBe(1000);
   });
+
+  it("returns zero for malformed dollar/percent tokens (no NaN leak)", () => {
+    // "$." used to match the loose /\$([\d.]+)/ → parseFloat(".") → NaN.
+    expect(parseFee("$.")).toEqual({ flat: 0, pct: 0 });
+    // ".%" used to match /([\d.]+)%/ → parseFloat(".") → NaN.
+    expect(parseFee(".%")).toEqual({ flat: 0, pct: 0 });
+  });
+
+  it("parses a sane value from multi-dot junk like '1.2.3%'", () => {
+    // The tightened regex stops at the first valid number; result must
+    // be finite (the old loose regex captured "1.2.3" → parseFloat 1.2).
+    const result = parseFee("1.2.3%");
+    expect(Number.isFinite(result.pct)).toBe(true);
+    expect(result.flat).toBe(0);
+  });
 });
 
 // ─── calcBrokerSaving ─────────────────────────────────────────────────────────
@@ -353,6 +368,17 @@ describe("calcBrokerSaving", () => {
       targetAsxFee: "$9.50",
     });
     expect(result.annualDifference).toBeGreaterThan(0);
+  });
+
+  it("keeps annualDifference finite when one broker has a garbage fee string", () => {
+    const result = calcBrokerSaving({
+      ...baseInputs,
+      currentAsxFee: "$.",
+      targetAsxFee: "$9.50",
+    });
+    expect(Number.isFinite(result.annualDifference)).toBe(true);
+    expect(Number.isFinite(result.currentAnnualCost)).toBe(true);
+    expect(Number.isFinite(result.targetAnnualCost)).toBe(true);
   });
 
   it("negative annualDifference means target costs more (no saving)", () => {
