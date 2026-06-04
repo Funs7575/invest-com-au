@@ -21,7 +21,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { "broker-slug": slug } = await params;
   const script = getSwitchScript(slug);
-  if (!script) return {};
+  if (!script) return { robots: { index: false } };
   const title = `Switch from ${script.brokerName} — negotiation script + transfer steps | ${SITE_NAME}`;
   const description = `How to ask ${script.brokerName} to match a competitor's pricing, and step-by-step what to do if you decide to leave. CHESS / custodian transfer process, AU tax notes (CGT, in-specie, DRP).`;
   return {

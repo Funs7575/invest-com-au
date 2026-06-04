@@ -30,7 +30,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { preset: slug } = await params;
   const p = getPreset(slug);
-  if (!p) return {};
+  if (!p) return { robots: { index: false } };
 
   const description = `${p.summary.slice(0, 150)}… General information only — not personal advice.`;
 

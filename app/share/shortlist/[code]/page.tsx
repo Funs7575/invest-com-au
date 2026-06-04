@@ -69,7 +69,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { code } = await params;
   const loaded = await loadShortlist(code);
-  if (!loaded) return {};
+  if (!loaded) return { robots: { index: false } };
   const names = loaded.brokers.map((b) => b.name).join(", ");
   const title = loaded.brokers.length
     ? `${loaded.brokers.length} brokers I'm comparing (${names.slice(0, 80)}${names.length > 80 ? "…" : ""})`

@@ -49,7 +49,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { type } = await params;
   const meta = META[type];
-  if (!meta) return {};
+  if (!meta) return { robots: { index: false } };
   return {
     title: meta.title,
     description: meta.description,

@@ -30,7 +30,7 @@ const TYPE_COLORS: Record<PostType, { bg: string; color: string }> = {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; id: string }> }): Promise<Metadata> {
   const { slug, id } = await params;
   const postId = parseInt(id, 10);
-  if (!Number.isFinite(postId)) return {};
+  if (!Number.isFinite(postId)) return { robots: { index: false } };
 
   const supabase = await createClient();
 
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .eq("professionals.slug", slug)
     .maybeSingle();
 
-  if (!post) return {};
+  if (!post) return { robots: { index: false } };
 
   const pro = post.professional as unknown as { name: string; slug: string } | null;
   const title = pro?.name

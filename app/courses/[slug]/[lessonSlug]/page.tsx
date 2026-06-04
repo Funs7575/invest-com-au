@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug, lessonSlug } = await params;
   const lessons = await getCourseLessons(slug);
   const info = findLessonBySlug(lessons, lessonSlug);
-  if (!info) return {};
+  if (!info) return { robots: { index: false } };
 
   const course = await getCourse(slug);
   const courseTitle = course?.title || slug;

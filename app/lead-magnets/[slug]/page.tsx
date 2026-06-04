@@ -18,7 +18,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const magnet = LEAD_MAGNETS.find((m) => m.slug === slug);
-  if (!magnet) return {};
+  if (!magnet) return { robots: { index: false } };
   return {
     title: `${magnet.title} — Free Download | invest.com.au`,
     description: magnet.description,

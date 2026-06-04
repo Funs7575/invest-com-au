@@ -84,7 +84,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { "advisor-type": typeSlug, city: citySlug } = await params;
   const dbType = slugToType(typeSlug);
   const typeInfo = ADVISOR_TYPE_MAP[dbType];
-  if (!typeInfo) return {};
+  if (!typeInfo) return { robots: { index: false } };
 
   const city = citySlugToDisplay(citySlug);
   const title = `Find ${typeInfo.plural} in ${city} (${CURRENT_YEAR})`;

@@ -36,7 +36,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const guide = getGuide(slug);
-  if (!guide) return {};
+  if (!guide) return { robots: { index: false } };
 
   return {
     title: buildTitle(guide.title),

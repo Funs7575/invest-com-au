@@ -557,7 +557,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ type: string }> }): Promise<Metadata> {
   const { type: typeSlug } = await params;
   const professionalType = SLUG_TO_TYPE[typeSlug];
-  if (!professionalType) return {};
+  if (!professionalType) return { robots: { index: false } };
 
   const label = PROFESSIONAL_TYPE_LABELS[professionalType];
   const title = `Best ${label}s in Australia (${CURRENT_YEAR}) — Find & Compare`;

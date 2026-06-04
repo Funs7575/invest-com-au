@@ -23,7 +23,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { path: pathSlug } = await params;
   const learningPath = getLearningPath(pathSlug);
-  if (!learningPath) return {};
+  if (!learningPath) return { robots: { index: false } };
 
   const totalMins = sumEstimatedMinutes(learningPath);
   const hours = (totalMins / 60).toFixed(1);

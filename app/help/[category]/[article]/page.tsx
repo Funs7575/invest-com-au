@@ -18,7 +18,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { category, article } = await params;
   const found = getArticleBySlug(category, article);
-  if (!found) return {};
+  if (!found) return { robots: { index: false } };
   const { category: cat, article: art } = found;
   return {
     title: `${art.title} | Help Centre | Invest.com.au`,

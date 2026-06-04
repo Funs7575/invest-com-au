@@ -36,7 +36,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { category } = await params;
   const label = CATEGORIES[category];
-  if (!label) return {};
+  if (!label) return { robots: { index: false } };
   const title = `${label} Articles & Guides (${CURRENT_YEAR}) — Invest.com.au`;
   return {
     title,

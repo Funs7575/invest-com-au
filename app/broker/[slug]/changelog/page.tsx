@@ -25,7 +25,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const broker = await getBrokerBySlug(slug);
-  if (!broker) return {};
+  if (!broker) return { robots: { index: false } };
   return {
     title: `${broker.name} Fee & Data Changelog (${CURRENT_YEAR})`,
     description: `Full history of fee changes, rating updates, and data corrections for ${broker.name} on Invest.com.au.`,

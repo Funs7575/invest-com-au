@@ -128,6 +128,6 @@ describe("generateMetadata", () => {
       params: Promise.resolve({ "advisor-type": "unknown-type", city: "sydney" }),
     });
 
-    expect(result).toEqual({});
+    expect(result).toEqual({ robots: { index: false } });
   });
 });

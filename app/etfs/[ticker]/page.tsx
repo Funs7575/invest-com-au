@@ -20,7 +20,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { ticker } = await params;
   const etf = getETFByTicker(ticker);
-  if (!etf) return { title: "ETF Not Found" };
+  if (!etf) return { title: "ETF Not Found", robots: "noindex" };
 
   const title = `${etf.ticker} ETF (${CURRENT_YEAR}) — ${etf.name}`;
   const description = `${etf.ticker} ETF review: ${etf.provider}, ${etf.benchmark}, MER ${etf.mer}%, AUM $${etf.aumMillions >= 1000 ? `${(etf.aumMillions / 1000).toFixed(1)}B` : `${etf.aumMillions}M`}. Compare with similar ETFs on invest.com.au.`;

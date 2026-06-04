@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .eq("status", "active")
     .single();
 
-  if (!firm) return {};
+  if (!firm) return { robots: { index: false } };
 
   const title = `${firm.name} — Advisory Firm Profile`;
   const description = firm.tagline || (firm.bio

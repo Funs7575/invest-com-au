@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const supabase = await createClient();
   const { data: pro } = await supabase.from("professionals").select("name, firm_name, type, location_display, meta_title, meta_description").eq("slug", slug).eq("status", "active").single();
-  if (!pro) return {};
+  if (!pro) return { robots: { index: false } };
 
   const typeLabel = PROFESSIONAL_TYPE_LABELS[pro.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || "Financial Professional";
   const title = pro.meta_title || `${pro.name}${pro.firm_name ? ` — ${pro.firm_name}` : ""} — ${typeLabel}`;
