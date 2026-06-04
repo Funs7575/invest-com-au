@@ -702,9 +702,9 @@ function AdvisorApplyInner() {
               />
               <span className="text-[0.6rem] md:text-xs text-slate-600 leading-relaxed">
                 I have read and agree to the{" "}
-                <Link href="/advisor-terms" target="_blank" className="text-violet-600 underline hover:text-violet-800">Advisor Services Agreement</Link>,{" "}
-                <Link href="/terms" target="_blank" className="text-violet-600 underline hover:text-violet-800">Terms of Use</Link>, and{" "}
-                <Link href="/privacy" target="_blank" className="text-violet-600 underline hover:text-violet-800">Privacy Policy</Link>.
+                <Link href="/advisor-terms" target="_blank" rel="noopener noreferrer" className="text-violet-600 underline hover:text-violet-800">Advisor Services Agreement</Link>,{" "}
+                <Link href="/terms" target="_blank" rel="noopener noreferrer" className="text-violet-600 underline hover:text-violet-800">Terms of Use</Link>, and{" "}
+                <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="text-violet-600 underline hover:text-violet-800">Privacy Policy</Link>.
                 I confirm my details are accurate and I hold the required professional registration.
               </span>
             </label>

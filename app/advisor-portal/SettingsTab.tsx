@@ -260,7 +260,7 @@ export default function SettingsTab({ advisor }: Props) {
             <p className={`text-sm font-semibold mt-0.5 ${advisor?.status === "active" ? "text-emerald-600" : "text-amber-600"}`}>{advisor?.status}</p>
           </div>
           <div className="pt-2 border-t border-slate-100">
-            <Link href={`/advisor/${advisor?.slug}`} target="_blank" className="text-sm text-violet-600 hover:text-violet-800 font-medium">
+            <Link href={`/advisor/${advisor?.slug}`} target="_blank" rel="noopener noreferrer" className="text-sm text-violet-600 hover:text-violet-800 font-medium">
               View Public Profile ↗
             </Link>
           </div>

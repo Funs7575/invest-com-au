@@ -78,9 +78,9 @@ export default function AdvisorContactStep({
             />
             <span className="text-xs text-slate-600 leading-relaxed">
               I agree to Invest.com.au&apos;s{" "}
-              <Link href="/privacy" target="_blank" className="text-amber-600 hover:text-amber-700 underline">Privacy Policy</Link>
+              <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700 underline">Privacy Policy</Link>
               {" "}and{" "}
-              <Link href="/terms" target="_blank" className="text-amber-600 hover:text-amber-700 underline">Terms of Use</Link>.
+              <Link href="/terms" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700 underline">Terms of Use</Link>.
               {" "}<strong className="text-slate-700">Your details go to ONE matched advisor only — no spam.</strong>
             </span>
           </label>

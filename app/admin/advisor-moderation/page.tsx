@@ -191,6 +191,7 @@ export default function AdvisorModerationPage() {
                       <Link
                         href={`/advisor/${a.slug}`}
                         target="_blank"
+                        rel="noopener noreferrer"
                         className="text-xs font-semibold text-slate-500 hover:text-slate-700 px-2.5 py-1 border border-slate-200 rounded-lg hover:bg-slate-50"
                       >
                         Preview

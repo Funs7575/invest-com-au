@@ -264,9 +264,9 @@ export default function BrokerRegisterPage() {
                 />
                 <span className="text-xs text-slate-600 leading-relaxed">
                   I have read and agree to the{" "}
-                  <a href="/broker-terms" target="_blank" className="text-blue-600 underline hover:text-blue-800">Advertising &amp; Listing Terms</a>,{" "}
-                  <a href="/terms" target="_blank" className="text-blue-600 underline hover:text-blue-800">Terms of Use</a>, and{" "}
-                  <a href="/privacy" target="_blank" className="text-blue-600 underline hover:text-blue-800">Privacy Policy</a>.
+                  <a href="/broker-terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Advertising &amp; Listing Terms</a>,{" "}
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Terms of Use</a>, and{" "}
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Privacy Policy</a>.
                   I confirm we hold the required licences to offer our products in Australia.
                 </span>
               </label>

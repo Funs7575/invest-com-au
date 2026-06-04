@@ -365,7 +365,7 @@ export default function AdminAdvisorsPage() {
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
                           <button onClick={() => setEditing(a)} className="text-xs text-blue-600 hover:text-blue-800 font-semibold">Edit</button>
-                          <a href={`/advisor/${a.slug}`} target="_blank" className="text-xs text-slate-500 hover:text-slate-700 font-semibold">View</a>
+                          <a href={`/advisor/${a.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-slate-700 font-semibold">View</a>
                           {a.email && (
                             <button
                               onClick={async () => {

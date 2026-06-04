@@ -621,6 +621,7 @@ export default function ProsJoinWizard() {
                 <Link
                   href="/advisor-terms"
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="text-violet-600 underline"
                 >
                   Provider Services Agreement
@@ -629,6 +630,7 @@ export default function ProsJoinWizard() {
                 <Link
                   href="/terms"
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="text-violet-600 underline"
                 >
                   Terms of Use
@@ -637,6 +639,7 @@ export default function ProsJoinWizard() {
                 <Link
                   href="/privacy"
                   target="_blank"
+                  rel="noopener noreferrer"
                   className="text-violet-600 underline"
                 >
                   Privacy Policy

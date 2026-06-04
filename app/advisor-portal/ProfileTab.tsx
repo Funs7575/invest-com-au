@@ -59,7 +59,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
           <h1 className="text-xl font-bold text-slate-900 mb-1">Edit Profile</h1>
           <p className="text-sm text-slate-500">Changes are saved to your public listing.</p>
         </div>
-        <Link href={`/advisor/${advisor.slug}`} target="_blank" className="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-1">
+        <Link href={`/advisor/${advisor.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-1">
           <Icon name="external-link" size={14} />
           Preview
         </Link>
