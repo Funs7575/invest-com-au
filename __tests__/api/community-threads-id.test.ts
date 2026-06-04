@@ -91,7 +91,12 @@ function makeListBuilder(data: unknown[] = [], error: unknown = null) {
 // ── GET tests ──────────────────────────────────────────────────────────────────
 
 describe("GET /api/community/threads/[id]", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // GET now resolves the viewer server-side to derive ownership flags
+    // without serializing author_id. Default: anonymous viewer.
+    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+  });
 
   it("returns 404 when thread not found", async () => {
     mockAdminFrom.mockReturnValue(makeSingleBuilder(null, { message: "not found" }));
@@ -106,6 +111,7 @@ describe("GET /api/community/threads/[id]", () => {
       author_id: "author-2",
       thread_id: THREAD_ID,
       body: "A reply",
+      is_anonymous: false,
       is_removed: false,
       created_at: new Date().toISOString(),
     };
@@ -135,6 +141,113 @@ describe("GET /api/community/threads/[id]", () => {
     const data = await res.json();
     expect(data.thread.id).toBe(THREAD_ID);
     expect(data.posts).toHaveLength(1);
+  });
+
+  it("does NOT serialize author_id on thread or posts (P1/P3 cross-user leak)", async () => {
+    const thread = makeThread({ author_id: USER_ID, is_anonymous: false });
+    const post = {
+      id: "post-1",
+      author_id: "author-2",
+      thread_id: THREAD_ID,
+      body: "A reply",
+      is_anonymous: false,
+      is_removed: false,
+      created_at: new Date().toISOString(),
+    };
+    const profile = { user_id: USER_ID, display_name: "Alice", reputation: 10, badge: null, is_moderator: false };
+
+    let callCount = 0;
+    mockAdminFrom.mockImplementation((table: string) => {
+      callCount++;
+      if (table === "forum_threads" && callCount === 1) return makeSingleBuilder(thread, null);
+      if (table === "forum_threads" && callCount === 2) {
+        return { update: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis() };
+      }
+      if (table === "forum_posts") return makeListBuilder([post]);
+      if (table === "forum_user_profiles") return makeListBuilder([profile]);
+      return makeSingleBuilder(null, null);
+    });
+
+    const res = await GET(makeRequest("GET"), makeParams());
+    expect(res.status).toBe(200);
+    const data = await res.json();
+
+    // No raw auth UUIDs anywhere in the serialized payload.
+    const serialized = JSON.stringify(data);
+    expect(serialized).not.toContain("author_id");
+    expect(serialized).not.toContain(USER_ID);
+    expect(serialized).not.toContain("author-2");
+
+    expect(data.thread).not.toHaveProperty("author_id");
+    expect(data.posts[0]).not.toHaveProperty("author_id");
+
+    // For an anonymous viewer, ownership is always false.
+    expect(data.thread.is_own).toBe(false);
+    expect(data.posts[0].is_own).toBe(false);
+  });
+
+  it("derives is_own server-side for the viewer's own thread without leaking author_id", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: { id: USER_ID } }, error: null });
+    const thread = makeThread({ author_id: USER_ID, is_anonymous: false });
+    const post = {
+      id: "post-1",
+      author_id: "author-2",
+      thread_id: THREAD_ID,
+      body: "A reply",
+      is_anonymous: false,
+      is_removed: false,
+      created_at: new Date().toISOString(),
+    };
+
+    let callCount = 0;
+    mockAdminFrom.mockImplementation((table: string) => {
+      callCount++;
+      if (table === "forum_threads" && callCount === 1) return makeSingleBuilder(thread, null);
+      if (table === "forum_threads" && callCount === 2) {
+        return { update: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis() };
+      }
+      if (table === "forum_posts") return makeListBuilder([post]);
+      if (table === "forum_user_profiles") return makeListBuilder([]);
+      return makeSingleBuilder(null, null);
+    });
+
+    const res = await GET(makeRequest("GET"), makeParams());
+    const data = await res.json();
+    expect(data.thread.is_own).toBe(true);
+    expect(data.posts[0].is_own).toBe(false);
+    expect(JSON.stringify(data)).not.toContain("author_id");
+  });
+
+  it("withholds author_profile for anonymous threads/posts so they can't be re-identified", async () => {
+    const thread = makeThread({ author_id: USER_ID, is_anonymous: true });
+    const post = {
+      id: "post-1",
+      author_id: USER_ID,
+      thread_id: THREAD_ID,
+      body: "A reply",
+      is_anonymous: true,
+      is_removed: false,
+      created_at: new Date().toISOString(),
+    };
+    const profile = { user_id: USER_ID, display_name: "Alice", reputation: 10, badge: null, is_moderator: false };
+
+    let callCount = 0;
+    mockAdminFrom.mockImplementation((table: string) => {
+      callCount++;
+      if (table === "forum_threads" && callCount === 1) return makeSingleBuilder(thread, null);
+      if (table === "forum_threads" && callCount === 2) {
+        return { update: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis() };
+      }
+      if (table === "forum_posts") return makeListBuilder([post]);
+      if (table === "forum_user_profiles") return makeListBuilder([profile]);
+      return makeSingleBuilder(null, null);
+    });
+
+    const res = await GET(makeRequest("GET"), makeParams());
+    const data = await res.json();
+    expect(data.thread.author_profile).toBeNull();
+    expect(data.posts[0].author_profile).toBeNull();
+    expect(JSON.stringify(data)).not.toContain("author_id");
   });
 
   it("returns 500 on unexpected error", async () => {

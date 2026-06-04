@@ -119,6 +119,28 @@ describe("GET /api/community/threads", () => {
     expect(json.page).toBe(1);
   });
 
+  it("does NOT select or serialize author_id on the thread list (P1/P3 cross-user leak)", async () => {
+    const chain = makeGetChain({
+      // Simulate a row that still carries author_id in the fixture to prove the
+      // route never echoes it back even if present.
+      data: [{ ...SAMPLE_THREADS[0], author_id: "leaked-auth-uid" }],
+      error: null,
+      count: 1,
+    });
+    mockAdminFrom.mockReset();
+    mockAdminFrom.mockReturnValue(chain);
+
+    const res = await GET(makeGet());
+    expect(res.status).toBe(200);
+
+    // The select() column list must not request author_id.
+    const selectArg = (chain.select as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as string;
+    expect(typeof selectArg).toBe("string");
+    expect(selectArg).not.toContain("author_id");
+    // Display label is still selected.
+    expect(selectArg).toContain("author_name");
+  });
+
   it("returns 404 when category slug is not found", async () => {
     // First call = category lookup → not found
     mockAdminFrom.mockReset();

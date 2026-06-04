@@ -57,10 +57,13 @@ export async function GET(req: NextRequest) {
       categoryId = cat.id;
     }
 
-    // Build the query
+    // Build the query — author_id (a Supabase auth.uid) is intentionally NOT
+    // selected: it must never reach the client on this publicly readable list,
+    // or it deanonymises Investment Confessions authors. author_name carries
+    // the display label ("Anonymous Investor" for anonymous threads).
     let query = supabase
       .from("forum_threads")
-      .select("id, category_id, author_id, author_name, title, slug, is_pinned, is_locked, reply_count, view_count, vote_score, last_reply_at, created_at", { count: "exact" })
+      .select("id, category_id, author_name, title, slug, is_pinned, is_locked, reply_count, view_count, vote_score, last_reply_at, created_at", { count: "exact" })
       .eq("is_removed", false);
 
     if (categoryId) {
