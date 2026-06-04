@@ -1265,15 +1265,30 @@ async function buildShard8(): Promise<MetadataRoute.Sitemap> {
 // each shard at `/sitemap/0.xml`, `/sitemap/1.xml`, … `/sitemap/7.xml`.
 // robots.ts already points to `/sitemap.xml` so no change is needed there.
 
-export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
-  // The @netlify/plugin-nextjs runtime passes the shard `id` as the request
-  // FILENAME — "0.xml", not "0" — so `Number("0.xml")` is NaN and the switch
-  // fell through to `default: []`, serving an empty <urlset> for EVERY shard
-  // (Google got empty sitemaps). `parseInt` reads the leading integer from any
-  // form ("0", "0.xml", or a real number) → correct shard on both Netlify and
-  // Vercel. (#1316 used `Number(id)`, which does NOT handle the ".xml" suffix —
-  // its test only exercised "0", so CI was green while prod served empties.)
-  const shard = parseInt(String(id), 10);
+export default async function sitemap({
+  id,
+}: {
+  // Next 16's generated dynamic-sitemap route (next-metadata-route-loader)
+  // calls `handler({ id: targetIdPromise })` — `id` arrives as a PROMISE that
+  // resolves to the base filename string ("0"), NOT a bare number/string.
+  // Older docs/tests assumed a plain number, so the param type is widened to
+  // reflect every form the runtime can actually pass.
+  id: number | string | Promise<number | string | undefined> | undefined;
+}): Promise<MetadataRoute.Sitemap> {
+  // Root cause of the all-empty-shards prod failure: in Next 16 the runtime
+  // passes `id` as a *Promise* (`targetIdPromise`), so `String(id)` was
+  // "[object Promise]" → `parseInt(...)` === NaN → switch fell through to
+  // `default: []`, serving an empty <urlset> for EVERY shard (including the
+  // fully-static 0 & 1 that have no DB dependency). #1316 (`Number(id)`) and
+  // #1326 (`parseInt(id)`) both still assumed a synchronous string and only
+  // tested "0"/"0.xml", so CI stayed green while Google got empty sitemaps.
+  //
+  // Robust parse: await the value (a no-op for non-Promises), then pull the
+  // first digit run and map it to a shard. Tolerant of "0", "0.xml",
+  // "sitemap/0", "/sitemap/0.xml", a bare number, or a Promise of any of these.
+  const resolved = await id;
+  const digits = /(\d+)/.exec(String(resolved ?? ""))?.[1];
+  const shard = digits ? parseInt(digits, 10) : NaN;
   switch (shard) {
     case 0: return buildShard0();
     case 1: return buildShard1();
@@ -1286,7 +1301,10 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     case 8: return buildShard8();
     default:
       // Never fail silently again: an unrecognised id means empty sitemaps.
-      log.warn("sitemap: unrecognised shard id — serving empty urlset", { id, shard });
+      log.warn("sitemap: unrecognised shard id — serving empty urlset", {
+        resolved: String(resolved ?? ""),
+        shard,
+      });
       return [];
   }
 }

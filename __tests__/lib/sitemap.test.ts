@@ -113,6 +113,64 @@ describe("sitemap shard id coercion (Netlify passes string ids)", () => {
       expect(byFilename.length).toBe(byNumber.length);
     }
   });
+
+  // Regression for the all-empty-shards prod failure: Next 16's generated
+  // dynamic-sitemap route (next-metadata-route-loader) invokes the handler as
+  // `handler({ id: targetIdPromise })` — `id` arrives as a PROMISE, not a
+  // string/number. `String(promise)` === "[object Promise]" → the old
+  // parseInt-based parse returned NaN → default:[] → empty <urlset> for EVERY
+  // shard. CI was green because every prior test passed a synchronous "0"/0.
+  it("resolves a PROMISE id (the real Next 16 runtime shape), not just a string", async () => {
+    const asPromise = await sitemap({
+      id: Promise.resolve("0") as unknown as number,
+    });
+    const asNumber = await sitemap({ id: 0 });
+    expect(asPromise.length).toBeGreaterThan(0);
+    expect(asPromise.length).toBe(asNumber.length);
+  });
+
+  it("resolves a Promise of the FILENAME id (Promise<'1.xml'>) for static shard 1", async () => {
+    // Shard 1 (LOCALE_GROUPS) is fully static — must never be empty.
+    const asPromise = await sitemap({
+      id: Promise.resolve("1.xml") as unknown as number,
+    });
+    const asNumber = await sitemap({ id: 1 });
+    expect(asPromise.length).toBeGreaterThan(0);
+    expect(asPromise.length).toBe(asNumber.length);
+  });
+
+  it("tolerates path-style and undefined ids", async () => {
+    // "sitemap/0" / "/sitemap/0.xml" — first digit run wins.
+    const pathStyle = await sitemap({ id: "/sitemap/0.xml" as unknown as number });
+    const asNumber = await sitemap({ id: 0 });
+    expect(pathStyle.length).toBe(asNumber.length);
+    // No digits anywhere → empty (the safe unrecognised-id branch), not a throw.
+    const garbage = await sitemap({ id: undefined as unknown as number });
+    expect(garbage).toEqual([]);
+  });
+
+  it("static shards 0 & 1 are non-empty for every id form the runtime can pass", async () => {
+    for (const id of [
+      0,
+      "0",
+      "0.xml",
+      Promise.resolve("0"),
+      Promise.resolve("0.xml"),
+    ] as unknown as number[]) {
+      const urls = await sitemap({ id });
+      expect(urls.length, `shard 0 empty for id form ${String(id)}`).toBeGreaterThan(0);
+    }
+    for (const id of [
+      1,
+      "1",
+      "1.xml",
+      Promise.resolve("1"),
+      Promise.resolve("1.xml"),
+    ] as unknown as number[]) {
+      const urls = await sitemap({ id });
+      expect(urls.length, `shard 1 empty for id form ${String(id)}`).toBeGreaterThan(0);
+    }
+  });
 });
 
 /** Build a single shard and return its URLs. */
