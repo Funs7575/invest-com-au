@@ -106,6 +106,6 @@ describe("account plans/[id] auth ordering", () => {
 
     await expect(renderPage("42")).rejects.toThrow("NOT_FOUND");
     expect(mockRedirect).not.toHaveBeenCalled();
-    expect(mockGetPlanById).toHaveBeenCalledWith(42);
+    expect(mockGetPlanById).toHaveBeenCalledWith(42, VIEWER_UUID);
   });
 });
