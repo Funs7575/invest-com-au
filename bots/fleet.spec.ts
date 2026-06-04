@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { test } from "@playwright/test";
 import { loadConfig } from "./config";
 import { BotSession } from "./session";
-import { PHASE0_PERSONAS, AI_PERSONAS, AUTHED_PERSONAS } from "./personas";
+import { PHASE0_PERSONAS, ADVISOR_PERSONAS, AI_PERSONAS, AUTHED_PERSONAS } from "./personas";
 import { resolveAiKey } from "./ai/anthropic-client";
 
 /**
@@ -20,7 +20,12 @@ import { resolveAiKey } from "./ai/anthropic-client";
 
 const config = loadConfig();
 
-for (const persona of PHASE0_PERSONAS) {
+// Deterministic anonymous personas (no storage state needed). ADVISOR_PERSONAS
+// adds adviser-directory coverage and runs the same way as PHASE0_PERSONAS — the
+// intended default target is the protected Netlify mirror via `npm run bots:mirror`.
+const DETERMINISTIC_PERSONAS = [...PHASE0_PERSONAS, ...ADVISOR_PERSONAS];
+
+for (const persona of DETERMINISTIC_PERSONAS) {
   test(`bot persona: ${persona.name}`, async ({ browser }) => {
     const session = await BotSession.create(browser, config, {
       persona: persona.name,
@@ -78,7 +83,8 @@ for (const persona of AUTHED_PERSONAS) {
 }
 
 if (aiEnabled) {
-  for (const persona of AI_PERSONAS) {
+  // Advisor personas carry goals too, so let them explore/judge when AI is on.
+  for (const persona of [...AI_PERSONAS, ...ADVISOR_PERSONAS]) {
     test(`AI bot: ${persona.name}`, async ({ browser }) => {
       const session = await BotSession.create(browser, config, {
         persona: persona.name,
