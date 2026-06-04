@@ -3,20 +3,12 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { marginalRate } from "@/lib/tax/brackets";
 
 // ─── FHSS maths ──────────────────────────────────────────────────────────────
 
 const MAX_PER_YEAR = 15_000;
 const MAX_TOTAL = 50_000;
-
-/** ATO resident rates 2024-25 (Stage 3), excl. Medicare. */
-function marginalRate(income: number): number {
-  if (income <= 18_200) return 0;
-  if (income <= 45_000) return 0.16;
-  if (income <= 135_000) return 0.30;
-  if (income <= 190_000) return 0.37;
-  return 0.45;
-}
 
 function medicareLevy(income: number): number {
   if (income <= 26_000) return 0;

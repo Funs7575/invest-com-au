@@ -3,17 +3,9 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { incomeTax } from "@/lib/tax/brackets";
 
 // ─── Australian lending maths (FY2025-26) ────────────────────────────────────
-
-/** ATO resident rates 2024-25 (Stage 3), excl. Medicare. */
-function incomeTax(gross: number): number {
-  if (gross <= 18_200) return 0;
-  if (gross <= 45_000) return (gross - 18_200) * 0.16;
-  if (gross <= 135_000) return 4_288 + (gross - 45_000) * 0.30;
-  if (gross <= 190_000) return 31_288 + (gross - 135_000) * 0.37;
-  return 51_638 + (gross - 190_000) * 0.45;
-}
 
 function netMonthly(grossAnnual: number): number {
   const medicare = grossAnnual * 0.02;

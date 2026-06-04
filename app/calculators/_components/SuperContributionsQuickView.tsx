@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import {
   getParam, useUrlSync, CalcSection, InputField, ResultBox, ShareResultsButton,
 } from "./CalcShared";
+import { marginalRate } from "@/lib/tax/brackets";
 
 interface Props {
   searchParams: URLSearchParams;
@@ -15,15 +16,6 @@ const SUPER_TAX = 0.15;
 
 function fmt(n: number) {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
-}
-
-// ATO resident rates 2024-25 (Stage 3)
-function marginalRate(income: number): number {
-  if (income <= 18200) return 0;
-  if (income <= 45000) return 0.16;
-  if (income <= 135000) return 0.30;
-  if (income <= 190000) return 0.37;
-  return 0.45;
 }
 
 export default function SuperContributionsQuickView({ searchParams }: Props) {
