@@ -25,6 +25,7 @@ import FollowAdvisorButton from "@/components/FollowAdvisorButton";
 import { computeIdealClientBoost, type UserMatchProfile, type IdealClientCriteria } from "@/lib/advisor-profile-match";
 import { getRelatedForAdvisor } from "@/lib/related-content";
 import RelatedRail from "@/components/RelatedRail";
+import { ADVISOR_PUBLIC_COLUMNS } from "./public-columns";
 
 export const revalidate = 1800;
 
@@ -71,12 +72,14 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: pro } = await supabase
+  const { data: proRow } = await supabase
     .from("professionals")
-    .select("*")
+    .select(ADVISOR_PUBLIC_COLUMNS)
     .eq("slug", slug)
     .eq("status", "active")
     .single();
+  // Explicit column projection makes Supabase return GenericStringError typing; cast back to the row shape.
+  const pro = proRow as unknown as Professional | null;
 
   if (!pro) notFound();
 
@@ -385,11 +388,11 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
       {localBusinessLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessLd) }} />}
-      {pro.faqs?.length > 0 && (
+      {(pro.faqs?.length ?? 0) > 0 && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          mainEntity: pro.faqs.map((f: { q: string; a: string }) => ({
+          mainEntity: (pro.faqs ?? []).map((f: { q: string; a: string }) => ({
             "@type": "Question",
             name: f.q,
             acceptedAnswer: { "@type": "Answer", text: f.a },
