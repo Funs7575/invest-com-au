@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import AccountClient from "./AccountClient";
 import AccountKindCards from "./AccountKindCards";
@@ -38,48 +39,57 @@ export default async function AccountPage() {
   let cohortExperience: string | null = null;
   let cohortBudget: string | null = null;
   let cohortVertical: string | null = null;
+
+  // Anonymous visitors get an empty shell otherwise — mirror the child
+  // pages (e.g. /account/holdings) and bounce to login with a return path.
+  // Resolve the user outside the try/catch: redirect() throws a control-flow
+  // signal that the catch must not swallow.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    redirect("/auth/login?next=/account");
+  }
+
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const admin = createAdminClient();
-      const [m, p, s, d, rc, ip] = await Promise.all([
-        getKindsForUser(user.id),
-        listPlansForUser(user.id),
-        listSavedSearchesForUser(user.id),
-        loadDashboardState({ authUserId: user.id, email: user.email ?? null }),
-        user.email
-          ? admin
-              .from("user_reviews")
-              .select("id", { count: "exact", head: true })
-              .eq("email", user.email)
-          : Promise.resolve({ count: 0, error: null }),
-        supabase
-          .from("investor_profiles")
-          .select("is_fhb, is_pre_retiree, is_hnw, experience_level, budget_band, primary_vertical")
-          .eq("auth_user_id", user.id)
-          .maybeSingle(),
-      ]);
-      memberships = m;
-      plans = p;
-      savedSearchCount = s.length;
-      dashboard = d;
-      reviewCount = rc.count ?? 0;
-      if (ip.data) {
-        const profileData = ip.data;
-        const personaInput: PersonaInput = {
-          isFhb: profileData.is_fhb ?? false,
-          isPreRetiree: profileData.is_pre_retiree ?? false,
-          isHnw: profileData.is_hnw ?? false,
-          experienceLevel: (profileData.experience_level as PersonaInput["experienceLevel"]) ?? null,
-          budgetBand: (profileData.budget_band as PersonaInput["budgetBand"]) ?? null,
-          primaryVertical: profileData.primary_vertical ?? null,
-        };
-        persona = computePersona(personaInput);
-        cohortExperience = profileData.experience_level ?? null;
-        cohortBudget = profileData.budget_band ?? null;
-        cohortVertical = profileData.primary_vertical ?? null;
-      }
+    const admin = createAdminClient();
+    const [m, p, s, d, rc, ip] = await Promise.all([
+      getKindsForUser(user.id),
+      listPlansForUser(user.id),
+      listSavedSearchesForUser(user.id),
+      loadDashboardState({ authUserId: user.id, email: user.email ?? null }),
+      user.email
+        ? admin
+            .from("user_reviews")
+            .select("id", { count: "exact", head: true })
+            .eq("email", user.email)
+        : Promise.resolve({ count: 0, error: null }),
+      supabase
+        .from("investor_profiles")
+        .select("is_fhb, is_pre_retiree, is_hnw, experience_level, budget_band, primary_vertical")
+        .eq("auth_user_id", user.id)
+        .maybeSingle(),
+    ]);
+    memberships = m;
+    plans = p;
+    savedSearchCount = s.length;
+    dashboard = d;
+    reviewCount = rc.count ?? 0;
+    if (ip.data) {
+      const profileData = ip.data;
+      const personaInput: PersonaInput = {
+        isFhb: profileData.is_fhb ?? false,
+        isPreRetiree: profileData.is_pre_retiree ?? false,
+        isHnw: profileData.is_hnw ?? false,
+        experienceLevel: (profileData.experience_level as PersonaInput["experienceLevel"]) ?? null,
+        budgetBand: (profileData.budget_band as PersonaInput["budgetBand"]) ?? null,
+        primaryVertical: profileData.primary_vertical ?? null,
+      };
+      persona = computePersona(personaInput);
+      cohortExperience = profileData.experience_level ?? null;
+      cohortBudget = profileData.budget_band ?? null;
+      cohortVertical = profileData.primary_vertical ?? null;
     }
   } catch {
     /* fall through with empty data — AccountClient still renders */
