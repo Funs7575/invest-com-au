@@ -166,6 +166,43 @@ describe("shard 0 — static pages", () => {
     const homepageUrls = urls.filter((u) => u === "https://invest.com.au");
     expect(homepageUrls.length).toBe(1);
   });
+
+  it("includes the SEO-01 indexable content/tool pages", async () => {
+    // Sample of pages added in SEO-01 that were previously absent from
+    // staticPaths (fully-rendered, self-canonical, not redirects/noindex).
+    const urls = new Set(await getShardUrls(0));
+    for (const path of [
+      "/invest/etfs",
+      "/global-investing/etfs",
+      "/global-investing/shares/us",
+      "/global-investing/guides/ibkr-australia-setup",
+      "/global-investing/calculators/direct-vs-asx-cost",
+      "/foreign-investment/compare",
+      "/foreign-investment/crypto",
+      "/home-loans/compare",
+      "/super/pension-phase",
+      "/retirement/downsizer-contribution",
+      "/retirement/retirement-income",
+      "/first-home-buyer/grants",
+      "/business-finance",
+      "/brokerage-fee-index",
+      "/advisor-jobs",
+      "/advisor/trust-score-methodology",
+      "/methodology/invest-score",
+      "/market-pulse",
+      "/insights",
+      "/insights/state-of-australian-investing",
+      "/reports/annual",
+      "/rates/today",
+      "/tools/etf-overlap",
+      "/tools/dividend-calendar",
+      "/tools/portfolio-stress-test",
+      "/tools/state-grants-calculator",
+      "/tools/dasp-calculator",
+    ]) {
+      expect(urls.has(`https://invest.com.au${path}`), `missing ${path}`).toBe(true);
+    }
+  });
 });
 
 describe("shard 1 — localized pages", () => {
