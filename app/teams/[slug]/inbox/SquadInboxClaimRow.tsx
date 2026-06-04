@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 import type { TeamBriefAssignmentRow } from "@/lib/team-brief-assignments";
 
@@ -122,10 +123,11 @@ export default function SquadInboxClaimRow({
       {activeAssignment && !isMine && !handsOff && (
         <div className="flex items-center gap-2 text-xs text-slate-700">
           {claimerPhotoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element -- tiny inline avatar; no LCP concern
-            <img
+            <Image
               src={claimerPhotoUrl}
               alt=""
+              width={20}
+              height={20}
               className="w-5 h-5 rounded-full object-cover"
             />
           ) : (
