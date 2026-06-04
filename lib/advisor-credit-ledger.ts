@@ -81,7 +81,49 @@ export interface RecordLedgerEntryInput {
    * `createAdminClient()` for callers that don't have a context.
    */
   supabase?: SupabaseLike;
+  /**
+   * Opt OUT of the negative-balance floor for spend kinds. Defaults to
+   * `false` — i.e. the floor is enforced for the prepaid-credit spend kinds
+   * (`lead_spend`, `success_bonus_award`) and a charge that would drive
+   * `credit_balance_cents` below zero throws `NegativeBalanceError`.
+   *
+   * Set to `true` only for kinds that legitimately settle a debt that may
+   * exceed the current cached balance (e.g. a `chargeback_clawback` of a
+   * credit the pro has already spent, or `expiry` of granted-but-spent
+   * credits). Those kinds are NOT floored even when this is left `false`.
+   */
+  allowNegativeBalance?: boolean;
 }
+
+/**
+ * Thrown when a prepaid-credit spend would drive the cached balance below
+ * zero. Mirrors `lib/marketplace/wallet.ts`'s "Adjustment would result in
+ * negative balance" guard so no caller can silently over-spend.
+ */
+export class NegativeBalanceError extends Error {
+  constructor(
+    public readonly professionalId: number,
+    public readonly currentBalanceCents: number,
+    public readonly amountCents: number,
+  ) {
+    super(
+      `recordLedgerEntry: spend would drive advisor ${professionalId} below zero ` +
+        `(balance ${currentBalanceCents}c, amount ${amountCents}c)`,
+    );
+    this.name = "NegativeBalanceError";
+  }
+}
+
+/**
+ * Spend kinds whose balance must not be driven below zero unless the caller
+ * explicitly opts out via `allowNegativeBalance`. These are the prepaid-credit
+ * accept-time charges; clawbacks / expiry of already-spent credits are
+ * intentionally excluded so debt settlement still works.
+ */
+const FLOORED_SPEND_KINDS: ReadonlySet<LedgerKind> = new Set<LedgerKind>([
+  "lead_spend",
+  "success_bonus_award",
+]);
 
 export interface RecordLedgerEntryResult {
   /** The ledger row (existing one if (kind, reference_type, reference_id) triple already landed). */
@@ -138,6 +180,24 @@ export async function recordLedgerEntry(
 
   const currentBalance = pro.credit_balance_cents ?? 0;
   const newBalance = currentBalance + input.amountCents;
+
+  // ── 2b. Negative-balance floor for prepaid-credit spends ───────────
+  //      Mirrors lib/marketplace/wallet.ts: a spend that would drive the
+  //      cached balance below zero is rejected unless the caller opts out.
+  //      No ledger row is inserted and the cache is untouched, so the brief
+  //      claim that triggered the spend can be safely rolled back / aborted.
+  if (
+    input.amountCents < 0 &&
+    newBalance < 0 &&
+    !input.allowNegativeBalance &&
+    FLOORED_SPEND_KINDS.has(input.kind)
+  ) {
+    throw new NegativeBalanceError(
+      input.professionalId,
+      currentBalance,
+      input.amountCents,
+    );
+  }
 
   // ── 3. Insert the ledger row ───────────────────────────────────────
   const expiresAtIso =

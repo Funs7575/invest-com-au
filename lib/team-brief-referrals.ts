@@ -17,6 +17,7 @@
 // eslint-disable-next-line no-restricted-imports -- cross-team writes; service-role legitimate per CLAUDE.md.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { resolveProChargeGate } from "./briefs/credits";
 import { recordReferralPayout } from "./team-brief-referrals/payouts";
 
 const log = logger("team-brief-referrals");
@@ -227,6 +228,19 @@ export async function acceptReferral(
   }
   const acceptCreditsCost = (briefBefore.accept_credits_cost as number | null) ?? 2;
 
+  // ── Pre-charge gate (MUST run BEFORE the claim) ──────────────────────
+  // Mirror the direct-accept path (acceptBrief): resolve the pricing tier
+  // and, for standard-tier pros, reject up-front when the cached credit
+  // balance can't cover the accept-time charge. This runs before the claim
+  // and OUTSIDE the swallowed payout try/catch below, so an insufficient
+  // balance leaves the brief unclaimed and writes nothing to the ledger.
+  // success_only pros skip the accept-time charge entirely (gate.sufficient
+  // is always true for them) and pay at outcome-submit time instead.
+  const gate = await resolveProChargeGate(professionalId, acceptCreditsCost);
+  if (!gate.sufficient) {
+    throw new ReferralError("insufficient_credits");
+  }
+
   // Claim the brief for the receiving team AND stamp the accepting
   // professional so the lead spend can be attributed cleanly. Guard against
   // concurrent acceptance by another team / individual via the still-open
@@ -280,6 +294,7 @@ export async function acceptReferral(
       acceptingProfessionalId: professionalId,
       fromProfessionalId: referral.from_professional_id,
       fromTeamId: referral.from_team_id,
+      pricingTier: gate.tier,
     });
   } catch (err) {
     log.error("referral payout failed (referral still accepted)", {

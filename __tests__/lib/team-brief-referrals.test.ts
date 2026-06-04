@@ -28,6 +28,14 @@ interface BriefRow {
   accepted_by_team_id: number | null;
   accepted_by_professional_id: number | null;
   accepted_at?: string;
+  accept_credits_cost?: number | null;
+}
+interface ProRow {
+  id: number;
+  credit_balance_cents: number;
+  lifetime_credit_cents?: number;
+  lifetime_lead_spend_cents?: number;
+  pricing_tier?: "standard" | "success_only";
 }
 interface ReferralRow {
   id: number;
@@ -46,7 +54,10 @@ let members: MemberRow[] = [];
 let teams: TeamRow[] = [];
 let briefs: BriefRow[] = [];
 let referrals: ReferralRow[] = [];
+let pros: ProRow[] = [];
+let ledger: Record<string, unknown>[] = [];
 let nextReferralId = 1;
+let nextLedgerId = 1;
 
 function reset() {
   members = [
@@ -67,10 +78,21 @@ function reset() {
       id: 500,
       accepted_by_team_id: null,
       accepted_by_professional_id: null,
+      accept_credits_cost: 2,
     },
   ];
   referrals = [];
+  // Accepting pros: 200 (to_team 2) and 300 (to_team 3) funded generously by
+  // default so the existing happy-path tests pass. Per-test overrides set the
+  // balance / tier as needed.
+  pros = [
+    { id: 100, credit_balance_cents: 100_000, pricing_tier: "standard" },
+    { id: 200, credit_balance_cents: 100_000, pricing_tier: "standard" },
+    { id: 300, credit_balance_cents: 100_000, pricing_tier: "standard" },
+  ];
+  ledger = [];
   nextReferralId = 1;
+  nextLedgerId = 1;
 }
 
 // ─── Minimal Supabase admin-client chain mock ────────────────────────
@@ -181,7 +203,11 @@ function resolveRows(
           ? (briefs as unknown as Record<string, unknown>[])
           : table === "team_brief_referrals"
             ? (referrals as unknown as Record<string, unknown>[])
-            : [];
+            : table === "professionals"
+              ? (pros as unknown as Record<string, unknown>[])
+              : table === "advisor_credit_ledger"
+                ? (ledger as unknown as Record<string, unknown>[])
+                : [];
   return source.filter((row) => {
     for (const [k, v] of Object.entries(filters)) {
       if (row[k] !== v) return false;
@@ -197,6 +223,11 @@ function resolveRows(
 }
 
 function doInsert(table: string, payload: Record<string, unknown>): Record<string, unknown> | null {
+  if (table === "advisor_credit_ledger") {
+    const row = { id: nextLedgerId++, ...payload };
+    ledger.push(row);
+    return row;
+  }
   if (table === "team_brief_referrals") {
     // Enforce the UNIQUE (brief_id, to_team_id) constraint in the mock.
     const duplicate = referrals.find(
@@ -386,5 +417,156 @@ describe("team-brief-referrals", () => {
     await expect(acceptReferral(created.id, 200)).rejects.toMatchObject({
       code: "referral_not_pending",
     });
+  });
+
+  // ── Pre-charge gating (mirrors acceptBrief) ────────────────────────
+  // Regression guard for the referral-accept money divergence: the path
+  // used to claim the brief and debit with NO balance / tier check.
+
+  it("standard-tier accept charges the accepting pro the full accept cost", async () => {
+    // Cost 25 credits = 2500c; accepting pro 200 funded with 5000c.
+    briefs[0]!.accept_credits_cost = 25;
+    pros.find((p) => p.id === 200)!.credit_balance_cents = 5000;
+    const created = await createReferral({
+      briefId: 500,
+      fromTeamId: 1,
+      toTeamId: 2,
+      fromProfessionalId: 100,
+    });
+
+    const accepted = await acceptReferral(created.id, 200);
+    expect(accepted.status).toBe("accepted");
+    expect(briefs[0]!.accepted_by_team_id).toBe(2);
+
+    // The accepting pro was debited 2500c -> 2500c remaining.
+    expect(pros.find((p) => p.id === 200)!.credit_balance_cents).toBe(2500);
+    // One lead_spend ledger row was written for the accepting pro.
+    const spend = ledger.filter(
+      (r) => r["kind"] === "lead_spend" && r["professional_id"] === 200,
+    );
+    expect(spend).toHaveLength(1);
+    expect(spend[0]!["amount_cents"]).toBe(-2500);
+  });
+
+  it("rejects a standard-tier accept when balance is below the accept cost — brief stays unclaimed, zero ledger writes", async () => {
+    // Cost 25 credits = 2500c; accepting pro 200 only has 100c.
+    briefs[0]!.accept_credits_cost = 25;
+    pros.find((p) => p.id === 200)!.credit_balance_cents = 100;
+    const created = await createReferral({
+      briefId: 500,
+      fromTeamId: 1,
+      toTeamId: 2,
+      fromProfessionalId: 100,
+    });
+
+    await expect(acceptReferral(created.id, 200)).rejects.toMatchObject({
+      code: "insufficient_credits",
+    });
+
+    // The fix's whole point: the brief must NOT be claimed.
+    expect(briefs[0]!.accepted_by_team_id).toBeNull();
+    expect(briefs[0]!.accepted_by_professional_id).toBeNull();
+    // The referral must remain pending.
+    expect(referrals[0]!.status).toBe("pending");
+    // No balance movement at all — neither the spend nor the referrer payout.
+    expect(pros.find((p) => p.id === 200)!.credit_balance_cents).toBe(100);
+    expect(ledger).toHaveLength(0);
+  });
+
+  it("rejects when balance is exactly one cent short (boundary)", async () => {
+    briefs[0]!.accept_credits_cost = 25; // 2500c
+    pros.find((p) => p.id === 200)!.credit_balance_cents = 2499;
+    const created = await createReferral({
+      briefId: 500,
+      fromTeamId: 1,
+      toTeamId: 2,
+      fromProfessionalId: 100,
+    });
+    await expect(acceptReferral(created.id, 200)).rejects.toMatchObject({
+      code: "insufficient_credits",
+    });
+    expect(briefs[0]!.accepted_by_team_id).toBeNull();
+    expect(ledger).toHaveLength(0);
+  });
+
+  it("accepts when balance exactly equals the accept cost (boundary)", async () => {
+    briefs[0]!.accept_credits_cost = 25; // 2500c
+    pros.find((p) => p.id === 200)!.credit_balance_cents = 2500;
+    const created = await createReferral({
+      briefId: 500,
+      fromTeamId: 1,
+      toTeamId: 2,
+      fromProfessionalId: 100,
+    });
+    const accepted = await acceptReferral(created.id, 200);
+    expect(accepted.status).toBe("accepted");
+    expect(pros.find((p) => p.id === 200)!.credit_balance_cents).toBe(0);
+  });
+
+  it("success_only accept skips the accept-time charge entirely — no debit, brief still claimed", async () => {
+    briefs[0]!.accept_credits_cost = 25; // 2500c if charged
+    const pro200 = pros.find((p) => p.id === 200)!;
+    pro200.pricing_tier = "success_only";
+    pro200.credit_balance_cents = 0; // would fail the standard gate
+    const created = await createReferral({
+      briefId: 500,
+      fromTeamId: 1,
+      toTeamId: 2,
+      fromProfessionalId: 100,
+    });
+
+    const accepted = await acceptReferral(created.id, 200);
+    expect(accepted.status).toBe("accepted");
+    expect(briefs[0]!.accepted_by_team_id).toBe(2);
+
+    // No lead_spend on the accepting pro — they pay at outcome-submit time.
+    const spend = ledger.filter(
+      (r) => r["kind"] === "lead_spend" && r["professional_id"] === 200,
+    );
+    expect(spend).toHaveLength(0);
+    expect(pro200.credit_balance_cents).toBe(0);
+  });
+
+  it("success_only accept still pays out the referrer", async () => {
+    briefs[0]!.accept_credits_cost = 25; // 2500c basis
+    const pro200 = pros.find((p) => p.id === 200)!;
+    pro200.pricing_tier = "success_only";
+    pro200.credit_balance_cents = 0;
+    const created = await createReferral({
+      briefId: 500,
+      fromTeamId: 1,
+      toTeamId: 2,
+      fromProfessionalId: 100,
+    });
+
+    await acceptReferral(created.id, 200);
+    // Referrer (pro 100) gets 20% of the standard 2500c basis = 500c.
+    const payout = ledger.filter(
+      (r) => r["kind"] === "referral_payout" && r["professional_id"] === 100,
+    );
+    expect(payout).toHaveLength(1);
+    expect(payout[0]!["amount_cents"]).toBe(500);
+  });
+
+  it("repeat accept of an already-settled referral is idempotent — no double charge", async () => {
+    briefs[0]!.accept_credits_cost = 25; // 2500c
+    pros.find((p) => p.id === 200)!.credit_balance_cents = 5000;
+    const created = await createReferral({
+      briefId: 500,
+      fromTeamId: 1,
+      toTeamId: 2,
+      fromProfessionalId: 100,
+    });
+    await acceptReferral(created.id, 200);
+    expect(pros.find((p) => p.id === 200)!.credit_balance_cents).toBe(2500);
+
+    // A second accept of the now-accepted referral is rejected as not-pending,
+    // and crucially does NOT debit again.
+    await expect(acceptReferral(created.id, 200)).rejects.toMatchObject({
+      code: "referral_not_pending",
+    });
+    expect(pros.find((p) => p.id === 200)!.credit_balance_cents).toBe(2500);
+    const spend = ledger.filter((r) => r["kind"] === "lead_spend");
+    expect(spend).toHaveLength(1);
   });
 });
