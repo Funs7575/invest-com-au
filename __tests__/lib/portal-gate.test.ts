@@ -66,6 +66,19 @@ describe("enforcePortalKind", () => {
     expect(mockGetActiveKind).not.toHaveBeenCalled();
   });
 
+  it("preserves the actual requested deep-link path in next= when given (Campaign 3 P3)", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    await expect(
+      enforcePortalKind("investor", "/account/holdings"),
+    ).rejects.toThrow(/REDIRECT/);
+    // Without the requestedPath arg the gate would default to /account and drop
+    // the /account/holdings deep-link before the page's own redirect can run.
+    expect(mockRedirect).toHaveBeenCalledWith(
+      `/auth/login?next=${encodeURIComponent("/account/holdings")}`,
+    );
+    expect(mockGetActiveKind).not.toHaveBeenCalled();
+  });
+
   it("allows the happy path (active matches + holds the kind)", async () => {
     mockGetActiveKind.mockResolvedValue("investor");
     mockGetKindsForUser.mockResolvedValue([{ kind: "investor" }]);

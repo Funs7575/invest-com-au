@@ -19,7 +19,10 @@ export default async function HoldingsPage() {
   // advisor in advisor workspace navigating here gets redirected back to
   // /account/select-workspace. RLS already isolates by auth.uid(); the
   // gate just makes the workspace promise visible at the UX layer.
-  await enforcePortalKind("investor");
+  // Pass the actual route so a logged-out deep-link to /account/holdings is
+  // preserved in next= (the gate would otherwise default to /account, dropping
+  // the deep-link before this page's own getUser/redirect below ever runs).
+  await enforcePortalKind("investor", "/account/holdings");
 
   const supabase = await createClient();
   const {

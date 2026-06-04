@@ -58,11 +58,25 @@ async function bestEffortSetActiveKind(kind: WorkspaceKind): Promise<void> {
   }
 }
 
-export async function enforcePortalKind(expected: WorkspaceKind): Promise<void> {
+/**
+ * @param expected      the workspace kind this portal/page belongs to.
+ * @param requestedPath the ACTUAL path the visitor asked for. Used only to
+ *   build the `next=` deep-link on the unauthenticated → /auth/login redirect,
+ *   so a logged-out visitor to e.g. `/account/holdings` lands back on holdings
+ *   after sign-in instead of the workspace root. When omitted, falls back to
+ *   the portal root (`currentPortalPath(expected)`) — the prior behaviour, so
+ *   every existing caller is unchanged. Pass the page's own route here on
+ *   deep-linkable sub-pages (Campaign 3 P3).
+ */
+export async function enforcePortalKind(
+  expected: WorkspaceKind,
+  requestedPath?: string,
+): Promise<void> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect(`/auth/login?next=${encodeURIComponent(currentPortalPath(expected))}`);
+    const next = requestedPath ?? currentPortalPath(expected);
+    redirect(`/auth/login?next=${encodeURIComponent(next)}`);
   }
 
   const [active, memberships] = await Promise.all([
