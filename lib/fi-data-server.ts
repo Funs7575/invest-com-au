@@ -359,13 +359,24 @@ export async function getDefaultWHT(): Promise<{ dividendUnfranked: number; divi
   const unfranked = rates.find((r) => r.income_type === "Dividends (unfranked)");
   const interest = rates.find((r) => r.income_type === "Interest (bank deposits, bonds)");
 
+  // standard_rate is free text ("30%", "0%", "12.5%", "30% on unfranked
+  // portion"). parseInt() truncates decimals (12.5 → 12) and the old
+  // `|| DEFAULT` guard threw away a legitimately-parsed 0 (a real "0%"
+  // rate), falling back to the default instead. pct() preserves decimals
+  // and treats a real 0 as a valid result, only falling back on garbage.
+  const pct = (s: string, fallback: number): number => {
+    const m = s.match(/(\d+(?:\.\d+)?)/);
+    const n = m?.[1] !== undefined ? parseFloat(m[1]) : NaN;
+    return Number.isFinite(n) ? n : fallback;
+  };
+
   return {
     dividendUnfranked: unfranked
-      ? parseInt(unfranked.standard_rate.replace("%", "")) || DEFAULT_WHT.dividendUnfranked
+      ? pct(unfranked.standard_rate, DEFAULT_WHT.dividendUnfranked)
       : DEFAULT_WHT.dividendUnfranked,
     dividendFullyFranked: 0,
     interest: interest
-      ? parseInt(interest.standard_rate.replace("%", "")) || DEFAULT_WHT.interest
+      ? pct(interest.standard_rate, DEFAULT_WHT.interest)
       : DEFAULT_WHT.interest,
     royalties: DEFAULT_WHT.royalties,
   };
