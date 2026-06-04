@@ -86,14 +86,27 @@ describe("POST /api/rba-polls/[id]/vote", () => {
 
   it("upserts a HIKE vote and returns ok", async () => {
     mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    const upsertChain = makeUpsertChain({ error: null });
     mockFrom
       .mockReturnValueOnce(makePollChain({ id: 5, status: "open" }))
-      .mockReturnValueOnce(makeUpsertChain({ error: null }));
+      .mockReturnValueOnce(upsertChain);
     const res = await POST(makeReq({ vote: 1 }));
     expect(res.status).toBe(200);
     const body = await res.json() as { ok: boolean; vote: number };
     expect(body.ok).toBe(true);
     expect(body.vote).toBe(1);
+
+    // Writes the prod forum_votes columns (user_id/value, not voter_user_id/vote)
+    // and conflicts on the real UNIQUE(user_id, target_type, target_id) index.
+    expect(upsertChain.upsert).toHaveBeenCalledWith(
+      {
+        target_type: "rba_poll",
+        target_id: 5,
+        user_id: USER.id,
+        value: 1,
+      },
+      { onConflict: "target_type,target_id,user_id" },
+    );
   });
 
   it("upserts a HOLD vote (0) successfully", async () => {

@@ -29,8 +29,8 @@ interface PollRow {
 
 interface VoteRow {
   target_id: number;
-  vote: number;
-  voter_user_id: string;
+  value: number;
+  user_id: string;
 }
 
 function tallyVotes(votes: VoteRow[], pollId: number) {
@@ -38,9 +38,9 @@ function tallyVotes(votes: VoteRow[], pollId: number) {
   const tally = { hike: 0, hold: 0, cut: 0, total: 0 };
   for (const v of subset) {
     tally.total++;
-    if (v.vote === 1) tally.hike++;
-    else if (v.vote === 0) tally.hold++;
-    else if (v.vote === -1) tally.cut++;
+    if (v.value === 1) tally.hike++;
+    else if (v.value === 0) tally.hold++;
+    else if (v.value === -1) tally.cut++;
   }
   return tally;
 }
@@ -71,7 +71,7 @@ export async function GET() {
   // Fetch all votes for these polls in one query.
   const { data: voteRows } = await admin
     .from("forum_votes")
-    .select("target_id, vote, voter_user_id")
+    .select("target_id, value, user_id")
     .eq("target_type", "rba_poll")
     .in("target_id", pollIds);
 
@@ -92,7 +92,7 @@ export async function GET() {
   const enriched = typedPolls.map((poll) => {
     const tally = tallyVotes(votes, poll.id);
     const myVote = userId
-      ? (votes.find((v) => v.target_id === poll.id && v.voter_user_id === userId)?.vote ?? null)
+      ? (votes.find((v) => v.target_id === poll.id && v.user_id === userId)?.value ?? null)
       : null;
     return { ...poll, tally, myVote };
   });
