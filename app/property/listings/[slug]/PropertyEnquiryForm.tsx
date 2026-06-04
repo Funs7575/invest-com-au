@@ -120,6 +120,7 @@ export default function PropertyEnquiryForm({
         <input
           type="text"
           placeholder="Full name *"
+          aria-label="Full name"
           required
           maxLength={200}
           value={form.user_name}
@@ -129,6 +130,7 @@ export default function PropertyEnquiryForm({
         <input
           type="email"
           placeholder="Email address *"
+          aria-label="Email address"
           required
           maxLength={254}
           value={form.user_email}
@@ -138,6 +140,7 @@ export default function PropertyEnquiryForm({
         <input
           type="tel"
           placeholder="Phone number"
+          aria-label="Phone number"
           value={form.user_phone}
           onChange={(e) => setForm({ ...form, user_phone: e.target.value })}
           className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
@@ -145,12 +148,14 @@ export default function PropertyEnquiryForm({
         <input
           type="text"
           placeholder="Country"
+          aria-label="Country"
           value={form.user_country}
           onChange={(e) => setForm({ ...form, user_country: e.target.value })}
           className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
         />
         <select
           value={form.investment_budget}
+          aria-label="Investment budget"
           onChange={(e) => setForm({ ...form, investment_budget: e.target.value })}
           className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 text-slate-600"
         >
@@ -161,6 +166,7 @@ export default function PropertyEnquiryForm({
         </select>
         <select
           value={form.timeline}
+          aria-label="Timeline"
           onChange={(e) => setForm({ ...form, timeline: e.target.value })}
           className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 text-slate-600"
         >
@@ -171,6 +177,7 @@ export default function PropertyEnquiryForm({
         </select>
         <textarea
           placeholder="Message (optional)"
+          aria-label="Message"
           rows={3}
           maxLength={5000}
           value={form.user_message}

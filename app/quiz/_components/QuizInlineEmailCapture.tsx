@@ -87,6 +87,7 @@ export default function QuizInlineEmailCapture({ onSubmit, status }: Props) {
         <input
           type="text"
           placeholder="First name (optional)"
+          aria-label="First name"
           autoComplete="given-name"
           value={name}
           onChange={(e) => setName(e.target.value)}

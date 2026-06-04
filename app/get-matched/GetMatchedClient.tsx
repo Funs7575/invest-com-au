@@ -818,6 +818,7 @@ function ActionPlanScreen({
               <input
                 type="email"
                 placeholder="you@example.com"
+                aria-label="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"

@@ -183,6 +183,7 @@ export default function IdealClientBuilder() {
           rows={3}
           maxLength={500}
           placeholder="Describe your ideal client in your own words…"
+          aria-label="Describe your ideal client"
           value={criteria.description ?? ""}
           onChange={(e) => set("description", e.target.value || undefined)}
         />
