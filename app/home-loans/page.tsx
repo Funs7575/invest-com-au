@@ -140,7 +140,7 @@ export default async function HomeLoansHubPage() {
               {articles.map((a) => (
                 <a
                   key={a.slug}
-                  href={`/articles/${a.slug}`}
+                  href={`/article/${a.slug}`}
                   className="block bg-slate-50 rounded-xl border border-slate-200 p-4 hover:border-violet-300 hover:shadow-sm transition-all group"
                 >
                   <p className="text-xs font-semibold text-violet-600 mb-1 uppercase tracking-wide">

@@ -45,6 +45,7 @@ export default function BrokerStickyRightRail({
     <aside
       aria-label={`Quick action for ${broker.name}`}
       aria-hidden={!visible}
+      inert={!visible ? true : undefined}
       className={`hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-30 flex-col items-stretch w-56 xl:w-60 transition-all duration-300 ease-out ${
         visible ? "opacity-100 translate-x-0" : "opacity-0 pointer-events-none translate-x-4"
       }`}

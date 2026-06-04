@@ -131,15 +131,13 @@ export default function HomeRouteCards({
           {previewBrokers.map((b) => (
             <div
               key={b.name}
-              className="font-mono"
+              className="font-mono bg-blue-50 border border-blue-100"
               style={{
                 fontSize: 11,
                 display: "flex",
                 justifyContent: "space-between",
                 gap: 8,
                 color: "var(--color-ink-700)",
-                background: "color-mix(in oklch, #2563eb 4%, white)",
-                border: "1px solid color-mix(in oklch, #2563eb 12%, transparent)",
                 borderRadius: 6,
                 padding: "5px 8px",
               }}
@@ -164,14 +162,13 @@ export default function HomeRouteCards({
             <div
               key={l.id}
               aria-hidden
+              className="bg-emerald-50 border border-emerald-100"
               style={{
                 position: "relative",
                 width: 64,
                 height: 48,
                 borderRadius: 6,
                 overflow: "hidden",
-                border: "1px solid color-mix(in oklch, #059669 18%, transparent)",
-                background: "color-mix(in oklch, #059669 6%, white)",
                 flexShrink: 0,
               }}
             >
@@ -201,15 +198,14 @@ export default function HomeRouteCards({
               <div
                 key={a.name + i}
                 aria-hidden
+                className="border-2 border-white bg-violet-50"
                 style={{
                   position: "relative",
                   width: 32,
                   height: 32,
                   borderRadius: 99,
                   overflow: "hidden",
-                  border: "2px solid white",
                   marginLeft: i === 0 ? 0 : -8,
-                  background: "color-mix(in oklch, #7c3aed 14%, white)",
                   zIndex: previewAdvisors.length - i,
                   flexShrink: 0,
                 }}
@@ -229,13 +225,11 @@ export default function HomeRouteCards({
           </div>
           {overflow > 0 && (
             <span
-              className="font-mono"
+              className="font-mono bg-violet-50 border border-violet-200"
               style={{
                 fontSize: 11,
                 fontWeight: 800,
                 color: "#7c3aed",
-                background: "color-mix(in oklch, #7c3aed 10%, white)",
-                border: "1px solid color-mix(in oklch, #7c3aed 24%, transparent)",
                 padding: "3px 8px",
                 borderRadius: 99,
                 marginLeft: 8,
@@ -298,6 +292,7 @@ export default function HomeRouteCards({
   return (
     <section
       id="routes"
+      className="bg-white"
       style={{ padding: "56px 36px 60px", maxWidth: 1280, margin: "0 auto" }}
     >
       <div style={{ marginBottom: 24 }}>
@@ -325,14 +320,14 @@ export default function HomeRouteCards({
           <Link
             key={r.href}
             href={r.href}
-            className="iv2-card-hover"
+            className={r.featured ? "iv2-card-hover" : "iv2-card-hover bg-white border border-slate-200"}
             style={{
               position: "relative",
               display: "flex",
               flexDirection: "column",
-              background: r.featured ? "var(--color-ink-900)" : "white",
+              background: r.featured ? "var(--color-ink-900)" : undefined,
               color: r.featured ? "white" : "var(--color-ink-900)",
-              border: r.featured ? `1.5px solid ${r.accent}` : "1px solid #e5e7eb",
+              border: r.featured ? `1.5px solid ${r.accent}` : undefined,
               borderRadius: 16,
               overflow: "hidden",
               textDecoration: "none",
@@ -346,6 +341,7 @@ export default function HomeRouteCards({
             {r.featured && (
               <span
                 aria-hidden
+                className="bg-white"
                 style={{
                   position: "absolute",
                   top: 12,
@@ -355,7 +351,6 @@ export default function HomeRouteCards({
                   fontWeight: 800,
                   textTransform: "uppercase",
                   letterSpacing: ".06em",
-                  background: "white",
                   color: r.accent,
                   padding: "4px 10px",
                   borderRadius: 99,
@@ -371,11 +366,12 @@ export default function HomeRouteCards({
 
             <div
               aria-hidden
+              className={r.featured ? undefined : "bg-slate-50"}
               style={{
                 height: 88,
                 background: r.featured
                   ? `linear-gradient(135deg, ${r.accent} 0%, color-mix(in oklch, ${r.accent} 70%, #ec4899) 100%)`
-                  : `color-mix(in oklch, ${r.accent} 12%, white)`,
+                  : undefined,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -440,19 +436,15 @@ export default function HomeRouteCards({
                     <span
                       key={c}
                       data-idx={i}
-                      className="route-cat-chip"
+                      className={`route-cat-chip${r.featured ? "" : " bg-slate-50 border border-slate-200"}`}
                       style={{
                         fontSize: 10.5,
                         fontWeight: 700,
                         padding: "2px 7px",
                         borderRadius: 99,
-                        background: r.featured
-                          ? "rgba(255,255,255,.08)"
-                          : `color-mix(in oklch, ${r.accent} 7%, white)`,
+                        background: r.featured ? "rgba(255,255,255,.08)" : undefined,
                         color: r.featured ? "rgba(255,255,255,.78)" : "var(--color-ink-700)",
-                        border: r.featured
-                          ? "1px solid rgba(255,255,255,.14)"
-                          : `1px solid color-mix(in oklch, ${r.accent} 18%, transparent)`,
+                        border: r.featured ? "1px solid rgba(255,255,255,.14)" : undefined,
                         whiteSpace: "nowrap",
                       }}
                     >
@@ -512,11 +504,12 @@ export default function HomeRouteCards({
       </div>
 
       <div
+        className="bg-slate-50 border-slate-200"
         style={{
           marginTop: 18,
           padding: "12px 18px",
-          background: "var(--color-sand-50)",
-          border: "1px solid #e5e7eb",
+          borderWidth: "1px",
+          borderStyle: "solid",
           borderRadius: 10,
           display: "flex",
           flexWrap: "wrap",

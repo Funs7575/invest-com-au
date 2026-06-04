@@ -84,7 +84,7 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
       </nav>
 
       {/* Mobile: compact bottom pill — positioned above potential sticky CTA */}
-      <div className="xl:hidden fixed bottom-16 left-3 right-3 z-40">
+      <div className="xl:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-3 right-3 z-40">
         {/* Collapsed — slim pill with section indicator */}
         {!isExpanded && (
           <button

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 // eslint-disable-next-line no-restricted-imports -- Pro Squad inbox: members-only authenticated surface. We resolve the caller via the auth cookie then read cross-table (expert_teams, members, professionals, advisor_auctions, team_brief_assignments) under admin. Per CLAUDE.md § "Two Supabase clients", a logged-in-required portal page joining team membership + brief acceptance is a legitimate cross-row server-side lookup. The page redirects unauthenticated visitors first and 404s non-members.
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -250,10 +251,11 @@ export default async function SquadInboxPage({ params, searchParams }: PageProps
               >
                 <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-200 overflow-hidden text-[10px] font-semibold text-slate-600">
                   {m.pro_photo_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- small inline avatar, no LCP concern
-                    <img
+                    <Image
                       src={m.pro_photo_url}
                       alt=""
+                      width={28}
+                      height={28}
                       className="w-full h-full object-cover"
                     />
                   ) : (

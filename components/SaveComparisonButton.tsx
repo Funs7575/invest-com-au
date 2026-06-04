@@ -127,6 +127,7 @@ export default function SaveComparisonButton({
               : "bg-slate-900 text-white hover:bg-slate-800"
           } ${className ?? ""}`}
           title={disabled ? "Add at least 2 brokers to save a comparison" : "Save this comparison"}
+          aria-label="Save this comparison"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path

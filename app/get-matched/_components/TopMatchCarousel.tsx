@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import type { TopMatch } from "@/lib/getmatched/types";
+import { trackClick } from "@/lib/tracking";
+import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 /**
  * Top-3 carousel — first card is the affiliate-aware hero (existing
@@ -67,11 +69,15 @@ export default function TopMatchCarousel({ matches }: Props) {
         </div>
         <Link
           href={hero.cta_href}
+          onClick={() => trackClick(hero.slug, hero.name, 'get-matched-1', '/get-matched', 'get-matched')}
           className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm sm:text-base px-5 py-3 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
         >
           {hero.cta_label}
           <Icon name="arrow-right" size={14} />
         </Link>
+        <p className="mt-3 text-[11px] text-slate-400 text-center">
+          {ADVERTISER_DISCLOSURE_SHORT}
+        </p>
       </div>
 
       {/* Runner-up cards — slimmer, side-by-side */}
@@ -81,10 +87,11 @@ export default function TopMatchCarousel({ matches }: Props) {
             Other strong matches
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {runners.map((m) => (
+            {runners.map((m, i) => (
               <Link
                 key={m.slug}
                 href={m.cta_href}
+                onClick={() => trackClick(m.slug, m.name, `get-matched-${i + 2}`, '/get-matched', 'get-matched')}
                 className="group bg-white rounded-2xl border border-slate-200 hover:border-amber-400 p-4 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"
               >
                 <div className="flex items-start gap-3">

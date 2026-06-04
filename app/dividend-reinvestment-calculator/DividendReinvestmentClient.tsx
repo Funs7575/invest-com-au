@@ -205,7 +205,13 @@ export default function DividendReinvestmentClient() {
           </div>
 
           {/* Results */}
-          <div className="lg:col-span-3 space-y-4">
+          <div
+            className="lg:col-span-3 space-y-4"
+            role="region"
+            aria-live="polite"
+            aria-atomic="true"
+            aria-label="Calculated results"
+          >
             {/* DRP vs Cash comparison */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-4">DRP vs Cash After {years} Years</p>

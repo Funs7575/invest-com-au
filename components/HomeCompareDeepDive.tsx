@@ -67,11 +67,10 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
 
   return (
     <section
+      className="bg-white border-t border-slate-200"
       style={{
         padding: "52px 36px",
-        background: "white",
         color: "var(--color-ink-900)",
-        borderTop: "1px solid #e5e7eb",
         position: "relative",
       }}
     >
@@ -104,7 +103,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
           </Link>
         </div>
 
-        <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap", borderBottom: "1px solid #e5e7eb" }}>
+        <div className="border-b border-slate-200" style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>
           {tabs.map((t) => {
             const active = activeTab === t.key;
             return (
@@ -141,9 +140,8 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
             return (
               <div
                 key={key}
+                className="bg-white border border-slate-200"
                 style={{
-                  background: "white",
-                  border: "1px solid #e5e7eb",
                   borderRadius: 12,
                   overflow: "hidden",
                   display: "flex",
@@ -151,7 +149,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                   boxShadow: "0 1px 2px rgba(11,20,34,.04)",
                 }}
               >
-                <div style={{ padding: "12px 14px", borderBottom: "1px solid #f1f5f9" }}>
+                <div className="border-b border-slate-100" style={{ padding: "12px 14px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 3 }}>
                     <span aria-hidden style={{ width: 7, height: 7, borderRadius: 99, background: meta.color }} />
                     <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-ink-900)" }}>{meta.label}</span>
@@ -172,13 +170,13 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                   return (
                     <div
                       key={row.id}
+                      className={j < rows.length - 1 ? "border-b border-slate-100" : undefined}
                       style={{
                         padding: "9px 14px",
                         display: "grid",
                         gridTemplateColumns: "22px 26px 1fr auto auto",
                         gap: 9,
                         alignItems: "center",
-                        borderBottom: j < rows.length - 1 ? "1px solid #f1f5f9" : "none",
                         background: isPromoted ? "rgba(242,88,34,.06)" : "transparent",
                       }}
                     >
@@ -205,6 +203,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                 })}
                 <Link
                   href={meta.href}
+                  className="border-t border-slate-100"
                   style={{
                     padding: "10px",
                     fontSize: 11.5,
@@ -212,7 +211,6 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                     color: meta.color,
                     background: "transparent",
                     border: "none",
-                    borderTop: "1px solid #f1f5f9",
                     textAlign: "center",
                     textDecoration: "none",
                   }}
@@ -225,12 +223,10 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
         </div>
 
         <div
-          className="home-compare-end"
+          className="home-compare-end bg-slate-50 border border-slate-200"
           style={{
             marginTop: 18,
             padding: "14px 18px",
-            background: "var(--color-sand-50)",
-            border: "1px solid #e5e7eb",
             borderRadius: 12,
             display: "flex",
             alignItems: "center",

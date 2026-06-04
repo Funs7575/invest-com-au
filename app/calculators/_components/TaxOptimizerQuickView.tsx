@@ -6,18 +6,17 @@ import Icon from "@/components/Icon";
 import {
   getParam, useUrlSync, CalcSection, InputField, ResultBox, ShareResultsButton,
 } from "./CalcShared";
+import { MARGINAL_RATE_OPTIONS } from "@/lib/tax/brackets";
 
 interface Props {
   searchParams: URLSearchParams;
 }
 
-const BRACKETS = [
-  { label: "0%", value: 0 },
-  { label: "19%", value: 19 },
-  { label: "32.5%", value: 32.5 },
-  { label: "37%", value: 37 },
-  { label: "45%", value: 45 },
-];
+// ATO resident rates 2024-25 (Stage 3) — derived from lib/tax/brackets SSOT.
+const BRACKETS = MARGINAL_RATE_OPTIONS.map((o) => ({
+  label: o.label,
+  value: Math.round(o.value * 100),
+}));
 
 function fmt(n: number) {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
@@ -26,7 +25,7 @@ function fmt(n: number) {
 export default function TaxOptimizerQuickView({ searchParams }: Props) {
   const [gain, setGain] = useState(() => getParam(searchParams, "tax_g") || "10000");
   const [days, setDays] = useState(() => getParam(searchParams, "tax_d") || "400");
-  const [bracket, setBracket] = useState(() => getParam(searchParams, "tax_b") || "32.5");
+  const [bracket, setBracket] = useState(() => getParam(searchParams, "tax_b") || "30");
 
   useUrlSync({ calc: "tax-optimizer", tax_g: gain, tax_d: days, tax_b: bracket });
 

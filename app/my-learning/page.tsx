@@ -59,6 +59,7 @@ function StatusBadge({ status }: { status: "active" | "completed" }) {
   if (status === "completed") {
     return (
       <span
+        className="bg-green-50 text-green-800 border border-green-200"
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -69,9 +70,6 @@ function StatusBadge({ status }: { status: "active" | "completed" }) {
           fontWeight: 700,
           letterSpacing: "0.04em",
           textTransform: "uppercase",
-          background: "#f0fdf4",
-          color: "#166534",
-          border: "1px solid #bbf7d0",
         }}
       >
         Completed
@@ -80,6 +78,7 @@ function StatusBadge({ status }: { status: "active" | "completed" }) {
   }
   return (
     <span
+      className="bg-teal-50 text-teal-700 border border-teal-200"
       style={{
         display: "inline-flex",
         alignItems: "center",
@@ -90,9 +89,6 @@ function StatusBadge({ status }: { status: "active" | "completed" }) {
         fontWeight: 700,
         letterSpacing: "0.04em",
         textTransform: "uppercase",
-        background: "#f0fdfa",
-        color: "#0f766e",
-        border: "1px solid #99f6e4",
       }}
     >
       In Progress
@@ -108,9 +104,8 @@ function EnrollmentCard({ enrollment }: { enrollment: EnrollmentRow }) {
 
   return (
     <div
+      className="bg-white border border-slate-200"
       style={{
-        background: "#ffffff",
-        border: "1px solid #e2e8f0",
         borderRadius: "16px",
         padding: "20px",
         display: "flex",
@@ -123,10 +118,10 @@ function EnrollmentCard({ enrollment }: { enrollment: EnrollmentRow }) {
           {slug ? (
             <Link
               href={`/academy/${slug}`}
+              className="text-slate-900"
               style={{
                 fontWeight: 700,
                 fontSize: "1rem",
-                color: "var(--color-ink-900, #0f172a)",
                 textDecoration: "none",
                 lineHeight: 1.3,
               }}
@@ -134,7 +129,7 @@ function EnrollmentCard({ enrollment }: { enrollment: EnrollmentRow }) {
               {title}
             </Link>
           ) : (
-            <p style={{ fontWeight: 700, fontSize: "1rem", color: "var(--color-ink-900, #0f172a)", margin: 0 }}>
+            <p className="text-slate-900" style={{ fontWeight: 700, fontSize: "1rem", margin: 0 }}>
               {title}
             </p>
           )}
@@ -142,7 +137,7 @@ function EnrollmentCard({ enrollment }: { enrollment: EnrollmentRow }) {
         <StatusBadge status={enrollment.status} />
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", fontSize: "0.8rem", color: "#64748b" }}>
+      <div className="text-slate-500" style={{ display: "flex", flexWrap: "wrap", gap: "16px", fontSize: "0.8rem" }}>
         <span>Enrolled: {formatDate(enrollment.enrolled_at)}</span>
         {enrollment.completed_at && (
           <span>Completed: {formatDate(enrollment.completed_at)}</span>
@@ -176,9 +171,8 @@ function CertificateCard({ cert }: { cert: CertificateRow }) {
 
   return (
     <div
+      className="bg-white border border-slate-200"
       style={{
-        background: "#ffffff",
-        border: "1px solid #e2e8f0",
         borderRadius: "16px",
         padding: "20px",
         display: "flex",
@@ -203,24 +197,24 @@ function CertificateCard({ cert }: { cert: CertificateRow }) {
             {slug ? (
               <Link
                 href={`/academy/${slug}`}
+                className="text-slate-900"
                 style={{
                   fontWeight: 700,
                   fontSize: "1rem",
-                  color: "var(--color-ink-900, #0f172a)",
                   textDecoration: "none",
                 }}
               >
                 {title}
               </Link>
             ) : (
-              <span style={{ fontWeight: 700, fontSize: "1rem", color: "var(--color-ink-900, #0f172a)" }}>
+              <span className="text-slate-900" style={{ fontWeight: 700, fontSize: "1rem" }}>
                 {title}
               </span>
             )}
           </div>
 
           {cert.certificate_number && (
-            <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: 0 }}>
+            <p className="text-slate-400" style={{ fontSize: "0.75rem", margin: 0 }}>
               Certificate #{cert.certificate_number}
             </p>
           )}
@@ -230,14 +224,13 @@ function CertificateCard({ cert }: { cert: CertificateRow }) {
           {cert.certificate_number && (
             <Link
               href={`/certificate/${cert.certificate_number}`}
+              className="bg-teal-50 border border-teal-200"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "6px",
                 padding: "6px 14px",
-                background: "#f0fdfa",
                 color: "var(--color-teal-600, #0d9488)",
-                border: "1px solid #99f6e4",
                 borderRadius: "8px",
                 fontSize: "0.8rem",
                 fontWeight: 600,
@@ -257,13 +250,13 @@ function CertificateCard({ cert }: { cert: CertificateRow }) {
               href={cert.certificate_url}
               target="_blank"
               rel="noopener noreferrer"
+              className="text-white"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "6px",
                 padding: "6px 14px",
                 background: "var(--color-teal-600, #0d9488)",
-                color: "#ffffff",
                 borderRadius: "8px",
                 fontSize: "0.8rem",
                 fontWeight: 600,
@@ -278,12 +271,11 @@ function CertificateCard({ cert }: { cert: CertificateRow }) {
             </a>
           ) : (
             <span
+              className="bg-slate-100 text-slate-400"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 padding: "6px 14px",
-                background: "#f1f5f9",
-                color: "#94a3b8",
                 borderRadius: "8px",
                 fontSize: "0.8rem",
                 fontWeight: 600,
@@ -296,7 +288,7 @@ function CertificateCard({ cert }: { cert: CertificateRow }) {
         </div>
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", fontSize: "0.8rem", color: "#64748b" }}>
+      <div className="text-slate-500" style={{ display: "flex", flexWrap: "wrap", gap: "16px", fontSize: "0.8rem" }}>
         <span>Issued: {formatDate(cert.issued_at)}</span>
         {cpdHours != null && cpdHours > 0 && (
           <span style={{ color: "var(--color-teal-600, #0d9488)", fontWeight: 600 }}>
@@ -361,24 +353,24 @@ export default async function MyLearningPage() {
     <main style={{ maxWidth: "800px", margin: "0 auto", padding: "32px 16px 64px" }}>
       {/* Page header */}
       <header style={{ marginBottom: "32px" }}>
-        <nav aria-label="Breadcrumb" style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "12px" }}>
-          <Link href="/" style={{ color: "#64748b", textDecoration: "none" }}>Home</Link>
+        <nav aria-label="Breadcrumb" className="text-slate-500" style={{ fontSize: "0.85rem", marginBottom: "12px" }}>
+          <Link href="/" className="text-slate-500" style={{ textDecoration: "none" }}>Home</Link>
           <span style={{ margin: "0 8px" }}>/</span>
-          <span style={{ color: "var(--color-ink-900, #0f172a)" }}>My Learning</span>
+          <span className="text-slate-900">My Learning</span>
         </nav>
 
         <h1
+          className="text-slate-900"
           style={{
             fontSize: "1.75rem",
             fontWeight: 800,
-            color: "var(--color-ink-900, #0f172a)",
             margin: 0,
             lineHeight: 1.2,
           }}
         >
           My Learning
         </h1>
-        <p style={{ marginTop: "6px", color: "#64748b", fontSize: "0.9rem" }}>
+        <p className="text-slate-500" style={{ marginTop: "6px", fontSize: "0.9rem" }}>
           {user.email}
         </p>
       </header>
@@ -393,33 +385,31 @@ export default async function MyLearningPage() {
         }}
       >
         <div
+          className="bg-white border border-slate-200"
           style={{
-            background: "#ffffff",
-            border: "1px solid #e2e8f0",
             borderRadius: "12px",
             padding: "16px",
           }}
         >
-          <p style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#94a3b8", fontWeight: 600, margin: "0 0 4px" }}>
+          <p className="text-slate-400" style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 4px" }}>
             Enrolled
           </p>
-          <p style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-ink-900, #0f172a)", margin: 0 }}>
+          <p className="text-slate-900" style={{ fontSize: "1.5rem", fontWeight: 800, margin: 0 }}>
             {enrollments.length}
           </p>
         </div>
 
         <div
+          className="bg-white border border-slate-200"
           style={{
-            background: "#ffffff",
-            border: "1px solid #e2e8f0",
             borderRadius: "12px",
             padding: "16px",
           }}
         >
-          <p style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#94a3b8", fontWeight: 600, margin: "0 0 4px" }}>
+          <p className="text-slate-400" style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 4px" }}>
             Completed
           </p>
-          <p style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-ink-900, #0f172a)", margin: 0 }}>
+          <p className="text-slate-900" style={{ fontSize: "1.5rem", fontWeight: 800, margin: 0 }}>
             {completedCount}
           </p>
         </div>
@@ -432,7 +422,7 @@ export default async function MyLearningPage() {
             padding: "16px",
           }}
         >
-          <p style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "#94a3b8", fontWeight: 600, margin: "0 0 4px" }}>
+          <p className="text-slate-400" style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600, margin: "0 0 4px" }}>
             CPD Hours
           </p>
           <p
@@ -453,18 +443,18 @@ export default async function MyLearningPage() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
           <h2
             id="enrollments-heading"
+            className="text-slate-500"
             style={{
               fontSize: "0.75rem",
               fontWeight: 700,
               textTransform: "uppercase",
               letterSpacing: "0.08em",
-              color: "#64748b",
               margin: 0,
             }}
           >
             My Courses
             {enrollments.length > 0 && (
-              <span style={{ marginLeft: "8px", fontWeight: 400, color: "#94a3b8" }}>
+              <span className="text-slate-400" style={{ marginLeft: "8px", fontWeight: 400 }}>
                 ({activeCount} active · {completedCount} completed)
               </span>
             )}
@@ -473,29 +463,29 @@ export default async function MyLearningPage() {
 
         {enrollments.length === 0 ? (
           <div
+            className="bg-white border-slate-300"
             style={{
-              background: "#ffffff",
-              border: "1px dashed #cbd5e1",
+              border: "1px dashed",
               borderRadius: "16px",
               padding: "40px 24px",
               textAlign: "center",
             }}
           >
-            <p style={{ color: "#64748b", marginBottom: "8px", fontWeight: 600 }}>
+            <p className="text-slate-500" style={{ marginBottom: "8px", fontWeight: 600 }}>
               You are not enrolled in any courses yet.
             </p>
-            <p style={{ color: "#94a3b8", fontSize: "0.875rem", marginBottom: "20px" }}>
+            <p className="text-slate-400" style={{ fontSize: "0.875rem", marginBottom: "20px" }}>
               Browse CPD-accredited courses from Australian advisors and providers.
             </p>
             <Link
               href="/academy"
+              className="text-white"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "6px",
                 padding: "10px 20px",
                 background: "var(--color-teal-600, #0d9488)",
-                color: "#ffffff",
                 borderRadius: "8px",
                 fontWeight: 700,
                 fontSize: "0.9rem",
@@ -519,12 +509,12 @@ export default async function MyLearningPage() {
         <section aria-labelledby="certificates-heading" style={{ marginBottom: "40px" }}>
           <h2
             id="certificates-heading"
+            className="text-slate-500"
             style={{
               fontSize: "0.75rem",
               fontWeight: 700,
               textTransform: "uppercase",
               letterSpacing: "0.08em",
-              color: "#64748b",
               marginBottom: "16px",
             }}
           >
@@ -541,9 +531,8 @@ export default async function MyLearningPage() {
       {/* CPD progress note */}
       {totalCpdHours > 0 && (
         <div
+          className="bg-teal-50 border border-teal-200"
           style={{
-            background: "#f0fdfa",
-            border: "1px solid #99f6e4",
             borderRadius: "16px",
             padding: "20px",
             marginBottom: "40px",
@@ -552,7 +541,7 @@ export default async function MyLearningPage() {
           <h3 style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--color-teal-600, #0d9488)", margin: "0 0 6px" }}>
             CPD Progress Summary
           </h3>
-          <p style={{ color: "#0f766e", fontSize: "0.875rem", margin: 0 }}>
+          <p className="text-teal-700" style={{ fontSize: "0.875rem", margin: 0 }}>
             You have earned <strong>{totalCpdHours % 1 === 0 ? totalCpdHours.toFixed(0) : totalCpdHours.toFixed(1)} CPD hours</strong> through courses on Invest.com.au.{" "}
             Australian financial advisors require 40 CPD hours per year under ASIC rules.
           </p>
@@ -577,12 +566,12 @@ export default async function MyLearningPage() {
         </p>
         <Link
           href="/academy"
+          className="bg-white"
           style={{
             display: "inline-flex",
             alignItems: "center",
             gap: "6px",
             padding: "10px 24px",
-            background: "#ffffff",
             color: "var(--color-teal-600, #0d9488)",
             borderRadius: "8px",
             fontWeight: 700,

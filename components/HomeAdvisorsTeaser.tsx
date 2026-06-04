@@ -90,13 +90,13 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
       </div>
 
       <div
+        className="border-b border-slate-200"
         style={{
           display: "flex",
           alignItems: "center",
           gap: 6,
           marginBottom: 14,
           paddingBottom: 14,
-          borderBottom: "1px solid #e5e7eb",
           flexWrap: "wrap",
         }}
       >
@@ -107,6 +107,7 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
               key={f.key}
               type="button"
               onClick={() => setFilter(f.key)}
+              className={active ? undefined : "bg-white border-slate-200"}
               style={{
                 padding: "7px 12px",
                 fontSize: 12,
@@ -114,8 +115,8 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
                 cursor: "pointer",
                 borderRadius: 99,
                 border: "1px solid",
-                borderColor: active ? "var(--color-ink-900)" : "#e5e7eb",
-                background: active ? "var(--color-ink-900)" : "white",
+                borderColor: active ? "var(--color-ink-900)" : undefined,
+                background: active ? "var(--color-ink-900)" : undefined,
                 color: active ? "white" : "var(--color-ink-500)",
                 fontFamily: "inherit",
               }}
@@ -198,11 +199,11 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
                 {(a.specialties ?? []).slice(0, 3).map((s) => (
                   <span
                     key={s}
+                    className="bg-slate-100"
                     style={{
                       fontSize: 10,
                       padding: "2px 6px",
                       borderRadius: 99,
-                      background: "var(--color-sand-50)",
                       color: "var(--color-ink-500)",
                       fontWeight: 600,
                     }}
@@ -212,13 +213,12 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
                 ))}
               </div>
               <div
+                className="bg-slate-50 border-t border-slate-200"
                 style={{
                   padding: "8px 12px",
-                  borderTop: "1px solid #e5e7eb",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  background: "var(--color-sand-50)",
                   marginTop: "auto",
                 }}
               >

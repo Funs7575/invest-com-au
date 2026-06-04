@@ -83,12 +83,14 @@ describe("BrokerComparisonTable", () => {
     expect(screen.getAllByText("BrokerGamma").length).toBeGreaterThanOrEqual(1);
   });
 
-  it("renders sort tabs with FX Fee, US Fee, and Rating", () => {
+  it("renders sort buttons for FX Fee, US Fee, and Rating", () => {
     render(<BrokerComparisonTable brokers={[brokerA, brokerB]} />);
 
-    expect(screen.getByRole("tab", { name: "FX Fee" })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "US Fee" })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: "Rating" })).toBeInTheDocument();
+    // Sort controls are toggle buttons (role=button, aria-pressed), not tabs:
+    // they reorder the same table rather than switching tabpanels.
+    expect(screen.getByRole("button", { name: "FX Fee" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "US Fee" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Rating" })).toBeInTheDocument();
   });
 
   it("defaults to sorting by FX Fee (lowest first)", () => {

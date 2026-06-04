@@ -19,6 +19,24 @@ export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+/**
+ * Build a Next.js Metadata `title` value that never double-brands.
+ *
+ * The root layout uses `title.template: "%s — Invest.com.au"`.  Any page
+ * that passes a plain string through `metadata.title` will have the brand
+ * appended automatically.  If the string already contains the brand (e.g.
+ * "How to Buy Shares — Invest.com.au") Next.js would append it again,
+ * producing "How to Buy Shares — Invest.com.au — Invest.com.au".
+ *
+ * This helper returns `{ absolute: t }` when the title already contains the
+ * brand — Next.js treats `{ absolute }` as a fully-formed title and skips the
+ * template.  For brand-free titles the plain string is returned so the
+ * template still fires normally.
+ */
+export function buildTitle(t: string): string | { absolute: string } {
+  return t.includes(SITE_NAME) ? { absolute: t } : t;
+}
+
 /* ─── Shared Organization block for JSON-LD (enhanced for E-E-A-T) ─── */
 
 export const ORGANIZATION_JSONLD = {
@@ -452,7 +470,16 @@ export function howToJsonLd(guide: {
   h1: string;
   intro: string;
   steps: { heading: string; body: string }[];
+  /** ISO-8601 date the guide was first published (e.g. "2025-01-15").
+   *  Omit when unknown — the field is left out of the schema rather than
+   *  emitting a fabricated date that contradicts the always-current
+   *  dateModified. */
+  datePublished?: string | null;
+  /** ISO-8601 date of the last substantive update.
+   *  Defaults to today when not supplied. */
+  dateModified?: string | null;
 }) {
+  const today = new Date().toISOString().split("T")[0];
   return {
     "@context": "https://schema.org",
     "@type": "HowTo",
@@ -477,8 +504,8 @@ export function howToJsonLd(guide: {
       url: REVIEW_AUTHOR.url,
     },
     publisher: ORGANIZATION_JSONLD,
-    datePublished: "2025-01-15",
-    dateModified: new Date().toISOString().split("T")[0],
+    ...(guide.datePublished ? { datePublished: guide.datePublished } : {}),
+    dateModified: guide.dateModified ?? today,
   };
 }
 

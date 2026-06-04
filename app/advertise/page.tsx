@@ -99,7 +99,7 @@ export default function AdvertisePage() {
             Invest.com.au is Australia&apos;s leading independent investing comparison hub. Our users are high-intent — they&apos;re actively researching and ready to open accounts.
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <Link href="/broker-portal/register"
+            <Link href="/advertise/packages"
               className="px-8 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-lg hover:bg-amber-400 transition-colors">
               Start Advertising →
             </Link>
@@ -251,7 +251,7 @@ export default function AdvertisePage() {
             Join leading Australian brokerages already advertising on Invest.com.au.
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <Link href="/broker-portal/register"
+            <Link href="/advertise/packages"
               className="px-8 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-lg hover:bg-amber-400 transition-colors">
               Create Partner Account →
             </Link>

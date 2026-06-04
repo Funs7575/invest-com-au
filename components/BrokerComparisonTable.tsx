@@ -24,13 +24,13 @@ function Stars({ rating }: { rating: number }) {
   const stars: React.ReactNode[] = [];
   for (let i = 0; i < full; i++)
     stars.push(
-      <span key={`f${i}`} className="text-amber">
+      <span key={`f${i}`} className="text-amber-600">
         &#9733;
       </span>
     );
   if (half)
     stars.push(
-      <span key="h" className="text-amber">
+      <span key="h" className="text-amber-600">
         &#189;
       </span>
     );
@@ -66,7 +66,7 @@ export default function BrokerComparisonTable({
         <h3 className="text-lg font-extrabold text-brand">
           International Broker Comparison
         </h3>
-        <div className="flex gap-1.5 text-xs" role="tablist" aria-label="Sort brokers by">
+        <div className="flex gap-1.5 text-xs" role="group" aria-label="Sort options">
           {(
             [
               ["fx_rate", "FX Fee"],
@@ -77,8 +77,7 @@ export default function BrokerComparisonTable({
             <button
               key={key}
               onClick={() => setSortBy(key)}
-              role="tab"
-              aria-selected={sortBy === key}
+              aria-pressed={sortBy === key}
               className={`px-3 py-1.5 rounded-full font-semibold transition-colors ${
                 sortBy === key
                   ? "bg-brand text-white"

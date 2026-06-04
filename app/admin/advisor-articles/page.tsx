@@ -121,7 +121,7 @@ export default function AdminAdvisorArticlesPage() {
           <h1 className="text-xl font-bold text-slate-900">Article Moderation</h1>
           <p className="text-xs text-slate-500">{articles.length} articles · {pending} pending review</p>
         </div>
-        <Link href="/expert" target="_blank" className="text-xs font-semibold text-violet-600 hover:text-violet-800">View Public Page ↗</Link>
+        <Link href="/expert" target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-violet-600 hover:text-violet-800">View Public Page ↗</Link>
       </div>
 
       {/* Status filters */}
@@ -181,7 +181,7 @@ export default function AdminAdvisorArticlesPage() {
                     {/* Meta */}
                     <div className="flex flex-wrap gap-2 text-xs">
                       <span className={`font-bold px-2 py-0.5 rounded-full ${SC[selected.status]}`}>{selected.status.replace("_", " ")}</span>
-                      <span className="text-slate-500">By <Link href={`/advisor/${selected.author_slug}`} target="_blank" className="text-violet-600 hover:underline">{selected.author_name}</Link></span>
+                      <span className="text-slate-500">By <Link href={`/advisor/${selected.author_slug}`} target="_blank" rel="noopener noreferrer" className="text-violet-600 hover:underline">{selected.author_name}</Link></span>
                       <span className="text-slate-500">{selected.category}</span>
                       <span className="text-slate-500 capitalize">{selected.pricing_tier} (${(selected.price_cents / 100).toFixed(0)})</span>
                       <span className={selected.payment_status === "paid" ? "text-emerald-600 font-semibold" : "text-slate-400"}>{selected.payment_status}</span>
@@ -247,7 +247,7 @@ export default function AdminAdvisorArticlesPage() {
                         <button onClick={() => doAction("publish")} disabled={busy} className="px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 disabled:opacity-50">🚀 Publish Now</button>
                       )}
                       {selected.status === "published" && selected.slug && (
-                        <Link href={`/expert/${selected.slug}`} target="_blank" className="px-3 py-2 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-50">View Published ↗</Link>
+                        <Link href={`/expert/${selected.slug}`} target="_blank" rel="noopener noreferrer" className="px-3 py-2 border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-50">View Published ↗</Link>
                       )}
                     </div>
                   </div>

@@ -77,7 +77,7 @@ export default async function InvestScoreGauge() {
             <path
               d="M 15 100 A 85 85 0 0 1 185 100"
               fill="none"
-              stroke="#f1f5f9"
+              stroke="rgba(148,163,184,0.25)"
               strokeWidth={16}
               strokeLinecap="round"
             />
@@ -97,18 +97,18 @@ export default async function InvestScoreGauge() {
               y1="100"
               x2="100"
               y2="22"
-              stroke="#1e293b"
+              stroke="currentColor"
               strokeWidth={2.5}
               strokeLinecap="round"
               transform={needleTransform(score)}
               style={{ transformOrigin: "100px 100px", transition: "transform 0.8s ease-out" }}
             />
-            <circle cx="100" cy="100" r="5" fill="#1e293b" />
+            <circle cx="100" cy="100" r="5" fill="currentColor" />
             {/* Labels */}
             <text x="12" y="108" fontSize="9" fill="#94a3b8" textAnchor="middle">0</text>
             <text x="188" y="108" fontSize="9" fill="#94a3b8" textAnchor="middle">100</text>
             {/* Score text */}
-            <text x="100" y="90" fontSize="22" fontWeight="700" fill="#0f172a" textAnchor="middle">
+            <text x="100" y="90" fontSize="22" fontWeight="700" fill="currentColor" textAnchor="middle">
               {Math.round(score)}
             </text>
           </svg>

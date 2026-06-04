@@ -118,7 +118,7 @@ export default function AdvisorTrustScoreCard() {
           <h3 className="text-sm font-bold text-slate-900">Trust Score</h3>
           <p className="text-xs text-slate-500 mt-0.5">
             Factual credential composite —{" "}
-            <Link href="/advisor/trust-score-methodology" className="text-violet-600 hover:underline" target="_blank">
+            <Link href="/advisor/trust-score-methodology" className="text-violet-600 hover:underline" target="_blank" rel="noopener noreferrer">
               see methodology
             </Link>
           </p>

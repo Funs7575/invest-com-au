@@ -192,9 +192,10 @@ export default function RateBoardClient({
           </nav>
 
           {/* Tabs */}
-          <div className="flex gap-2 mb-6">
+          <div className="flex gap-2 mb-6" role="group" aria-label="Filter by account type">
             <button
               onClick={() => handleTabChange("savings")}
+              aria-pressed={activeTab === "savings"}
               className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${
                 activeTab === "savings"
                   ? "bg-slate-900 text-white"
@@ -208,6 +209,7 @@ export default function RateBoardClient({
             </button>
             <button
               onClick={() => handleTabChange("term_deposit")}
+              aria-pressed={activeTab === "term_deposit"}
               className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${
                 activeTab === "term_deposit"
                   ? "bg-slate-900 text-white"
@@ -225,36 +227,47 @@ export default function RateBoardClient({
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
+                <caption className="sr-only">
+                  Savings and term-deposit rates, sortable
+                </caption>
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50">
-                    <th className="px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider w-12">
+                    <th scope="col" className="px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider w-12">
                       #
                     </th>
                     <th
+                      scope="col"
+                      aria-sort={sortField === "name" ? (sortDirection === "asc" ? "ascending" : "descending") : "none"}
                       className="px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-900 select-none"
                       onClick={() => handleSort("name")}
                     >
                       Provider{sortArrow("name")}
                     </th>
                     <th
+                      scope="col"
+                      aria-sort={sortField === "rate" ? (sortDirection === "asc" ? "ascending" : "descending") : "none"}
                       className="px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-900 select-none text-right"
                       onClick={() => handleSort("rate")}
                     >
                       Rate{sortArrow("rate")}
                     </th>
                     <th
+                      scope="col"
+                      aria-sort={sortField === "min_deposit" ? (sortDirection === "asc" ? "ascending" : "descending") : "none"}
                       className="px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-900 select-none text-right hidden md:table-cell"
                       onClick={() => handleSort("min_deposit")}
                     >
                       Min Deposit{sortArrow("min_deposit")}
                     </th>
                     <th
+                      scope="col"
+                      aria-sort={sortField === "rating" ? (sortDirection === "asc" ? "ascending" : "descending") : "none"}
                       className="px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-900 select-none text-center hidden md:table-cell"
                       onClick={() => handleSort("rating")}
                     >
                       Rating{sortArrow("rating")}
                     </th>
-                    <th className="px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
+                    <th scope="col" className="px-3 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
                       Action
                     </th>
                   </tr>

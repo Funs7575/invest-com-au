@@ -4,6 +4,14 @@ import { getSubPageDict, type SubPageDict } from "@/lib/i18n/dictionaries";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 
+/**
+ * Locales that have the full foreign-investment hub + sub-pages (siv/property/tax).
+ * "ar" is intentionally excluded — Arabic only has country-specific pages
+ * (/ar/foreign-investment/united-arab-emirates, /ar/foreign-investment/saudi-arabia)
+ * and does NOT have a hub or siv/property/tax sub-pages.
+ */
+const FI_LOCALES = LOCALES.filter((l) => l !== "ar") as Locale[];
+
 const SUB_PAGE_HUB_LABEL: Record<Locale, string> = {
   en: "Foreign investment",
   zh: "外国人投资",
@@ -98,10 +106,10 @@ export default function ForeignInvestmentSubPage({ locale, slug }: Props) {
 
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
           <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-2">
-            {LOCALES.map((l) => LOCALE_LABEL[l]).join(" · ")}
+            {FI_LOCALES.map((l) => LOCALE_LABEL[l]).join(" · ")}
           </p>
           <div className="flex flex-wrap gap-2">
-            {LOCALES.map((l) => {
+            {FI_LOCALES.map((l) => {
               const href =
                 l === "en"
                   ? `/foreign-investment/${slug}`

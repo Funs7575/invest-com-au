@@ -18,7 +18,7 @@ export default function ShortlistError({ error, reset }: { error: Error; reset: 
           Couldn&apos;t load your shortlist
         </h2>
         <p className="text-sm text-slate-500 mb-6">
-          Something went wrong loading your saved brokers. Please try again.
+          Something went wrong loading your saved platforms. Please try again.
         </p>
         <div className="flex items-center justify-center gap-3">
           <button

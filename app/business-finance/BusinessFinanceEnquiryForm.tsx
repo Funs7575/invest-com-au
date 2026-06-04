@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import Icon from "@/components/Icon";
 
 const FINANCE_TYPES = [
@@ -13,6 +13,16 @@ const FINANCE_TYPES = [
 ];
 
 export default function BusinessFinanceEnquiryForm() {
+  const businessNameId = useId();
+  const contactNameId = useId();
+  const emailId = useId();
+  const phoneId = useId();
+  const financeTypeId = useId();
+  const loanAmountId = useId();
+  const annualRevenueId = useId();
+  const timeInBusinessId = useId();
+  const purposeId = useId();
+  const messageId = useId();
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -86,50 +96,58 @@ export default function BusinessFinanceEnquiryForm() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
+          <label htmlFor={businessNameId} className="block text-xs font-semibold text-slate-700 mb-1">
             Business name <span className="text-red-500">*</span>
           </label>
           <input
+            id={businessNameId}
             type="text"
             name="business_name"
             required
             maxLength={200}
+            autoComplete="organization"
             placeholder="Acme Pty Ltd"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
+          <label htmlFor={contactNameId} className="block text-xs font-semibold text-slate-700 mb-1">
             Your name <span className="text-red-500">*</span>
           </label>
           <input
+            id={contactNameId}
             type="text"
             name="contact_name"
             required
             maxLength={200}
+            autoComplete="name"
             placeholder="Jane Smith"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
+          <label htmlFor={emailId} className="block text-xs font-semibold text-slate-700 mb-1">
             Email <span className="text-red-500">*</span>
           </label>
           <input
+            id={emailId}
             type="email"
             name="email"
             required
             maxLength={254}
+            autoComplete="email"
             placeholder="jane@acme.com.au"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">Phone</label>
+          <label htmlFor={phoneId} className="block text-xs font-semibold text-slate-700 mb-1">Phone</label>
           <input
+            id={phoneId}
             type="tel"
             name="phone"
             maxLength={30}
+            autoComplete="tel"
             placeholder="0400 000 000"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
@@ -137,10 +155,11 @@ export default function BusinessFinanceEnquiryForm() {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-700 mb-1">
+        <label htmlFor={financeTypeId} className="block text-xs font-semibold text-slate-700 mb-1">
           Finance type <span className="text-red-500">*</span>
         </label>
         <select
+          id={financeTypeId}
           name="finance_type"
           required
           className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 bg-white"
@@ -154,38 +173,43 @@ export default function BusinessFinanceEnquiryForm() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
+          <label htmlFor={loanAmountId} className="block text-xs font-semibold text-slate-700 mb-1">
             Amount needed (AUD)
           </label>
           <input
+            id={loanAmountId}
             type="number"
             name="loan_amount"
             min={0}
             max={50_000_000}
             step={1000}
+            inputMode="decimal"
             placeholder="e.g. 250000"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
+          <label htmlFor={annualRevenueId} className="block text-xs font-semibold text-slate-700 mb-1">
             Annual revenue (AUD)
           </label>
           <input
+            id={annualRevenueId}
             type="number"
             name="annual_revenue"
             min={0}
             max={500_000_000}
             step={10000}
+            inputMode="decimal"
             placeholder="e.g. 1200000"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
+          <label htmlFor={timeInBusinessId} className="block text-xs font-semibold text-slate-700 mb-1">
             Time in business (years)
           </label>
           <input
+            id={timeInBusinessId}
             type="number"
             name="time_in_business_months"
             min={0}
@@ -198,10 +222,11 @@ export default function BusinessFinanceEnquiryForm() {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-700 mb-1">
+        <label htmlFor={purposeId} className="block text-xs font-semibold text-slate-700 mb-1">
           Purpose of funds
         </label>
         <input
+          id={purposeId}
           type="text"
           name="purpose"
           maxLength={1000}
@@ -211,10 +236,11 @@ export default function BusinessFinanceEnquiryForm() {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-700 mb-1">
+        <label htmlFor={messageId} className="block text-xs font-semibold text-slate-700 mb-1">
           Additional notes
         </label>
         <textarea
+          id={messageId}
           name="message"
           rows={3}
           maxLength={2000}

@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { incomeTax, marginalRate as marginalRateOf } from "@/lib/tax/brackets";
 
 // ─── FY2025-26 tax constants ──────────────────────────────────────────────────
 
@@ -10,26 +11,10 @@ const SG_RATE = 0.115;
 const CONCESSIONAL_CAP = 30_000;
 const DIV293_THRESHOLD = 250_000;
 
-function incomeTax(gross: number): number {
-  if (gross <= 18_200) return 0;
-  if (gross <= 45_000) return (gross - 18_200) * 0.19;
-  if (gross <= 135_000) return 5_092 + (gross - 45_000) * 0.325;
-  if (gross <= 190_000) return 29_467 + (gross - 135_000) * 0.37;
-  return 51_667 + (gross - 190_000) * 0.45;
-}
-
 function medicare(gross: number): number {
   if (gross <= 26_000) return 0;
   if (gross <= 32_500) return (gross - 26_000) * 0.1;
   return gross * 0.02;
-}
-
-function marginalRateOf(gross: number): number {
-  if (gross <= 18_200) return 0;
-  if (gross <= 45_000) return 0.19;
-  if (gross <= 135_000) return 0.325;
-  if (gross <= 190_000) return 0.37;
-  return 0.45;
 }
 
 function totalTax(gross: number): number {

@@ -3,17 +3,9 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { incomeTax } from "@/lib/tax/brackets";
 
 // ─── Australian lending maths (FY2025-26) ────────────────────────────────────
-
-/** FY2025-26 marginal tax rates excl. Medicare. */
-function incomeTax(gross: number): number {
-  if (gross <= 18_200) return 0;
-  if (gross <= 45_000) return (gross - 18_200) * 0.19;
-  if (gross <= 135_000) return 5_092 + (gross - 45_000) * 0.325;
-  if (gross <= 190_000) return 29_467 + (gross - 135_000) * 0.37;
-  return 51_667 + (gross - 190_000) * 0.45;
-}
 
 function netMonthly(grossAnnual: number): number {
   const medicare = grossAnnual * 0.02;

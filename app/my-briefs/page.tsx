@@ -123,7 +123,7 @@ export default async function MyBriefsPage() {
   }));
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
+    <div className="min-h-screen bg-slate-50" style={{ minHeight: "100vh" }}>
       <div
         style={{
           maxWidth: 768,
@@ -133,20 +133,20 @@ export default async function MyBriefsPage() {
       >
         {/* Breadcrumb */}
         <div
+          className="text-slate-500"
           style={{
             display: "flex",
             alignItems: "center",
             gap: "0.4rem",
             fontSize: "0.75rem",
-            color: "#64748b",
             marginBottom: "1.25rem",
           }}
         >
-          <Link href="/account" style={{ color: "#64748b", textDecoration: "none" }}>
+          <Link href="/account" className="text-slate-500" style={{ textDecoration: "none" }}>
             Account
           </Link>
           <span>/</span>
-          <span style={{ color: "#0f172a" }}>My Briefs</span>
+          <span className="text-slate-900">My Briefs</span>
         </div>
 
         {/* Header row */}
@@ -162,27 +162,27 @@ export default async function MyBriefsPage() {
         >
           <div>
             <h1
+              className="text-slate-900"
               style={{
                 fontSize: "1.75rem",
                 fontWeight: 800,
-                color: "var(--color-ink-900, #0f172a)",
                 margin: 0,
               }}
             >
               My Briefs
             </h1>
-            <p style={{ fontSize: "0.875rem", color: "#64748b", marginTop: "0.25rem" }}>
+            <p className="text-slate-500" style={{ fontSize: "0.875rem", marginTop: "0.25rem" }}>
               Your advisor quote requests and their current status.
             </p>
           </div>
           <Link
             href="/briefs/new"
+            className="text-white"
             style={{
               display: "inline-block",
               padding: "0.55rem 1.1rem",
               borderRadius: "0.6rem",
               background: "var(--color-teal-600, #0d9488)",
-              color: "#ffffff",
               fontSize: "0.875rem",
               fontWeight: 600,
               textDecoration: "none",
@@ -196,35 +196,34 @@ export default async function MyBriefsPage() {
         {/* Empty state */}
         {briefsWithCounts.length === 0 && (
           <div
+            className="bg-white border border-slate-200"
             style={{
-              background: "#ffffff",
-              border: "1px solid #e2e8f0",
               borderRadius: "1rem",
               padding: "3rem 2rem",
               textAlign: "center",
             }}
           >
             <p
+              className="text-slate-900"
               style={{
                 fontSize: "1rem",
                 fontWeight: 700,
-                color: "#0f172a",
                 marginBottom: "0.5rem",
               }}
             >
               No briefs yet
             </p>
-            <p style={{ fontSize: "0.875rem", color: "#64748b", maxWidth: 360, margin: "0 auto 1.5rem" }}>
+            <p className="text-slate-500" style={{ fontSize: "0.875rem", maxWidth: 360, margin: "0 auto 1.5rem" }}>
               Tell us what you&apos;re looking for and get matched with verified advisors.
             </p>
             <Link
               href="/briefs/new"
+              className="text-white"
               style={{
                 display: "inline-block",
                 padding: "0.6rem 1.25rem",
                 borderRadius: "0.6rem",
                 background: "var(--color-teal-600, #0d9488)",
-                color: "#ffffff",
                 fontSize: "0.875rem",
                 fontWeight: 600,
                 textDecoration: "none",
@@ -252,9 +251,8 @@ export default async function MyBriefsPage() {
                     style={{ textDecoration: "none", display: "block" }}
                   >
                     <div
+                      className="bg-white border border-slate-200"
                       style={{
-                        background: "#ffffff",
-                        border: "1px solid #e2e8f0",
                         borderRadius: "1rem",
                         padding: "1.25rem 1.5rem",
                         transition: "box-shadow 0.15s",
@@ -271,10 +269,10 @@ export default async function MyBriefsPage() {
                         }}
                       >
                         <h2
+                          className="text-slate-900"
                           style={{
                             fontSize: "1rem",
                             fontWeight: 700,
-                            color: "var(--color-ink-900, #0f172a)",
                             margin: 0,
                             flex: 1,
                           }}
@@ -300,12 +298,12 @@ export default async function MyBriefsPage() {
 
                       {/* Meta row */}
                       <div
+                        className="text-slate-500"
                         style={{
                           display: "flex",
                           alignItems: "center",
                           gap: "0.75rem",
                           fontSize: "0.75rem",
-                          color: "#64748b",
                           flexWrap: "wrap",
                         }}
                       >
@@ -355,10 +353,10 @@ export default async function MyBriefsPage() {
         {/* Footer note */}
         {briefsWithCounts.length > 0 && (
           <p
+            className="text-slate-400"
             style={{
               marginTop: "1.5rem",
               fontSize: "0.75rem",
-              color: "#94a3b8",
               textAlign: "center",
             }}
           >

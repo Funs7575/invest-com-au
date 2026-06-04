@@ -14,12 +14,13 @@ interface TaxHolding {
   quantity: number;
 }
 
+// ATO resident rates 2024-25 (Stage 3)
 const TAX_BRACKETS = [
   { label: "$0 – $18,200 (0%)", rate: 0, max: 18200 },
-  { label: "$18,201 – $45,000 (19%)", rate: 0.19, max: 45000 },
-  { label: "$45,001 – $120,000 (32.5%)", rate: 0.325, max: 120000 },
-  { label: "$120,001 – $180,000 (37%)", rate: 0.37, max: 180000 },
-  { label: "$180,001+ (45%)", rate: 0.45, max: Infinity },
+  { label: "$18,201 – $45,000 (16%)", rate: 0.16, max: 45000 },
+  { label: "$45,001 – $135,000 (30%)", rate: 0.30, max: 135000 },
+  { label: "$135,001 – $190,000 (37%)", rate: 0.37, max: 190000 },
+  { label: "$190,001+ (45%)", rate: 0.45, max: Infinity },
 ];
 
 // Common ASX dividend-paying stocks with franking
@@ -30,7 +31,7 @@ function uid() { return Math.random().toString(36).slice(2, 10); }
 function daysBetween(a: string, b: Date) { return Math.floor((b.getTime() - new Date(a).getTime()) / 86400000); }
 
 export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Broker[] }) {
-  const [bracket, setBracket] = useState(2); // default 32.5%
+  const [bracket, setBracket] = useState(2); // default 30% (ATO resident rates 2024-25, Stage 3)
   const [holdings, setHoldings] = useState<TaxHolding[]>([]);
   const [ticker, setTicker] = useState("");
   const [buyDate, setBuyDate] = useState("");

@@ -126,10 +126,9 @@ function EventCard({ event }: { event: AdvisorEvent }) {
       </div>
 
       <div
+        className="bg-teal-50 border-t border-slate-200"
         style={{
           padding: "10px 14px",
-          borderTop: "1px solid #e5e7eb",
-          background: "var(--color-teal-50)",
           marginTop: "auto",
           display: "flex",
           flexDirection: "column",
@@ -194,11 +193,9 @@ export default async function HomeUpcomingEvents() {
 
   return (
       <section
+        className="bg-teal-50 border-t border-b border-teal-100"
         style={{
           padding: "52px 36px",
-          background: "linear-gradient(135deg, #f0fdfa 0%, #e6fffa 100%)",
-          borderTop: "1px solid var(--color-teal-100)",
-          borderBottom: "1px solid var(--color-teal-100)",
         }}
       >
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>

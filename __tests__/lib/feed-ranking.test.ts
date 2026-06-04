@@ -164,9 +164,9 @@ describe("feedEventHref", () => {
     expect(feedEventHref(e)).toBe("/community/general/my-thread");
   });
 
-  it("links article to /articles/[slug]", () => {
+  it("links article to /article/[slug]", () => {
     const e = makeEvent({ event_type: "article", entity_slug: "how-to-invest" });
-    expect(feedEventHref(e)).toBe("/articles/how-to-invest");
+    expect(feedEventHref(e)).toBe("/article/how-to-invest");
   });
 
   it("links deal to broker page", () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useId } from "react";
 
 interface Props {
   brokerId: number;
@@ -39,6 +39,8 @@ export default function BrokerReliabilityScore({ brokerId, brokerName }: Props) 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
+  const scoreDetailId = useId();
+  const reportFormId = useId();
   const [selectedEvent, setSelectedEvent] = useState<string>("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -104,6 +106,8 @@ export default function BrokerReliabilityScore({ brokerId, brokerName }: Props) 
       <button
         onClick={handleToggle}
         aria-expanded={open}
+        aria-controls={scoreDetailId}
+        aria-label="Show reliability score details"
         className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 transition-colors"
       >
         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,7 +124,7 @@ export default function BrokerReliabilityScore({ brokerId, brokerName }: Props) 
       </button>
 
       {open && (
-        <div className="mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs motion-safe:animate-[fadeIn_0.2s_ease-out]">
+        <div id={scoreDetailId} className="mt-2 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs motion-safe:animate-[fadeIn_0.2s_ease-out]">
           {data && data.totalReports > 0 ? (
             <>
               {/* Score + components */}
@@ -165,6 +169,8 @@ export default function BrokerReliabilityScore({ brokerId, brokerName }: Props) 
           {!submitDone && (
             <button
               onClick={() => setFormOpen((v) => !v)}
+              aria-expanded={formOpen}
+              aria-controls={reportFormId}
               className="text-[11px] text-blue-600 hover:underline mb-2"
             >
               {formOpen ? "Cancel" : "Report your experience →"}
@@ -176,7 +182,7 @@ export default function BrokerReliabilityScore({ brokerId, brokerName }: Props) 
           )}
 
           {formOpen && (
-            <form onSubmit={handleSubmit} className="space-y-2 mt-1">
+            <form id={reportFormId} onSubmit={handleSubmit} className="space-y-2 mt-1">
               <div className="grid grid-cols-1 gap-1">
                 {EVENT_TYPES.map((et) => (
                   <label key={et.value} className="flex items-center gap-2 cursor-pointer">

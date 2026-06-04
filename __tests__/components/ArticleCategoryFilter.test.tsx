@@ -5,74 +5,82 @@ import ArticleCategoryFilter from "@/components/ArticleCategoryFilter";
 /**
  * setup.tsx mocks useSearchParams() to return an empty URLSearchParams,
  * so every test below executes the "no category, no query" branch:
- * the "All" tab is selected, all others are not.
+ * the "All" pill is active, all others are not.
+ *
+ * The filter renders navigation links (not tabs): each pill is an <a>
+ * that navigates to /articles?category=<slug>, wrapped in a
+ * role="group" aria-label="Filter by category" container. Active state
+ * is conveyed with aria-pressed rather than the previously-misused
+ * role="tab"/aria-selected (tabs don't navigate; these links do).
  *
  * Behaviour specific to active/category and ?q= passthrough is covered
  * by E2E and route-level integration tests where useSearchParams is
  * resolved by Next at request time.
  */
 describe("ArticleCategoryFilter", () => {
-  it("renders the tablist landmark with the right label", () => {
+  it("renders the filter group landmark with the right label", () => {
     render(<ArticleCategoryFilter />);
     expect(
-      screen.getByRole("tablist", { name: "Article category filter" }),
+      screen.getByRole("group", { name: "Filter by category" }),
     ).toBeInTheDocument();
   });
 
-  it("renders 14 tabs (All + 13 categories)", () => {
+  it("renders 14 filter links (All + 13 categories)", () => {
     render(<ArticleCategoryFilter />);
-    expect(screen.getAllByRole("tab")).toHaveLength(14);
+    const group = screen.getByRole("group", { name: "Filter by category" });
+    expect(within(group).getAllByRole("link")).toHaveLength(14);
   });
 
-  it("marks the 'All' tab as aria-selected when no category is in the URL", () => {
+  it("marks the 'All' link as aria-pressed when no category is in the URL", () => {
     render(<ArticleCategoryFilter />);
-    const allTab = screen.getByRole("tab", { name: "All" });
-    expect(allTab).toHaveAttribute("aria-selected", "true");
+    const allLink = screen.getByRole("link", { name: "All" });
+    expect(allLink).toHaveAttribute("aria-pressed", "true");
   });
 
-  it("marks every category tab as aria-selected=false when no category is set", () => {
+  it("marks every category link as aria-pressed=false when no category is set", () => {
     render(<ArticleCategoryFilter />);
-    const tabs = screen.getAllByRole("tab");
-    const nonAll = tabs.filter((t) => t.textContent !== "All");
-    nonAll.forEach((tab) => {
-      expect(tab).toHaveAttribute("aria-selected", "false");
+    const group = screen.getByRole("group", { name: "Filter by category" });
+    const links = within(group).getAllByRole("link");
+    const nonAll = links.filter((t) => t.textContent !== "All");
+    nonAll.forEach((link) => {
+      expect(link).toHaveAttribute("aria-pressed", "false");
     });
   });
 
-  it("the 'All' tab links to /articles with no query string", () => {
+  it("the 'All' link points to /articles with no query string", () => {
     render(<ArticleCategoryFilter />);
-    const allTab = screen.getByRole("tab", { name: "All" });
-    expect(allTab).toHaveAttribute("href", "/articles");
+    const allLink = screen.getByRole("link", { name: "All" });
+    expect(allLink).toHaveAttribute("href", "/articles");
   });
 
-  it("each category tab links to /articles?category=<slug>", () => {
+  it("each category link points to /articles?category=<slug>", () => {
     render(<ArticleCategoryFilter />);
-    expect(screen.getByRole("tab", { name: "Tax" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Tax" })).toHaveAttribute(
       "href",
       "/articles?category=tax",
     );
-    expect(screen.getByRole("tab", { name: "SMSF" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "SMSF" })).toHaveAttribute(
       "href",
       "/articles?category=smsf",
     );
-    expect(screen.getByRole("tab", { name: "ETFs" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "ETFs" })).toHaveAttribute(
       "href",
       "/articles?category=etfs",
     );
     expect(
-      screen.getByRole("tab", { name: "Robo-Advisors" }),
+      screen.getByRole("link", { name: "Robo-Advisors" }),
     ).toHaveAttribute("href", "/articles?category=robo-advisors");
     expect(
-      screen.getByRole("tab", { name: "CFD & Forex" }),
+      screen.getByRole("link", { name: "CFD & Forex" }),
     ).toHaveAttribute("href", "/articles?category=cfd-forex");
     expect(
-      screen.getByRole("tab", { name: "Research Tools" }),
+      screen.getByRole("link", { name: "Research Tools" }),
     ).toHaveAttribute("href", "/articles?category=research-tools");
   });
 
   it("renders human labels for every category slug", () => {
     render(<ArticleCategoryFilter />);
-    const tablist = screen.getByRole("tablist");
+    const group = screen.getByRole("group", { name: "Filter by category" });
     const labels = [
       "All",
       "Beginners",
@@ -91,22 +99,22 @@ describe("ArticleCategoryFilter", () => {
     ];
     labels.forEach((label) => {
       expect(
-        within(tablist).getByRole("tab", { name: label }),
+        within(group).getByRole("link", { name: label }),
       ).toBeInTheDocument();
     });
   });
 
-  it("the 'All' tab carries the active dark styling", () => {
+  it("the 'All' link carries the active dark styling", () => {
     render(<ArticleCategoryFilter />);
-    const allTab = screen.getByRole("tab", { name: "All" });
-    expect(allTab.className).toContain("bg-slate-900");
-    expect(allTab.className).toContain("text-white");
+    const allLink = screen.getByRole("link", { name: "All" });
+    expect(allLink.className).toContain("bg-slate-900");
+    expect(allLink.className).toContain("text-white");
   });
 
-  it("non-All tabs carry the unselected light styling", () => {
+  it("non-All links carry the unselected light styling", () => {
     render(<ArticleCategoryFilter />);
-    const tab = screen.getByRole("tab", { name: "Tax" });
-    expect(tab.className).toContain("bg-slate-100");
-    expect(tab.className).toContain("text-slate-700");
+    const link = screen.getByRole("link", { name: "Tax" });
+    expect(link.className).toContain("bg-slate-100");
+    expect(link.className).toContain("text-slate-700");
   });
 });

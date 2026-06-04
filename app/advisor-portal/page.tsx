@@ -232,7 +232,7 @@ export default function AdvisorPortalPage() {
           <span className="text-sm font-semibold">Advisor Portal</span>
         </div>
         <div className="flex items-center gap-3">
-          <Link href={`/advisor/${advisor?.slug}`} target="_blank" className="text-xs text-white/60 hover:text-white">View Profile ↗</Link>
+          <Link href={`/advisor/${advisor?.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-white/60 hover:text-white">View Profile ↗</Link>
           <button onClick={logout} className="text-xs text-white/60 hover:text-white">Log Out</button>
         </div>
       </div>
@@ -789,7 +789,7 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
               <input type="checkbox" checked={acknowledged} onChange={e => setAcknowledged(e.target.checked)} className="w-4 h-4 mt-0.5 rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
               <span className="text-xs text-slate-600 leading-relaxed">
                 I confirm this article is <strong>original content</strong>, complies with the <strong>editorial guidelines</strong> above, does not constitute <strong>personal financial advice</strong>, and does not contain <strong>promotional material</strong> for my firm or any specific product. I agree to the{" "}
-                <a href="/content-license" target="_blank" className="text-violet-600 underline hover:text-violet-800">Content Licence Agreement</a>{" "}
+                <a href="/content-license" target="_blank" rel="noopener noreferrer" className="text-violet-600 underline hover:text-violet-800">Content Licence Agreement</a>{" "}
                 and grant Invest.com.au a licence to publish, edit, and distribute this article. I understand articles that violate these guidelines will be rejected or require revision.
               </span>
             </label>
@@ -894,7 +894,7 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
                   }} className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50">Edit</button>
                 )}
                 {a.status === "published" && a.slug && (
-                  <Link href={`/expert/${a.slug}`} target="_blank" className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50">View</Link>
+                  <Link href={`/expert/${a.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50">View</Link>
                 )}
               </div>
             </div>

@@ -90,7 +90,7 @@ describe("collectChangesForUser", () => {
     expect(changes[0]).toMatchObject({
       kind: "related_article",
       headline: "New: Stake cuts US fees",
-      href: "/articles/stake-fees-2026",
+      href: "/article/stake-fees-2026",
     });
   });
 

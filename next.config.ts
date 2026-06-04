@@ -230,6 +230,13 @@ const nextConfig: NextConfig = {
       // /broker is itself a redirect to /compare, so this entry skips
       // the double-hop and sends /brokers directly to /compare.
       // PRODUCT_AUDIT.md 2026-04-15 §CRITICAL #1.
+      // /alternatives was linked from content but never existed — a 404 caught
+      // by the crypto-curious AI-journey persona. /alt-assets is the real hub.
+      {
+        source: "/alternatives",
+        destination: "/alt-assets",
+        permanent: true,
+      },
       {
         source: "/brokers",
         destination: "/compare",

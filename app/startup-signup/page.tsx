@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import Link from "next/link";
 
 const STAGES = [
@@ -48,6 +48,14 @@ const INIT: FormData = {
 };
 
 export default function StartupSignupPage() {
+  const emailId = useId();
+  const passwordId = useId();
+  const companyNameId = useId();
+  const abnId = useId();
+  const foundedYearId = useId();
+  const stageId = useId();
+  const linkedinUrlId = useId();
+  const teamSizeId = useId();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(INIT);
   const [error, setError] = useState<string | null>(null);
@@ -180,8 +188,9 @@ export default function StartupSignupPage() {
         {step === 1 && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+              <label htmlFor={emailId} className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
               <input
+                id={emailId}
                 type="email"
                 autoComplete="email"
                 value={form.email}
@@ -191,8 +200,9 @@ export default function StartupSignupPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label htmlFor={passwordId} className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <input
+                id={passwordId}
                 type="password"
                 autoComplete="new-password"
                 value={form.password}
@@ -214,8 +224,9 @@ export default function StartupSignupPage() {
         {step === 2 && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Company name</label>
+              <label htmlFor={companyNameId} className="block text-sm font-medium text-gray-700 mb-1">Company name</label>
               <input
+                id={companyNameId}
                 type="text"
                 value={form.company_name}
                 onChange={(e) => set("company_name", e.target.value)}
@@ -225,8 +236,9 @@ export default function StartupSignupPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">ABN (optional)</label>
+                <label htmlFor={abnId} className="block text-sm font-medium text-gray-700 mb-1">ABN (optional)</label>
                 <input
+                  id={abnId}
                   type="text"
                   value={form.abn}
                   onChange={(e) => set("abn", e.target.value)}
@@ -235,8 +247,9 @@ export default function StartupSignupPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Founded year</label>
+                <label htmlFor={foundedYearId} className="block text-sm font-medium text-gray-700 mb-1">Founded year</label>
                 <input
+                  id={foundedYearId}
                   type="number"
                   min={2000}
                   max={new Date().getFullYear()}
@@ -248,8 +261,9 @@ export default function StartupSignupPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Funding stage</label>
+              <label htmlFor={stageId} className="block text-sm font-medium text-gray-700 mb-1">Funding stage</label>
               <select
+                id={stageId}
                 value={form.stage}
                 onChange={(e) => set("stage", e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
@@ -300,8 +314,9 @@ export default function StartupSignupPage() {
         {step === 3 && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL (optional)</label>
+              <label htmlFor={linkedinUrlId} className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL (optional)</label>
               <input
+                id={linkedinUrlId}
                 type="url"
                 value={form.linkedin_url}
                 onChange={(e) => set("linkedin_url", e.target.value)}
@@ -310,8 +325,9 @@ export default function StartupSignupPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Team size</label>
+              <label htmlFor={teamSizeId} className="block text-sm font-medium text-gray-700 mb-1">Team size</label>
               <input
+                id={teamSizeId}
                 type="number"
                 min={1}
                 value={form.team_size}

@@ -214,7 +214,7 @@ export default function AdSlot({
             )}
             <button
               onClick={() => setDismissed(true)}
-              className="shrink-0 p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
+              className="shrink-0 p-1.5 text-slate-600 hover:text-slate-600 transition-colors"
               aria-label="Dismiss ad"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -223,7 +223,7 @@ export default function AdSlot({
               </svg>
             </button>
           </div>
-          <span className="text-[0.56rem] text-slate-400 uppercase tracking-wider">
+          <span className="text-[0.7rem] text-slate-600 uppercase tracking-wider">
             Advertisement
           </span>
         </div>
@@ -306,10 +306,10 @@ function DirectSoldDisplayAd({
     return (
       <div className="bg-white p-4 sm:p-5">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[0.56rem] font-bold uppercase tracking-wider text-slate-400">
+          <span className="text-[0.7rem] font-bold uppercase tracking-wider text-slate-600">
             Sponsored
           </span>
-          <span className="text-[0.56rem] text-slate-400 uppercase tracking-wider">Ad</span>
+          <span className="text-[0.7rem] text-slate-600 uppercase tracking-wider">Ad</span>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -338,7 +338,7 @@ function DirectSoldDisplayAd({
             </a>
           </div>
         </div>
-        <p className="text-[0.56rem] text-slate-400 mt-2">{SPONSORED_DISCLOSURE_SHORT}</p>
+        <p className="text-[0.7rem] text-slate-600 mt-2">{SPONSORED_DISCLOSURE_SHORT}</p>
       </div>
     );
   }
@@ -351,7 +351,7 @@ function DirectSoldDisplayAd({
         <span className="text-[0.69rem] font-extrabold uppercase tracking-wider text-white/90">
           Sponsored
         </span>
-        <span className="text-[0.56rem] font-medium text-white/60 uppercase tracking-wider">
+        <span className="text-[0.7rem] font-medium text-white/60 uppercase tracking-wider">
           Ad
         </span>
       </div>
@@ -426,7 +426,7 @@ function DirectSoldDisplayAd({
           Read Full Review
         </a>
 
-        <p className="text-[0.56rem] text-slate-400 mt-3 leading-relaxed">
+        <p className="text-[0.7rem] text-slate-600 mt-3 leading-relaxed">
           {SPONSORED_DISCLOSURE_SHORT}
         </p>
       </div>
@@ -501,6 +501,7 @@ function ProgrammaticContainer({
     if (adsenseSlot && typeof window !== "undefined" && window.adsbygoogle) {
       try {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- marks the slot loaded after the adsbygoogle SDK push (external system sync)
         setAdLoaded(true);
       } catch {
         // AdSense not ready
@@ -512,7 +513,7 @@ function ProgrammaticContainer({
     return (
       <div ref={adRef} className="w-full" data-placement={placement}>
         <div className="flex items-center justify-between px-3 pt-2">
-          <span className="text-[0.56rem] text-slate-400 uppercase tracking-wider">
+          <span className="text-[0.7rem] text-slate-600 uppercase tracking-wider">
             Advertisement
           </span>
         </div>
@@ -538,7 +539,7 @@ function ProgrammaticContainer({
       data-ad-format={format}
       aria-hidden="true"
     >
-      <span className="text-[0.56rem] uppercase tracking-widest">Ad Space</span>
+      <span className="text-[0.7rem] uppercase tracking-widest">Ad Space</span>
     </div>
   );
 }

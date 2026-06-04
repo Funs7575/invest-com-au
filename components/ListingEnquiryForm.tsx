@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 
 interface ListingEnquiryFormProps {
   listingId: number;
@@ -36,6 +36,7 @@ export default function ListingEnquiryForm({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const errorId = useId();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -145,6 +146,7 @@ export default function ListingEnquiryForm({
           value={form.email}
           onChange={handleChange}
           placeholder="you@example.com"
+          aria-describedby={error ? errorId : undefined}
           className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
         />
       </div>
@@ -222,7 +224,11 @@ export default function ListingEnquiryForm({
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+        <p
+          id={errorId}
+          role="alert"
+          className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+        >
           {error}
         </p>
       )}

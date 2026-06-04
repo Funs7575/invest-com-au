@@ -122,12 +122,11 @@ export default async function TeamReferralsPage({ params }: PageProps) {
     return (
       <li
         key={referral.id}
+        className="bg-white border border-slate-200"
         style={{
           padding: "14px 16px",
-          border: "1px solid #e2e8f0",
           borderRadius: 8,
           marginBottom: 10,
-          background: "#fff",
         }}
       >
         <div
@@ -139,20 +138,19 @@ export default async function TeamReferralsPage({ params }: PageProps) {
           }}
         >
           <div>
-            <p style={{ margin: 0, fontWeight: 600, color: "#0f172a" }}>
+            <p className="text-slate-900" style={{ margin: 0, fontWeight: 600 }}>
               {brief?.title ?? `Brief #${referral.brief_id}`}
             </p>
-            <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#475569" }}>
+            <p className="text-slate-600" style={{ margin: "4px 0 0 0", fontSize: 13 }}>
               {direction === "incoming" ? "From" : "To"}:{" "}
               <strong>{otherTeam?.name ?? `Team #${otherTeamId}`}</strong>
             </p>
             {referral.note ? (
               <p
+                className="text-slate-900 bg-slate-100"
                 style={{
                   margin: "8px 0 0 0",
                   fontSize: 13,
-                  color: "#0f172a",
-                  background: "#f1f5f9",
                   padding: "8px 10px",
                   borderRadius: 6,
                   whiteSpace: "pre-wrap",
@@ -161,7 +159,7 @@ export default async function TeamReferralsPage({ params }: PageProps) {
                 {referral.note}
               </p>
             ) : null}
-            <p style={{ margin: "8px 0 0 0", fontSize: 12, color: "#94a3b8" }}>
+            <p className="text-slate-400" style={{ margin: "8px 0 0 0", fontSize: 12 }}>
               {created}
             </p>
           </div>
@@ -181,24 +179,24 @@ export default async function TeamReferralsPage({ params }: PageProps) {
   return (
     <main style={{ maxWidth: 720, margin: "0 auto", padding: "32px 16px" }}>
       <p style={{ fontSize: 13 }}>
-        <Link href={`/teams/${slug}`} style={{ color: "#0ea5e9" }}>
+        <Link href={`/teams/${slug}`} className="text-sky-500">
           ← {team.name as string}
         </Link>
       </p>
-      <h1 style={{ fontSize: 22, marginTop: 8, color: "#0f172a" }}>
+      <h1 className="text-slate-900" style={{ fontSize: 22, marginTop: 8 }}>
         Squad referrals
       </h1>
-      <p style={{ color: "#475569", fontSize: 14 }}>
+      <p className="text-slate-600" style={{ fontSize: 14 }}>
         Cross-team referrals. Accept an incoming referral to claim the brief
         for your squad; decline if it&apos;s not a fit.
       </p>
 
       <section style={{ marginTop: 28 }}>
-        <h2 style={{ fontSize: 16, color: "#0f172a" }}>
+        <h2 className="text-slate-900" style={{ fontSize: 16 }}>
           Incoming ({incoming.length})
         </h2>
         {incoming.length === 0 ? (
-          <p style={{ color: "#94a3b8", fontSize: 14 }}>
+          <p className="text-slate-400" style={{ fontSize: 14 }}>
             No incoming referrals yet.
           </p>
         ) : (
@@ -209,11 +207,11 @@ export default async function TeamReferralsPage({ params }: PageProps) {
       </section>
 
       <section style={{ marginTop: 32 }}>
-        <h2 style={{ fontSize: 16, color: "#0f172a" }}>
+        <h2 className="text-slate-900" style={{ fontSize: 16 }}>
           Outgoing ({outgoing.length})
         </h2>
         {outgoing.length === 0 ? (
-          <p style={{ color: "#94a3b8", fontSize: 14 }}>
+          <p className="text-slate-400" style={{ fontSize: 14 }}>
             You haven&apos;t referred any briefs out yet.
           </p>
         ) : (

@@ -376,7 +376,7 @@ export default function DashboardTab({
           <div className="py-6 text-center">
             <Icon name="star" size={28} className="text-slate-300 mx-auto mb-2" />
             <p className="text-sm text-slate-500">No reviews yet. Ask happy clients to leave a review on your profile.</p>
-            <Link href={`/advisor/${advisor?.slug}`} target="_blank" className="inline-block mt-2 text-xs font-semibold text-violet-600 hover:text-violet-700">Share review link &rarr;</Link>
+            <Link href={`/advisor/${advisor?.slug}`} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-xs font-semibold text-violet-600 hover:text-violet-700">Share review link &rarr;</Link>
           </div>
         ) : (
           <div className="space-y-3">
@@ -420,7 +420,7 @@ export default function DashboardTab({
           <div className="text-sm font-bold text-slate-900">Edit Profile</div>
           <div className="text-xs text-slate-500">Update bio, fees, specialties</div>
         </button>
-        <Link href={`/advisor/${advisor?.slug}`} target="_blank" className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 hover:shadow-sm transition-all">
+        <Link href={`/advisor/${advisor?.slug}`} target="_blank" rel="noopener noreferrer" className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 hover:shadow-sm transition-all">
           <Icon name="external-link" size={20} className="text-blue-600 mb-2" />
           <div className="text-sm font-bold text-slate-900">View Public Profile</div>
           <div className="text-xs text-slate-500">See how investors see you</div>

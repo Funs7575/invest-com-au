@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import {
   getParam, useUrlSync, CalcSection, InputField, ResultBox, ShareResultsButton,
 } from "./CalcShared";
+import { marginalRate } from "@/lib/tax/brackets";
 
 interface Props {
   searchParams: URLSearchParams;
@@ -15,14 +16,6 @@ const SUPER_TAX = 0.15;
 
 function fmt(n: number) {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
-}
-
-function marginalRate(income: number): number {
-  if (income <= 18200) return 0;
-  if (income <= 45000) return 0.19;
-  if (income <= 120000) return 0.325;
-  if (income <= 180000) return 0.37;
-  return 0.45;
 }
 
 export default function SuperContributionsQuickView({ searchParams }: Props) {
@@ -88,7 +81,7 @@ export default function SuperContributionsQuickView({ searchParams }: Props) {
             </div>
           )}
           <p className="text-xs text-slate-400 mt-3">
-            i — Concessional cap $30,000 (2025). Tax saved = additional × (marginal rate − 15% super tax). Marginal rates: 0% / 19% / 32.5% / 37% / 45%.
+            i — Concessional cap $30,000 (2025). Tax saved = additional × (marginal rate − 15% super tax). Marginal rates: 0% / 16% / 30% / 37% / 45% (ATO resident rates 2024-25, Stage 3).
           </p>
         </>
       ) : (

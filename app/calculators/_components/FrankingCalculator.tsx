@@ -15,9 +15,10 @@ interface Props {
 export default function FrankingCalculator({ searchParams }: Props) {
   const [dividendYield, setDividendYield] = useState(() => getParam(searchParams, "fr_dy") || "4.5");
   const [frankingPct, setFrankingPct] = useState(() => getParam(searchParams, "fr_fp") || "100");
+  // ATO resident rates 2024-25 (Stage 3) — default to 30% (middle bracket)
   const [marginalRate, setMarginalRate] = useState(() => {
     const v = parseFloat(getParam(searchParams, "fr_mr") || "");
-    return isNaN(v) ? 32.5 : v;
+    return isNaN(v) ? 30 : v;
   });
 
   useUrlSync({ calc: "franking", fr_dy: dividendYield, fr_fp: frankingPct, fr_mr: String(marginalRate) });
@@ -25,7 +26,7 @@ export default function FrankingCalculator({ searchParams }: Props) {
   // Track calculator usage (debounced)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (dividendYield !== "4.5" || frankingPct !== "100" || marginalRate !== 32.5) {
+      if (dividendYield !== "4.5" || frankingPct !== "100" || marginalRate !== 30) {
         trackEvent('calculator_use', { calc_type: 'franking', dividend_yield: dividendYield, franking_pct: frankingPct, marginal_rate: marginalRate }, '/calculators');
       }
     }, 2000);

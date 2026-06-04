@@ -48,7 +48,7 @@ async function getCurrentAdvisor() {
 export default async function AdvisorUpgradePage() {
   const advisor = await getCurrentAdvisor();
   if (!advisor) {
-    redirect("/advisor-portal/login?redirect=/advisor-portal/upgrade");
+    redirect("/account/login?redirect=/advisor-portal/upgrade");
   }
 
   const currentTier = ((advisor.advisor_tier as AdvisorTier) || "free") as AdvisorTier;

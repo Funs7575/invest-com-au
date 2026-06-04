@@ -199,6 +199,19 @@ function MegaMenuDropdown({
 
   useEffect(() => () => clearTimeout(timeout.current), []);
 
+  // Close on Escape and return focus to the trigger button
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
+
   return (
     <div
       ref={ref}
@@ -857,76 +870,6 @@ export function Navigation() {
                 })}
               </div>
             ))}
-
-            {/* Account section — previously desktop-only, now mirrored for
-                mobile so logged-in users can reach /account, /shortlist etc
-                and logged-out users can reach sign-in/sign-up from any page. */}
-            <div className="border-t border-slate-100 dark:border-slate-700 pt-3 mt-1">
-              <p className="px-3 pb-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                Account
-              </p>
-              {user ? (
-                <>
-                  <Link
-                    href="/account"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
-                  >
-                    My Account
-                    <svg className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/shortlist"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
-                  >
-                    My Shortlist
-                    <svg className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/account/saved"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
-                  >
-                    Saved Comparisons
-                    <svg className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                  <Link
-                    href="/fee-alerts"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
-                  >
-                    Fee Alerts
-                    <svg className="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </>
-              ) : (
-                <div className="flex gap-2 px-3 py-2">
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex-1 flex items-center justify-center py-3 min-h-12 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/auth/signup"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex-1 flex items-center justify-center py-3 min-h-12 rounded-xl text-sm font-semibold text-white bg-slate-900 dark:bg-slate-100 dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors"
-                  >
-                    Sign Up
-                  </Link>
-                </div>
-              )}
-            </div>
 
             {/* Single full-width CTA */}
             <div className="border-t border-slate-100 dark:border-slate-700 pt-4 mt-2 pb-2">

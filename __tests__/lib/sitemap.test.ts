@@ -30,6 +30,7 @@ vi.mock("@/lib/supabase/server", () => ({
         "gte",
         "order",
         "limit",
+        "range",
       ];
       for (const m of methods) {
         builder[m] = vi.fn(() => builder);
@@ -106,7 +107,7 @@ describe("sitemap shard id coercion (Netlify passes string ids)", () => {
   });
 
   it("each shard's filename id ('N.xml') resolves to that shard", async () => {
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 9; i++) {
       const byFilename = await sitemap({ id: `${i}.xml` as unknown as number });
       const byNumber = await sitemap({ id: i });
       expect(byFilename.length).toBe(byNumber.length);
@@ -123,10 +124,10 @@ async function getShardUrls(id: number): Promise<string[]> {
 // ── generateSitemaps structure ────────────────────────────────────────────────
 
 describe("generateSitemaps()", () => {
-  it("returns 8 shards (ids 0–7)", () => {
+  it("returns 9 shards (ids 0–8)", () => {
     const shards = generateSitemaps();
-    expect(shards).toHaveLength(8);
-    expect(shards.map((s) => s.id)).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
+    expect(shards).toHaveLength(9);
+    expect(shards.map((s) => s.id)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   });
 });
 
@@ -304,6 +305,13 @@ describe("shard 5 — glossary, how-to, marketplace", () => {
       1 + TEST_INTENTS.length + TEST_INTENTS.length * AUSTRALIAN_STATES.length;
     expect(marketplaceCount).toBe(expected);
   });
+
+  it("includes /topic/[slug] category pages but not a bare /topic hub", async () => {
+    const urls = new Set(await getShardUrls(5));
+    expect(urls.has("https://invest.com.au/topic/tax")).toBe(true);
+    // No app/topic/page.tsx exists, so a bare /topic URL would point crawlers at a 404.
+    expect(urls.has("https://invest.com.au/topic")).toBe(false);
+  });
 });
 
 describe("shard 6 — property, suburb, investing-cities", () => {
@@ -393,7 +401,7 @@ describe("union of all shards", () => {
     expect(urls.length).toBe(urlSet.size);
   });
 
-  it("covers all expected category shards (0-7 all return entries or empty for DB-driven)", async () => {
+  it("covers all expected category shards (0-8 all return entries or empty for DB-driven)", async () => {
     const shardIds = generateSitemaps().map((s) => s.id);
     const results = await Promise.all(
       shardIds.map(async (id) => ({ id, count: (await sitemap({ id })).length })),

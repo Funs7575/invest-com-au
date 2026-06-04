@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { trackEvent } from "@/lib/tracking";
 
 interface AdvisorReviewFormProps {
@@ -68,6 +68,9 @@ function StarRatingInput({
 }
 
 export default function AdvisorReviewForm({ professionalId, advisorName, onSuccess, onCancel }: AdvisorReviewFormProps) {
+  const reviewerNameId = useId();
+  const reviewTitleId = useId();
+  const reviewBodyId = useId();
   const [state, setState] = useState<"idle" | "submitting" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [attempted, setAttempted] = useState(false);
@@ -140,7 +143,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
   };
 
   return (
-    <div className="border-t border-slate-100 pt-4">
+    <form className="border-t border-slate-100 pt-4" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
       <h3 className="text-xs font-bold text-slate-700 mb-3">
         Share Your Experience with {firstName}
       </h3>
@@ -192,10 +195,11 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
 
         {/* Reviewer name */}
         <div>
-          <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
+          <label htmlFor={reviewerNameId} className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
             Your name <span className="text-slate-400 font-normal">(optional, defaults to &quot;Anonymous&quot;)</span>
           </label>
           <input
+            id={reviewerNameId}
             type="text"
             value={reviewerName}
             onChange={(e) => setReviewerName(e.target.value)}
@@ -206,10 +210,11 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
 
         {/* Title */}
         <div>
-          <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
+          <label htmlFor={reviewTitleId} className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
             Title <span className="text-slate-400 font-normal">(optional)</span>
           </label>
           <input
+            id={reviewTitleId}
             type="text"
             value={reviewTitle}
             onChange={(e) => setReviewTitle(e.target.value)}
@@ -220,10 +225,11 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
 
         {/* Review body */}
         <div>
-          <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
+          <label htmlFor={reviewBodyId} className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
             Your review *
           </label>
           <textarea
+            id={reviewBodyId}
             value={reviewBody}
             onChange={(e) => setReviewBody(e.target.value)}
             rows={4}
@@ -254,8 +260,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
         {/* Actions */}
         <div className="flex gap-2">
           <button
-            type="button"
-            onClick={handleSubmit}
+            type="submit"
             disabled={!canSubmit}
             className="flex-1 md:flex-none px-4 py-3 min-h-11 bg-slate-900 text-white text-sm md:text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
@@ -274,6 +279,6 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
           Reviews are moderated before publication. Your name will be displayed publicly; if left blank it will show as &quot;Anonymous&quot;.
         </p>
       </div>
-    </div>
+    </form>
   );
 }

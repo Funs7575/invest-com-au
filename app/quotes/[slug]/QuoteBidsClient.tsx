@@ -230,10 +230,11 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
                 {/* Advisor avatar */}
                 <div className="shrink-0">
                   {bid.advisor?.photo_url ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
+                    <Image
                       src={bid.advisor.photo_url}
                       alt={bid.advisor.name}
+                      width={56}
+                      height={56}
                       className="w-14 h-14 rounded-full object-cover border border-slate-200"
                     />
                   ) : (

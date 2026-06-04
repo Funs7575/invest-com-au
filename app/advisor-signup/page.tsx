@@ -744,9 +744,9 @@ export default function AdvisorSignupPage() {
             />
             <span className="text-[0.65rem] md:text-xs text-slate-600 leading-relaxed">
               I have read and agree to the{" "}
-              <Link href="/advisor-terms" target="_blank" className="text-violet-600 underline hover:text-violet-800">Advisor Services Agreement</Link>,{" "}
-              <Link href="/terms" target="_blank" className="text-violet-600 underline hover:text-violet-800">Terms of Use</Link>, and{" "}
-              <Link href="/privacy" target="_blank" className="text-violet-600 underline hover:text-violet-800">Privacy Policy</Link>.
+              <Link href="/advisor-terms" target="_blank" rel="noopener noreferrer" className="text-violet-600 underline hover:text-violet-800">Advisor Services Agreement</Link>,{" "}
+              <Link href="/terms" target="_blank" rel="noopener noreferrer" className="text-violet-600 underline hover:text-violet-800">Terms of Use</Link>, and{" "}
+              <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="text-violet-600 underline hover:text-violet-800">Privacy Policy</Link>.
               I confirm my registration details are accurate and I hold the required licences to provide financial services in Australia.
             </span>
           </label>

@@ -16,9 +16,10 @@ interface Props {
 
 export default function CgtCalculator({ searchParams }: Props) {
   const [gainAmount, setGainAmount] = useState(() => getParam(searchParams, "cg_amt") || "");
+  // ATO resident rates 2024-25 (Stage 3) — default to 30% (middle bracket)
   const [marginalRate, setMarginalRate] = useState(() => {
     const v = parseFloat(getParam(searchParams, "cg_mr") || "");
-    return isNaN(v) ? 32.5 : v;
+    return isNaN(v) ? 30 : v;
   });
   const [held12Months, setHeld12Months] = useState(() => getParam(searchParams, "cg_12m") !== "0");
 
@@ -27,7 +28,7 @@ export default function CgtCalculator({ searchParams }: Props) {
   // Track calculator usage (debounced)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (gainAmount || marginalRate !== 32.5 || !held12Months) {
+      if (gainAmount || marginalRate !== 30 || !held12Months) {
         trackEvent('calculator_use', { calc_type: 'cgt', gain_amount: gainAmount, marginal_rate: marginalRate, held_12_months: held12Months }, '/calculators');
       }
     }, 2000);

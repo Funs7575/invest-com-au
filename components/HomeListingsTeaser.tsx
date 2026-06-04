@@ -41,10 +41,9 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
 
   return (
     <section
+      className="bg-slate-50 border-t border-slate-200"
       style={{
         padding: "48px 36px 52px",
-        background: "var(--color-sand-50)",
-        borderTop: "1px solid #e5e7eb",
       }}
     >
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>

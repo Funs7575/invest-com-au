@@ -5,9 +5,10 @@ import HubLeadForm from "@/components/leads/HubLeadForm";
 import { formatAUD } from "@/lib/currency";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
 
+// ATO resident rates 2024-25 (Stage 3)
 const TAX_RATES = [
   { label: "0% — under threshold", rate: 0 },
-  { label: "19%", rate: 0.19 },
+  { label: "16%", rate: 0.16 },
   { label: "30%", rate: 0.30 },
   { label: "37%", rate: 0.37 },
   { label: "45%", rate: 0.45 },

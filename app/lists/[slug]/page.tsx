@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 const ITEM_TYPE_CONFIG: Record<string, { label: string; emoji: string; href: (ref: string) => string }> = {
   broker: { label: "Broker / Platform", emoji: "📈", href: (r) => `/brokers/${r}` },
   etf: { label: "ETF", emoji: "📊", href: (r) => `/etfs/${r}` },
-  article: { label: "Article", emoji: "📰", href: (r) => `/articles/${r}` },
+  article: { label: "Article", emoji: "📰", href: (r) => `/article/${r}` },
   advisor: { label: "Advisor", emoji: "🧑‍💼", href: (r) => `/advisors/${r}` },
   property: { label: "Property", emoji: "🏠", href: (r) => `/property/${r}` },
 };

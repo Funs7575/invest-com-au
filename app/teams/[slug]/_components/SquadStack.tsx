@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import Icon from "@/components/Icon";
 
 /**
@@ -85,10 +86,11 @@ export default function SquadStack({ members }: Props) {
             >
               {/* Headshot or initials */}
               {m.pro_photo_url ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
+                <Image
                   src={m.pro_photo_url}
                   alt={m.pro_name}
+                  width={56}
+                  height={56}
                   className="w-14 h-14 rounded-full object-cover shrink-0 bg-slate-100"
                 />
               ) : (

@@ -31,6 +31,7 @@ export const revalidate = 86400;
 // 5  glossary + how-to + invest-categories + marketplace
 // 6  property + suburb guides + investing-cities
 // 7  misc (authors, reviewers, quotes, newsletter, grants, investingFor, events, afsl, feed)
+// 8  community thread pages (/community/[category]/[threadId])
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function generateSitemaps() {
@@ -43,6 +44,7 @@ export function generateSitemaps() {
     { id: 5 },
     { id: 6 },
     { id: 7 },
+    { id: 8 },
   ];
 }
 
@@ -929,6 +931,22 @@ async function buildShard5(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // ── /topic/[slug] content-category pages ──
+  // Slugs sourced from TOPIC_LABELS in app/topic/[slug]/page.tsx — no DB query needed.
+  // No bare `/topic` hub URL is emitted: the app defines only app/topic/[slug]/page.tsx
+  // (there is no app/topic/page.tsx), so a `/topic` entry would point crawlers at a 404.
+  const TOPIC_SLUGS = [
+    "tax", "beginners", "smsf", "strategy", "news", "reviews",
+    "crypto", "etfs", "robo-advisors", "research-tools", "super",
+    "property", "cfd-forex",
+  ] as const;
+  const topicPages = TOPIC_SLUGS.map((slug) => ({
+    url: `${base}/topic/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
   // ── /marketplace hub + intent + intent×state pages ──
   const enabledIntents = await getEnabledIntents();
   const marketplaceHubPage = {
@@ -955,6 +973,7 @@ async function buildShard5(): Promise<MetadataRoute.Sitemap> {
   return [
     ...glossaryPages,
     ...howToPages,
+    ...topicPages,
     marketplaceHubPage,
     ...marketplaceIntentPages,
     ...marketplaceIntentStatePages,
@@ -1206,6 +1225,40 @@ async function buildShard7(): Promise<MetadataRoute.Sitemap> {
   ];
 }
 
+async function buildShard8(): Promise<MetadataRoute.Sitemap> {
+  const base = baseUrl();
+  const supabase = await getSupabase();
+  if (!supabase) return [];
+
+  // Supabase REST caps a single select at 1,000 rows, but the community can hold
+  // more public threads than that, so page through every non-removed thread
+  // (ordered by id for stable ranges) instead of silently dropping the rest.
+  // (If the community ever exceeds ~50k threads this shard must be split further
+  // to stay within the sitemaps-protocol 50,000-URL-per-file limit.)
+  const PAGE_SIZE = 1000;
+  const entries: MetadataRoute.Sitemap = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data: threads } = await supabase
+      .from("forum_threads")
+      .select("id, category_slug, updated_at")
+      .eq("is_removed", false)
+      .order("id", { ascending: true })
+      .range(from, from + PAGE_SIZE - 1);
+    const page = (threads || []) as { id: number; category_slug: string; updated_at: string | null }[];
+    for (const t of page) {
+      entries.push({
+        url: `${base}/community/${t.category_slug}/${t.id}`,
+        lastModified: t.updated_at ? new Date(t.updated_at) : new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.5,
+      });
+    }
+    if (page.length < PAGE_SIZE) break;
+  }
+
+  return entries;
+}
+
 // ─── Main export ──────────────────────────────────────────────────────────────
 // Next.js calls `sitemap({ id })` for each ID returned by `generateSitemaps`.
 // It automatically builds a sitemap index at `/sitemap.xml` that references
@@ -1230,6 +1283,7 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     case 5: return buildShard5();
     case 6: return buildShard6();
     case 7: return buildShard7();
+    case 8: return buildShard8();
     default:
       // Never fail silently again: an unrecognised id means empty sitemaps.
       log.warn("sitemap: unrecognised shard id — serving empty urlset", { id, shard });
