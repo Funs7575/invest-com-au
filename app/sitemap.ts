@@ -931,19 +931,15 @@ async function buildShard5(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // ── /topic hub + /topic/[slug] content-category pages ──
+  // ── /topic/[slug] content-category pages ──
   // Slugs sourced from TOPIC_LABELS in app/topic/[slug]/page.tsx — no DB query needed.
+  // No bare `/topic` hub URL is emitted: the app defines only app/topic/[slug]/page.tsx
+  // (there is no app/topic/page.tsx), so a `/topic` entry would point crawlers at a 404.
   const TOPIC_SLUGS = [
     "tax", "beginners", "smsf", "strategy", "news", "reviews",
     "crypto", "etfs", "robo-advisors", "research-tools", "super",
     "property", "cfd-forex",
   ] as const;
-  const topicHubPage = {
-    url: `${base}/topic`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  };
   const topicPages = TOPIC_SLUGS.map((slug) => ({
     url: `${base}/topic/${slug}`,
     lastModified: new Date(),
@@ -977,7 +973,6 @@ async function buildShard5(): Promise<MetadataRoute.Sitemap> {
   return [
     ...glossaryPages,
     ...howToPages,
-    topicHubPage,
     ...topicPages,
     marketplaceHubPage,
     ...marketplaceIntentPages,
@@ -1233,20 +1228,35 @@ async function buildShard7(): Promise<MetadataRoute.Sitemap> {
 async function buildShard8(): Promise<MetadataRoute.Sitemap> {
   const base = baseUrl();
   const supabase = await getSupabase();
+  if (!supabase) return [];
 
-  const { data: threads } = supabase
-    ? await supabase
-        .from("forum_threads")
-        .select("id, category_slug, updated_at")
-        .eq("is_removed", false)
-    : { data: null };
+  // Supabase REST caps a single select at 1,000 rows, but the community can hold
+  // more public threads than that, so page through every non-removed thread
+  // (ordered by id for stable ranges) instead of silently dropping the rest.
+  // (If the community ever exceeds ~50k threads this shard must be split further
+  // to stay within the sitemaps-protocol 50,000-URL-per-file limit.)
+  const PAGE_SIZE = 1000;
+  const entries: MetadataRoute.Sitemap = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data: threads } = await supabase
+      .from("forum_threads")
+      .select("id, category_slug, updated_at")
+      .eq("is_removed", false)
+      .order("id", { ascending: true })
+      .range(from, from + PAGE_SIZE - 1);
+    const page = (threads || []) as { id: number; category_slug: string; updated_at: string | null }[];
+    for (const t of page) {
+      entries.push({
+        url: `${base}/community/${t.category_slug}/${t.id}`,
+        lastModified: t.updated_at ? new Date(t.updated_at) : new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.5,
+      });
+    }
+    if (page.length < PAGE_SIZE) break;
+  }
 
-  return (threads || []).map((t: { id: number; category_slug: string; updated_at: string | null }) => ({
-    url: `${base}/community/${t.category_slug}/${t.id}`,
-    lastModified: t.updated_at ? new Date(t.updated_at) : new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.5,
-  }));
+  return entries;
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────
