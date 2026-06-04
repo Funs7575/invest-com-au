@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdvisorProfileClient from "@/app/advisor/[slug]/AdvisorProfileClient";
@@ -56,7 +56,7 @@ async function submitValidEnquiry() {
 }
 
 describe("AdvisorProfileClient enquiry submit", () => {
-  let fetchSpy: ReturnType<typeof vi.spyOn<typeof globalThis, "fetch">>;
+  let fetchSpy: MockInstance<typeof fetch>;
 
   beforeEach(() => {
     fetchSpy = vi.spyOn(globalThis, "fetch");
