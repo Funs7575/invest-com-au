@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
 import { getSiteUrl } from "@/lib/url";
-import { DEFAULT_TOPUP_CENTS } from "@/lib/advisor-billing";
+import { DEFAULT_TOPUP_CENTS, FREE_LEAD_LIMIT } from "@/lib/advisor-billing";
 import { isRateLimited } from "@/lib/rate-limit";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { getPack } from "@/lib/advisor-credit-packs";
@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
     lifetime_credit_cents: pro?.lifetime_credit_cents || 0,
     lifetime_spend_cents: pro?.lifetime_lead_spend_cents || 0,
     free_leads_used: pro?.free_leads_used || 0,
-    free_leads_remaining: Math.max(0, 2 - (pro?.free_leads_used || 0)),
+    free_leads_remaining: Math.max(0, FREE_LEAD_LIMIT - (pro?.free_leads_used || 0)),
     lead_price_cents: pro?.lead_price_cents || 4900,
     topups: topups || [],
   });
