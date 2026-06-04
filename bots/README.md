@@ -46,6 +46,45 @@ Then every run:
 To turn on the AI bots in CI, add a secret `BOTS_ANTHROPIC_API_KEY` (its own
 billing line) and set the `BOTS_AI_TOKEN_BUDGET` variable above 0.
 
+## Authenticated / sandbox testing
+
+By default the fleet roams **anonymous** routes. To exercise LOGGED-IN journeys
+(account dashboard, holdings, bookmarks, save-a-plan, advisor enquiry) it uses a
+dedicated test account and a captured browser session — with **zero financial
+side effects** (payments, affiliate `/go/`, leads and account writes are mocked
+by `safety/money-paths.ts`, on every target class).
+
+End-to-end flow against a **disposable sandbox/staging** target (never prod):
+
+```bash
+# 0. Point at a seeded sandbox / staging deploy (or Supabase local).
+#    NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY must target it.
+export BOTS_BASE_URL=https://my-staging.example.com
+
+# 1. Seed the dedicated bot account(s) — idempotent; safe to re-run.
+npm run bots:seed-users        # creates test-bot-buyer@invest-test.local + profile
+
+# 2. Capture its authenticated session (storageState) via the auto-login flow.
+#    Writes e2e/visual/.auth/bot-buyer.json (gitignored).
+E2E_BASE_URL=$BOTS_BASE_URL npm run screenshots:auto-login
+
+# 3. Run the fleet in sandbox mode — authed personas now activate.
+npm run bots:sandbox
+```
+
+How it stays safe to run *un*seeded: each authenticated persona
+(`AUTHED_PERSONAS` in `personas.ts`) is **skipped** unless its storageState file
+exists on disk, so a normal/CI run without seeded auth never fails on them.
+
+Destructive account operations (delete account, document removal) stay gated
+behind `BOTS_ALLOW_DESTRUCTIVE=1` *and* a `sandbox` target — leave it off unless
+you're deliberately testing teardown on throwaway data.
+
+The credentials reuse the existing test convention: the non-routable
+`*.invest-test.local` domain and the shared `TEST_USER_PASSWORD`
+(single source of truth in `e2e/visual/state-registry.ts`). No new secret is
+introduced, and the seed script never prints the password.
+
 ## Why this is safe
 
 The whole design hinges on one rule: **a bot must never trip a real-world side
@@ -141,7 +180,7 @@ bots/
 │   ├── store.ts         # collect / dedupe / aggregate                     [pure]
 │   └── report.ts        # HTML+JSON report + shard aggregation            [pure render]
 ├── ai/cost.ts           # token→USD ledger + budget guard                 [pure]
-├── personas.ts          # persona registry
+├── personas.ts          # persona registry (anon / AI / authenticated)
 ├── session.ts           # BotSession: safety + checks + findings per user
 ├── fleet.spec.ts        # entrypoint (one session per persona)
 ├── playwright.config.ts # dedicated runner config

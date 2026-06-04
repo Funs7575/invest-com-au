@@ -1,7 +1,8 @@
+import fs from "node:fs";
 import { test } from "@playwright/test";
 import { loadConfig } from "./config";
 import { BotSession } from "./session";
-import { PHASE0_PERSONAS, AI_PERSONAS } from "./personas";
+import { PHASE0_PERSONAS, AI_PERSONAS, AUTHED_PERSONAS } from "./personas";
 import { resolveAiKey } from "./ai/anthropic-client";
 
 /**
@@ -40,6 +41,41 @@ for (const persona of PHASE0_PERSONAS) {
 // AI-driven personas — only when AI is enabled (a budget is set AND a key is
 // present). Each pursues a goal like a real user and judges the experience.
 const aiEnabled = config.aiTokenBudget > 0 && resolveAiKey() !== null;
+
+// Authenticated personas — drive logged-in surfaces using a seeded storageState.
+// Each test SKIPS unless its storageState file exists on disk, so a normal/CI
+// run without seeded auth never fails on them. They activate after
+// `npm run bots:seed-users` + the e2e/visual auto-login capture. Money/affiliate/
+// external paths stay auto-mocked by safety/money-paths.ts.
+for (const persona of AUTHED_PERSONAS) {
+  test(`authed bot: ${persona.name}`, async ({ browser }) => {
+    const storageStateFile = persona.storageStateFile;
+    test.skip(
+      !storageStateFile || !fs.existsSync(storageStateFile),
+      `no seeded storageState for "${persona.name}" — run bots:seed-users + auto-login first`,
+    );
+
+    const session = await BotSession.create(browser, config, {
+      persona: persona.name,
+      storageStateFile,
+    });
+    try {
+      // Deterministic logged-in route sweep.
+      for (const route of persona.routes ?? []) {
+        await session.visit(route);
+        await session.audit({ links: true });
+      }
+      // If AI is enabled, also let the persona pursue its logged-in goal.
+      if (aiEnabled && persona.goal) {
+        await session.runAiGoal(persona.goal, persona.startPath ?? "/account");
+        await session.audit();
+      }
+    } finally {
+      await session.persist();
+      await session.close();
+    }
+  });
+}
 
 if (aiEnabled) {
   for (const persona of AI_PERSONAS) {
