@@ -11,10 +11,16 @@
  * `quiz_weights` or `brokers` can't be queried, we return null and the
  * result screen renders without the hero card (action plan + checklist
  * still display).
+ *
+ * Both reads target public anon-readable tables — `brokers` (anon SELECT on
+ * `status = 'active'`) and `quiz_weights` (anon SELECT `USING (TRUE)`) — so we
+ * use the RLS-respecting anon server client, not the service-role admin client.
+ * The only caller is the public, unauthenticated `/api/get-matched/resolve`
+ * route, where least-privilege matters: keeping RLS in the loop means a future
+ * SELECT change can't silently leak protected rows.
  */
 
-// eslint-disable-next-line no-restricted-imports -- public-read of brokers + quiz_weights; service-role legitimate because we want to bypass anon-row restrictions on weight rows.
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import {
   scoreQuizResults,
@@ -115,12 +121,12 @@ export async function computeTopMatch(
   vertical: Vertical | null,
 ): Promise<TopMatch | null> {
   try {
-    const admin = createAdminClient();
+    const supabase = await createClient();
 
     // Load active brokers + their scoring weights in parallel.
     const [brokersRes, weightsRes] = await Promise.all([
-      admin.from("brokers").select("*").eq("status", "active"),
-      admin.from("quiz_weights").select("*"),
+      supabase.from("brokers").select("*").eq("status", "active"),
+      supabase.from("quiz_weights").select("*"),
     ]);
 
     if (brokersRes.error) throw brokersRes.error;
@@ -191,11 +197,11 @@ export async function computeTopMatches(
   limit = 3,
 ): Promise<TopMatch[]> {
   try {
-    const admin = createAdminClient();
+    const supabase = await createClient();
 
     const [brokersRes, weightsRes] = await Promise.all([
-      admin.from("brokers").select("*").eq("status", "active"),
-      admin.from("quiz_weights").select("*"),
+      supabase.from("brokers").select("*").eq("status", "active"),
+      supabase.from("quiz_weights").select("*"),
     ]);
     if (brokersRes.error) throw brokersRes.error;
     if (weightsRes.error) throw weightsRes.error;
