@@ -143,6 +143,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                   alt={`${typedFirm.name} banner`}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 768px"
                   priority
                 />
               </div>
