@@ -6,7 +6,17 @@ import {
   FALLBACK_INTENTS,
   FALLBACK_QUESTIONS,
 } from "@/lib/getmatched/fallbacks";
-import type { RouteType } from "@/lib/getmatched/types";
+import type { ResultTemplate, RouteType } from "@/lib/getmatched/types";
+
+/** Every href referenced by a result template (checklist + CTAs + cross-sells). */
+function templateHrefs(template: ResultTemplate): string[] {
+  return [
+    ...template.checklist.map((item) => item.href),
+    template.primary_cta.href,
+    ...template.secondary_ctas.map((cta) => cta.href),
+    ...template.cross_sells.map((sell) => sell.href),
+  ].filter((href): href is string => typeof href === "string");
+}
 
 const ROUTES: RouteType[] = [
   "compare",
@@ -40,6 +50,26 @@ describe("FALLBACK_TEMPLATES integrity", () => {
   it("every template carries a defined route", () => {
     for (const template of Object.values(FALLBACK_TEMPLATES)) {
       expect(template.route).toBeDefined();
+    }
+  });
+
+  it("never links to the non-existent /calculators/fee-impact route", () => {
+    for (const template of Object.values(FALLBACK_TEMPLATES)) {
+      for (const href of templateHrefs(template)) {
+        expect(href).not.toContain("/calculators/fee-impact");
+      }
+    }
+  });
+
+  it("points compare's fee-calculator links at the real /fee-impact route", () => {
+    const feeLinks = [
+      ...FALLBACK_TEMPLATES.compare.checklist,
+      ...FALLBACK_TEMPLATES.compare.secondary_ctas,
+    ].filter((item) => /fee calculator/i.test(item.label));
+
+    expect(feeLinks.length).toBeGreaterThan(0);
+    for (const link of feeLinks) {
+      expect(link.href).toBe("/fee-impact");
     }
   });
 });

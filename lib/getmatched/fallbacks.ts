@@ -424,13 +424,13 @@ export const FALLBACK_TEMPLATES: Record<RouteType, ResultTemplate> = {
     checklist: [
       { label: "See your top match", href: "/compare" },
       { label: "Compare the full shortlist", href: "/compare" },
-      { label: "Run the fee calculator", href: "/calculators/fee-impact" },
+      { label: "Run the fee calculator", href: "/fee-impact" },
       { label: "Check CHESS sponsorship", href: "/chess-lookup" },
       { label: "Save your shortlist" },
     ],
     primary_cta: { label: "See full comparison", href: "/compare" },
     secondary_ctas: [
-      { label: "Fee calculator", href: "/calculators/fee-impact" },
+      { label: "Fee calculator", href: "/fee-impact" },
       { label: "Get expert help if unsure", href: "/get-matched?goal=help" },
     ],
     cross_sells: [
