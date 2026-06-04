@@ -16,7 +16,7 @@ export const metadata: Metadata = {
  *   1. Workspace-kind isolation (enforcePortalKind) — a multi-kind user must
  *      deliberately switch into the business workspace; this prevents reaching
  *      the business portal while active in another kind (audit §5 #14).
- *   2. Authenticated user (else → /account/login)
+ *   2. Authenticated user (else → /auth/login)
  *   3. Active or pending business_accounts row (else → /account/upgrade/business)
  */
 export default async function BusinessPortalLayout({
@@ -32,7 +32,7 @@ export default async function BusinessPortalLayout({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/business-portal");
+    redirect("/auth/login?next=/business-portal");
   }
 
   const businessId = await requireBusinessSession();

@@ -25,7 +25,7 @@ export default async function FirmBillingPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/firm-portal/billing");
+    redirect("/auth/login?next=/firm-portal/billing");
   }
 
   const admin = createAdminClient();

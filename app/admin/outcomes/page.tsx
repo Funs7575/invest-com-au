@@ -25,7 +25,7 @@ interface ScoreRow {
 
 export default async function AdminOutcomesPage() {
   const guard = await requireAdmin();
-  if (!guard.ok) redirect("/account/login");
+  if (!guard.ok) redirect("/auth/login");
 
   const admin = createAdminClient();
   const { data: rows } = await admin

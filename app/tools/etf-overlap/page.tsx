@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "ETF Overlap Detector | Invest.com.au",
   description: "See how much your ETFs overlap. Holding VGS and NDQ? You may have more US tech concentration than you realise.",
   openGraph: { title: "ETF Overlap Detector", description: "Check for unintentional concentration across your ETFs." },
+  alternates: { canonical: `${SITE_URL}/tools/etf-overlap` },
 };
 
 const breadcrumbLd = breadcrumbJsonLd([
@@ -47,7 +48,7 @@ export default function EtfOverlapPage() {
 
       <EtfOverlapDetector />
 
-      <p className="text-[11px] text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+      <p className="text-[11px] text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
       </div>
     </>
   );

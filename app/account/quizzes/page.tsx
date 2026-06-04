@@ -26,7 +26,7 @@ export default async function AccountQuizHistoryPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/account/login?redirect=/account/quizzes");
+    redirect("/auth/login?next=/account/quizzes");
   }
 
   const rows = await listForUser(user.id);

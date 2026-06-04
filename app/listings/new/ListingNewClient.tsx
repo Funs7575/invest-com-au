@@ -115,7 +115,7 @@ export default function ListingNewClient() {
         });
         if (createRes.status === 401) {
           router.push(
-            `/account/login?redirect=${encodeURIComponent("/listings/new")}`,
+            `/auth/login?next=${encodeURIComponent("/listings/new")}`,
           );
           return;
         }

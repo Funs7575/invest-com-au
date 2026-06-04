@@ -34,7 +34,7 @@ export default async function BusinessPortalPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/business-portal");
+    redirect("/auth/login?next=/business-portal");
   }
 
   const { data } = await supabase

@@ -28,7 +28,7 @@ export default async function ProsPricingTierPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/pros/settings/pricing-tier");
+    redirect("/auth/login?next=/pros/settings/pricing-tier");
   }
 
   const admin = createAdminClient();

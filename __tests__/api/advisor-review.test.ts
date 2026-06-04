@@ -146,6 +146,39 @@ describe("POST /api/advisor-review", () => {
     expect((await POST(makeReq({ ...VALID, body: "Short review." }))).status).toBe(400);
   });
 
+  it("returns 400 when review body exceeds the max length (5000 chars)", async () => {
+    const res = await POST(makeReq({ ...VALID, body: "A".repeat(5001) }));
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toMatch(/5000 characters or fewer/i);
+  });
+
+  it("returns 400 when title exceeds the max length (160 chars)", async () => {
+    const res = await POST(makeReq({ ...VALID, title: "T".repeat(161) }));
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toMatch(/title/i);
+  });
+
+  it("returns 400 when reviewer_name exceeds the max length (100 chars)", async () => {
+    const res = await POST(makeReq({ ...VALID, reviewer_name: "N".repeat(101) }));
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toMatch(/name/i);
+  });
+
+  it("returns 400 when reviewer_email exceeds the max length (200 chars)", async () => {
+    // Construct an address that is syntactically valid but over 200 chars.
+    const longEmail = `${"a".repeat(195)}@b.com`;
+    const res = await POST(makeReq({ ...VALID, reviewer_email: longEmail }));
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toMatch(/email/i);
+  });
+
+  it("accepts a body at the max length boundary (5000 chars)", async () => {
+    setupNoEngagement();
+    setupHappyPath();
+    const res = await POST(makeReq({ ...VALID, body: "A".repeat(5000) }));
+    expect(res.status).toBe(200);
+  });
+
   it("returns 400 when used_services is not boolean", async () => {
     expect((await POST(makeReq({ ...VALID, used_services: "yes" }))).status).toBe(400);
   });

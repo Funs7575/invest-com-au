@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "ETF Dividend Calendar | Invest.com.au",
   description: "Upcoming ASX ETF distribution ex-dates and payment dates. Know when to own shares to receive your distribution.",
   openGraph: { title: "ETF Dividend Calendar", description: "Track upcoming ETF ex-dates and distribution payments." },
+  alternates: { canonical: `${SITE_URL}/tools/dividend-calendar` },
 };
 
 const breadcrumbLd = breadcrumbJsonLd([
@@ -47,7 +48,7 @@ export default function DividendCalendarPage() {
 
       <DividendCalendar />
 
-      <p className="text-[11px] text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+      <p className="text-[11px] text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
       </div>
     </>
   );

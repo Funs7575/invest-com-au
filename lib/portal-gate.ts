@@ -62,7 +62,7 @@ export async function enforcePortalKind(expected: WorkspaceKind): Promise<void> 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect(`/account/login?redirect=${encodeURIComponent(currentPortalPath(expected))}`);
+    redirect(`/auth/login?next=${encodeURIComponent(currentPortalPath(expected))}`);
   }
 
   const [active, memberships] = await Promise.all([

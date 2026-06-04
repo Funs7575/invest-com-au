@@ -21,7 +21,7 @@ export default function CollapsibleSection({
   const [isExpanded, setIsExpanded] = useState(false);
   const [needsCollapse, setNeedsCollapse] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
-  const panelId = useId();
+  const contentId = useId();
 
   // Check if content is tall enough to need collapsing
   useEffect(() => {
@@ -42,13 +42,13 @@ export default function CollapsibleSection({
   // If content is short enough, just render normally
   if (!needsCollapse || isExpanded) {
     return (
-      <div ref={contentRef} id={panelId}>
+      <div ref={contentRef} id={contentId}>
         {children}
         {needsCollapse && isExpanded && (
           <button
             onClick={() => setIsExpanded(false)}
             aria-expanded={true}
-            aria-controls={panelId}
+            aria-controls={contentId}
             className="w-full mt-3 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors flex items-center justify-center gap-1.5"
           >
             <svg className="w-3.5 h-3.5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,9 +63,14 @@ export default function CollapsibleSection({
 
   return (
     <div>
+      {/* `inert` keeps the clipped (visually hidden) content out of the tab
+          order and the accessibility tree while collapsed — without it,
+          links beyond `collapsedHeight` are still Tab-focusable behind
+          overflow:hidden (WCAG 2.4.3). "Show all" reveals + re-enables it. */}
       <div
-        id={panelId}
         ref={contentRef}
+        id={contentId}
+        inert
         className="relative overflow-hidden"
         style={{ maxHeight: `${collapsedHeight}px` }}
       >
@@ -76,7 +81,7 @@ export default function CollapsibleSection({
       <button
         onClick={() => setIsExpanded(true)}
         aria-expanded={false}
-        aria-controls={panelId}
+        aria-controls={contentId}
         className="w-full mt-2 py-2.5 text-sm font-semibold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center gap-1.5"
       >
         Show all {totalCount} {itemLabel}

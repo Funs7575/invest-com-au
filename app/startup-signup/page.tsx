@@ -393,7 +393,7 @@ export default function StartupSignupPage() {
 
         <p className="text-center text-xs text-gray-400 mt-6">
           Already have an account?{" "}
-          <Link href="/account/login" className="text-blue-600 hover:underline">Sign in</Link>
+          <Link href="/auth/login" className="text-blue-600 hover:underline">Sign in</Link>
         </p>
       </div>
     </div>

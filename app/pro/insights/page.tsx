@@ -538,7 +538,7 @@ export default async function ProInsightsPage() {
       </div>
 
       <footer className="mt-12 pt-6 border-t border-slate-100">
-        <p className="text-xs text-slate-400 leading-relaxed">
+        <p className="text-xs text-slate-500 leading-relaxed">
           {GENERAL_ADVICE_WARNING}
         </p>
       </footer>

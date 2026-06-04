@@ -228,7 +228,7 @@ export default async function ForeignInvestmentHubPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {TOP_5_RULES_FOR_FOREIGN_INVESTORS.map((rule) => (
               <div key={rule.number} className="bg-white rounded-xl border border-amber-200 p-4">
-                <div className="text-2xl font-black text-amber-300 leading-none mb-1">{rule.number}</div>
+                <div className="text-2xl font-black text-amber-700 leading-none mb-1">{rule.number}</div>
                 <div className="text-xs font-bold text-slate-900 mb-1">{rule.rule}</div>
                 <div className="text-xs text-slate-500 leading-relaxed">{rule.detail}</div>
               </div>

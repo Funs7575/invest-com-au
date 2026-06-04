@@ -19,7 +19,7 @@ export default async function PropertyHoldingsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/property-holdings");
+    redirect("/auth/login?next=/account/property-holdings");
   }
 
   const { data } = await supabase

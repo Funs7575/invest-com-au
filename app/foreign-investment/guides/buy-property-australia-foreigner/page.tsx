@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd, howToJsonLd } from "@/lib/schema-markup";
 import { FIRB_FEES, STATE_SURCHARGES } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
@@ -136,6 +137,36 @@ const FAQS = [
 ];
 
 function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: FxProvider[] | null }) {
+  const faqLd = faqJsonLd(FAQS.map((f) => ({ q: f.question, a: f.answer })));
+
+  // HowTo JSON-LD built from the rendered purchase steps, with step/page URLs
+  // patched to this guide (not /how-to/).
+  const howToLd = howToJsonLd({
+    slug: "buy-property-australia-foreigner",
+    h1: "How to Buy Property in Australia as a Foreigner",
+    intro:
+      "A step-by-step process for foreign buyers: confirm eligibility, choose an eligible (new or off-the-plan) property, engage a lawyer, obtain FIRB approval, arrange finance, budget for stamp duty surcharges, open an Australian bank account, then exchange and settle.",
+    steps: STEPS.map((s) => ({ heading: s.title, body: s.description })),
+  });
+  const howTo = {
+    ...howToLd,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl("/foreign-investment/guides/buy-property-australia-foreigner"),
+    },
+    step: howToLd.step?.map(
+      (
+        s: { "@type": string; position: number; name: string; text: string; url: string },
+        i: number,
+      ) => ({
+        ...s,
+        url: absoluteUrl(
+          `/foreign-investment/guides/buy-property-australia-foreigner#step-${i + 1}`,
+        ),
+      }),
+    ),
+  };
+
   return (
     <div className="bg-white min-h-screen">
       <script
@@ -151,6 +182,16 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
           ),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howTo) }}
+      />
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
 
       {/* ── 2025–2027 Established Dwelling Ban Alert ── */}
       <div className="bg-red-50 border-b-2 border-red-200">
@@ -474,7 +515,7 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
                 <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                   <div>
                     <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                    <p className="text-xs text-amber-500">{renderStars(Number(b.rating ?? 0))}</p>
+                    <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating ?? 0))}</span> <span className="font-semibold text-slate-600">{Number(b.rating ?? 0).toFixed(1)}</span></p>
                     <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                   </div>
                   <div className="mt-auto">

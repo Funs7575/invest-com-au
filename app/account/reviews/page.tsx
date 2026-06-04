@@ -51,7 +51,7 @@ export default async function AccountReviewsPage() {
   } = await supabase.auth.getUser();
 
   if (!user?.email) {
-    redirect("/account/login?redirect=/account/reviews");
+    redirect("/auth/login?next=/account/reviews");
   }
 
   const admin = createAdminClient();

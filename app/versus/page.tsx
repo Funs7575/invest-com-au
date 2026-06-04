@@ -234,7 +234,7 @@ export default async function VersusHubPage() {
           </p>
 
           {/* Disclosure */}
-          <p className="text-[0.6rem] md:text-xs text-slate-400 mb-6 md:mb-10">
+          <p className="text-[0.6rem] md:text-xs text-slate-500 mb-6 md:mb-10">
             {ADVERTISER_DISCLOSURE_SHORT}
           </p>
 

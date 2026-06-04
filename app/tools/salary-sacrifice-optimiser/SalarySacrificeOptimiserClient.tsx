@@ -243,7 +243,7 @@ export default function SalarySacrificeOptimiserClient() {
         </div>
       )}
 
-      <p className="text-xs text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+      <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </div>
   );
 }

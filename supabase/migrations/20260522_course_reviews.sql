@@ -7,7 +7,7 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS public.course_reviews (
   id              SERIAL PRIMARY KEY,
-  course_id       UUID NOT NULL REFERENCES public.courses(id) ON DELETE CASCADE,
+  course_id       BIGINT NOT NULL REFERENCES public.courses(id) ON DELETE CASCADE,
   user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   purchase_id     INTEGER REFERENCES public.course_purchases(id) ON DELETE SET NULL,
   rating          SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),

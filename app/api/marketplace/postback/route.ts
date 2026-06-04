@@ -5,6 +5,25 @@ import { logger } from "@/lib/logger";
 
 const log = logger("postback");
 
+// conversion_value_cents is stored in a Postgres INTEGER (int4) column and only
+// feeds broker-portal analytics aggregations — it never moves money. Clamp the
+// usable range to a finite, non-negative int4 so garbage can never poison those
+// totals or crash the INSERT.
+const MAX_INT4 = 2_147_483_647;
+
+// Coerce an arbitrary postback value to a safe int4 cents amount. Accepts
+// numbers and numeric strings (S2S postbacks routinely serialise "500");
+// anything non-finite/negative/non-numeric (NaN, Infinity, "abc", -100000,
+// 12.5, 1e308, >int4) collapses to 0 rather than rejecting or overflowing,
+// preserving the documented "valid-ish postbacks are never rejected" contract.
+function safeConversionValueCents(value: unknown): number {
+  const n = typeof value === "string" ? Number(value) : value;
+  if (typeof n !== "number" || !Number.isFinite(n)) return 0;
+  const floored = Math.trunc(n);
+  if (floored < 0) return 0;
+  return Math.min(floored, MAX_INT4);
+}
+
 // Partner conversion postback. Each field is validated individually below
 // (the existing guards produce the partner-facing error messages and HTTP
 // codes); the schema is permissive and `.passthrough()` so arbitrary partner
@@ -16,9 +35,8 @@ const Body = z
     // Accept any type here — partner S2S postbacks routinely serialise every
     // field as a string (e.g. "500"). A strict `z.number()` would fail the
     // whole-body parse, collapsing click_id/event_type to undefined and
-    // returning a spurious 400 (dropping the conversion). The downstream
-    // `typeof … === "number" ? … : 0` guard already coerces a non-number to 0,
-    // matching the documented "never rejected" contract.
+    // returning a spurious 400 (dropping the conversion). `safeConversionValueCents`
+    // below sanitises this to a bounded int4 at the insert/webhook call sites.
     conversion_value_cents: z.unknown().optional(),
     metadata: z.record(z.string(), z.unknown()).optional(),
   })
@@ -70,6 +88,10 @@ export async function POST(request: NextRequest) {
   const parsedBody = Body.safeParse(raw);
   const { click_id, event_type, conversion_value_cents, metadata } =
     parsedBody.success ? parsedBody.data : {};
+
+  // Bounded, finite, non-negative int4 — used at both the insert and webhook
+  // call sites so garbage can never poison analytics or crash the INSERT.
+  const safeValueCents = safeConversionValueCents(conversion_value_cents);
 
   // Validate required fields
   if (!click_id || typeof click_id !== "string") {
@@ -153,10 +175,7 @@ export async function POST(request: NextRequest) {
       broker_slug: account.broker_slug,
       campaign_id: campaignEvent?.campaign_id || null,
       event_type,
-      conversion_value_cents:
-        typeof conversion_value_cents === "number"
-          ? conversion_value_cents
-          : 0,
+      conversion_value_cents: safeValueCents,
       metadata: metadata || {},
       source: "postback",
       ip_hash: ipHash,
@@ -209,7 +228,7 @@ export async function POST(request: NextRequest) {
           conversion_id: conversion?.id,
           click_id,
           event_type,
-          conversion_value_cents: typeof conversion_value_cents === "number" ? conversion_value_cents : 0,
+          conversion_value_cents: safeValueCents,
           metadata: metadata || {},
           timestamp: conversion?.created_at,
         },

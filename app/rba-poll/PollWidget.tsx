@@ -209,7 +209,7 @@ export default function PollWidget({ poll, isAuthenticated }: Props) {
 
       {!isAuthenticated && isOpen && (
         <p className="text-sm text-slate-500 mb-4 text-center">
-          <a href="/account/login" className="text-violet-600 font-semibold hover:underline">
+          <a href="/auth/login" className="text-violet-600 font-semibold hover:underline">
             Sign in
           </a>{" "}
           to predict the RBA decision.

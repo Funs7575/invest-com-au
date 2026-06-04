@@ -569,7 +569,7 @@ export default function StartClient() {
             </div>
 
             {/* Compliance */}
-            <p className="text-[0.6rem] text-slate-400 text-center mt-6 leading-relaxed max-w-lg mx-auto">
+            <p className="text-[0.6rem] text-slate-500 text-center mt-6 leading-relaxed max-w-lg mx-auto">
               {GENERAL_ADVICE_WARNING} This tool provides general information only and is not personal financial advice.
               Results are based on the answers you selected.
             </p>

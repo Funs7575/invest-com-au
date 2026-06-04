@@ -9,7 +9,6 @@
  */
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 // eslint-disable-next-line no-restricted-imports -- Firm-admin identity resolution requires email-fallback match that can't be expressed via auth.uid() RLS. No cross-user data is read at this layer — data fetching is delegated to getFirmLeadQuality which uses service-role scoped by firmId.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -17,7 +16,6 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { resolveFirmAdminContext } from "@/lib/firm-billing";
 import LeadQualityClient from "./LeadQualityClient";
 import type { LeadQualityReport } from "./LeadQualityClient";
-import Icon from "@/components/Icon";
 
 export const metadata: Metadata = {
   title: "Lead quality analytics — Firm Portal — Invest.com.au",
@@ -57,7 +55,7 @@ export default async function FirmAnalyticsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/firm-portal/analytics");
+    redirect("/auth/login?next=/firm-portal/analytics");
   }
 
   const admin = createAdminClient();
@@ -194,33 +192,8 @@ export default async function FirmAnalyticsPage() {
       />
 
       <div className="min-h-screen bg-slate-50">
-        {/* Breadcrumb nav */}
-        <div className="bg-white border-b border-slate-200">
-          <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-500">
-              <Link href="/firm-portal/performance" className="hover:text-violet-600 transition-colors">
-                Firm Portal
-              </Link>
-              <span>/</span>
-              <span className="text-slate-800 font-medium">Analytics</span>
-            </nav>
-            <div className="flex items-center gap-3 text-xs">
-              <Link href="/firm-portal/performance" className="text-slate-500 hover:text-violet-600 transition-colors flex items-center gap-1">
-                <Icon name="users" size={12} />
-                Performance
-              </Link>
-              <Link href="/firm-portal/billing" className="text-slate-500 hover:text-violet-600 transition-colors flex items-center gap-1">
-                <Icon name="credit-card" size={12} />
-                Billing
-              </Link>
-              <Link href="/firm-portal/jobs" className="text-slate-500 hover:text-violet-600 transition-colors flex items-center gap-1">
-                <Icon name="briefcase" size={12} />
-                Jobs
-              </Link>
-            </div>
-          </div>
-        </div>
-
+        {/* Sibling nav (Performance · Billing · Jobs · Analytics) now lives in
+            the shared app/firm-portal/layout.tsx. */}
         <div className="max-w-5xl mx-auto px-4 py-8">
           <LeadQualityClient initial={report} />
         </div>

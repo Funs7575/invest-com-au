@@ -148,7 +148,7 @@ export default function DirectVsAsxCostPage() {
                 </ul>
               </div>
             </div>
-            <p className="text-xs text-slate-400 mt-3">{GENERAL_ADVICE_WARNING}</p>
+            <p className="text-xs text-slate-500 mt-3">{GENERAL_ADVICE_WARNING}</p>
           </div>
         </section>
 
@@ -218,7 +218,7 @@ export default function DirectVsAsxCostPage() {
                 </div>
               ))}
             </div>
-            <p className="text-xs text-slate-400 mt-4">{GENERAL_ADVICE_WARNING} Scenarios are indicative; actual costs depend on broker rates, FX at time of conversion, and number of purchases.</p>
+            <p className="text-xs text-slate-500 mt-4">{GENERAL_ADVICE_WARNING} Scenarios are indicative; actual costs depend on broker rates, FX at time of conversion, and number of purchases.</p>
           </div>
         </section>
 

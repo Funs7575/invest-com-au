@@ -60,13 +60,13 @@ CREATE POLICY "rba_polls_service_all"
 
 CREATE OR REPLACE VIEW public.rba_poll_accuracy AS
 SELECT
-  fv.voter_user_id,
+  fv.user_id,
   COUNT(*)::integer                                              AS polls_participated,
-  SUM(CASE WHEN fv.vote = rp.outcome THEN 1 ELSE 0 END)::integer AS correct_predictions,
+  SUM(CASE WHEN fv.value = rp.outcome THEN 1 ELSE 0 END)::integer AS correct_predictions,
   CASE
     WHEN COUNT(*) = 0 THEN 0.0
     ELSE ROUND(
-      100.0 * SUM(CASE WHEN fv.vote = rp.outcome THEN 1 ELSE 0 END) / COUNT(*),
+      100.0 * SUM(CASE WHEN fv.value = rp.outcome THEN 1 ELSE 0 END) / COUNT(*),
       1
     )
   END::numeric                                                   AS accuracy_pct
@@ -76,7 +76,7 @@ JOIN public.rba_polls rp
  AND fv.target_type = 'rba_poll'
 WHERE rp.status = 'revealed'
   AND rp.outcome IS NOT NULL
-GROUP BY fv.voter_user_id;
+GROUP BY fv.user_id;
 
 -- ── Seed: 3 polls (1 revealed historic, 2 upcoming) ─────────────────────────
 -- Real RBA meeting schedule (approximate). Seeded for demo / dev.
@@ -94,7 +94,10 @@ VALUES
   )
 ON CONFLICT (meeting_date) DO NOTHING;
 
-INSERT INTO public.rba_polls (meeting_date, description, status)
+-- Upcoming polls: status defaults to 'open' (column default), so it is omitted
+-- from the column list. (The original listed `status` with no matching value,
+-- which raised "INSERT has more target columns than expressions".)
+INSERT INTO public.rba_polls (meeting_date, description)
 VALUES
   ('2026-07-07', 'July 2026 RBA Board meeting — cash rate decision.'),
   ('2026-08-04', 'August 2026 RBA Board meeting — cash rate decision.')

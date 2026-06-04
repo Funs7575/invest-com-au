@@ -65,13 +65,13 @@ function renderStarsSvg(rating: number) {
   for (let i = 0; i < 5; i++) {
     if (i < full) {
       stars.push(
-        <span key={i} className="text-amber-400">
+        <span key={i} className="text-amber-600">
           ★
         </span>
       );
     } else if (i === full && half) {
       stars.push(
-        <span key={i} className="text-amber-400">
+        <span key={i} className="text-amber-600">
           ½
         </span>
       );

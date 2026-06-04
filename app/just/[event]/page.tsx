@@ -145,7 +145,7 @@ const EVENTS: JustEvent[] = [
       },
       {
         q: "What is the cost base for inherited shares in Australia?",
-        a: "For shares acquired by the deceased after 20 September 1985, your cost base is the market value at the date of death. You are treated as having acquired the shares at that time. The 50% CGT discount applies if you hold the inherited shares for more than 12 months before selling (the holding period does not carry over from the deceased).",
+        a: "For shares acquired by the deceased after 20 September 1985, your cost base is the market value at the date of death. You are treated as having acquired the shares at that time. The 50% CGT discount applies if you hold the inherited shares for more than 12 months before selling (the holding period does not carry over from the deceased).", // dated-ok — CGT inception date, fixed by statute (never changes)
       },
       {
         q: "How long do I have to sell an inherited main residence CGT-free?",
@@ -321,7 +321,7 @@ const EVENTS: JustEvent[] = [
     faqs: [
       {
         q: "Does my employer have to pay super when I'm on parental leave?",
-        a: "Under the Superannuation Guarantee legislation, employers are not legally required to pay super on unpaid parental leave. However, some enterprise agreements and company policies require it. From 1 July 2025, SG contributions will be paid on government-funded Parental Leave Pay, ensuring 11.5% super on the PPL payments. Check your enterprise agreement for employer-paid parental leave super.",
+        a: "Under the Superannuation Guarantee legislation, employers are not legally required to pay super on unpaid parental leave. However, some enterprise agreements and company policies require it. From 1 July 2025, SG contributions will be paid on government-funded Parental Leave Pay, ensuring 11.5% super on the PPL payments. Check your enterprise agreement for employer-paid parental leave super.", // dated-ok — legislated SG-on-PPL commencement date, fixed by statute
       },
       {
         q: "How much life insurance do I need with a new baby?",
@@ -573,7 +573,7 @@ const EVENTS: JustEvent[] = [
       },
       {
         q: "Can I use my superannuation for a first home deposit?",
-        a: "Yes — via the First Home Super Saver Scheme (FHSS). You can make voluntary concessional or non-concessional contributions into super (above mandatory employer contributions) and later withdraw them for a first home deposit. The withdrawal cap is $50,000 (from 1 July 2022). Concessional contributions are taxed at 15% going in, but the associated earnings benefit from the super tax rate rather than your marginal rate. Apply for an FHSS determination through the ATO before signing a contract.",
+        a: "Yes — via the First Home Super Saver Scheme (FHSS). You can make voluntary concessional or non-concessional contributions into super (above mandatory employer contributions) and later withdraw them for a first home deposit. The withdrawal cap is $50,000 (from 1 July 2022). Concessional contributions are taxed at 15% going in, but the associated earnings benefit from the super tax rate rather than your marginal rate. Apply for an FHSS determination through the ATO before signing a contract.", // dated-ok — FHSS $50k cap effective date, fixed historical change
       },
     ],
   },
@@ -760,7 +760,7 @@ export default async function JustEventPage({ params }: Props) {
           </div>
         </section>
 
-        <p className="text-xs text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+        <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
       </div>
     </>
   );

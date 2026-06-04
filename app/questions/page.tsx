@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import { itemListJsonLd } from "@/lib/schema-markup";
 import {
   QUESTIONS,
   CATEGORY_LABELS,
@@ -36,6 +37,19 @@ const breadcrumbLd = breadcrumbJsonLd([
   { name: "Questions", url: absoluteUrl("/questions") },
 ]);
 
+// ItemList over the answered questions so the index is citable by AI
+// answer engines. itemListJsonLd absoluteUrl-wraps each url, so pass
+// site-relative paths.
+const listLd = itemListJsonLd(
+  "Australian Investing Questions Answered",
+  QUESTIONS.map((q, i) => ({
+    position: i + 1,
+    name: q.question,
+    url: `/questions/${q.slug}`,
+    description: q.shortAnswer,
+  })),
+);
+
 const CATEGORY_ORDER: QuestionCategory[] = [
   "super",
   "tax",
@@ -66,6 +80,10 @@ export default function QuestionsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(listLd) }}
       />
       <main className="max-w-4xl mx-auto px-4 py-12">
         <header className="mb-10">

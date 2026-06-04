@@ -206,7 +206,7 @@ export default async function PremiumResearchPage() {
         ))}
       </section>
 
-      <p className="mt-10 text-xs text-slate-400">{GENERAL_ADVICE_WARNING}</p>
+      <p className="mt-10 text-xs text-slate-500">{GENERAL_ADVICE_WARNING}</p>
     </div>
   );
 }

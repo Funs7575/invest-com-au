@@ -179,6 +179,24 @@ function MegaMenuDropdown({
     timeout.current = setTimeout(() => setOpen(false), 120);
   }, []);
 
+  // Keyboard users must be able to dismiss the dropdown (WCAG 2.1.1).
+  // Escape closes it and returns focus to the trigger button.
+  const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") {
+      setOpen(false);
+      triggerRef.current?.focus();
+    }
+  }, []);
+
+  // Close when focus leaves the menu entirely (Tab past the last item).
+  // relatedTarget is the element receiving focus; if it's outside this
+  // wrapper, the menu has been tabbed out of and should collapse.
+  const onBlur = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+      setOpen(false);
+    }
+  }, []);
+
   useEffect(() => () => clearTimeout(timeout.current), []);
 
   // Close on Escape and return focus to the trigger button
@@ -200,6 +218,8 @@ function MegaMenuDropdown({
       className="relative"
       onMouseEnter={enter}
       onMouseLeave={leave}
+      onKeyDown={onKeyDown}
+      onBlur={onBlur}
     >
       <button
         ref={triggerRef}
@@ -766,7 +786,7 @@ export function Navigation() {
             <AccountButton />
             <Link
               href="/quiz"
-              className="bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:from-amber-700 active:to-orange-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] inline-flex items-center gap-2 cursor-pointer"
+              className="bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:from-amber-700 active:to-orange-700 text-slate-900 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] inline-flex items-center gap-2 cursor-pointer"
             >
               Get matched
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -789,7 +809,7 @@ export function Navigation() {
             </button>
             <Link
               href="/quiz"
-              className="bg-gradient-to-br from-amber-500 to-orange-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:from-amber-600 hover:to-orange-600 min-h-11 inline-flex items-center cursor-pointer"
+              className="bg-gradient-to-br from-amber-500 to-orange-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:from-amber-600 hover:to-orange-600 min-h-11 inline-flex items-center cursor-pointer"
             >
               Get Matched
             </Link>

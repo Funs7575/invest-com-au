@@ -858,7 +858,7 @@ export default async function LeavingAustraliaPage() {
                   <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                     <div>
                       <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                      <p className="text-xs text-amber-500">{renderStars(Number(b.rating))}</p>
+                      <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600">{(Number(b.rating) || 0).toFixed(1)}</span></p>
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                     </div>
                     <div className="mt-auto">
@@ -891,7 +891,7 @@ export default async function LeavingAustraliaPage() {
       {/* ── Compliance footer ────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">{SUPER_WARNING_SHORT} {GENERAL_ADVICE_WARNING}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{SUPER_WARNING_SHORT} {GENERAL_ADVICE_WARNING}</p>
         </div>
       </section>
     </div>

@@ -237,7 +237,7 @@ export default function BusinessFinancePage() {
             <Suspense fallback={<div className="h-80 rounded-2xl bg-slate-100 animate-pulse" />}>
               <BusinessFinanceEnquiryForm />
             </Suspense>
-            <p className="mt-3 text-center text-xs text-slate-400">{ADVERTISER_DISCLOSURE_SHORT}</p>
+            <p className="mt-3 text-center text-xs text-slate-500">{ADVERTISER_DISCLOSURE_SHORT}</p>
           </section>
 
           {/* FAQ */}
@@ -278,7 +278,7 @@ export default function BusinessFinancePage() {
           </section>
 
           {/* Compliance */}
-          <p className="text-center text-[0.7rem] text-slate-400">{GENERAL_ADVICE_WARNING}</p>
+          <p className="text-center text-[0.7rem] text-slate-500">{GENERAL_ADVICE_WARNING}</p>
           {vertical.disclaimer && (
             <p className="mt-2 text-center text-[0.65rem] text-slate-400">{vertical.disclaimer}</p>
           )}

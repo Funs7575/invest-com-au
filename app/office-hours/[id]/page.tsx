@@ -49,14 +49,20 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
+  const sessionId = parseInt(id, 10);
+  // advisor_office_hours.id is bigint — a non-numeric slug would send id=eq.NaN
+  // and Postgres rejects it ("invalid input syntax for type bigint"). Guard
+  // before querying, mirroring the page body below.
+  if (!Number.isInteger(sessionId) || sessionId <= 0) return { title: "Session not found" };
+
   const supabase = await createClient();
 
   const { data } = await supabase
     .from("advisor_office_hours")
     .select("title, description, professionals(name)")
-    .eq("id", parseInt(id, 10))
+    .eq("id", sessionId)
     .eq("is_published", true)
-    .single();
+    .maybeSingle();
 
   if (!data) return { title: "Session not found" };
 
@@ -266,7 +272,7 @@ export default async function OfficeHoursSessionPage({
       </section>
 
       <footer className="mt-10 pt-4 border-t border-slate-200">
-        <p className="text-[11px] text-slate-400 leading-relaxed">
+        <p className="text-[11px] text-slate-500 leading-relaxed">
           <strong className="text-slate-500">General Advice Warning:</strong>{" "}
           {GENERAL_ADVICE_WARNING}
         </p>

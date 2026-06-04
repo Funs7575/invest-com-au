@@ -27,7 +27,7 @@ export default async function HoldingsPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/account/login?redirect=/account/holdings");
+    redirect("/auth/login?next=/account/holdings");
   }
 
   // Fetch holdings + broker fee table + sharesight connection in parallel.

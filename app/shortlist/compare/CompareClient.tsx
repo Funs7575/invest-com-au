@@ -218,8 +218,8 @@ export default function CompareClient() {
                       </span>
                     </Link>
                     <div className="flex items-center justify-center gap-1 mt-1">
-                      <span className="text-xs text-amber-500">{renderStars(broker.rating || 0)}</span>
-                      <span className="text-[0.65rem] text-slate-400">{broker.rating}/5</span>
+                      <span className="text-xs text-amber-600">{renderStars(broker.rating || 0)}</span>
+                      <span className="text-[0.65rem] text-slate-500">{broker.rating}/5</span>
                     </div>
                   </th>
                 ))}

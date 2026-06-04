@@ -4,6 +4,7 @@ import { useState, useId } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { safeNextPath } from "@/lib/safe-next";
 
 type Tab = "magic-link" | "password";
 
@@ -27,7 +28,9 @@ function EyeOffIcon() {
 export default function LoginClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const next = searchParams.get("next") || "/account";
+  // Guard against open redirect — only same-origin relative paths are allowed
+  // for both router.push (password path) and the magic-link emailRedirectTo.
+  const next = safeNextPath(searchParams.get("next"));
   const callbackError = searchParams.get("error");
 
   const [tab, setTab] = useState<Tab>("magic-link");
@@ -174,7 +177,7 @@ export default function LoginClient() {
               We sent a magic link to <span className="font-semibold text-slate-900">{email}</span>.
               Click the link in the email to sign in.
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Didn&apos;t receive it? Check your spam folder or{" "}
               <button
                 onClick={() => { setSent(false); setError(""); }}
@@ -205,7 +208,7 @@ export default function LoginClient() {
               We sent a password reset link to <span className="font-semibold text-slate-900">{email}</span>.
               Click the link in the email to reset your password.
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Didn&apos;t receive it? Check your spam folder or{" "}
               <button
                 onClick={() => { setResetSent(false); setError(""); }}
@@ -375,7 +378,7 @@ export default function LoginClient() {
                 Create one
               </Link>
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               By signing in, you agree to our{" "}
               <Link href="/terms" className="text-slate-700 hover:underline">Terms</Link>
               {" "}and{" "}

@@ -65,7 +65,7 @@ export default function BrokerStickyRightRail({
           </svg>
         </button>
 
-        <div className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mb-2">
+        <div className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500 mb-2">
           Quick action
         </div>
 
@@ -115,7 +115,7 @@ export default function BrokerStickyRightRail({
           </svg>
         </a>
 
-        <p className="mt-2 text-[0.6rem] leading-tight text-slate-400">
+        <p className="mt-2 text-[0.6rem] leading-tight text-slate-500">
           {ADVERTISER_DISCLOSURE_SHORT}
         </p>
       </div>

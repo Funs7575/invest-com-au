@@ -73,9 +73,11 @@ CREATE POLICY "etf_distributions_service_write"
 CREATE INDEX IF NOT EXISTS etf_distributions_slug_date_idx
   ON public.etf_distributions (etf_slug, ex_date DESC);
 
+-- Plain ascending index on ex_date. A partial predicate (e.g.
+-- WHERE ex_date >= CURRENT_DATE) cannot be used here because CURRENT_DATE is
+-- not IMMUTABLE (Postgres error 42P17 on partial-index predicates).
 CREATE INDEX IF NOT EXISTS etf_distributions_future_idx
-  ON public.etf_distributions (ex_date ASC)
-  WHERE ex_date >= CURRENT_DATE;
+  ON public.etf_distributions (ex_date ASC);
 
 -- ── Seed: etf_holdings ────────────────────────────────────────────────────────
 -- Top ~15 holdings per ETF from publicly published fund disclosures.

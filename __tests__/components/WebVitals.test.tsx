@@ -26,6 +26,10 @@ vi.mock("next/web-vitals", () => ({
   },
 }));
 
+vi.mock("@/lib/session", () => ({
+  getSessionId: () => "sid-test",
+}));
+
 import WebVitals from "@/components/WebVitals";
 
 const fetchMock = vi.fn();
@@ -71,7 +75,7 @@ describe("WebVitals", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("POSTs to /api/track-event in production", () => {
+  it("POSTs to the dedicated /api/web-vitals beacon in production", () => {
     vi.stubEnv("NODE_ENV", "production");
     Object.defineProperty(window, "location", {
       configurable: true,
@@ -87,24 +91,21 @@ describe("WebVitals", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
     const [url, init] = fetchMock.mock.calls[0]!;
-    expect(url).toBe("/api/track-event");
+    expect(url).toBe("/api/web-vitals");
     expect(init.method).toBe("POST");
     expect(init.keepalive).toBe(true);
 
+    // Shape must match app/api/web-vitals/route.ts's VitalsBody validation.
     const body = JSON.parse(init.body);
     expect(body).toEqual({
-      event_type: "web_vital",
-      page: "/some/path",
-      metadata: {
-        metric: "LCP",
-        value: 1234.57, // rounded to 2dp
-        rating: "good",
-        id: "id-1",
-      },
+      metric: "LCP",
+      value: 1234.567, // raw value — route stores the sample as-is
+      page_path: "/some/path",
+      session_id: "sid-test",
     });
   });
 
-  it("rounds the metric value to 2 decimal places", () => {
+  it("sends the raw (unrounded) metric value the route expects", () => {
     vi.stubEnv("NODE_ENV", "production");
     render(<WebVitals />);
     capturedCallback?.({
@@ -116,7 +117,8 @@ describe("WebVitals", () => {
     const body = JSON.parse(
       fetchMock.mock.calls[0]?.[1]?.body as string,
     );
-    expect(body.metadata.value).toBe(0.12);
+    expect(body.value).toBe(0.123456789);
+    expect(typeof body.value).toBe("number");
   });
 
   it("swallows a fetch rejection without throwing", async () => {

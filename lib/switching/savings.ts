@@ -24,15 +24,21 @@ export function parseFee(feeStr: string | null | undefined): {
 } {
   if (!feeStr) return { flat: 0, pct: 0 };
   const s = feeStr.replace(/,/g, "").trim();
-  const pctMatch = s.match(/([\d.]+)%/);
+  // Tightened regexes (\d+(?:\.\d+)?) mirror parseFeeNumeric in
+  // lib/price-snapshots.ts — a loose [\d.]+ matches malformed tokens
+  // like "." or "1.2.3", which parseFloat then turns into NaN or a
+  // silently-truncated value that flows into the calculator UI.
+  const pctMatch = s.match(/(\d+(?:\.\d+)?)\s*%/);
   if (pctMatch) {
-    const pctRaw = pctMatch[1];
-    return { flat: 0, pct: parseFloat(pctRaw ?? "0") / 100 };
+    const n = parseFloat(pctMatch[1] ?? "0");
+    if (!Number.isFinite(n)) return { flat: 0, pct: 0 };
+    return { flat: 0, pct: n / 100 };
   }
-  const flatMatch = s.match(/\$([\d.]+)/);
+  const flatMatch = s.match(/\$\s*(\d+(?:\.\d+)?)/);
   if (flatMatch) {
-    const flatRaw = flatMatch[1];
-    return { flat: parseFloat(flatRaw ?? "0"), pct: 0 };
+    const n = parseFloat(flatMatch[1] ?? "0");
+    if (!Number.isFinite(n)) return { flat: 0, pct: 0 };
+    return { flat: n, pct: 0 };
   }
   // "$0", "free", "0" all collapse to zero
   if (s === "0" || s.toLowerCase().includes("free") || s === "$0") {

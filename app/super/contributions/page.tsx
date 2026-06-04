@@ -78,7 +78,7 @@ const CONTRIBUTIONS_TYPES = [
     type: "Employer SG",
     rate: "11.5% (2024-25)",
     taxTreatment: "Concessional — 15% tax in fund",
-    notes: "Mandatory; calculated on ordinary time earnings. Rising to 12% from 1 July 2025.",
+    notes: "Mandatory; calculated on ordinary time earnings. Rising to 12% from 1 July 2025.", // dated-ok — legislated SG rate-rise commencement date, fixed by statute
   },
   {
     type: "Salary sacrifice",
@@ -290,7 +290,7 @@ export default function SuperContributionsPage() {
               </p>
               <p className="text-2xl font-black text-amber-700">11.5%</p>
               <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                {/* dated-ok — legislated SG rate-rise dates from ATO */}
+                {/* // dated-ok — legislated SG rate-rise dates from ATO */}
                 Superannuation Guarantee rate for 2024-25. Rising to 12% from 1 July 2025.
               </p>
             </div>
@@ -490,7 +490,7 @@ export default function SuperContributionsPage() {
           />
           <div className="space-y-4 text-sm text-slate-600 leading-relaxed">
             <p>
-              Since 1 July 2017, the &quot;10% test&quot; was removed — meaning salaried employees can now
+              Since 1 July 2017, the &quot;10% test&quot; was removed — meaning salaried employees can now{/* // dated-ok — fixed legislative effective date, never changes */}
               make personal after-tax contributions and claim a tax deduction for them, achieving
               the same outcome as salary sacrifice even if their employer doesn&apos;t offer it.
             </p>
@@ -716,7 +716,7 @@ export default function SuperContributionsPage() {
             <p>
               Division 296 is a proposed measure that imposes an additional 15% tax on the portion
               of super earnings attributable to balances above $3 million. Originally legislated
-              to apply from 1 July 2025, the start date has been deferred to{" "}
+              to apply from 1 July 2025, the start date has been deferred to{" "}{/* // dated-ok — Division 296 legislated commencement dates, fixed by statute */}
               <strong className="text-slate-800">1 July 2026</strong>. The legislation has passed
               the House of Representatives but was awaiting Senate passage as of the 2025-26
               budget.
@@ -918,7 +918,7 @@ export default function SuperContributionsPage() {
       {/* ── Compliance ───────────────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
         </div>
       </section>
     </div>

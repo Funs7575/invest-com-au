@@ -202,7 +202,7 @@ export default async function ComparePairPage({
             Australia — withholding tax rates, FIRB rules, FX corridors,
             pension transfers, and migration pathways.
           </p>
-          <p className="text-xs text-slate-400 leading-relaxed">
+          <p className="text-xs text-slate-500 leading-relaxed">
             {GENERAL_ADVICE_WARNING}
           </p>
         </div>

@@ -190,7 +190,7 @@ export default function RateAlertsPage() {
             >
               <RateAlertSignupForm />
             </Suspense>
-            <p className="mt-3 text-center text-xs text-slate-400">
+            <p className="mt-3 text-center text-xs text-slate-500">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>
@@ -328,7 +328,7 @@ export default function RateAlertsPage() {
           </section>
 
           {/* Compliance footer */}
-          <p className="text-center text-[0.7rem] text-slate-400">
+          <p className="text-center text-[0.7rem] text-slate-500">
             {GENERAL_ADVICE_WARNING}
           </p>
         </div>

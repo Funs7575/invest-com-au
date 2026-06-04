@@ -207,6 +207,59 @@ describe("GET /api/advisor-articles — advisor mode", () => {
   });
 });
 
+// ── NaN guards (D-04) ────────────────────────────────────────────────────────
+// advisor_articles.id / professional_id / article_id are bigint columns. A
+// non-numeric query string must be rejected with 400 before reaching .eq(),
+// otherwise parseInt('abc')=NaN sends col=eq.NaN and Postgres throws
+// "invalid input syntax for type bigint".
+
+describe("GET /api/advisor-articles — NaN guards", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+  });
+
+  it("returns 400 for non-numeric id (authed admin) and never queries with NaN", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: { email: ADMIN_EMAIL } }, error: null });
+    const builder = createChainableBuilder("advisor_articles");
+    mockAdminFrom.mockReturnValue(builder);
+
+    const res = await GET(makeGet({ id: "abc" }));
+    expect(res.status).toBe(400);
+    const data = await res.json();
+    expect(data.error).toMatch(/invalid id/i);
+    // The admin client must not have been queried with NaN
+    const eqCalls = (builder.eq as ReturnType<typeof vi.fn>).mock.calls;
+    expect(eqCalls.some((c: unknown[]) => Number.isNaN(c[1]))).toBe(false);
+    expect(eqCalls).toHaveLength(0);
+  });
+
+  it("returns 400 for non-numeric professional_id in advisor mode", async () => {
+    const builder = createChainableBuilder("advisor_articles");
+    mockServerFrom.mockReturnValue(builder);
+
+    const res = await GET(makeGet({ mode: "advisor", professional_id: "abc" }));
+    expect(res.status).toBe(400);
+    const data = await res.json();
+    expect(data.error).toMatch(/invalid id/i);
+    const eqCalls = (builder.eq as ReturnType<typeof vi.fn>).mock.calls;
+    expect(eqCalls.some((c: unknown[]) => Number.isNaN(c[1]))).toBe(false);
+  });
+
+  it("returns 400 for non-numeric article_id in moderation_log mode", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: { email: ADMIN_EMAIL } }, error: null });
+    const builder = createChainableBuilder("advisor_article_moderation_log");
+    mockAdminFrom.mockReturnValue(builder);
+
+    const res = await GET(makeGet({ mode: "moderation_log", article_id: "abc" }));
+    expect(res.status).toBe(400);
+    const data = await res.json();
+    expect(data.error).toMatch(/invalid id/i);
+    const eqCalls = (builder.eq as ReturnType<typeof vi.fn>).mock.calls;
+    expect(eqCalls.some((c: unknown[]) => Number.isNaN(c[1]))).toBe(false);
+  });
+});
+
 // ── POST tests ─────────────────────────────────────────────────────────────────
 
 describe("POST /api/advisor-articles", () => {

@@ -31,8 +31,12 @@ export async function GET(req: NextRequest) {
     const { searchParams } = req.nextUrl;
     const categorySlug = searchParams.get("category");
     const sort = searchParams.get("sort") || "recent";
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20", 10)));
+    // Math.max(1, NaN) === NaN, so the clamps alone don't catch ?page=abc —
+    // that would feed NaN into .range(). Coerce non-numeric input first.
+    const parsedPage = parseInt(searchParams.get("page") || "1", 10);
+    const page = Number.isFinite(parsedPage) ? Math.max(1, parsedPage) : 1;
+    const parsedLimit = parseInt(searchParams.get("limit") || "20", 10);
+    const limit = Number.isFinite(parsedLimit) ? Math.min(50, Math.max(1, parsedLimit)) : 20;
     const offset = (page - 1) * limit;
 
     const supabase = createAdminClient();

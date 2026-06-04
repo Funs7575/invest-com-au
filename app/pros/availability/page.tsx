@@ -25,7 +25,7 @@ export default async function ProsAvailabilityPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/pros/availability");
+    redirect("/auth/login?next=/pros/availability");
   }
 
   const admin = createAdminClient();

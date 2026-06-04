@@ -118,7 +118,9 @@ export async function GET(request: NextRequest) {
   try {
     const params = request.nextUrl.searchParams;
 
-    // Parse pagination
+    // Parse pagination. `parseInt('abc')` is NaN (falsy), so the `|| 20` / `|| 0`
+    // fallbacks already coerce non-numeric input to a safe default before it can
+    // reach .range(); the `< 1` / `< 0` checks then normalise negatives.
     let limit = Math.min(parseInt(params.get("limit") || "20", 10) || 20, 100);
     if (limit < 1) limit = 20;
     let offset = parseInt(params.get("offset") || "0", 10) || 0;

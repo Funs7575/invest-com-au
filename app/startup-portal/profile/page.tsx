@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 export default async function StartupPortalProfilePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/account/login?redirect=/startup-portal/profile");
+  if (!user) redirect("/auth/login?next=/startup-portal/profile");
 
   const { data: profile } = await supabase
     .from("startup_profiles")

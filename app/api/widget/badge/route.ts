@@ -41,7 +41,15 @@ export const revalidate = 3600;
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const type = params.get("type");
-  const slug = params.get("slug")?.trim() ?? "";
+  // Sanitize slug to the slug charset before it is ever echoed back. The 404
+  // branches below interpolate it into a `/* … "${slug}" … */` JS comment
+  // served as application/javascript; an unsanitized `*/<payload>/*` would
+  // break out of the comment and inject script. Slugs are always [a-z0-9-],
+  // so stripping everything else is lossless for legitimate lookups.
+  const slug = (params.get("slug") ?? "")
+    .trim()
+    .replace(/[^a-z0-9-]/gi, "")
+    .slice(0, 100);
   const theme = params.get("theme") === "dark" ? "dark" : "light";
   const ref = params.get("ref") || "";
 

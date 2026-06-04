@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Portfolio Stress Test | Invest.com.au",
   description: "See how your portfolio allocation would have fared during the GFC, COVID crash, dot-com bust and 2022 rate hike cycle.",
   openGraph: { title: "Portfolio Stress Test", description: "Stress-test your portfolio against historical market crises." },
+  alternates: { canonical: `${SITE_URL}/tools/portfolio-stress-test` },
 };
 
 const breadcrumbLd = breadcrumbJsonLd([
@@ -47,7 +48,7 @@ export default function PortfolioStressTestPage() {
 
       <PortfolioStressTest />
 
-      <p className="text-[11px] text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+      <p className="text-[11px] text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
       </div>
     </>
   );

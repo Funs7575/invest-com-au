@@ -21,7 +21,7 @@ export default async function TermDepositsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/term-deposits");
+    redirect("/auth/login?next=/account/term-deposits");
   }
 
   const { data } = await supabase
@@ -60,7 +60,7 @@ export default async function TermDepositsPage() {
       <TermDepositsClient initialItems={initialItems} />
 
       <footer className="mt-8 pt-4 border-t border-slate-200">
-        <p className="text-xs text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+        <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
         <p className="text-xs text-slate-400 mt-1">
           Reminders are sent to your account email at 07:00 UTC on the day the 30/7/1-day window opens.
           Manage notification preferences in{" "}

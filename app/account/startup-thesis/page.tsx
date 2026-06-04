@@ -29,7 +29,7 @@ export default async function StartupThesisPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/account/login?redirect=/account/startup-thesis");
+  if (!user) redirect("/auth/login?next=/account/startup-thesis");
 
   const { data } = await supabase
     .from("investor_profiles")

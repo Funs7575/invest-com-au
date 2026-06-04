@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd, howToJsonLd } from "@/lib/schema-markup";
 import { FIRB_FEES, FIRB_PROCESS_STEPS, FIRB_FAQS, WHO_NEEDS_FIRB } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
@@ -65,6 +66,36 @@ const APPROVAL_CONDITIONS = [
 ];
 
 export default function FirbApplicationGuidePage() {
+  const faqLd = faqJsonLd(
+    FIRB_FAQS.map((f) => ({ q: f.question, a: f.answer })),
+  );
+
+  // HowTo JSON-LD built from the rendered FIRB process steps, with step/page
+  // URLs patched to this guide (not /how-to/).
+  const howToLd = howToJsonLd({
+    slug: "firb-application-guide",
+    h1: "FIRB Application: Complete Step-by-Step Guide",
+    intro:
+      "Every foreign person buying Australian property must obtain FIRB approval. The process runs in five steps — engage a solicitor, identify an eligible property, submit the online application, await the decision, then proceed to purchase.",
+    steps: FIRB_PROCESS_STEPS.map((s) => ({ heading: s.title, body: s.description })),
+  });
+  const howTo = {
+    ...howToLd,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl("/foreign-investment/guides/firb-application-guide"),
+    },
+    step: howToLd.step?.map(
+      (
+        s: { "@type": string; position: number; name: string; text: string; url: string },
+        i: number,
+      ) => ({
+        ...s,
+        url: absoluteUrl(`/foreign-investment/guides/firb-application-guide#step-${i + 1}`),
+      }),
+    ),
+  };
+
   return (
     <div className="bg-white min-h-screen">
       <script
@@ -80,6 +111,16 @@ export default function FirbApplicationGuidePage() {
           ),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howTo) }}
+      />
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
 
       {/* ── Ban reminder ── */}
       <div className="bg-amber-50 border-b border-amber-200">
@@ -117,8 +158,7 @@ export default function FirbApplicationGuidePage() {
               <span className="text-amber-600">Complete Step-by-Step Guide</span>
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-6">
-              Every foreign person buying Australian property must obtain FIRB approval. This guide covers exactly
-              what to submit, how much it costs, how long it takes, and what happens after you apply.
+              Every foreign person buying Australian property must obtain FIRB approval. The process runs in five steps — engage a solicitor, identify an eligible property, submit the application online, await the decision, then proceed to purchase — takes around 30 days for standard processing, and costs $14,100 in fees for a property up to $1M. This guide covers exactly what to submit, the full fee schedule, processing times, and what happens after you apply.
             </p>
             <div className="grid grid-cols-3 gap-3">
               {[

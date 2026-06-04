@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isAllowed } from "@/lib/rate-limit-db";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { respondToMessage, type ChatMessage } from "@/lib/chatbot";
 import { logger } from "@/lib/logger";
 
@@ -29,8 +29,11 @@ export const runtime = "nodejs";
  * Returns:
  *   { reply, retrieved: [...], flagged, flaggedReason }
  *
- * Rate limited to 20 messages per minute per session to keep
- * the provider bill bounded.
+ * Rate limited per session (20/min, UX guard) AND per IP (40/min). The
+ * IP limiter is the wallet-DoS backstop: `session_id` is client-supplied,
+ * so an anon caller can rotate it per request and defeat the per-session
+ * cap. Keying the second bucket on the request IP bounds the Anthropic
+ * provider bill regardless of how many sessions a single client spins up.
  */
 export async function POST(request: NextRequest) {
   const parsedBody = Body.safeParse(await request.json().catch(() => ({})));
@@ -47,6 +50,12 @@ export async function POST(request: NextRequest) {
   }
   if (message.length > 2000) {
     return NextResponse.json({ error: "Message too long" }, { status: 400 });
+  }
+
+  // IP-keyed backstop: caps the provider bill even when session_id is rotated
+  // per request to slip past the per-session limit below.
+  if (!(await isAllowed("chatbot_ip", ipKey(request), { max: 40, refillPerSec: 40 / 60 }))) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
 
   if (!(await isAllowed("chatbot", sessionId, { max: 20, refillPerSec: 20 / 60 }))) {

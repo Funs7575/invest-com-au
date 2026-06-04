@@ -66,7 +66,11 @@ export async function POST(request: NextRequest) {
       bounce?: { message?: string };
       complaint?: { type?: string };
     };
-    const email = d.to?.[0] || d.email_id;
+    // Recipient comes ONLY from data.to[]. data.email_id is the sent-message
+    // UUID, never an email address — using it as a fallback keys the
+    // suppression UPDATEs on a value that can never match a stored email,
+    // silently no-op'ing the bounce/complaint suppression.
+    const email = d.to?.[0];
 
     if (type === "email.bounced" || type === "email.complained") {
       log.info(`Email ${type}`, {
@@ -92,6 +96,12 @@ export async function POST(request: NextRequest) {
           .from("quiz_leads")
           .update({ unsubscribed: true })
           .eq("email", email.toLowerCase());
+      } else {
+        // No recipient address on the event — we cannot suppress anyone.
+        // Surface it instead of silently dropping a real bounce/complaint.
+        log.warn(`Email ${type} received without a recipient address`, {
+          emailId: d.email_id,
+        });
       }
     } else if (type === "email.delivery_delayed") {
       log.info("Email delivery delayed", { email });

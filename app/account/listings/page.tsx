@@ -48,7 +48,7 @@ export default async function AccountListingsPage({
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/listings");
+    redirect("/auth/login?next=/account/listings");
   }
 
   const listings = await listListingsForOwner(user.id);

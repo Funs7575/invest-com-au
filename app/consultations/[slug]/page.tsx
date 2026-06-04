@@ -302,8 +302,8 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
 
           {/* Compliance */}
           <div className="mt-16 space-y-3 text-center">
-            <p className="text-xs text-slate-400">{GENERAL_ADVICE_WARNING}</p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">{GENERAL_ADVICE_WARNING}</p>
+            <p className="text-xs text-slate-500">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
             <p className="text-xs text-slate-400 mt-4">

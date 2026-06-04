@@ -57,13 +57,13 @@ export default async function SquadInboxPage({ params, searchParams }: PageProps
   const page = Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1;
   const offset = (page - 1) * PAGE_SIZE;
 
-  // 1. Auth — redirect unauthenticated to /account/login.
+  // 1. Auth — redirect unauthenticated to /auth/login.
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect(`/account/login?redirect=/teams/${slug}/inbox`);
+    redirect(`/auth/login?next=/teams/${slug}/inbox`);
   }
 
   // 2. Resolve calling professional + team membership.

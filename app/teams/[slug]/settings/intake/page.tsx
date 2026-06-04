@@ -33,7 +33,7 @@ export default async function TeamIntakeSettingsPage({
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect(`/account/login?redirect=/teams/${slug}/settings/intake`);
+    redirect(`/auth/login?next=/teams/${slug}/settings/intake`);
   }
 
   const admin = createAdminClient();

@@ -222,7 +222,7 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
                         <td className={`py-2 text-right font-bold ${r.gain >= 0 ? "text-emerald-600" : "text-red-600"}`}>${Math.round(r.gain).toLocaleString()}</td>
                         <td className="py-2 text-right text-slate-500">{r.daysHeld}d</td>
                         <td className="py-2 text-center">
-                          {r.cgtEligible ? <span className="text-emerald-600 font-bold">50% off</span> : r.daysUntilDiscount <= 90 ? <span className="text-amber-600">{r.daysUntilDiscount}d away</span> : <span className="text-slate-400">No</span>}
+                          {r.cgtEligible ? <span className="text-emerald-700 font-bold">50% off</span> : r.daysUntilDiscount <= 90 ? <span className="text-amber-700">{r.daysUntilDiscount}d away</span> : <span className="text-slate-500">No</span>}
                         </td>
                         <td className="py-2 text-right text-slate-900">${Math.round(r.taxableGain).toLocaleString()}</td>
                         <td className="py-2 text-right font-bold text-slate-900">${Math.round(r.estimatedTax).toLocaleString()}</td>
@@ -245,7 +245,7 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
                         <p className="text-sm font-bold text-slate-900">{m.action}</p>
                         <p className="text-xs text-slate-600">{m.detail}</p>
                       </div>
-                      <span className="text-sm font-extrabold text-emerald-600">Save ~${m.savings.toLocaleString()}</span>
+                      <span className="text-sm font-extrabold text-emerald-700">Save ~${m.savings.toLocaleString()}</span>
                     </div>
                   ))}
                 </div>

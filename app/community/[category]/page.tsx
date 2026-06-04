@@ -266,7 +266,7 @@ export default async function CategoryPage({
           </div>
           <Link
             href={`/community/new?category=${slug}`}
-            className="hidden sm:inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm shrink-0"
+            className="hidden sm:inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm shrink-0"
           >
             <Icon name="plus" size={16} />
             New Thread
@@ -310,7 +310,7 @@ export default async function CategoryPage({
             </p>
             <Link
               href={`/community/new?category=${slug}`}
-              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm mb-8"
+              className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm mb-8"
             >
               <Icon name="plus" size={16} />
               Start the First Thread
@@ -426,7 +426,7 @@ export default async function CategoryPage({
         <div className="sm:hidden mt-6">
           <Link
             href={`/community/new?category=${slug}`}
-            className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-3 rounded-xl transition-colors w-full"
+            className="flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-5 py-3 rounded-xl transition-colors w-full"
           >
             <Icon name="plus" size={16} />
             New Thread

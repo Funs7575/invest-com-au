@@ -32,7 +32,7 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS public.job_posts (
   id            uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
-  firm_id       uuid        NOT NULL REFERENCES public.advisor_firms(id) ON DELETE CASCADE,
+  firm_id       integer     NOT NULL REFERENCES public.advisor_firms(id) ON DELETE CASCADE,
   created_by    uuid        REFERENCES auth.users(id) ON DELETE SET NULL,
   title         text        NOT NULL CHECK (char_length(title) BETWEEN 2 AND 200),
   location      text        NOT NULL CHECK (char_length(location) BETWEEN 2 AND 100),

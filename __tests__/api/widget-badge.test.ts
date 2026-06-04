@@ -130,6 +130,52 @@ describe("GET /api/widget/badge — validation", () => {
     const res = await GET(makeReq({ type: "broker", slug: "nobody" }));
     expect(res.status).toBe(404);
   });
+
+  it("sanitizes the slug so a 404 comment cannot break out of the JS comment (advisor)", async () => {
+    // The 404 body interpolates the slug into a `/* … "<slug>" … */` comment
+    // served as application/javascript. An unsanitized `*/<payload>/*` would
+    // terminate the comment early and inject executable script. After
+    // sanitization the body must contain only the single, legitimate comment
+    // terminator (the template's own `*/`) and none of the attacker's payload.
+    mockFrom.mockReturnValue(makeSingleChain(null)); // force the 404 branch
+    const res = await GET(
+      makeReq({ type: "advisor", slug: "nobody*/alert(document.domain);/*" }),
+    );
+    expect(res.status).toBe(404);
+    const body = await res.text();
+    // Exactly one `*/` — the template terminator. A breakout would add more.
+    expect(body.split("*/").length - 1).toBe(1);
+    // The echoed slug carries none of the comment/script metacharacters.
+    expect(body).not.toContain("alert(");
+    expect(body).not.toContain("document.domain");
+    expect(body).not.toContain("(");
+    expect(body).not.toContain(";");
+    // The sanitized remainder (slug charset only) is what gets echoed.
+    expect(body).toContain("nobodyalertdocumentdomain");
+  });
+
+  it("sanitizes the slug so a 404 comment cannot break out of the JS comment (broker)", async () => {
+    mockFrom.mockReturnValue(makeSingleChain(null)); // force the 404 branch
+    const res = await GET(
+      makeReq({ type: "broker", slug: "nobody*/</script><script>x/*" }),
+    );
+    expect(res.status).toBe(404);
+    const body = await res.text();
+    // Only the single legitimate comment terminator survives.
+    expect(body.split("*/").length - 1).toBe(1);
+    expect(body).not.toContain("<script>");
+    expect(body).not.toContain("</script>");
+    expect(body).not.toContain("</");
+  });
+
+  it("passes a slug-charset-only value to the DB query (injection chars stripped)", async () => {
+    const chain = makeSingleChain(null);
+    mockFrom.mockReturnValue(chain);
+    await GET(makeReq({ type: "advisor", slug: "jane*/x/*-smith" }));
+    const eqCalls = (chain.eq as ReturnType<typeof vi.fn>).mock.calls;
+    const slugCall = eqCalls.find((c) => c[0] === "slug");
+    expect(slugCall?.[1]).toBe("janex-smith");
+  });
 });
 
 describe("GET /api/widget/badge — advisor badge", () => {

@@ -373,4 +373,141 @@ describe("POST /api/marketplace/postback", () => {
       expect(res.status).toBe(200);
     }
   });
+
+  describe("conversion_value_cents bounds", () => {
+    // Capture the row written to conversion_events so we can assert the exact
+    // sanitised value reaches the int4 column (and the webhook payload).
+    function setupCapturingInsert() {
+      const conversionInsert = vi.fn().mockReturnThis();
+      const webhookInsert = vi.fn().mockResolvedValue({ data: null, error: null });
+      mockFrom.mockImplementation((table: string) => {
+        if (table === "broker_accounts") {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            not: vi.fn().mockReturnThis(),
+            limit: vi.fn().mockReturnThis(),
+            maybeSingle: vi.fn().mockResolvedValue({
+              data: {
+                broker_slug: "commsec",
+                status: "active",
+                webhook_url: "https://broker.example/hook",
+              },
+              error: null,
+            }),
+          };
+        }
+        if (table === "affiliate_clicks") {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            maybeSingle: vi.fn().mockResolvedValue({ data: CLICK, error: null }),
+          };
+        }
+        if (table === "conversion_events") {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            insert: conversionInsert,
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+            single: vi.fn().mockResolvedValue({ data: CONVERSION, error: null }),
+          };
+        }
+        if (table === "campaign_events") {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            limit: vi.fn().mockReturnThis(),
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          };
+        }
+        if (table === "webhook_delivery_queue") {
+          return { insert: webhookInsert };
+        }
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          update: vi.fn().mockReturnThis(),
+          maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+        };
+      });
+      return { conversionInsert, webhookInsert };
+    }
+
+    function insertedValue(conversionInsert: ReturnType<typeof vi.fn>): number {
+      const row = conversionInsert.mock.calls[0]![0] as {
+        conversion_value_cents: number;
+      };
+      return row.conversion_value_cents;
+    }
+
+    it("clamps a negative value to 0 instead of poisoning revenue totals", async () => {
+      const { conversionInsert, webhookInsert } = setupCapturingInsert();
+      const res = await POST(
+        makePost({ ...VALID_BODY, conversion_value_cents: -100000 }, VALID_API_KEY)
+      );
+      expect(res.status).toBe(200);
+      expect(insertedValue(conversionInsert)).toBe(0);
+      const wh = webhookInsert.mock.calls[0]![0] as {
+        payload: { conversion_value_cents: number };
+      };
+      expect(wh.payload.conversion_value_cents).toBe(0);
+    });
+
+    it("truncates a fractional value to an integer (int4 column)", async () => {
+      const { conversionInsert } = setupCapturingInsert();
+      const res = await POST(
+        makePost({ ...VALID_BODY, conversion_value_cents: 12.9 }, VALID_API_KEY)
+      );
+      expect(res.status).toBe(200);
+      expect(insertedValue(conversionInsert)).toBe(12);
+    });
+
+    it("coerces NaN to 0 instead of crashing the insert (500)", async () => {
+      const { conversionInsert } = setupCapturingInsert();
+      // NaN cannot be JSON-encoded, so pass a string the route coerces to NaN.
+      const res = await POST(
+        makePost({ ...VALID_BODY, conversion_value_cents: "not-a-number" }, VALID_API_KEY)
+      );
+      expect(res.status).toBe(200);
+      expect(insertedValue(conversionInsert)).toBe(0);
+    });
+
+    it("coerces a non-finite (Infinity-like) value to 0", async () => {
+      const { conversionInsert } = setupCapturingInsert();
+      // 1e400 parses to Infinity in JS; JSON.stringify emits it as null, and a
+      // numeric-overflow string also resolves to Infinity via Number().
+      const res = await POST(
+        makePost({ ...VALID_BODY, conversion_value_cents: "1e400" }, VALID_API_KEY)
+      );
+      expect(res.status).toBe(200);
+      expect(insertedValue(conversionInsert)).toBe(0);
+    });
+
+    it("clamps a value above int4 range to MAX_INT4 instead of overflowing (500)", async () => {
+      const { conversionInsert } = setupCapturingInsert();
+      const res = await POST(
+        makePost({ ...VALID_BODY, conversion_value_cents: 3_000_000_000 }, VALID_API_KEY)
+      );
+      expect(res.status).toBe(200);
+      expect(insertedValue(conversionInsert)).toBe(2_147_483_647);
+    });
+
+    it("preserves a valid numeric-string value (S2S contract)", async () => {
+      const { conversionInsert } = setupCapturingInsert();
+      const res = await POST(
+        makePost({ ...VALID_BODY, conversion_value_cents: "500" }, VALID_API_KEY)
+      );
+      expect(res.status).toBe(200);
+      expect(insertedValue(conversionInsert)).toBe(500);
+    });
+
+    it("defaults an omitted value to 0", async () => {
+      const { conversionInsert } = setupCapturingInsert();
+      const { conversion_value_cents: _omit, ...noValue } = VALID_BODY;
+      const res = await POST(makePost(noValue, VALID_API_KEY));
+      expect(res.status).toBe(200);
+      expect(insertedValue(conversionInsert)).toBe(0);
+    });
+  });
 });

@@ -123,7 +123,7 @@ export default function CompareDesktopTable({
                   </details>
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <div className="mb-2 whitespace-nowrap"><span className="text-amber">{renderStars(broker.rating || 0)}</span><span className="text-sm text-slate-500 ml-1">{broker.rating}</span></div>
+                  <div className="mb-2 whitespace-nowrap"><span className="text-amber-600">{renderStars(broker.rating || 0)}</span><span className="text-sm text-slate-500 ml-1">{broker.rating}</span></div>
                   <ABTestCTA
                     broker={broker}
                     activeTests={activeABTests}

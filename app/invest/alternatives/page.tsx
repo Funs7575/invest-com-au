@@ -137,7 +137,7 @@ export default function AlternativesHubPage() {
               {vertical?.heroSubtext ??
                 `Diversify beyond shares and property with wine, art, classic cars, watches, rare coins, and whisky. Compare platforms, browse listings, and learn how Australians are accessing alternative asset classes in ${CURRENT_YEAR}.`}
             </p>
-            <p className="text-[0.56rem] md:text-xs text-slate-400">
+            <p className="text-[0.56rem] md:text-xs text-slate-500">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>
@@ -186,7 +186,7 @@ export default function AlternativesHubPage() {
             </details>
           </div>
 
-          <p className="text-[0.58rem] text-slate-400 leading-relaxed mb-3">
+          <p className="text-[0.58rem] text-slate-500 leading-relaxed mb-3">
             {PDS_CONSIDERATION} {FSG_NOTE} {AFCA_REFERENCE}
           </p>
 
