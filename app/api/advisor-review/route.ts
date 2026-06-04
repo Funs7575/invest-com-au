@@ -16,6 +16,14 @@ function isValidRating(v: unknown): v is number {
   return typeof v === "number" && Number.isInteger(v) && v >= 1 && v <= 5;
 }
 
+// Maximum lengths for free-text fields, consistent with lib/api-schemas.ts caps.
+// Columns are unbounded TEXT, so these route-level bounds are the only backstop
+// against unbounded-payload storage abuse / layout-breaking review bodies.
+const MAX_BODY_LENGTH = 5000;
+const MAX_TITLE_LENGTH = 160;
+const MAX_NAME_LENGTH = 100;
+const MAX_EMAIL_LENGTH = 200;
+
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
   if (await isRateLimited(`advisor_review:${ip}`, 5, 60)) {
@@ -56,6 +64,20 @@ export async function POST(request: NextRequest) {
     // Minimum review length
     if (reviewBody.trim().length < 50) {
       return NextResponse.json({ error: "Review must be at least 50 characters long." }, { status: 400 });
+    }
+
+    // Maximum lengths — guard against unbounded TEXT writes (storage abuse / layout breakage)
+    if (reviewBody.trim().length > MAX_BODY_LENGTH) {
+      return NextResponse.json({ error: `Review must be ${MAX_BODY_LENGTH} characters or fewer.` }, { status: 400 });
+    }
+    if (typeof title === "string" && title.trim().length > MAX_TITLE_LENGTH) {
+      return NextResponse.json({ error: `Title must be ${MAX_TITLE_LENGTH} characters or fewer.` }, { status: 400 });
+    }
+    if (typeof reviewer_name === "string" && reviewer_name.trim().length > MAX_NAME_LENGTH) {
+      return NextResponse.json({ error: `Name must be ${MAX_NAME_LENGTH} characters or fewer.` }, { status: 400 });
+    }
+    if (typeof reviewer_email === "string" && reviewer_email.trim().length > MAX_EMAIL_LENGTH) {
+      return NextResponse.json({ error: `Email must be ${MAX_EMAIL_LENGTH} characters or fewer.` }, { status: 400 });
     }
 
     // Validate used_services
