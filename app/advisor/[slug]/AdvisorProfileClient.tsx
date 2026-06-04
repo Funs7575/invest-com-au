@@ -1207,38 +1207,45 @@ export default function AdvisorProfileClient({
                 ) : (
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">Your name *</label>
+                      <label htmlFor="advisor-contact-name" className="block text-xs font-bold text-slate-700 mb-1.5">Your name *</label>
                       <input
+                        id="advisor-contact-name"
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         onBlur={() => setTouched((p) => ({ ...p, name: true }))}
                         placeholder="Full name"
+                        aria-invalid={nameError ? true : undefined}
+                        aria-describedby={nameError ? "advisor-contact-name-error" : undefined}
                         className={`w-full px-3.5 py-2.5 text-sm bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/25 focus:border-amber-400 focus:bg-white transition-all ${
                           nameError ? "border-red-300 bg-red-50" : "border-slate-200"
                         }`}
                       />
-                      {nameError && <p className="text-xs text-red-500 mt-1">{nameError}</p>}
+                      {nameError && <p id="advisor-contact-name-error" className="text-xs text-red-500 mt-1">{nameError}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">Email *</label>
+                      <label htmlFor="advisor-contact-email" className="block text-xs font-bold text-slate-700 mb-1.5">Email *</label>
                       <input
+                        id="advisor-contact-email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         onBlur={() => setTouched((p) => ({ ...p, email: true }))}
                         placeholder="your@email.com"
+                        aria-invalid={emailError ? true : undefined}
+                        aria-describedby={emailError ? "advisor-contact-email-error" : undefined}
                         className={`w-full px-3.5 py-2.5 text-sm bg-slate-50 border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/25 focus:border-amber-400 focus:bg-white transition-all ${
                           emailError ? "border-red-300 bg-red-50" : "border-slate-200"
                         }`}
                       />
-                      {emailError && <p className="text-xs text-red-500 mt-1">{emailError}</p>}
+                      {emailError && <p id="advisor-contact-email-error" className="text-xs text-red-500 mt-1">{emailError}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        Phone <span className="text-slate-400 font-normal">(optional)</span>
+                      <label htmlFor="advisor-contact-phone" className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Phone <span className="text-slate-500 font-normal">(optional)</span>
                       </label>
                       <input
+                        id="advisor-contact-phone"
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -1247,10 +1254,11 @@ export default function AdvisorProfileClient({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                        What do you need help with? <span className="text-slate-400 font-normal">(optional)</span>
+                      <label htmlFor="advisor-contact-message" className="block text-xs font-bold text-slate-700 mb-1.5">
+                        What do you need help with? <span className="text-slate-500 font-normal">(optional)</span>
                       </label>
                       <textarea
+                        id="advisor-contact-message"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Brief description of your situation..."
