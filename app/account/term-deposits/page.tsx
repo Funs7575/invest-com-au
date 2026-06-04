@@ -21,7 +21,7 @@ export default async function TermDepositsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/term-deposits");
+    redirect("/auth/login?next=/account/term-deposits");
   }
 
   const { data } = await supabase

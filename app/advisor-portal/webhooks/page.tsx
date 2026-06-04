@@ -23,7 +23,7 @@ export default async function AdvisorPortalWebhooksPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/advisor-portal/webhooks");
+    redirect("/auth/login?next=/advisor-portal/webhooks");
   }
 
   const admin = createAdminClient();

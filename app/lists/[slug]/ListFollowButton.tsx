@@ -14,7 +14,7 @@ export default function ListFollowButton({ slug, initialFollowing, isAuthenticat
 
   const toggle = async () => {
     if (!isAuthenticated) {
-      window.location.href = `/account/login?redirect=/lists/${slug}`;
+      window.location.href = `/auth/login?next=/lists/${slug}`;
       return;
     }
     setBusy(true);

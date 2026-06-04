@@ -17,7 +17,7 @@ export default async function GoalsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/goals");
+    redirect("/auth/login?next=/account/goals");
   }
 
   const { data } = await supabase

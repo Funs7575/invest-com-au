@@ -25,7 +25,7 @@ export default async function ProsIntakeSettingsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/pros/settings/intake");
+    redirect("/auth/login?next=/pros/settings/intake");
   }
 
   const admin = createAdminClient();

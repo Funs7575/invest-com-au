@@ -268,7 +268,7 @@ export default async function RbaPollPage() {
             )}
             {!userId && (
               <p className="text-xs text-slate-400 mt-4 border-t border-slate-100 pt-3">
-                <Link href="/account/login" className="text-violet-600 font-semibold hover:underline">
+                <Link href="/auth/login" className="text-violet-600 font-semibold hover:underline">
                   Sign in
                 </Link>{" "}
                 to track your accuracy.

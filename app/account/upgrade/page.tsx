@@ -137,7 +137,7 @@ export default async function AccountUpgradeHubPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/upgrade");
+    redirect("/auth/login?next=/account/upgrade");
   }
 
   const memberships = await getKindsForUser(user.id);

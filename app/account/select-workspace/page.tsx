@@ -28,7 +28,7 @@ export default async function SelectWorkspacePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/select-workspace");
+    redirect("/auth/login?next=/account/select-workspace");
   }
 
   const memberships = await getKindsForUser(user.id);

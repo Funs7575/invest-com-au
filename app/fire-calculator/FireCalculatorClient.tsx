@@ -428,7 +428,7 @@ function SaveGoalButton({
   if (status === "signin") {
     return (
       <p className="mt-3 text-xs text-slate-500">
-        <Link href="/account/login?redirect=/fire-calculator" className="underline">
+        <Link href="/auth/login?next=/fire-calculator" className="underline">
           Sign in
         </Link>{" "}
         to save this FIRE goal to your account.

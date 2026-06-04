@@ -16,7 +16,7 @@ export default async function InvestorProfilePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/investor-profile");
+    redirect("/auth/login?next=/account/investor-profile");
   }
 
   const [profile, tokensRes] = await Promise.all([

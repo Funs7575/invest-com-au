@@ -96,7 +96,7 @@ export default function UserVerifiedBadge({ productType, productRef, initialCoun
 
       {!loading && !user && (
         <Link
-          href={`/account/login?redirect=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname : "/")}`}
+          href={`/auth/login?next=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname : "/")}`}
           className="text-xs text-slate-500 hover:text-violet-700 underline-offset-2 hover:underline"
         >
           Sign in to verify

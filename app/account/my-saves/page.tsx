@@ -118,7 +118,7 @@ export default async function MySavesPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/account/login?redirect=/account/my-saves");
+    redirect("/auth/login?next=/account/my-saves");
   }
 
   const admin = createAdminClient();

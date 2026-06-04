@@ -20,7 +20,7 @@ export default async function AccountReferPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/account/login?redirect=/account/refer");
+  if (!user) redirect("/auth/login?next=/account/refer");
 
   const link = await getOrCreateLink(user.id);
   const shareUrl = `${SITE_URL}/api/ref/${link.share_token}`;

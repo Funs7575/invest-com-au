@@ -43,7 +43,7 @@ export default async function AccountTimelinePage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/account/login?redirect=/account/timeline");
+  if (!user) redirect("/auth/login?next=/account/timeline");
 
   const items = await loadTimeline({
     authUserId: user.id,

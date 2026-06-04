@@ -18,7 +18,7 @@ export default async function BusinessUpgradePage({ searchParams }: PageProps) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/upgrade/business");
+    redirect("/auth/login?next=/account/upgrade/business");
   }
 
   const params = await searchParams;

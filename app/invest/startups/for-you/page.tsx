@@ -22,7 +22,7 @@ export default async function StartupsForYouPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/account/login?redirect=/invest/startups/for-you");
+  if (!user) redirect("/auth/login?next=/invest/startups/for-you");
 
   // Fetch thesis, wholesale cert, and open rounds in parallel
   const [profileRes, certRes, roundsRes] = await Promise.all([

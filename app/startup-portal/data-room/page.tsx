@@ -9,7 +9,7 @@ async function getDataRoomData() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/account/login?redirect=/startup-portal/data-room");
+  if (!user) redirect("/auth/login?next=/startup-portal/data-room");
 
   const { data: profile } = await supabase
     .from("startup_profiles")

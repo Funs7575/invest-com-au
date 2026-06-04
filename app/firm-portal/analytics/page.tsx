@@ -57,7 +57,7 @@ export default async function FirmAnalyticsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/firm-portal/analytics");
+    redirect("/auth/login?next=/firm-portal/analytics");
   }
 
   const admin = createAdminClient();

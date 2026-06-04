@@ -11,7 +11,7 @@ export default async function EsicVerificationPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/account/login?redirect=/startup-portal/esic-verification");
+  if (!user) redirect("/auth/login?next=/startup-portal/esic-verification");
 
   const { data: profile } = await supabase
     .from("startup_profiles")

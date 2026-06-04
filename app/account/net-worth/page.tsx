@@ -58,7 +58,7 @@ export default async function NetWorthPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/account/login?redirect=/account/net-worth");
+  if (!user) redirect("/auth/login?next=/account/net-worth");
 
   const [holdingsRes, goalsRes, manualBalancesRes] = await Promise.all([
     supabase

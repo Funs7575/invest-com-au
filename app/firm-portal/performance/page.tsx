@@ -39,7 +39,7 @@ export default async function FirmPerformancePage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/firm-portal/performance");
+    redirect("/auth/login?next=/firm-portal/performance");
   }
 
   const admin = createAdminClient();
