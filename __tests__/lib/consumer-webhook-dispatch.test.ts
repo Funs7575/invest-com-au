@@ -32,13 +32,17 @@ function makeChain() {
 
   // The chain accumulates filter state so maybeSingle/order can return
   // the right data.
-  const state: { table?: string; filters: [string, unknown][]; updatePatch?: Record<string, unknown>; insertRow?: Record<string, unknown> } = { filters: [] };
+  const state: { table?: string; filters: [string, unknown][]; inFilters: [string, unknown[]][]; updatePatch?: Record<string, unknown>; insertRow?: Record<string, unknown> } = { filters: [], inFilters: [] };
 
   chain.select = vi.fn((_cols?: string, _opts?: unknown) => {
     return chain;
   });
   chain.eq = vi.fn((_col: string, val: unknown) => {
     state.filters.push([_col, val]);
+    return chain;
+  });
+  chain.in = vi.fn((_col: string, vals: unknown[]) => {
+    state.inFilters.push([_col, vals]);
     return chain;
   });
   chain.gte = vi.fn(() => chain);
@@ -71,6 +75,8 @@ function makeChain() {
     if (state.updatePatch) {
       const id = state.filters.find(([col]) => col === "id")?.[1] as string | undefined;
       if (id) updatedDeliveries.push({ id, patch: state.updatePatch });
+      const inIds = state.inFilters.find(([col]) => col === "id")?.[1] as string[] | undefined;
+      if (inIds) for (const inId of inIds) updatedDeliveries.push({ id: inId, patch: state.updatePatch });
     }
     return Promise.resolve(resolve({ data: null, error: null }));
   };
@@ -98,8 +104,16 @@ vi.mock("@/lib/supabase/admin", () => ({
       // Deliveries table
       if (table === "consumer_webhook_deliveries") {
         const chain = makeChain();
+        // Preserve the update-tracking `then` from makeChain (closes over this
+        // chain's state) so .update(...).eq/.in(...) records updatedDeliveries;
+        // fall back to returning mockDeliveries for plain SELECT chains.
+        const trackingThen = chain.then as (
+          resolve: (v: { data: unknown; error: unknown }) => unknown,
+        ) => unknown;
         chain.then = (resolve: (v: { data: unknown; error: unknown }) => unknown) =>
-          Promise.resolve(resolve({ data: mockDeliveries, error: null }));
+          trackingThen((res: { data: unknown; error: unknown }) =>
+            resolve({ ...res, data: mockDeliveries }),
+          );
         // Override insert to track rows
         chain.insert = vi.fn((row: Record<string, unknown>) => {
           insertedDeliveries.push(row);
@@ -380,6 +394,75 @@ describe("retryFailedConsumerWebhooks", () => {
     expect(stats.skipped_no_secret).toBe(1);
     expect(stats.retried).toBe(0);
     expect(sender).not.toHaveBeenCalled();
+  });
+
+  it("clears needs_retry on ALL sibling rows in a group, not just the latest, on successful retry", async () => {
+    // Two byte-identical (webhook, event, payload) failures — e.g. the
+    // timestamp-less broker.updated event fired across two cron runs while the
+    // subscriber was down. Both rows are needs_retry=true in the same group.
+    const payload = { broker_slug: "commsec" };
+    mockDeliveries = [
+      {
+        id: "d-old",
+        webhook_id: "wh-1",
+        event_type: "broker.updated",
+        payload,
+        response_status: 503,
+        attempt_count: 1,
+        needs_retry: true,
+      },
+      {
+        id: "d-new",
+        webhook_id: "wh-1",
+        event_type: "broker.updated",
+        payload,
+        response_status: 503,
+        attempt_count: 1,
+        needs_retry: true,
+      },
+    ];
+    hookLookupResult = makeHook();
+    const sender = makeSender(200);
+
+    const stats = await retryFailedConsumerWebhooks(sender);
+
+    // Single group (identical key), one real retry.
+    expect(stats.groups).toBe(1);
+    expect(stats.retried).toBe(1);
+
+    // BOTH original rows must be marked needs_retry=false — not just the latest.
+    const clearedIds = updatedDeliveries
+      .filter((u) => u.patch.needs_retry === false)
+      .map((u) => u.id);
+    expect(clearedIds).toContain("d-old");
+    expect(clearedIds).toContain("d-new");
+  });
+
+  it("clears needs_retry on ALL sibling rows when a group hits the attempt cap", async () => {
+    // 5 identical-payload failures = at cap; every row must be cleared so none
+    // is left orphaned as needs_retry=true.
+    const payload = { broker_slug: "stake" };
+    mockDeliveries = Array.from({ length: 5 }, (_, i) => ({
+      id: `cap-${i}`,
+      webhook_id: "wh-1",
+      event_type: "broker.updated",
+      payload,
+      response_status: 503,
+      attempt_count: 1,
+      needs_retry: true,
+    }));
+    hookLookupResult = makeHook();
+    const sender = makeSender(200);
+
+    const stats = await retryFailedConsumerWebhooks(sender);
+
+    expect(stats.skipped_max_attempts).toBe(1);
+    const clearedIds = updatedDeliveries
+      .filter((u) => u.patch.needs_retry === false)
+      .map((u) => u.id);
+    for (let i = 0; i < 5; i++) {
+      expect(clearedIds).toContain(`cap-${i}`);
+    }
   });
 
   it("groups separate events for the same webhook_id independently", async () => {

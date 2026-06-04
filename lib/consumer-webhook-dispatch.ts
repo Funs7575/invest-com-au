@@ -256,13 +256,18 @@ export async function retryFailedConsumerWebhooks(
 
   if (!deliveries || deliveries.length === 0) return stats;
 
-  // Group by webhook_id + event_type + payload — pick latest row per key.
+  // Group by webhook_id + event_type + payload — pick latest row per key and
+  // track every delivery id in the group so we can clear needs_retry on all of
+  // them (not just the latest) when the group is resolved. Identical payloads
+  // can recur across cron runs (e.g. the timestamp-less broker.updated event),
+  // producing multiple needs_retry=true rows in one group; clearing only the
+  // latest would orphan the siblings as permanently needs_retry=true.
   interface DeliveryGroup {
     webhookId: string;
     eventType: string;
     payload: Record<string, unknown>;
     attempts: number;
-    latestDeliveryId: string;
+    ids: string[];
   }
   const groups = new Map<string, DeliveryGroup>();
 
@@ -278,12 +283,13 @@ export async function retryFailedConsumerWebhooks(
     const key = `${d.webhook_id}|${d.event_type}|${JSON.stringify(d.payload)}`;
     const existing = groups.get(key);
     const attempts = existing ? existing.attempts + d.attempt_count : d.attempt_count;
+    const ids = existing ? [...existing.ids, d.id] : [d.id];
     groups.set(key, {
       webhookId: d.webhook_id,
       eventType: d.event_type,
       payload: d.payload,
       attempts,
-      latestDeliveryId: d.id,
+      ids,
     });
   }
 
@@ -291,12 +297,12 @@ export async function retryFailedConsumerWebhooks(
 
   for (const g of groups.values()) {
     if (g.attempts >= MAX_CONSUMER_DELIVERY_ATTEMPTS) {
-      // Mark the latest delivery row as permanently failed (stop retrying).
+      // Mark every delivery row in the group as permanently failed (stop retrying).
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (admin as any)
         .from("consumer_webhook_deliveries")
         .update({ needs_retry: false })
-        .eq("id", g.latestDeliveryId);
+        .in("id", g.ids);
       stats.skipped_max_attempts += 1;
       continue;
     }
@@ -314,7 +320,7 @@ export async function retryFailedConsumerWebhooks(
       await (admin as any)
         .from("consumer_webhook_deliveries")
         .update({ needs_retry: false })
-        .eq("id", g.latestDeliveryId);
+        .in("id", g.ids);
       stats.skipped_hook_gone += 1;
       continue;
     }
@@ -324,7 +330,7 @@ export async function retryFailedConsumerWebhooks(
       await (admin as any)
         .from("consumer_webhook_deliveries")
         .update({ needs_retry: false })
-        .eq("id", g.latestDeliveryId);
+        .in("id", g.ids);
       stats.skipped_no_secret += 1;
       continue;
     }
@@ -350,12 +356,13 @@ export async function retryFailedConsumerWebhooks(
     const now = new Date().toISOString();
     const newAttemptCount = g.attempts + 1;
 
-    // Mark old delivery row as no longer needing retry.
+    // Mark every old delivery row in the group as no longer needing retry —
+    // not just the latest — so recurring identical-payload siblings are cleared.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (admin as any)
       .from("consumer_webhook_deliveries")
       .update({ needs_retry: false })
-      .eq("id", g.latestDeliveryId);
+      .in("id", g.ids);
 
     // Insert a fresh delivery row for this attempt.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
