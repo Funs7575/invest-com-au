@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { recordFormEvent, getOrCreateSessionId } from "@/lib/form-tracking";
+import { useDialogA11y } from "@/lib/hooks/useDialogA11y";
+import { Input } from "@/components/ui/Input";
 
 /**
  * Exit-intent modal.
@@ -45,6 +47,7 @@ export default function ExitIntentModal({
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   // Open handler — triggered on mouseleave top OR pagehide
   const trigger = useCallback(() => {
@@ -72,6 +75,11 @@ export default function ExitIntentModal({
     },
     [],
   );
+
+  // Escape-to-close + focus trap + initial focus + focus restoration.
+  // Escape is treated as a manual close (same as the × button).
+  const closeFromEscape = useCallback(() => dismiss("close"), [dismiss]);
+  useDialogA11y({ open, onClose: closeFromEscape, containerRef: dialogRef });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -133,6 +141,7 @@ export default function ExitIntentModal({
 
   return (
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm px-4"
       role="dialog"
       aria-modal="true"
@@ -158,14 +167,15 @@ export default function ExitIntentModal({
           </div>
         ) : (
           <form onSubmit={submit} className="space-y-3">
-            <input
+            <Input
+              id="exit-intent-email"
+              label="Email address"
               type="email"
               required
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none"
             />
             {error && (
               <p role="alert" className="text-xs text-red-700">
