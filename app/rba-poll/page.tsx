@@ -35,8 +35,8 @@ interface PollRow {
 
 interface VoteRow {
   target_id: number;
-  vote: number;
-  voter_user_id: string;
+  value: number;
+  user_id: string;
 }
 
 interface LeaderboardRow {
@@ -53,9 +53,9 @@ function tallyVotes(votes: VoteRow[], pollId: number) {
   const t = { hike: 0, hold: 0, cut: 0, total: 0 };
   for (const v of subset) {
     t.total++;
-    if (v.vote === 1) t.hike++;
-    else if (v.vote === 0) t.hold++;
-    else if (v.vote === -1) t.cut++;
+    if (v.value === 1) t.hike++;
+    else if (v.value === 0) t.hold++;
+    else if (v.value === -1) t.cut++;
   }
   return t;
 }
@@ -81,7 +81,7 @@ export default async function RbaPollPage() {
   // Fetch all votes for these polls — forum_votes_public_read covers this.
   const { data: voteRows } = await supabase
     .from("forum_votes")
-    .select("target_id, vote, voter_user_id")
+    .select("target_id, value, user_id")
     .eq("target_type", "rba_poll")
     .in("target_id", pollIds.length > 0 ? pollIds : [-1]);
 
@@ -140,7 +140,7 @@ export default async function RbaPollPage() {
     outcome: (poll.outcome as 1 | 0 | -1 | null),
     tally: tallyVotes(votes, poll.id),
     myVote: userId
-      ? ((votes.find((v) => v.target_id === poll.id && v.voter_user_id === userId)?.vote ??
+      ? ((votes.find((v) => v.target_id === poll.id && v.user_id === userId)?.value ??
           null) as 1 | 0 | -1 | null)
       : null,
   }));

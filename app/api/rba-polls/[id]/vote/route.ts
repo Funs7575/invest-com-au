@@ -3,7 +3,7 @@
  *
  * Body: { vote: 1 | 0 | -1 }  (1=HIKE, 0=HOLD, -1=CUT)
  *
- * Upserts into forum_votes on UNIQUE(target_type, target_id, voter_user_id).
+ * Upserts into forum_votes on UNIQUE(user_id, target_type, target_id).
  * Returns early if the poll is no longer open (revealed or closed).
  */
 
@@ -55,10 +55,10 @@ export const POST = withValidatedBody(VoteBody, async (req: NextRequest, body) =
       {
         target_type: "rba_poll",
         target_id: pollId,
-        voter_user_id: user.id,
-        vote: body.vote,
+        user_id: user.id,
+        value: body.vote,
       },
-      { onConflict: "target_type,target_id,voter_user_id" },
+      { onConflict: "target_type,target_id,user_id" },
     );
 
   if (error) {
