@@ -76,17 +76,6 @@ CREATE POLICY "Organisation admin can update own org"
   USING (admin_user_id = auth.uid())
   WITH CHECK (admin_user_id = auth.uid());
 
--- Active members can also view their organisation
-DROP POLICY IF EXISTS "Organisation members can view own org" ON public.organisations;
-CREATE POLICY "Organisation members can view own org"
-  ON public.organisations FOR SELECT TO authenticated
-  USING (
-    id IN (
-      SELECT organisation_id FROM public.organisation_members
-      WHERE user_id = auth.uid() AND status = 'active'
-    )
-  );
-
 -- Service role has full access (admin routes, cron, webhooks)
 DROP POLICY IF EXISTS "Service role full access on organisations" ON public.organisations;
 CREATE POLICY "Service role full access on organisations"
@@ -167,6 +156,19 @@ CREATE POLICY "Service role full access on organisation_members"
   ON public.organisation_members FOR ALL TO service_role
   USING (true)
   WITH CHECK (true);
+
+-- Active members can also view their organisation.
+-- Defined here (not in the organisations section above) because it subqueries
+-- organisation_members, which must exist first.
+DROP POLICY IF EXISTS "Organisation members can view own org" ON public.organisations;
+CREATE POLICY "Organisation members can view own org"
+  ON public.organisations FOR SELECT TO authenticated
+  USING (
+    id IN (
+      SELECT organisation_id FROM public.organisation_members
+      WHERE user_id = auth.uid() AND status = 'active'
+    )
+  );
 
 -- ─── organisation_applications ────────────────────────────────────────────────
 
