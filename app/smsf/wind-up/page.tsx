@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
+import { faqJsonLd, howToJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const revalidate = 86400;
@@ -159,11 +159,41 @@ export default function SmsfWindUpPage() {
   ]);
   const faq = faqJsonLd(FAQS);
 
+  // HowTo JSON-LD built from the rendered wind-up steps, with step/page URLs
+  // patched to this page (not /how-to/).
+  const howToLd = howToJsonLd({
+    slug: "smsf-wind-up",
+    h1: `How to Wind Up an SMSF in Australia (${CURRENT_YEAR} Guide)`,
+    intro:
+      "The formal process to wind up a self-managed super fund: pass a trustee resolution, notify the ATO, realise assets, pay liabilities, pay or rollover member benefits, lodge the final annual return, and close accounts and cancel the ABN/TFN.",
+    steps: WIND_UP_STEPS.map((s) => ({ heading: s.title, body: s.body })),
+  });
+  const howTo = {
+    ...howToLd,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl("/smsf/wind-up"),
+    },
+    step: howToLd.step?.map(
+      (
+        s: { "@type": string; position: number; name: string; text: string; url: string },
+        i: number,
+      ) => ({
+        ...s,
+        url: absoluteUrl(`/smsf/wind-up#step-${i + 1}`),
+      }),
+    ),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howTo) }}
       />
       {faq && (
         <script
@@ -197,10 +227,11 @@ export default function SmsfWindUpPage() {
               How to Wind Up an SMSF in Australia ({CURRENT_YEAR} Guide)
             </h1>
             <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-3xl mb-6">
-              Winding up an SMSF is a formal process with specific ATO notification requirements,
-              tax events, and compliance steps. Done incorrectly it can trigger unexpected CGT
-              bills, ongoing levies, and penalties. This guide covers every step — from the
-              trustee resolution through to cancelling the fund&apos;s ABN.
+              Winding up an SMSF takes seven steps — pass a trustee resolution, notify the ATO,
+              realise assets, pay all liabilities, pay or rollover member benefits, lodge the final
+              annual return, then close the bank accounts and cancel the ABN/TFN — and typically
+              costs $2,000–$6,000+ over a 3–12 month timeline. Done incorrectly it can trigger
+              unexpected CGT bills, ongoing levies, and penalties; this guide covers every step.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl">
               {[

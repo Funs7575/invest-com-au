@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { howToJsonLd } from "@/lib/schema-markup";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { createClient } from "@/lib/supabase/server";
@@ -47,9 +48,36 @@ export default async function SmsfSetupPage() {
     { name: "SMSF", url: absoluteUrl("/smsf") },
     { name: "Setup", url: absoluteUrl("/smsf/setup") },
   ]);
+
+  // Build HowTo JSON-LD from the 7 setup steps using the canonical builder,
+  // then patch step/page URLs to this page (not /how-to/) per its real location.
+  const howToLd = howToJsonLd({
+    slug: "smsf-setup",
+    h1: `How to Set Up an SMSF in Australia (${CURRENT_YEAR} Guide)`,
+    intro:
+      "The complete 7-step process to establish a self-managed super fund in Australia, from choosing a trustee structure to engaging an SMSF accountant.",
+    steps: SETUP_STEPS.map((s) => ({ heading: s.title, body: s.body })),
+  });
+  const howTo = {
+    ...howToLd,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl("/smsf/setup"),
+    },
+    step: howToLd.step?.map(
+      (
+        s: { "@type": string; position: number; name: string; text: string; url: string },
+        i: number,
+      ) => ({
+        ...s,
+        url: absoluteUrl(`/smsf/setup#step-${i + 1}`),
+      }),
+    ),
+  };
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howTo) }} />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
@@ -64,7 +92,7 @@ export default async function SmsfSetupPage() {
               How to Set Up an SMSF in Australia ({CURRENT_YEAR} Guide)
             </h1>
             <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-3xl mb-6">
-              The complete 7-step setup, with realistic cost ranges and the trustee-structure decision that drives most of the downstream complexity.
+              Setting up an SMSF takes seven steps — choose a trustee structure, create the trust deed, register with the ATO, open a dedicated bank account, document an investment strategy, roll over existing super, and engage an SMSF accountant — and costs $800–$3,500 depending on whether you use individual or corporate trustees. Below is the full process, the trustee-structure decision that drives most downstream complexity, and the realistic cost ranges.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl">
               {[
