@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-const { mockFrom, mockPaymentIntentsCreate, mockAccountsCreate, mockAccountLinksCreate, mockAccountsRetrieve } = vi.hoisted(() => ({
+const { mockFrom, mockPaymentIntentsCreate, mockAccountsCreate, mockAccountLinksCreate, mockAccountsRetrieve, mockCheckoutSessionsCreate } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockPaymentIntentsCreate: vi.fn(),
   mockAccountsCreate: vi.fn(),
   mockAccountLinksCreate: vi.fn(),
   mockAccountsRetrieve: vi.fn(),
+  mockCheckoutSessionsCreate: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -17,13 +18,16 @@ vi.mock("@/lib/stripe", () => ({
     paymentIntents: { create: mockPaymentIntentsCreate },
     accounts: { create: mockAccountsCreate, retrieve: mockAccountsRetrieve },
     accountLinks: { create: mockAccountLinksCreate },
+    checkout: { sessions: { create: mockCheckoutSessionsCreate } },
   })),
 }));
 
 import {
   createPaymentForBrief,
+  createBookingCheckout,
   createConnectOnboardingLink,
   getMarketplaceTakeRateBps,
+  getSessionTakeRateBps,
   refreshConnectAccountStatus,
   handleConnectWebhook,
 } from "@/lib/stripe-connect";
@@ -165,6 +169,110 @@ describe("createPaymentForBrief", () => {
     expect(callArgs.transfer_data?.destination).toBe("acct_test");
     expect(callArgs.metadata?.kind).toBe("marketplace_payment");
     expect(callArgs.metadata?.brief_id).toBe("5");
+  });
+});
+
+describe("getSessionTakeRateBps", () => {
+  beforeEach(() => {
+    delete process.env.SESSION_BOOKING_TAKE_RATE_BPS;
+  });
+
+  it("defaults to 15% (1500 bps)", () => {
+    expect(getSessionTakeRateBps()).toBe(1500);
+  });
+
+  it("honours SESSION_BOOKING_TAKE_RATE_BPS env override", () => {
+    process.env.SESSION_BOOKING_TAKE_RATE_BPS = "1000";
+    expect(getSessionTakeRateBps()).toBe(1000);
+  });
+
+  it("clamps out-of-range values to default", () => {
+    process.env.SESSION_BOOKING_TAKE_RATE_BPS = "9999"; // > 3000 cap
+    expect(getSessionTakeRateBps()).toBe(1500);
+  });
+});
+
+describe("createBookingCheckout (pre-AFSL/RG-246 kill-switch)", () => {
+  // Advisor session-booking payments intermediate consumer→adviser money +
+  // take a 15% clip (DD-03) — RG 246 / client-money territory that must stay
+  // OFF until the AFSL lands. The rail must NOT create a checkout session
+  // unless BOOKING_PAYMENTS_ENABLED === "true". Defaults OFF.
+  beforeEach(() => {
+    delete process.env.SESSION_BOOKING_TAKE_RATE_BPS; // keep the 15% default deterministic
+  });
+
+  const baseInput = {
+    slotId: 42,
+    professionalId: 7,
+    advisorSlug: "jane-adviser",
+    advisorName: "Jane Adviser",
+    consumerEmail: "c@example.com",
+    amountCents: 30000, // $300
+    successUrl: "https://invest.com.au/booking/success",
+    cancelUrl: "https://invest.com.au/advisor/jane-adviser#book",
+  };
+
+  const connectedPro = () =>
+    mockFrom.mockImplementation(() => ({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          maybeSingle: vi.fn().mockResolvedValue({
+            data: {
+              stripe_connect_account_id: "acct_test",
+              stripe_connect_status: "active",
+              stripe_connect_payouts_enabled: true,
+              stripe_connect_charges_enabled: true,
+            },
+            error: null,
+          }),
+        }),
+      }),
+    }));
+
+  it("returns 'disabled' by default (flag unset) and never calls Stripe", async () => {
+    vi.stubEnv("BOOKING_PAYMENTS_ENABLED", "");
+    connectedPro();
+    const result = await createBookingCheckout(baseInput);
+    expect(result.unavailable).toBe("disabled");
+    expect(result.checkoutUrl).toBeNull();
+    expect(mockCheckoutSessionsCreate).not.toHaveBeenCalled();
+  });
+
+  it.each(["false", "1", "TRUE", "True", "yes", "on", " true "])(
+    "stays gated when BOOKING_PAYMENTS_ENABLED is %j (not exactly 'true')",
+    async (value) => {
+      vi.stubEnv("BOOKING_PAYMENTS_ENABLED", value);
+      connectedPro();
+      const result = await createBookingCheckout(baseInput);
+      expect(result.unavailable).toBe("disabled");
+      expect(result.checkoutUrl).toBeNull();
+      expect(mockCheckoutSessionsCreate).not.toHaveBeenCalled();
+    },
+  );
+
+  it("does not call Stripe even when STRIPE_SECRET_KEY is set, while the flag is off", async () => {
+    vi.stubEnv("BOOKING_PAYMENTS_ENABLED", "");
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_dummy");
+    connectedPro();
+    const result = await createBookingCheckout(baseInput);
+    expect(result.unavailable).toBe("disabled");
+    expect(mockCheckoutSessionsCreate).not.toHaveBeenCalled();
+    expect(mockFrom).not.toHaveBeenCalled(); // gate short-circuits before any DB/Stripe work
+  });
+
+  it("creates a checkout session with the 15% clip once the flag is explicitly 'true'", async () => {
+    vi.stubEnv("BOOKING_PAYMENTS_ENABLED", "true");
+    connectedPro();
+    mockCheckoutSessionsCreate.mockResolvedValue({
+      url: "https://checkout.stripe.com/c/pay/cs_test",
+    });
+    const result = await createBookingCheckout(baseInput);
+    expect(result.checkoutUrl).toBe("https://checkout.stripe.com/c/pay/cs_test");
+    const arg = mockCheckoutSessionsCreate.mock.calls[0]?.[0];
+    expect(arg.mode).toBe("payment");
+    expect(arg.payment_intent_data?.application_fee_amount).toBe(4500); // 15% of 30000
+    expect(arg.payment_intent_data?.transfer_data?.destination).toBe("acct_test");
+    expect(arg.metadata?.type).toBe("session_booking");
   });
 });
 

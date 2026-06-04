@@ -408,13 +408,40 @@ export interface CreateBookingCheckoutInput {
 
 export interface CreateBookingCheckoutResult {
   checkoutUrl: string | null;
-  unavailable?: "no_secret" | "pro_not_connected" | "stripe_error";
+  unavailable?: "no_secret" | "pro_not_connected" | "stripe_error" | "disabled";
   detail?: string;
+}
+
+/**
+ * Advisor session bookings intermediate consumer→adviser money and take a
+ * platform clip (DD-03, 15%) — engaging RG 246 (conflicted remuneration) and
+ * client-money handling under an AFSL we do not yet hold. This booking-payment
+ * rail stays OFF until the licence lands and the RG 246 / s981A questions in
+ * `AFSL-LAWYER-BRIEF.md` are cleared: it MUST NOT create a checkout session
+ * unless `BOOKING_PAYMENTS_ENABLED` is explicitly set to "true". Defaults OFF —
+ * a missing/empty/any-other value keeps it gated. Flipping this flag on is
+ * founder + legal-gated (see `docs/strategy/REGULATORY-AVOID-LIST.md`, DD-03);
+ * do not enable pre-AFSL.
+ */
+export function areBookingPaymentsEnabled(): boolean {
+  return process.env.BOOKING_PAYMENTS_ENABLED === "true";
 }
 
 export async function createBookingCheckout(
   input: CreateBookingCheckoutInput,
 ): Promise<CreateBookingCheckoutResult> {
+  if (!areBookingPaymentsEnabled()) {
+    log.warn(
+      "createBookingCheckout blocked: booking payments disabled (pre-AFSL/RG-246)",
+      { slot_id: input.slotId },
+    );
+    return {
+      checkoutUrl: null,
+      unavailable: "disabled",
+      detail: "Booking payments are not currently available.",
+    };
+  }
+
   if (!process.env.STRIPE_SECRET_KEY) {
     return { checkoutUrl: null, unavailable: "no_secret" };
   }
