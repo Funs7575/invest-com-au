@@ -1,9 +1,31 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import Icon from "@/components/Icon";
-import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { howToJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
+
+// The four ordered methods walked through on this page — single source for both
+// the HowTo JSON-LD steps and to keep the schema in lockstep with the DOM copy.
+const GOLD_METHODS = [
+  {
+    title: "Physical Bullion",
+    body: "Own the gold directly as bars, coins, or via an allocated storage account. The Perth Mint, being Western Australian Government-guaranteed, is the gold standard for Australian physical gold; ABC Bullion and The Gold Bullion Company are established dealers.",
+  },
+  {
+    title: "Gold ETFs (ASX-Listed)",
+    body: "The simplest route for most investors — buy and sell like a share through any broker. ASX-listed physical gold ETFs include GOLD (iShares), PMGOLD (Perth Mint, government-guaranteed vault) and QAU (BetaShares, AUD-hedged); you own a pro-rata share of vaulted gold without storage hassle.",
+  },
+  {
+    title: "ASX-Listed Gold Miners",
+    body: "Direct equity in gold mining companies such as NST (Northern Star), EVN (Evolution Mining) and NEM (Newmont) — typically more volatile than physical gold, but with operational leverage to the gold price. Buy through any ASX broker; mining equities carry exploration and management risks beyond gold price exposure.",
+  },
+  {
+    title: "Perth Mint Certificate Programme",
+    body: "Designed for larger investors (typically $10,000+) seeking allocated gold storage backed by the Western Australian Government. Unlike an ETF, a PMCP certificate is a direct legal claim on specific gold held in the Perth Mint vault — not a fund unit.",
+  },
+];
 
 export const metadata: Metadata = {
   title: `How to Invest in Gold in Australia (${CURRENT_YEAR}) — Physical, ETFs & ASX Miners`,
@@ -25,12 +47,30 @@ export default function GoldPage() {
     { name: "Gold & Precious Metals" },
   ]);
 
-  const webPage = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: `How to Invest in Gold in Australia (${CURRENT_YEAR})`,
-    url: `${SITE_URL}/invest/gold`,
-    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  // HowTo JSON-LD built from the four ordered methods using the canonical
+  // builder, with step/page URLs patched to this page (not /how-to/).
+  const howToLd = howToJsonLd({
+    slug: "invest-in-gold",
+    h1: `How to Invest in Gold in Australia (${CURRENT_YEAR})`,
+    intro:
+      "Four ways to invest in gold in Australia: physical bullion via the Perth Mint, ASX-listed gold ETFs (GOLD, PMGOLD, QAU), ASX-listed gold miners (NST, EVN, NEM), and the Perth Mint Certificate Programme.",
+    steps: GOLD_METHODS.map((m) => ({ heading: m.title, body: m.body })),
+  });
+  const howTo = {
+    ...howToLd,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl("/invest/gold"),
+    },
+    step: howToLd.step?.map(
+      (
+        s: { "@type": string; position: number; name: string; text: string; url: string },
+        i: number,
+      ) => ({
+        ...s,
+        url: absoluteUrl(`/invest/gold#method-${i + 1}`),
+      }),
+    ),
   };
 
   return (
@@ -41,7 +81,7 @@ export default function GoldPage() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howTo) }}
       />
 
       {/* Hero */}
@@ -71,7 +111,7 @@ export default function GoldPage() {
             How to Invest in Gold in Australia
           </h1>
           <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
-            Australia produces more gold than almost any other country. Whether you want physical bullion, ETFs, ASX-listed miners, or the government-backed Perth Mint Certificate Programme — here is everything you need to know.
+            There are four ways to invest in gold in Australia: physical bullion via the Perth Mint, ASX-listed gold ETFs (GOLD, PMGOLD, QAU), ASX-listed gold miners (NST, EVN, NEM), and the Perth Mint Certificate Programme — and investment-grade bullion is GST-free. Below is how each method works, what it costs, and who it suits.
           </p>
         </div>
       </section>
