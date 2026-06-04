@@ -25,7 +25,7 @@ export async function GET(
 
   const { data: reviews } = await supabase
     .from("course_reviews")
-    .select("id, rating, headline, body, is_verified_purchase, created_at, user_id")
+    .select("id, rating, headline, body, is_verified_purchase, created_at")
     .eq("course_id", course.id)
     .eq("status", "published")
     .order("created_at", { ascending: false })

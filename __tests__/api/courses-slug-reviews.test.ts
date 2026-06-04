@@ -120,6 +120,7 @@ function makePostRequest(
 
 const COURSE_ROW = { id: "course-1" };
 
+// Mirrors what the DB returns under the explicit-column select — no `user_id`.
 const PUBLISHED_REVIEWS = [
   {
     id: "rev-1",
@@ -128,7 +129,6 @@ const PUBLISHED_REVIEWS = [
     body: "Really enjoyed it",
     is_verified_purchase: true,
     created_at: "2026-01-01T00:00:00Z",
-    user_id: "user-1",
   },
   {
     id: "rev-2",
@@ -137,7 +137,6 @@ const PUBLISHED_REVIEWS = [
     body: null,
     is_verified_purchase: false,
     created_at: "2026-01-02T00:00:00Z",
-    user_id: "user-2",
   },
 ];
 
@@ -194,6 +193,36 @@ describe("GET /api/courses/[slug]/reviews", () => {
     // avg of [5, 3] = 4.0
     expect(body.avg_rating).toBe(4);
     expect(body.count).toBe(2);
+  });
+
+  it("does not expose reviewer user_id to anonymous callers", async () => {
+    // Capture the column list passed to the reviews query's .select().
+    const reviewsChain = makeChain({ data: PUBLISHED_REVIEWS });
+    mockServerFrom.mockReset();
+    mockServerFrom
+      .mockReturnValueOnce(makeChain({ data: COURSE_ROW })) // courses lookup
+      .mockReturnValueOnce(reviewsChain); // reviews query
+
+    const [req, ctx] = makeGetRequest();
+    const res = await GET(req, ctx);
+
+    expect(res.status).toBe(200);
+
+    // The explicit column list must not include user_id (cross-user leak guard).
+    const selectArg = (reviewsChain["select"] as ReturnType<typeof vi.fn>).mock
+      .calls[0]?.[0] as string;
+    expect(selectArg).toBeTruthy();
+    expect(selectArg).not.toMatch(/user_id/);
+    // Fields the consumer needs remain present.
+    expect(selectArg).toMatch(/rating/);
+    expect(selectArg).toMatch(/headline/);
+    expect(selectArg).toMatch(/body/);
+
+    // And no returned review object carries a user_id field.
+    const body = await res.json();
+    for (const review of body.reviews) {
+      expect(review).not.toHaveProperty("user_id");
+    }
   });
 
   it("returns 200 with empty reviews and null avg_rating when no reviews exist", async () => {
