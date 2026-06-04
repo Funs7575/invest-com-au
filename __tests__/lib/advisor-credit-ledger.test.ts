@@ -34,10 +34,27 @@ interface ProRow {
 let ledger: LedgerRow[] = [];
 let pros: ProRow[] = [];
 let nextLedgerId = 1;
-// One-shot hook fired right before the first compare-and-set predicate is
-// evaluated — lets a test simulate a concurrent writer moving the balance
-// between recordLedgerEntry's read and its cache write.
-let casHook: (() => void) | null = null;
+
+/**
+ * Optional hook a test can install to simulate a concurrent writer landing
+ * between the helper's stale read and the atomic mutation. Called once,
+ * inside the RPC, before the lock+increment is applied. Cleared each reset.
+ */
+let onRpcBeforeApply: (() => void) | null = null;
+
+/**
+ * When true, the RPC stub reports itself as not-installed (mirrors an env
+ * where the migration hasn't been applied), forcing the optimistic-lock
+ * fallback path. Cleared each reset.
+ */
+let rpcMissing = false;
+
+/**
+ * One-shot hook fired inside the professionals optimistic UPDATE, BEFORE the
+ * lock predicate is evaluated — used to simulate a concurrent writer moving
+ * the balance between the helper's read and its cache UPDATE (fallback path).
+ */
+let onProUpdateBeforeLock: (() => void) | null = null;
 
 function reset() {
   ledger = [];
@@ -46,7 +63,9 @@ function reset() {
     { id: 2, credit_balance_cents: 5000, lifetime_credit_cents: 5000, lifetime_lead_spend_cents: 0 },
   ];
   nextLedgerId = 1;
-  casHook = null;
+  onRpcBeforeApply = null;
+  rpcMissing = false;
+  onProUpdateBeforeLock = null;
 }
 
 const supabaseStub = {
@@ -59,6 +78,51 @@ const supabaseStub = {
     }
     throw new Error(`unexpected table: ${table}`);
   },
+  // Atomic balance mutation. Models the real RPC: locks the row, applies the
+  // signed delta + lifetime roll-ups, enforces the negative-balance guard.
+  rpc(fn: string, params: Record<string, unknown>) {
+    if (fn !== "apply_credit_ledger_balance") {
+      return Promise.resolve({ data: null, error: { code: "PGRST202", message: "not found" } });
+    }
+    if (rpcMissing) {
+      return Promise.resolve({
+        data: null,
+        error: { code: "42883", message: "function apply_credit_ledger_balance does not exist" },
+      });
+    }
+    const proId = params.p_professional_id as number;
+    const delta = params.p_delta_cents as number;
+    const allowNegative = params.p_allow_negative as boolean;
+    const creditDelta = (params.p_lifetime_credit_delta_cents as number) ?? 0;
+    const spendDelta = (params.p_lifetime_spend_delta_cents as number) ?? 0;
+
+    // Simulate a concurrent writer mutating the row *before* we lock it.
+    if (onRpcBeforeApply) {
+      const hook = onRpcBeforeApply;
+      onRpcBeforeApply = null;
+      hook();
+    }
+
+    const pro = pros.find((p) => p.id === proId);
+    if (!pro) {
+      return Promise.resolve({
+        data: null,
+        error: { code: "P0002", message: "advisor not found" },
+      });
+    }
+    const newBalance = (pro.credit_balance_cents ?? 0) + delta;
+    if (delta < 0 && !allowNegative && newBalance < 0) {
+      return Promise.resolve({
+        data: null,
+        error: { code: "23514", message: "insufficient balance for advisor" },
+      });
+    }
+    pro.credit_balance_cents = newBalance;
+    pro.lifetime_credit_cents = (pro.lifetime_credit_cents ?? 0) + Math.max(creditDelta, 0);
+    pro.lifetime_lead_spend_cents =
+      (pro.lifetime_lead_spend_cents ?? 0) + Math.max(spendDelta, 0);
+    return Promise.resolve({ data: newBalance, error: null });
+  },
 };
 
 function ledgerTableStub() {
@@ -66,14 +130,38 @@ function ledgerTableStub() {
   let rangeArgs: [number, number] | null = null;
   let countMode = false;
 
+  let pendingUpdate: Partial<LedgerRow> | null = null;
+  let deleteMode = false;
+
   const builder = {
     select: vi.fn((_cols: string, opts?: { count?: string }) => {
       if (opts?.count === "exact") countMode = true;
       return builder;
     }),
     insert: vi.fn((row: Partial<LedgerRow>) => insertOp(row)),
+    update: vi.fn((u: Partial<LedgerRow>) => {
+      pendingUpdate = u;
+      return builder;
+    }),
+    delete: vi.fn(() => {
+      deleteMode = true;
+      return builder;
+    }),
     eq: vi.fn((col: string, val: unknown) => {
       filters[col] = val;
+      // Terminal eq for an update/delete on advisor_credit_ledger (always
+      // keyed by id in the helper) — apply it and resolve as a thenable.
+      if ((pendingUpdate || deleteMode) && col === "id") {
+        const target = ledger.find((l) => l.id === val);
+        if (deleteMode) {
+          ledger = ledger.filter((l) => l.id !== val);
+        } else if (target && pendingUpdate) {
+          Object.assign(target, pendingUpdate);
+        }
+        pendingUpdate = null;
+        deleteMode = false;
+        return Promise.resolve({ data: null, error: null });
+      }
       return builder;
     }),
     gt: vi.fn((col: string, val: unknown) => {
@@ -164,37 +252,42 @@ function prosTableStub() {
   let updates: Record<string, unknown> | null = null;
   const filters: Record<string, unknown> = {};
 
-  // Apply the compare-and-set: match by id, and (when present) by the
-  // optimistic-lock predicate on credit_balance_cents. Models REAL PostgREST:
-  // a 0-row match returns { data: [], error: null } — NOT an error.
-  function runCas(): { data: Array<{ id: number }>; error: null } {
-    // One-shot concurrent-writer injection (test hook) fires right before the
-    // CAS predicate is evaluated, simulating another caller landing in between.
-    if (casHook) {
-      const h = casHook;
-      casHook = null;
-      h();
+  // Apply a pending optimistic UPDATE. Models real PostgREST semantics: a
+  // WHERE that matches 0 rows returns { data: [], error: null } — NOT an
+  // error. Returns the affected rows (for `.select("id")`).
+  function applyUpdate(): { data: ProRow[]; error: null } {
+    if (!updates) return { data: [], error: null };
+    // Simulate a concurrent writer landing right before the lock check.
+    if (onProUpdateBeforeLock) {
+      const hook = onProUpdateBeforeLock;
+      onProUpdateBeforeLock = null;
+      hook();
     }
     const id = filters["id"] as number | undefined;
     const pro = pros.find((p) => p.id === id);
     const balanceCheck = filters["credit_balance_cents"];
-    if (
-      pro &&
-      updates &&
-      (typeof balanceCheck !== "number" || pro.credit_balance_cents === balanceCheck)
-    ) {
-      Object.assign(pro, updates);
-      updates = null;
-      return { data: [{ id: pro.id }], error: null };
-    }
     updates = null;
-    return { data: [], error: null };
+    if (!pro) return { data: [], error: null };
+    if (typeof balanceCheck === "number" && pro.credit_balance_cents !== balanceCheck) {
+      return { data: [], error: null }; // optimistic lock missed — 0 rows
+    }
+    Object.assign(pro, filters["__updates"] ?? {});
+    return { data: [pro], error: null };
   }
 
   const builder = {
-    select: vi.fn(() => builder),
+    select: vi.fn(() => {
+      // `.update(...).eq(...).eq(...).select("id")` — terminal for the
+      // optimistic fallback. Return affected rows as a thenable.
+      if (updates) {
+        const result = applyUpdate();
+        return Promise.resolve(result);
+      }
+      return builder;
+    }),
     update: vi.fn((u: Record<string, unknown>) => {
-      updates = { ...u };
+      updates = u;
+      filters["__updates"] = u;
       return builder;
     }),
     eq: vi.fn((col: string, val: unknown) => {
@@ -207,9 +300,14 @@ function prosTableStub() {
       if (!pro) return Promise.resolve({ data: null, error: { message: "not found" } });
       return Promise.resolve({ data: pro, error: null });
     },
-    // The CAS write path: update().eq(id).eq(balance).select("id") is awaited.
-    then: (cb: (v: { data: Array<{ id: number }>; error: null }) => unknown) => {
-      const result = updates ? runCas() : { data: [], error: null as null };
+    maybeSingle: () => {
+      const id = filters["id"] as number | undefined;
+      const pro = pros.find((p) => p.id === id);
+      return Promise.resolve({ data: pro ?? null, error: null });
+    },
+    then: (cb: (v: { data: ProRow[]; error: null }) => unknown) => {
+      // For an update without `.select()`/`.single()` — apply and resolve.
+      const result = applyUpdate();
       return Promise.resolve(result).then(cb);
     },
   };
@@ -353,37 +451,6 @@ describe("recordLedgerEntry", () => {
     expect(pros[0]?.credit_balance_cents).toBe(10000);
   });
 
-  it("recovers under concurrency — CAS retries against the refreshed balance (no drift)", async () => {
-    // Regression: the optimistic-lock retry previously (a) re-used the stale
-    // `currentBalance` predicate on retry and (b) relied on cacheErr, which a
-    // 0-row PostgREST update never sets — so a concurrent spend silently
-    // dropped this entry's cache write, drifting the balance ABOVE the truth
-    // (advisor overspends past zero).
-    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
-    pros[0]!.credit_balance_cents = 5000;
-    pros[0]!.lifetime_lead_spend_cents = 0;
-
-    // A concurrent -1000 spend lands between our read (5000) and our CAS,
-    // dropping the cached balance to 4000.
-    casHook = () => {
-      pros[0]!.credit_balance_cents = 4000;
-    };
-
-    const result = await recordLedgerEntry({
-      professionalId: 1,
-      amountCents: -3900,
-      kind: "lead_spend",
-      description: "lead while another spend lands",
-      referenceType: "professional_lead",
-      referenceId: "777",
-    });
-
-    // 5000 − 1000 (concurrent) − 3900 (this) = 100. The cache must reflect the
-    // retry recomputed against the fresh 4000 base, not the stale 5000.
-    expect(pros[0]?.credit_balance_cents).toBe(100);
-    expect(result.balanceAfterCents).toBe(100);
-  });
-
   it("throws when the advisor doesn't exist", async () => {
     const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
     await expect(
@@ -394,6 +461,229 @@ describe("recordLedgerEntry", () => {
         description: "no advisor",
       }),
     ).rejects.toThrow();
+  });
+});
+
+describe("recordLedgerEntry — atomic balance via RPC (lost-update protection)", () => {
+  it("uses the locked balance, not the stale read, when a concurrent write lands in between", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 1000;
+
+    // A concurrent +500 top-up lands AFTER this call's stale read (1000) but
+    // BEFORE the atomic increment. The old read-modify-write loop would have
+    // overwritten the cache to 1000+200=1200, losing the concurrent +500.
+    // The atomic RPC locks the current (1500) row, so the result is 1700.
+    onRpcBeforeApply = () => {
+      pros[0]!.credit_balance_cents = 1500;
+    };
+
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: 200,
+      kind: "topup",
+      description: "topup racing a concurrent topup",
+      referenceType: "advisor_credit_topup",
+      referenceId: "race-1",
+    });
+
+    expect(result.balanceAfterCents).toBe(1700);
+    expect(pros[0]?.credit_balance_cents).toBe(1700); // concurrent +500 NOT lost
+  });
+
+  it("corrects the ledger row's balance_after_cents to the authoritative locked value", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 1000;
+    onRpcBeforeApply = () => {
+      pros[0]!.credit_balance_cents = 1500; // concurrent write
+    };
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: 200,
+      kind: "topup",
+      description: "race",
+      referenceType: "advisor_credit_topup",
+      referenceId: "race-2",
+    });
+    // The stored ledger row's snapshot must match the true post-balance,
+    // not the stale 1200 computed off the pre-race read.
+    expect(result.entry.balance_after_cents).toBe(1700);
+    expect(ledger.find((l) => l.reference_id === "race-2")?.balance_after_cents).toBe(1700);
+  });
+});
+
+describe("recordLedgerEntry — negative-balance guard", () => {
+  it("rejects a lead_spend that would drive the balance below zero and does NOT mutate the cache", async () => {
+    const { recordLedgerEntry, NegativeBalanceError } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 1000;
+    await expect(
+      recordLedgerEntry({
+        professionalId: 1,
+        amountCents: -3000, // over-spend
+        kind: "lead_spend",
+        description: "lead over balance",
+        referenceType: "professional_lead",
+        referenceId: "over-1",
+      }),
+    ).rejects.toBeInstanceOf(NegativeBalanceError);
+    // Cache untouched.
+    expect(pros[0]?.credit_balance_cents).toBe(1000);
+  });
+
+  it("rolls back the inserted ledger row when the guard trips (SUM stays consistent)", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 1000;
+    await expect(
+      recordLedgerEntry({
+        professionalId: 1,
+        amountCents: -3000,
+        kind: "lead_spend",
+        description: "over",
+        referenceType: "professional_lead",
+        referenceId: "over-2",
+      }),
+    ).rejects.toThrow();
+    // No orphaned spend row left behind.
+    expect(ledger.find((l) => l.reference_id === "over-2")).toBeUndefined();
+    expect(ledger).toHaveLength(0);
+  });
+
+  it("allows a spend that exactly zeroes the balance", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 3000;
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: -3000,
+      kind: "lead_spend",
+      description: "exact",
+      referenceType: "professional_lead",
+      referenceId: "exact-1",
+    });
+    expect(result.balanceAfterCents).toBe(0);
+    expect(pros[0]?.credit_balance_cents).toBe(0);
+  });
+
+  it("lets correction kinds (expiry) drive the balance negative by default", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 1000;
+    // Credit expired but was already spent → balance legitimately goes negative.
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: -3000,
+      kind: "expiry",
+      description: "expiry past spend",
+      referenceType: "advisor_credit_ledger",
+      referenceId: "exp-1",
+    });
+    expect(result.balanceAfterCents).toBe(-2000);
+    expect(pros[0]?.credit_balance_cents).toBe(-2000);
+  });
+
+  it("lets admin_adjustment drive the balance negative by default (admin override)", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 500;
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: -2000,
+      kind: "admin_adjustment",
+      description: "clawback",
+      referenceType: "admin",
+      referenceId: "adj-1",
+    });
+    expect(result.balanceAfterCents).toBe(-1500);
+  });
+
+  it("honours an explicit allowNegative override on a lead_spend", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 1000;
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: -3000,
+      kind: "lead_spend",
+      description: "forced negative",
+      referenceType: "professional_lead",
+      referenceId: "forced-1",
+      allowNegative: true,
+    });
+    expect(result.balanceAfterCents).toBe(-2000);
+  });
+
+  it("honours an explicit allowNegative=false override on a correction kind", async () => {
+    const { recordLedgerEntry, NegativeBalanceError } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 1000;
+    await expect(
+      recordLedgerEntry({
+        professionalId: 1,
+        amountCents: -3000,
+        kind: "admin_adjustment",
+        description: "guarded admin debit",
+        referenceType: "admin",
+        referenceId: "guarded-1",
+        allowNegative: false,
+      }),
+    ).rejects.toBeInstanceOf(NegativeBalanceError);
+    expect(pros[0]?.credit_balance_cents).toBe(1000);
+  });
+});
+
+describe("recordLedgerEntry — optimistic-lock fallback (RPC unavailable)", () => {
+  it("succeeds via the fallback when the RPC is not installed", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    rpcMissing = true;
+    pros[0]!.credit_balance_cents = 1000;
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: 500,
+      kind: "topup",
+      description: "fallback topup",
+      referenceType: "advisor_credit_topup",
+      referenceId: "fb-1",
+    });
+    expect(result.balanceAfterCents).toBe(1500);
+    expect(pros[0]?.credit_balance_cents).toBe(1500);
+    // lifetime_credit_cents seeded at 0; the +500 topup rolls it up to 500.
+    expect(pros[0]?.lifetime_credit_cents).toBe(500);
+  });
+
+  it("fallback retries against the refreshed balance after a lost optimistic lock", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    rpcMissing = true;
+    pros[0]!.credit_balance_cents = 1000;
+    // The helper reads 1000, then a concurrent writer moves it to 1500 just
+    // before the first optimistic UPDATE. That UPDATE (WHERE balance=1000)
+    // matches 0 rows. The FIX: detect the 0-row update, refetch (1500), and
+    // retry the predicate against 1500 — NOT silently claim success against
+    // the stale value. End state must be 1500 + 200 = 1700, never 1200.
+    onProUpdateBeforeLock = () => {
+      pros[0]!.credit_balance_cents = 1500;
+    };
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: 200,
+      kind: "topup",
+      description: "fallback retry",
+      referenceType: "advisor_credit_topup",
+      referenceId: "fb-retry-1",
+    });
+    expect(result.balanceAfterCents).toBe(1700);
+    expect(pros[0]?.credit_balance_cents).toBe(1700); // concurrent write NOT lost
+  });
+
+  it("fallback enforces the negative-balance guard and rolls back the ledger row", async () => {
+    const { recordLedgerEntry, NegativeBalanceError } = await import("@/lib/advisor-credit-ledger");
+    rpcMissing = true;
+    pros[0]!.credit_balance_cents = 500;
+    await expect(
+      recordLedgerEntry({
+        professionalId: 1,
+        amountCents: -2000,
+        kind: "lead_spend",
+        description: "fallback over-spend",
+        referenceType: "professional_lead",
+        referenceId: "fb-over-1",
+      }),
+    ).rejects.toBeInstanceOf(NegativeBalanceError);
+    expect(pros[0]?.credit_balance_cents).toBe(500);
+    expect(ledger.find((l) => l.reference_id === "fb-over-1")).toBeUndefined();
   });
 });
 

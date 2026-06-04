@@ -16,11 +16,22 @@
  * dispute resolver re-run) is a no-op — `recordLedgerEntry` returns the
  * existing row instead of inserting a duplicate.
  *
- * Concurrency: the cache update uses an optimistic-lock predicate against
- * the previously-read balance, mirroring the pattern in
- * `app/api/advisor-enquiry/route.ts`. Concurrent inserts produce
- * deterministic ordering by `created_at` and a correct final cache value
- * because each call refetches the current balance before writing.
+ * Concurrency: the cache update is applied through the atomic
+ * `apply_credit_ledger_balance` RPC (a SECURITY DEFINER Postgres function
+ * that increments `credit_balance_cents` under a row lock), so concurrent
+ * ledger writes to the same advisor can never lose an update — the old
+ * read-modify-write + optimistic-lock loop could silently drop a writer's
+ * cache update (a 0-row PostgREST UPDATE returns no error). If the RPC is
+ * unavailable we fall back to a fixed optimistic-lock loop that (a) locks
+ * against the *refreshed* balance on retry and (b) detects 0-row updates
+ * via `.select()`.
+ *
+ * Negative-balance guard: spend kinds (`lead_spend`, `referral_payout`)
+ * default to refusing a mutation that would push the cached balance below
+ * zero (mirroring `lib/marketplace/wallet.ts` `adjustWallet`). Correction
+ * kinds (`expiry`, `chargeback_clawback`, `admin_adjustment`,
+ * `lead_dispute_refund`) may legitimately drive a balance negative and so
+ * default to allowing it. Callers can override via `allowNegative`.
  */
 
 // eslint-disable-next-line no-restricted-imports -- Cross-user mutation surface: webhook handlers, cron, admin overrides, and dispute resolvers all write to advisor_credit_ledger without an authenticated user JWT. Documented service-role-legitimate use case per CLAUDE.md "Two Supabase clients" — advisor reads are still gated by the table's own RLS policy (auth_user_id = auth.uid()).
@@ -36,6 +47,25 @@ const log = logger("advisor-credit-ledger");
  * `ctx.admin`) without a structural-typing fight.
  */
 type SupabaseLike = ReturnType<typeof createAdminClient>;
+
+/**
+ * Thrown when a spend would push `credit_balance_cents` below zero and the
+ * caller has not opted into `allowNegative`. Callers that gate before
+ * charging (e.g. brief accept, referral payout) can catch this to surface an
+ * "insufficient credits" outcome instead of a 500.
+ */
+export class NegativeBalanceError extends Error {
+  readonly professionalId: number;
+  readonly attemptedDeltaCents: number;
+  constructor(professionalId: number, attemptedDeltaCents: number) {
+    super(
+      `recordLedgerEntry: insufficient balance for advisor ${professionalId} (delta ${attemptedDeltaCents})`,
+    );
+    this.name = "NegativeBalanceError";
+    this.professionalId = professionalId;
+    this.attemptedDeltaCents = attemptedDeltaCents;
+  }
+}
 
 export type LedgerKind =
   | "topup"
@@ -75,6 +105,15 @@ export interface RecordLedgerEntryInput {
   expiresAt?: Date | string | null;        // optional — defaults vary by kind, helper does not infer
   createdBy?: string;
   /**
+   * When false, a mutation that would drive `credit_balance_cents` below
+   * zero is rejected (mirrors `lib/marketplace/wallet.ts` adjustWallet).
+   * Defaults by `kind`: spend kinds (lead_spend, referral_payout) → false;
+   * correction kinds (expiry, chargeback_clawback, admin_adjustment,
+   * lead_dispute_refund) → true. Credit kinds are unaffected. Pass an
+   * explicit value to override the per-kind default.
+   */
+  allowNegative?: boolean;
+  /**
    * Optional caller-supplied supabase admin client. Used by the Stripe
    * webhook handler so its ctx.admin (which the test harness mocks)
    * actually drives the helper's queries. Falls back to a fresh
@@ -90,6 +129,26 @@ export interface RecordLedgerEntryResult {
   balanceAfterCents: number;
   /** True when this exact triple was already recorded — caller can branch on idempotent re-runs. */
   idempotent: boolean;
+}
+
+/**
+ * Per-kind default for the negative-balance guard. Spend kinds keep the
+ * guard ON (a debit must not silently over-spend); correction/reconciliation
+ * kinds may legitimately drive a balance negative and so default to OFF.
+ * Credit kinds never decrease the balance, so the value is moot for them.
+ */
+function defaultAllowNegative(kind: LedgerKind): boolean {
+  switch (kind) {
+    case "lead_spend":
+    case "referral_payout":
+      return false;
+    default:
+      // topup / refund_to_credit / tier_proration_credit / success_bonus_award
+      // (credits — guard never triggers), and the correction kinds
+      // expiry / chargeback_clawback / admin_adjustment / lead_dispute_refund
+      // which may legitimately go negative.
+      return true;
+  }
 }
 
 /**
@@ -186,72 +245,230 @@ export async function recordLedgerEntry(
     throw new Error(`recordLedgerEntry: insert failed (${insertErr.message})`);
   }
 
-  // ── 4. Update the cache + lifetime totals ──────────────────────────
-  const updates: Record<string, number> = { credit_balance_cents: newBalance };
-  if (input.kind === "topup" || input.kind === "refund_to_credit" || input.kind === "tier_proration_credit") {
-    if (input.amountCents > 0) {
-      updates.lifetime_credit_cents = (pro.lifetime_credit_cents ?? 0) + input.amountCents;
-    }
+  // ── 4. Atomically apply the cache + lifetime totals ────────────────
+  // Lifetime roll-up deltas (always non-negative; the RPC clamps too).
+  let lifetimeCreditDelta = 0;
+  let lifetimeSpendDelta = 0;
+  if (
+    (input.kind === "topup" ||
+      input.kind === "refund_to_credit" ||
+      input.kind === "tier_proration_credit") &&
+    input.amountCents > 0
+  ) {
+    lifetimeCreditDelta = input.amountCents;
   }
   if (input.kind === "lead_spend" && input.amountCents < 0) {
-    updates.lifetime_lead_spend_cents =
-      (pro.lifetime_lead_spend_cents ?? 0) + Math.abs(input.amountCents);
+    lifetimeSpendDelta = Math.abs(input.amountCents);
   }
 
-  // Optimistic-lock (compare-and-set) cache write. The predicate
-  // `credit_balance_cents = expectedBalance` only matches if no concurrent
-  // call moved the balance since our read. CONTENTION IS SIGNALLED BY ZERO
-  // ROWS UPDATED, NOT BY AN ERROR — PostgREST returns `{ data: [], error: null }`
-  // for a 0-row match, so we must inspect the returned rows (via `.select()`),
-  // not just `cacheErr`. On a miss we refetch, recompute BOTH the new balance
-  // and the lifetime totals against the fresh base, and retry the CAS against
-  // that fresh expected value. The ledger row is already inserted, so the
-  // ledger SUM stays authoritative even if the cache write is ultimately lost.
-  let expectedBalance = currentBalance;
-  let cacheOk = false;
-  for (let attempt = 0; attempt < 2 && !cacheOk; attempt++) {
-    const { data: updatedRows, error: cacheErr } = await supabase
-      .from("professionals")
-      .update(updates)
-      .eq("id", input.professionalId)
-      .eq("credit_balance_cents", expectedBalance)
-      .select("id");
-    if (!cacheErr && (updatedRows?.length ?? 0) > 0) {
-      cacheOk = true;
-      break;
-    }
-    // Lost the race (0 rows matched) or errored — refetch and recompute the
-    // delta against the latest cached balance, then retry the CAS.
-    const { data: refreshed } = await supabase
-      .from("professionals")
-      .select("credit_balance_cents, lifetime_credit_cents, lifetime_lead_spend_cents")
-      .eq("id", input.professionalId)
-      .single();
-    if (!refreshed) break;
-    expectedBalance = refreshed.credit_balance_cents ?? 0;
-    updates.credit_balance_cents = expectedBalance + input.amountCents;
-    if (updates.lifetime_credit_cents !== undefined && input.amountCents > 0) {
-      updates.lifetime_credit_cents = (refreshed.lifetime_credit_cents ?? 0) + input.amountCents;
-    }
-    if (updates.lifetime_lead_spend_cents !== undefined && input.amountCents < 0) {
-      updates.lifetime_lead_spend_cents =
-        (refreshed.lifetime_lead_spend_cents ?? 0) + Math.abs(input.amountCents);
-    }
-  }
+  const allowNegative = input.allowNegative ?? defaultAllowNegative(input.kind);
 
-  if (!cacheOk) {
-    log.error("Cache update lost — ledger row recorded but cache may drift", {
+  // Preferred path: a single atomic SQL statement under a row lock. This
+  // eliminates the read-modify-write race entirely — concurrent writers to
+  // the same advisor each see the locked, current balance, so no update is
+  // ever lost. The RPC also enforces the negative-balance guard.
+  const { data: rpcBalance, error: rpcErr } = await supabase.rpc(
+    "apply_credit_ledger_balance",
+    {
+      p_professional_id: input.professionalId,
+      p_delta_cents: input.amountCents,
+      p_allow_negative: allowNegative,
+      p_lifetime_credit_delta_cents: lifetimeCreditDelta,
+      p_lifetime_spend_delta_cents: lifetimeSpendDelta,
+    },
+  );
+
+  let finalBalance = newBalance;
+
+  if (!rpcErr && typeof rpcBalance === "number") {
+    // Authoritative balance from the atomic mutation.
+    finalBalance = rpcBalance;
+    if (finalBalance !== newBalance) {
+      // The stale read disagreed with the locked value (a concurrent write
+      // landed in between). Correct the ledger row's snapshot so the audit
+      // trail matches the true post-balance.
+      await supabase
+        .from("advisor_credit_ledger")
+        .update({ balance_after_cents: finalBalance })
+        .eq("id", inserted.id);
+      (inserted as LedgerEntry).balance_after_cents = finalBalance;
+    }
+  } else if (isNegativeBalanceRpcError(rpcErr)) {
+    // Guard tripped: the spend would have driven the balance below zero.
+    // Roll back the ledger row we just inserted so SUM(amount_cents) stays
+    // consistent with the (unchanged) cache, then surface the rejection.
+    await supabase.from("advisor_credit_ledger").delete().eq("id", inserted.id);
+    throw new NegativeBalanceError(input.professionalId, input.amountCents);
+  } else if (isMissingRpcError(rpcErr)) {
+    // Fallback for environments where the RPC migration has not yet been
+    // applied. Uses a FIXED optimistic-lock loop: the retry predicate locks
+    // against the *refreshed* balance, and a 0-row UPDATE is detected via
+    // `.select()` (PostgREST does not error on a 0-row UPDATE, so a missing
+    // lock would otherwise look like success — the original bug).
+    finalBalance = await applyBalanceOptimistic({
+      supabase,
+      professionalId: input.professionalId,
+      amountCents: input.amountCents,
+      currentBalance,
+      lifetimeCreditDelta,
+      lifetimeSpendDelta,
+      allowNegative,
+      ledgerId: inserted.id,
+    });
+    if (finalBalance !== newBalance) {
+      await supabase
+        .from("advisor_credit_ledger")
+        .update({ balance_after_cents: finalBalance })
+        .eq("id", inserted.id);
+      (inserted as LedgerEntry).balance_after_cents = finalBalance;
+    }
+  } else {
+    // Unexpected RPC failure — the ledger row is in place (SUM remains
+    // authoritative) but the cache may not have moved. Surface loudly.
+    log.error("Atomic balance RPC failed — ledger row recorded but cache may drift", {
       professionalId: input.professionalId,
       ledgerId: inserted.id,
       kind: input.kind,
+      error: rpcErr?.message ?? "unknown",
     });
   }
 
   return {
     entry: inserted as LedgerEntry,
-    balanceAfterCents: updates.credit_balance_cents as number,
+    balanceAfterCents: finalBalance,
     idempotent: false,
   };
+}
+
+interface RpcLikeError {
+  message?: string;
+  code?: string;
+}
+
+/**
+ * The atomic RPC raises with ERRCODE 'check_violation' (23514) when the
+ * negative-balance guard trips.
+ */
+function isNegativeBalanceRpcError(err: RpcLikeError | null): boolean {
+  if (!err) return false;
+  if (err.code === "23514") return true;
+  const msg = (err.message ?? "").toLowerCase();
+  return msg.includes("insufficient balance");
+}
+
+/**
+ * Detect "function does not exist" so we can fall back to the optimistic
+ * loop in environments where the RPC migration has not yet been applied.
+ * PostgREST surfaces a missing RPC as PGRST202 / 404 or Postgres 42883.
+ */
+function isMissingRpcError(err: RpcLikeError | null): boolean {
+  if (!err) return false;
+  if (err.code === "42883" || err.code === "PGRST202" || err.code === "404") return true;
+  const msg = (err.message ?? "").toLowerCase();
+  return (
+    msg.includes("does not exist") ||
+    msg.includes("could not find") ||
+    msg.includes("not found") ||
+    msg.includes("schema cache")
+  );
+}
+
+interface ApplyBalanceOptimisticArgs {
+  supabase: SupabaseLike;
+  professionalId: number;
+  amountCents: number;
+  currentBalance: number;
+  lifetimeCreditDelta: number;
+  lifetimeSpendDelta: number;
+  allowNegative: boolean;
+  ledgerId: number;
+}
+
+/**
+ * Fallback cache mutation when the atomic RPC is unavailable. Fixes BOTH
+ * defects from the original loop:
+ *   1) the retry predicate locks against the *refreshed* balance (the old
+ *      code used the stale `currentBalance` on both attempts — a no-op);
+ *   2) a 0-row UPDATE is detected via `.select("id")`, because PostgREST
+ *      returns no error on a 0-row UPDATE (the old code treated that as
+ *      success, silently dropping the write).
+ * Returns the persisted balance. Throws NegativeBalanceError if the guard
+ * trips. Rolls back the ledger row before throwing.
+ */
+async function applyBalanceOptimistic(args: ApplyBalanceOptimisticArgs): Promise<number> {
+  const {
+    supabase,
+    professionalId,
+    amountCents,
+    currentBalance,
+    lifetimeCreditDelta,
+    lifetimeSpendDelta,
+    allowNegative,
+    ledgerId,
+  } = args;
+
+  let lockBalance = currentBalance;
+
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const newBalance = lockBalance + amountCents;
+    if (amountCents < 0 && !allowNegative && newBalance < 0) {
+      await supabase.from("advisor_credit_ledger").delete().eq("id", ledgerId);
+      throw new NegativeBalanceError(professionalId, amountCents);
+    }
+
+    const updates: Record<string, number> = { credit_balance_cents: newBalance };
+    if (lifetimeCreditDelta > 0 || lifetimeSpendDelta > 0) {
+      // Read the current lifetime totals so we add (not overwrite) them.
+      const { data: cur } = await supabase
+        .from("professionals")
+        .select("lifetime_credit_cents, lifetime_lead_spend_cents")
+        .eq("id", professionalId)
+        .single();
+      if (cur) {
+        if (lifetimeCreditDelta > 0) {
+          updates.lifetime_credit_cents = (cur.lifetime_credit_cents ?? 0) + lifetimeCreditDelta;
+        }
+        if (lifetimeSpendDelta > 0) {
+          updates.lifetime_lead_spend_cents =
+            (cur.lifetime_lead_spend_cents ?? 0) + lifetimeSpendDelta;
+        }
+      }
+    }
+
+    // Optimistic lock against the *current* lockBalance, and request the
+    // affected rows back so a 0-row update is observable.
+    const { data: affected, error: cacheErr } = await supabase
+      .from("professionals")
+      .update(updates)
+      .eq("id", professionalId)
+      .eq("credit_balance_cents", lockBalance)
+      .select("id");
+
+    if (!cacheErr && affected && affected.length > 0) {
+      return newBalance; // a row was actually updated
+    }
+
+    // Either an error, or a 0-row update (lost lock). Refresh and retry
+    // against the new balance.
+    const { data: refreshed } = await supabase
+      .from("professionals")
+      .select("credit_balance_cents")
+      .eq("id", professionalId)
+      .single();
+    if (!refreshed) break;
+    const refreshedBalance = refreshed.credit_balance_cents ?? 0;
+    if (refreshedBalance === lockBalance) {
+      // Balance hasn't moved yet our update matched 0 rows — avoid a spin.
+      break;
+    }
+    lockBalance = refreshedBalance;
+  }
+
+  log.error("Cache update lost — ledger row recorded but cache may drift", {
+    professionalId,
+    ledgerId,
+  });
+  return lockBalance + amountCents;
 }
 
 export interface GetLedgerPageOptions {
