@@ -25,6 +25,7 @@ import FollowAdvisorButton from "@/components/FollowAdvisorButton";
 import { computeIdealClientBoost, type UserMatchProfile, type IdealClientCriteria } from "@/lib/advisor-profile-match";
 import { getRelatedForAdvisor } from "@/lib/related-content";
 import RelatedRail from "@/components/RelatedRail";
+import { ADVISOR_PUBLIC_COLUMNS } from "./public-columns";
 
 export const revalidate = 1800;
 
@@ -73,7 +74,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
 
   const { data: pro } = await supabase
     .from("professionals")
-    .select("*")
+    .select(ADVISOR_PUBLIC_COLUMNS)
     .eq("slug", slug)
     .eq("status", "active")
     .single();
