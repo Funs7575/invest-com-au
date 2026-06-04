@@ -6,6 +6,10 @@ import { NextRequest } from "next/server";
 const mockIsAllowed = vi.fn();
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
+  // Deterministic, IP-derived key so the IP-limiter test can hold the bucket
+  // across requests that rotate session_id.
+  ipKey: (req: { headers: Headers }) =>
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "test-ip",
 }));
 
 const mockAdminFrom = vi.fn();
@@ -26,10 +30,10 @@ import { POST } from "@/app/api/chatbot/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-function makePost(body: unknown): NextRequest {
+function makePost(body: unknown, headers: Record<string, string> = {}): NextRequest {
   return new NextRequest("http://localhost/api/chatbot", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...headers },
     body: JSON.stringify(body),
   });
 }
@@ -95,6 +99,67 @@ describe("POST /api/chatbot", () => {
     expect(res.status).toBe(429);
     const json = await res.json();
     expect(json.error).toMatch(/Too many/i);
+  });
+
+  it("checks an IP-keyed bucket so the cap survives session_id rotation (wallet-DoS guard)", async () => {
+    // Model the limiter as two independent buckets. The per-session bucket is
+    // keyed on the client-supplied session_id (and so resets when an attacker
+    // rotates it); the IP bucket is keyed on the request IP and persists across
+    // requests from the same IP regardless of session. The IP bucket starts
+    // depleted, so even a fresh session_id from the same IP must be rejected.
+    const sessionBuckets = new Map<string, number>();
+    let ipTokens = 0; // IP bucket already exhausted for this IP
+    mockIsAllowed.mockImplementation(
+      async (scope: string, key: string) => {
+        if (scope === "chatbot_ip") {
+          if (ipTokens < 1) return false;
+          ipTokens -= 1;
+          return true;
+        }
+        // per-session bucket: each distinct session gets a fresh allowance
+        const remaining = sessionBuckets.get(key) ?? 20;
+        if (remaining < 1) return false;
+        sessionBuckets.set(key, remaining - 1);
+        return true;
+      },
+    );
+
+    const ip = { "x-forwarded-for": "203.0.113.7" };
+
+    // 1st request: brand-new session_id, but the IP bucket is empty → 429.
+    const res1 = await POST(makePost({ session_id: "sess-1", message: "hi" }, ip));
+    expect(res1.status).toBe(429);
+
+    // 2nd request: DIFFERENT session_id (rotated, as an attacker would) from the
+    // SAME IP. The per-session bucket is fresh, but the IP bucket still holds →
+    // still 429. This is the property that closes the provider-bill DoS.
+    const res2 = await POST(makePost({ session_id: "sess-2", message: "hi" }, ip));
+    expect(res2.status).toBe(429);
+
+    // The IP-keyed bucket was consulted for both requests.
+    const ipCalls = mockIsAllowed.mock.calls.filter((c) => c[0] === "chatbot_ip");
+    expect(ipCalls.length).toBe(2);
+    expect(ipCalls.every((c) => c[1] === "203.0.113.7")).toBe(true);
+  });
+
+  it("allows when both IP and session buckets have capacity", async () => {
+    mockIsAllowed.mockResolvedValue(true);
+    let callCount = 0;
+    mockAdminFrom.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return makeConversationSelectChain({ data: [], error: null });
+      return makeInsertChain({ error: null });
+    });
+    mockRespondToMessage.mockResolvedValue(CHAT_RESULT);
+
+    const res = await POST(
+      makePost({ session_id: "sess-ok", message: "hi" }, { "x-forwarded-for": "198.51.100.4" }),
+    );
+    expect(res.status).toBe(200);
+    // Both buckets were checked, IP first.
+    const scopes = mockIsAllowed.mock.calls.map((c) => c[0]);
+    expect(scopes).toContain("chatbot_ip");
+    expect(scopes).toContain("chatbot");
   });
 
   it("returns 200 with reply on success", async () => {
