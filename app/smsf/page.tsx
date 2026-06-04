@@ -81,11 +81,6 @@ const TOPIC_CARDS = [
     href: "/smsf/investment-strategy",
   },
   {
-    title: "SMSF Insurance",
-    description: "Trustee obligations to consider life, TPD and income protection inside the fund.",
-    href: "/smsf/insurance",
-  },
-  {
     title: "SMSF Audits",
     description: "Annual audit requirements, what auditors check, and how to find a registered SMSF auditor.",
     href: "/smsf/auditors",
