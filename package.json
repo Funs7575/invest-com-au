@@ -18,6 +18,8 @@
     "e2e:install": "playwright install --with-deps chromium webkit",
     "bots": "playwright test --config bots/playwright.config.ts",
     "bots:install": "playwright install --with-deps chromium",
+    "bots:seed-users": "npx tsx scripts/seed-bot-users.ts",
+    "bots:sandbox": "BOTS_TARGET_CLASS=sandbox playwright test --config bots/playwright.config.ts",
     "screenshots": "playwright test --config e2e/visual/playwright.config.ts e2e/visual/screenshots.spec.ts",
     "screenshots:seed": "node scripts/screenshots-seed.mjs",
     "screenshots:auto-seed": "node scripts/screenshots-auto-seed.mjs",

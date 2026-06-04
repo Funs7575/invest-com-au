@@ -11,7 +11,16 @@ export interface AuthState {
 
 const AUTH_DIR = path.resolve(process.cwd(), "e2e/visual/.auth");
 
-function stateFile(name: string): string {
+/**
+ * Shared password for every seeded test account. Single source of truth so the
+ * Playwright auto-login flow and the service-role seed script (scripts/) stay in
+ * lockstep. Test-only credential against a non-routable `*.invest-test.local`
+ * domain — never a real secret. Override per-environment with TEST_USER_PASSWORD.
+ */
+export const TEST_USER_PASSWORD = process.env.TEST_USER_PASSWORD ?? "TestPassword123!@#";
+
+/** Resolve the on-disk storageState path for a named auth state. */
+export function stateFile(name: string): string {
   return path.join(AUTH_DIR, `${name}.json`);
 }
 
@@ -80,6 +89,14 @@ export const AUTH_STATES: AuthState[] = [
     loginUrl: "/advisor-portal",
     postLoginPattern: /\/advisor-portal(\/|$)/,
     storageStateFile: stateFile("firm-portal"),
+  },
+  {
+    name: "bot-buyer",
+    description:
+      "Dedicated bot-fleet individual investor — drives logged-in QA journeys (account, holdings, save-a-plan) with money auto-mocked",
+    loginUrl: "/login",
+    postLoginPattern: /\/(dashboard|account|$)/,
+    storageStateFile: stateFile("bot-buyer"),
   },
 ];
 

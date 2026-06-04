@@ -3,10 +3,13 @@
  *
  * A persona is a simulated user with a goal and a route emphasis. Phase 0 ships
  * anonymous personas over public, placeholder-cred-safe routes (the same routes
- * the a11y suite trusts to render without a seeded DB). Later phases attach
- * auth states (reusing e2e/visual/state-registry.ts) and AI-driven goals so a
- * persona can roam and judge the experience, not just load a fixed list.
+ * the a11y suite trusts to render without a seeded DB). Authenticated personas
+ * attach an auth state (reusing e2e/visual/state-registry.ts) so a persona can
+ * walk logged-in pages and pursue logged-in goals — gated on the storageState
+ * existing, so unseeded runs skip them safely.
  */
+
+import { stateFile } from "../e2e/visual/state-registry";
 
 export interface Persona {
   name: string;
@@ -62,5 +65,27 @@ export const AI_PERSONAS: Persona[] = [
     description: "A visitor using the guided 'get matched' quiz.",
     startPath: "/get-matched",
     goal: "Complete the get-matched quiz as a long-term investor and reach a personalised action plan. Judge whether the result is clear and trustworthy, and flag anything broken or missing.",
+  },
+];
+
+/**
+ * Authenticated personas: each reuses a seeded storageState (captured by the
+ * e2e/visual auto-login flow) so the bot drives logged-in surfaces — account
+ * dashboard, holdings, bookmarks, save-a-plan, advisor enquiry. Money, affiliate
+ * and external paths stay auto-mocked by safety/money-paths.ts, so these run
+ * with zero financial side effects. The fleet SKIPS any persona whose
+ * storageStateFile is not present on disk, so a normal/CI run (no seeded auth)
+ * never fails on them — they activate only after `npm run bots:seed-users` +
+ * the auto-login capture.
+ */
+export const AUTHED_PERSONAS: Persona[] = [
+  {
+    name: "authed-investor",
+    description:
+      "A signed-in individual investor exploring their account, holdings and saved plans.",
+    storageStateFile: stateFile("bot-buyer"),
+    routes: ["/account", "/account/holdings", "/account/bookmarks", "/dashboard"],
+    startPath: "/account",
+    goal: "As a logged-in investor, explore your account dashboard, review your holdings and saved bookmarks, and try to save a plan or send an advisor enquiry. Note anything broken, confusing, or any missing fees/risk disclosures. (Money and external actions are mocked — do not worry about real side effects.)",
   },
 ];

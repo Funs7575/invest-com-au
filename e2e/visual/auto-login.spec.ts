@@ -1,53 +1,21 @@
 import { test } from "@playwright/test";
-import { AUTH_STATES } from "./state-registry";
+import { AUTH_STATES, TEST_USER_PASSWORD } from "./state-registry";
 
+// Email per state; the password is shared (see TEST_USER_PASSWORD) so it stays
+// in lockstep with scripts/seed-bot-users.ts and the rest of the seed flow.
 const TEST_USERS = [
-  {
-    state: "user-individual",
-    email: "test-individual@invest-test.local",
-    password: "TestPassword123!@#",
-  },
-  {
-    state: "advisor",
-    email: "test-advisor@invest-test.local",
-    password: "TestPassword123!@#",
-  },
-  {
-    state: "broker",
-    email: "test-broker@invest-test.local",
-    password: "TestPassword123!@#",
-  },
-  {
-    state: "business",
-    email: "test-business@invest-test.local",
-    password: "TestPassword123!@#",
-  },
-  {
-    state: "advertiser",
-    email: "test-advertiser@invest-test.local",
-    password: "TestPassword123!@#",
-  },
-  {
-    state: "author",
-    email: "test-author@invest-test.local",
-    password: "TestPassword123!@#",
-  },
-  {
-    state: "admin",
-    email: "test-admin@invest-test.local",
-    password: "TestPassword123!@#",
-  },
-  {
-    state: "listing-owner",
-    email: "test-listing-owner@invest-test.local",
-    password: "TestPassword123!@#",
-  },
-  {
-    state: "firm-portal",
-    email: "test-firm-admin@invest-test.local",
-    password: "TestPassword123!@#",
-  },
-];
+  { state: "user-individual", email: "test-individual@invest-test.local" },
+  { state: "advisor", email: "test-advisor@invest-test.local" },
+  { state: "broker", email: "test-broker@invest-test.local" },
+  { state: "business", email: "test-business@invest-test.local" },
+  { state: "advertiser", email: "test-advertiser@invest-test.local" },
+  { state: "author", email: "test-author@invest-test.local" },
+  { state: "admin", email: "test-admin@invest-test.local" },
+  { state: "listing-owner", email: "test-listing-owner@invest-test.local" },
+  { state: "firm-portal", email: "test-firm-admin@invest-test.local" },
+  // Dedicated bot-fleet individual account — seeded by scripts/seed-bot-users.ts.
+  { state: "bot-buyer", email: "test-bot-buyer@invest-test.local" },
+].map((u) => ({ ...u, password: TEST_USER_PASSWORD }));
 
 const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
 
