@@ -8,6 +8,8 @@
  * tests assert the current page's real content; the HubPage template itself is
  * still validated via the dividends hub test.
  */
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { describe, it, expect } from "vitest";
 import { render, screen } from "../components/setup";
 import SmsfPage from "@/app/smsf/page";
@@ -56,6 +58,23 @@ describe("SmsfPage", () => {
   it("renders the general-advice compliance warning", () => {
     render(<SmsfPage />);
     expect(screen.getByText(/general in nature/i)).toBeInTheDocument();
+  });
+
+  it("links every topic card to a real /smsf/* route (no dead links)", () => {
+    render(<SmsfPage />);
+    const cardLinks = screen
+      .getAllByRole("link", { name: /read guide/i })
+      .map((a) => a.getAttribute("href"))
+      .filter((href): href is string => Boolean(href));
+
+    expect(cardLinks.length).toBeGreaterThan(0);
+
+    for (const href of cardLinks) {
+      expect(href.startsWith("/smsf/")).toBe(true);
+      const slug = href.replace(/^\/smsf\//, "");
+      const routeFile = join(process.cwd(), "app", "smsf", slug, "page.tsx");
+      expect(existsSync(routeFile), `${href} should resolve to ${routeFile}`).toBe(true);
+    }
   });
 
   it("emits BreadcrumbList + FAQPage JSON-LD", () => {
