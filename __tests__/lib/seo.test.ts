@@ -16,8 +16,13 @@ import {
   articleAuthorJsonLd,
   dealOfferJsonLd,
   dealsHubJsonLd,
+  brokerProductJsonLd,
+  reviewerPersonJsonLd,
+  courseJsonLd,
+  howToJsonLd,
+  qaPageJsonLd,
 } from "@/lib/seo";
-import type { TeamMember, Broker } from "@/lib/types";
+import type { TeamMember, Broker, Course } from "@/lib/types";
 
 describe("constants", () => {
   it("SITE_NAME is set", () => {
@@ -396,5 +401,306 @@ describe("dealsHubJsonLd", () => {
     const jsonLd = dealsHubJsonLd([]);
     expect(jsonLd.numberOfItems).toBe(0);
     expect(jsonLd.itemListElement).toEqual([]);
+  });
+});
+
+/* ─── TEST-06: brokerProductJsonLd / reviewerPersonJsonLd / courseJsonLd ─── */
+
+describe("brokerProductJsonLd", () => {
+  const base = { name: "TestBroker", slug: "test-broker" };
+
+  it("emits FinancialProduct with a #product @id anchored to the broker URL", () => {
+    const jsonLd = brokerProductJsonLd(base);
+    expect(jsonLd["@context"]).toBe("https://schema.org");
+    expect(jsonLd["@type"]).toBe("FinancialProduct");
+    expect(jsonLd.url).toBe(absoluteUrl("/broker/test-broker"));
+    expect(jsonLd["@id"]).toBe(`${absoluteUrl("/broker/test-broker")}#product`);
+  });
+
+  it("classifies a crypto broker as a Cryptocurrency Exchange", () => {
+    const jsonLd = brokerProductJsonLd({ ...base, is_crypto: true });
+    expect(jsonLd.category).toBe("Cryptocurrency Exchange");
+  });
+
+  it("classifies platform_type robo_advisor as Robo-Advisor", () => {
+    const jsonLd = brokerProductJsonLd({ ...base, platform_type: "robo_advisor" });
+    expect(jsonLd.category).toBe("Robo-Advisor");
+  });
+
+  it("classifies platform_type super_fund as Superannuation Fund", () => {
+    const jsonLd = brokerProductJsonLd({ ...base, platform_type: "super_fund" });
+    expect(jsonLd.category).toBe("Superannuation Fund");
+  });
+
+  it("defaults to Share Trading Platform for anything else", () => {
+    const jsonLd = brokerProductJsonLd({ ...base, platform_type: "share_broker" });
+    expect(jsonLd.category).toBe("Share Trading Platform");
+    expect(brokerProductJsonLd(base).category).toBe("Share Trading Platform");
+  });
+
+  it("prefers is_crypto over platform_type when both set", () => {
+    const jsonLd = brokerProductJsonLd({ ...base, is_crypto: true, platform_type: "robo_advisor" });
+    expect(jsonLd.category).toBe("Cryptocurrency Exchange");
+  });
+
+  it("includes aggregateRating only when review_count > 0", () => {
+    const withRatings = brokerProductJsonLd({ ...base, rating: 4.2, review_count: 12 });
+    expect(withRatings.aggregateRating).toBeDefined();
+    expect(withRatings.aggregateRating?.ratingValue).toBe(4.2);
+    expect(withRatings.aggregateRating?.reviewCount).toBe(12);
+
+    expect(brokerProductJsonLd({ ...base, rating: 4.2, review_count: 0 }).aggregateRating).toBeUndefined();
+    expect(brokerProductJsonLd(base).aggregateRating).toBeUndefined();
+  });
+
+  it("clamps ratingValue to a floor of 1 for 0 / undefined / negative", () => {
+    expect(brokerProductJsonLd({ ...base, rating: 0, review_count: 3 }).aggregateRating?.ratingValue).toBe(1);
+    expect(brokerProductJsonLd({ ...base, rating: -5, review_count: 3 }).aggregateRating?.ratingValue).toBe(1);
+    expect(brokerProductJsonLd({ ...base, review_count: 3 }).aggregateRating?.ratingValue).toBe(1);
+  });
+
+  it("includes additionalProperty only when regulated_by set", () => {
+    const regulated = brokerProductJsonLd({ ...base, regulated_by: "ASIC" });
+    expect(regulated.additionalProperty).toEqual({
+      "@type": "PropertyValue",
+      name: "Regulated By",
+      value: "ASIC",
+    });
+    expect(brokerProductJsonLd(base).additionalProperty).toBeUndefined();
+  });
+
+  it("includes provider.foundingDate only when year_founded set", () => {
+    const founded = brokerProductJsonLd({ ...base, year_founded: 2010 });
+    expect(founded.provider.foundingDate).toBe("2010");
+    expect(brokerProductJsonLd(base).provider.foundingDate).toBeUndefined();
+  });
+});
+
+describe("reviewerPersonJsonLd", () => {
+  const member: TeamMember = {
+    id: 7,
+    slug: "jane-reviewer",
+    full_name: "Jane Reviewer",
+    role: "expert_reviewer",
+    linkedin_url: "https://linkedin.com/in/jane",
+    status: "active",
+    created_at: "2024-01-01",
+    updated_at: "2024-01-01",
+  };
+
+  it("uses the /reviewers/ path (not /authors/)", () => {
+    const jsonLd = reviewerPersonJsonLd(member);
+    expect(jsonLd.url).toBe(absoluteUrl("/reviewers/jane-reviewer"));
+    expect(jsonLd.url).not.toContain("/authors/");
+  });
+
+  it("sets jobTitle via formatRole", () => {
+    const jsonLd = reviewerPersonJsonLd(member);
+    expect(jsonLd.jobTitle).toBe(formatRole("expert_reviewer"));
+    expect(jsonLd.jobTitle).toBe("Expert Reviewer");
+  });
+
+  it("includes sameAs only when linkedin_url set", () => {
+    expect(reviewerPersonJsonLd(member).sameAs).toEqual(["https://linkedin.com/in/jane"]);
+    const noLinkedin: TeamMember = { ...member, linkedin_url: undefined };
+    expect(reviewerPersonJsonLd(noLinkedin).sameAs).toBeUndefined();
+  });
+
+  it("carries SITE_NAME / SITE_URL on the worksFor Organization", () => {
+    const jsonLd = reviewerPersonJsonLd(member);
+    expect(jsonLd.worksFor).toEqual({
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    });
+  });
+});
+
+describe("courseJsonLd", () => {
+  const base: Course = {
+    id: 1,
+    slug: "investing-101",
+    title: "Investing 101",
+    description: "Learn the basics.",
+    price: 9900,
+    currency: "AUD",
+    revenue_share_percent: 0,
+    level: "beginner",
+    status: "published",
+    featured: false,
+    sort_order: 0,
+    created_at: "2024-01-01",
+    updated_at: "2024-01-01",
+  };
+
+  it("formats offers.price as dollars from cents", () => {
+    expect(courseJsonLd(base, 10, 3).offers.price).toBe("99.00");
+    expect(courseJsonLd({ ...base, price: 12345 }, 10, 3).offers.price).toBe("123.45");
+    expect(courseJsonLd({ ...base, price: 0 }, 10, 3).offers.price).toBe("0.00");
+  });
+
+  it("maps educationalLevel from level", () => {
+    expect(courseJsonLd({ ...base, level: "beginner" }, 1, 1).educationalLevel).toBe("Beginner");
+    expect(courseJsonLd({ ...base, level: "intermediate" }, 1, 1).educationalLevel).toBe("Intermediate");
+    expect(courseJsonLd({ ...base, level: "advanced" }, 1, 1).educationalLevel).toBe("Advanced");
+  });
+
+  it("includes instructor only when creator set", () => {
+    const creator: TeamMember = {
+      id: 2,
+      slug: "the-creator",
+      full_name: "The Creator",
+      role: "course_creator",
+      status: "active",
+      created_at: "2024-01-01",
+      updated_at: "2024-01-01",
+    };
+    const withCreator = courseJsonLd({ ...base, creator }, 1, 1) as ReturnType<typeof courseJsonLd> & {
+      instructor?: { "@type": string; name: string; url: string };
+    };
+    expect(withCreator.instructor).toEqual({
+      "@type": "Person",
+      name: "The Creator",
+      url: absoluteUrl("/authors/the-creator"),
+    });
+    const noCreator = courseJsonLd(base, 1, 1) as Record<string, unknown>;
+    expect(noCreator.instructor).toBeUndefined();
+  });
+
+  it("includes courseWorkload only when estimated_hours set", () => {
+    const withHours = courseJsonLd({ ...base, estimated_hours: 4.4 }, 1, 1);
+    expect(withHours.hasCourseInstance.courseWorkload).toBe("PT4H");
+    const noHours = courseJsonLd(base, 1, 1);
+    expect(noHours.hasCourseInstance.courseWorkload).toBeUndefined();
+  });
+
+  it("sets numberOfCredits to totalModules and inLanguage to en-AU", () => {
+    const jsonLd = courseJsonLd(base, 12, 5);
+    expect(jsonLd.numberOfCredits).toBe(5);
+    expect(jsonLd.inLanguage).toBe("en-AU");
+    expect(jsonLd["@type"]).toBe("Course");
+  });
+});
+
+/* ─── TEST-13: seo howToJsonLd / qaPageJsonLd ─── */
+
+describe("howToJsonLd (seo)", () => {
+  const guide = {
+    slug: "open-a-brokerage-account",
+    h1: "How to open a brokerage account",
+    intro: "A short walkthrough.",
+    steps: [
+      { heading: "Pick a broker", body: "Compare fees and features." },
+      { heading: "Sign up", body: "x".repeat(600) },
+    ],
+  };
+
+  it("emits HowTo with totalTime and AUD-zero estimatedCost", () => {
+    const jsonLd = howToJsonLd(guide);
+    expect(jsonLd["@type"]).toBe("HowTo");
+    expect(jsonLd.totalTime).toBe("PT10M");
+    expect(jsonLd.estimatedCost).toEqual({
+      "@type": "MonetaryAmount",
+      currency: "AUD",
+      value: "0",
+    });
+  });
+
+  it("numbers steps from 1 and anchors step urls", () => {
+    const jsonLd = howToJsonLd(guide);
+    expect(jsonLd.step[0].position).toBe(1);
+    expect(jsonLd.step[1].position).toBe(2);
+    expect(jsonLd.step[0].url).toBe(absoluteUrl("/how-to/open-a-brokerage-account#step-1"));
+    expect(jsonLd.step[1].url).toBe(absoluteUrl("/how-to/open-a-brokerage-account#step-2"));
+  });
+
+  it("truncates step text to 500 chars", () => {
+    const jsonLd = howToJsonLd(guide);
+    expect(jsonLd.step[1].text).toHaveLength(500);
+  });
+
+  it("sets dateModified to today's ISO date and author to REVIEW_AUTHOR", () => {
+    const jsonLd = howToJsonLd(guide);
+    expect(jsonLd.dateModified).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(jsonLd.author.name).toBe("invest.com.au Research Team");
+  });
+});
+
+describe("qaPageJsonLd (seo)", () => {
+  it("uses acceptedAnswer when an answer is accepted", () => {
+    const jsonLd = qaPageJsonLd(
+      [
+        {
+          question: "Is X safe?",
+          answers: [
+            { answer: "Not accepted.", is_accepted: false },
+            { answer: "Yes, regulated.", is_accepted: true, display_name: "Jane" },
+          ],
+        },
+      ],
+      "Broker Q&A",
+      "/ignored",
+    );
+    expect(jsonLd["@type"]).toBe("QAPage");
+    expect(jsonLd.name).toBe("Broker Q&A");
+    const q = jsonLd.mainEntity[0] as Record<string, { text: string; author: { name: string } }>;
+    expect(q.acceptedAnswer.text).toBe("Yes, regulated.");
+    expect(q.acceptedAnswer.author.name).toBe("Jane");
+    expect((jsonLd.mainEntity[0] as Record<string, unknown>).suggestedAnswer).toBeUndefined();
+  });
+
+  it("falls back to 'Editorial Team' author when display_name missing", () => {
+    const jsonLd = qaPageJsonLd(
+      [{ question: "Q?", answers: [{ answer: "A.", is_accepted: true }] }],
+      "Page",
+      "/x",
+    );
+    const q = jsonLd.mainEntity[0] as Record<string, { author: { name: string } }>;
+    expect(q.acceptedAnswer.author.name).toBe("Editorial Team");
+  });
+
+  it("uses suggestedAnswer for all answers when none accepted", () => {
+    const jsonLd = qaPageJsonLd(
+      [
+        {
+          question: "Q?",
+          answers: [
+            { answer: "A1.", is_accepted: false, display_name: "Bob" },
+            { answer: "A2.", is_accepted: false },
+          ],
+        },
+      ],
+      "Page",
+      "/x",
+    );
+    const q = jsonLd.mainEntity[0] as Record<string, unknown>;
+    expect(q.acceptedAnswer).toBeUndefined();
+    const suggested = q.suggestedAnswer as { text: string; author: { name: string } }[];
+    expect(suggested).toHaveLength(2);
+    expect(suggested[0]).toEqual({
+      "@type": "Answer",
+      text: "A1.",
+      author: { "@type": "Person", name: "Bob" },
+    });
+    expect(suggested[1].author.name).toBe("Editorial Team");
+  });
+
+  it("emits neither answer key when there are no answers", () => {
+    const jsonLd = qaPageJsonLd(
+      [{ question: "Q?", answers: [] }],
+      "Page",
+      "/x",
+    );
+    const q = jsonLd.mainEntity[0] as Record<string, unknown>;
+    expect(q.acceptedAnswer).toBeUndefined();
+    expect(q.suggestedAnswer).toBeUndefined();
+    expect(q.name).toBe("Q?");
+  });
+
+  it("ignores the third arg — pageName drives name", () => {
+    const a = qaPageJsonLd([], "The Page Name", "/path-a");
+    const b = qaPageJsonLd([], "The Page Name", "/path-b-different");
+    expect(a.name).toBe("The Page Name");
+    expect(a).toEqual(b);
   });
 });
