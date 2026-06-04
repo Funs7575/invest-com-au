@@ -26,7 +26,6 @@ interface AuthorProfile {
 interface ForumThread {
   id: string;
   category_id: string;
-  author_id: string;
   author_name: string;
   title: string;
   slug: string;
@@ -39,13 +38,16 @@ interface ForumThread {
   created_at: string;
   updated_at: string | null;
   author_profile: AuthorProfile | null;
+  // Server-computed ownership flag — replaces shipping the raw author_id
+  // (a Supabase auth.uid) to the browser. See finding "Forum thread-detail
+  // page serializes author_id to the client".
+  is_own: boolean;
 }
 
 interface ForumPost {
   id: string;
   thread_id: string;
   parent_id: string | null;
-  author_id: string;
   author_name: string;
   body: string;
   vote_score: number;
@@ -53,6 +55,8 @@ interface ForumPost {
   created_at: string;
   updated_at: string | null;
   author_profile: AuthorProfile | null;
+  // Server-computed ownership flag (see ForumThread.is_own).
+  is_own: boolean;
 }
 
 interface ForumCategory {
@@ -154,20 +158,33 @@ export default async function ThreadPage({
   if (!catData) notFound();
   const category = catData as ForumCategory;
 
-  // Fetch thread
+  // Resolve the viewer once, server-side. author_id (a Supabase auth.uid) is
+  // never serialized to the client; ownership/moderator state is computed here
+  // and only booleans cross the RSC boundary.
+  const {
+    data: { user: viewer },
+  } = await supabase.auth.getUser();
+  const viewerId = viewer?.id ?? null;
+
+  // Fetch thread — explicit columns (no select("*")). author_id stays
+  // server-side only, long enough to build profileMap and ownership flags.
   const { data: threadData } = await supabase
     .from("forum_threads")
-    .select("*")
+    .select(
+      "id, category_id, author_id, author_name, title, slug, body, is_pinned, is_locked, reply_count, view_count, vote_score, created_at, updated_at"
+    )
     .eq("id", threadId)
     .eq("is_removed", false)
     .single();
 
   if (!threadData) notFound();
 
-  // Fetch posts
+  // Fetch posts — explicit columns (no select("*")), author_id server-side only.
   const { data: postsData } = await supabase
     .from("forum_posts")
-    .select("*")
+    .select(
+      "id, thread_id, parent_id, author_id, author_name, body, vote_score, is_removed, created_at, updated_at"
+    )
     .eq("thread_id", threadId)
     .eq("is_removed", false)
     .order("created_at", { ascending: true });
@@ -179,6 +196,12 @@ export default async function ThreadPage({
     for (const post of postsData) {
       authorIds.add(post.author_id);
     }
+  }
+  // Include the viewer so their own moderator flag is available even when they
+  // have not authored anything in this thread (matches the intent of the prior
+  // client-side mod check, without shipping author_ids to the browser).
+  if (viewerId != null) {
+    authorIds.add(viewerId);
   }
 
   const { data: profiles } = await supabase
@@ -204,15 +227,29 @@ export default async function ThreadPage({
     }
   }
 
+  // Strip author_id before crossing the client boundary — keep only a
+  // per-row ownership boolean so the browser never receives raw auth UUIDs.
+  const { author_id: threadAuthorId, ...threadRest } = threadData;
   const thread: ForumThread = {
-    ...threadData,
-    author_profile: profileMap[threadData.author_id] ?? null,
+    ...threadRest,
+    author_profile: profileMap[threadAuthorId] ?? null,
+    is_own: viewerId != null && threadAuthorId === viewerId,
   };
 
-  const posts: ForumPost[] = (postsData ?? []).map((post) => ({
-    ...post,
-    author_profile: profileMap[post.author_id] ?? null,
-  }));
+  const posts: ForumPost[] = (postsData ?? []).map((post) => {
+    const { author_id: postAuthorId, ...postRest } = post;
+    return {
+      ...postRest,
+      author_profile: profileMap[postAuthorId] ?? null,
+      is_own: viewerId != null && postAuthorId === viewerId,
+    };
+  });
+
+  // Moderator state for the viewer is the authoritative server-side flag from
+  // their own forum profile — computed here, never inferred client-side from
+  // other users' author_ids. Defaults to false for anonymous/non-mod viewers.
+  const isViewerModerator =
+    viewerId != null && profileMap[viewerId]?.is_moderator === true;
 
   // Increment view count (fire-and-forget)
   supabase
@@ -357,6 +394,7 @@ export default async function ThreadPage({
           thread={thread}
           posts={posts}
           categorySlug={categorySlug}
+          isModerator={isViewerModerator}
         />
       </Suspense>
       <div className="container-custom max-w-4xl pb-8">
