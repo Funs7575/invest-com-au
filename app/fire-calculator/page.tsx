@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import FireCalculatorClient from "./FireCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import InvestOpportunitiesCallout from "@/components/invest/InvestOpportunitiesCallout";
 
 export const revalidate = 86400;
 
@@ -98,7 +99,17 @@ export default function FireCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <FireCalculatorClient />
-      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+      <div className="container-custom pb-8 space-y-6">
+        <InvestOpportunitiesCallout
+          icon="coins"
+          heading="Hitting your FIRE number means owning income-producing assets."
+          blurb="Browse income-focused opportunities — managed funds, dividend-paying listed securities and yield-bearing assets — to build the passive cash flow your FIRE plan depends on."
+          href="/invest?kind=fund,listed_security&min_yield=5"
+          ctaLabel="Browse income opportunities"
+          secondary={{ label: "Compare share-trading platforms", href: "/share-trading" }}
+        />
+        <ComplianceFooter variant="calculator" />
+      </div>
 
     </>
   );

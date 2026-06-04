@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import InvestOpportunitiesCallout from "@/components/invest/InvestOpportunitiesCallout";
 
 export const revalidate = 86400;
 
@@ -816,6 +817,19 @@ export default function SmsfPropertyPage() {
               </Link>
             </div>
           </div>
+        </section>
+
+        {/* Cross-link into the marketplace (Wave 6) */}
+        <section className="container-custom max-w-5xl pb-12">
+          <InvestOpportunitiesCallout
+            tone="amber"
+            icon="building"
+            heading="SMSF-eligible property & income opportunities"
+            blurb="Browse commercial property, SDA (NDIS) housing and other LRBA-compatible assets suited to SMSF acquisition — many flagged SMSF-eligible with bare-trust-ready structures. Use the after-tax return estimator on each listing to model the 15% accumulation vs 0% pension outcome."
+            href="/invest?category=commercial-property"
+            ctaLabel="Browse SMSF-eligible listings"
+            secondary={{ label: "SDA / NDIS housing", href: "/invest?category=sda-housing" }}
+          />
         </section>
 
       </div>

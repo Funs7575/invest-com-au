@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import InvestOpportunitiesCallout from "@/components/invest/InvestOpportunitiesCallout";
 import WithholdingTaxClient from "./WithholdingTaxClient";
 
 export const revalidate = 3600;
@@ -66,7 +67,16 @@ export default function WithholdingTaxCalculatorPage() {
       <Suspense fallback={<Loading />}>
         <WithholdingTaxClient />
       </Suspense>
-      <div className="container-custom pb-8">
+      <div className="container-custom pb-8 space-y-6">
+        <InvestOpportunitiesCallout
+          tone="blue"
+          icon="globe"
+          heading="Worked out your withholding rate? Now find the investments."
+          blurb="Browse ASX-listed securities and FIRB-eligible opportunities suited to foreign and non-resident investors — or compare brokers that accept non-residents."
+          href="/invest?kind=listed_security&firb=eligible"
+          ctaLabel="Browse listed opportunities"
+          secondary={{ label: "Compare non-resident brokers", href: "/compare" }}
+        />
         <ComplianceFooter variant="calculator" />
       </div>
     </>

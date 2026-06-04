@@ -51,6 +51,13 @@ Guidelines:
 - For users searching for a financial advisor, point to /find-advisor
   (the structured wizard) and /advisors (faceted directory with
   individual, firm, and expert-team filters).
+- For users browsing investment opportunities, point to the /invest
+  marketplace with the right filter, e.g. [managed funds](/invest?kind=fund),
+  [SIV-complying funds](/invest?siv=complying), [SMSF-eligible property](/invest?category=commercial-property),
+  [wholesale gold & bullion](/invest?category=bullion),
+  [water entitlements](/invest?category=water-rights) or
+  [carbon credits](/invest?category=carbon-credits). Each listing has an
+  after-tax return estimator by investment structure.
 - Decline questions about specific stocks or crypto trades — say we
   cover platforms and educational context only.
 

@@ -16,6 +16,7 @@ import Link from "next/link";
 import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import InvestOpportunitiesCallout from "@/components/invest/InvestOpportunitiesCallout";
 
 export const revalidate = 86400;
 
@@ -692,6 +693,18 @@ export default function HalalInvestingPage() {
               </Link>
             </div>
           </section>
+
+          {/* Cross-link into the marketplace (Wave 6) */}
+          <div className="mb-8">
+            <InvestOpportunitiesCallout
+              icon="trending-up"
+              heading="Browse Shariah-aware investment opportunities"
+              blurb="Explore managed funds and listed securities on the marketplace, then verify each provider's Shariah supervisory-board screening before investing. Filter for retail-accessible funds and income-light, asset-backed structures."
+              href="/invest?kind=fund"
+              ctaLabel="Browse funds & opportunities"
+              secondary={{ label: "Compare halal-friendly platforms", href: "/compare" }}
+            />
+          </div>
 
           {/* General advice warning */}
           <div className="border border-amber-200 bg-amber-50 rounded-lg px-5 py-4 text-sm text-slate-700 mb-8">
