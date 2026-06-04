@@ -98,6 +98,9 @@ export const POST = withValidatedBody(
   async (request: NextRequest, body) => {
     try {
       const session = await requireOrgSession();
+      if (session.role === "viewer") {
+        return NextResponse.json({ error: "Forbidden — viewers cannot create lessons." }, { status: 403 });
+      }
       const admin = createAdminClient();
 
       // Parse courseId from URL
@@ -165,6 +168,9 @@ export const PATCH = withValidatedBody(
   async (request: NextRequest, body) => {
     try {
       const session = await requireOrgSession();
+      if (session.role === "viewer") {
+        return NextResponse.json({ error: "Forbidden — viewers cannot edit lessons." }, { status: 403 });
+      }
       const admin = createAdminClient();
 
       // Parse courseId from URL

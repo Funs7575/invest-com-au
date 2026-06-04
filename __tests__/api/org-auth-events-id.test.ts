@@ -5,9 +5,9 @@ import type { NextRequest } from "next/server";
 
 const { mockIsRateLimited, mockRequireOrgSession, mockAdminFrom } = vi.hoisted(() => ({
   mockIsRateLimited: vi.fn<() => Promise<boolean>>(async () => false),
-  mockRequireOrgSession: vi.fn<() => Promise<{ organisationId: number; email: string }>>(
-    async () => ({ organisationId: 1, email: "org@example.com" }),
-  ),
+  mockRequireOrgSession: vi.fn<
+    () => Promise<{ organisationId: number; email: string; role?: string }>
+  >(async () => ({ organisationId: 1, email: "org@example.com" })),
   mockAdminFrom: vi.fn(() => makeChain()),
 }));
 
@@ -175,6 +175,40 @@ describe("PATCH /api/org-auth/events/[eventId]", () => {
     const json = await res.json();
     expect(json.event.status).toBe("published");
   });
+
+  it("returns 403 when the session role is viewer", async () => {
+    mockRequireOrgSession.mockResolvedValue({
+      organisationId: 1,
+      email: "viewer@example.com",
+      role: "viewer",
+    });
+    const req = makeReq("PATCH", EVENT_URL, { title: "New Title" });
+    const res = await PATCH(req);
+    expect(res.status).toBe(403);
+    const json = await res.json();
+    expect(json.error).toMatch(/forbidden/i);
+    // Guard must short-circuit before any DB access
+    expect(mockAdminFrom).not.toHaveBeenCalled();
+  });
+
+  it.each(["editor", "admin"])("allows a %s to edit an event", async (role) => {
+    mockRequireOrgSession.mockResolvedValue({
+      organisationId: 1,
+      email: `${role}@example.com`,
+      role,
+    });
+    const updatedEvent = { id: 99, title: "New Title", status: "draft" };
+    let callCount = 0;
+    mockAdminFrom.mockImplementation(() => {
+      callCount += 1;
+      if (callCount === 1)
+        return makeChain({ data: { id: 99, status: "draft", organisation_id: 1 }, error: null });
+      return makeChain({ data: updatedEvent, error: null });
+    });
+    const req = makeReq("PATCH", EVENT_URL, { title: "New Title" });
+    const res = await PATCH(req);
+    expect(res.status).toBe(200);
+  });
 });
 
 // ── DELETE ──────────────────────────────────────────────────────────────────
@@ -252,5 +286,38 @@ describe("DELETE /api/org-auth/events/[eventId]", () => {
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.success).toBe(true);
+  });
+
+  it("returns 403 when the session role is viewer", async () => {
+    mockRequireOrgSession.mockResolvedValue({
+      organisationId: 1,
+      email: "viewer@example.com",
+      role: "viewer",
+    });
+    const req = makeReq("DELETE", EVENT_URL);
+    const res = await DELETE(req, { params: Promise.resolve({ eventId: "99" }) });
+    expect(res.status).toBe(403);
+    const json = await res.json();
+    expect(json.error).toMatch(/forbidden/i);
+    // Guard must short-circuit before any DB access
+    expect(mockAdminFrom).not.toHaveBeenCalled();
+  });
+
+  it.each(["editor", "admin"])("allows a %s to delete a draft event", async (role) => {
+    mockRequireOrgSession.mockResolvedValue({
+      organisationId: 1,
+      email: `${role}@example.com`,
+      role,
+    });
+    let callCount = 0;
+    mockAdminFrom.mockImplementation(() => {
+      callCount += 1;
+      if (callCount === 1)
+        return makeChain({ data: { id: 99, status: "draft", organisation_id: 1 }, error: null });
+      return makeChain({ data: null, error: null });
+    });
+    const req = makeReq("DELETE", EVENT_URL);
+    const res = await DELETE(req, { params: Promise.resolve({ eventId: "99" }) });
+    expect(res.status).toBe(200);
   });
 });
