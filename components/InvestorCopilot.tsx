@@ -102,7 +102,7 @@ export default function InvestorCopilot() {
       {/* Chat panel */}
       {open && (
         <div
-          className="fixed bottom-20 right-5 z-40 flex w-[340px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl sm:w-[380px]"
+          className="fixed bottom-20 right-5 z-40 flex w-[min(340px,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl sm:w-[380px]"
           style={{ maxHeight: "min(520px, calc(100vh - 100px))" }}
         >
           {/* Header */}

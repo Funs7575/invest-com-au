@@ -287,7 +287,7 @@ export default async function SearchPage({
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <Link href="/compare" className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 hover:border-amber-400 transition-colors">
-                  Compare Brokers
+                  Compare Platforms
                 </Link>
                 <Link href="/advisors" className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 hover:border-amber-400 transition-colors">
                   Find Advisors

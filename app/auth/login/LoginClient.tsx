@@ -79,7 +79,7 @@ export default function LoginClient() {
 
       setSent(true);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError("Something went wrong on our end. Please try again in a moment.");
     } finally {
       setLoading(false);
     }
@@ -121,7 +121,7 @@ export default function LoginClient() {
 
       router.push(next);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError("We couldn't sign you in. Double-check your email and password, or reset your password.");
     } finally {
       setLoading(false);
     }
@@ -153,7 +153,7 @@ export default function LoginClient() {
 
       setResetSent(true);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError("Something went wrong on our end. Please try again in a moment.");
     } finally {
       setLoading(false);
     }
