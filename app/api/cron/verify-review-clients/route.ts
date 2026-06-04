@@ -15,16 +15,26 @@ export async function GET(req: NextRequest) {
   let brokerVerified = 0;
   let advisorVerified = 0;
 
-  // ── Broker reviews: match user_reviews.email against broker_signups.email ──
+  // ── Broker reviews: match user_reviews.email against platform leads ──
+  //
+  // A reviewer is a "verified client" of a broker when they submitted a
+  // platform enquiry for that broker via /api/submit-lead (lead_type =
+  // 'platform', broker_id set). This mirrors the advisor path, which matches
+  // professional_reviews.reviewer_email against professional_leads. The match
+  // key is broker_id (not broker_slug): user_reviews carries both, but the
+  // `leads` table only has broker_id, so we key on the column both share.
   //
   // Previously this loop was N+1: one Supabase query per unverified review.
   // With the platform growing this hit cron timeout (60s) once unverified
   // reviews crossed ~600 rows. The new flow:
   //   1. Fetch all unverified reviews (one query)
-  //   2. Fetch all candidate broker_signups in a single .in() (one query)
-  //   3. Build an in-memory lookup map keyed on (broker_slug,email)
+  //   2. Fetch all candidate platform leads in a single .in() (one query)
+  //   3. Build an in-memory lookup map keyed on (broker_id,email)
   //   4. Update only reviews that have a matching key
   // Reduces N+1 to O(1) Supabase round-trips on the read path.
+  //
+  // Caveat: platform leads submitted without a broker (null broker_id) never
+  // match — by design; there is no broker to attribute the review to.
   try {
     const { data: unverifiedBrokerReviews } = await supabase
       .from("user_reviews")
@@ -42,31 +52,33 @@ export async function GET(req: NextRequest) {
         ),
       );
 
-      // Single batched fetch of all candidate signups
-      const { data: candidateSignups } = await supabase
-        .from("broker_signups")
-        .select("broker_slug, email")
-        .in("email", emails);
+      // Single batched fetch of all candidate platform leads
+      const { data: candidateLeads } = await supabase
+        .from("leads")
+        .select("broker_id, user_email")
+        .eq("lead_type", "platform")
+        .not("broker_id", "is", null)
+        .in("user_email", emails);
 
-      // Build O(1) lookup keyed on slug+email
-      const matchKey = (slug: string, email: string) =>
-        `${slug}::${email.toLowerCase()}`;
+      // Build O(1) lookup keyed on broker_id+email
+      const matchKey = (brokerId: number | string, email: string) =>
+        `${brokerId}::${email.toLowerCase()}`;
       const matchedKeys = new Set(
-        (candidateSignups || []).map((s) =>
-          matchKey(s.broker_slug, s.email),
-        ),
+        (candidateLeads || [])
+          .filter((l) => l.broker_id != null && l.user_email)
+          .map((l) => matchKey(l.broker_id, l.user_email)),
       );
 
       // Update only matching reviews
       for (const review of unverifiedBrokerReviews) {
-        if (!review.email) continue;
-        if (!matchedKeys.has(matchKey(review.broker_slug, review.email))) continue;
+        if (!review.email || review.broker_id == null) continue;
+        if (!matchedKeys.has(matchKey(review.broker_id, review.email))) continue;
 
         const { error } = await supabase
           .from("user_reviews")
           .update({
             is_verified_client: true,
-            verified_via: "signup_match",
+            verified_via: "enquiry_match",
             verified_client_at: new Date().toISOString(),
           })
           .eq("id", review.id);

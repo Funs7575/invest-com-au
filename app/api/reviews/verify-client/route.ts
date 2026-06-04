@@ -80,20 +80,35 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Check if reviewer email matches any broker_signups for the same broker
-      const { data: signupMatch } = await supabase
-        .from("broker_signups")
+      // Check if reviewer email matches any platform lead for the same broker.
+      // A platform enquiry (lead_type='platform', broker_id set) submitted via
+      // /api/submit-lead proves the reviewer is a real customer of this broker.
+      // Mirrors the advisor path (professional_leads match). We key on
+      // broker_id — `leads` has no broker_slug, and the review row carries
+      // broker_id alongside broker_slug. Reviews with a null broker_id (and
+      // leads with a null broker_id) can't be attributed, so they never match.
+      if (review.broker_id == null) {
+        return NextResponse.json({
+          success: true,
+          verified: false,
+          message: "No matching enquiry found for this reviewer",
+        });
+      }
+
+      const { data: leadMatch } = await supabase
+        .from("leads")
         .select("id")
-        .eq("broker_slug", review.broker_slug)
-        .eq("email", review.email)
+        .eq("lead_type", "platform")
+        .eq("broker_id", review.broker_id)
+        .eq("user_email", review.email)
         .limit(1);
 
-      if (signupMatch && signupMatch.length > 0) {
+      if (leadMatch && leadMatch.length > 0) {
         const { error: updateError } = await supabase
           .from("user_reviews")
           .update({
             is_verified_client: true,
-            verified_via: "signup_match",
+            verified_via: "enquiry_match",
             verified_client_at: new Date().toISOString(),
           })
           .eq("id", review_id);
@@ -112,7 +127,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           verified: true,
-          verified_via: "signup_match",
+          verified_via: "enquiry_match",
         });
       }
 
@@ -120,7 +135,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         verified: false,
-        message: "No matching signup found for this reviewer",
+        message: "No matching enquiry found for this reviewer",
       });
     } else {
       // advisor review

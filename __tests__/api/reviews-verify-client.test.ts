@@ -117,7 +117,7 @@ describe("POST /api/reviews/verify-client", () => {
     expect(body.already_verified).toBe(true);
   });
 
-  it("verifies broker review via signup_match", async () => {
+  it("verifies broker review via enquiry_match against a platform lead", async () => {
     const reviewChain = {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -126,7 +126,8 @@ describe("POST /api/reviews/verify-client", () => {
         error: null,
       }),
     };
-    const signupChain = {
+    // Platform-lead lookup chain: .select().eq(lead_type).eq(broker_id).eq(user_email).limit()
+    const leadChain = {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       limit: vi.fn().mockResolvedValue({ data: [{ id: 10 }] }),
@@ -137,7 +138,7 @@ describe("POST /api/reviews/verify-client", () => {
     };
     mockAdminFrom
       .mockReturnValueOnce(reviewChain)
-      .mockReturnValueOnce(signupChain)
+      .mockReturnValueOnce(leadChain)
       .mockReturnValueOnce(updateChain);
 
     const { POST } = await import("@/app/api/reviews/verify-client/route");
@@ -146,10 +147,15 @@ describe("POST /api/reviews/verify-client", () => {
 
     expect(res.status).toBe(200);
     expect(body.verified).toBe(true);
-    expect(body.verified_via).toBe("signup_match");
+    expect(body.verified_via).toBe("enquiry_match");
+    // Confirms we matched against `leads`, scoped to platform lead_type + broker_id
+    expect(mockAdminFrom).toHaveBeenNthCalledWith(2, "leads");
+    expect(leadChain.eq).toHaveBeenCalledWith("lead_type", "platform");
+    expect(leadChain.eq).toHaveBeenCalledWith("broker_id", 2);
+    expect(leadChain.eq).toHaveBeenCalledWith("user_email", "customer@example.com");
   });
 
-  it("returns verified=false when no broker signup match", async () => {
+  it("returns verified=false when no platform lead matches the broker review", async () => {
     const reviewChain = {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -158,14 +164,14 @@ describe("POST /api/reviews/verify-client", () => {
         error: null,
       }),
     };
-    const signupChain = {
+    const leadChain = {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       limit: vi.fn().mockResolvedValue({ data: [] }),
     };
     mockAdminFrom
       .mockReturnValueOnce(reviewChain)
-      .mockReturnValueOnce(signupChain);
+      .mockReturnValueOnce(leadChain);
 
     const { POST } = await import("@/app/api/reviews/verify-client/route");
     const res = await POST(makeReq({ review_id: 1, review_type: "broker" }));
@@ -173,6 +179,28 @@ describe("POST /api/reviews/verify-client", () => {
 
     expect(res.status).toBe(200);
     expect(body.verified).toBe(false);
+    expect(body.message).toMatch(/no matching enquiry/i);
+  });
+
+  it("returns verified=false without querying leads when broker review has no broker_id", async () => {
+    const reviewChain = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({
+        data: { id: 1, email: "customer@example.com", broker_slug: "commsec", broker_id: null, is_verified_client: false },
+        error: null,
+      }),
+    };
+    mockAdminFrom.mockReturnValueOnce(reviewChain);
+
+    const { POST } = await import("@/app/api/reviews/verify-client/route");
+    const res = await POST(makeReq({ review_id: 1, review_type: "broker" }));
+    const body = await res.json() as Record<string, unknown>;
+
+    expect(res.status).toBe(200);
+    expect(body.verified).toBe(false);
+    // Only the review fetch should have hit the DB — no leads lookup for a null broker_id.
+    expect(mockAdminFrom).toHaveBeenCalledTimes(1);
   });
 
   it("returns 500 when broker review update fails", async () => {
@@ -184,7 +212,7 @@ describe("POST /api/reviews/verify-client", () => {
         error: null,
       }),
     };
-    const signupChain = {
+    const leadChain = {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       limit: vi.fn().mockResolvedValue({ data: [{ id: 10 }] }),
@@ -195,7 +223,7 @@ describe("POST /api/reviews/verify-client", () => {
     };
     mockAdminFrom
       .mockReturnValueOnce(reviewChain)
-      .mockReturnValueOnce(signupChain)
+      .mockReturnValueOnce(leadChain)
       .mockReturnValueOnce(updateChain);
 
     const { POST } = await import("@/app/api/reviews/verify-client/route");
