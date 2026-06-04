@@ -72,12 +72,14 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: pro } = await supabase
+  const { data: proRow } = await supabase
     .from("professionals")
     .select(ADVISOR_PUBLIC_COLUMNS)
     .eq("slug", slug)
     .eq("status", "active")
     .single();
+  // Explicit column projection makes Supabase return GenericStringError typing; cast back to the row shape.
+  const pro = proRow as unknown as Professional | null;
 
   if (!pro) notFound();
 
