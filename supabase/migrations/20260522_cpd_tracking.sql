@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS course_certificates (
   id                 UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id            UUID        REFERENCES auth.users(id) ON DELETE SET NULL,
   professional_id    BIGINT      REFERENCES professionals(id) ON DELETE SET NULL,
-  course_id          UUID        NOT NULL REFERENCES courses(id),
+  course_id          BIGINT      NOT NULL REFERENCES courses(id),
   purchase_id        BIGINT      REFERENCES course_purchases(id),
   certificate_number TEXT        NOT NULL,
   issued_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -101,7 +101,7 @@ CREATE POLICY "User reads own certificates"
 CREATE TABLE IF NOT EXISTS cpd_credits (
   id               UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   professional_id  BIGINT      NOT NULL REFERENCES professionals(id) ON DELETE CASCADE,
-  course_id        UUID        NOT NULL REFERENCES courses(id),
+  course_id        BIGINT      NOT NULL REFERENCES courses(id),
   purchase_id      BIGINT      REFERENCES course_purchases(id),
   certificate_id   UUID        REFERENCES course_certificates(id) ON DELETE SET NULL,
   hours_earned     NUMERIC(5,2) NOT NULL,

@@ -33,17 +33,9 @@ CREATE TABLE IF NOT EXISTS public.investment_clubs (
 ALTER TABLE public.investment_clubs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.investment_clubs FORCE ROW LEVEL SECURITY;
 
--- Members can read their clubs (joined via club_members)
-CREATE POLICY "club_members_read_club"
-  ON public.investment_clubs FOR SELECT
-  TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.club_members
-      WHERE club_members.club_id = investment_clubs.id
-        AND club_members.user_id = auth.uid()
-    )
-  );
+-- NOTE: the "club_members_read_club" SELECT policy on investment_clubs
+-- subqueries club_members, so it is created further down — after the
+-- club_members table exists.
 
 -- Authenticated users can create clubs
 CREATE POLICY "authenticated_insert_club"
@@ -103,6 +95,20 @@ CREATE INDEX IF NOT EXISTS club_members_club_idx
 
 CREATE INDEX IF NOT EXISTS club_members_user_idx
   ON public.club_members (user_id);
+
+-- Members can read their clubs (joined via club_members).
+-- Defined here (not in the investment_clubs section above) because it
+-- subqueries club_members, which must exist first.
+CREATE POLICY "club_members_read_club"
+  ON public.investment_clubs FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.club_members
+      WHERE club_members.club_id = investment_clubs.id
+        AND club_members.user_id = auth.uid()
+    )
+  );
 
 -- ── club_watchlist_items ──────────────────────────────────────────────────────
 
