@@ -36,6 +36,28 @@ const SIZES = {
   xl: { container: "w-16 h-16", text: "text-lg", img: 64 },
 };
 
+/**
+ * Known sentinel/placeholder logo URLs that exist in some broker data but
+ * 404 when routed through the Next image optimizer (e.g. the mirror dataset
+ * ships `images.unsplash.com/placeholder`). Match these case-insensitively and
+ * substring-wise so query strings or sizing params don't slip past the guard.
+ */
+const PLACEHOLDER_LOGO_SENTINELS = ["images.unsplash.com/placeholder"];
+
+/**
+ * A logo URL is only usable if it's a non-empty string that isn't a known
+ * placeholder sentinel. Empty/whitespace/sentinel URLs fall back to the
+ * initials avatar up front rather than sending a doomed request through the
+ * image optimizer.
+ */
+function isUsableLogoUrl(url: string | undefined): url is string {
+  if (!url) return false;
+  const trimmed = url.trim();
+  if (trimmed === "") return false;
+  const lower = trimmed.toLowerCase();
+  return !PLACEHOLDER_LOGO_SENTINELS.some((sentinel) => lower.includes(sentinel));
+}
+
 function LetterFallback({ broker, s }: { broker: BrokerLogoProps["broker"]; s: (typeof SIZES)["md"] }) {
   return (
     <div
@@ -56,8 +78,9 @@ export default function BrokerLogo({
   const s = SIZES[size];
   const [imgError, setImgError] = useState(false);
 
-  if (broker.logo_url && !imgError) {
-    const isIco = broker.logo_url.endsWith(".ico");
+  if (isUsableLogoUrl(broker.logo_url) && !imgError) {
+    const logoUrl = broker.logo_url.trim();
+    const isIco = logoUrl.endsWith(".ico");
 
     // ICO files: use native <img> since Next.js Image doesn't handle ICO well
     if (isIco) {
@@ -65,7 +88,7 @@ export default function BrokerLogo({
         <div className={`${s.container} rounded-lg overflow-hidden shrink-0 bg-white border border-slate-100 ${className}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={broker.logo_url}
+            src={logoUrl}
             alt={`${broker.name} logo`}
             width={s.img}
             height={s.img}
@@ -81,7 +104,7 @@ export default function BrokerLogo({
     return (
       <div className={`${s.container} rounded-lg overflow-hidden shrink-0 bg-white border border-slate-100 ${className}`}>
         <Image
-          src={broker.logo_url}
+          src={logoUrl}
           alt={`${broker.name} logo`}
           width={s.img}
           height={s.img}
