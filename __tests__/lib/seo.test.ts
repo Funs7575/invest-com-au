@@ -643,7 +643,7 @@ describe("qaPageJsonLd (seo)", () => {
     );
     expect(jsonLd["@type"]).toBe("QAPage");
     expect(jsonLd.name).toBe("Broker Q&A");
-    const q = jsonLd.mainEntity[0] as Record<string, { text: string; author: { name: string } }>;
+    const q = jsonLd.mainEntity[0] as unknown as Record<string, { text: string; author: { name: string } }>;
     expect(q.acceptedAnswer.text).toBe("Yes, regulated.");
     expect(q.acceptedAnswer.author.name).toBe("Jane");
     expect((jsonLd.mainEntity[0] as Record<string, unknown>).suggestedAnswer).toBeUndefined();
@@ -655,7 +655,7 @@ describe("qaPageJsonLd (seo)", () => {
       "Page",
       "/x",
     );
-    const q = jsonLd.mainEntity[0] as Record<string, { author: { name: string } }>;
+    const q = jsonLd.mainEntity[0] as unknown as Record<string, { author: { name: string } }>;
     expect(q.acceptedAnswer.author.name).toBe("Editorial Team");
   });
 
