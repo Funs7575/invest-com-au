@@ -4,10 +4,8 @@ import { DesignIcon } from "@/components/design/DesignIcon";
 export default function HomePostAJob() {
   return (
     <section
+      className="bg-slate-50 border-t border-b border-slate-200"
       style={{
-        background: "var(--color-sand-50)",
-        borderTop: "1px solid #e5e7eb",
-        borderBottom: "1px solid #e5e7eb",
         padding: "52px 36px",
       }}
     >
@@ -98,14 +96,13 @@ export default function HomePostAJob() {
             ).map(([n, title, sub]) => (
               <li
                 key={n}
+                className="bg-white border border-slate-200"
                 style={{
                   display: "flex",
                   gap: 14,
                   alignItems: "flex-start",
                   padding: "14px 16px",
-                  background: "white",
                   borderRadius: 12,
-                  border: "1px solid #e5e7eb",
                   boxShadow: "0 1px 2px rgba(11,20,34,.04)",
                 }}
               >

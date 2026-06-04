@@ -21,10 +21,8 @@ const STEPS = [
 export default function HomeHowItWorks() {
   return (
     <section
+      className="bg-slate-50 border-t border-b border-slate-200"
       style={{
-        background: "#f8fafc",
-        borderTop: "1px solid #e5e7eb",
-        borderBottom: "1px solid #e5e7eb",
         padding: "52px 36px",
       }}
     >

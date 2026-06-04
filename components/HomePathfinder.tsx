@@ -22,9 +22,8 @@ export default async function HomePathfinder() {
   return (
     <section style={{ padding: "40px 36px", maxWidth: 1280, margin: "0 auto" }}>
       <div
+        className="bg-white border border-slate-200 home-pathfinder-card"
         style={{
-          background: "linear-gradient(135deg, var(--color-sand-50), white)",
-          border: "1px solid #e5e7eb",
           borderRadius: 16,
           padding: "32px 32px 28px",
           display: "grid",
@@ -32,7 +31,6 @@ export default async function HomePathfinder() {
           gap: 32,
           alignItems: "center",
         }}
-        className="home-pathfinder-card"
       >
         <div>
           <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
@@ -128,9 +126,8 @@ export default async function HomePathfinder() {
           ).map(([n, title, sub]) => (
             <li
               key={n}
+              className="bg-slate-50 border border-slate-200"
               style={{
-                background: "white",
-                border: "1px solid #e5e7eb",
                 borderRadius: 11,
                 padding: "12px 14px",
                 display: "flex",

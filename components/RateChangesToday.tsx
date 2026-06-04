@@ -41,8 +41,8 @@ export default async function RateChangesToday() {
 
   return (
     <div className="container-custom max-w-4xl my-6">
-      <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: "1px solid #f1f5f9" }}>
+      <div className="bg-white border border-slate-200" style={{ borderRadius: 16, overflow: "hidden" }}>
+        <div className="border-b border-slate-100" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px" }}>
           <div>
             <span style={{ fontSize: 10, fontWeight: 700, color: "var(--color-ink-400)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Rate changes</span>
             <h2 style={{ fontSize: 14, fontWeight: 700, color: "var(--color-ink-900)", margin: "2px 0 0" }}>What changed {dayLabel}</h2>
@@ -57,7 +57,7 @@ export default async function RateChangesToday() {
             const isUp = c.direction === "up";
             const isNew = c.direction === "new";
             const accentColor = isUp ? "#16a34a" : isNew ? "#1d4ed8" : "#dc2626";
-            const accentBg = isUp ? "#f0fdf4" : isNew ? "#eff6ff" : "#fef2f2";
+            const accentBg = isUp ? "rgba(22,163,74,.12)" : isNew ? "rgba(29,78,216,.12)" : "rgba(220,38,38,.12)";
             const arrow = isUp ? "↑" : isNew ? "★" : "↓";
             const productLabel = PRODUCT_LABELS[c.product_kind] ?? c.product_kind;
             const brokerPath = c.product_kind === "savings_account" || c.product_kind === "term_deposit"
@@ -68,13 +68,15 @@ export default async function RateChangesToday() {
               <Link
                 key={`${c.broker_slug}-${c.product_kind}-${i}`}
                 href={brokerPath}
+                className={[
+                  i % 4 !== 3 ? "border-r border-slate-100" : "",
+                  Math.floor(i / 4) < Math.floor((changes.length - 1) / 4) ? "border-b border-slate-100" : "",
+                ].join(" ").trim() || undefined}
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: 10,
                   padding: "12px 16px",
-                  borderRight: i % 4 !== 3 ? "1px solid #f1f5f9" : "none",
-                  borderBottom: Math.floor(i / 4) < Math.floor((changes.length - 1) / 4) ? "1px solid #f1f5f9" : "none",
                   textDecoration: "none",
                 }}
               >

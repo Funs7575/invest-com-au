@@ -143,10 +143,9 @@ function CourseCard({ course }: { course: Course }) {
       </div>
 
       <div
+        className="bg-slate-50 border-t border-slate-200"
         style={{
           padding: "10px 14px",
-          borderTop: "1px solid #e5e7eb",
-          background: "var(--color-sand-50)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -198,10 +197,9 @@ export default async function HomeCPDCourses() {
 
   return (
       <section
+        className="bg-white border-t border-slate-200"
         style={{
           padding: "52px 36px",
-          background: "white",
-          borderTop: "1px solid #e5e7eb",
         }}
       >
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>

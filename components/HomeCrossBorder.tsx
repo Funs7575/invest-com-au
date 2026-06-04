@@ -151,11 +151,10 @@ function HomeCrossBorderInner({ arrivals }: { arrivals: ReadonlyArray<(typeof AR
       </div>
 
       <div
-        className="home-crossborder-footer"
+        className="home-crossborder-footer border-t border-slate-200"
         style={{
           marginTop: 18,
           paddingTop: 14,
-          borderTop: "1px solid #e5e7eb",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",

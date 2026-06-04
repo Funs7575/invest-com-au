@@ -35,11 +35,9 @@ export default function HomeFridayBriefing() {
 
   return (
     <section
+      className="bg-slate-50 border-t border-b border-slate-200"
       style={{
         padding: "32px 36px",
-        background: "var(--color-sand-50)",
-        borderTop: "1px solid var(--color-sand-200)",
-        borderBottom: "1px solid var(--color-sand-200)",
       }}
     >
       <div
@@ -68,12 +66,12 @@ export default function HomeFridayBriefing() {
               {PROOF.map(([c, initials], i) => (
                 <div
                   key={c}
+                  className="border-2 border-slate-100"
                   style={{
                     width: 18,
                     height: 18,
                     borderRadius: 99,
                     background: c,
-                    border: "2px solid var(--color-sand-50)",
                     marginLeft: i ? -6 : 0,
                     fontSize: 7.5,
                     fontWeight: 800,
@@ -101,15 +99,15 @@ export default function HomeFridayBriefing() {
             placeholder="you@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="bg-white border-slate-200 text-slate-900"
             style={{
               flex: 1,
               padding: "12px 16px",
               borderRadius: 9,
-              border: "1px solid var(--color-sand-200)",
+              borderWidth: "1px",
+              borderStyle: "solid",
               fontSize: 14,
               fontFamily: "inherit",
-              background: "white",
-              color: "var(--color-ink-900)",
               minWidth: 0,
             }}
           />
