@@ -123,7 +123,13 @@ export default async function OfficeHoursSessionPage({
   if (!sessionResult.data) notFound();
 
   const session = sessionResult.data as unknown as Session;
-  const questions = (questionsResult.data ?? []) as Question[];
+  // Respect anonymity: never forward an anonymous asker's display_name into
+  // client RSC props. The stream UI renders "Anonymous" for these, but the raw
+  // value would otherwise be serialised into the page payload and readable in
+  // the HTML source. Blank it server-side before it crosses the boundary.
+  const questions = ((questionsResult.data ?? []) as Question[]).map((q) =>
+    q.is_anonymous ? { ...q, display_name: "" } : q,
+  );
   const isTranscript = session.status === "transcript";
   const advisor = session.professionals;
 
