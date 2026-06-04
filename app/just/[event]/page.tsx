@@ -594,7 +594,7 @@ type Props = { params: Promise<{ event: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { event } = await params;
   const e = EVENT_MAP.get(event);
-  if (!e) return {};
+  if (!e) return { robots: { index: false } };
 
   const title = `${e.headline}: Your financial checklist (${CURRENT_YEAR}) — ${SITE_NAME}`;
   const description = e.subhead;

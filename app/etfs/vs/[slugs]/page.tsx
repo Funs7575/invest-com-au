@@ -297,10 +297,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slugs } = await params;
   const parts = slugs.split("-vs-");
-  if (parts.length !== 2) return {};
+  if (parts.length !== 2) return { title: "Not found", robots: "noindex" };
   const a = ETF_DATABASE[parts[0]];
   const b = ETF_DATABASE[parts[1]];
-  if (!a || !b) return {};
+  if (!a || !b) return { title: "Not found", robots: "noindex" };
   const title = `${a.ticker} vs ${b.ticker} (${CURRENT_YEAR}) — Which ETF is Better?`;
   const description = `${a.ticker} vs ${b.ticker}: compare MER, AUM, yield, franking credits, and performance. Which is the better ETF for Australian investors in ${CURRENT_YEAR}?`;
   return {

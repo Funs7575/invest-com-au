@@ -126,7 +126,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const idNum = parseInt(id, 10);
-  if (isNaN(idNum)) return {};
+  if (isNaN(idNum)) return { robots: { index: false } };
 
   const supabase = await createClient();
   const { data } = await supabase
@@ -136,7 +136,7 @@ export async function generateMetadata({
     .eq("status", "published")
     .single();
 
-  if (!data) return {};
+  if (!data) return { robots: { index: false } };
 
   const dateStr = formatShortDate(data.starts_at as string);
   const title = `${data.title as string} — ${data.event_type as string} | ${SITE_NAME}`;

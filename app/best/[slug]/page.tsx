@@ -82,7 +82,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const cat = getCategoryBySlug(slug);
-  if (!cat) return {};
+  if (!cat) return { title: "Not found", robots: "noindex" };
   const ogImageUrl = `/api/og?title=${encodeURIComponent(cat.h1)}&subtitle=${encodeURIComponent(cat.metaDescription.slice(0, 80))}&type=best`;
   return {
     title: cat.title,

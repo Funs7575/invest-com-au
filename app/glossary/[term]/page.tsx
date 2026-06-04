@@ -21,7 +21,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ term: string }> }): Promise<Metadata> {
   const { term: slug } = await params;
   const entry = await getGlossaryBySlug(slug);
-  if (!entry) return {};
+  if (!entry) return { robots: { index: false } };
 
   const title = `What Is ${entry.term}? — Definition & Explanation`;
   const description = entry.definition.length > 155 ? entry.definition.slice(0, 152) + "..." : entry.definition;

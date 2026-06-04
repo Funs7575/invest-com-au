@@ -175,7 +175,7 @@ export async function generateMetadata({
   const { slugs } = await params;
   const brokerSlugs = parseSlugs(slugs);
 
-  if (brokerSlugs.length < 2 || brokerSlugs.length > 4) return {};
+  if (brokerSlugs.length < 2 || brokerSlugs.length > 4) return { robots: { index: false } };
 
   const supabase = await createClient();
   const { data: brokers } = await supabase
@@ -184,7 +184,7 @@ export async function generateMetadata({
     .in("slug", brokerSlugs)
     .eq("status", "active");
 
-  if (!brokers || brokers.length < 2) return {};
+  if (!brokers || brokers.length < 2) return { robots: { index: false } };
 
   // Preserve the order from the URL
   const ordered = brokerSlugs

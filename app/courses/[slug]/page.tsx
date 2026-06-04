@@ -24,7 +24,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const course = await getCourse(slug);
-  if (!course || course.status !== "published") return {};
+  if (!course || course.status !== "published") return { robots: { index: false } };
 
   return {
     title: course.title,

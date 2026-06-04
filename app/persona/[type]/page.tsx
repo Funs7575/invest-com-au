@@ -58,7 +58,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { type } = await params;
   const personaType = SLUG_TO_TYPE[type];
-  if (!personaType) return {};
+  if (!personaType) return { robots: { index: false } };
   const result = personaFromType(personaType);
   const ogUrl = absoluteUrl(
     `/api/og?type=persona&persona=${encodeURIComponent(personaType)}&title=${encodeURIComponent(personaType)}&subtitle=${encodeURIComponent(result.tagline)}`,

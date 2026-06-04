@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .eq("slug", slug)
     .eq("status", "active")
     .single();
-  if (!pro) return {};
+  if (!pro) return { robots: { index: false } };
 
   const typeLabel = PROFESSIONAL_TYPE_LABELS[pro.type as keyof typeof PROFESSIONAL_TYPE_LABELS] ?? "Advisor";
   const title = `${pro.name} — Insights & Updates | Invest.com.au`;

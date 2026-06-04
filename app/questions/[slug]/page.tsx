@@ -24,7 +24,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const question = QUESTIONS_BY_SLUG.get(slug);
-  if (!question) return {};
+  if (!question) return { robots: { index: false } };
   return {
     title: question.metaTitle,
     description: question.metaDescription,

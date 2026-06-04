@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { type, state } = await params;
   const typeKey = type.toLowerCase();
   const stateKey = state.toUpperCase();
-  if (!isValidType(typeKey) || !isValidState(stateKey)) return {};
+  if (!isValidType(typeKey) || !isValidState(stateKey)) return { robots: { index: false } };
 
   const label = TYPE_LABELS[typeKey] ?? typeKey;
   return {

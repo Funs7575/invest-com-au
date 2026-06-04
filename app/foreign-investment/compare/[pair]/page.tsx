@@ -50,7 +50,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { pair } = await params;
   const parsed = parsePairSlug(pair);
-  if (!parsed) return {};
+  if (!parsed) return { robots: { index: false } };
 
   const { cfgA, cfgB } = parsed;
   const title = `${cfgA.countryName} vs ${cfgB.countryName} Investing in Australia — Tax, FIRB & Rules (${CURRENT_YEAR})`;

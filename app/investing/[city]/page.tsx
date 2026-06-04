@@ -41,7 +41,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { city: slug } = await params;
   const city = getCityBySlug(slug);
-  if (!city) return {};
+  if (!city) return { robots: { index: false } };
 
   return {
     title: city.metaTitle,

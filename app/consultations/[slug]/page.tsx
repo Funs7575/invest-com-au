@@ -42,7 +42,7 @@ async function getConsultation(slug: string) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const consultation = await getConsultation(slug);
-  if (!consultation) return {};
+  if (!consultation) return { robots: { index: false } };
 
   const title = `${consultation.title} — Expert Consultation`;
   const description =

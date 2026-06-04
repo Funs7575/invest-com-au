@@ -38,7 +38,7 @@ export async function generateMetadata({
     .eq("public", true)
     .eq("verification_status", "verified")
     .maybeSingle();
-  if (!team) return {};
+  if (!team) return { robots: { index: false } };
   return {
     title: `${team.name} — Verified Expert Team (${CURRENT_YEAR})`,
     description: (team.description as string)?.slice(0, 155) ?? `${team.name} is a verified expert team on Invest.com.au.`,

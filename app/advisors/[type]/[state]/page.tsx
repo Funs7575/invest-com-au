@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: { params: Promise<{ type: str
   const { type: typeSlug, state: locSlug } = await params;
   const professionalType = SLUG_TO_TYPE[typeSlug];
   const loc = resolveLocation(locSlug);
-  if (!professionalType || !loc) return {};
+  if (!professionalType || !loc) return { robots: { index: false } };
 
   const label = PROFESSIONAL_TYPE_LABELS[professionalType];
   const title = `${label}s in ${loc.name} (${CURRENT_YEAR})`;

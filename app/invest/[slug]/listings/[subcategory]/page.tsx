@@ -37,9 +37,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug: category, subcategory } = await params;
   const cat = getInvestCategoryBySlug(category);
-  if (!cat) return {};
+  if (!cat) return { robots: { index: false } };
   const sub = getSubcategoryBySlug(category, subcategory);
-  if (!sub) return {};
+  if (!sub) return { robots: { index: false } };
 
   const ogImageUrl = `/api/og?title=${encodeURIComponent(sub.h1)}&subtitle=${encodeURIComponent(sub.metaDescription.slice(0, 80))}&type=invest`;
 
