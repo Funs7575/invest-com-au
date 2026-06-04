@@ -27,14 +27,15 @@ export default async function MyPlanDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const planId = Number(id);
-  if (!Number.isFinite(planId)) notFound();
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect(`/auth/login?next=/account/plans/${planId}`);
+  if (!user) redirect(`/auth/login?next=/account/plans/${id}`);
+
+  const planId = Number(id);
+  if (!Number.isFinite(planId)) notFound();
 
   const plan = await getPlanById(planId);
   if (!plan || plan.auth_user_id !== user.id) notFound();
