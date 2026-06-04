@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { categoryForListing, listingUrl } from "@/lib/listing-url";
+import {
+  categoryForListing,
+  listingUrl,
+  normaliseVertical,
+  rawVerticalVariants,
+  isCanonicalVertical,
+} from "@/lib/listing-url";
 import type { InvestmentListing, InvestListingVertical } from "@/lib/types";
 
 function listing(
@@ -60,6 +66,65 @@ describe("categoryForListing", () => {
     expect(
       categoryForListing({ vertical: "mining", sub_category: "art" }),
     ).toBe("mining");
+  });
+
+  it("normalises drifted vertical strings to the right category", () => {
+    // These non-canonical vertical values exist in the DB from earlier
+    // seed waves and must not silently fall through to "funds".
+    const cases: [string, string][] = [
+      ["commercial-property", "commercial-property"],
+      ["startups", "startups"],
+      ["renewable-energy", "renewable-energy"],
+      ["funds", "funds"],
+    ];
+    for (const [vertical, slug] of cases) {
+      expect(
+        categoryForListing({
+          vertical: vertical as InvestListingVertical,
+          sub_category: undefined,
+        }),
+      ).toBe(slug);
+    }
+  });
+
+  it("applies fund sub-category overrides to the drifted 'funds' vertical", () => {
+    // A 'funds' (drift) listing with a private_credit sub still routes to
+    // private-credit, the same as the canonical 'fund' vertical.
+    expect(
+      categoryForListing({
+        vertical: "funds" as InvestListingVertical,
+        sub_category: "private_credit",
+      }),
+    ).toBe("private-credit");
+  });
+});
+
+describe("vertical normalisation helpers", () => {
+  it("normaliseVertical maps drift → canonical and leaves canonical/guide untouched", () => {
+    expect(normaliseVertical("commercial-property")).toBe("commercial_property");
+    expect(normaliseVertical("funds")).toBe("fund");
+    expect(normaliseVertical("startups")).toBe("startup");
+    expect(normaliseVertical("renewable-energy")).toBe("energy");
+    expect(normaliseVertical("mining")).toBe("mining");
+    expect(normaliseVertical("oil-gas")).toBe("oil-gas");
+  });
+
+  it("rawVerticalVariants returns canonical + drift variants for querying", () => {
+    expect(rawVerticalVariants("commercial_property")).toEqual([
+      "commercial_property",
+      "commercial-property",
+    ]);
+    expect(rawVerticalVariants("fund")).toEqual(["fund", "funds"]);
+    expect(rawVerticalVariants("mining")).toEqual(["mining"]);
+  });
+
+  it("isCanonicalVertical accepts canonical + drift, rejects guide/unknown", () => {
+    expect(isCanonicalVertical("commercial_property")).toBe(true);
+    expect(isCanonicalVertical("renewable-energy")).toBe(true); // drift → energy
+    expect(isCanonicalVertical("fund")).toBe(true);
+    expect(isCanonicalVertical("oil-gas")).toBe(false);
+    expect(isCanonicalVertical("uranium")).toBe(false);
+    expect(isCanonicalVertical("nonsense")).toBe(false);
   });
 });
 

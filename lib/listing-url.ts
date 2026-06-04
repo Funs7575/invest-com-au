@@ -30,6 +30,71 @@ export const VERTICAL_TO_CATEGORY: Record<InvestListingVertical, string> = {
 };
 
 /**
+ * Non-canonical `vertical` strings that have drifted into the database
+ * via various seed waves, mapped back to their canonical
+ * `InvestListingVertical`. Several seeds stored the hyphenated/plural
+ * *category* slug (e.g. "renewable-energy", "startups") in the
+ * `vertical` column instead of the canonical union value ("energy",
+ * "startup"). Left unnormalised, `categoryForListing` falls these
+ * through to the "funds" bucket, so commercial-property / startups /
+ * renewable-energy filters and deep-links silently show nothing.
+ *
+ * Normalising in code (rather than mutating prod data) keeps the fix
+ * reversible and avoids an autonomous data migration. The root-cause
+ * data cleanup is tracked separately.
+ */
+export const VERTICAL_ALIASES: Record<string, string> = {
+  "commercial-property": "commercial_property",
+  funds: "fund",
+  startups: "startup",
+  "renewable-energy": "energy",
+};
+
+/** Canonical vertical for a (possibly drifted) raw vertical string. */
+export function normaliseVertical(raw: string): string {
+  return VERTICAL_ALIASES[raw] ?? raw;
+}
+
+/**
+ * The reverse of {@link VERTICAL_ALIASES}: every canonical vertical mapped
+ * to the full set of raw strings (canonical + drift variants) that should
+ * be matched when querying the DB for that vertical. Built once at module
+ * load.
+ */
+const RAW_VERTICAL_VARIANTS: Record<string, string[]> = (() => {
+  const map: Record<string, string[]> = {};
+  for (const [raw, canonical] of Object.entries(VERTICAL_ALIASES)) {
+    (map[canonical] ??= [canonical]).push(raw);
+  }
+  return map;
+})();
+
+/**
+ * All raw `vertical` strings to match for a canonical vertical — the
+ * canonical value plus any drifted variants. Use in `.in("vertical", …)`
+ * queries so listings seeded with a drifted vertical aren't missed.
+ */
+export function rawVerticalVariants(canonical: string): string[] {
+  return RAW_VERTICAL_VARIANTS[canonical] ?? [canonical];
+}
+
+/** The set of canonical vertical values (keys of VERTICAL_TO_CATEGORY). */
+export const CANONICAL_VERTICALS: ReadonlySet<string> = new Set(
+  Object.keys(VERTICAL_TO_CATEGORY),
+);
+
+/**
+ * Whether a raw vertical normalises to a known canonical vertical. Guide
+ * sector-hub verticals (e.g. "oil-gas", "uranium", "hydrogen") and any
+ * other unrecognised string return false — callers building the
+ * Opportunities IA use this to exclude such listings from category counts
+ * and curated samples rather than letting them pollute the "funds" bucket.
+ */
+export function isCanonicalVertical(raw: string): boolean {
+  return CANONICAL_VERTICALS.has(normaliseVertical(raw));
+}
+
+/**
  * Some `fund` listings actually belong to a different category based on
  * their `sub_category` value. For example, a fund with sub_category "art"
  * is an "alternatives" category listing.
@@ -51,11 +116,12 @@ export const FUND_SUB_TO_CATEGORY: Record<string, string> = {
  * Used to construct correct URLs for listing detail pages.
  */
 export function categoryForListing(listing: Pick<InvestmentListing, "vertical" | "sub_category">): string {
-  if (listing.vertical === "fund" && listing.sub_category) {
+  const vertical = normaliseVertical(listing.vertical as string);
+  if (vertical === "fund" && listing.sub_category) {
     const override = FUND_SUB_TO_CATEGORY[listing.sub_category];
     if (override) return override;
   }
-  return VERTICAL_TO_CATEGORY[listing.vertical] ?? "funds";
+  return VERTICAL_TO_CATEGORY[vertical as InvestListingVertical] ?? "funds";
 }
 
 /**

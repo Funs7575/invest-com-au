@@ -9,6 +9,8 @@ import {
   getOpportunityCategories,
   getAllSubcategorySlugs,
 } from "@/lib/invest-categories";
+import { BEST_FOR_COMBOS } from "@/lib/invest-best-for";
+import { STATE_SURCHARGES } from "@/lib/firb-data";
 import { listingUrl } from "@/lib/listing-url";
 import type { InvestListingVertical, PlatformType } from "@/lib/types";
 import { generateVersusPairs } from "@/lib/versus-pairs";
@@ -683,6 +685,22 @@ async function buildShard2(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // Curated "best {vertical} for {profile}" landing pages.
+  const investBestForPages = BEST_FOR_COMBOS.map((c) => ({
+    url: `${base}/invest/best-for/${c.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // Per-state investment landing pages (/invest-in/{state}).
+  const investStatePages = STATE_SURCHARGES.map((s) => ({
+    url: `${base}/invest-in/${s.stateCode.toLowerCase()}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
   // Individual investment listing detail pages
   const { data: investListings } = supabase
     ? await supabase.from("investment_listings").select("slug, vertical, sub_category, updated_at").eq("status", "active")
@@ -707,6 +725,8 @@ async function buildShard2(): Promise<MetadataRoute.Sitemap> {
     ...stockbrokerFirmPages,
     ...investCategoryPages,
     ...investSubcategoryPages,
+    ...investBestForPages,
+    ...investStatePages,
     ...investListingPages,
   ];
 }
