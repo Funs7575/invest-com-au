@@ -39,11 +39,10 @@ export default function ArticleCategoryFilter() {
   }
 
   return (
-    <div className="flex md:flex-wrap gap-1.5 md:gap-2 mb-3 md:mb-8 overflow-x-auto pb-1 md:pb-0 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0" role="tablist" aria-label="Article category filter">
+    <div className="flex md:flex-wrap gap-1.5 md:gap-2 mb-3 md:mb-8 overflow-x-auto pb-1 md:pb-0 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0" role="group" aria-label="Filter by category">
       <Link
         href={href("all")}
-        role="tab"
-        aria-selected={activeCategory === "all"}
+        aria-pressed={activeCategory === "all"}
         scroll={false}
         className={`shrink-0 px-3 md:px-4 py-2 md:py-2 min-h-11 inline-flex items-center text-xs md:text-sm font-medium rounded-full transition-colors ${
           activeCategory === "all"
@@ -57,8 +56,7 @@ export default function ArticleCategoryFilter() {
         <Link
           key={cat}
           href={href(cat)}
-          role="tab"
-          aria-selected={activeCategory === cat}
+          aria-pressed={activeCategory === cat}
           scroll={false}
           className={`shrink-0 px-3 md:px-4 py-2 md:py-2 min-h-11 inline-flex items-center text-xs md:text-sm font-medium rounded-full transition-colors ${
             activeCategory === cat

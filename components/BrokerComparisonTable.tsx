@@ -66,7 +66,7 @@ export default function BrokerComparisonTable({
         <h3 className="text-lg font-extrabold text-brand">
           International Broker Comparison
         </h3>
-        <div className="flex gap-1.5 text-xs" role="tablist" aria-label="Sort brokers by">
+        <div className="flex gap-1.5 text-xs" role="group" aria-label="Sort options">
           {(
             [
               ["fx_rate", "FX Fee"],
@@ -77,8 +77,7 @@ export default function BrokerComparisonTable({
             <button
               key={key}
               onClick={() => setSortBy(key)}
-              role="tab"
-              aria-selected={sortBy === key}
+              aria-pressed={sortBy === key}
               className={`px-3 py-1.5 rounded-full font-semibold transition-colors ${
                 sortBy === key
                   ? "bg-brand text-white"

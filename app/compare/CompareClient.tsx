@@ -589,13 +589,12 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             />
           </div>
           {/* Row 1: Platform type pills with logos */}
-          <div className="flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1" role="tablist" aria-label="Platform type">
+          <div className="flex flex-nowrap gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1" role="group" aria-label="Filter by platform type">
             {platformTypes.map(f => (
               <button
                 key={f.key}
                 onClick={() => setActiveFilter(f.key)}
-                role="tab"
-                aria-selected={activeFilter === f.key}
+                aria-pressed={activeFilter === f.key}
                 className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full transition-all inline-flex items-center gap-0.5 ${
                   activeFilter === f.key
                     ? 'bg-slate-900 text-white shadow-sm scale-105'

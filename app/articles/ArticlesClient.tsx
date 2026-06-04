@@ -64,11 +64,10 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
       </div>
 
       {/* Category Filter Pills */}
-      <div className="flex flex-wrap gap-2 mb-8" role="tablist" aria-label="Article category filter">
+      <div className="flex flex-wrap gap-2 mb-8" role="group" aria-label="Filter by category">
         <button
           onClick={() => setActiveCategory("all")}
-          role="tab"
-          aria-selected={activeCategory === "all"}
+          aria-pressed={activeCategory === "all"}
           className={`px-4 py-2 text-sm font-medium rounded-full filter-pill ${
             activeCategory === "all"
               ? "bg-blue-700 text-white"
@@ -81,8 +80,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            role="tab"
-            aria-selected={activeCategory === cat}
+            aria-pressed={activeCategory === cat}
             className={`px-4 py-2 text-sm font-medium rounded-full capitalize filter-pill ${
               activeCategory === cat
                 ? "bg-blue-700 text-white"

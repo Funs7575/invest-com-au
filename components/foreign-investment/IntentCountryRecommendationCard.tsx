@@ -102,10 +102,9 @@ export default function IntentCountryRecommendationCard({
                 ? `${RECOMMENDATION_APPLIED_BG} text-white scale-105`
                 : `${RECOMMENDATION_CTA_BG} ${RECOMMENDATION_CTA_HOVER} text-slate-900`
             }`}
-            aria-live="polite"
           >
             {applied ? (
-              <span className="inline-flex items-center gap-1.5">
+              <span aria-live="polite" aria-atomic="true" className="inline-flex items-center gap-1.5">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                 </svg>

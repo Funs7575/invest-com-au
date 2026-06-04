@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -54,6 +54,8 @@ export default function SignupClient() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+
+  const errorId = useId();
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== "undefined" ? window.location.origin : "");
 
@@ -189,10 +191,11 @@ export default function SignupClient() {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-1 bg-slate-100 rounded-lg p-1 mb-6">
+          <div role="group" aria-label="Sign-up method" className="flex gap-1 bg-slate-100 rounded-lg p-1 mb-6">
             <button
               type="button"
               onClick={() => { setTab("password"); setError(""); }}
+              aria-pressed={tab === "password"}
               className={`flex-1 text-sm font-medium py-2 px-3 rounded-lg transition-colors ${
                 tab === "password"
                   ? "bg-slate-900 text-white"
@@ -204,6 +207,7 @@ export default function SignupClient() {
             <button
               type="button"
               onClick={() => { setTab("magic-link"); setError(""); }}
+              aria-pressed={tab === "magic-link"}
               className={`flex-1 text-sm font-medium py-2 px-3 rounded-lg transition-colors ${
                 tab === "magic-link"
                   ? "bg-slate-900 text-white"
@@ -229,6 +233,7 @@ export default function SignupClient() {
                   placeholder="you@example.com"
                   autoComplete="email"
                   aria-required="true"
+                  aria-describedby={error ? errorId : undefined}
                   className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
                 />
               </div>
@@ -246,7 +251,7 @@ export default function SignupClient() {
                     placeholder="At least 8 characters"
                     autoComplete="new-password"
                     aria-required="true"
-                    aria-describedby="password-strength"
+                    aria-describedby={error ? `password-strength ${errorId}` : "password-strength"}
                     className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
                   />
                   <button
@@ -285,6 +290,7 @@ export default function SignupClient() {
                     placeholder="Re-enter your password"
                     autoComplete="new-password"
                     aria-required="true"
+                    aria-describedby={error ? errorId : undefined}
                     className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
                   />
                   <button
@@ -299,7 +305,7 @@ export default function SignupClient() {
               </div>
 
               {error && (
-                <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
+                <p id={errorId} role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
               )}
 
               <button
@@ -327,12 +333,13 @@ export default function SignupClient() {
                   placeholder="you@example.com"
                   autoComplete="email"
                   aria-required="true"
+                  aria-describedby={error ? errorId : undefined}
                   className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
                 />
               </div>
 
               {error && (
-                <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
+                <p id={errorId} role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>
               )}
 
               <button
