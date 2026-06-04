@@ -913,6 +913,29 @@ async function buildShard5(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // ── /topic hub + /topic/[slug] content-category pages ──
+  // Slugs sourced from TOPIC_LABELS in app/topic/[slug]/page.tsx — no DB query needed.
+  // TODO: community thread pages (/community/[slug]/[threadId]) are DB-backed;
+  //       add a dedicated shard (e.g. shard 8) with a Supabase query against the
+  //       community_threads table (published, indexed=true) once the table is stable.
+  const TOPIC_SLUGS = [
+    "tax", "beginners", "smsf", "strategy", "news", "reviews",
+    "crypto", "etfs", "robo-advisors", "research-tools", "super",
+    "property", "cfd-forex",
+  ] as const;
+  const topicHubPage = {
+    url: `${base}/topic`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  };
+  const topicPages = TOPIC_SLUGS.map((slug) => ({
+    url: `${base}/topic/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
   // ── /marketplace hub + intent + intent×state pages ──
   const enabledIntents = await getEnabledIntents();
   const marketplaceHubPage = {
@@ -939,6 +962,8 @@ async function buildShard5(): Promise<MetadataRoute.Sitemap> {
   return [
     ...glossaryPages,
     ...howToPages,
+    topicHubPage,
+    ...topicPages,
     marketplaceHubPage,
     ...marketplaceIntentPages,
     ...marketplaceIntentStatePages,
