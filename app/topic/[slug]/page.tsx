@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { absoluteUrl, SITE_NAME } from "@/lib/seo";
 import type { Article } from "@/lib/types";
 
 export const revalidate = 3600;
@@ -33,10 +34,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!label) {
     return { title: "Topic not found", robots: "noindex, nofollow" };
   }
+  const title = `${label.title} — ${SITE_NAME}`;
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(label.title)}&subtitle=${encodeURIComponent(label.description.slice(0, 80))}&type=default`;
   return {
-    title: `${label.title} — Invest.com.au`,
+    title,
     description: label.description,
     alternates: { canonical: `/topic/${slug}` },
+    openGraph: {
+      title,
+      description: label.description,
+      url: absoluteUrl(`/topic/${slug}`),
+      type: "website",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: label.title }],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title,
+      description: label.description,
+      images: [ogImageUrl],
+    },
   };
 }
 

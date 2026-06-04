@@ -8,6 +8,7 @@ import { getGuide, getAllGuideSlugs, getAllGuides } from "@/lib/how-to-guides";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
+  buildTitle,
   howToJsonLd,
   CURRENT_MONTH_YEAR,
   REVIEW_AUTHOR,
@@ -38,7 +39,7 @@ export async function generateMetadata({
   if (!guide) return {};
 
   return {
-    title: guide.title,
+    title: buildTitle(guide.title),
     description: guide.metaDescription,
     alternates: { canonical: `/how-to/${guide.slug}` },
     openGraph: {

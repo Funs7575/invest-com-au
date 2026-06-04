@@ -47,10 +47,28 @@ export async function generateMetadata({
 
     if (!cat) return { title: "Category Not Found" };
 
+    const title = `${cat.name} - Community Forum`;
+    const { description } = cat;
+    const canonicalPath = `/community/${slug}`;
+    const ogImageUrl = `/api/og?title=${encodeURIComponent(cat.name)}&subtitle=${encodeURIComponent("Community Forum · Invest.com.au")}&type=community`;
+
     return {
-      title: `${cat.name} - Community Forum`,
-      description: cat.description,
-      alternates: { canonical: `/community/${slug}` },
+      title,
+      description,
+      alternates: { canonical: absoluteUrl(canonicalPath) },
+      openGraph: {
+        title,
+        description,
+        url: absoluteUrl(canonicalPath),
+        type: "website",
+        images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [ogImageUrl],
+      },
     };
   } catch {
     return { title: "Category Not Found" };

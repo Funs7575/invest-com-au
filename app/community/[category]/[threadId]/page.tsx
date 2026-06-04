@@ -115,7 +115,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ category: string; threadId: string }>;
 }): Promise<Metadata> {
-  const { threadId } = await params;
+  const { category: categorySlug, threadId } = await params;
   const supabase = await createClient();
 
   const { data: thread } = await supabase
@@ -127,9 +127,28 @@ export async function generateMetadata({
 
   if (!thread) return { title: "Thread Not Found" };
 
+  const title = `${thread.title} - Community Forum`;
+  const description = `Discussion started by ${thread.author_name} in the Invest.com.au community forum.`;
+  const canonicalPath = `/community/${categorySlug}/${threadId}`;
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(thread.title)}&subtitle=${encodeURIComponent("Community Forum · Invest.com.au")}&type=community`;
+
   return {
-    title: `${thread.title} - Community Forum`,
-    description: `Discussion started by ${thread.author_name} in the Invest.com.au community forum.`,
+    title,
+    description,
+    alternates: { canonical: absoluteUrl(canonicalPath) },
+    openGraph: {
+      title,
+      description,
+      url: absoluteUrl(canonicalPath),
+      type: "article",
+      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImageUrl],
+    },
   };
 }
 

@@ -7,7 +7,7 @@ import {
   type BrokerForScoring,
   type ScenarioInput,
 } from "@/lib/best-for-scorer";
-import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, SITE_NAME, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -55,14 +55,24 @@ export async function generateMetadata({
   const { slug } = await params;
   const scenario = await getScenario(slug);
   if (!scenario) return { title: "Not found", robots: "noindex" };
+  const title = `${scenario.h1} (${CURRENT_YEAR})`;
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(scenario.h1)}&subtitle=${encodeURIComponent(scenario.meta_description.slice(0, 80))}&type=best`;
   return {
-    title: `${scenario.h1} (${CURRENT_YEAR})`,
+    title,
     description: scenario.meta_description,
     alternates: { canonical: `${SITE_URL}/best-for/${slug}` },
     openGraph: {
-      title: `${scenario.h1} (${CURRENT_YEAR})`,
+      title,
       description: scenario.meta_description,
-      url: `${SITE_URL}/best-for/${slug}`,
+      url: absoluteUrl(`/best-for/${slug}`),
+      type: "website",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: scenario.h1 }],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title,
+      description: scenario.meta_description,
+      images: [ogImageUrl],
     },
   };
 }
