@@ -31,6 +31,9 @@ const ALLOWLIST = new Set<string>([
   "app/course/page.tsx",
   "app/course/[slug]/page.tsx",
   "app/grants/page.tsx",
+  // Bare `/firm-portal` is a pure redirect to `/firm-portal/performance`
+  // (it had no index route → 404). Metadata would never render.
+  "app/firm-portal/page.tsx",
 ]);
 
 const META_PATTERN = /export\s+(?:const|async\s+function)\s+(metadata|generateMetadata)/;
