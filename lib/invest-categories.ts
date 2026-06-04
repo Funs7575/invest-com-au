@@ -90,6 +90,13 @@ const INTENT_BY_SLUG: Record<string, InvestCategoryIntent> = {
   royalties: "opportunity",
   "income-assets": "opportunity",
 
+  // Wave 4 (2026-05) — AU-specific niches identified in the post-Wave-3
+  // gap audit. Seeded with ~25 listings across these four slugs.
+  bullion: "opportunity",
+  "water-rights": "opportunity",
+  "carbon-credits": "opportunity",
+  "sda-housing": "opportunity",
+
   // Compare (4) — 301-redirected to canonical Compare/duplicate. The
   // entries are kept in categories[] for back-compat with iterators
   // that key off the array; redirects in next.config.ts intercept the
@@ -2089,6 +2096,99 @@ const categoriesRaw: Omit<InvestCategory, "intent">[] = [
         answer: "High-risk speculative exposure only. Most ASX hydrogen pure-plays are pre-revenue, dependent on continued government policy support, and subject to recurring equity dilution and project-cancellation risk. Position size should be small (single-digit % of portfolio at most) and timeline expectations should be 5–15 years. Diversified renewable-energy exposure via ETFs (FUEL, ERTH, CLNE) provides indirect hydrogen exposure with lower single-project risk. Direct allocation to hydrogen pure-plays only after reading the project economics, equity raise pipeline and management track record carefully.",
       },
     ],
+    subcategories: [],
+  },
+
+  // ─── Wave 4 (2026-05) ────────────────────────────────────────────────────
+  // Four AU-specific niches identified in the post-Wave-3 gap audit. Minimal
+  // editorial — slug + label + intro + meta only. Full sections + FAQs are
+  // a separate authoring task; the listings page already works without them.
+
+  // ─── Wholesale precious metals ───
+  {
+    slug: "bullion",
+    label: "Wholesale Precious Metals",
+    dbVerticals: ["bullion"],
+    color: {
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      text: "text-amber-700",
+      accent: "bg-amber-600",
+      gradient: "from-amber-50 to-white",
+    },
+    icon: "gem",
+    title: `Wholesale Gold, Silver & Bullion Investment in Australia (${yr})`,
+    h1: "Wholesale Precious Metals — Allocated Bullion & Gold ETFs",
+    metaDescription: `Perth Mint allocated gold, ABC Bullion vaulted silver, PMGOLD ASX ETF and other physical-metal investments. SMSF-eligible options, LBMA Good Delivery, allocated vs. unallocated. ${upd}.`,
+    intro: `Physical gold, silver, platinum and palladium — allocated bullion stored at the Perth Mint or ABC Bullion vaults, plus ASX-listed gold ETFs like PMGOLD and GOLD. The Australian market is dominated by two domestic refiners (Perth Mint, ABC Bullion) with LBMA Good Delivery status, making resale at spot straightforward. SMSF investors can hold allocated bullion stored at an APRA-approved depository without breaching the sole-purpose test.`,
+    sections: [],
+    faqs: [],
+    subcategories: [],
+  },
+
+  // ─── Water entitlements ───
+  {
+    slug: "water-rights",
+    label: "Water Entitlements",
+    dbVerticals: ["water-rights"],
+    color: {
+      bg: "bg-sky-50",
+      border: "border-sky-200",
+      text: "text-sky-700",
+      accent: "bg-sky-600",
+      gradient: "from-sky-50 to-white",
+    },
+    icon: "droplets",
+    title: `Murray-Darling Basin Water Entitlements for Investors (${yr})`,
+    h1: "Water Rights — Murray-Darling Basin & Bore Licences",
+    metaDescription: `High-security and general-security water entitlements across NSW Murray, VIC Goulburn, SA Murray, QLD Condamine. Lease yields, allocation history, secondary market. ${upd}.`,
+    intro: `Tradeable water entitlements across the Murray-Darling Basin and Queensland bore systems. High-security NSW Murray and Goulburn entitlements trade like commercial property — held for lease income (3-5% yield via lease to growers) or capital growth as scarcity tightens. General-security and groundwater licences carry more allocation risk but lower entry prices. Secondary market via Waterfind / H2OX; transfers take 4-12 weeks via the relevant state Water Authority register.`,
+    sections: [],
+    faqs: [],
+    subcategories: [],
+  },
+
+  // ─── Carbon credits ───
+  {
+    slug: "carbon-credits",
+    label: "Carbon & Biodiversity Credits",
+    dbVerticals: ["carbon-environmental-markets"],
+    color: {
+      bg: "bg-emerald-50",
+      border: "border-emerald-200",
+      text: "text-emerald-700",
+      accent: "bg-emerald-600",
+      gradient: "from-emerald-50 to-white",
+    },
+    icon: "sprout",
+    title: `Australian Carbon Credits (ACCUs) & Biodiversity Offsets (${yr})`,
+    h1: "ACCUs, Voluntary Carbon Units & NSW Biodiversity Credits",
+    metaDescription: `Australian Carbon Credit Units (ACCUs), Verra Voluntary Carbon Units, NSW Biodiversity Conservation Scheme credits. Safeguard Mechanism compliance + voluntary retirement markets. ${upd}.`,
+    intro: `Australian Carbon Credit Units (ACCUs) issued by the Clean Energy Regulator under the Emissions Reduction Fund — tradeable into Safeguard Mechanism compliance (mandatory for facilities emitting >100,000t CO2-e/yr) or voluntary retirement. The reformed Safeguard Mechanism since 2024 creates structural mandatory buyers; spot prices have settled in the $30-50 range with method-specific premiums (savanna burning > generic > HIR). Voluntary Carbon Units (Verra, Gold Standard) trade at lower prices but suit corporate ESG retirement programs. NSW Biodiversity Conservation credits round out the offsets market.`,
+    sections: [],
+    faqs: [],
+    subcategories: [],
+  },
+
+  // ─── SDA / NDIS housing ───
+  {
+    slug: "sda-housing",
+    label: "SDA Housing (NDIS)",
+    dbVerticals: ["commercial_property"],
+    color: {
+      bg: "bg-fuchsia-50",
+      border: "border-fuchsia-200",
+      text: "text-fuchsia-700",
+      accent: "bg-fuchsia-600",
+      gradient: "from-fuchsia-50 to-white",
+    },
+    icon: "building",
+    title: `SDA Housing Investments — NDIS Specialist Disability Accommodation (${yr})`,
+    h1: "SDA Housing — 10-13% Yield, Government-Backed NDIS Rent",
+    metaDescription: `Specialist Disability Accommodation (SDA) — Fully-Accessible, High-Physical-Support, Robust and Improved-Livability NDIS-registered dwellings. Net yields 10-13%, LRBA-compatible, SMSF-eligible. ${upd}.`,
+    intro: `Specialist Disability Accommodation — purpose-built dwellings for NDIS participants with extreme functional impairment. The NDIA pays Reasonable Rent Contribution directly to the owner (typically $80,000-$130,000 per qualifying tenant per year depending on design category), producing net yields of 10-13% on $650k-$1.1M contract prices. Four design categories: Improved-Livability, Robust, Fully-Accessible, and High-Physical-Support. LRBA-compatible bare-trust structures available for SMSF investors. Vacancy risk is real — choose locations near disability services and reputable SIL (Supported Independent Living) operators.`,
+    sections: [],
+    faqs: [],
     subcategories: [],
   },
 ];

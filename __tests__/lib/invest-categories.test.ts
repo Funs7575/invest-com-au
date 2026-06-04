@@ -130,12 +130,13 @@ describe("IA intent (2026-05-07 refactor)", () => {
     }
   });
 
-  it("getOpportunityCategories returns the 15 canonical opportunity verticals", () => {
+  it("getOpportunityCategories returns the canonical opportunity verticals", () => {
     const slugs = getOpportunityCategories()
       .map((c) => c.slug)
       .sort();
     expect(slugs).toEqual(
       [
+        // Original 15 (2026-05-07 IA refactor)
         "alternatives",
         "buy-business",
         "commercial-property",
@@ -151,6 +152,11 @@ describe("IA intent (2026-05-07 refactor)", () => {
         "renewable-energy",
         "royalties",
         "startups",
+        // Wave 4 expansion (2026-05) — AU-specific niches
+        "bullion",
+        "carbon-credits",
+        "sda-housing",
+        "water-rights",
       ].sort(),
     );
   });

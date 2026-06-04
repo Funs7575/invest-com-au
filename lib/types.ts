@@ -1434,6 +1434,7 @@ export interface FirmInvitation {
 
 export type InvestListingVertical =
   | 'aquaculture'
+  | 'bullion'                       // Wave 4 — wholesale gold/silver/platinum/palladium
   | 'business'
   | 'carbon-environmental-markets'
   | 'commercial_property'
@@ -1452,7 +1453,8 @@ export type InvestListingVertical =
   | 'public-social-infrastructure'
   | 'royalties'
   | 'startup'
-  | 'venture-capital';
+  | 'venture-capital'
+  | 'water-rights';                  // Wave 4 — Murray-Darling Basin entitlements
 
 /**
  * Discriminator added 2026-05 (Wave 1 of /invest rebuild). Each kind has a
