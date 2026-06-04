@@ -62,7 +62,9 @@ import {
   getArticleBySlug,
   getProfessionalBySlug,
   getCurrentUser,
+  stripInternalBrokerFields,
 } from "@/lib/request-cache";
+import type { Broker } from "@/lib/types";
 
 describe("request-cache helpers", () => {
   beforeEach(() => {
@@ -96,6 +98,69 @@ describe("request-cache helpers", () => {
       expect(call?.table).toBe("brokers");
       expect(call?.filters).toContainEqual({ col: "slug", val: "stake-unique-2" });
       expect(call?.filters).toContainEqual({ col: "status", val: "active" });
+    });
+
+    it("strips internal commercial/affiliate-economics fields from the returned row", async () => {
+      brokerData = {
+        id: 1,
+        slug: "stake",
+        name: "Stake",
+        rating: 4.5,
+        // internal commercial fields that must NOT reach the client
+        cpa_value: 400,
+        monthly_sponsorship_fee: 1500,
+        affiliate_priority: "high",
+        commission_type: "cpa",
+        commission_value: 400,
+        estimated_epc: 12.5,
+        promoted_placement: true,
+      };
+      const res = (await getBrokerBySlug("stake-strip-1")) as unknown as Record<string, unknown>;
+      expect(res).not.toBeNull();
+      // public fields survive
+      expect(res.id).toBe(1);
+      expect(res.name).toBe("Stake");
+      expect(res.rating).toBe(4.5);
+      // commercial fields are gone
+      for (const field of [
+        "cpa_value",
+        "monthly_sponsorship_fee",
+        "affiliate_priority",
+        "commission_type",
+        "commission_value",
+        "estimated_epc",
+        "promoted_placement",
+      ]) {
+        expect(res).not.toHaveProperty(field);
+      }
+      // and they are absent from the JSON that gets serialised to the client
+      const serialised = JSON.stringify(res);
+      expect(serialised).not.toContain("cpa_value");
+      expect(serialised).not.toContain("sponsorship_fee");
+      expect(serialised).not.toContain("affiliate_priority");
+    });
+  });
+
+  describe("stripInternalBrokerFields", () => {
+    it("removes commercial fields without mutating the original", () => {
+      const original = {
+        id: 2,
+        slug: "ig",
+        name: "IG",
+        cpa_value: 250,
+        affiliate_priority: "medium",
+        monthly_sponsorship_fee: 0,
+      } as unknown as Broker;
+      const cleaned = stripInternalBrokerFields(original);
+      // original retained for server-side ranking/sponsorship use
+      expect(original.cpa_value).toBe(250);
+      expect(original.affiliate_priority).toBe("medium");
+      // cleaned shape is client-safe
+      expect(cleaned).not.toHaveProperty("cpa_value");
+      expect(cleaned).not.toHaveProperty("affiliate_priority");
+      expect(cleaned).not.toHaveProperty("monthly_sponsorship_fee");
+      expect(cleaned.id).toBe(2);
+      expect(cleaned.name).toBe("IG");
     });
   });
 
