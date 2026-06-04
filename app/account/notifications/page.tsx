@@ -25,7 +25,7 @@ export default async function AccountNotificationsPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/account/login?redirect=/account/notifications");
+    redirect("/auth/login?next=/account/notifications");
   }
 
   const { data } = await supabase

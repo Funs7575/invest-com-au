@@ -55,6 +55,17 @@ describe("enforcePortalKind", () => {
     expect(mockSetActiveKind).not.toHaveBeenCalled();
   });
 
+  it("redirects an unauthenticated visitor to /auth/login?next= the portal path (A-19 migration)", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    await expect(enforcePortalKind("advisor")).rejects.toThrow(/REDIRECT/);
+    // Must point at the real sign-in route (/auth/login?next=), not the legacy
+    // /account/login?redirect= URL that only existed as a next.config.ts hop.
+    expect(mockRedirect).toHaveBeenCalledWith(
+      `/auth/login?next=${encodeURIComponent("/advisor-portal")}`,
+    );
+    expect(mockGetActiveKind).not.toHaveBeenCalled();
+  });
+
   it("allows the happy path (active matches + holds the kind)", async () => {
     mockGetActiveKind.mockResolvedValue("investor");
     mockGetKindsForUser.mockResolvedValue([{ kind: "investor" }]);

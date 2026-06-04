@@ -33,7 +33,7 @@ export default async function FirmJobsPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/account/login?redirect=/firm-portal/jobs");
+    redirect("/auth/login?next=/firm-portal/jobs");
   }
 
   const admin = createAdminClient();

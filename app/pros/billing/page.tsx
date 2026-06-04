@@ -50,7 +50,7 @@ export default async function ProsBillingPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/pros/billing");
+    redirect("/auth/login?next=/pros/billing");
   }
 
   // Use the admin client to find the matching professionals row. The

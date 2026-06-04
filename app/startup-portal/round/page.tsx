@@ -11,7 +11,7 @@ function centsToAud(cents: number): string {
 export default async function StartupPortalRoundPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/account/login?redirect=/startup-portal/round");
+  if (!user) redirect("/auth/login?next=/startup-portal/round");
 
   const { data: profile } = await supabase
     .from("startup_profiles")

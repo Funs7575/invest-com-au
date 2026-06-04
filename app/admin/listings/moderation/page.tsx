@@ -32,7 +32,7 @@ export default async function ListingsModerationPage() {
   } = await supabase.auth.getUser();
 
   if (!user || !user.email) {
-    redirect("/account/login?redirect=/admin/listings/moderation");
+    redirect("/auth/login?next=/admin/listings/moderation");
   }
   if (!getAdminEmails().includes(user.email.toLowerCase())) {
     redirect("/account");

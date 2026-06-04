@@ -20,7 +20,7 @@ export default async function VerifiedProductsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/verified");
+    redirect("/auth/login?next=/account/verified");
   }
 
   const { data } = await supabase

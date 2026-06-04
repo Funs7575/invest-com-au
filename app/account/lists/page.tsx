@@ -20,7 +20,7 @@ export default async function AccountListsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/lists");
+    redirect("/auth/login?next=/account/lists");
   }
 
   const { data } = await supabase

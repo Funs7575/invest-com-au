@@ -210,7 +210,7 @@ export default async function AnnualCheckPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect("/account/login?redirect=/account/annual-check");
+    redirect("/auth/login?next=/account/annual-check");
   }
 
   const investorProfile = await getInvestorProfile(user.id).catch(() => null);

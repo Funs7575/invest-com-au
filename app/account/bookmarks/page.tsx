@@ -27,7 +27,7 @@ export default async function AccountBookmarksPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/account/login?redirect=/account/bookmarks");
+    redirect("/auth/login?next=/account/bookmarks");
   }
 
   const items: BookmarkRow[] = await listBookmarks(user.id);

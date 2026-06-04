@@ -22,7 +22,7 @@ export default async function AccountAlertsPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/account/login?redirect=/account/alerts");
+    redirect("/auth/login?next=/account/alerts");
   }
 
   const email = user.email ?? "";

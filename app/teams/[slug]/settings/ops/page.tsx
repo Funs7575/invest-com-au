@@ -26,7 +26,7 @@ export default async function TeamOpsSettingsPage({
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect(`/account/login?redirect=/teams/${slug}/settings/ops`);
+    redirect(`/auth/login?next=/teams/${slug}/settings/ops`);
   }
 
   const admin = createAdminClient();

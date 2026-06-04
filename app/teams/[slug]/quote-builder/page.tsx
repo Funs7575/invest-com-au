@@ -31,7 +31,7 @@ export default async function QuoteBuilderPage({ params, searchParams }: PagePro
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect(`/account/login?redirect=/teams/${slug}/quote-builder?brief=${briefId}`);
+    redirect(`/auth/login?next=/teams/${slug}/quote-builder?brief=${briefId}`);
   }
 
   const admin = createAdminClient();

@@ -21,7 +21,7 @@ export default async function WatchlistPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/account/login?redirect=/account/watchlist");
+    redirect("/auth/login?next=/account/watchlist");
   }
 
   const [watchlistRes, investorProfile] = await Promise.all([

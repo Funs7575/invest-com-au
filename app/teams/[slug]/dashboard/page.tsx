@@ -57,7 +57,7 @@ export default async function TeamDashboardPage({ params }: PageProps) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    redirect(`/account/login?redirect=/teams/${slug}/dashboard`);
+    redirect(`/auth/login?next=/teams/${slug}/dashboard`);
   }
 
   const admin = createAdminClient();

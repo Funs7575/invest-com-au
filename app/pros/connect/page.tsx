@@ -22,7 +22,7 @@ export default async function ProsConnectPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/account/login?redirect=/pros/connect");
+  if (!user) redirect("/auth/login?next=/pros/connect");
 
   const admin = createAdminClient();
   const { data: pro } = await admin
