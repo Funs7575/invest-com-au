@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Professional } from "@/lib/types";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { itemListJsonLd } from "@/lib/schema-markup";
 import AdvisorsClient from "../AdvisorsClient";
 
 export const revalidate = 1800;
@@ -88,6 +89,23 @@ export default async function InternationalTaxSpecialistsPage() {
     })),
   };
 
+  const advisors = (professionals as Professional[]) || [];
+
+  // ItemList over the listed specialists (sorted verified-then-rating)
+  // so the directory is citable by AI answer engines. itemListJsonLd
+  // absoluteUrl-wraps each url, so pass site-relative paths.
+  const listLd = advisors.length > 0
+    ? itemListJsonLd(
+        PAGE_TITLE,
+        advisors.slice(0, 10).map((p, i) => ({
+          position: i + 1,
+          name: p.name,
+          url: `/advisor/${p.slug}`,
+          description: p.bio?.slice(0, 200),
+        })),
+      )
+    : null;
+
   return (
     <>
       <script
@@ -98,8 +116,14 @@ export default async function InternationalTaxSpecialistsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
+      {listLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(listLd) }}
+        />
+      )}
       <AdvisorsClient
-        professionals={(professionals as Professional[]) || []}
+        professionals={advisors}
         pageTitle={PAGE_TITLE}
         pageDescription={PAGE_DESCRIPTION}
         faqs={FAQS}
