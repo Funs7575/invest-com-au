@@ -5,6 +5,7 @@ import Icon from "@/components/Icon";
 import ListingImageGallery from "@/components/ListingImageGallery";
 import ListingCard, { type InvestmentListing } from "@/components/ListingCard";
 import ListingEnquiryForm from "@/components/ListingEnquiryForm";
+import ListingDecisionTools from "@/components/invest/ListingDecisionTools";
 import ListingsEmptyState from "@/components/ListingsEmptyState";
 import SubCategoryListingsView from "@/components/SubCategoryListingsView";
 import {
@@ -273,6 +274,9 @@ export default async function InfrastructureListingDetailPage({
                   vertical="infrastructure"
                 />
               </div>
+              {/* Wave 5 — structure-aware after-tax return + FIRB estimate */}
+              <ListingDecisionTools listing={l} />
+
 
               {/* Stats */}
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-6">

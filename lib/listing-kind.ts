@@ -16,8 +16,22 @@ import type { InvestmentListing, ListingKind } from "@/lib/types";
 
 /** Mirror of the SQL backfill in 20260725200000_add_listing_kind.sql.
  *  Keep in sync if either side changes. */
-export function deriveListingKind(row: Pick<InvestmentListing, "vertical" | "key_metrics" | "asking_price_cents" | "listing_kind">): ListingKind {
-  if (row.listing_kind) return row.listing_kind;
+/**
+ * Structural input for `deriveListingKind` — looser than the full
+ * `InvestmentListing` so callers holding a narrower row shape (e.g. the
+ * ListingCard type used on detail pages, which omits `updated_at` and
+ * types `vertical` as a plain string) can derive a kind without a cast.
+ * The function only reads these four fields.
+ */
+export type DerivableListing = {
+  vertical: string;
+  key_metrics?: Record<string, unknown> | null;
+  asking_price_cents?: number | null;
+  listing_kind?: string | null;
+};
+
+export function deriveListingKind(row: DerivableListing): ListingKind {
+  if (row.listing_kind) return row.listing_kind as ListingKind;
 
   const km = (row.key_metrics ?? {}) as Record<string, unknown>;
   const v = row.vertical as string;

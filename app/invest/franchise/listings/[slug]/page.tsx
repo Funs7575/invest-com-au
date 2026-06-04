@@ -5,6 +5,7 @@ import Icon from "@/components/Icon";
 import ListingImageGallery from "@/components/ListingImageGallery";
 import ListingCard, { type InvestmentListing } from "@/components/ListingCard";
 import ListingEnquiryForm from "@/components/ListingEnquiryForm";
+import ListingDecisionTools from "@/components/invest/ListingDecisionTools";
 import ListingsEmptyState from "@/components/ListingsEmptyState";
 import SubCategoryListingsView from "@/components/SubCategoryListingsView";
 import {
@@ -226,6 +227,9 @@ export default async function FranchiseListingDetailPage({
                 <p className="text-xs text-slate-500 mb-4">Get a Franchise Disclosure Document and speak with the franchisor.</p>
                 <ListingEnquiryForm listingId={l.id} listingTitle={l.title} vertical="franchise" />
               </div>
+              {/* Wave 5 — structure-aware after-tax return + FIRB estimate */}
+              <ListingDecisionTools listing={l} />
+
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-6">
                 <div className="text-center">
                   <p className="text-lg font-bold text-slate-900">{l.views ?? 0}</p>
