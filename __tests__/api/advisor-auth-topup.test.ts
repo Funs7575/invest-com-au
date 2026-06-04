@@ -30,6 +30,7 @@ vi.mock("@/lib/url", () => ({
 
 vi.mock("@/lib/advisor-billing", () => ({
   DEFAULT_TOPUP_CENTS: 20000,
+  FREE_LEAD_LIMIT: 3,
 }));
 
 const mockCustomerCreate = vi.fn();
@@ -47,6 +48,7 @@ vi.mock("@/lib/stripe", () => ({
 
 import { POST, GET } from "@/app/api/advisor-auth/topup/route";
 import { isRateLimited } from "@/lib/rate-limit";
+import { FREE_LEAD_LIMIT } from "@/lib/advisor-billing"; // mocked above to 3
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -388,7 +390,8 @@ describe("GET /api/advisor-auth/topup", () => {
     expect(json.balance_cents).toBe(50000);
     expect(json.lifetime_credit_cents).toBe(100000);
     expect(json.free_leads_used).toBe(1);
-    expect(json.free_leads_remaining).toBe(1);
+    // FREE_LEAD_LIMIT (3) - free_leads_used (1) = 2
+    expect(json.free_leads_remaining).toBe(2);
     expect(json.lead_price_cents).toBe(4900);
     expect(json.topups).toHaveLength(1);
   });
@@ -419,8 +422,56 @@ describe("GET /api/advisor-auth/topup", () => {
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.balance_cents).toBe(0);
-    expect(json.free_leads_remaining).toBe(2);
+    // No professional row: free_leads_used defaults 0, so FREE_LEAD_LIMIT (3) - 0 = 3
+    expect(json.free_leads_remaining).toBe(3);
     expect(json.lead_price_cents).toBe(4900);
     expect(json.topups).toEqual([]);
+  });
+
+  it("derives free_leads_remaining from FREE_LEAD_LIMIT, not a hardcoded literal", async () => {
+    // Pins the allowance to the shared constant (=3) so it stays consistent with
+    // billing-summary and the advisor-portal UI. With zero free leads used, a
+    // fresh advisor must see the full FREE_LEAD_LIMIT allowance.
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-1", email: "advisor@test.com" } },
+    });
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        let callCount = 0;
+        b.maybeSingle = vi.fn(() => {
+          callCount++;
+          if (callCount === 1) {
+            return Promise.resolve({ data: { id: 42 }, error: null });
+          }
+          return Promise.resolve({ data: null, error: null });
+        });
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              credit_balance_cents: 0,
+              lifetime_credit_cents: 0,
+              lifetime_lead_spend_cents: 0,
+              free_leads_used: 0,
+              lead_price_cents: 4900,
+            },
+            error: null,
+          }),
+        );
+      }
+      if (table === "advisor_credit_topups") {
+        b.limit = vi.fn(() => Promise.resolve({ data: [], error: null }));
+      }
+      return b;
+    });
+
+    const res = await GET(makeGet());
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.free_leads_used).toBe(0);
+    // Must equal FREE_LEAD_LIMIT (3), the single source of truth — not the old
+    // hardcoded 2 — so this endpoint agrees with billing-summary and the portal.
+    expect(json.free_leads_remaining).toBe(FREE_LEAD_LIMIT);
+    expect(json.free_leads_remaining).toBe(3);
   });
 });
