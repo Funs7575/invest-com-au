@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll } from "vitest";
+// @ts-expect-error - next bundles path-to-regexp without type declarations
 import { pathToRegexp } from "next/dist/compiled/path-to-regexp";
 import config from "../../next.config";
 
