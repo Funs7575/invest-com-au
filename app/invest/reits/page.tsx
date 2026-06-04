@@ -3,6 +3,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR_VERIFIED_BADGE, FACTUAL_COMPARISON_DISCLAIMER, ADVISOR_DIRECTORY_HEADING, ADVISOR_DIRECTORY_SUBTEXT } from "@/lib/compliance-config";
 
@@ -20,6 +21,17 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 3600;
+
+const REIT_FAQS = [
+  { q: "What are A-REITs?", a: "Australian Real Estate Investment Trusts (A-REITs) are ASX-listed entities that own, operate, or finance income-producing real estate such as office towers, shopping centres, and industrial warehouses. They must distribute at least 90% of taxable income to unitholders, making them popular income investments with yields typically between 4-6%." },
+  { q: "How do I buy REITs on the ASX?", a: "You can buy A-REITs through any ASX broker (CommSec, Stake, CMC Markets, etc.) just like buying ordinary shares. You can purchase individual REITs like Goodman Group (GMG) or Scentre Group (SCG), or buy a REIT ETF like VAP (Vanguard Australian Property Securities) for diversified exposure with a single trade." },
+  { q: "How are REIT distributions taxed in Australia?", a: "A-REIT distributions typically contain a mix of income, capital gains, and tax-deferred (return of capital) components. The tax-deferred portion reduces your cost base rather than being taxed immediately, with CGT payable when you eventually sell your units. In an SMSF, distributions are taxed at 15% in accumulation or 0% in pension phase." },
+  { q: "What does NTA premium or discount mean for REITs?", a: "NTA (Net Tangible Assets) represents the underlying value of a REIT's property portfolio per unit. When a REIT trades above its NTA, it is at a premium, which may indicate the market values its management quality or growth prospects. Trading below NTA indicates a discount, which may signal a buying opportunity or concerns about the portfolio's future value." },
+  { q: "What is the best REIT ETF in Australia?", a: "VAP (Vanguard Australian Property Securities ETF) is the most popular A-REIT ETF with a low MER of 0.23% and exposure to around 30 A-REITs. MVA (VanEck Australian Property ETF) is another option with a slightly higher MER of 0.35%. For global REIT exposure, DJRE (BetaShares Global Real Estate ETF) covers approximately 100 REITs worldwide." },
+  { q: "How do REITs compare to direct property investment?", a: "REITs offer liquidity (buy/sell instantly on ASX), diversification across multiple properties, professional management, and low minimums (from $500 via ETFs). Direct property offers leverage via mortgage, greater control, and potential tax benefits through negative gearing. REITs avoid the hassles of property management, vacancies, and maintenance but provide no ability to add value through renovation." },
+  { q: "Can SMSFs invest in REITs?", a: "Yes, A-REITs and REIT ETFs are straightforward investments for SMSFs with no special restrictions. They are treated like any other ASX-listed investment. Distributions are taxed at 15% in accumulation phase or 0% in pension phase, making them tax-efficient income generators for SMSF portfolios." },
+  { q: "How do interest rates affect REIT prices?", a: "A-REITs are highly sensitive to interest rate movements. Rising rates increase borrowing costs for REITs and make their distribution yields less attractive relative to bonds and term deposits, typically causing REIT prices to fall. Conversely, falling rates tend to boost REIT valuations. Most A-REITs carry gearing of 25-35%, so refinancing costs directly impact profitability." },
+];
 
 export default async function ReitsPage() {
   const supabase = await createClient();
@@ -53,20 +65,7 @@ export default async function ReitsPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      { "@type": "Question", name: "What are A-REITs?", acceptedAnswer: { "@type": "Answer", text: "Australian Real Estate Investment Trusts (A-REITs) are ASX-listed entities that own, operate, or finance income-producing real estate such as office towers, shopping centres, and industrial warehouses. They must distribute at least 90% of taxable income to unitholders, making them popular income investments with yields typically between 4-6%." } },
-      { "@type": "Question", name: "How do I buy REITs on the ASX?", acceptedAnswer: { "@type": "Answer", text: "You can buy A-REITs through any ASX broker (CommSec, Stake, CMC Markets, etc.) just like buying ordinary shares. You can purchase individual REITs like Goodman Group (GMG) or Scentre Group (SCG), or buy a REIT ETF like VAP (Vanguard Australian Property Securities) for diversified exposure with a single trade." } },
-      { "@type": "Question", name: "How are REIT distributions taxed in Australia?", acceptedAnswer: { "@type": "Answer", text: "A-REIT distributions typically contain a mix of income, capital gains, and tax-deferred (return of capital) components. The tax-deferred portion reduces your cost base rather than being taxed immediately, with CGT payable when you eventually sell your units. In an SMSF, distributions are taxed at 15% in accumulation or 0% in pension phase." } },
-      { "@type": "Question", name: "What does NTA premium or discount mean for REITs?", acceptedAnswer: { "@type": "Answer", text: "NTA (Net Tangible Assets) represents the underlying value of a REIT's property portfolio per unit. When a REIT trades above its NTA, it is at a premium, which may indicate the market values its management quality or growth prospects. Trading below NTA indicates a discount, which may signal a buying opportunity or concerns about the portfolio's future value." } },
-      { "@type": "Question", name: "What is the best REIT ETF in Australia?", acceptedAnswer: { "@type": "Answer", text: "VAP (Vanguard Australian Property Securities ETF) is the most popular A-REIT ETF with a low MER of 0.23% and exposure to around 30 A-REITs. MVA (VanEck Australian Property ETF) is another option with a slightly higher MER of 0.35%. For global REIT exposure, DJRE (BetaShares Global Real Estate ETF) covers approximately 100 REITs worldwide." } },
-      { "@type": "Question", name: "How do REITs compare to direct property investment?", acceptedAnswer: { "@type": "Answer", text: "REITs offer liquidity (buy/sell instantly on ASX), diversification across multiple properties, professional management, and low minimums (from $500 via ETFs). Direct property offers leverage via mortgage, greater control, and potential tax benefits through negative gearing. REITs avoid the hassles of property management, vacancies, and maintenance but provide no ability to add value through renovation." } },
-      { "@type": "Question", name: "Can SMSFs invest in REITs?", acceptedAnswer: { "@type": "Answer", text: "Yes, A-REITs and REIT ETFs are straightforward investments for SMSFs with no special restrictions. They are treated like any other ASX-listed investment. Distributions are taxed at 15% in accumulation phase or 0% in pension phase, making them tax-efficient income generators for SMSF portfolios." } },
-      { "@type": "Question", name: "How do interest rates affect REIT prices?", acceptedAnswer: { "@type": "Answer", text: "A-REITs are highly sensitive to interest rate movements. Rising rates increase borrowing costs for REITs and make their distribution yields less attractive relative to bonds and term deposits, typically causing REIT prices to fall. Conversely, falling rates tend to boost REIT valuations. Most A-REITs carry gearing of 25-35%, so refinancing costs directly impact profitability." } },
-    ],
-  };
+  const faqSchema = faqJsonLd(REIT_FAQS);
 
   return (
     <div>
@@ -78,10 +77,12 @@ export default async function ReitsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -490,13 +491,13 @@ export default async function ReitsPage() {
           <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
           <div className="space-y-3">
-            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
-              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+            {REIT_FAQS.map((faq) => (
+              <details key={faq.q} className="group bg-white border border-slate-200 rounded-xl">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
-                  {faq.name}
+                  {faq.q}
                   <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                 </summary>
-                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.a}</div>
               </details>
             ))}
           </div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
+import { faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -184,20 +185,26 @@ export default function ETFHubPage() {
     { name: "ETF Hub" },
   ]);
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: ETF_FAQS.map((f) => ({
-      "@type": "Question",
-      name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.answer },
-    })),
-  };
+  const faqSchema = faqJsonLd(
+    ETF_FAQS.map((f) => ({ q: f.question, a: f.answer })),
+  );
+
+  // Speakable: mark the H1 + answer-first lead as the extractable answer region
+  // so AI/voice engines surface the direct "what is an ETF" answer (mirrors the
+  // #*-short-answer pattern used on /questions/[slug]).
+  const speakableSchema = speakableWebPageJsonLd({
+    name: "Best ETFs in Australia",
+    path: "/etfs",
+    selectors: ["#etfs-title", "#etfs-short-answer"],
+  });
 
   return (
     <div className="bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      {faqSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      )}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }} />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -212,10 +219,15 @@ export default function ETFHubPage() {
               <span className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
               ETF Hub · {UPDATED_LABEL}
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
+            <h1 id="etfs-title" className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
               Best ETFs in Australia{" "}
               <span className="text-amber-600">({CURRENT_YEAR})</span>
             </h1>
+            <p id="etfs-short-answer" className="text-sm md:text-base text-slate-800 font-medium leading-relaxed max-w-2xl mb-3">
+              An ETF (exchange-traded fund) is a single ASX-listed investment that holds a basket of
+              shares or bonds, letting you own hundreds of companies in one low-cost trade — the
+              cheapest Australian ETFs charge just 0.04% per year.
+            </p>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed max-w-2xl">
               Compare Australian ETFs by category, MER, performance, and income yield. Our independent
               analysis covers ASX 200, US market, dividend, international, bond, and sector ETFs —

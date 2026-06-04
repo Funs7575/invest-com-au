@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
+import { faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -222,20 +223,28 @@ export default function TaxHubPage() {
     { name: "Tax Strategy Hub" },
   ]);
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQS.map((f) => ({
-      "@type": "Question",
-      name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.answer },
-    })),
-  };
+  const faqSchema = faqJsonLd(
+    FAQS.map((f) => ({ q: f.question, a: f.answer })),
+  );
+
+  // Speakable: mark the H1 + answer-first lead as the extractable answer region
+  // so AI/voice engines surface the direct "how are investments taxed in
+  // Australia" answer (mirrors the #*-short-answer pattern on /questions/[slug]).
+  const speakableSchema = speakableWebPageJsonLd({
+    name: "Australian Investor Tax Guide",
+    path: "/tax",
+    selectors: ["#tax-title", "#tax-short-answer"],
+  });
 
   return (
     <div className="bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      {faqSchema && (
+
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
+      )}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }} />
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -250,10 +259,16 @@ export default function TaxHubPage() {
               <span className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
               Tax Hub · {UPDATED_LABEL}
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
+            <h1 id="tax-title" className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
               Australian Investor{" "}
               <span className="text-amber-600">Tax Guide ({CURRENT_YEAR})</span>
             </h1>
+            <p id="tax-short-answer" className="text-sm md:text-base text-slate-800 font-medium leading-relaxed max-w-2xl mb-3">
+              In Australia, investment income (dividends, interest, rent) is added to your assessable
+              income and taxed at your marginal rate, while capital gains on assets held 12+ months
+              receive a 50% discount before tax — and franking credits offset tax already paid on
+              Australian dividends.
+            </p>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed max-w-2xl">
               Everything Australian investors need to know about tax — capital gains, franking credits,
               negative gearing, crypto, super strategies, and year-end tax planning. Independent guides
