@@ -345,7 +345,12 @@ export default function RetirementCalculatorClient() {
 
         {/* Results */}
         {showResults && (
-          <>
+          <div
+            role="region"
+            aria-live="polite"
+            aria-atomic="true"
+            aria-label="Calculated results"
+          >
             {/* Projected super at retirement */}
             <div className={`rounded-2xl p-5 md:p-8 mb-6 text-center ${isOnTrack ? "bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200" : "bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200"}`}>
               <p className="text-sm font-semibold mb-1" style={{ color: isOnTrack ? "#059669" : "#d97706" }}>
@@ -513,7 +518,7 @@ export default function RetirementCalculatorClient() {
                 <Link href="/calculators" className="text-xs px-3 py-1.5 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">More Calculators →</Link>
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

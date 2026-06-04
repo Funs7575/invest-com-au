@@ -305,7 +305,13 @@ export default function SuperContributionsClient() {
           </div>
 
           {/* ── Results ── */}
-          <div className="lg:col-span-3 space-y-4">
+          <div
+            className="lg:col-span-3 space-y-4"
+            role="region"
+            aria-live="polite"
+            aria-atomic="true"
+            aria-label="Calculated results"
+          >
             {/* Concessional cap usage */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5">
               <div className="flex items-start justify-between mb-3">
