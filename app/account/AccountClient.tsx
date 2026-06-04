@@ -217,6 +217,31 @@ export default function AccountClient() {
       <div className="container-custom max-w-2xl">
         <h1 className="text-2xl font-extrabold text-slate-900 mb-6">My Account</h1>
 
+        {/* Full dashboard entry — the rich NavCard hub at /account/dashboard
+            (goals, holdings, net worth, watchlist, alerts, calendar, vault…)
+            was previously only reachable via breadcrumbs. Surface it here as
+            the primary "all tools" entry point. */}
+        <Link
+          href="/account/dashboard"
+          className="group mb-6 flex items-center justify-between gap-3 rounded-xl border border-violet-200 bg-gradient-to-r from-violet-50 to-white px-5 py-4 transition-colors hover:border-violet-300"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl" aria-hidden="true">🧭</span>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Your dashboard</p>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Goals, holdings, net worth, watchlist, alerts &amp; every tool in one place
+              </p>
+            </div>
+          </div>
+          <span className="inline-flex items-center gap-1 text-sm font-semibold text-violet-700 whitespace-nowrap">
+            Open
+            <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </span>
+        </Link>
+
         {/* Checkout success banner */}
         {showSuccessBanner && isPro && (
           <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-start gap-3">
@@ -610,6 +635,12 @@ export default function AccountClient() {
             </Link>
             <Link href="/calculators" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
               <span>🧮</span> Calculators
+            </Link>
+            <Link href="/account/net-worth" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+              <span>💰</span> Net Worth
+            </Link>
+            <Link href="/account/alerts" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+              <span>📉</span> Rate &amp; Fee Alerts
             </Link>
             <Link href="/quiz" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
               <span>🎯</span> Platform Quiz
