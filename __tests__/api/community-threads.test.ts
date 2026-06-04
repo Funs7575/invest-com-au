@@ -177,6 +177,34 @@ describe("GET /api/community/threads", () => {
     const json = await res.json();
     expect(json.error).toMatch(/failed to fetch threads/i);
   });
+
+  // ── NaN guards (D-03) ──────────────────────────────────────────────────────
+  // Math.max(1, NaN) === NaN, so the clamps don't catch non-numeric input on
+  // their own — the route must coerce to defaults before .range().
+
+  it("coerces non-numeric page to 1 (range starts at offset 0)", async () => {
+    const chain = makeGetChain({ data: SAMPLE_THREADS, error: null, count: 1 });
+    mockAdminFrom.mockReturnValue(chain);
+    const res = await GET(makeGet({ page: "abc" }));
+    expect(res.status).toBe(200);
+    expect(chain.range).toHaveBeenCalledWith(0, 19);
+  });
+
+  it("coerces non-numeric limit to default 20", async () => {
+    const chain = makeGetChain({ data: SAMPLE_THREADS, error: null, count: 1 });
+    mockAdminFrom.mockReturnValue(chain);
+    const res = await GET(makeGet({ limit: "abc" }));
+    expect(res.status).toBe(200);
+    expect(chain.range).toHaveBeenCalledWith(0, 19);
+  });
+
+  it("coerces both non-numeric page and limit to defaults", async () => {
+    const chain = makeGetChain({ data: SAMPLE_THREADS, error: null, count: 1 });
+    mockAdminFrom.mockReturnValue(chain);
+    const res = await GET(makeGet({ limit: "abc", page: "abc" }));
+    expect(res.status).toBe(200);
+    expect(chain.range).toHaveBeenCalledWith(0, 19);
+  });
 });
 
 // ── Tests: POST ────────────────────────────────────────────────────────────────

@@ -58,8 +58,12 @@ export async function GET(request: NextRequest) {
     // Single article by ID — admin only (contains unpublished/draft content)
     const adminEmail = await verifyAdmin();
     if (!adminEmail) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const aid = Number(articleId);
+    // advisor_articles.id is bigint — guard before .eq() so ?id=abc doesn't send
+    // id=eq.NaN and trip "invalid input syntax for type bigint".
+    if (!Number.isFinite(aid)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     const admin = createAdminClient();
-    const { data } = await admin.from("advisor_articles").select("*").eq("id", parseInt(articleId)).single();
+    const { data } = await admin.from("advisor_articles").select("*").eq("id", aid).single();
     if (!data) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(data);
   }
@@ -72,7 +76,9 @@ export async function GET(request: NextRequest) {
   }
 
   if (mode === "advisor" && sp.get("professional_id")) {
-    const { data } = await supabase.from("advisor_articles").select("id, title, slug, content, excerpt, status, category, tags, created_at, submitted_at, published_at, view_count, click_count, admin_notes, rejection_reason, pricing_tier, payment_status, price_cents").eq("professional_id", parseInt(sp.get("professional_id")!)).order("created_at", { ascending: false });
+    const pid = Number(sp.get("professional_id"));
+    if (!Number.isFinite(pid)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+    const { data } = await supabase.from("advisor_articles").select("id, title, slug, content, excerpt, status, category, tags, created_at, submitted_at, published_at, view_count, click_count, admin_notes, rejection_reason, pricing_tier, payment_status, price_cents").eq("professional_id", pid).order("created_at", { ascending: false });
     return NextResponse.json(data || []);
   }
 
@@ -89,8 +95,10 @@ export async function GET(request: NextRequest) {
   if (mode === "moderation_log" && sp.get("article_id")) {
     const adminEmail = await verifyAdmin();
     if (!adminEmail) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const aid = Number(sp.get("article_id"));
+    if (!Number.isFinite(aid)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     const admin = createAdminClient();
-    const { data } = await admin.from("advisor_article_moderation_log").select("*").eq("article_id", parseInt(sp.get("article_id")!)).order("created_at", { ascending: false });
+    const { data } = await admin.from("advisor_article_moderation_log").select("*").eq("article_id", aid).order("created_at", { ascending: false });
     return NextResponse.json(data || []);
   }
 
