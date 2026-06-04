@@ -3,6 +3,7 @@ import {
   VERTICALS,
   getVerticalBySlug,
   getAllVerticalSlugs,
+  getRelatedVerticals,
   type HubAudience,
   type HubConfig,
   type LeadQueueRoute,
@@ -365,5 +366,66 @@ describe("HubAudience union exhaustiveness", () => {
       "startup-investor",
     ];
     expect(expected).toHaveLength(6);
+  });
+});
+
+/* ─── TEST-07: getRelatedVerticals ─── */
+
+describe("getRelatedVerticals", () => {
+  // Data-driven against the live VERTICALS export — no hardcoded counts so the
+  // assertions survive new verticals being added.
+  const PILLAR_SHORT_LABELS: Record<string, string> = {
+    "share-trading": "Share Trading",
+    crypto: "Crypto",
+    savings: "Savings",
+    super: "Super",
+    cfd: "CFD & Forex",
+    "term-deposits": "Term Deposits",
+    "robo-advisors": "Robo-Advisors",
+    "property-platforms": "Property Platforms",
+    "research-tools": "Research Tools",
+    alternatives: "Alternative Assets",
+    "business-finance": "Business Finance",
+  };
+
+  const firstSlug = VERTICALS[0]!.slug;
+
+  it("excludes the passed currentSlug and returns all-but-one verticals", () => {
+    const related = getRelatedVerticals(firstSlug);
+    expect(related).toHaveLength(VERTICALS.length - 1);
+    expect(related.every((r) => r.slug !== firstSlug)).toBe(true);
+  });
+
+  it("preserves the source order of the remaining verticals", () => {
+    const related = getRelatedVerticals(firstSlug);
+    const expectedSlugs = VERTICALS.filter((v) => v.slug !== firstSlug).map((v) => v.slug);
+    expect(related.map((r) => r.slug)).toEqual(expectedSlugs);
+  });
+
+  it("resolves label via PILLAR_SHORT_LABELS, falling back to the raw slug", () => {
+    const related = getRelatedVerticals("__none__");
+    for (const r of related) {
+      const expected = PILLAR_SHORT_LABELS[r.slug] ?? r.slug;
+      expect(r.label).toBe(expected);
+    }
+  });
+
+  it("derives tagline from the first stat as `value label.toLowerCase()`", () => {
+    const related = getRelatedVerticals("__none__");
+    const bySlug = new Map(VERTICALS.map((v) => [v.slug, v]));
+    for (const r of related) {
+      const v = bySlug.get(r.slug)!;
+      const firstStat = v.stats[0];
+      const expected = firstStat
+        ? `${firstStat.value} ${firstStat.label.toLowerCase()}`
+        : "";
+      expect(r.tagline).toBe(expected);
+    }
+  });
+
+  it("returns ALL verticals when the slug does not match any", () => {
+    const related = getRelatedVerticals("does-not-exist");
+    expect(related).toHaveLength(VERTICALS.length);
+    expect(related.map((r) => r.slug)).toEqual(VERTICALS.map((v) => v.slug));
   });
 });

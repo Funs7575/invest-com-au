@@ -20,6 +20,8 @@ import {
   howToJsonLd,
   personCredentialJsonLd,
   personJsonLd,
+  blogPostingJsonLd,
+  governmentServiceJsonLd,
 } from "@/lib/schema-markup";
 
 describe("articleJsonLd", () => {
@@ -1411,5 +1413,109 @@ describe("personJsonLd", () => {
     expect(out.knowsAbout).toBeDefined();
     expect(out.interactionStatistic).toBeDefined();
     expect((out.interactionStatistic as Bag[])).toHaveLength(2);
+  });
+});
+
+/* ─── TEST-11: blogPostingJsonLd ─── */
+
+describe("blogPostingJsonLd", () => {
+  const base = {
+    postId: 42,
+    advisorSlug: "jane-advisor",
+    body: "x".repeat(300),
+    postType: "market-update",
+    publishedAt: "2026-01-15T00:00:00.000Z",
+    authorName: "Jane Advisor",
+    authorSlug: "jane-author",
+  };
+
+  it("emits BlogPosting with url /advisor/{advisorSlug}/insights/{postId}", () => {
+    const out = blogPostingJsonLd(base) as Bag;
+    expect(out["@context"]).toBe("https://schema.org");
+    expect(out["@type"]).toBe("BlogPosting");
+    expect(out.url).toBe("https://invest.com.au/advisor/jane-advisor/insights/42");
+  });
+
+  it("derives headline (110) / description (160) from body, keeps full articleBody", () => {
+    const out = blogPostingJsonLd(base) as Bag;
+    expect((out.headline as string)).toHaveLength(110);
+    expect((out.description as string)).toHaveLength(160);
+    expect(out.articleBody).toBe(base.body);
+  });
+
+  it("sets keywords to postType and datePublished === dateModified === publishedAt", () => {
+    const out = blogPostingJsonLd(base) as Bag;
+    expect(out.keywords).toBe("market-update");
+    expect(out.datePublished).toBe(base.publishedAt);
+    expect(out.dateModified).toBe(base.publishedAt);
+  });
+
+  it("author Person uses /advisor/{authorSlug}; image omitted when authorPhotoUrl null/undefined", () => {
+    const out = blogPostingJsonLd(base) as Bag;
+    const author = out.author as Bag;
+    expect(author["@type"]).toBe("Person");
+    expect(author.name).toBe("Jane Advisor");
+    expect(author.url).toBe("https://invest.com.au/advisor/jane-author");
+    expect(author.image).toBeUndefined();
+
+    const outNull = blogPostingJsonLd({ ...base, authorPhotoUrl: null }) as Bag;
+    expect((outNull.author as Bag).image).toBeUndefined();
+  });
+
+  it("includes author image when authorPhotoUrl present", () => {
+    const out = blogPostingJsonLd({ ...base, authorPhotoUrl: "https://cdn.example/jane.jpg" }) as Bag;
+    expect((out.author as Bag).image).toBe("https://cdn.example/jane.jpg");
+  });
+
+  it("publisher is the Organization and mainEntityOfPage.@id matches url", () => {
+    const out = blogPostingJsonLd(base) as Bag;
+    expect((out.publisher as Bag)["@type"]).toBe("Organization");
+    expect((out.mainEntityOfPage as Bag)["@id"]).toBe(out.url);
+  });
+});
+
+/* ─── TEST-11: governmentServiceJsonLd ─── */
+
+describe("governmentServiceJsonLd", () => {
+  const base = {
+    name: "ROPS pension transfer",
+    description: "Transfer a UK pension to an Australian QROPS.",
+    serviceType: "Tax concession",
+    countryName: "United Kingdom",
+    sourceName: "HMRC ROPS notification list",
+    sourceUrl: "https://www.gov.uk/rops",
+    pagePath: "/foreign-investment/united-kingdom",
+  };
+
+  it("emits GovernmentService with passed-through serviceType", () => {
+    const out = governmentServiceJsonLd(base) as Bag;
+    expect(out["@context"]).toBe("https://schema.org");
+    expect(out["@type"]).toBe("GovernmentService");
+    expect(out.name).toBe(base.name);
+    expect(out.serviceType).toBe("Tax concession");
+  });
+
+  it("areaServed is a Country with the country name", () => {
+    const out = governmentServiceJsonLd(base) as Bag;
+    expect(out.areaServed).toEqual({ "@type": "Country", name: "United Kingdom" });
+  });
+
+  it("provider is a GovernmentOrganization carrying sourceName/sourceUrl", () => {
+    const out = governmentServiceJsonLd(base) as Bag;
+    expect(out.provider).toEqual({
+      "@type": "GovernmentOrganization",
+      name: "HMRC ROPS notification list",
+      url: "https://www.gov.uk/rops",
+    });
+  });
+
+  it("mainEntityOfPage is the absolute page URL", () => {
+    const out = governmentServiceJsonLd(base) as Bag;
+    expect(out.mainEntityOfPage).toBe("https://invest.com.au/foreign-investment/united-kingdom");
+  });
+
+  it("audience.audienceType is 'Cross-border investor'", () => {
+    const out = governmentServiceJsonLd(base) as Bag;
+    expect(out.audience).toEqual({ "@type": "Audience", audienceType: "Cross-border investor" });
   });
 });
