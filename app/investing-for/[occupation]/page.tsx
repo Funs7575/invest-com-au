@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl, buildTitle } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const revalidate = 3600;
@@ -985,11 +985,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cfg = OCCUPATIONS[occupation];
   if (!cfg) return { title: "Not found" };
   return {
-    title: `Investing as a ${cfg.label.split(" ")[0]} in Australia (${CURRENT_YEAR}) | Invest.com.au`,
+    title: buildTitle(`Investing for ${cfg.label} in Australia (${CURRENT_YEAR})`),
     description: cfg.metaDescription,
     alternates: { canonical: `${SITE_URL}/investing-for/${occupation}` },
     openGraph: {
-      title: `Investing as a ${cfg.label.split(" ")[0]} — ${CURRENT_YEAR} Guide`,
+      title: `Investing for ${cfg.label} — ${CURRENT_YEAR} Guide`,
       description: cfg.metaDescription,
       url: `${SITE_URL}/investing-for/${occupation}`,
       type: "website",
@@ -1054,7 +1054,7 @@ export default async function InvestingForOccupationPage({ params }: Props) {
             </span>
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3">
-            Investing as a {cfg.label.includes("&") ? cfg.label : cfg.label} — {CURRENT_YEAR} Guide
+            Investing for {cfg.label} — {CURRENT_YEAR} Guide
           </h1>
           <p className="text-lg text-slate-600 leading-relaxed">{cfg.intro}</p>
         </header>
