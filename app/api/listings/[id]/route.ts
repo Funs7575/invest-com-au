@@ -28,6 +28,43 @@ function emailsMatch(a: string | null | undefined, b: string): boolean {
   return timingSafeEqual(aBuf, bBuf);
 }
 
+// Explicit public projection for the anonymous GET. The previous `select("*")`
+// leaked owner contact details (contact_email, contact_phone) and the internal
+// moderation trail (auto_classified_*, admin_overridden_*) to any unauthenticated
+// caller. This route has no authenticated/owner consumer — owner edit/read flows
+// go through /api/listings/my-listings* — so every column safe to expose to an
+// anonymous visitor is enumerated here. Add new public columns deliberately;
+// do NOT re-introduce `*`.
+const PUBLIC_GET_COLUMNS = [
+  "id",
+  "vertical",
+  "title",
+  "slug",
+  "description",
+  "location_state",
+  "location_city",
+  "asking_price_cents",
+  "price_display",
+  "annual_revenue_cents",
+  "annual_profit_cents",
+  "industry",
+  "sub_category",
+  "key_metrics",
+  "images",
+  "listing_type",
+  "listing_kind",
+  "firb_eligible",
+  "siv_complying",
+  "listed_by_professional_id",
+  "external_url",
+  "status",
+  "expires_at",
+  "views",
+  "enquiries",
+  "created_at",
+  "updated_at",
+].join(", ");
+
 const UPDATABLE_FIELDS = [
   "title",
   "description",
@@ -66,7 +103,7 @@ export async function GET(
 
     const { data: listing, error } = await admin
       .from("investment_listings")
-      .select("*")
+      .select(PUBLIC_GET_COLUMNS)
       .eq("id", listingId)
       .single();
 
@@ -84,7 +121,7 @@ export async function GET(
       .eq("listing_id", listingId);
 
     return NextResponse.json({
-      ...listing,
+      ...(listing as unknown as Record<string, unknown>),
       enquiries_count: count ?? 0,
     });
   } catch (err) {

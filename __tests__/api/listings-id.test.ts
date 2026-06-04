@@ -136,6 +136,102 @@ describe("GET /api/listings/[id]", () => {
     const res = await GET(req, params);
     expect(res.status).toBe(500);
   });
+
+  it("requests an explicit public column projection (never select('*'))", async () => {
+    const selectSpy = vi.fn().mockReturnThis();
+    let fromCalls = 0;
+    mockFrom.mockImplementation(() => {
+      fromCalls++;
+      if (fromCalls === 1) {
+        return {
+          select: selectSpy,
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: LISTING, error: null }),
+        };
+      }
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        then: vi.fn((cb: (v: unknown) => void) => {
+          cb({ count: 0, data: null, error: null });
+          return Promise.resolve();
+        }),
+      };
+    });
+
+    const [req, params] = makeGet("1");
+    await GET(req, params);
+
+    expect(selectSpy).toHaveBeenCalledTimes(1);
+    const projection = selectSpy.mock.calls[0]?.[0] as string;
+    expect(projection).not.toBe("*");
+    // Sensitive owner/moderation columns must NOT be in the projection.
+    expect(projection).not.toMatch(/contact_email/);
+    expect(projection).not.toMatch(/contact_phone/);
+    expect(projection).not.toMatch(/auto_classified/);
+    expect(projection).not.toMatch(/admin_overridden/);
+    // Legitimate public columns must still be requested.
+    expect(projection).toMatch(/\btitle\b/);
+    expect(projection).toMatch(/\bprice_display\b/);
+  });
+
+  it("does not expose contact details or moderation fields to anon callers", async () => {
+    // Even if the DB row were to carry these (e.g. a stale select), the public
+    // payload must never surface them. We simulate the admin client returning a
+    // full row and assert the response body excludes the sensitive keys.
+    const FULL_ROW = {
+      id: 1,
+      title: "SAAS Business",
+      price_display: "$1.2M",
+      status: "active",
+      contact_email: "owner@example.com",
+      contact_phone: "+61 400 000 000",
+      auto_classified_verdict: "auto_approve",
+      auto_classified_reasons: { foo: "bar" },
+      admin_overridden_by: "finn@invest.com.au",
+    };
+    let fromCalls = 0;
+    mockFrom.mockImplementation(() => {
+      fromCalls++;
+      if (fromCalls === 1) {
+        // The route's projection would normally strip these columns at the DB
+        // layer; here we model the projection by returning only public keys.
+        return {
+          select: vi.fn((cols: string) => {
+            const requested = cols.split(",").map((c) => c.trim());
+            const projected = Object.fromEntries(
+              Object.entries(FULL_ROW).filter(([k]) => requested.includes(k)),
+            );
+            return {
+              eq: vi.fn().mockReturnThis(),
+              single: vi.fn().mockResolvedValue({ data: projected, error: null }),
+            };
+          }),
+        };
+      }
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        then: vi.fn((cb: (v: unknown) => void) => {
+          cb({ count: 0, data: null, error: null });
+          return Promise.resolve();
+        }),
+      };
+    });
+
+    const [req, params] = makeGet("1");
+    const res = await GET(req, params);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).not.toHaveProperty("contact_email");
+    expect(body).not.toHaveProperty("contact_phone");
+    expect(body).not.toHaveProperty("auto_classified_verdict");
+    expect(body).not.toHaveProperty("auto_classified_reasons");
+    expect(body).not.toHaveProperty("admin_overridden_by");
+    // Public fields still present.
+    expect(body.title).toBe("SAAS Business");
+    expect(body.price_display).toBe("$1.2M");
+  });
 });
 
 // ── PUT tests ─────────────────────────────────────────────────────────────────
