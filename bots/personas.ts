@@ -89,3 +89,57 @@ export const AUTHED_PERSONAS: Persona[] = [
     goal: "As a logged-in investor, explore your account dashboard, review your holdings and saved bookmarks, and try to save a plan or send an advisor enquiry. Note anything broken, confusing, or any missing fees/risk disclosures. (Money and external actions are mocked — do not worry about real side effects.)",
   },
 ];
+
+/**
+ * Advisor-area personas — anonymous coverage of the adviser directory, the
+ * specialty hubs, the get-matched entry point, and a seeded profile. Designed to
+ * be run against the protected Netlify mirror (writes are auto-mocked), so every
+ * route here is read-only / public; no `storageStateFile` is attached. Each
+ * carries a deterministic route list AND an AI goal, so the same array drives
+ * both the page-sweep and (when AI is enabled) the explore/judge loop.
+ *
+ * `/advisor/james-wong-sydney` is a known slug from the mock-advisor seed
+ * (`supabase/migrations/20260309_seed_mock_advisors.sql`); if the target isn't
+ * seeded it falls back to a 404-handled profile, still useful as a smoke check.
+ */
+export const ADVISOR_PERSONAS: Persona[] = [
+  {
+    name: "advisor-directory-browser",
+    description:
+      "Browsing the adviser directory: the landing page, a type listing, and a type-by-state slice.",
+    routes: [
+      "/advisors",
+      "/advisors/financial-planners",
+      "/advisors/financial-planners/nsw",
+    ],
+    startPath: "/advisors",
+    goal: "Browse the adviser directory, drill into a profession (financial planners) and then a state, and judge whether listings, filters, and disclosures are clear. Flag dead ends, empty states, or missing AFSL/fee disclosures.",
+  },
+  {
+    name: "advisor-specialty-seeker",
+    description:
+      "Looking for niche adviser specialties (FIRB, migration, international tax).",
+    routes: [
+      "/advisors/firb-specialists",
+      "/advisors/migration-agents",
+      "/advisors/international-tax-specialists",
+    ],
+    startPath: "/advisors/firb-specialists",
+    goal: "As a foreign investor, find a specialist (FIRB, migration, or international tax) who can help, and reach a point where you could make contact. Flag anything confusing, broken, or any missing disclosures.",
+  },
+  {
+    name: "advisor-matchmaker",
+    description: "Using the guided find-an-adviser entry point.",
+    routes: ["/find-advisor", "/advisors"],
+    startPath: "/find-advisor",
+    goal: "Use the find-an-adviser flow to get matched with a suitable adviser, and judge whether the matching is clear and trustworthy. Flag dead ends or missing disclosures.",
+  },
+  {
+    name: "advisor-profile-explorer",
+    description:
+      "Reading a single adviser profile in depth before making contact.",
+    routes: ["/advisor/james-wong-sydney", "/advisors"],
+    startPath: "/advisor/james-wong-sydney",
+    goal: "Read an adviser's profile in detail and decide whether you'd contact them. Judge whether credentials, fees, and disclosures are present and trustworthy; flag anything broken or missing.",
+  },
+];

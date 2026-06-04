@@ -23,6 +23,31 @@ npm run bots                  # drive a local dev server (auto-started)
 BOTS_BASE_URL=https://my-preview.vercel.app npm run bots
 ```
 
+## Testing the Netlify mirror (/advisors)
+
+The live Netlify **mirror** (`https://lambent-sawine-17c3dd.netlify.app`) is the
+default remote target for ad-hoc QA. It is a `protected` target, so **every
+state-mutating write is auto-mocked** by `safety/money-paths.ts` — nothing real
+happens.
+
+```bash
+npm run bots:mirror      # full fleet (incl. advisor personas) against the mirror
+npm run bots:advisors    # same, scoped to the advisor personas only (-g advisor)
+```
+
+Both scripts set `BOTS_BASE_URL` to the mirror and `BOTS_IGNORE_HTTPS_ERRORS=1`
+(this workspace sits behind a TLS-MITM proxy). The fleet includes the
+`ADVISOR_PERSONAS` (in `personas.ts`) which cover the adviser directory
+(`/advisors`, `/advisors/<type>`, `/advisors/<type>/<state>`), the specialty
+hubs (`/advisors/firb-specialists`, `/advisors/migration-agents`,
+`/advisors/international-tax-specialists`), the `/find-advisor` entry point, and
+a seeded profile (`/advisor/<slug>`).
+
+These personas are **anonymous** (no auth). For logged-in advisor flows
+(advisor-portal, lead management), seed and capture auth as described under
+[AI-driven bots](#ai-driven-bots) / the authenticated-personas roadmap item —
+the mirror's writes remain mocked regardless.
+
 The run writes `bots/.runs/<runId>/report.html` (visual report), `summary.md`
 (plain-English digest), and `findings.json`.
 
