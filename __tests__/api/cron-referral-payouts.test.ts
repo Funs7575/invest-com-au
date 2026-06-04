@@ -37,19 +37,20 @@ type AdvisorRow = { id: number; credit_balance_cents: number };
 let rewardsToReturn: RewardRow[] = [];
 let fetchError: { message: string } | null = null;
 let advisorByEmail: Map<string, AdvisorRow> = new Map();
-let advisorUpdateErrorForId: Map<number, { message: string }> = new Map();
 let featureDisabled = false;
 
 // Capture calls
-type UpdateCall = { id: number; payload: Record<string, unknown> };
+type UpdateCall = { id: number; payload: Record<string, unknown>; statusGuard?: unknown };
 const rewardUpdateCalls: UpdateCall[] = [];
-const advisorUpdateCalls: {
-  id: number;
-  payload: Record<string, unknown>;
-  expectedPrior: number;
-}[] = [];
 const financialAuditCalls: Record<string, unknown>[] = [];
 const notifyUserCalls: Record<string, unknown>[] = [];
+
+// recordLedgerEntry mock — captures inputs and lets a test force idempotency
+// (mid-crash retry: the ledger triple already exists) or a throw.
+const ledgerCalls: Record<string, unknown>[] = [];
+// Map referenceId → { idempotent, balanceAfterCents } overrides.
+let ledgerIdempotentForRefId: Map<string, boolean> = new Map();
+let ledgerThrowForRefId: Map<string, string> = new Map();
 
 const mockFrom = vi.fn((table: string) => {
   if (table === "referral_rewards") {
@@ -65,9 +66,24 @@ const mockFrom = vi.fn((table: string) => {
         }),
       }),
       update: (payload: Record<string, unknown>) => ({
-        eq: async (_col: string, id: number) => {
-          rewardUpdateCalls.push({ id, payload });
-          return { data: null, error: null };
+        // First .eq is the id filter; reward-paid flips chain a second
+        // .eq("status","pending") guard — rejection updates do not.
+        eq: (_col: string, id: number) => {
+          const recordAndReturn = () => {
+            rewardUpdateCalls.push({ id, payload });
+            return { data: null, error: null };
+          };
+          // Return a thenable that ALSO exposes a second .eq for the
+          // status-guarded paid flip.
+          const thenable = {
+            eq: (_col2: string, statusGuard: unknown) => {
+              rewardUpdateCalls.push({ id, payload, statusGuard });
+              return Promise.resolve({ data: null, error: null });
+            },
+            then: (resolve: (v: { data: null; error: null }) => unknown) =>
+              Promise.resolve(resolve(recordAndReturn())),
+          };
+          return thenable;
         },
       }),
     };
@@ -83,16 +99,6 @@ const mockFrom = vi.fn((table: string) => {
           },
         }),
       }),
-      update: (payload: Record<string, unknown>) => {
-        const firstEq = (col1: string, id: number) => ({
-          eq: async (_col2: string, priorBalance: number) => {
-            advisorUpdateCalls.push({ id, payload, expectedPrior: priorBalance });
-            const err = advisorUpdateErrorForId.get(id);
-            return { data: null, error: err ?? null };
-          },
-        });
-        return { eq: firstEq };
-      },
     };
   }
 
@@ -117,6 +123,30 @@ vi.mock("@/lib/financial-audit", () => ({
   }),
 }));
 
+vi.mock("@/lib/advisor-credit-ledger", () => ({
+  recordLedgerEntry: vi.fn(async (input: Record<string, unknown>) => {
+    ledgerCalls.push(input);
+    const refId = String(input.referenceId);
+    const thrown = ledgerThrowForRefId.get(refId);
+    if (thrown) throw new Error(thrown);
+    const idempotent = ledgerIdempotentForRefId.get(refId) ?? false;
+    // Look up the seeded prior balance for this professional id so the
+    // returned balance_after mirrors the real helper. On an idempotent
+    // re-run the helper returns the EXISTING balance (no double-add).
+    const proId = input.professionalId as number;
+    const seeded = [...advisorByEmail.values()].find((a) => a.id === proId);
+    const current = seeded?.credit_balance_cents ?? 0;
+    const balanceAfterCents = idempotent
+      ? current
+      : current + (input.amountCents as number);
+    return {
+      entry: { id: 1 },
+      balanceAfterCents,
+      idempotent,
+    };
+  }),
+}));
+
 vi.mock("@/lib/notifications", () => ({
   buildEmailToUserIdMap: vi.fn(async () => {
     const m = new Map<string, string>();
@@ -132,6 +162,7 @@ vi.mock("@/lib/notifications", () => ({
 import { GET, runtime, maxDuration } from "@/app/api/cron/referral-payouts/route";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { isFeatureDisabled } from "@/lib/admin/classifier-config";
+import { recordLedgerEntry } from "@/lib/advisor-credit-ledger";
 
 function makeReq(): NextRequest {
   return new Request("http://localhost/api/cron/referral-payouts") as unknown as NextRequest;
@@ -145,12 +176,13 @@ describe("GET /api/cron/referral-payouts", () => {
     rewardsToReturn = [];
     fetchError = null;
     advisorByEmail = new Map();
-    advisorUpdateErrorForId = new Map();
     featureDisabled = false;
     rewardUpdateCalls.length = 0;
-    advisorUpdateCalls.length = 0;
     financialAuditCalls.length = 0;
     notifyUserCalls.length = 0;
+    ledgerCalls.length = 0;
+    ledgerIdempotentForRefId = new Map();
+    ledgerThrowForRefId = new Map();
   });
 
   afterAll(() => {
@@ -169,7 +201,7 @@ describe("GET /api/cron/referral-payouts", () => {
     const res = await GET(makeReq());
     expect(res.status).toBe(401);
     expect(rewardUpdateCalls).toHaveLength(0);
-    expect(advisorUpdateCalls).toHaveLength(0);
+    expect(ledgerCalls).toHaveLength(0);
     expect(financialAuditCalls).toHaveLength(0);
   });
 
@@ -183,7 +215,7 @@ describe("GET /api/cron/referral-payouts", () => {
     expect(vi.mocked(isFeatureDisabled)).toHaveBeenCalledWith("referral_payouts");
     // No DB work done
     expect(rewardUpdateCalls).toHaveLength(0);
-    expect(advisorUpdateCalls).toHaveLength(0);
+    expect(ledgerCalls).toHaveLength(0);
   });
 
   it("returns 500 when the initial fetch errors", async () => {
@@ -241,9 +273,9 @@ describe("GET /api/cron/referral-payouts", () => {
     expect(json.manual).toBe(2);
     expect(json.paid).toBe(0);
     expect(json.rejected).toBe(0);
-    // Reward + advisor rows remain untouched — admin handles manually
+    // Reward + ledger untouched — admin handles manually
     expect(rewardUpdateCalls).toHaveLength(0);
-    expect(advisorUpdateCalls).toHaveLength(0);
+    expect(ledgerCalls).toHaveLength(0);
     expect(financialAuditCalls).toHaveLength(0);
   });
 
@@ -273,12 +305,12 @@ describe("GET /api/cron/referral-payouts", () => {
         rejection_reason: "referrer_email_not_found_in_professionals",
       },
     });
-    // Advisor balance untouched + no audit row
-    expect(advisorUpdateCalls).toHaveLength(0);
+    // No credit + no audit row
+    expect(ledgerCalls).toHaveLength(0);
     expect(financialAuditCalls).toHaveLength(0);
   });
 
-  it("credits the advisor, stamps the reward paid, writes an audit row, and inboxes the referrer", async () => {
+  it("credits via the ledger, stamps the reward paid (status-guarded), writes audit, inboxes referrer", async () => {
     rewardsToReturn = [
       {
         id: 42,
@@ -303,22 +335,27 @@ describe("GET /api/cron/referral-payouts", () => {
     expect(json.failed).toBe(0);
     expect(json.inboxed).toBe(1);
 
-    // Optimistic lock: update guarded by prior balance
-    expect(advisorUpdateCalls).toHaveLength(1);
-    expect(advisorUpdateCalls[0]).toMatchObject({
-      id: 99,
-      expectedPrior: 12500,
-      payload: { credit_balance_cents: 20000 },
+    // Credit routed through the ledger with the idempotent reference triple
+    // keyed to the reward id.
+    expect(ledgerCalls).toHaveLength(1);
+    expect(ledgerCalls[0]).toMatchObject({
+      professionalId: 99,
+      amountCents: 7500,
+      kind: "referral_payout",
+      referenceType: "referral_reward",
+      referenceId: "42",
+      createdBy: "cron:referral-payouts",
     });
 
-    // Reward marked paid with advisor reference
+    // Reward marked paid with the status='pending' guard (second .eq)
     const rewardUpdate = rewardUpdateCalls.find((c) => c.id === 42);
     expect(rewardUpdate?.payload.status).toBe("paid");
     expect(rewardUpdate?.payload.payout_method).toBe("credit_balance");
     expect(rewardUpdate?.payload.payout_reference).toBe("advisor_99");
     expect(rewardUpdate?.payload.paid_at).toEqual(expect.any(String));
+    expect(rewardUpdate?.statusGuard).toBe("pending");
 
-    // Audit row is shaped correctly
+    // Audit row shaped correctly (new balance = 12500 + 7500)
     expect(financialAuditCalls).toHaveLength(1);
     expect(financialAuditCalls[0]).toMatchObject({
       actorType: "cron",
@@ -340,7 +377,47 @@ describe("GET /api/cron/referral-payouts", () => {
     });
   });
 
-  it("marks failed when the optimistic lock loses — reward stays pending, no audit written", async () => {
+  it("IDEMPOTENT: a 2nd run after a mid-crash does NOT double-credit and writes no 2nd audit row", async () => {
+    // Scenario: a prior fire crashed AFTER crediting the ledger but BEFORE
+    // flipping the reward to 'paid'. The reward is still 'pending', so this
+    // run re-picks it. The ledger triple already exists → recordLedgerEntry
+    // returns idempotent:true and does NOT mutate the balance again.
+    rewardsToReturn = [
+      {
+        id: 42,
+        referral_code: "REFX",
+        referrer_email: "referrer@example.com",
+        referred_email: "new@example.com",
+        trigger_event: "first_deposit",
+        reward_cents: 7500,
+        payout_method: "credit_balance",
+      },
+    ];
+    advisorByEmail.set("referrer@example.com", {
+      id: 99,
+      credit_balance_cents: 20000, // already includes the prior credit
+    });
+    ledgerIdempotentForRefId.set("42", true); // triple already landed
+
+    const res = await GET(makeReq());
+    expect(res.status).toBe(200);
+
+    // Ledger was called once (idempotently) — the helper itself is the guard.
+    expect(ledgerCalls).toHaveLength(1);
+    expect(vi.mocked(recordLedgerEntry)).toHaveReturnedTimes(1);
+
+    // The reward is still flipped to paid (idempotently, status-guarded), but
+    // because the credit was idempotent NO second financial-audit row is
+    // written — we must not log a phantom second movement.
+    expect(financialAuditCalls).toHaveLength(0);
+
+    // The reward paid-flip still fired with the status guard.
+    const rewardUpdate = rewardUpdateCalls.find((c) => c.id === 42);
+    expect(rewardUpdate?.payload.status).toBe("paid");
+    expect(rewardUpdate?.statusGuard).toBe("pending");
+  });
+
+  it("marks failed when the ledger entry throws — reward stays pending, no audit, no inbox", async () => {
     rewardsToReturn = [
       {
         id: 7,
@@ -355,7 +432,7 @@ describe("GET /api/cron/referral-payouts", () => {
       id: 5,
       credit_balance_cents: 0,
     });
-    advisorUpdateErrorForId.set(5, { message: "stale row" });
+    ledgerThrowForRefId.set("7", "ledger insert failed");
 
     const res = await GET(makeReq());
     const json = await res.json();
@@ -389,6 +466,7 @@ describe("GET /api/cron/referral-payouts", () => {
     const json = await res.json();
     expect(json.paid).toBe(1);
     expect(json.manual).toBe(0);
+    expect(ledgerCalls).toHaveLength(1);
   });
 
   it("mixes outcomes across a batch (paid + rejected + manual)", async () => {
@@ -432,12 +510,13 @@ describe("GET /api/cron/referral-payouts", () => {
     expect(json.paid).toBe(1); // id 1 — credited successfully
     expect(json.failed).toBe(0);
 
-    // Exactly one advisor balance write
-    expect(advisorUpdateCalls).toHaveLength(1);
-    expect(advisorUpdateCalls[0]).toMatchObject({
-      id: 10,
-      expectedPrior: 0,
-      payload: { credit_balance_cents: 100 },
+    // Exactly one ledger credit (for the paid row)
+    expect(ledgerCalls).toHaveLength(1);
+    expect(ledgerCalls[0]).toMatchObject({
+      professionalId: 10,
+      amountCents: 100,
+      kind: "referral_payout",
+      referenceId: "1",
     });
 
     // One audit row for the paid credit

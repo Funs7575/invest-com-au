@@ -32,8 +32,15 @@ vi.mock("@/lib/url", () => ({
   getSiteUrl: () => "https://invest.com.au",
 }));
 
-// The route's local sendEmail is a fire-and-forget fetch; suppress it globally.
-vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(new Response("ok", { status: 200 }))));
+// enqueueJob mock — the durable email path. Returns a job id (truthy) by
+// default; tests flip it to null to simulate an enqueue failure.
+const { enqueueCalls, mockEnqueueJob } = vi.hoisted(() => ({
+  enqueueCalls: [] as { type: string; payload: Record<string, unknown> }[],
+  mockEnqueueJob: vi.fn(),
+}));
+vi.mock("@/lib/job-queue", () => ({
+  enqueueJob: mockEnqueueJob,
+}));
 
 // DB call queue — consumed in order.
 // Call sequence per invocation:
@@ -41,6 +48,7 @@ vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(new Response("ok", { status: 
 //   For each advisor:
 //     [N] from("professional_leads").select(..., {count}).eq().is().gte() → { count: N }
 //     [optionally] from("professionals").update(...).eq() → { error: null }
+//                  (warning paths only run this AFTER a successful enqueue)
 
 interface DbResult {
   data?: unknown;
@@ -50,15 +58,20 @@ interface DbResult {
 
 const dbQueue: DbResult[] = [];
 let dbIdx = 0;
+const updateCalls: { table: string; payload: Record<string, unknown> }[] = [];
 
-function makeChain(res: DbResult) {
+function makeChain(table: string, res: DbResult) {
   const chain: Record<string, unknown> = {};
   for (const m of [
-    "select", "update", "insert",
-    "eq", "neq", "lt", "lte", "gte", "is", "in", "not", "or", "order", "limit",
+    "select", "eq", "neq", "lt", "lte", "gte", "is", "in", "not", "or", "order", "limit",
   ]) {
     chain[m] = vi.fn(() => chain);
   }
+  chain.update = vi.fn((payload: Record<string, unknown>) => {
+    updateCalls.push({ table, payload });
+    return chain;
+  });
+  chain.insert = vi.fn(() => chain);
   const r = {
     data: "data" in res ? res.data : null,
     error: res.error ?? null,
@@ -71,7 +84,9 @@ function makeChain(res: DbResult) {
 
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({
-    from: vi.fn(() => makeChain(dbQueue[dbIdx++] ?? { data: null, error: null, count: 0 })),
+    from: vi.fn((table: string) =>
+      makeChain(table, dbQueue[dbIdx++] ?? { data: null, error: null, count: 0 }),
+    ),
   })),
 }));
 
@@ -112,6 +127,15 @@ describe("GET /api/cron/enforce-lead-sla", () => {
     vi.clearAllMocks();
     dbIdx = 0;
     dbQueue.length = 0;
+    updateCalls.length = 0;
+    enqueueCalls.length = 0;
+    mockEnqueueJob.mockReset();
+    mockEnqueueJob.mockImplementation(
+      async (type: string, payload: Record<string, unknown>) => {
+        enqueueCalls.push({ type, payload });
+        return 123; // job id → durable enqueue succeeded
+      },
+    );
     delete process.env.RESEND_API_KEY;
   });
 
@@ -163,10 +187,10 @@ describe("GET /api/cron/enforce-lead-sla", () => {
     expect(body.paused).toBe(0);
     // Only 2 from() calls (advisors + leads count, no update)
     expect(dbIdx).toBe(2);
+    expect(enqueueCalls).toHaveLength(0);
   });
 
-  it("sends warning-1 email and stamps pause_warning_sent_at when advisor has 3 unresponded and no prior warning", async () => {
-    process.env.RESEND_API_KEY = "re_test_key";
+  it("enqueues warning-1 durably and stamps pause_warning_sent_at when advisor has 3 unresponded and no prior warning", async () => {
     dbQueue.push({ data: [advisor({ pause_warning_sent_at: null })], error: null });
     dbQueue.push({ count: 3, error: null }); // leads count
     dbQueue.push({ error: null });             // update pause_warning_sent_at
@@ -176,11 +200,32 @@ describe("GET /api/cron/enforce-lead-sla", () => {
     expect(body.warned1).toBe(1);
     expect(body.warned2).toBe(0);
     expect(body.paused).toBe(0);
-    // fetch was called for the email
-    expect(vi.mocked(fetch)).toHaveBeenCalledWith(
-      "https://api.resend.com/emails",
-      expect.objectContaining({ method: "POST" }),
+    // Email enqueued durably (job_queue), NOT a raw fire-and-forget fetch.
+    expect(enqueueCalls).toHaveLength(1);
+    expect(enqueueCalls[0].type).toBe("send_email");
+    expect(enqueueCalls[0].payload.to).toBe("alice@example.com");
+    // The flag was stamped (enqueue succeeded).
+    expect(updateCalls.some((c) => c.table === "professionals" && "pause_warning_sent_at" in c.payload)).toBe(true);
+  });
+
+  it("EMAIL RETRY: a failed warning-1 enqueue leaves pause_warning_sent_at UNSET so the next run retries", async () => {
+    dbQueue.push({ data: [advisor({ pause_warning_sent_at: null })], error: null });
+    dbQueue.push({ count: 3, error: null });
+    // Enqueue fails (job_queue insert returned null).
+    mockEnqueueJob.mockImplementationOnce(
+      async (type: string, payload: Record<string, unknown>) => {
+        enqueueCalls.push({ type, payload });
+        return null;
+      },
     );
+    const res = await GET(makeReq());
+    const body = await res.json();
+    expect(body.warned1).toBe(0);
+    expect(body.failed).toBe(1);
+    // We attempted the enqueue …
+    expect(enqueueCalls).toHaveLength(1);
+    // … but the flag was NOT stamped, so the warning retries next run.
+    expect(updateCalls.some((c) => c.table === "professionals")).toBe(false);
   });
 
   it("skips warning-1 when advisor already has pause_warning_sent_at set", async () => {
@@ -192,12 +237,12 @@ describe("GET /api/cron/enforce-lead-sla", () => {
     const res = await GET(makeReq());
     const body = await res.json();
     expect(body.warned1).toBe(0);
-    // No update DB call
+    // No update DB call, no enqueue
     expect(dbIdx).toBe(2);
+    expect(enqueueCalls).toHaveLength(0);
   });
 
-  it("sends warning-2 and stamps when advisor has 5 unresponded and last warn was >24h ago", async () => {
-    process.env.RESEND_API_KEY = "re_test_key";
+  it("enqueues warning-2 and stamps when advisor has 5 unresponded and last warn was >24h ago", async () => {
     const lastWarnedAt = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(); // 25h ago
     dbQueue.push({
       data: [advisor({ pause_warning_sent_at: lastWarnedAt })],
@@ -209,6 +254,28 @@ describe("GET /api/cron/enforce-lead-sla", () => {
     const body = await res.json();
     expect(body.warned2).toBe(1);
     expect(body.paused).toBe(0);
+    expect(enqueueCalls).toHaveLength(1);
+    expect(updateCalls.some((c) => c.table === "professionals" && "pause_warning_sent_at" in c.payload)).toBe(true);
+  });
+
+  it("EMAIL RETRY: a failed warning-2 enqueue leaves the flag unchanged", async () => {
+    const lastWarnedAt = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
+    dbQueue.push({
+      data: [advisor({ pause_warning_sent_at: lastWarnedAt })],
+      error: null,
+    });
+    dbQueue.push({ count: 5, error: null });
+    mockEnqueueJob.mockImplementationOnce(
+      async (type: string, payload: Record<string, unknown>) => {
+        enqueueCalls.push({ type, payload });
+        return null;
+      },
+    );
+    const res = await GET(makeReq());
+    const body = await res.json();
+    expect(body.warned2).toBe(0);
+    expect(body.failed).toBe(1);
+    expect(updateCalls.some((c) => c.table === "professionals")).toBe(false);
   });
 
   it("skips warning-2 when last warn was <24h ago", async () => {
@@ -218,12 +285,12 @@ describe("GET /api/cron/enforce-lead-sla", () => {
     const res = await GET(makeReq());
     const body = await res.json();
     expect(body.warned2).toBe(0);
-    // No update call
+    // No update call, no enqueue
     expect(dbIdx).toBe(2);
+    expect(enqueueCalls).toHaveLength(0);
   });
 
-  it("auto-pauses advisor at 7+ unresponded leads (no prior auto_paused_at)", async () => {
-    process.env.RESEND_API_KEY = "re_test_key";
+  it("auto-pauses advisor at 7+ unresponded leads (no prior auto_paused_at), enqueues advisor + admin notices", async () => {
     dbQueue.push({ data: [advisor()], error: null });
     dbQueue.push({ count: 7, error: null });
     dbQueue.push({ error: null }); // update professionals (pause)
@@ -232,6 +299,13 @@ describe("GET /api/cron/enforce-lead-sla", () => {
     expect(body.paused).toBe(1);
     expect(body.warned1).toBe(0);
     expect(body.warned2).toBe(0);
+    // Pause landed (durable) + both notices enqueued (advisor + admin).
+    expect(updateCalls.some((c) => c.table === "professionals" && c.payload.status === "paused")).toBe(true);
+    expect(enqueueCalls).toHaveLength(2);
+    expect(enqueueCalls.map((c) => c.payload.to)).toEqual([
+      "alice@example.com",
+      "admin@invest.com.au",
+    ]);
   });
 
   it("does not re-pause an advisor that already has auto_paused_at set", async () => {
@@ -243,12 +317,12 @@ describe("GET /api/cron/enforce-lead-sla", () => {
     const res = await GET(makeReq());
     const body = await res.json();
     expect(body.paused).toBe(0);
-    // No update DB call
+    // No update DB call, no enqueue
     expect(dbIdx).toBe(2);
+    expect(enqueueCalls).toHaveLength(0);
   });
 
   it("unpauses advisor paused for SLA when unresponded count drops below 3", async () => {
-    process.env.RESEND_API_KEY = "re_test_key";
     dbQueue.push({
       data: [
         advisor({
@@ -265,6 +339,9 @@ describe("GET /api/cron/enforce-lead-sla", () => {
     const body = await res.json();
     expect(body.unpaused).toBe(1);
     expect(body.paused).toBe(0);
+    // Reinstatement persisted + courtesy email enqueued.
+    expect(updateCalls.some((c) => c.table === "professionals" && c.payload.status === "active")).toBe(true);
+    expect(enqueueCalls).toHaveLength(1);
   });
 
   it("increments failed when a per-advisor operation throws", async () => {
@@ -272,10 +349,6 @@ describe("GET /api/cron/enforce-lead-sla", () => {
     dbQueue.push({ data: [advisor()], error: null });
     // Next from() call will throw synchronously via makeChain error
     dbQueue.push({ data: null, error: { message: "unexpected throw" } });
-    // Simulate a throw by overriding this specific result — the route catches per-advisor errors
-    // We can verify the catch block fires by making the count chain throw via a TypeError
-    // The simplest approach: no dbQueue entry forces usage of fallback { count: 0 } which doesn't throw.
-    // Instead, check the catch block via a supabase from() throw.
     const res = await GET(makeReq());
     // Even with an error, the cron returns 200 with stats
     expect(res.status).toBe(200);
