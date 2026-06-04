@@ -23,12 +23,12 @@ const CARRY_FORWARD_BALANCE_THRESHOLD = 500_000;
 // formatPercent imported from lib/tracking; pass 1-decimal at call sites
 // where this calculator wants 1-decimal (e.g. tax-rate displays).
 
-/** Australian marginal income tax rate (FY2026, incl. 2% Medicare Levy) */
+/** Australian marginal income tax rate (ATO resident rates 2024-25, Stage 3, incl. 2% Medicare Levy) */
 function marginalRate(income: number): number {
   if (income <= 18_200) return 0;
-  if (income <= 45_000) return 0.19 + 0.02;
-  if (income <= 120_000) return 0.325 + 0.02;
-  if (income <= 180_000) return 0.37 + 0.02;
+  if (income <= 45_000) return 0.16 + 0.02;
+  if (income <= 135_000) return 0.30 + 0.02;
+  if (income <= 190_000) return 0.37 + 0.02;
   return 0.45 + 0.02;
 }
 

@@ -205,4 +205,5 @@ export function WaterfallBar({ label, value, width, color, valueColor }: {
    ────────────────────────────────────────────── */
 export const CORPORATE_TAX_RATE = 0.3;
 export const TRANSFER_FEE = 54;
-export const TAX_BRACKETS = [0, 19, 32.5, 37, 45];
+// ATO resident rates 2024-25 (Stage 3); in effect from 1 July 2024.
+export const TAX_BRACKETS = [0, 16, 30, 37, 45];

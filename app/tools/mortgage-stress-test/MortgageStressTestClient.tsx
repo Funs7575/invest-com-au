@@ -12,13 +12,13 @@ function monthlyRepayment(principal: number, annualRate: number, months: number)
   return (principal * r) / (1 - Math.pow(1 + r, -months));
 }
 
-/** FY2025-26 marginal tax rates excl. Medicare. */
+/** ATO resident rates 2024-25 (Stage 3), excl. Medicare. */
 function incomeTax(gross: number): number {
   if (gross <= 18_200) return 0;
-  if (gross <= 45_000) return (gross - 18_200) * 0.19;
-  if (gross <= 135_000) return 5_092 + (gross - 45_000) * 0.325;
-  if (gross <= 190_000) return 29_467 + (gross - 135_000) * 0.37;
-  return 51_667 + (gross - 190_000) * 0.45;
+  if (gross <= 45_000) return (gross - 18_200) * 0.16;
+  if (gross <= 135_000) return 4_288 + (gross - 45_000) * 0.30;
+  if (gross <= 190_000) return 31_288 + (gross - 135_000) * 0.37;
+  return 51_638 + (gross - 190_000) * 0.45;
 }
 
 function netMonthly(grossAnnual: number): number {

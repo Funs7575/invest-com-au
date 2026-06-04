@@ -8,7 +8,8 @@ import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 const TAX_RATES: Array<{ id: string; label: string; rate: number; isSmsf?: boolean; pension?: boolean }> = [
   { id: "0",        label: "0% — under threshold",   rate: 0 },
-  { id: "19",       label: "19% — $18,201–$45,000",  rate: 0.19 },
+  // ATO resident rates 2024-25 (Stage 3)
+  { id: "16",       label: "16% — $18,201–$45,000",  rate: 0.16 },
   { id: "30",       label: "30% — $45,001–$135,000", rate: 0.30 },
   { id: "37",       label: "37% — $135,001–$190,000", rate: 0.37 },
   { id: "45",       label: "45% — over $190,000",    rate: 0.45 },

@@ -11,10 +11,11 @@ interface Props {
   searchParams: URLSearchParams;
 }
 
+// ATO resident rates 2024-25 (Stage 3)
 const BRACKETS = [
   { label: "0%", value: 0 },
-  { label: "19%", value: 19 },
-  { label: "32.5%", value: 32.5 },
+  { label: "16%", value: 16 },
+  { label: "30%", value: 30 },
   { label: "37%", value: 37 },
   { label: "45%", value: 45 },
 ];
@@ -26,7 +27,7 @@ function fmt(n: number) {
 export default function TaxOptimizerQuickView({ searchParams }: Props) {
   const [gain, setGain] = useState(() => getParam(searchParams, "tax_g") || "10000");
   const [days, setDays] = useState(() => getParam(searchParams, "tax_d") || "400");
-  const [bracket, setBracket] = useState(() => getParam(searchParams, "tax_b") || "32.5");
+  const [bracket, setBracket] = useState(() => getParam(searchParams, "tax_b") || "30");
 
   useUrlSync({ calc: "tax-optimizer", tax_g: gain, tax_d: days, tax_b: bracket });
 

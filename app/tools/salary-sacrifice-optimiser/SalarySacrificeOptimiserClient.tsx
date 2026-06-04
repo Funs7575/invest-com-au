@@ -10,12 +10,13 @@ const SG_RATE = 0.115;
 const CONCESSIONAL_CAP = 30_000;
 const DIV293_THRESHOLD = 250_000;
 
+// ATO resident rates 2024-25 (Stage 3)
 function incomeTax(gross: number): number {
   if (gross <= 18_200) return 0;
-  if (gross <= 45_000) return (gross - 18_200) * 0.19;
-  if (gross <= 135_000) return 5_092 + (gross - 45_000) * 0.325;
-  if (gross <= 190_000) return 29_467 + (gross - 135_000) * 0.37;
-  return 51_667 + (gross - 190_000) * 0.45;
+  if (gross <= 45_000) return (gross - 18_200) * 0.16;
+  if (gross <= 135_000) return 4_288 + (gross - 45_000) * 0.30;
+  if (gross <= 190_000) return 31_288 + (gross - 135_000) * 0.37;
+  return 51_638 + (gross - 190_000) * 0.45;
 }
 
 function medicare(gross: number): number {
@@ -26,8 +27,8 @@ function medicare(gross: number): number {
 
 function marginalRateOf(gross: number): number {
   if (gross <= 18_200) return 0;
-  if (gross <= 45_000) return 0.19;
-  if (gross <= 135_000) return 0.325;
+  if (gross <= 45_000) return 0.16;
+  if (gross <= 135_000) return 0.30;
   if (gross <= 190_000) return 0.37;
   return 0.45;
 }

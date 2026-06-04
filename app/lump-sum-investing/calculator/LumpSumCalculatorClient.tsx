@@ -5,10 +5,11 @@ import HubLeadForm from "@/components/leads/HubLeadForm";
 import { formatAUD } from "@/lib/currency";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
 
+// ATO resident rates 2024-25 (Stage 3)
 const TAX_OPTIONS = [
   { id: "none",   label: "No tax (super pension)",  rate: 0 },
   { id: "smsf",   label: "SMSF accumulation (15%)", rate: 0.15 },
-  { id: "32.5",   label: "32.5% marginal",          rate: 0.325 },
+  { id: "30",     label: "30% marginal",            rate: 0.30 },
   { id: "37",     label: "37% marginal",            rate: 0.37 },
   { id: "45",     label: "45% marginal",            rate: 0.45 },
 ];
@@ -38,7 +39,7 @@ export default function LumpSumCalculatorClient() {
   const [monthly, setMonthly] = useState<number>(0);
   const [returnRate, setReturnRate] = useState<number>(7);
   const [years, setYears] = useState<number>(15);
-  const [taxId, setTaxId] = useState<string>("32.5");
+  const [taxId, setTaxId] = useState<string>("30");
 
   const {
     value: persistedInputs,
@@ -55,7 +56,7 @@ export default function LumpSumCalculatorClient() {
     monthly: 0,
     return_rate: 7,
     years: 15,
-    tax_id: "32.5",
+    tax_id: "30",
   });
 
   useEffect(() => {

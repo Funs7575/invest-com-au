@@ -9,11 +9,11 @@ import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 const MAX_PER_YEAR = 15_000;
 const MAX_TOTAL = 50_000;
 
-/** FY2025-26 marginal rates (excl. Medicare). */
+/** ATO resident rates 2024-25 (Stage 3), excl. Medicare. */
 function marginalRate(income: number): number {
   if (income <= 18_200) return 0;
-  if (income <= 45_000) return 0.19;
-  if (income <= 135_000) return 0.325;
+  if (income <= 45_000) return 0.16;
+  if (income <= 135_000) return 0.30;
   if (income <= 190_000) return 0.37;
   return 0.45;
 }
@@ -98,10 +98,11 @@ function fmt(n: number): string {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
+// ATO resident rates 2024-25 (Stage 3)
 const INCOME_OPTIONS = [
   { label: "Under $18,200", value: 18_200, rate: "0%" },
-  { label: "$18,200 – $45,000", value: 40_000, rate: "19%" },
-  { label: "$45,001 – $135,000", value: 90_000, rate: "32.5%" },
+  { label: "$18,200 – $45,000", value: 40_000, rate: "16%" },
+  { label: "$45,001 – $135,000", value: 90_000, rate: "30%" },
   { label: "$135,001 – $190,000", value: 160_000, rate: "37%" },
   { label: "Over $190,000", value: 200_000, rate: "45%" },
 ];
