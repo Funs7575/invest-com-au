@@ -135,15 +135,34 @@ describe("POST /api/webhooks/resend", () => {
     expect(mockAdminFrom).toHaveBeenCalledWith("email_captures");
   });
 
-  it("uses email_id as fallback when to[] is absent", async () => {
+  it("does not run suppression UPDATEs when to[] is absent (email_id is a UUID, never an address)", async () => {
+    // Resend sends data.email_id as the sent-message UUID, not an email.
+    // When to[] is missing we must NOT fall back to it and key a query on it.
     const res = await POST(
       makePost({
         type: "email.bounced",
-        data: { email_id: "norecipient@test.com" },
+        data: {
+          email_id: "56761188-7520-42d8-8898-ff6fc54ce618",
+          bounce: { message: "user unknown" },
+        },
       })
     );
     expect(res.status).toBe(200);
-    expect(mockAdminFrom).toHaveBeenCalledWith("email_captures");
+    const json = await res.json();
+    expect(json.received).toBe(true);
+    // No DB suppression should be attempted on any table.
+    expect(mockAdminFrom).not.toHaveBeenCalled();
+  });
+
+  it("does not run suppression UPDATEs when to[] is empty", async () => {
+    const res = await POST(
+      makePost({
+        type: "email.complained",
+        data: { to: [], complaint: { type: "abuse" } },
+      })
+    );
+    expect(res.status).toBe(200);
+    expect(mockAdminFrom).not.toHaveBeenCalled();
   });
 
   it("handles email.delivery_delayed without DB writes", async () => {
