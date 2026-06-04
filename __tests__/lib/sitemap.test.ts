@@ -401,7 +401,7 @@ describe("union of all shards", () => {
     expect(urls.length).toBe(urlSet.size);
   });
 
-  it("covers all expected category shards (0-7 all return entries or empty for DB-driven)", async () => {
+  it("covers all expected category shards (0-8 all return entries or empty for DB-driven)", async () => {
     const shardIds = generateSitemaps().map((s) => s.id);
     const results = await Promise.all(
       shardIds.map(async (id) => ({ id, count: (await sitemap({ id })).length })),
