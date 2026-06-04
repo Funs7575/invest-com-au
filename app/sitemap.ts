@@ -31,6 +31,7 @@ export const revalidate = 86400;
 // 5  glossary + how-to + invest-categories + marketplace
 // 6  property + suburb guides + investing-cities
 // 7  misc (authors, reviewers, quotes, newsletter, grants, investingFor, events, afsl, feed)
+// 8  community thread pages (/community/[category]/[threadId])
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function generateSitemaps() {
@@ -43,6 +44,7 @@ export function generateSitemaps() {
     { id: 5 },
     { id: 6 },
     { id: 7 },
+    { id: 8 },
   ];
 }
 
@@ -915,9 +917,6 @@ async function buildShard5(): Promise<MetadataRoute.Sitemap> {
 
   // ── /topic hub + /topic/[slug] content-category pages ──
   // Slugs sourced from TOPIC_LABELS in app/topic/[slug]/page.tsx — no DB query needed.
-  // TODO: community thread pages (/community/[slug]/[threadId]) are DB-backed;
-  //       add a dedicated shard (e.g. shard 8) with a Supabase query against the
-  //       community_threads table (published, indexed=true) once the table is stable.
   const TOPIC_SLUGS = [
     "tax", "beginners", "smsf", "strategy", "news", "reviews",
     "crypto", "etfs", "robo-advisors", "research-tools", "super",
@@ -1215,6 +1214,25 @@ async function buildShard7(): Promise<MetadataRoute.Sitemap> {
   ];
 }
 
+async function buildShard8(): Promise<MetadataRoute.Sitemap> {
+  const base = baseUrl();
+  const supabase = await getSupabase();
+
+  const { data: threads } = supabase
+    ? await supabase
+        .from("forum_threads")
+        .select("id, category_slug, updated_at")
+        .eq("is_removed", false)
+    : { data: null };
+
+  return (threads || []).map((t: { id: number; category_slug: string; updated_at: string | null }) => ({
+    url: `${base}/community/${t.category_slug}/${t.id}`,
+    lastModified: t.updated_at ? new Date(t.updated_at) : new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.5,
+  }));
+}
+
 // ─── Main export ──────────────────────────────────────────────────────────────
 // Next.js calls `sitemap({ id })` for each ID returned by `generateSitemaps`.
 // It automatically builds a sitemap index at `/sitemap.xml` that references
@@ -1239,6 +1257,7 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     case 5: return buildShard5();
     case 6: return buildShard6();
     case 7: return buildShard7();
+    case 8: return buildShard8();
     default:
       // Never fail silently again: an unrecognised id means empty sitemaps.
       log.warn("sitemap: unrecognised shard id — serving empty urlset", { id, shard });
