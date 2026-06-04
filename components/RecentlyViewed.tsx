@@ -54,7 +54,7 @@ export default function RecentlyViewed({ currentSlug }: { currentSlug?: string }
             </div>
             <div className="min-w-0">
               <div className="text-xs font-bold text-slate-900 truncate">{item.name}</div>
-              <div className="text-[0.56rem] text-amber-500">{renderStars(item.rating)} {item.rating}</div>
+              <div className="text-[0.56rem] text-amber-700">{renderStars(item.rating)} {item.rating}</div>
             </div>
           </Link>
         ))}

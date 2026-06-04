@@ -702,7 +702,7 @@ export default function SuperDeathBenefitPage() {
       {/* ── Compliance footer ────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
-          <p className="text-xs text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
         </div>
       </section>
     </div>

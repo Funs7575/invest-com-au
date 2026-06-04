@@ -447,7 +447,7 @@ export default function BuyUSSharesFromAustraliaPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {STEPS.map((step) => (
               <div key={step.n} className="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col">
-                <div className="text-2xl font-black text-amber-300 leading-none mb-2">{step.n}</div>
+                <div className="text-2xl font-black text-amber-700 leading-none mb-2">{step.n}</div>
                 <p className="text-sm font-extrabold text-slate-900 mb-2">{step.title}</p>
                 <p className="text-xs text-slate-600 leading-relaxed">{step.body}</p>
               </div>

@@ -205,7 +205,7 @@ export default async function HowToGuidePage({
           </div>
 
           {/* Disclosure */}
-          <p className="text-[0.6rem] md:text-xs text-slate-400 mb-6 md:mb-8">
+          <p className="text-[0.6rem] md:text-xs text-slate-500 mb-6 md:mb-8">
             {ADVERTISER_DISCLOSURE_SHORT}
           </p>
 
@@ -270,7 +270,7 @@ export default async function HowToGuidePage({
                                 </span>
                               )}
                             </div>
-                            <p className="text-[0.6rem] md:text-xs text-slate-400 truncate">
+                            <p className="text-[0.6rem] md:text-xs text-slate-500 truncate">
                               {broker.asx_fee
                                 ? `ASX: ${broker.asx_fee}`
                                 : PLATFORM_TYPE_LABELS[broker.platform_type]}
@@ -289,7 +289,7 @@ export default async function HowToGuidePage({
                         </div>
                       ))}
                     </div>
-                    <p className="text-[0.62rem] md:text-xs text-slate-400 mt-2 md:mt-3">
+                    <p className="text-[0.62rem] md:text-xs text-slate-500 mt-2 md:mt-3">
                       {ADVERTISER_DISCLOSURE_SHORT}
                     </p>
                   </div>

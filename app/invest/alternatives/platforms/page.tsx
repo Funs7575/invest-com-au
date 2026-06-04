@@ -311,7 +311,7 @@ export default function AlternativesPlatformsPage() {
               minimum investment, asset class coverage, and direct accessibility for Australian investors.
               Updated {CURRENT_MONTH_YEAR}.
             </p>
-            <p className="text-[0.56rem] md:text-xs text-slate-400">{ADVERTISER_DISCLOSURE_SHORT}</p>
+            <p className="text-[0.56rem] md:text-xs text-slate-500">{ADVERTISER_DISCLOSURE_SHORT}</p>
           </div>
 
           {/* Stats strip from vertical config */}
@@ -343,7 +343,7 @@ export default function AlternativesPlatformsPage() {
             </details>
           </div>
 
-          <p className="text-[0.58rem] text-slate-400 leading-relaxed mb-3">
+          <p className="text-[0.58rem] text-slate-500 leading-relaxed mb-3">
             {PDS_CONSIDERATION} {FSG_NOTE} {AFCA_REFERENCE}
           </p>
 

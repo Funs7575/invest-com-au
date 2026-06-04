@@ -221,7 +221,7 @@ export default async function CityInvestingPage({
               </div>
             </div>
 
-            <p className="text-[0.56rem] md:text-xs text-slate-400 mt-3">
+            <p className="text-[0.56rem] md:text-xs text-slate-500 mt-3">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>
@@ -352,7 +352,7 @@ export default async function CityInvestingPage({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-center">
-                      <span className="text-amber">
+                      <span className="text-amber-600">
                         {renderStars(broker.rating || 0)}
                       </span>
                       <span className="text-sm text-slate-500 ml-1">

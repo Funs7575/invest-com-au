@@ -363,7 +363,7 @@ export default function StateGrantsCalculatorClient() {
         </div>
       </section>
 
-      <p className="text-xs text-slate-400 leading-relaxed">
+      <p className="text-xs text-slate-500 leading-relaxed">
         {GENERAL_ADVICE_WARNING} Stamp duty figures are progressive in
         practice — this calculator uses a single mid-band rate to give a
         planning estimate. Always confirm the exact amount against your

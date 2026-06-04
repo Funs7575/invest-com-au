@@ -167,7 +167,7 @@ export default async function InvestSubcategoryListingsPage({
               {sub.h1}
             </h1>
             <p className="text-xs md:text-base text-slate-600 mb-2">{sub.intro}</p>
-            <p className="text-[0.56rem] md:text-xs text-slate-400">
+            <p className="text-[0.56rem] md:text-xs text-slate-500">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>

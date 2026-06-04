@@ -356,7 +356,7 @@ export default function DaspCalculatorClient() {
 
       {/* Disclaimer */}
       <div className="mt-8 pt-6 border-t border-slate-200">
-        <p className="text-xs text-slate-400 leading-relaxed">
+        <p className="text-xs text-slate-500 leading-relaxed">
           {GENERAL_ADVICE_WARNING}
         </p>
         <p className="text-xs text-slate-400 leading-relaxed mt-2">

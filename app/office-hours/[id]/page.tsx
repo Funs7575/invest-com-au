@@ -266,7 +266,7 @@ export default async function OfficeHoursSessionPage({
       </section>
 
       <footer className="mt-10 pt-4 border-t border-slate-200">
-        <p className="text-[11px] text-slate-400 leading-relaxed">
+        <p className="text-[11px] text-slate-500 leading-relaxed">
           <strong className="text-slate-500">General Advice Warning:</strong>{" "}
           {GENERAL_ADVICE_WARNING}
         </p>

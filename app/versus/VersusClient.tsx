@@ -468,7 +468,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                         <div key={br.slug} className={`px-2 py-2.5 md:px-4 md:py-4 text-center ${isWinner ? 'bg-emerald-50/50' : 'bg-slate-50'}`}>
                           <BrokerLogo broker={br} size="md" className="mx-auto mb-1 md:mb-2" />
                           <div className="font-bold text-[0.69rem] md:text-sm">{br.name}</div>
-                          {isWinner && <div className="text-[0.56rem] md:text-[0.69rem] font-extrabold text-emerald-600 uppercase tracking-wider mt-0.5">Winner</div>}
+                          {isWinner && <div className="text-[0.56rem] md:text-[0.69rem] font-extrabold text-emerald-700 uppercase tracking-wider mt-0.5">Winner</div>}
                         </div>
                       );
                     })}

@@ -420,7 +420,7 @@ export default async function FeeTrackerPage() {
               system recording it. Always verify current fees directly with the broker before executing trades.{" "}
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
-            <p className="text-xs text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+            <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
           </div>
         </div>
       </section>

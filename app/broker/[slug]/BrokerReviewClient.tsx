@@ -300,7 +300,7 @@ export default function BrokerReviewClient({
               <h1 className="text-xl md:text-3xl font-extrabold leading-tight text-slate-900">{b.name} Review ({CURRENT_YEAR})</h1>
               <p className="text-slate-500 mt-0.5 md:mt-1 text-xs md:text-base">{b.tagline}</p>
               <div className="flex items-center gap-2 md:gap-3 flex-wrap mt-2">
-                <span className="text-amber-400 text-sm">{renderStars(b.rating || 0)}</span>
+                <span className="text-amber-600 text-sm">{renderStars(b.rating || 0)}</span>
                 <span className="text-sm font-bold text-slate-700">{b.rating}/5</span>
                 {b.chess_sponsored && (
                   <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">CHESS</span>
@@ -323,12 +323,12 @@ export default function BrokerReviewClient({
           </a>
           <BrokerReliabilityScore brokerId={b.id} brokerName={b.name} />
         </div>
-        <p className="text-xs text-slate-400 mb-1">
+        <p className="text-xs text-slate-500 mb-1">
           {ADVERTISER_DISCLOSURE_SHORT}
         </p>
-        <p className="text-xs text-slate-400 mb-3">
+        <p className="text-xs text-slate-500 mb-3">
           {PDS_CONSIDERATION}{" "}
-          <a href="#important-info" className="text-blue-700 hover:underline">
+          <a href="#important-info" className="text-blue-700 underline">
             Important information, fees &amp; exit policy →
           </a>
         </p>
@@ -584,16 +584,16 @@ export default function BrokerReviewClient({
               </strong>
             </span>
             {b.fee_source_url && (
-              <a href={b.fee_source_url} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline">
+              <a href={b.fee_source_url} target="_blank" rel="noopener noreferrer" className="text-blue-700 underline">
                 Pricing page ↗
               </a>
             )}
             {b.fee_source_tcs_url && (
-              <a href={b.fee_source_tcs_url} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline">
+              <a href={b.fee_source_tcs_url} target="_blank" rel="noopener noreferrer" className="text-blue-700 underline">
                 Terms &amp; Conditions ↗
               </a>
             )}
-            <Link href="/how-we-verify" className="text-blue-700 hover:underline">
+            <Link href="/how-we-verify" className="text-blue-700 underline">
               How we verify fees
             </Link>
             {b.fee_last_checked && (
@@ -625,7 +625,7 @@ export default function BrokerReviewClient({
           <div className="mt-3 pt-3 border-t border-slate-200">
             <p className="text-xs text-slate-400 leading-relaxed">
               <strong className="text-slate-500">Editorial independence:</strong> Our ratings and rankings are determined by our editorial team using a standardised methodology. Affiliate partnerships may influence which platforms we review but never our ratings or recommendations.{" "}
-              <Link href="/how-we-verify" className="text-blue-700 hover:underline">Read our full methodology →</Link>
+              <Link href="/how-we-verify" className="text-blue-700 underline">Read our full methodology →</Link>
             </p>
           </div>
         </div>
@@ -654,7 +654,7 @@ export default function BrokerReviewClient({
           </div>
           <p className="text-xs text-slate-400 mt-3 text-center">
             Estimates based on published fee schedule. Actual costs may vary.{' '}
-            <Link href="/calculators" className="text-blue-700 hover:underline">Try our full calculators →</Link>
+            <Link href="/calculators" className="text-blue-700 underline">Try our full calculators →</Link>
           </p>
         </div>
 
@@ -780,7 +780,7 @@ export default function BrokerReviewClient({
                   <span className="text-slate-400 mt-0.5">•</span>
                   <span>
                     No cooling-off period applies to brokerage accounts in Australia. Once you open an account and place a trade, standard terms apply.{" "}
-                    <Link href="/switch" className="text-blue-700 hover:underline">Use our switch planner →</Link>
+                    <Link href="/switch" className="text-blue-700 underline">Use our switch planner →</Link>
                   </span>
                 </li>
               </ul>
@@ -1059,7 +1059,7 @@ export default function BrokerReviewClient({
                     <BrokerLogo broker={s} size="md" />
                   </div>
                   <h3 className="font-bold text-xs md:text-sm">{s.name}</h3>
-                  <div className="text-[0.62rem] md:text-xs text-amber">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></div>
+                  <div className="text-[0.62rem] md:text-xs text-amber-600">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></div>
                   <div className="text-[0.58rem] md:text-xs text-slate-500 mt-0.5 md:mt-1">{s.asx_fee} · {s.chess_sponsored ? 'CHESS' : 'Custodial'}</div>
                   <span className="inline-block mt-1.5 md:mt-2 text-[0.62rem] md:text-xs px-2 py-0.5 md:px-3 md:py-1 bg-slate-900 text-white rounded-md font-semibold">vs {b.name} →</span>
                 </Link>

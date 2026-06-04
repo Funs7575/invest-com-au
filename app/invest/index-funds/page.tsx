@@ -1455,7 +1455,7 @@ export default async function IndexFundsPage() {
       {/* ── Compliance footer ────────────────────────────────────── */}
       <section className="py-8 bg-white border-t border-slate-100">
         <div className="container-custom max-w-4xl">
-          <p className="text-xs text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+          <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
         </div>
       </section>
     </div>

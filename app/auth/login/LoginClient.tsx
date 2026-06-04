@@ -172,7 +172,7 @@ export default function LoginClient() {
               We sent a magic link to <span className="font-semibold text-slate-900">{email}</span>.
               Click the link in the email to sign in.
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Didn&apos;t receive it? Check your spam folder or{" "}
               <button
                 onClick={() => { setSent(false); setError(""); }}
@@ -203,7 +203,7 @@ export default function LoginClient() {
               We sent a password reset link to <span className="font-semibold text-slate-900">{email}</span>.
               Click the link in the email to reset your password.
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Didn&apos;t receive it? Check your spam folder or{" "}
               <button
                 onClick={() => { setResetSent(false); setError(""); }}
@@ -368,7 +368,7 @@ export default function LoginClient() {
                 Create one
               </Link>
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               By signing in, you agree to our{" "}
               <Link href="/terms" className="text-slate-700 hover:underline">Terms</Link>
               {" "}and{" "}

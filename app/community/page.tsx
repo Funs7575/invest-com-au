@@ -80,7 +80,7 @@ export default async function CommunityPage() {
           </p>
           <Link
             href="/community/new"
-            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
           >
             <Icon name="plus" size={18} />
             New Thread

@@ -171,14 +171,14 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
               className="w-full text-left px-3 py-2 hover:bg-amber-50 text-sm text-slate-700 flex items-center justify-between"
             >
               <span>{p.locality}, {p.state}</span>
-              <span className="text-xs text-slate-400">{p.postcode}</span>
+              <span className="text-xs text-slate-500">{p.postcode}</span>
             </button>
           ))}
         </div>
       )}
       {open && results.length === 0 && query.length >= 2 && (
         <div className="absolute z-50 top-full mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg p-3">
-          <p className="text-xs text-slate-400">No locations found</p>
+          <p className="text-xs text-slate-500">No locations found</p>
         </div>
       )}
     </div>
@@ -809,7 +809,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-semibold disabled:opacity-40 transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
                       <Icon name={f.icon} size={11} />
                       {f.label}
-                      <span className="font-mono text-[10px] text-slate-400">{count}</span>
+                      <span className="font-mono text-[10px] text-slate-500">{count}</span>
                     </button>
                   );
                 })}
@@ -832,7 +832,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     <button key={s} type="button" disabled={count === 0 && !selected} onClick={() => { setStateFilter(selected ? "all" : s); setOpenPill(null); }}
                       className={`py-2 rounded-lg border text-xs font-bold disabled:opacity-40 transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
                       {s}
-                      <span className="block text-[9px] font-mono text-slate-400">{count}</span>
+                      <span className="block text-[9px] font-mono text-slate-500">{count}</span>
                     </button>
                   );
                 })}
@@ -990,7 +990,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {/* Result count — canonical primitive */}
         <div className="flex items-center justify-between mb-3 md:mb-4">
           {nearbyLoading ? (
-            <span className="text-sm text-slate-400">Searching nearby advisors…</span>
+            <span className="text-sm text-slate-500">Searching nearby advisors…</span>
           ) : (
             <ResultCount
               total={feed.length}
@@ -1002,7 +1002,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               })()}
             />
           )}
-          {totalPages > 1 && <p className="text-[0.62rem] md:text-xs text-slate-400">Page {page} of {totalPages}</p>}
+          {totalPages > 1 && <p className="text-[0.62rem] md:text-xs text-slate-500">Page {page} of {totalPages}</p>}
         </div>
 
         {/* Firm sub-filter — narrows individual results to one firm.
@@ -1032,7 +1032,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     {firm.name.split(/\s+/).slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()}
                   </span>
                   {firm.name}
-                  <span className={`text-[0.6rem] ${firmFilter === firm.name ? "text-slate-300" : "text-slate-400"}`}>({firmMemberCounts[firm.id] || 0})</span>
+                  <span className={`text-[0.6rem] ${firmFilter === firm.name ? "text-slate-300" : "text-slate-500"}`}>({firmMemberCounts[firm.id] || 0})</span>
                 </button>
               ))}
             </div>
@@ -1120,7 +1120,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                         <p className="text-[0.7rem] md:text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">{firm.bio}</p>
                       )}
                       <div className="mt-auto pt-3 flex items-center justify-between border-t border-slate-100">
-                        <span className="text-[0.62rem] text-slate-400">{item.memberCount} advisor{item.memberCount === 1 ? "" : "s"}</span>
+                        <span className="text-[0.62rem] text-slate-500">{item.memberCount} advisor{item.memberCount === 1 ? "" : "s"}</span>
                         <span className="inline-flex items-center gap-1 text-xs font-bold text-blue-700 group-hover:text-blue-800">
                           View firm
                           <Icon name="arrow-right" size={11} />
@@ -1328,7 +1328,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                           }`}>{s}</span>
                         ))}
                         {pro.specialties.length > 3 && (
-                          <span className="text-[0.6rem] text-slate-400 self-center">+{pro.specialties.length - 3}</span>
+                          <span className="text-[0.6rem] text-slate-500 self-center">+{pro.specialties.length - 3}</span>
                         )}
                       </div>
                     )}
@@ -1336,13 +1336,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     {/* Fees + Availability stat grid */}
                     <div className="grid grid-cols-2 gap-2 mt-3">
                       <div className="rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1.5">
-                        <div className="iv2-mini text-[0.55rem] text-slate-400">Fees</div>
+                        <div className="iv2-mini text-[0.55rem] text-slate-500">Fees</div>
                         <div className="text-[0.68rem] font-bold text-slate-800 truncate" title={feeText}>{feeText}</div>
                       </div>
                       <div className="rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1.5">
-                        <div className="iv2-mini text-[0.55rem] text-slate-400">Availability</div>
+                        <div className="iv2-mini text-[0.55rem] text-slate-500">Availability</div>
                         <div className={`text-[0.68rem] font-bold flex items-center gap-1 ${
-                          availability === "open" ? "text-emerald-600" : availability === "waitlist" ? "text-amber-600" : "text-red-600"
+                          availability === "open" ? "text-emerald-700" : availability === "waitlist" ? "text-amber-700" : "text-red-600"
                         }`}>
                           <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                             availability === "open" ? "bg-emerald-500" : availability === "waitlist" ? "bg-amber-500" : "bg-red-500"
@@ -1362,7 +1362,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
                     {/* Footer: AFSL + View profile CTA */}
                     <div className="mt-auto pt-3 flex items-center justify-between gap-2 border-t border-slate-100">
-                      <span className="text-[0.6rem] text-slate-400 truncate">
+                      <span className="text-[0.6rem] text-slate-500 truncate">
                         {pro.afsl_number ? `AFSL ${pro.afsl_number}` : " "}
                       </span>
                       <span className="shrink-0 inline-flex items-center gap-1 rounded-lg bg-coral-600 px-3 py-1.5 text-[0.7rem] font-bold text-white whitespace-nowrap shadow-sm transition-colors group-hover:bg-coral-700">
@@ -1583,7 +1583,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           </div>
         </div>
 
-        <div className="mt-4 md:mt-6 text-[0.58rem] md:text-xs text-slate-400 text-center leading-relaxed">
+        <div className="mt-4 md:mt-6 text-[0.58rem] md:text-xs text-slate-500 text-center leading-relaxed">
           <p>All advisors listed are verified against the ASIC Financial Advisers Register or Tax Practitioners Board. Invest.com.au does not provide financial advice. Selecting an advisor is your decision &mdash; we facilitate the connection only.</p>
         </div>
       </div>

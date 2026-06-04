@@ -275,7 +275,7 @@ export default function AlternativesPlatformsClient({ platforms }: Props) {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="text-amber-500 text-sm">{renderStars(p.rating)}</span>
+                      <span className="text-amber-600 text-sm">{renderStars(p.rating)}</span>
                       <span className="text-xs text-slate-500 ml-1">{p.rating}</span>
                     </td>
                   </tr>
@@ -294,10 +294,10 @@ export default function AlternativesPlatformsClient({ platforms }: Props) {
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-400">#{i + 1}</span>
+                    <span className="text-xs font-bold text-slate-500">#{i + 1}</span>
                     <span className="font-bold text-slate-900">{p.name}</span>
                   </div>
-                  <span className="text-xs text-amber-500">
+                  <span className="text-xs text-amber-700">
                     {renderStars(p.rating)} {p.rating}
                   </span>
                 </div>
@@ -355,7 +355,7 @@ export default function AlternativesPlatformsClient({ platforms }: Props) {
                       >
                         {p.australiaAccess}
                       </span>
-                      <span className="text-sm text-amber-500">
+                      <span className="text-sm text-amber-700">
                         {renderStars(p.rating)} {p.rating}/5
                       </span>
                     </div>

@@ -245,7 +245,7 @@ export default function WealthStackClient() {
           Start over with different answers
         </button>
 
-        <p className="text-[0.65rem] text-slate-400">
+        <p className="text-[0.65rem] text-slate-500">
           {GENERAL_ADVICE_WARNING} Stack ID: <code>{stack.stackId}</code>
         </p>
       </div>

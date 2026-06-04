@@ -207,7 +207,7 @@ export default function AlternativesGuidesPage() {
               cover everything from getting started to SMSF rules, CGT treatment, and platform
               comparisons. Updated {CURRENT_MONTH_YEAR}.
             </p>
-            <p className="text-[0.56rem] md:text-xs text-slate-400">
+            <p className="text-[0.56rem] md:text-xs text-slate-500">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>
@@ -229,7 +229,7 @@ export default function AlternativesGuidesPage() {
             </details>
           </div>
 
-          <p className="text-[0.58rem] text-slate-400 leading-relaxed mb-3">
+          <p className="text-[0.58rem] text-slate-500 leading-relaxed mb-3">
             {PDS_CONSIDERATION} {FSG_NOTE} {AFCA_REFERENCE}
           </p>
 

@@ -47,7 +47,7 @@ export default function EtfOverlapPage() {
 
       <EtfOverlapDetector />
 
-      <p className="text-[11px] text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+      <p className="text-[11px] text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
       </div>
     </>
   );

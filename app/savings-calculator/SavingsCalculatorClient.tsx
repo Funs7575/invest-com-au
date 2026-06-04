@@ -248,7 +248,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                     <div className="text-right">
                       <div className="text-sm font-bold text-slate-900">{formatCurrency(account.annualInterest)}/yr</div>
                       {account.extraEarnings > 0 && (
-                        <div className="text-[0.56rem] font-bold text-emerald-600">+{formatCurrency(account.extraEarnings)} more</div>
+                        <div className="text-[0.56rem] font-bold text-emerald-700">+{formatCurrency(account.extraEarnings)} more</div>
                       )}
                       {account.extraEarnings < 0 && (
                         <div className="text-[0.56rem] font-bold text-red-500">{formatCurrency(account.extraEarnings)} less</div>

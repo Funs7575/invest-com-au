@@ -177,9 +177,9 @@ function VoteButtons({
       <span
         className={`text-xs font-semibold min-w-[20px] text-center ${
           vote === "up"
-            ? "text-emerald-600"
+            ? "text-emerald-700"
             : vote === "down"
-            ? "text-red-500"
+            ? "text-red-600"
             : "text-slate-500"
         }`}
       >
@@ -629,7 +629,7 @@ export default function ThreadClient({
               replyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
               setTimeout(() => replyRef.current?.focus(), 350);
             }}
-            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl transition-colors text-sm"
+            className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-4 py-2 rounded-xl transition-colors text-sm"
           >
             <Icon name="edit-3" size={14} />
             Write a reply
@@ -664,7 +664,7 @@ export default function ThreadClient({
                 <button
                   onClick={handleSaveEdit}
                   disabled={submitting || !editBody.trim()}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
+                  className="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
                 >
                   {submitting ? "Saving..." : "Save"}
                 </button>
@@ -769,7 +769,7 @@ export default function ThreadClient({
             <button
               onClick={handleSubmitReply}
               disabled={submitting || !replyBody.trim()}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50"
+              className="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50"
             >
               {submitting ? "Posting..." : "Post Reply"}
             </button>

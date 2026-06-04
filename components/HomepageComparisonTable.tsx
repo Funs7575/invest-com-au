@@ -330,7 +330,7 @@ export default function HomepageComparisonTable({
                 {SHOW_RATINGS && (
                 <td className="px-3 py-2.5 text-center">
                   <div className="flex items-center justify-center gap-1">
-                    <span className="text-amber text-xs">{renderStars(broker.rating || 0)}</span>
+                    <span className="text-amber-600 text-xs">{renderStars(broker.rating || 0)}</span>
                     <span className="text-xs font-semibold text-slate-600">{broker.rating}</span>
                   </div>
                 </td>
