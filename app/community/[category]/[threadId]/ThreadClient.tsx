@@ -22,7 +22,6 @@ interface AuthorProfile {
 interface ForumThread {
   id: string;
   category_id: string;
-  author_id: string;
   author_name: string;
   title: string;
   slug: string;
@@ -35,13 +34,15 @@ interface ForumThread {
   created_at: string;
   updated_at: string | null;
   author_profile: AuthorProfile | null;
+  // Server-computed: viewer authored this thread. Replaces comparing a
+  // serialized author_id (auth.uid) on the client.
+  is_own: boolean;
 }
 
 interface ForumPost {
   id: string;
   thread_id: string;
   parent_id: string | null;
-  author_id: string;
   author_name: string;
   body: string;
   vote_score: number;
@@ -49,12 +50,16 @@ interface ForumPost {
   created_at: string;
   updated_at: string | null;
   author_profile: AuthorProfile | null;
+  // Server-computed ownership flag (see ForumThread.is_own).
+  is_own: boolean;
 }
 
 interface ThreadClientProps {
   thread: ForumThread;
   posts: ForumPost[];
   categorySlug: string;
+  // Server-computed moderator flag for the current viewer.
+  isModerator: boolean;
 }
 
 /* ─── Helpers ─── */
@@ -220,7 +225,7 @@ function PostCard({
 }) {
   const [showReport, setShowReport] = useState(false);
   const [reported, setReported] = useState(false);
-  const isAuthor = userId === post.author_id;
+  const isAuthor = post.is_own;
   const parentPost = post.parent_id ? true : false;
 
   return (
@@ -382,6 +387,7 @@ export default function ThreadClient({
   thread,
   posts: initialPosts,
   categorySlug,
+  isModerator,
 }: ThreadClientProps) {
   const { user, loading } = useUser();
   const router = useRouter();
@@ -398,14 +404,8 @@ export default function ThreadClient({
 
   const userId = user?.id ?? null;
 
-  // Check if the user is moderator from the thread's profile data
-  const isModerator =
-    posts.some(
-      (p) =>
-        p.author_id === userId && p.author_profile?.is_moderator === true
-    ) ||
-    (thread.author_id === userId &&
-      thread.author_profile?.is_moderator === true);
+  // isModerator is computed server-side and passed in as a prop — the client
+  // no longer infers it from serialized author_ids.
 
   /* ─── Reply ─── */
 
@@ -445,6 +445,8 @@ export default function ThreadClient({
         is_removed: false,
         updated_at: null,
         author_profile: null,
+        // The viewer just authored this reply.
+        is_own: true,
       };
       setPosts((prev) => [...prev, newPost]);
       setReplyBody("");
