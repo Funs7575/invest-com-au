@@ -208,7 +208,7 @@ export default function VerticalPillarPage({
               ))}
             </div>
 
-            <p className="text-[0.62rem] md:text-xs text-slate-400 mt-3">
+            <p className="text-[0.62rem] md:text-xs text-slate-500 mt-3">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
             {hasSponsored && (
@@ -263,7 +263,7 @@ export default function VerticalPillarPage({
           )}
 
           {/* PDS / FSG / AFCA */}
-          <p className="text-[0.62rem] md:text-xs text-slate-400 leading-relaxed mb-3">
+          <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed mb-3">
             {PDS_CONSIDERATION} {FSG_NOTE} {AFCA_REFERENCE}
           </p>
 
@@ -309,11 +309,11 @@ export default function VerticalPillarPage({
               className={`${config.color.bg} border ${config.color.border} rounded-xl p-4 md:p-5 mb-6 md:mb-8 scroll-mt-20`}
             >
               <div className="flex items-center gap-2 mb-2">
-                <span
+                <h2
                   className={`text-xs font-bold uppercase tracking-wide ${config.color.text} ${config.color.bg} px-2 py-0.5 rounded-full`}
                 >
                   Our Top Pick
-                </span>
+                </h2>
                 {isSponsored(topPick) && <SponsorBadge broker={topPick} />}
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -619,7 +619,7 @@ export default function VerticalPillarPage({
                       />
                       <div>
                         <div className="text-[0.62rem] font-bold text-slate-700">{article.author_name || 'Expert Contributor'}</div>
-                        <div className="text-[0.55rem] text-slate-400">{article.views ? `${article.views.toLocaleString()} views` : 'Expert article'}</div>
+                        <div className="text-[0.55rem] text-slate-500">{article.views ? `${article.views.toLocaleString()} views` : 'Expert article'}</div>
                       </div>
                     </div>
                     <h3 className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors mb-1.5 line-clamp-2">{article.title}</h3>
@@ -711,7 +711,7 @@ export default function VerticalPillarPage({
                         {ra.title}
                       </h4>
                       {ra.read_time && (
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-slate-500">
                           {ra.read_time} min read
                         </span>
                       )}

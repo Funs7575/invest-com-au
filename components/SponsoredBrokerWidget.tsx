@@ -185,7 +185,7 @@ export default function SponsoredBrokerWidget({
         )}
 
         {/* Disclaimer */}
-        <p className="text-xs text-slate-400 mt-3 leading-relaxed px-1">
+        <p className="text-xs text-slate-500 mt-3 leading-relaxed px-1">
           {isCampaign ? "Sponsored placement." : ""} {ADVERTISER_DISCLOSURE_SHORT}{" "}
           <a href="/how-we-earn" className="underline hover:text-slate-600">
             Learn more
