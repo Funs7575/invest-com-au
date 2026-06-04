@@ -273,9 +273,16 @@ const nextConfig: NextConfig = {
         destination: "/savings/:slug*",
         permanent: true,
       },
+      // /brokers/<broker-slug> 301s to the canonical singular profile at
+      // /broker/<broker-slug>. The negative-lookahead excludes the real
+      // curated /brokers/full-service hub (and its /brokers/full-service/:slug
+      // firm profiles) — those are first-class app routes
+      // (app/brokers/full-service/**), not plural aliases. Without the
+      // exclusion this redirect shadowed them, 308ing /brokers/full-service to
+      // a non-existent /broker/full-service → "Broker Not Found".
       {
-        source: "/brokers/:slug*",
-        destination: "/broker/:slug*",
+        source: "/brokers/:slug((?!full-service(?:/|$)).+)",
+        destination: "/broker/:slug",
         permanent: true,
       },
       // /advisors/search retired 2026-05 — the inline filter panel on
