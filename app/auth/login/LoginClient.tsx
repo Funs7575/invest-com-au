@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { safeNextPath } from "@/lib/safe-next";
 
 type Tab = "magic-link" | "password";
 
@@ -27,7 +28,9 @@ function EyeOffIcon() {
 export default function LoginClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const next = searchParams.get("next") || "/account";
+  // Guard against open redirect — only same-origin relative paths are allowed
+  // for both router.push (password path) and the magic-link emailRedirectTo.
+  const next = safeNextPath(searchParams.get("next"));
   const callbackError = searchParams.get("error");
 
   const [tab, setTab] = useState<Tab>("magic-link");
