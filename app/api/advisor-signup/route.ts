@@ -1,10 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { isValidEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-signup");
+
+// Permissive schema — the handler keeps every existing field guard (.trim()
+// presence checks, isValidEmail, Array.isArray, String(...) coercions), so
+// each field is `z.any()` to preserve the original untyped ergonomics and
+// avoid rejecting any currently-valid request. Validation just confirms the
+// body is a JSON object.
+const Body = z
+  .object({
+    name: z.any(),
+    email: z.any(),
+    phone: z.any(),
+    firm_name: z.any(),
+    type: z.any(),
+    afsl_number: z.any(),
+    abn: z.any(),
+    registration_number: z.any(),
+    specialties: z.any(),
+    location_state: z.any(),
+    location_suburb: z.any(),
+    bio: z.any(),
+    fee_structure: z.any(),
+    fee_description: z.any(),
+    pitch_message: z.any(),
+    years_experience: z.any(),
+    client_types: z.any(),
+    languages: z.any(),
+  })
+  .passthrough();
 
 function slugify(text: string): string {
   return text
@@ -20,7 +49,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many signup attempts. Please try again later." }, { status: 429 });
     }
 
-    const body = await request.json();
+    const parsed = Body.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Full name is required." }, { status: 400 });
+    }
     const {
       name,
       email,
@@ -40,7 +72,7 @@ export async function POST(request: NextRequest) {
       years_experience,
       client_types,
       languages,
-    } = body;
+    } = parsed.data;
 
     // Validate required fields
     if (!name?.trim()) {

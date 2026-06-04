@@ -90,7 +90,7 @@ describe("FollowAdvisorButton", () => {
     );
   });
 
-  it("redirects to /sign-in when API returns 401", async () => {
+  it("redirects to /auth/login (with a next param) when API returns 401", async () => {
     mockFetch.mockImplementation(unauthorizedResponse);
     const user = userEvent.setup();
     render(<FollowAdvisorButton professionalId={2} initialFollowing={false} />);
@@ -100,7 +100,9 @@ describe("FollowAdvisorButton", () => {
     });
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/sign-in");
+      expect(mockPush).toHaveBeenCalledWith(
+        expect.stringContaining("/auth/login?next="),
+      );
     });
   });
 

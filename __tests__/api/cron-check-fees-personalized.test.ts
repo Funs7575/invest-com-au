@@ -60,6 +60,11 @@ vi.mock("@/lib/email-templates", () => ({
   feeChangeAlertEmail: (rows: Array<{ broker: string }>) => `<p>fee-change-html-for-${rows.map((r) => r.broker).join("-")}</p>`,
 }));
 
+vi.mock("@/lib/autopilot", () => ({
+  checkAutopilotGate: vi.fn().mockResolvedValue(null),
+  _resetAutopilotCache: vi.fn(),
+}));
+
 import { GET } from "@/app/api/cron/check-fees/route";
 
 // Tiny chainable-query builder that yields `data` when awaited.

@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-auth:firm:member");
+
+// Mirrors the existing guards: memberId + role required, role restricted to
+// the same three values, is_firm_admin an optional boolean.
+const PatchBody = z.object({
+  memberId: z.number(),
+  role: z.enum(["owner", "manager", "member"]),
+  is_firm_admin: z.boolean().optional(),
+});
 
 async function getFirmAdmin(request: NextRequest) {
   const advisorId = await requireAdvisorSession(request);
@@ -25,18 +34,23 @@ export async function PATCH(request: NextRequest) {
   const admin = await getFirmAdmin(request);
   if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  let body: { memberId: number; role: string; is_firm_admin?: boolean };
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    rawBody = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const { memberId, role, is_firm_admin } = body;
-  if (!memberId || !role) return NextResponse.json({ error: "memberId and role required" }, { status: 400 });
-
-  const validRoles = ["owner", "manager", "member"];
-  if (!validRoles.includes(role)) return NextResponse.json({ error: "Invalid role" }, { status: 400 });
+  const parsed = PatchBody.safeParse(rawBody);
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    const isRoleIssue = issue?.path[0] === "role" && issue.code !== "invalid_type";
+    return NextResponse.json(
+      { error: isRoleIssue ? "Invalid role" : "memberId and role required" },
+      { status: 400 },
+    );
+  }
+  const { memberId, role, is_firm_admin } = parsed.data;
 
   const supabase = createAdminClient();
 

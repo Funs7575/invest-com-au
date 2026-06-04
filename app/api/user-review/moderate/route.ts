@@ -1,11 +1,22 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from "zod";
 import { logger } from '@/lib/logger';
 import { notificationFooter } from '@/lib/email-templates';
 import { ADMIN_EMAILS } from "@/lib/admin";
 
 const log = logger('user-review');
+
+// review_id/action are guarded with field-specific 400s below; the schema
+// only enforces "body is an object" so those messages stay intact.
+const ModerateBody = z
+  .object({
+    review_id: z.unknown(),
+    action: z.unknown(),
+    moderation_note: z.unknown(),
+  })
+  .passthrough();
 
 export async function POST(request: NextRequest) {
   // ── Auth check: require an authenticated admin user ──
@@ -18,7 +29,8 @@ export async function POST(request: NextRequest) {
   // Parse body
   let body: Record<string, unknown>;
   try {
-    body = await request.json();
+    const parsed = ModerateBody.safeParse(await request.json());
+    body = parsed.success ? parsed.data : {};
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }

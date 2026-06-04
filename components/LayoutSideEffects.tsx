@@ -52,7 +52,11 @@ export default function LayoutSideEffects() {
       <ServiceWorkerRegistrar />
       <ClaimAnonymousOnAuth />
       <WebVitals />
-      <SpeedInsights />
+      {/* Vercel-only: the injected /_vercel/speed-insights/script.js 404s on the
+          Netlify mirror (it only exists on Vercel). NEXT_PUBLIC_VERCEL_ENV is
+          set only in Vercel builds, so Speed Insights renders at launch (Vercel)
+          and stays off on Netlify — no more per-page 404 + MIME console error. */}
+      {process.env.NEXT_PUBLIC_VERCEL_ENV ? <SpeedInsights /> : null}
       <UserOnboarding />
     </>
   );

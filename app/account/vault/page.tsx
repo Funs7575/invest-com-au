@@ -45,24 +45,31 @@ export default async function VaultPage() {
     .select("id, document_type, file_name, file_path, file_size_bytes, mime_type, description, created_at")
     .order("created_at", { ascending: false });
 
-  const documents: Document[] = await Promise.all(
-    (rows ?? []).map(async (row) => {
-      const { data: signed } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .createSignedUrl(row.file_path as string, SIGNED_URL_EXPIRY);
-      return {
-        ...row,
-        document_type: row.document_type as DocType,
-        file_name: row.file_name as string,
-        file_path: row.file_path as string,
-        file_size_bytes: row.file_size_bytes as number,
-        mime_type: row.mime_type as string,
-        description: (row.description as string | null) ?? null,
-        created_at: row.created_at as string,
-        download_url: signed?.signedUrl ?? null,
-      };
-    }),
-  );
+  // Batch the signed-URL generation into a single storage round-trip
+  // (createSignedUrls preserves input order) instead of one call per document.
+  const rowList = rows ?? [];
+  const signed =
+    rowList.length === 0
+      ? []
+      : (
+          await supabase.storage
+            .from(STORAGE_BUCKET)
+            .createSignedUrls(
+              rowList.map((r) => r.file_path as string),
+              SIGNED_URL_EXPIRY,
+            )
+        ).data ?? [];
+  const documents: Document[] = rowList.map((row, i) => ({
+    ...row,
+    document_type: row.document_type as DocType,
+    file_name: row.file_name as string,
+    file_path: row.file_path as string,
+    file_size_bytes: row.file_size_bytes as number,
+    mime_type: row.mime_type as string,
+    description: (row.description as string | null) ?? null,
+    created_at: row.created_at as string,
+    download_url: signed[i]?.signedUrl ?? null,
+  }));
 
   return <VaultClient initialDocs={documents} />;
 }

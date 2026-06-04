@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import Anthropic from "@anthropic-ai/sdk";
 
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
@@ -36,6 +37,15 @@ interface Message {
   content: string;
 }
 
+// `messages` must be a non-empty array (matching the prior
+// `!Array.isArray(messages) || messages.length === 0` guard). Elements are
+// kept as unknown so the per-message sanitisation loop below — which filters
+// out bad roles/content rather than rejecting the whole request — is
+// preserved unchanged.
+const Body = z.object({
+  messages: z.array(z.unknown()).min(1),
+});
+
 export async function POST(req: NextRequest) {
   const allowed = await isAllowed("investor_copilot", ipKey(req), {
     max: 20,
@@ -52,11 +62,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
   }
 
-  const { messages } = body as { messages?: unknown };
-
-  if (!Array.isArray(messages) || messages.length === 0) {
+  const parsed = Body.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json({ error: "messages array required." }, { status: 400 });
   }
+  const { messages } = parsed.data;
 
   // Validate and sanitise messages: only user/assistant roles, string content, max 10 turns
   const validated: Message[] = [];

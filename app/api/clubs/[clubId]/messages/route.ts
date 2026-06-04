@@ -87,7 +87,7 @@ export async function GET(req: NextRequest, { params }: Params) {
 
 // ── POST ──────────────────────────────────────────────────────────────────────
 
-export const POST = withValidatedBody(PostBody, async (req: NextRequest, body, ctx?: unknown) => {
+export const POST = withValidatedBody<typeof PostBody, Params>(PostBody, async (req: NextRequest, body, ctx) => {
   if (!(await isAllowed("clubs_messages_post", ipKey(req), { max: 30, refillPerSec: 0.5 }))) {
     return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
@@ -98,7 +98,7 @@ export const POST = withValidatedBody(PostBody, async (req: NextRequest, body, c
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const { clubId } = await (ctx as Params)!.params;
+  const { clubId } = await ctx.params;
   const membership = await getMembership(supabase, clubId, user.id);
   if (!membership) return NextResponse.json({ error: "not_member" }, { status: 403 });
 

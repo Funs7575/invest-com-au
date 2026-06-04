@@ -215,6 +215,25 @@ const ALLOWED_NAMES = new Set([
   "rankBrokers",
   "rankAdvisors",
   "scoreAdvisor",
+
+  // components/FeeImpactVisualiser.tsx: formatAud(n: number) — takes dollars, returns
+  // compact chart-label strings ($100k, $1.50M). Used in SVG chart axis/tooltip labels
+  // where space is constrained.
+  // lib/first-home-buyer/state-grants.ts: formatAud(cents: number) — takes cents,
+  // returns full Intl.NumberFormat AUD string ($1,200). Used for state-grant amounts.
+  // Different units (dollars vs cents) and output format (compact vs full). Swapping
+  // would produce wrong monetary values in both contexts. (Resolved FP — iter 517.)
+  "formatAud",
+
+  // app/investment-income-tax-calculator/InvestmentIncomeTaxClient.tsx: parseMoney(value)
+  // — strips everything except digits and the decimal point, returns 0 for invalid or
+  // negative input. Designed for tax-calculator form fields where amounts must be ≥ 0.
+  // lib/holdings/csv-import/_utils.ts: parseMoney(raw) — strips currency symbols,
+  // letters, commas, and whitespace; preserves the minus sign; returns NaN for empty
+  // strings. Designed for CSV import rows where negative amounts are valid.
+  // Different invalid-input sentinel (0 vs NaN), different sign handling, different
+  // domains (UI form vs CSV importer). (Surfaced by scout fire 2026-05-25 — F-DISC-20260525-01.)
+  "parseMoney",
 ]);
 
 const EXPORT_PATTERNS = [

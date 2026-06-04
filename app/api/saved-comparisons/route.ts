@@ -1,9 +1,22 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("saved-comparisons");
+
+// Fields are defaulted/coerced below (name fallback, broker_slugs filter,
+// notes trim); keep the schema permissive so the route's own field handling
+// and 400 messages remain authoritative.
+const ComparisonBody = z
+  .object({
+    name: z.unknown(),
+    broker_slugs: z.array(z.unknown()).optional(),
+    quiz_results: z.unknown(),
+    notes: z.unknown(),
+  })
+  .passthrough();
 
 const MAX_COMPARISONS = 25;
 const MAX_NAME_LENGTH = 100;
@@ -86,9 +99,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let body;
+    let body: z.infer<typeof ComparisonBody>;
     try {
-      body = await request.json();
+      const parsed = ComparisonBody.safeParse(await request.json());
+      if (!parsed.success) {
+        return NextResponse.json(
+          { error: "Some fields are invalid. Check and try again." },
+          { status: 400 }
+        );
+      }
+      body = parsed.data;
     } catch {
       return NextResponse.json(
         { error: "Some fields are invalid. Check and try again." },

@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { sendNewLeadNotification } from "@/lib/advisor-emails";
 import { logger } from "@/lib/logger";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
@@ -7,6 +8,13 @@ import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 export const runtime = "edge";
 
 const log = logger("confirm-lead");
+
+// Fields are optional so a missing one still yields the route's specific
+// "lead_id and user_email required" message rather than a generic schema error.
+const ConfirmBody = z.object({
+  lead_id: z.number().optional(),
+  user_email: z.string().optional(),
+});
 
 /**
  * POST /api/submit-lead/confirm
@@ -23,7 +31,11 @@ export async function POST(request: NextRequest) {
 
   let body: { lead_id?: number; user_email?: string };
   try {
-    body = await request.json();
+    const parsed = ConfirmBody.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
+    body = parsed.data;
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }

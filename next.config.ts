@@ -203,6 +203,26 @@ const nextConfig: NextConfig = {
         destination: "/auth/login",
         permanent: false,
       },
+      // Same root cause for three more legacy sign-in URLs that internal CTAs
+      // and external bookmarks still hit (RsvpButton, IpoWatchlistButton,
+      // OfficeHoursLiveStream used `/login?redirect=`; FollowAdvisorButton +
+      // feed used `/sign-in`; plans + get-matched used `/auth/sign-up`). The
+      // call sites are also fixed; these rules catch bookmarks / external links.
+      {
+        source: "/login",
+        has: [{ type: "query", key: "redirect", value: "(?<dest>.*)" }],
+        destination: "/auth/login?next=:dest",
+        permanent: false,
+      },
+      { source: "/login", destination: "/auth/login", permanent: false },
+      {
+        source: "/sign-in",
+        has: [{ type: "query", key: "redirect", value: "(?<dest>.*)" }],
+        destination: "/auth/login?next=:dest",
+        permanent: false,
+      },
+      { source: "/sign-in", destination: "/auth/login", permanent: false },
+      { source: "/auth/sign-up", destination: "/auth/signup", permanent: false },
 
       // /brokers (plural) used to 404 even though every natural link,
       // internal nav, and Google result expects the plural. The actual

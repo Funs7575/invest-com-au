@@ -144,9 +144,14 @@ export function formatPercent(n: number, decimals = 2): string {
 }
 
 export function renderStars(rating: number): string {
-  const full = Math.floor(rating);
-  const half = rating % 1 >= 0.5 ? 1 : 0;
-  const empty = 5 - full - half;
+  // Clamp to the conventional 0–5 scale. Out-of-range or NaN input (bad data, a
+  // different scale leaking in, or a null coerced to NaN) previously made
+  // '☆'.repeat(negative) throw a RangeError — a hard SSR crash on any page that
+  // rendered the stars. Clamping is identity for valid 0–5 ratings.
+  const r = Math.max(0, Math.min(5, Number.isFinite(rating) ? rating : 0));
+  const full = Math.floor(r);
+  const half = r % 1 >= 0.5 ? 1 : 0;
+  const empty = Math.max(0, 5 - full - half);
   return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
 }
 

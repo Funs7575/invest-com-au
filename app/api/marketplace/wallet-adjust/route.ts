@@ -2,10 +2,22 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { adjustWallet } from "@/lib/marketplace/wallet";
 import { logger } from "@/lib/logger";
 
 const log = logger("wallet");
+
+// Admin-only wallet adjustment. The presence/falsy guard below produces the
+// existing "...are required" 400; the schema is permissive so it never
+// rejects a request the old destructure accepted.
+const Body = z
+  .object({
+    broker_slug: z.string().optional(),
+    amount_cents: z.number().optional(),
+    description: z.string().optional(),
+  })
+  .passthrough();
 
 /**
  * POST /api/marketplace/wallet-adjust
@@ -50,7 +62,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
     }
 
-    const { broker_slug, amount_cents, description } = await request.json();
+    const parsed = Body.safeParse(await request.json());
+    const { broker_slug, amount_cents, description } = parsed.success
+      ? parsed.data
+      : {};
 
     if (!broker_slug || !amount_cents || !description) {
       return NextResponse.json(

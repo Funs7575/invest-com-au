@@ -50,6 +50,10 @@ vi.mock("@/lib/logger", () => ({
   }),
 }));
 
+vi.mock("@/lib/consumer-webhook-dispatch", () => ({
+  fireConsumerWebhook: vi.fn().mockResolvedValue(undefined),
+}));
+
 import { GET } from "@/app/api/cron/snapshot-health-scores/route";
 
 /* ─── Helpers ────────────────────────────────────────────────────────────────── */

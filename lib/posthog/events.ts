@@ -6,6 +6,7 @@ export type EventName =
   | 'lead_submitted'
   | 'advisor_response'
   | 'lead_outcome'
+  | 'ai_referral'
 
 export interface EventProps {
   quiz_started: {
@@ -61,6 +62,14 @@ export interface EventProps {
     advisor_id: number
     outcome: 'converted' | 'lost' | 'no_response'
     lead_source: string | null
+  }
+  /** A visit that arrived from a generative-AI assistant / answer engine. */
+  ai_referral: {
+    source: string
+    label: string
+    vendor: string
+    kind: 'assistant' | 'answer_engine'
+    landing_path: string
   }
 }
 

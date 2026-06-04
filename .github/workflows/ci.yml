@@ -13,6 +13,12 @@ on:
       - "docs/audits/**"
       - "LOOP_DONE"
   pull_request:
+    # Default types are opened/synchronize/reopened; adding ready_for_review
+    # means flipping a draft → ready triggers CI. Without it, un-drafting
+    # fires no workflow run (only push/synchronize do), so the required gates
+    # never ran on un-draft and the audit-remediation loop had to push empty
+    # "ci: re-trigger" commits every time (REMEDIATION_QUEUE iters 557/559/561).
+    types: [opened, synchronize, reopened, ready_for_review]
     branches: [main]
     paths-ignore:
       - "docs/audits/**"

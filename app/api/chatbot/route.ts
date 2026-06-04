@@ -1,10 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed } from "@/lib/rate-limit-db";
 import { respondToMessage, type ChatMessage } from "@/lib/chatbot";
 import { logger } from "@/lib/logger";
 
 const log = logger("chatbot");
+
+// Permissive: fields accepted as unknown and narrowed by the handler's own
+// typeof-guards (which also enforce presence and the 2000-char message cap),
+// matching the prior `.catch(() => ({}))` fall-through behaviour.
+const Body = z
+  .object({
+    session_id: z.unknown(),
+    message: z.unknown(),
+    user_key: z.unknown(),
+  })
+  .partial()
+  .passthrough();
 
 export const runtime = "nodejs";
 
@@ -20,7 +33,8 @@ export const runtime = "nodejs";
  * the provider bill bounded.
  */
 export async function POST(request: NextRequest) {
-  const body = await request.json().catch(() => ({}));
+  const parsedBody = Body.safeParse(await request.json().catch(() => ({})));
+  const body = parsedBody.success ? parsedBody.data : {};
   const sessionId = typeof body.session_id === "string" ? body.session_id : null;
   const message = typeof body.message === "string" ? body.message : null;
   const userKey = typeof body.user_key === "string" ? body.user_key : null;

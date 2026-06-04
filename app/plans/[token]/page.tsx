@@ -120,7 +120,7 @@ export default async function PlanPublicPage({
 
           <div className="text-center text-xs text-slate-500">
             Want to keep tracking this plan and any briefs you create?{" "}
-            <Link href="/auth/sign-up" className="underline">
+            <Link href="/auth/signup" className="underline">
               Create a free account
             </Link>
             .

@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
+
+// prefs must be an object (matches the prior `typeof body.prefs !== "object"`
+// guard); inner values stay untyped because the handler coerces each to a
+// boolean with `!!`.
+const PatchBody = z.object({
+  prefs: z.record(z.string(), z.unknown()),
+});
 
 const DEFAULT_PREFS = {
   new_lead: true,
@@ -35,12 +43,12 @@ export async function PATCH(request: NextRequest) {
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-  const body = await request.json().catch(() => null);
-  if (!body?.prefs || typeof body.prefs !== "object") {
+  const parsed = PatchBody.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
     return NextResponse.json({ error: "Invalid preferences" }, { status: 400 });
   }
 
-  const { new_lead, weekly_summary, billing_alerts, review_new } = body.prefs;
+  const { new_lead, weekly_summary, billing_alerts, review_new } = parsed.data.prefs;
   const prefs = {
     new_lead: !!new_lead,
     weekly_summary: !!weekly_summary,

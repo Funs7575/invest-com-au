@@ -79,6 +79,11 @@ vi.mock("@/lib/cron-auth", () => ({
   requireCronAuth: vi.fn(() => null), // default: auth OK
 }));
 
+vi.mock("@/lib/autopilot", () => ({
+  checkAutopilotGate: vi.fn().mockResolvedValue(null),
+  _resetAutopilotCache: vi.fn(),
+}));
+
 import { GET, runtime, maxDuration } from "@/app/api/cron/auto-publish/route";
 import { requireCronAuth } from "@/lib/cron-auth";
 

@@ -1,10 +1,32 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from "zod";
 import { logger } from '@/lib/logger';
 import { isValidEmail } from '@/lib/validate-email';
 import { createRateLimiter } from '@/lib/rate-limiter';
 
 const log = logger('user-review');
+
+// Each field is type-and-range checked below with a field-specific 400
+// message; the schema only enforces "body is an object", preserving every
+// existing validation message and status code.
+const ReviewBody = z
+  .object({
+    broker_slug: z.unknown(),
+    display_name: z.unknown(),
+    email: z.unknown(),
+    rating: z.unknown(),
+    title: z.unknown(),
+    body: z.unknown(),
+    pros: z.unknown(),
+    cons: z.unknown(),
+    fees_rating: z.unknown(),
+    platform_rating: z.unknown(),
+    support_rating: z.unknown(),
+    reliability_rating: z.unknown(),
+    experience_months: z.unknown(),
+  })
+  .passthrough();
 
 const checkRateLimit = createRateLimiter(300_000, 3); // 3 reviews per 5 min per IP
 
@@ -56,7 +78,8 @@ export async function POST(request: NextRequest) {
   // Parse body
   let body: Record<string, unknown>;
   try {
-    body = await request.json();
+    const parsed = ReviewBody.safeParse(await request.json());
+    body = parsed.success ? parsed.data : {};
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }

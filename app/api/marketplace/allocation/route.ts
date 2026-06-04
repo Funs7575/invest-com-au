@@ -1,4 +1,4 @@
-import { getWinningCampaigns, AllocationContext } from "@/lib/marketplace/allocation";
+import { getWinningCampaigns } from "@/lib/marketplace/allocation";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 

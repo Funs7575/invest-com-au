@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
@@ -8,11 +9,18 @@ const log = logger("listing-renew");
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-interface RenewBody {
-  listing_id: number;
-  plan_id: number;
-  contact_email: string;
-}
+// Permissive by design — the per-field guards below produce the precise,
+// field-specific 400 messages clients rely on (listing_id / plan_id /
+// contact_email). Fields are accepted as unknown so the schema never rejects
+// ahead of those guards while still consuming the body through a schema.
+const BodySchema = z
+  .object({
+    listing_id: z.unknown(),
+    plan_id: z.unknown(),
+    contact_email: z.unknown(),
+  })
+  .partial()
+  .passthrough();
 
 /**
  * POST /api/listings/renew
@@ -21,16 +29,19 @@ interface RenewBody {
  */
 export async function POST(request: NextRequest) {
   try {
-    let body: Partial<RenewBody>;
+    let raw: unknown;
 
     try {
-      body = await request.json();
+      raw = await request.json();
     } catch {
       return NextResponse.json(
         { error: "Invalid JSON body." },
         { status: 400 },
       );
     }
+
+    const parsed = BodySchema.safeParse(raw);
+    const body: z.infer<typeof BodySchema> = parsed.success ? parsed.data : {};
 
     // Validate required fields
     if (!body.listing_id || typeof body.listing_id !== "number") {

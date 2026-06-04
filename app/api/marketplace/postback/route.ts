@@ -1,8 +1,28 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 
 const log = logger("postback");
+
+// Partner conversion postback. Each field is validated individually below
+// (the existing guards produce the partner-facing error messages and HTTP
+// codes); the schema is permissive and `.passthrough()` so arbitrary partner
+// metadata is preserved and currently-valid postbacks are never rejected.
+const Body = z
+  .object({
+    click_id: z.string().optional(),
+    event_type: z.string().optional(),
+    // Accept any type here — partner S2S postbacks routinely serialise every
+    // field as a string (e.g. "500"). A strict `z.number()` would fail the
+    // whole-body parse, collapsing click_id/event_type to undefined and
+    // returning a spurious 400 (dropping the conversion). The downstream
+    // `typeof … === "number" ? … : 0` guard already coerces a non-number to 0,
+    // matching the documented "never rejected" contract.
+    conversion_value_cents: z.unknown().optional(),
+    metadata: z.record(z.string(), z.unknown()).optional(),
+  })
+  .passthrough();
 
 /**
  * POST /api/marketplace/postback
@@ -41,19 +61,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: Record<string, unknown>;
+  let raw: unknown;
   try {
-    body = await request.json();
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
-
-  const { click_id, event_type, conversion_value_cents, metadata } = body as {
-    click_id?: string;
-    event_type?: string;
-    conversion_value_cents?: number;
-    metadata?: Record<string, unknown>;
-  };
+  const parsedBody = Body.safeParse(raw);
+  const { click_id, event_type, conversion_value_cents, metadata } =
+    parsedBody.success ? parsedBody.data : {};
 
   // Validate required fields
   if (!click_id || typeof click_id !== "string") {
@@ -197,6 +213,12 @@ export async function POST(request: NextRequest) {
           metadata: metadata || {},
           timestamp: conversion?.created_at,
         },
+        // next_retry_at has no DB default, and the retry-webhooks cron selects
+        // rows with `.lte("next_retry_at", now)`. In Postgres `NULL <= now()` is
+        // NULL (not true), so a row enqueued without it is NEVER picked up — the
+        // broker receives zero conversion webhooks. Make the first attempt due
+        // immediately; the cron handles backoff/retries from there.
+        next_retry_at: new Date().toISOString(),
       });
     }
   } catch (err) {

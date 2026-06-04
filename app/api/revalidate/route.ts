@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { z } from "zod";
+
+// Secret-gated cache-purge call. Each field is checked individually below
+// (secret comparison, `Array.isArray` + per-entry guards, the `all` shortcut),
+// so the schema only asserts the body is an object; `.passthrough()` keeps the
+// `body.all` read working and a malformed body still throws → the existing 500.
+const Body = z.object({}).passthrough();
 
 /**
  * POST /api/revalidate
@@ -13,7 +20,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = Body.parse(await request.json());
     const { paths, tags, secret } = body;
 
     // Secret check — prevents random people from purging your cache
@@ -52,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ revalidated, count: revalidated.length });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Revalidation failed" }, { status: 500 });
   }
 }

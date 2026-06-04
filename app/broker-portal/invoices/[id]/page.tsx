@@ -85,10 +85,18 @@ export default function InvoiceDetailPage() {
     );
   }
 
-  const lineItems: LineItem[] =
-    typeof invoice.line_items === "string"
-      ? JSON.parse(invoice.line_items)
-      : invoice.line_items || [];
+  let lineItems: LineItem[] = [];
+  if (invoice.line_items) {
+    try {
+      const parsed =
+        typeof invoice.line_items === "string"
+          ? JSON.parse(invoice.line_items)
+          : invoice.line_items;
+      if (Array.isArray(parsed)) lineItems = parsed;
+    } catch {
+      // Malformed JSONB → render with no line items rather than crashing the page.
+    }
+  }
 
   const formatAUD = (cents: number) =>
     `$${(cents / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}`;

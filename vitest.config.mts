@@ -73,10 +73,29 @@ export default defineConfig({
         // separately measured (full-suite coverage couldn't be run locally
         // under heavy concurrent-CI machine load). The app/api/** floor
         // below is the one this sweep most moves and IS now measured.
-        lines: 65,
-        functions: 73,
-        branches: 73,
-        statements: 65,
+        //
+        // Ratchet 2026-05-28 — Wave 2 + Wave 4 combined added ~341 new tests
+        // (account/wholesale/compliance routes ×72, advisor-portal ×66,
+        // widget/telegram/market ×76, org-portal ×65 — all API; plus lib
+        // etf-data ×20, scenario-delta ×15, advisor-response-time ×27).
+        // Conservative +1pp nudge on global lines/statements; +1pp on
+        // functions/branches since the lib tests hit previously-zero coverage
+        // functions. API-route floor matches: +1pp each.
+        //
+        // Ratchet 2026-05-28 (Wave 15b) — Waves 8–15 added ~550 new lib tests
+        // across 18 pure-lib modules (life-event-checklist, advisor-credit-packs,
+        // prefill-url, lead-magnets, lifecycle-journeys, qa-ctas, consumer-copy,
+        // validate-email, help-content, account-types, advisor-types, api-tiers,
+        // listing-vertical-images, advisor-billing-multipliers, advisor-tiers,
+        // ab-winner, concierge-scoring, concierge-seeds). All target
+        // previously-zero-coverage lib functions. Conservative +1pp on global
+        // lines/statements (these are lib modules, not app/api, so the API-route
+        // floor is unchanged — those floors are already tight from the per-route
+        // sweep). +1pp on global functions/branches to match the new lib coverage.
+        lines: 67,
+        functions: 75,
+        branches: 75,
+        statements: 67,
         // API-route floor. Raised from 13/58/30 (D-10, Apr 2026) after
         // D-11 added tests for virtually all existing routes (batches 1-23+,
         // ~110 route files covered). Conservative 5pp buffer applied.
@@ -91,11 +110,13 @@ export default defineConfig({
         // measured (wider than the global 1pp because the audit loop adds
         // brand-new untested routes between PRs, which transiently dip the
         // %): lines/statements 75, branches 74, functions 82.
+        //
+        // 2026-05-28: +1pp across the board after Wave 2 API route tests.
         "app/api/**/*.ts": {
-          lines: 75,
-          branches: 74,
-          functions: 82,
-          statements: 75,
+          lines: 76,
+          branches: 75,
+          functions: 83,
+          statements: 76,
         },
       },
     },

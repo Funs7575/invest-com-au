@@ -20,7 +20,11 @@ export type FinderKey =
   | "advisor-finder"
   | "broker-comparison"
   | "smsf-101"
-  | "first-etf";
+  | "first-etf"
+  | "super-contributions"
+  | "retirement-planning"
+  | "property-vs-shares"
+  | "franking-credits";
 
 export interface ConciergeSeed {
   /** Short label for analytics + admin tooling. */
@@ -49,6 +53,26 @@ export const CONCIERGE_SEEDS: Record<FinderKey, ConciergeSeed> = {
     label: "First ETF",
     prompt:
       "I'm a beginner looking to buy my first ETF. What concepts should I understand before choosing one?",
+  },
+  "super-contributions": {
+    label: "Super contributions",
+    prompt:
+      "What are the concessional and non-concessional super contribution caps in Australia, and how do salary-sacrifice contributions work?",
+  },
+  "retirement-planning": {
+    label: "Retirement planning",
+    prompt:
+      "How do I estimate how much super I'll need to retire comfortably in Australia, and what's the 4% rule?",
+  },
+  "property-vs-shares": {
+    label: "Property vs shares",
+    prompt:
+      "What are the main differences between investing in Australian property versus shares, and what should I consider first?",
+  },
+  "franking-credits": {
+    label: "Franking credits",
+    prompt:
+      "How do Australian franking credits work, and how do they affect the after-tax return on my dividends?",
   },
 };
 
