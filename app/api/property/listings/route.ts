@@ -23,7 +23,9 @@ export async function GET(request: NextRequest) {
     const foreignBuyer = searchParams.get("foreign_buyer_eligible");
     const featured = searchParams.get("featured");
     const sort = searchParams.get("sort") || "default";
-    const page = parseInt(searchParams.get("page") || "1", 10);
+    const parsedPage = parseInt(searchParams.get("page") || "1", 10);
+    // ?page=abc / ?page=-5 / ?page=0 must not feed NaN/negative offsets into .range()
+    const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
     const perPage = 12;
     const offset = (page - 1) * perPage;
 
@@ -59,9 +61,14 @@ export async function GET(request: NextRequest) {
     // Filters
     if (city && city !== "All") query = query.eq("city", city);
     if (type && type !== "All") query = query.eq("property_type", type);
-    if (priceMin) query = query.gte("price_from_cents", parseInt(priceMin, 10));
-    if (priceMax) query = query.lte("price_from_cents", parseInt(priceMax, 10));
-    if (bedsMin && bedsMin !== "0") query = query.gte("bedrooms_min", parseInt(bedsMin, 10));
+    // Only apply numeric filters when the value parses to a finite number —
+    // ?price_min=abc would otherwise push NaN into .gte()/.lte().
+    const priceMinNum = priceMin ? Number(priceMin) : NaN;
+    if (Number.isFinite(priceMinNum)) query = query.gte("price_from_cents", priceMinNum);
+    const priceMaxNum = priceMax ? Number(priceMax) : NaN;
+    if (Number.isFinite(priceMaxNum)) query = query.lte("price_from_cents", priceMaxNum);
+    const bedsMinNum = bedsMin && bedsMin !== "0" ? Number(bedsMin) : NaN;
+    if (Number.isFinite(bedsMinNum)) query = query.gte("bedrooms_min", bedsMinNum);
     if (firbApproved === "true") query = query.eq("firb_approved", true);
     if (offThePlan === "true") query = query.eq("off_the_plan", true);
     if (newDevelopment === "true") query = query.eq("new_development", true);

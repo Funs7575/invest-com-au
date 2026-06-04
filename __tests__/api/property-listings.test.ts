@@ -178,4 +178,54 @@ describe("GET /api/property/listings", () => {
     const json = await res.json();
     expect(json.total_pages).toBe(3);
   });
+
+  // ── NaN guards (D-02) ──────────────────────────────────────────────────────
+
+  it("coerces non-numeric page to 1 (range starts at first page)", async () => {
+    const chain = makeQueryChain([], 0);
+    mockServerFrom.mockReturnValue(chain);
+    const res = await GET(makeGet({ page: "abc" }));
+    expect(res.status).toBe(200);
+    expect(chain.range).toHaveBeenCalledWith(0, 11);
+  });
+
+  it("normalizes page=-5 to 1", async () => {
+    const chain = makeQueryChain([], 0);
+    mockServerFrom.mockReturnValue(chain);
+    const res = await GET(makeGet({ page: "-5" }));
+    expect(res.status).toBe(200);
+    expect(chain.range).toHaveBeenCalledWith(0, 11);
+  });
+
+  it("normalizes page=0 to 1", async () => {
+    const chain = makeQueryChain([], 0);
+    mockServerFrom.mockReturnValue(chain);
+    const res = await GET(makeGet({ page: "0" }));
+    expect(res.status).toBe(200);
+    expect(chain.range).toHaveBeenCalledWith(0, 11);
+  });
+
+  it("skips price_min filter when value is non-numeric", async () => {
+    const chain = makeQueryChain([], 0);
+    mockServerFrom.mockReturnValue(chain);
+    const res = await GET(makeGet({ price_min: "abc" }));
+    expect(res.status).toBe(200);
+    expect(chain.gte).not.toHaveBeenCalled();
+  });
+
+  it("skips price_max filter when value is non-numeric", async () => {
+    const chain = makeQueryChain([], 0);
+    mockServerFrom.mockReturnValue(chain);
+    const res = await GET(makeGet({ price_max: "abc" }));
+    expect(res.status).toBe(200);
+    expect(chain.lte).not.toHaveBeenCalled();
+  });
+
+  it("skips beds_min filter when value is non-numeric", async () => {
+    const chain = makeQueryChain([], 0);
+    mockServerFrom.mockReturnValue(chain);
+    const res = await GET(makeGet({ beds_min: "abc" }));
+    expect(res.status).toBe(200);
+    expect(chain.gte).not.toHaveBeenCalled();
+  });
 });
