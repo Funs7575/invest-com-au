@@ -81,31 +81,57 @@ export async function POST(request: NextRequest) {
   const unsubscribeToken = randomBytes(24).toString("hex");
   const thresholdBps = Math.round(threshold_pct * 100);
 
-  // Upsert on (lower(email), product_kind). Re-subscribing with the same
-  // pair refreshes the threshold + tokens; old verified state is reset
-  // because the threshold change is a meaningful intent shift.
-  const { error: insertErr } = await supabase
-    .from("rate_alert_subscriptions")
-    .upsert(
-      {
-        email: email.toLowerCase(),
-        product_kind,
-        threshold_bps: thresholdBps,
-        product_filters: product_filters ?? {},
-        frequency,
-        verified: false,
-        verify_token: verifyToken,
-        unsubscribe_token: unsubscribeToken,
-        last_notified_at: null,
-        notification_count: 0,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "email,product_kind" },
-    );
+  // Anon RLS on rate_alert_subscriptions grants INSERT ONLY (see
+  // supabase/migrations/20260518010000_rate_alert_subscriptions.sql) — an
+  // .upsert() (INSERT ... ON CONFLICT DO UPDATE) needs UPDATE + SELECT and
+  // so 500s for every anonymous subscriber. Branch on session: authenticated
+  // users fall under the service_role/FOR ALL path where an upsert is fine;
+  // anonymous users do a plain .insert() and treat a unique-violation
+  // (Postgres 23505 on the (lower(email), product_kind) index) as success —
+  // they're already subscribed. Mirrors graceful-duplicate handling
+  // elsewhere (e.g. app/api/account/watchlist/route.ts).
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (insertErr) {
-    log.error("rate-alert subscribe upsert failed", { err: insertErr.message });
-    return NextResponse.json({ error: "Failed to subscribe." }, { status: 500 });
+  const row = {
+    email: email.toLowerCase(),
+    product_kind,
+    threshold_bps: thresholdBps,
+    product_filters: product_filters ?? {},
+    frequency,
+    verified: false,
+    verify_token: verifyToken,
+    unsubscribe_token: unsubscribeToken,
+    last_notified_at: null,
+    notification_count: 0,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (user) {
+    // Authenticated path: upsert on (lower(email), product_kind). Re-subscribing
+    // with the same pair refreshes the threshold + tokens; old verified state is
+    // reset because the threshold change is a meaningful intent shift.
+    const { error: upsertErr } = await supabase
+      .from("rate_alert_subscriptions")
+      .upsert(row, { onConflict: "email,product_kind" });
+
+    if (upsertErr) {
+      log.error("rate-alert subscribe upsert failed", { err: upsertErr.message });
+      return NextResponse.json({ error: "Failed to subscribe." }, { status: 500 });
+    }
+  } else {
+    // Anonymous path: INSERT only. A 23505 means the (email, product_kind)
+    // pair already exists — already subscribed, so report success rather than
+    // 500. The verification email below still re-fires so the user can confirm.
+    const { error: insertErr } = await supabase
+      .from("rate_alert_subscriptions")
+      .insert(row);
+
+    if (insertErr && insertErr.code !== "23505") {
+      log.error("rate-alert subscribe insert failed", { err: insertErr.message });
+      return NextResponse.json({ error: "Failed to subscribe." }, { status: 500 });
+    }
   }
 
   // Fire-and-forget verification email; the subscriber row already
