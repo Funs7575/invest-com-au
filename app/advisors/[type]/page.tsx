@@ -4,6 +4,7 @@ import type { Professional, ProfessionalType } from "@/lib/types";
 import type { Metadata } from "next";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { itemListJsonLd } from "@/lib/schema-markup";
 import AdvisorsClient from "../AdvisorsClient";
 
 export const revalidate = 1800;
@@ -587,6 +588,7 @@ export default async function AdvisorTypePage({ params }: { params: Promise<{ ty
 
   const label = PROFESSIONAL_TYPE_LABELS[professionalType];
   const faqs = TYPE_FAQS[typeSlug] || [];
+  const advisors = (professionals as Professional[]) || [];
 
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -604,12 +606,28 @@ export default async function AdvisorTypePage({ params }: { params: Promise<{ ty
     })),
   } : null;
 
+  // ItemList over the listed advisors (already sorted verified-then-rating)
+  // so the ranking is citable by AI answer engines. itemListJsonLd
+  // absoluteUrl-wraps each url, so pass site-relative paths.
+  const listLd = advisors.length > 0
+    ? itemListJsonLd(
+        `${label}s in Australia`,
+        advisors.slice(0, 10).map((p, i) => ({
+          position: i + 1,
+          name: p.name,
+          url: `/advisor/${p.slug}`,
+          description: p.bio?.slice(0, 200),
+        })),
+      )
+    : null;
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />}
+      {listLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listLd) }} />}
       <AdvisorsClient
-        professionals={(professionals as Professional[]) || []}
+        professionals={advisors}
         initialType={professionalType}
         pageTitle={`${label}s in Australia`}
         pageDescription={TYPE_DESCRIPTIONS[typeSlug]}

@@ -8,6 +8,7 @@ import {
   type ScenarioInput,
 } from "@/lib/best-for-scorer";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { itemListJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -103,12 +104,37 @@ export default async function BestForPage({
     { name: scenario.h1 },
   ]);
 
+  // ItemList over the ranked top-5 so the ranking is machine-readable
+  // for AI answer engines. itemListJsonLd absoluteUrl-wraps each url,
+  // so pass site-relative paths.
+  const listLd =
+    top.length > 0
+      ? itemListJsonLd(
+          scenario.h1,
+          top.map((item) => ({
+            position: item.rank,
+            name: item.broker.name,
+            url: `/broker/${item.broker.slug}`,
+            description:
+              typeof item.broker.tagline === "string"
+                ? item.broker.tagline
+                : undefined,
+          })),
+        )
+      : null;
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {listLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(listLd) }}
+        />
+      )}
       <div>
         <section className="bg-white border-b border-slate-100 py-8 md:py-12">
           <div className="container-custom">

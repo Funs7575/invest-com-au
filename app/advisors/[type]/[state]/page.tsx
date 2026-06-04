@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Professional, ProfessionalType } from "@/lib/types";
 import type { Metadata } from "next";
-import { PROFESSIONAL_TYPE_LABELS, AU_STATES } from "@/lib/types";
+import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import AdvisorsClient from "../../AdvisorsClient";
 
@@ -158,9 +158,30 @@ export default async function AdvisorTypeLocationPage({ params }: { params: Prom
     ? `Verified ${label.toLowerCase()}s in ${loc.name}. Compare fees, reviews & specialties — request a free consultation.`
     : `Verified ${label.toLowerCase()}s in ${loc.name}. Request a free consultation — no obligation.`;
 
+  // ItemList of the local advisors, mirroring the FinancialService
+  // ListItem shape used by /find-advisor/[location] so the location
+  // ranking is citable by AI answer engines.
+  const listLd = professionals.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${label}s in ${loc.name}`,
+    numberOfItems: professionals.length,
+    itemListElement: professionals.slice(0, 10).map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "FinancialService",
+        name: p.name,
+        description: p.bio?.slice(0, 200),
+        address: { "@type": "PostalAddress", addressRegion: loc.state, addressCountry: "AU" },
+      },
+    })),
+  } : null;
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      {listLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listLd) }} />}
       <AdvisorsClient
         professionals={professionals}
         initialType={professionalType}

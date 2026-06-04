@@ -9,6 +9,7 @@ import LeadMagnet from "@/components/LeadMagnet";
 import Icon from "@/components/Icon";
 import JsonLd from "@/components/JsonLd";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { itemListJsonLd } from "@/lib/schema-markup";
 
 export const metadata = {
   title: "Investing Guides & Articles",
@@ -305,9 +306,25 @@ export default async function ArticlesPage({
     { name: "Guides & Articles" },
   ]);
 
+  // ItemList over the articles so the index is citable by AI answer
+  // engines. itemListJsonLd absoluteUrl-wraps each url, so pass
+  // site-relative paths. Capped at 50 to keep the payload reasonable.
+  const listLd =
+    allArticles.length > 0
+      ? itemListJsonLd(
+          "Australian Investing Articles",
+          allArticles.slice(0, 50).map((a, i) => ({
+            position: i + 1,
+            name: a.title,
+            url: `/article/${a.slug}`,
+            description: a.excerpt ?? undefined,
+          })),
+        )
+      : null;
+
   return (
     <div className="pt-5 pb-8 md:py-12">
-      <JsonLd data={breadcrumb} testId="articles-jsonld" />
+      <JsonLd data={listLd ? [breadcrumb, listLd] : breadcrumb} testId="articles-jsonld" />
       <div className="container-custom">
         <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
           <Link href="/" className="hover:text-slate-900">Home</Link>
