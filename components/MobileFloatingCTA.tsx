@@ -63,7 +63,7 @@ export default function MobileFloatingCTA({
           {getBenefitCta(broker, context)}
         </a>
       </div>
-      <div className="px-4 pb-2 text-[0.62rem] text-slate-400 text-center">
+      <div className="px-4 pb-2 text-[0.62rem] text-slate-500 text-center">
         {ADVERTISER_DISCLOSURE_SHORT}
       </div>
     </div>

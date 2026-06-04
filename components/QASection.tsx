@@ -258,7 +258,7 @@ export default function QASection({ questions, brokerSlug, brokerName, pageType:
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-slate-900 text-sm">{q.question}</p>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-slate-500 mt-1">
                     Asked by {q.display_name} &middot;{" "}
                     {new Date(q.created_at).toLocaleDateString("en-AU", {
                       day: "numeric",
@@ -299,7 +299,7 @@ export default function QASection({ questions, brokerSlug, brokerName, pageType:
                               )}
                             </div>
                             <p className="text-sm text-slate-700 leading-relaxed">{a.answer}</p>
-                            <p className="text-xs text-slate-400 mt-1">
+                            <p className="text-xs text-slate-500 mt-1">
                               {a.author_slug ? (
                                 <Link
                                   href={`/authors/${a.author_slug}`}

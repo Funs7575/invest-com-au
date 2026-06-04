@@ -154,7 +154,7 @@ export default function InvestListingCard({
         <span key={k}>
           {i > 0 && <span className="text-slate-300"> · </span>}
           <span className="font-bold text-ink-800">{formatKeyMetricValue(v)}</span>{" "}
-          <span className="text-slate-400">{k.replace(/_/g, " ")}</span>
+          <span className="text-slate-500">{k.replace(/_/g, " ")}</span>
         </span>
       ))}
     </p>

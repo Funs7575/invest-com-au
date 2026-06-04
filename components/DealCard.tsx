@@ -139,7 +139,7 @@ export default memo(function DealCard({
             <span className="text-xs text-amber">
               {renderStars(broker.rating || 0)}
             </span>
-            <span className="text-[0.69rem] text-slate-400">{broker.rating}/5</span>
+            <span className="text-[0.69rem] text-slate-500">{broker.rating}/5</span>
           </div>
         </div>
         {broker.deal_category && (
