@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Professional, ProfessionalReview, AdvisorFirm } from "@/lib/types";
@@ -130,6 +130,10 @@ export default function AdvisorProfileClient({
   firm?: AdvisorFirm | null;
   expertArticles?: ExpertArticle[];
 }) {
+  const enquiryNameId = useId();
+  const enquiryEmailId = useId();
+  const enquiryPhoneId = useId();
+  const enquiryMessageId = useId();
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [formError, setFormError] = useState("");
   const [name, setName] = useState("");
@@ -1207,8 +1211,9 @@ export default function AdvisorProfileClient({
                 ) : (
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">Your name *</label>
+                      <label htmlFor={enquiryNameId} className="block text-xs font-bold text-slate-700 mb-1.5">Your name *</label>
                       <input
+                        id={enquiryNameId}
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -1221,8 +1226,9 @@ export default function AdvisorProfileClient({
                       {nameError && <p className="text-xs text-red-500 mt-1">{nameError}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">Email *</label>
+                      <label htmlFor={enquiryEmailId} className="block text-xs font-bold text-slate-700 mb-1.5">Email *</label>
                       <input
+                        id={enquiryEmailId}
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -1235,10 +1241,11 @@ export default function AdvisorProfileClient({
                       {emailError && <p className="text-xs text-red-500 mt-1">{emailError}</p>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      <label htmlFor={enquiryPhoneId} className="block text-xs font-bold text-slate-700 mb-1.5">
                         Phone <span className="text-slate-400 font-normal">(optional)</span>
                       </label>
                       <input
+                        id={enquiryPhoneId}
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -1247,10 +1254,11 @@ export default function AdvisorProfileClient({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      <label htmlFor={enquiryMessageId} className="block text-xs font-bold text-slate-700 mb-1.5">
                         What do you need help with? <span className="text-slate-400 font-normal">(optional)</span>
                       </label>
                       <textarea
+                        id={enquiryMessageId}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Brief description of your situation..."

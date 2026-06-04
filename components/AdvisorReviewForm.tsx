@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { trackEvent } from "@/lib/tracking";
 
 interface AdvisorReviewFormProps {
@@ -68,6 +68,9 @@ function StarRatingInput({
 }
 
 export default function AdvisorReviewForm({ professionalId, advisorName, onSuccess, onCancel }: AdvisorReviewFormProps) {
+  const reviewerNameId = useId();
+  const reviewTitleId = useId();
+  const reviewBodyId = useId();
   const [state, setState] = useState<"idle" | "submitting" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [attempted, setAttempted] = useState(false);
@@ -192,10 +195,11 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
 
         {/* Reviewer name */}
         <div>
-          <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
+          <label htmlFor={reviewerNameId} className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
             Your name <span className="text-slate-400 font-normal">(optional, defaults to &quot;Anonymous&quot;)</span>
           </label>
           <input
+            id={reviewerNameId}
             type="text"
             value={reviewerName}
             onChange={(e) => setReviewerName(e.target.value)}
@@ -206,10 +210,11 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
 
         {/* Title */}
         <div>
-          <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
+          <label htmlFor={reviewTitleId} className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
             Title <span className="text-slate-400 font-normal">(optional)</span>
           </label>
           <input
+            id={reviewTitleId}
             type="text"
             value={reviewTitle}
             onChange={(e) => setReviewTitle(e.target.value)}
@@ -220,10 +225,11 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
 
         {/* Review body */}
         <div>
-          <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
+          <label htmlFor={reviewBodyId} className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">
             Your review *
           </label>
           <textarea
+            id={reviewBodyId}
             value={reviewBody}
             onChange={(e) => setReviewBody(e.target.value)}
             rows={4}

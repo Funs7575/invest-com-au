@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useId } from "react";
 
 interface Comment {
   id: number;
@@ -41,6 +41,9 @@ const REACTIONS: Array<{ kind: ReactionKind; emoji: string; label: string }> = [
  * confirmation.
  */
 export default function ArticleComments({ slug, initialCounts }: Props) {
+  const nameId = useId();
+  const emailId = useId();
+  const bodyId = useId();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [counts, setCounts] = useState<ReactionCounts>(
@@ -164,29 +167,35 @@ export default function ArticleComments({ slug, initialCounts }: Props) {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
           <input
+            id={nameId}
             type="text"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
+            aria-label="Your name"
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
             maxLength={100}
           />
           <input
+            id={emailId}
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Your email (never shown)"
+            aria-label="Your email (never shown)"
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
             maxLength={254}
           />
         </div>
         <textarea
+          id={bodyId}
           required
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="Share your thoughts, questions or experience…"
+          aria-label="Your comment"
           rows={4}
           maxLength={5000}
           className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
