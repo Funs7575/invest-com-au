@@ -37,12 +37,13 @@ const log = logger("admin:mfa:verify");
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
-  const guard = await requireAdmin();
+  const guard = await requireAdmin({ requireMfa: false }); // verify issues the MFA cookie — never gate it on the MFA cookie
   if (!guard.ok) return guard.response;
   const adminEmail = guard.email;
 
   let body: { code?: string; recovery_code?: string };
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- two optional string fields, hand-validated immediately below (typeof + "code or recovery_code required" check)
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });

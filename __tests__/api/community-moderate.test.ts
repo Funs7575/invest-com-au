@@ -17,6 +17,12 @@ vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
 }));
 
+const mockIsAllowed = vi.fn();
+vi.mock("@/lib/rate-limit-db", () => ({
+  isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
+  ipKey: vi.fn(() => "ip:test"),
+}));
+
 vi.mock("@/lib/admin", () => ({
   ADMIN_EMAILS: ["admin@invest.com.au"],
 }));
@@ -57,11 +63,34 @@ function makeModeratorBuilder(isModerator: boolean) {
   };
 }
 
+// Dispatches admin .from() for the report path: the target lookup
+// (forum_posts/forum_threads) returns `target`; forum_reports.upsert resolves.
+function makeReportAdminFrom(opts: {
+  target?: { id: number; author_id: string; is_removed: boolean } | null;
+  upsertError?: unknown;
+}) {
+  const target =
+    opts.target === undefined
+      ? { id: 5, author_id: "someone-else", is_removed: false }
+      : opts.target;
+  return (table: string) => {
+    if (table === "forum_reports") {
+      return { upsert: vi.fn(() => Promise.resolve({ error: opts.upsertError ?? null })) };
+    }
+    return {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn(() => Promise.resolve({ data: target, error: null })),
+    };
+  };
+}
+
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
 describe("POST /api/community/moderate", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsAllowed.mockResolvedValue(true);
   });
 
   it("returns 401 when not authenticated", async () => {
@@ -139,5 +168,48 @@ describe("POST /api/community/moderate", () => {
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
+  });
+
+  // ── Report action (P1-4) — any authenticated, non-author user ──
+  describe("report action", () => {
+    it("records a report from a non-moderator, non-author user (201)", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: REGULAR_USER }, error: null });
+      mockAdminFrom.mockImplementation(
+        makeReportAdminFrom({ target: { id: 5, author_id: "someone-else", is_removed: false } }),
+      );
+      const res = await POST(makeRequest({ action: "report", target_type: "post", target_id: 5 }));
+      expect(res.status).toBe(201);
+      const data = await res.json();
+      expect(data.ok).toBe(true);
+    });
+
+    it("returns 400 when reporting your own content", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: REGULAR_USER }, error: null });
+      mockAdminFrom.mockImplementation(
+        makeReportAdminFrom({ target: { id: 5, author_id: REGULAR_USER.id, is_removed: false } }),
+      );
+      const res = await POST(makeRequest({ action: "report", target_type: "post", target_id: 5 }));
+      expect(res.status).toBe(400);
+    });
+
+    it("returns 400 when target_type/target_id are missing", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: REGULAR_USER }, error: null });
+      const res = await POST(makeRequest({ action: "report" }));
+      expect(res.status).toBe(400);
+    });
+
+    it("returns 429 when the user is reporting too often", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: REGULAR_USER }, error: null });
+      mockIsAllowed.mockResolvedValueOnce(false);
+      const res = await POST(makeRequest({ action: "report", target_type: "post", target_id: 5 }));
+      expect(res.status).toBe(429);
+    });
+
+    it("returns 404 when the reported target doesn't exist", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: REGULAR_USER }, error: null });
+      mockAdminFrom.mockImplementation(makeReportAdminFrom({ target: null }));
+      const res = await POST(makeRequest({ action: "report", target_type: "post", target_id: 999 }));
+      expect(res.status).toBe(404);
+    });
   });
 });

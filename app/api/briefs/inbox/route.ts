@@ -45,6 +45,19 @@ export async function GET(request: NextRequest) {
       .eq("status", "active");
     const teamIds = (memberships ?? []).map((m) => m.team_id as number);
 
+    // Team names for the "accept as team" picker (AJ-9 — was bare "Team #<id>").
+    let teams: { id: number; name: string }[] = [];
+    if (teamIds.length > 0) {
+      const { data: teamRows } = await admin
+        .from("expert_teams")
+        .select("id, name")
+        .in("id", teamIds);
+      teams = (teamRows ?? []).map((t) => ({
+        id: t.id as number,
+        name: (t.name as string) ?? `Team #${t.id}`,
+      }));
+    }
+
     const { data: advisor } = await admin
       .from("professionals")
       .select("type, firm_id")
@@ -108,6 +121,7 @@ export async function GET(request: NextRequest) {
       available,
       accepted: acceptedRaw ?? [],
       teamIds,
+      teams,
     });
   } catch (err) {
     log.error("inbox error", {

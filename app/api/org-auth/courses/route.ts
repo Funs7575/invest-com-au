@@ -99,6 +99,9 @@ export const POST = withValidatedBody(CreateCourseSchema, async (request, body) 
     }
 
     const session = await requireOrgSession();
+    if (session.role === "viewer") {
+      return NextResponse.json({ error: "Forbidden — viewers cannot create courses." }, { status: 403 });
+    }
     const admin = createAdminClient();
 
     // Fetch org tier for limit check
@@ -180,6 +183,9 @@ export const POST = withValidatedBody(CreateCourseSchema, async (request, body) 
 export const PATCH = withValidatedBody(PatchCourseSchema, async (request, body) => {
   try {
     const session = await requireOrgSession();
+    if (session.role === "viewer") {
+      return NextResponse.json({ error: "Forbidden — viewers cannot edit courses." }, { status: 403 });
+    }
     const admin = createAdminClient();
 
     const { courseId, ...fields } = body;

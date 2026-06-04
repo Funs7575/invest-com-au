@@ -34,7 +34,7 @@ const Body = z.object({
 export const POST = withValidatedBody(Body, async (request: NextRequest, body) => {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email || !ADMIN_EMAILS.includes(user.email)) {
+  if (!user?.email || !ADMIN_EMAILS.includes(user.email.toLowerCase())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

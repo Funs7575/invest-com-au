@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
+// eslint-disable-next-line no-restricted-imports -- the consumer brief tracker is an anonymous email-link surface; accept-flow briefs (and brief_messages / brief_outcomes) are service-role-only under RLS, so the page reads via admin and gates ALL PII display by emailMatches — the same email-as-key model the brief write routes (withdraw/accept/book) use. The lone viewer-session check below stays on createClient (it needs the caller's JWT).
+import { createAdminClient } from "@/lib/supabase/admin";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
 import type { BriefRow, TrackerStatus } from "@/lib/briefs/types";
@@ -24,6 +26,8 @@ import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 import BookConsultationPanel from "./BookConsultationPanel";
 import BriefChatPanel from "./BriefChatPanel";
+import WithdrawBriefButton from "./WithdrawBriefButton";
+import MarkCompleteButton from "./MarkCompleteButton";
 import DisputePanel from "./DisputePanel";
 
 export const dynamic = "force-dynamic";
@@ -52,7 +56,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const admin = await createClient();
+  const admin = createAdminClient();
   const { data } = await admin
     .from("advisor_auctions")
     .select("job_title")
@@ -73,7 +77,7 @@ interface AcceptedInfo {
 }
 
 async function loadAccepted(brief: BriefRow): Promise<AcceptedInfo> {
-  const admin = await createClient();
+  const admin = createAdminClient();
   const info: AcceptedInfo = {};
   if (brief.accepted_by_professional_id) {
     const { data } = await admin
@@ -116,7 +120,7 @@ export default async function BriefTrackerPage({
   const sp = (await searchParams) ?? {};
   const email = typeof sp.email === "string" ? sp.email.toLowerCase().trim() : "";
 
-  const admin = await createClient();
+  const admin = createAdminClient();
   const { data } = await admin
     .from("advisor_auctions")
     .select("*")
@@ -159,7 +163,7 @@ export default async function BriefTrackerPage({
       disputeMessages = existing.messages;
     } else {
       // Check whether the brief is in a state where opening a dispute is allowed.
-      const adminRead = await createClient();
+      const adminRead = createAdminClient();
       const { data: outcomeRow } = await adminRead
         .from("brief_outcomes")
         .select("submitted_at")
@@ -181,7 +185,7 @@ export default async function BriefTrackerPage({
   let intakeOutstanding = 0;
   if (brief.accepted_at) {
     try {
-      const intakeAdmin = await createClient();
+      const intakeAdmin = createAdminClient();
       const targetTeam = brief.accepted_by_team_id;
       const targetPro = brief.accepted_by_professional_id;
       let questionFilter = intakeAdmin
@@ -208,7 +212,7 @@ export default async function BriefTrackerPage({
   let unreadFromPro = 0;
   if (brief.accepted_at && emailMatches) {
     try {
-      const msgAdmin = await createClient();
+      const msgAdmin = createAdminClient();
       const { count } = await msgAdmin
         .from("brief_messages")
         .select("id", { count: "exact", head: true })
@@ -228,7 +232,7 @@ export default async function BriefTrackerPage({
   let outcomeReviewToken: string | null = null;
   if (brief.accepted_at && (brief.tracker_status === "won" || emailMatches)) {
     try {
-      const outcomeAdmin = await createClient();
+      const outcomeAdmin = createAdminClient();
       const { data: outcomeRow } = await outcomeAdmin
         .from("brief_outcomes")
         .select("review_token, submitted_at")
@@ -363,7 +367,28 @@ export default async function BriefTrackerPage({
                 );
               })}
             </ol>
+
+            {emailMatches &&
+              !accepted.professional &&
+              brief.status !== "closed" &&
+              brief.status !== "withdrawn" && (
+                <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600">
+                  <span className="font-semibold text-slate-700">What happens next:</span>{" "}
+                  Verified providers who match your request are reviewing it now. You&apos;ll
+                  get an email the moment one accepts — their contact details then appear
+                  here and you can message them or book a call. Most requests see a
+                  response within a couple of business days.
+                </div>
+              )}
           </div>
+
+          {/* Withdraw — the verified owner can close an open request (AJ-3).
+              Email-as-key auth on the route; hidden once closed/withdrawn. */}
+          {emailMatches &&
+            brief.status !== "closed" &&
+            brief.status !== "withdrawn" && (
+              <WithdrawBriefButton slug={slug} contactEmail={email} />
+            )}
 
           {/* Intake-question prompt — surfaces unanswered required questions
               that the accepting provider published. Skipped silently when
@@ -388,6 +413,15 @@ export default async function BriefTrackerPage({
               </div>
             </div>
           )}
+
+          {/* Consumer "mark complete" → opens the review immediately (AJ-6),
+              shown only to the verified owner of an accepted brief that doesn't
+              already have a review request (else the banner below covers it). */}
+          {emailMatches &&
+            !outcomeReviewToken &&
+            (accepted.professional || accepted.team) && (
+              <MarkCompleteButton slug={slug} contactEmail={email} />
+            )}
 
           {/* Outcome review prompt — once the 4-week cron has issued a
               review_token for this brief, surface a small banner so the

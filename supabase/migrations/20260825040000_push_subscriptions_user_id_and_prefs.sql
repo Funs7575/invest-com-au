@@ -19,6 +19,24 @@
 
 BEGIN;
 
+-- ── push_subscriptions — base table ───────────────────────────────────────────
+-- Repo-parity fix (P0-3): push_subscriptions was only ever ALTER'd, never
+-- CREATE'd in any migration, so both a fresh DB build and the live DB lacked the
+-- table entirely (the ALTER below would error on a clean apply). Created here
+-- IF NOT EXISTS so this migration is self-contained. Schema matches the push
+-- subscribe route's upsert (onConflict: endpoint) and the dispatch helper's
+-- select (id, endpoint, keys_p256dh, keys_auth). user_id is added by the ALTER
+-- below so the FK lives in one place.
+CREATE TABLE IF NOT EXISTS public.push_subscriptions (
+  id           uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  endpoint     text        NOT NULL UNIQUE,
+  keys_p256dh  text        NOT NULL,
+  keys_auth    text        NOT NULL,
+  topics       text[]      NOT NULL DEFAULT '{}',
+  created_at   timestamptz NOT NULL DEFAULT now(),
+  updated_at   timestamptz NOT NULL DEFAULT now()
+);
+
 -- ── push_subscriptions — user linkage ─────────────────────────────────────────
 
 ALTER TABLE public.push_subscriptions

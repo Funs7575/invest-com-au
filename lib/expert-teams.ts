@@ -10,6 +10,7 @@
 
 // eslint-disable-next-line no-restricted-imports -- multi-row writes across professionals/teams; service-role legitimate per CLAUDE.md.
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendTeamInvitation } from "@/lib/marketplace-emails";
 import { randomBytes } from "crypto";
 import { logger } from "@/lib/logger";
 
@@ -237,6 +238,32 @@ export async function inviteMember(input: InviteMemberInput): Promise<ExpertTeam
     .single();
 
   if (error || !data) throw new Error(`inviteMember failed: ${error?.message ?? "no row"}`);
+
+  // Notify the invitee so they actually learn about the invite (AJ-2). The
+  // invite row is already committed; the email is best-effort and must never
+  // break invite creation — fire-and-forget with a swallowed catch.
+  void (async () => {
+    try {
+      const [{ data: team }, { data: inviter }] = await Promise.all([
+        admin.from("expert_teams").select("name").eq("id", input.teamId).maybeSingle(),
+        admin
+          .from("professionals")
+          .select("name")
+          .eq("id", input.invitedByProfessionalId)
+          .maybeSingle(),
+      ]);
+      await sendTeamInvitation({
+        email,
+        inviteeName: input.name ?? null,
+        teamName: (team?.name as string) ?? "an Invest.com.au team",
+        inviterName: (inviter?.name as string) ?? null,
+        token,
+      });
+    } catch {
+      /* swallowed — invite already created; email is best-effort */
+    }
+  })();
+
   return data as ExpertTeamInvitation;
 }
 
@@ -271,6 +298,27 @@ export async function acceptInvitation({
       .update({ status: "expired" })
       .eq("id", invite.id);
     throw new Error("invitation_expired");
+  }
+
+  // Bind the accept to the invited identity. A valid token alone must NOT let
+  // an arbitrary advisor join the team — match the invited professional id
+  // when the invite targeted an existing pro, otherwise match the invited
+  // email (case-insensitive). Prevents token replay / cross-account joins.
+  const { data: acceptingPro } = await admin
+    .from("professionals")
+    .select("id, email")
+    .eq("id", professionalId)
+    .maybeSingle();
+  if (!acceptingPro) throw new Error("invalid_invitation");
+  const idMatches =
+    invite.invited_professional_id != null &&
+    invite.invited_professional_id === professionalId;
+  const emailMatches =
+    !!invite.email &&
+    !!acceptingPro.email &&
+    acceptingPro.email.trim().toLowerCase() === invite.email.trim().toLowerCase();
+  if (!idMatches && !emailMatches) {
+    throw new Error("invitation_email_mismatch");
   }
 
   // Promote/insert the membership.

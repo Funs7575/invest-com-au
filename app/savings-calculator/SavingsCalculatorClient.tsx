@@ -17,9 +17,9 @@ type Account = {
   asx_fee: string; rating: number; affiliate_url: string; color: string; min_deposit: string;
 };
 
-function parseRate(fee: string): number {
-  const match = fee.match(/([\d.]+)/);
-  return match ? parseFloat(match[1]) : 0;
+function parseRate(fee: string | null | undefined): number {
+  const match = (fee ?? "").match(/([\d.]+)/);
+  return match && match[1] ? parseFloat(match[1]) : 0;
 }
 
 function formatCurrency(n: number): string {

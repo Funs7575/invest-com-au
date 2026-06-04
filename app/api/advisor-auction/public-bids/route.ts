@@ -28,9 +28,10 @@ export async function GET(request: NextRequest) {
     const admin = createAdminClient();
 
     const { data: advisor } = await admin
-      .from("advisors")
+      .from("professionals")
       .select("id")
       .eq("email", user.email)
+      .eq("status", "active")
       .single();
 
     if (!advisor) return NextResponse.json({ error: "Advisor profile not found." }, { status: 404 });
@@ -100,9 +101,10 @@ export async function DELETE(request: NextRequest) {
     const admin = createAdminClient();
 
     const { data: advisor } = await admin
-      .from("advisors")
+      .from("professionals")
       .select("id")
       .eq("email", user.email)
+      .eq("status", "active")
       .single();
 
     if (!advisor) return NextResponse.json({ error: "Advisor profile not found." }, { status: 404 });

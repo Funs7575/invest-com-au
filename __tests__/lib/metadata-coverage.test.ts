@@ -31,6 +31,9 @@ const ALLOWLIST = new Set<string>([
   "app/course/page.tsx",
   "app/course/[slug]/page.tsx",
   "app/grants/page.tsx",
+  // Bare `/firm-portal` is a pure redirect to `/firm-portal/performance`
+  // (it had no index route → 404). Metadata would never render.
+  "app/firm-portal/page.tsx",
   // "use client" invite-acceptance form — requires ?token= to function;
   // cannot export metadata from a client component; not intended for indexing
   "app/clubs/[clubId]/join/page.tsx",

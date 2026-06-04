@@ -982,6 +982,9 @@ export default function QuizPage() {
 
   return (
     <>
+      {/* Accessible/SEO heading for the quiz funnel (the screens below are
+          visual step UI with no semantic h1). sr-only so the design is unchanged. */}
+      <h1 className="sr-only">Investment match quiz</h1>
       {sharedTopSlug && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-center text-xs text-amber-800">
           Someone got matched with <strong>{brokers.find((b) => b.slug === sharedTopSlug)?.name ?? sharedTopSlug}</strong> — take the quiz to see your match.

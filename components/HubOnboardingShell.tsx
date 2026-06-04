@@ -5,6 +5,7 @@ import { useState } from "react";
 import EligibilityQuiz from "@/components/EligibilityQuiz";
 import type { QuizAnswers, QuizQuestion } from "@/components/EligibilityQuiz";
 import { isValidEmailClient } from "@/lib/validate-email";
+import { HUB_ONBOARDING_CONFIGS } from "@/lib/hub-onboarding-configs";
 
 export interface HubOnboardingResult {
   headline: string;
@@ -24,7 +25,14 @@ export interface HubOnboardingConfig {
 }
 
 interface HubOnboardingShellProps {
-  config: HubOnboardingConfig;
+  /**
+   * Serialisable key into HUB_ONBOARDING_CONFIGS (the config's `hubSlug`).
+   * A string — NOT the config object — because the config carries an
+   * `evaluate` function, and functions cannot be passed from a Server
+   * Component (the /quiz pages, which export `metadata`) to this Client
+   * Component (Next throws an RSC render error / React #419 if you try).
+   */
+  configKey: string;
 }
 
 type CaptureState = "idle" | "submitting" | "done" | "error";
@@ -201,7 +209,15 @@ function HubResultPanel({
  *
  * OB-01 — hub onboarding stream (REMEDIATION_QUEUE.md).
  */
-export default function HubOnboardingShell({ config }: HubOnboardingShellProps) {
+export default function HubOnboardingShell({ configKey }: HubOnboardingShellProps) {
+  const config = HUB_ONBOARDING_CONFIGS[configKey];
+  if (!config) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-12 text-center text-slate-500">
+        This quiz isn’t available right now.
+      </div>
+    );
+  }
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
       <div className="mb-8 text-center">

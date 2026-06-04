@@ -19,6 +19,18 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() })),
 }));
 
+// The bid route rate-limits via isAllowed() and notifies the consumer on a new
+// public-job bid. isAllowed() internally calls createAdminClient() — left
+// unmocked it consumes our mocked `from()` chains and throws the whole
+// sequence off (this is what made 8 of these tests 500). Stub both so the test
+// exercises only the bid logic.
+vi.mock("@/lib/rate-limit-db", () => ({
+  isAllowed: vi.fn().mockResolvedValue(true),
+}));
+vi.mock("@/lib/quote-emails", () => ({
+  sendConsumerBidReceivedEmail: vi.fn().mockResolvedValue(undefined),
+}));
+
 import { POST } from "@/app/api/advisor-auction/bid/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -35,23 +47,14 @@ function makePost(body: unknown): NextRequest {
 }
 
 /**
- * Build a multi-call sequence for mockAdminFrom.
- * The route calls admin.from() multiple times in order:
- *   1. advisors SELECT (single) → advisor profile
+ * The bid route calls admin.from() in this order — the tests below queue
+ * mock chains (via mockReturnValueOnce) to match it:
+ *   1. professionals SELECT (single) → advisor profile
  *   2. advisor_auctions SELECT (single) → auction
  *   3. advisor_auction_bids SELECT (maybeSingle) → existing bid (or null)
  *   4. advisor_auction_bids INSERT or UPDATE
  *   5. advisor_auction_bids SELECT (high bid check)
  */
-function makeDbSequence(steps: Array<() => Record<string, unknown>>) {
-  let call = 0;
-  return () => {
-    const step = steps[call] ?? steps[steps.length - 1];
-    call++;
-    return step();
-  };
-}
-
 function singleChain(result: { data: unknown; error: unknown }) {
   const c: Record<string, unknown> = {};
   c.select = vi.fn(() => c);
@@ -178,6 +181,11 @@ describe("POST /api/advisor-auction/bid", () => {
     expect(json.bid_amount).toBe(10000);
     expect(json.is_leading).toBe(true);
     expect(json.message).toMatch(/highest/i);
+    // Regression guard: the advisor must be resolved from `professionals`,
+    // never the non-existent `advisors` table (which silently 404'd the
+    // entire auction surface).
+    expect(mockAdminFrom).toHaveBeenCalledWith("professionals");
+    expect(mockAdminFrom).not.toHaveBeenCalledWith("advisors");
   });
 
   it("is_leading is false when another advisor has a higher bid", async () => {

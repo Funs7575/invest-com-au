@@ -52,6 +52,10 @@ function makeChain(result: { data: unknown; error?: unknown }) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // clearAllMocks does NOT drain a mockReturnValueOnce queue — reset mockFrom
+  // so a test that throws mid-chain can't leak unconsumed once-values into the
+  // next test's call sequence.
+  mockFrom.mockReset();
   mockIsAllowed.mockResolvedValue(true);
   mockRequireAdvisorSession.mockResolvedValue(42);
   mockMask.mockImplementation((row: unknown) => ({ masked: true, ...(row as object) }));
@@ -78,10 +82,12 @@ describe("GET /api/briefs/inbox", () => {
       flow_type: "accept",
       status: "open",
     };
-    // Calls in order: expert_team_members, professionals, advisor_auctions(open),
-    // advisor_auctions(accepted).
+    // Calls in order: expert_team_members, expert_teams (only when the caller
+    // has team memberships — AJ-9 name lookup), professionals,
+    // advisor_auctions(open), advisor_auctions(accepted).
     mockFrom
       .mockReturnValueOnce(makeChain({ data: [{ team_id: 7 }] }))
+      .mockReturnValueOnce(makeChain({ data: [{ id: 7, name: "Tax Crew" }] }))
       .mockReturnValueOnce(makeChain({ data: { type: "accountant", firm_id: null } }))
       .mockReturnValueOnce(makeChain({ data: [openBrief] }))
       .mockReturnValueOnce(makeChain({ data: [{ id: 1, slug: "acc1" }] }));
@@ -93,6 +99,7 @@ describe("GET /api/briefs/inbox", () => {
     expect(json.available[0].masked).toBe(true);
     expect(json.accepted).toHaveLength(1);
     expect(json.teamIds).toEqual([7]);
+    expect(json.teams).toEqual([{ id: 7, name: "Tax Crew" }]);
   });
 
   it("filters out direct-targeted briefs not aimed at the caller", async () => {

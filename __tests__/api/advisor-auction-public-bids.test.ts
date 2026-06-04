@@ -109,6 +109,9 @@ describe("GET /api/advisor-auction/public-bids", () => {
     expect(res.status).toBe(200);
     expect(Array.isArray(body.bids)).toBe(true);
     expect((body.bids as unknown[]).length).toBe(1);
+    // Regression guard: advisor resolved from `professionals`, not `advisors`.
+    expect(mockAdminFrom).toHaveBeenCalledWith("professionals");
+    expect(mockAdminFrom).not.toHaveBeenCalledWith("advisors");
   });
 
   it("returns empty array when advisor has no bids", async () => {
@@ -339,7 +342,6 @@ describe("DELETE /api/advisor-auction/public-bids", () => {
 
     const { DELETE } = await import("@/app/api/advisor-auction/public-bids/route");
     const res = await DELETE(makeDeleteReq(5, "not_a_valid_reason"));
-    const body = await res.json() as Record<string, unknown>;
 
     expect(res.status).toBe(200);
     expect(updateChain.update).toHaveBeenCalledWith({ status: "retracted", retract_reason: null });

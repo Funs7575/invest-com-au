@@ -67,6 +67,10 @@ export default function SquadInboxClaimRow({
           error?: string;
         };
         setError(data.error || `Could not ${action} this brief.`);
+        // Re-sync from the server so a lost claim race (someone else claimed it
+        // first) updates this row to show the current owner instead of a stale
+        // "Unclaimed" state (AJ-8).
+        startTransition(() => router.refresh());
         return;
       }
       startTransition(() => router.refresh());

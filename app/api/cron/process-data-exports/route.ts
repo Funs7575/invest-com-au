@@ -16,11 +16,12 @@
  * the founder at 7- and 25-day thresholds; this processor handles them
  * automatically in < 24 hours under normal conditions.
  *
- * PREREQUISITE — one-time founder action:
- *   Create a private Supabase Storage bucket named "data-exports":
- *   Dashboard → Storage → New bucket → name="data-exports", public=OFF.
- *   If the bucket is missing, the request is marked status='failed' with
- *   a descriptive error_message guiding the fix.
+ * STORAGE BUCKET:
+ *   The private "data-exports" bucket is created by
+ *   supabase/migrations/20260602_data_exports_bucket.sql (applied to live
+ *   2026-06-02). The guard below is retained as a defensive fallback: if the
+ *   bucket is ever missing, the request is marked status='failed' with a
+ *   descriptive error_message guiding the fix.
  *
  * TABLE STATUS:
  *   data_export_requests is defined in

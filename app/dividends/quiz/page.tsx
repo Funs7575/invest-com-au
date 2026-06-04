@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
-import { DIVIDENDS_ONBOARDING_CONFIG } from "@/lib/hub-onboarding-configs";
 import HubOnboardingShell from "@/components/HubOnboardingShell";
 
 export const revalidate = 86400;
@@ -33,7 +32,7 @@ export default function DividendsQuizPage() {
           </div>
         }
       >
-        <HubOnboardingShell config={DIVIDENDS_ONBOARDING_CONFIG} />
+        <HubOnboardingShell configKey="dividends" />
       </Suspense>
     </>
   );

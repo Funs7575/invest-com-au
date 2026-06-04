@@ -3,18 +3,19 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { logger } from "@/lib/logger";
+import { isAllowed } from "@/lib/rate-limit-db";
 import { sendConsumerBidReceivedEmail } from "@/lib/quote-emails";
 
 const log = logger("advisor-auction-bid");
 
 const MINIMUM_BID_CENTS = 50_00; // $50 minimum bid
 
-// auction_id / bid_amount must be numbers (matches the existing type guards).
-// The $50 minimum is intentionally NOT enforced here so the handler keeps its
-// dynamic "Minimum bid is $50.00" message.
-const Body = z.object({
-  auction_id: z.number(),
-  bid_amount: z.number(),
+const BidBody = z.object({
+  auction_id: z.number().int().positive(),
+  bid_amount: z
+    .number()
+    .int()
+    .min(MINIMUM_BID_CENTS, `Minimum bid is $${(MINIMUM_BID_CENTS / 100).toFixed(2)}.`),
 });
 
 export async function POST(request: NextRequest) {
@@ -32,38 +33,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const parsed = Body.safeParse(await request.json());
+    // Rate-limit per advisor — bidding is a write that also fires a consumer
+    // notification email; cap repeated submissions.
+    if (!(await isAllowed("advisor_auction_bid", `u:${user.id}`, { max: 30, refillPerSec: 0.5 }))) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
+
+    let rawBody: unknown;
+    try {
+      rawBody = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    }
+    const parsed = BidBody.safeParse(rawBody);
     if (!parsed.success) {
       return NextResponse.json(
-        { error: "auction_id is required." },
-        { status: 400 }
+        { error: parsed.error.issues[0]?.message ?? "Invalid body." },
+        { status: 400 },
       );
     }
     const { auction_id, bid_amount } = parsed.data;
 
-    if (!auction_id) {
-      return NextResponse.json(
-        { error: "auction_id is required." },
-        { status: 400 }
-      );
-    }
-
-    if (!bid_amount || bid_amount < MINIMUM_BID_CENTS) {
-      return NextResponse.json(
-        {
-          error: `Minimum bid is $${(MINIMUM_BID_CENTS / 100).toFixed(2)}.`,
-        },
-        { status: 400 }
-      );
-    }
-
     const admin = createAdminClient();
 
-    // Look up advisor by user email
+    // Look up advisor by user email. `professionals` is the canonical advisor
+    // table (the whole portal queries it) — `advisors` does not exist, so this
+    // lookup always returned null and the bid surface 404'd for every advisor.
     const { data: advisor } = await admin
-      .from("advisors")
+      .from("professionals")
       .select("id, name, email, type, credit_balance_cents")
       .eq("email", user.email)
+      .eq("status", "active")
       .single();
 
     if (!advisor) {

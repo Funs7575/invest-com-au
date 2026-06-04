@@ -117,7 +117,7 @@ async function createAuction(request: NextRequest) {
  * GET /api/advisor-auction?advisor_id=xxx — Return active auctions for an advisor.
  * Matches auctions to the advisor's type and location. Auth required.
  */
-async function getAuctions(request: NextRequest) {
+async function getAuctions(_request: NextRequest) {
   try {
     const supabase = await createClient();
     const {
@@ -131,21 +131,19 @@ async function getAuctions(request: NextRequest) {
       );
     }
 
-    const advisorId = request.nextUrl.searchParams.get("advisor_id");
-    if (!advisorId) {
-      return NextResponse.json(
-        { error: "advisor_id is required." },
-        { status: 400 }
-      );
-    }
-
     const admin = createAdminClient();
 
-    // Fetch advisor profile for type/location matching
+    // SECURITY: resolve the advisor from the AUTHENTICATED session — never from a
+    // client-supplied ?advisor_id=. Trusting that param was an IDOR that let any
+    // logged-in advisor read competitors' bid amounts and won-lead history.
+    // Mirrors the public-bids handler, which scopes to the caller's own email.
+    // `professionals` is the canonical table; `advisors` does not exist (this
+    // lookup always returned null, so the auctions surface 404'd for everyone).
     const { data: advisor } = await admin
-      .from("advisors")
+      .from("professionals")
       .select("id, type, location_state, location_suburb")
-      .eq("id", Number(advisorId))
+      .eq("email", user.email ?? "")
+      .eq("status", "active")
       .single();
 
     if (!advisor) {

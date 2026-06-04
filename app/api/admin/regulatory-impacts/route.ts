@@ -13,7 +13,7 @@ const log = logger("regulatory-impacts");
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email || !ADMIN_EMAILS.includes(user.email)) {
+  if (!user?.email || !ADMIN_EMAILS.includes(user.email.toLowerCase())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -43,10 +43,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email || !ADMIN_EMAILS.includes(user.email)) {
+  if (!user?.email || !ADMIN_EMAILS.includes(user.email.toLowerCase())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- admin-gated route (P2: migrate to Zod)
   const body = await request.json();
   const { alert_id, broker_slug, impact_level, impact_description, estimated_fee_change, broker_response } = body;
 
@@ -112,7 +113,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email || !ADMIN_EMAILS.includes(user.email)) {
+  if (!user?.email || !ADMIN_EMAILS.includes(user.email.toLowerCase())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

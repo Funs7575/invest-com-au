@@ -167,6 +167,51 @@ export async function createPendingOutcomeRequests(daysOld = 28): Promise<number
 }
 
 /**
+ * Create (or fetch) the outcome/review request for a SINGLE accepted brief —
+ * used when the consumer marks the engagement complete from the tracker (AJ-6)
+ * rather than waiting for the 28-day cron. Idempotent: returns the existing
+ * token if one already exists. Returns null if the brief isn't accepted yet.
+ */
+export async function ensureOutcomeRequestForBrief(
+  briefId: number,
+): Promise<{ token: string } | null> {
+  const admin = createAdminClient();
+
+  // Already requested? Reuse the token (idempotent — and avoids a duplicate row
+  // if the cron got there first).
+  const { data: existing } = await admin
+    .from("brief_outcomes")
+    .select("review_token")
+    .eq("brief_id", briefId)
+    .maybeSingle();
+  if (existing?.review_token) return { token: existing.review_token as string };
+
+  // Only accepted briefs can be reviewed.
+  const { data: brief } = await admin
+    .from("advisor_auctions")
+    .select("id, contact_email, accepted_by_professional_id, accepted_by_team_id, accepted_at")
+    .eq("id", briefId)
+    .maybeSingle();
+  if (!brief || !brief.accepted_at || !brief.contact_email) return null;
+
+  const token = newReviewToken();
+  const { error } = await admin.from("brief_outcomes").insert({
+    brief_id: briefId,
+    consumer_email: brief.contact_email as string,
+    professional_id: (brief.accepted_by_professional_id as number | null) ?? null,
+    team_id: (brief.accepted_by_team_id as number | null) ?? null,
+    review_token: token,
+    review_requested_at: new Date().toISOString(),
+    outcome: null,
+  });
+  if (error) {
+    log.warn("ensureOutcomeRequestForBrief insert failed", { briefId, err: error.message });
+    return null;
+  }
+  return { token };
+}
+
+/**
  * Recompute the `provider_outcome_scores` table for the last 12-month
  * window. Called by the daily cron.
  *
