@@ -56,7 +56,7 @@ async function submitValidEnquiry() {
 }
 
 describe("AdvisorProfileClient enquiry submit", () => {
-  let fetchSpy: ReturnType<typeof vi.spyOn>;
+  let fetchSpy: ReturnType<typeof vi.spyOn<typeof globalThis, "fetch">>;
 
   beforeEach(() => {
     fetchSpy = vi.spyOn(globalThis, "fetch");
