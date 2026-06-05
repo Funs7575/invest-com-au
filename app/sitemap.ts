@@ -951,6 +951,15 @@ async function buildShard5(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // "How to invest in X" programmatic guides — one per opportunity
+  // vertical (Wave 7). High-intent SEO pages with live marketplace data.
+  const howToInvestPages = getOpportunityCategories().map((c) => ({
+    url: `${base}/how-to-invest-in/${c.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
   // ── /topic/[slug] content-category pages ──
   // Slugs sourced from TOPIC_LABELS in app/topic/[slug]/page.tsx — no DB query needed.
   // No bare `/topic` hub URL is emitted: the app defines only app/topic/[slug]/page.tsx
@@ -993,6 +1002,7 @@ async function buildShard5(): Promise<MetadataRoute.Sitemap> {
   return [
     ...glossaryPages,
     ...howToPages,
+    ...howToInvestPages,
     ...topicPages,
     marketplaceHubPage,
     ...marketplaceIntentPages,
