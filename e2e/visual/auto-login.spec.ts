@@ -19,6 +19,13 @@ const TEST_USERS = [
 
 const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
 
+// Remote/sandbox egress proxies can MITM TLS with a CA chromium doesn't trust.
+// Manually-created contexts (browser.newContext()) don't inherit the config's
+// `use.ignoreHTTPSErrors`, so opt in explicitly via the same env the bots use.
+const ignoreHTTPSErrors =
+  process.env.E2E_IGNORE_HTTPS_ERRORS === "1" ||
+  process.env.BOTS_IGNORE_HTTPS_ERRORS === "1";
+
 test("auto-login: create authenticated sessions for all test users", async ({
   browser,
 }) => {
@@ -31,25 +38,35 @@ test("auto-login: create authenticated sessions for all test users", async ({
 
     console.log(`\n🔑 Logging in: ${testUser.state} (${testUser.email})`);
 
-    const context = await browser.newContext();
+    const context = await browser.newContext({ ignoreHTTPSErrors });
     const page = await context.newPage();
 
     try {
-      // Navigate to login
+      // `networkidle` never settles on auth pages (the Supabase client holds a
+      // connection open), so wait for the DOM instead.
       await page.goto(`${baseURL}${state.loginUrl}`, {
-        waitUntil: "networkidle",
-        timeout: 20000,
+        waitUntil: "domcontentloaded",
+        timeout: 30000,
       });
 
-      // Fill email
+      // Wait for the form to hydrate before touching it — otherwise the tab
+      // probe below races client hydration and the password field never mounts.
       const emailInput = page.locator('input[type="email"]').first();
-      await emailInput.fill(testUser.email);
+      await emailInput.waitFor({ state: "visible", timeout: 15000 });
 
-      // Fill password
+      // The public /login form defaults to a magic-link tab; the password
+      // fields only mount once the "Password" tab is selected. Best-effort —
+      // portal login forms don't have this tab.
+      const passwordTab = page.getByRole("button", { name: "Password", exact: true });
+      if (await passwordTab.count()) {
+        await passwordTab.first().click().catch(() => {});
+      }
+
       const passwordInput = page.locator('input[type="password"]').first();
+      await passwordInput.waitFor({ state: "visible", timeout: 10000 });
+      await emailInput.fill(testUser.email);
       await passwordInput.fill(testUser.password);
 
-      // Click login button (try multiple selectors)
       let loginButton = page.locator(
         'button:has-text("Sign in"), button:has-text("Login"), button[type="submit"]'
       );
@@ -58,11 +75,17 @@ test("auto-login: create authenticated sessions for all test users", async ({
       }
       await loginButton.click();
 
-      // Wait for post-login redirect
-      await page.waitForURL(state.postLoginPattern, { timeout: 15000 });
+      // Success = matches the state's post-login pattern AND is no longer a
+      // login page. Without the second clause, patterns like /broker-portal(\/|$)/
+      // match /broker-portal/login and produce a junk "authenticated" session.
+      await page.waitForURL(
+        (url) =>
+          state.postLoginPattern.test(url.pathname) &&
+          !/\/login(\/|$)/i.test(url.pathname),
+        { timeout: 15000 }
+      );
       console.log(`  ✓ Logged in, redirected to: ${page.url()}`);
 
-      // Save authenticated session
       const stateFile = state.storageStateFile;
       await page.context().storageState({ path: stateFile });
       console.log(`  ✓ Session saved to: ${stateFile}`);

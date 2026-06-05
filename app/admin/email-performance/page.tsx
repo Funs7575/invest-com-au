@@ -1,34 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import AdminShell from "@/components/AdminShell";
-
-interface DripLog {
-  email: string;
-  template_id: string;
-  sent_at: string;
-}
-
-interface EmailCapture {
-  id: number;
-  email: string;
-  source: string;
-  status?: string;
-  created_at: string;
-  utm_source?: string;
-}
-
-interface QuizLead {
-  email: string;
-  unsubscribed?: boolean;
-  created_at: string;
-}
-
-interface FeeAlert {
-  email: string;
-  verified: boolean;
-}
 
 type Period = "7d" | "30d" | "90d" | "all";
 
@@ -49,63 +22,29 @@ export default function EmailPerformancePage() {
   const [dripByTemplate, setDripByTemplate] = useState<[string, number][]>([]);
   const [recentBounces, setRecentBounces] = useState<string[]>([]);
 
-  useEffect(() => { fetchData(); }, [period]);
-
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     setLoading(true);
-    const supabase = createClient();
-    const days = period === "7d" ? 7 : period === "30d" ? 30 : period === "90d" ? 90 : 9999;
-    const since = days < 9999 ? new Date(Date.now() - days * 86400000).toISOString() : "2020-01-01T00:00:00Z";
-
-    const [capturesRes, quizRes, feeAlertsRes, bouncedRes, unsubRes, dripsRes, capturesFullRes] = await Promise.all([
-      supabase.from("email_captures").select("id, source, created_at, utm_source, status").gte("created_at", since).order("created_at", { ascending: false }).limit(5000),
-      supabase.from("quiz_leads").select("email, unsubscribed, created_at").gte("created_at", since),
-      supabase.from("fee_alert_subscriptions").select("email, verified"),
-      supabase.from("email_captures").select("id", { count: "exact", head: true }).eq("status", "bounced"),
-      supabase.from("quiz_leads").select("id", { count: "exact", head: true }).eq("unsubscribed", true),
-      supabase.from("investor_drip_log").select("email, template_id, sent_at").gte("sent_at", since).order("sent_at", { ascending: false }).limit(2000),
-      supabase.from("email_captures").select("email, status").eq("status", "bounced").limit(10),
-    ]);
-
-    const captures = (capturesRes.data || []) as EmailCapture[];
-    const quiz = (quizRes.data || []) as QuizLead[];
-    const drips = (dripsRes.data || []) as DripLog[];
-
-    setTotalCaptures(captures.length);
-    setTotalQuiz(quiz.length);
-    setTotalFeeAlerts((feeAlertsRes.data || []).filter((a: FeeAlert) => a.verified).length);
-    setBounced(bouncedRes.count || 0);
-    setUnsubscribed(unsubRes.count || 0);
-    setDripsSent(drips.length);
-    setRecentBounces((capturesFullRes.data || []).map((c: { email: string }) => c.email));
-
-    // By source
-    const srcMap = new Map<string, number>();
-    for (const c of captures) srcMap.set(c.source || "unknown", (srcMap.get(c.source || "unknown") || 0) + 1);
-    setCapturesBySource([...srcMap.entries()].sort((a, b) => b[1] - a[1]));
-
-    // By UTM
-    const utmMap = new Map<string, number>();
-    for (const c of captures) {
-      if (c.utm_source) utmMap.set(c.utm_source, (utmMap.get(c.utm_source) || 0) + 1);
+    try {
+      const res = await fetch(`/api/admin/email-performance?period=${period}`);
+      if (!res.ok) throw new Error(`email-performance ${res.status}`);
+      const data = await res.json();
+      setTotalCaptures(data.totalCaptures || 0);
+      setTotalQuiz(data.totalQuiz || 0);
+      setTotalFeeAlerts(data.totalFeeAlerts || 0);
+      setBounced(data.bounced || 0);
+      setUnsubscribed(data.unsubscribed || 0);
+      setDripsSent(data.dripsSent || 0);
+      setCapturesBySource(data.capturesBySource || []);
+      setCapturesByUtm(data.capturesByUtm || []);
+      setDailyCaptures(data.dailyCaptures || []);
+      setDripByTemplate(data.dripByTemplate || []);
+      setRecentBounces(data.recentBounces || []);
+    } finally {
+      setLoading(false);
     }
-    setCapturesByUtm([...utmMap.entries()].sort((a, b) => b[1] - a[1]));
+  }, [period]);
 
-    // Daily
-    const dayMap = new Map<string, number>();
-    for (const c of captures) {
-      const day = new Date(c.created_at).toISOString().slice(0, 10);
-      dayMap.set(day, (dayMap.get(day) || 0) + 1);
-    }
-    setDailyCaptures([...dayMap.entries()].sort((a, b) => a[0].localeCompare(b[0])).slice(-30));
-
-    // Drip by template
-    const tplMap = new Map<string, number>();
-    for (const d of drips) tplMap.set(d.template_id || "unknown", (tplMap.get(d.template_id || "unknown") || 0) + 1);
-    setDripByTemplate([...tplMap.entries()].sort((a, b) => b[1] - a[1]));
-
-    setLoading(false);
-  }
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const listHealth = useMemo(() => {
     const total = totalCaptures + totalQuiz;

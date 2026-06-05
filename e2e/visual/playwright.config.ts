@@ -21,6 +21,12 @@ export default defineConfig({
     baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000",
     actionTimeout: 10_000,
     navigationTimeout: 20_000,
+    // Opt-in for remote/sandbox environments whose egress proxy does TLS
+    // interception with a CA chromium doesn't trust (mirrors the bots config's
+    // BOTS_IGNORE_HTTPS_ERRORS). Off by default so local/CI stays strict.
+    ignoreHTTPSErrors:
+      process.env.E2E_IGNORE_HTTPS_ERRORS === "1" ||
+      process.env.BOTS_IGNORE_HTTPS_ERRORS === "1",
   },
   webServer: {
     command: "npm run dev",

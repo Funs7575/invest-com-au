@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import Icon from "@/components/Icon";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -60,66 +59,47 @@ export default function FinanceDashboardPage() {
   const [amountInput, setAmountInput] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  const supabase = createClient();
-
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [txnRes, monthRes] = await Promise.all([
-      supabase.from("finance_transactions").select("*").order("date", { ascending: false }).limit(500),
-      supabase.from("finance_monthly_summary").select("*").limit(24),
-    ]);
-    setTxns((txnRes.data || []) as Transaction[]);
-    setMonthly((monthRes.data || []) as MonthlySummary[]);
-    setLoading(false);
-  }, [supabase]);
+    try {
+      const res = await fetch("/api/admin/finance");
+      if (!res.ok) throw new Error(`finance ${res.status}`);
+      const data = await res.json();
+      setTxns((data.transactions || []) as Transaction[]);
+      setMonthly((data.monthly || []) as MonthlySummary[]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
 
-  // Auto-pull Stripe revenue into transactions
+  // Auto-pull Stripe revenue into transactions (server-side: advisor_billing
+  // and finance_transactions are both service-role-only post-RLS-hardening).
   const syncStripeRevenue = useCallback(async () => {
-    const { data: billing } = await supabase
-      .from("advisor_billing")
-      .select("id, amount_cents, professional_id, description, status, created_at")
-      .eq("status", "paid")
-      .order("created_at", { ascending: false })
-      .limit(100);
-
-    if (!billing || billing.length === 0) return;
-
-    const { data: existingRefs } = await supabase
-      .from("finance_transactions")
-      .select("reference")
-      .eq("category", "advisor_credits")
-      .not("reference", "is", null);
-
-    const existingSet = new Set((existingRefs || []).map(r => r.reference));
-    let added = 0;
-
-    for (const b of billing) {
-      const ref = `advisor_billing_${b.id}`;
-      if (existingSet.has(ref)) continue;
-      await supabase.from("finance_transactions").insert({
-        date: new Date(b.created_at).toISOString().slice(0, 10),
-        type: "income", category: "advisor_credits",
-        description: b.description || `Advisor lead payment`,
-        amount_cents: b.amount_cents,
-        counterparty: `Advisor #${b.professional_id}`,
-        reference: ref,
-      });
-      added++;
-    }
+    const res = await fetch("/api/admin/finance/sync", { method: "POST" });
+    if (!res.ok) return 0;
+    const { added } = await res.json();
     if (added > 0) loadData();
-    return added;
-  }, [supabase, loadData]);
+    return added as number;
+  }, [loadData]);
 
   const handleSave = async () => {
     if (!editing?.description || !editing.amount_cents) return;
     setSaving(true);
     const { id, created_at: _created_at, ...payload } = editing as Transaction;
     if (id) {
-      await supabase.from("finance_transactions").update(payload).eq("id", id);
+      await fetch("/api/admin/finance", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...payload }),
+      });
     } else {
-      await supabase.from("finance_transactions").insert(payload);
+      await fetch("/api/admin/finance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
     }
     setSaving(false);
     setEditing(null);
@@ -133,7 +113,11 @@ export default function FinanceDashboardPage() {
 
   const confirmDelete = async () => {
     if (deleteId == null) return;
-    await supabase.from("finance_transactions").delete().eq("id", deleteId);
+    await fetch("/api/admin/finance", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: deleteId }),
+    });
     setDeleteId(null);
     loadData();
   };
