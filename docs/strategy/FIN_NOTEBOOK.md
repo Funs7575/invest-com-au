@@ -578,6 +578,16 @@ Time-bound items that need a check-in at a specific date. Don't delete — strik
 
 Move items here once they ship OR are formally killed. Don't delete — keep the trail so we can see what we built and what we walked away from.
 
+- **2026-06-06 — Bot fleet infrastructure: full suite shipped.** Completed in mega-session (context ~2 windows). All of the following are on `main`:
+  - **Performance baseline** (`bots/checks/perf.ts`): Navigation Timing + FCP + JS heap captured after every `visit()`, written to `perf-baseline.json` per run.
+  - **JSON-LD schema drift detection** (`bots/checks/schema-markup.ts`): every `<script type="application/ld+json">` block validated against required fields per type — critical for GEO/AI citability.
+  - **Startup ecosystem flow** + **Advisor portal flow** (`bots/flows/startup-portal.ts`, `bots/flows/advisor-portal.ts`): 5-step scripted regressions for each.
+  - **CI smoke gate** (`.github/workflows/bots-pr-smoke.yml`): runs advisor/startup flows on PRs touching those paths, posts advisory comment, never blocks merge.
+  - **Auto GitHub issue filer** (`scripts/bots-file-issues.ts`): deduplicates open issues, files one per Critical/High finding; opt-in nightly via `BOTS_AUTO_FILE_ISSUES=1`.
+  - **Cross-run regression diff** (`scripts/bots-diff-baseline.ts`, `npm run bots:diff`): compares any two `findings.json` using stable ID hashes; surfaces new/resolved/stable/occurrence-change; exits 1 on critical/high regressions; 16 unit tests.
+  - **API surface probe** (`scripts/bots-probe-api.ts`, `npm run bots:probe-api`): enumerates 403 GET handlers, probes 186 non-admin/non-cron static routes against the mirror; found 5 server errors on first run (see DISC-20260606 in REMEDIATION_QUEUE); writes `bots/.runs/latest-api-probe.json`.
+  - Live runs: two full mirror runs executed. First probe found React hydration error #418 on every page (cross-cutting Netlify mirror issue), advisor portal login form missing inputs, and 5 API 500s. Diff script confirmed 12 new findings, 16 resolved between runs.
+
 - **2026-05-02 — Quiz funnel rebuilt.** PR #434 shipped: 7-outcome resolver (post-job, advisor-match, advisor-browse, calculator-first, education-first, diy-broker, bundle-stack) replaces binary DIY-vs-advisor track; email gate moved post-results (warm capture); 12 structured columns added to `quiz_leads`; 9 vertical drip-template variants × 3 steps = 27 drip templates; `applyQuizSponsorBoost` is vertical-aware (no crypto-sponsor over super result); `/quotes/post` prefills from quiz handoff. Migration applied to prod (project `guggzyqceattncjwvgyc`), 125 tests passing, all 25 CI gates green. Squash commit `f1d2017c` on main. Co-author Claude Opus 4.7.
 
 - **2026-05-02 — Tracker reality-audit findings.** Two queue items I was about to scope as fresh work were already done:
