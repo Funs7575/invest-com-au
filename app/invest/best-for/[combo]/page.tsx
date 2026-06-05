@@ -175,7 +175,7 @@ export default async function BestForComboPage({
             blurb="Compare every opportunity type side by side, filter by ticket size, FIRB eligibility and SMSF-suitability, and shortlist what fits your mandate."
             href={browseHref}
             ctaLabel="Open the marketplace"
-            secondary={{ label: "All curated picks", href: "/invest" }}
+            secondary={{ label: "Browse all opportunities", href: "/invest" }}
           />
         </div>
 
