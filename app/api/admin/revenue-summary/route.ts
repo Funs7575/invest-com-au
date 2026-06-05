@@ -68,19 +68,29 @@ export async function GET() {
     supabase.from("lead_disputes").select("id"),
   ]);
 
+  // Fatal-error check EXCLUDES campaignsRes: the `broker_campaigns` relation
+  // does not exist in production (schema drift — see
+  // docs/audits/SCHEMA-DRIFT-2026-06-05.md). The pre-#1410 browser dashboard
+  // read each table independently and simply showed 0 active campaigns when that
+  // query failed; this server route must not let one missing optional table
+  // 500 the entire revenue dashboard. activeCampaigns falls back to 0 below.
   const firstError =
     clicksRes.error ||
     brokersRes.error ||
     leadsRes.error ||
     billingRes.error ||
     walletsRes.error ||
-    campaignsRes.error ||
     articlesRes.error ||
     prosRes.error ||
     disputesRes.error;
   if (firstError) {
     log.error("Revenue summary read failed", { err: firstError.message });
     return NextResponse.json({ error: "Failed to load revenue data" }, { status: 500 });
+  }
+  if (campaignsRes.error) {
+    log.warn("Revenue summary: broker_campaigns read failed (treating as 0)", {
+      err: campaignsRes.error.message,
+    });
   }
 
   // Broker platform-type map (drives the client-side CPA estimate).
