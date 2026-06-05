@@ -21,6 +21,7 @@ export type FindingCategory =
   | "ux" // AI judge: confusing/broken user experience
   | "compliance" // AI judge: missing required financial disclosure
   | "flow-failure" // a scripted/AI flow could not complete a step
+  | "schema" // JSON-LD structured data missing required fields (GEO/AI-citation risk)
   | "safety"; // the safety net had to intercept something unexpected
 
 export const SEVERITY_ORDER: Record<Severity, number> = {

@@ -2,9 +2,11 @@ import fs from "node:fs";
 import { test } from "@playwright/test";
 import { loadConfig } from "./config";
 import { BotSession } from "./session";
-import { PHASE0_PERSONAS, ADVISOR_PERSONAS, AI_PERSONAS, AUTHED_PERSONAS, LIFECYCLE_PERSONAS } from "./personas";
+import { PHASE0_PERSONAS, ADVISOR_PERSONAS, AI_PERSONAS, AUTHED_PERSONAS, LIFECYCLE_PERSONAS, STARTUP_ECOSYSTEM_PERSONAS, ADVISOR_PORTAL_PERSONAS } from "./personas";
 import { resolveAiKey } from "./ai/anthropic-client";
 import { USER_LIFECYCLE_FLOW } from "./flows/user-lifecycle";
+import { STARTUP_ECOSYSTEM_FLOW } from "./flows/startup-portal";
+import { ADVISOR_PORTAL_FLOW } from "./flows/advisor-portal";
 
 /**
  * Fleet entrypoint.
@@ -117,6 +119,72 @@ for (const persona of LIFECYCLE_PERSONAS) {
       });
 
       // Cross-cutting checks on wherever the flow ended up.
+      await session.audit({ links: false });
+    } finally {
+      await session.persist();
+      await session.close();
+    }
+  });
+}
+
+// Startup ecosystem flow — public surfaces + portal auth gate.
+// No storageState required: runs on any target including the Netlify mirror.
+for (const persona of STARTUP_ECOSYSTEM_PERSONAS) {
+  test(`startup-ecosystem: ${persona.name}`, async ({ browser }) => {
+    const session = await BotSession.create(browser, config, {
+      persona: persona.name,
+    });
+    try {
+      const results = await session.runFlow(STARTUP_ECOSYSTEM_FLOW);
+
+      const failed = results.filter((r) => r.status === "fail");
+      const skipped = results.filter((r) => r.status === "skip");
+      session.store.add({
+        severity: failed.length > 0 ? "high" : "info",
+        category: "flow-failure",
+        title: `startup-ecosystem flow: ${results.length - failed.length - skipped.length}/${results.length} steps passed`,
+        detail:
+          results
+            .map((r) => `${r.status === "pass" ? "✓" : r.status === "skip" ? "⊘" : "✗"} ${r.name}${r.detail ? `: ${r.detail}` : ""}`)
+            .join("\n"),
+        url: session.page.url(),
+        persona: persona.name,
+        signatureKey: `startup-ecosystem:rollup:${persona.name}`,
+      });
+
+      await session.audit({ links: false });
+    } finally {
+      await session.persist();
+      await session.close();
+    }
+  });
+}
+
+// Advisor portal flow — login form render + health + public advisor surfaces.
+// No storageState required. Works against any target.
+for (const persona of ADVISOR_PORTAL_PERSONAS) {
+  test(`advisor-portal: ${persona.name}`, async ({ browser }) => {
+    const session = await BotSession.create(browser, config, {
+      persona: persona.name,
+    });
+    try {
+      const results = await session.runFlow(ADVISOR_PORTAL_FLOW);
+
+      const failed = results.filter((r) => r.status === "fail");
+      const skipped = results.filter((r) => r.status === "skip");
+      session.store.add({
+        severity: failed.length > 0 ? "high" : "info",
+        category: "flow-failure",
+        title: `advisor-portal flow: ${results.length - failed.length - skipped.length}/${results.length} steps passed`,
+        detail:
+          results
+            .map((r) => `${r.status === "pass" ? "✓" : r.status === "skip" ? "⊘" : "✗"} ${r.name}${r.detail ? `: ${r.detail}` : ""}`)
+            .join("\n"),
+        url: session.page.url(),
+        persona: persona.name,
+        signatureKey: `advisor-portal:rollup:${persona.name}`,
+      });
+
       await session.audit({ links: false });
     } finally {
       await session.persist();

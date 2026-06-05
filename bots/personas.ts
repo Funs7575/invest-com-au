@@ -106,6 +106,34 @@ export const LIFECYCLE_PERSONAS: Persona[] = [
 ];
 
 /**
+ * Startup ecosystem personas — anonymous coverage of the startup investor
+ * surfaces and the startup portal auth gate. No storageState required.
+ * Drives STARTUP_ECOSYSTEM_FLOW (see flows/startup-portal.ts).
+ */
+export const STARTUP_ECOSYSTEM_PERSONAS: Persona[] = [
+  {
+    name: "startup-ecosystem",
+    description:
+      "Exercises the public startup investor surfaces (hub, for-you, listings, signup form) and verifies the portal auth gate redirects correctly.",
+    startPath: "/invest/startups",
+  },
+];
+
+/**
+ * Advisor portal personas — anonymous smoke test of the advisor portal login
+ * shell and public advisor surfaces. No storageState required.
+ * Drives ADVISOR_PORTAL_FLOW (see flows/advisor-portal.ts).
+ */
+export const ADVISOR_PORTAL_PERSONAS: Persona[] = [
+  {
+    name: "advisor-portal",
+    description:
+      "Smoke-tests the advisor portal login form render + field check, health endpoint, advisor directory hub, and find-advisor entry point.",
+    startPath: "/advisor-portal",
+  },
+];
+
+/**
  * Advisor-area personas — anonymous coverage of the adviser directory, the
  * specialty hubs, the get-matched entry point, and a seeded profile. Designed to
  * be run against the protected Netlify mirror (writes are auto-mocked), so every

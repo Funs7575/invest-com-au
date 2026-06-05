@@ -103,6 +103,22 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+      - name: Upload perf baseline
+        if: steps.target.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: bot-perf-baseline
+          path: bots/.runs/*/perf-baseline.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: File GitHub issues for critical/high findings
+        # Only runs when BOTS_AUTO_FILE_ISSUES is set (opt-in).
+        if: steps.target.outputs.run == 'true' && vars.BOTS_AUTO_FILE_ISSUES == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run bots:file-issues
+
       - name: Update results issue
         if: steps.target.outputs.run == 'true'
         uses: actions/github-script@v7

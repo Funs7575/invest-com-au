@@ -23,6 +23,9 @@ import { makeAnthropicClient } from "./ai/anthropic-client";
 import { runAiSession, type AiSessionResult } from "./ai/driver";
 import { runFlow } from "./flows/runner";
 import type { Flow, FlowStepResult } from "./flows/types";
+import { capturePerfSample } from "./checks/perf";
+import type { PerfSample } from "./checks/perf";
+import { checkSchemaMarkup } from "./checks/schema-markup";
 
 export interface SessionOptions {
   persona: string;
@@ -35,6 +38,7 @@ export class BotSession {
   private readonly checkedLinks = new Set<string>();
   private net: SafetyNet | null = null;
   private ledger: CostLedger | null = null;
+  private readonly perfSamples: PerfSample[] = [];
 
   private constructor(
     readonly context: BrowserContext,
@@ -65,6 +69,8 @@ export class BotSession {
       status = res?.status() ?? 0;
       await this.page.waitForLoadState("load", { timeout: 30_000 }).catch(() => undefined);
       await this.page.waitForTimeout(600);
+      const sample = await capturePerfSample(this.page, this.persona);
+      if (sample) this.perfSamples.push(sample);
     } catch (err) {
       this.store.add({
         severity: "high",
@@ -113,6 +119,7 @@ export class BotSession {
   /** Run the cross-cutting checks on whatever is currently on screen. */
   async audit(opts: { links?: boolean } = {}): Promise<void> {
     await runAxe(this.page, this.store, this.persona);
+    await checkSchemaMarkup(this.page, this.store, this.persona);
     if (opts.links) {
       await checkInternalLinks(this.page, this.config, this.store, this.persona, {
         checked: this.checkedLinks,
@@ -176,6 +183,7 @@ export class BotSession {
           persona: this.persona,
           findings: this.store.all(),
           cost: this.ledger ? this.ledger.totals : undefined,
+          perf: this.perfSamples.length > 0 ? this.perfSamples : undefined,
         },
         null,
         2,

@@ -11,7 +11,7 @@ import { aggregateShards, writeReport, type RunMeta } from "./findings/report";
 
 export default async function globalTeardown(): Promise<void> {
   const config = loadConfig();
-  const { findings, sessions, personas, cost } = await aggregateShards(config.runDir);
+  const { findings, sessions, personas, cost, perf } = await aggregateShards(config.runDir);
 
   const meta: RunMeta = {
     runId: config.runId,
@@ -24,11 +24,13 @@ export default async function globalTeardown(): Promise<void> {
     cost: cost.calls > 0 ? cost : undefined,
   };
 
-  const { htmlPath, jsonPath } = await writeReport(config.runDir, findings, meta);
+  const { htmlPath, jsonPath, perfPath } = await writeReport(config.runDir, findings, meta, perf);
 
   console.log(
     `\n[bots] ${findings.length} distinct finding(s) across ${sessions} session(s).` +
       `\n[bots] report: ${htmlPath}` +
-      `\n[bots] json:   ${jsonPath}\n`,
+      `\n[bots] json:   ${jsonPath}` +
+      (perf.length > 0 ? `\n[bots] perf:   ${perfPath}` : "") +
+      "\n",
   );
 }

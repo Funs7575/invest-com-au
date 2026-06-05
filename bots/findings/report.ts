@@ -21,6 +21,9 @@ import {
 } from "./types";
 import { FindingStore } from "./store";
 import type { CostTotals } from "../ai/cost";
+import type { PerfSample } from "../checks/perf";
+
+export type { PerfSample };
 
 export interface RunMeta {
   runId: string;
@@ -38,6 +41,7 @@ export interface Shard {
   persona: string;
   findings: Finding[];
   cost?: CostTotals;
+  perf?: PerfSample[];
 }
 
 function emptyCost(): CostTotals {
@@ -113,11 +117,80 @@ const CATEGORY_HELP: Record<FindingCategory, { what: string; fix: string }> = {
     what: "A multi-step task (like the quiz or signup) couldn't be completed all the way through.",
     fix: "Reproduce the steps on the listed page and fix the blocking step.",
   },
+  schema: {
+    what: "A JSON-LD structured data block is missing a required field, which reduces AI/LLM citability and may fail Google rich-result eligibility.",
+    fix: "Add the missing field to the appropriate lib/schema-markup.ts builder, then verify with Google's Rich Results Test.",
+  },
   safety: {
     what: "The safety net intercepted real-world actions (payments, emails, etc.) so nothing actually happened.",
     fix: "No action needed — this confirms the safety net is working.",
   },
 };
+
+/** Colour-code a timing value: green < 1s, amber 1–3s, red > 3s. */
+function perfColor(ms: number | null): string {
+  if (ms === null) return "#999";
+  if (ms < 1000) return "#2e7d32";
+  if (ms < 3000) return "#b45309";
+  return "#b00020";
+}
+
+function fmtMs(ms: number | null): string {
+  if (ms === null) return "—";
+  return ms < 1000 ? `${ms}ms` : `${(ms / 1000).toFixed(2)}s`;
+}
+
+function renderPerfTable(samples: PerfSample[]): string {
+  if (samples.length === 0) return "";
+
+  // Deduplicate by route, keeping the median FCP (or first sample if only one).
+  const byRoute = new Map<string, PerfSample[]>();
+  for (const s of samples) {
+    const key = s.route;
+    if (!byRoute.has(key)) byRoute.set(key, []);
+    byRoute.get(key)!.push(s);
+  }
+
+  function median(values: Array<number | null>): number | null {
+    const nums = values.filter((v): v is number => v !== null).sort((a, b) => a - b);
+    if (nums.length === 0) return null;
+    return nums[Math.floor(nums.length / 2)] ?? null;
+  }
+
+  const rows = [...byRoute.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([route, ss]) => {
+      const fcp = median(ss.map((s) => s.fcpMs));
+      const dcl = median(ss.map((s) => s.domContentLoadedMs));
+      const load = median(ss.map((s) => s.loadEventMs));
+      const heap = median(ss.map((s) => s.jsHeapKb));
+      return `
+    <tr>
+      <td><code>${escapeHtml(route)}</code></td>
+      <td style="color:${perfColor(fcp)}">${fmtMs(fcp)}</td>
+      <td style="color:${perfColor(dcl)}">${fmtMs(dcl)}</td>
+      <td style="color:${perfColor(load)}">${fmtMs(load)}</td>
+      <td>${heap !== null ? `${heap.toLocaleString()} KB` : "—"}</td>
+    </tr>`;
+    })
+    .join("");
+
+  return `
+  <h2>⏱ Performance baseline</h2>
+  <p style="font-size:.85rem;color:#555">Median timings across all bot sessions. Green &lt;1 s · amber 1–3 s · red &gt;3 s.</p>
+  <table class="perf-table">
+    <thead>
+      <tr>
+        <th>Route</th>
+        <th>FCP</th>
+        <th>DOMContentLoaded</th>
+        <th>Load</th>
+        <th>JS Heap</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
 
 function escapeHtml(value: unknown): string {
   return String(value)
@@ -221,7 +294,7 @@ function renderFinding(f: Finding): string {
     </details>`;
 }
 
-export function renderHtmlReport(findings: Finding[], meta: RunMeta): string {
+export function renderHtmlReport(findings: Finding[], meta: RunMeta, perf: PerfSample[] = []): string {
   const sum = summarize(findings);
   const v = verdict(sum);
   const sorted = sortFindings(findings);
@@ -278,6 +351,10 @@ export function renderHtmlReport(findings: Finding[], meta: RunMeta): string {
   .meta { color: #777; font-size: .8rem; margin: .2rem 0; }
   code { background: #f0f0f2; padding: .05rem .3rem; border-radius: 3px; font-size: .82rem; word-break: break-all; }
   .empty { color: #2e7d32; font-weight: 600; }
+  table.perf-table { border-collapse: collapse; width: 100%; font-size: .85rem; margin: .8rem 0 1.5rem; }
+  table.perf-table th { text-align: left; padding: .35rem .7rem; background: #f0f0f2; border-bottom: 2px solid #ddd; font-weight: 600; }
+  table.perf-table td { padding: .3rem .7rem; border-bottom: 1px solid #ebebed; }
+  table.perf-table tr:nth-child(even) td { background: #fafafa; }
 </style>
 </head>
 <body>
@@ -294,6 +371,7 @@ export function renderHtmlReport(findings: Finding[], meta: RunMeta): string {
   <div class="chips">${summaryChips}</div>
   <details class="legend"><summary>What do these mean?</summary><ul>${legend}</ul></details>
   ${sorted.length === 0 ? '<p class="empty">✅ No findings — clean run.</p>' : grouped}
+  ${renderPerfTable(perf)}
 </body>
 </html>`;
 }
@@ -355,35 +433,41 @@ export async function writeReport(
   outDir: string,
   findings: Finding[],
   meta: RunMeta,
-): Promise<{ htmlPath: string; jsonPath: string; summaryPath: string }> {
+  perf: PerfSample[] = [],
+): Promise<{ htmlPath: string; jsonPath: string; summaryPath: string; perfPath: string }> {
   await fs.mkdir(outDir, { recursive: true });
   const htmlPath = path.join(outDir, "report.html");
   const jsonPath = path.join(outDir, "findings.json");
   const summaryPath = path.join(outDir, "summary.md");
-  await fs.writeFile(htmlPath, renderHtmlReport(findings, meta), "utf8");
+  const perfPath = path.join(outDir, "perf-baseline.json");
+  await fs.writeFile(htmlPath, renderHtmlReport(findings, meta, perf), "utf8");
   await fs.writeFile(summaryPath, renderMarkdownSummary(findings, meta), "utf8");
   await fs.writeFile(
     jsonPath,
     JSON.stringify({ meta, summary: summarize(findings), findings }, null, 2),
     "utf8",
   );
-  return { htmlPath, jsonPath, summaryPath };
+  if (perf.length > 0) {
+    await fs.writeFile(perfPath, JSON.stringify({ meta, samples: perf }, null, 2), "utf8");
+  }
+  return { htmlPath, jsonPath, summaryPath, perfPath };
 }
 
-/** Read all `${runDir}/shards/*.json` and merge into one finding set. */
+/** Read all `${runDir}/shards/*.json` and merge into one finding set + perf samples. */
 export async function aggregateShards(
   runDir: string,
-): Promise<{ findings: Finding[]; sessions: number; personas: string[]; cost: CostTotals }> {
+): Promise<{ findings: Finding[]; sessions: number; personas: string[]; cost: CostTotals; perf: PerfSample[] }> {
   const shardsDir = path.join(runDir, "shards");
   let entries: string[] = [];
   try {
     entries = (await fs.readdir(shardsDir)).filter((f) => f.endsWith(".json"));
   } catch {
-    return { findings: [], sessions: 0, personas: [], cost: emptyCost() };
+    return { findings: [], sessions: 0, personas: [], cost: emptyCost(), perf: [] };
   }
   const store = new FindingStore();
   const personas = new Set<string>();
   const cost = emptyCost();
+  const perf: PerfSample[] = [];
   let sessions = 0;
   for (const entry of entries) {
     try {
@@ -397,10 +481,11 @@ export async function aggregateShards(
         cost.usd += shard.cost.usd;
         cost.calls += shard.cost.calls;
       }
+      if (shard.perf) perf.push(...shard.perf);
       sessions += 1;
     } catch {
       // Skip unreadable/partial shards rather than failing the whole report.
     }
   }
-  return { findings: store.all(), sessions, personas: [...personas], cost };
+  return { findings: store.all(), sessions, personas: [...personas], cost, perf };
 }
