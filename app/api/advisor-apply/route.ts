@@ -41,6 +41,31 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "This invitation was sent to a different email address." }, { status: 400 });
       }
       inviteData = { id: invite.id, firm_id: invite.firm_id, role: invite.role };
+
+      // Re-enforce the firm seat cap at JOIN time. The invite-SEND path
+      // (app/api/advisor-auth/firm/invite) checks max_seats when the invite is
+      // created, but multiple pending invites — or any invite that lingers after
+      // the firm fills — would otherwise all attach here and push the firm past
+      // its seat tier (an entitlement/billing leak). Count members the same way
+      // the invite route does: professionals.firm_id = firm.
+      const { data: firm } = await supabase
+        .from("advisor_firms")
+        .select("max_seats, status")
+        .eq("id", inviteData.firm_id)
+        .single();
+      if (!firm || firm.status !== "active") {
+        return NextResponse.json({ error: "This firm is not currently accepting members." }, { status: 400 });
+      }
+      const { count: memberCount } = await supabase
+        .from("professionals")
+        .select("id", { count: "exact", head: true })
+        .eq("firm_id", inviteData.firm_id);
+      if ((memberCount || 0) >= firm.max_seats) {
+        return NextResponse.json(
+          { error: `This firm has reached its seat limit (${firm.max_seats}). Ask your firm admin to add seats before joining.` },
+          { status: 409 },
+        );
+      }
     }
 
     // Check if email already registered
