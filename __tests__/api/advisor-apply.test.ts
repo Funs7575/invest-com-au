@@ -67,6 +67,8 @@ interface ServerMockOpts {
   existingPro?: boolean;
   pendingApp?: boolean;
   insertError?: { message: string } | null;
+  firm?: { max_seats: number; status: string };
+  memberCount?: number;
 }
 
 function setupServerFromMock(opts: ServerMockOpts = {}) {
@@ -75,6 +77,10 @@ function setupServerFromMock(opts: ServerMockOpts = {}) {
     existingPro = false,
     pendingApp = false,
     insertError = null,
+    // Firm seat-cap re-check (only hit on the invite-token path). Defaults keep
+    // the firm well under capacity so existing invite tests pass unchanged.
+    firm = { max_seats: 10, status: "active" },
+    memberCount = 0,
   } = opts;
 
   const callCounts: Record<string, number> = {};
@@ -94,12 +100,25 @@ function setupServerFromMock(opts: ServerMockOpts = {}) {
       // UPDATE (callNum === 2): default .then() in builder already resolves success
     }
 
+    if (table === "advisor_firms") {
+      // Seat-cap re-check: .select("max_seats, status").eq("id").single()
+      b.single = vi.fn(() => Promise.resolve({ data: firm, error: null }));
+    }
+
     if (table === "professionals") {
+      // Serves BOTH call sites regardless of order: the seat-cap COUNT query
+      // (awaited builder → { count }) and the existing-email check (.single()).
       b.single = vi.fn(() =>
         Promise.resolve({
           data: existingPro ? { id: "pro-123" } : null,
           error: null,
         })
+      );
+      b.then = vi.fn(
+        (cb: (v: { data: never[]; error: null; count: number }) => void) => {
+          cb({ data: [], error: null, count: memberCount });
+          return Promise.resolve();
+        }
       );
     }
 
@@ -224,6 +243,29 @@ describe("POST /api/advisor-apply", () => {
     const res = await POST(applyRequest({ ...VALID_BODY, invite_token: "valid-token" }));
     expect(res.status).toBe(400);
     expect((await res.json()).error).toMatch(/different email/i);
+  });
+
+  it("returns 409 when the firm has reached its seat cap (join-time re-check)", async () => {
+    // Regression: the cap was only enforced at invite-SEND; a lingering/extra
+    // invite could otherwise attach here and push the firm past max_seats.
+    setupServerFromMock({
+      inviteLookup: { data: { ...VALID_INVITE }, error: null },
+      firm: { max_seats: 5, status: "active" },
+      memberCount: 5,
+    });
+    const res = await POST(applyRequest({ ...VALID_BODY, invite_token: "valid-token" }));
+    expect(res.status).toBe(409);
+    expect((await res.json()).error).toMatch(/seat limit/i);
+  });
+
+  it("allows the invited join when the firm is under its seat cap", async () => {
+    setupServerFromMock({
+      inviteLookup: { data: { ...VALID_INVITE }, error: null },
+      firm: { max_seats: 5, status: "active" },
+      memberCount: 2,
+    });
+    const res = await POST(applyRequest({ ...VALID_BODY, invite_token: "valid-token" }));
+    expect(res.status).toBe(200);
   });
 
   // ── Duplicate-check gates ─────────────────────────────────────────────────

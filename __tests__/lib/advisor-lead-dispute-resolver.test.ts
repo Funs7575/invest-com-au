@@ -81,6 +81,23 @@ function updateChain(error: unknown = null) {
 }
 
 /**
+ * CAS update chain for professionals cache write.
+ * The new CAS code adds .select("id") after .eq(), so the chain must support
+ * .select() and resolve to { data: rows, error: null } — a non-empty array
+ * signals the predicate matched and the cache write succeeded.
+ */
+function casUpdateChain(rows: Array<{ id: number }> = [{ id: 1 }]) {
+  const prom = Promise.resolve({ data: rows, error: null });
+  const chain = Object.assign(prom, {
+    eq: vi.fn(),
+    select: vi.fn(),
+  });
+  chain.eq.mockReturnValue(chain);
+  chain.select.mockReturnValue(chain);
+  return { update: vi.fn().mockReturnValue(chain) };
+}
+
+/**
  * Insert chain that returns the inserted row (for advisor_credit_ledger).
  *   .insert(row).select("*").single() → { data, error }
  */
@@ -130,8 +147,8 @@ function pushLedgerEntrySlots(opts: {
       reference_id: opts.refId,
     }),
   );
-  // 4. Update professionals.credit_balance_cents (cache write)
-  mockFrom.mockImplementationOnce(() => updateChain());
+  // 4. Update professionals.credit_balance_cents (CAS cache write — must return rows)
+  mockFrom.mockImplementationOnce(() => casUpdateChain());
 }
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
