@@ -578,6 +578,18 @@ Time-bound items that need a check-in at a specific date. Don't delete — strik
 
 Move items here once they ship OR are formally killed. Don't delete — keep the trail so we can see what we built and what we walked away from.
 
+- **2026-06-06 — Batch security + feature merges (mega-session continuation).**
+  Six PRs merged in a single pass during the `/goal do all to high quality` session:
+  - **#1409 P0 security** — owner-scope RLS on `broker_wallets`, `wallet_transactions`, `marketplace_invoices`. `USING (true)` gave every authenticated user all broker Stripe/PII data via PostgREST; replaced with per-broker-slug + is_admin() guard. 6 regression tests.
+  - **#1411 quiz server-side scoring** — moved all `quiz_weights` reads server-side (service-role); stripped `select("*")` on `/api/quiz/data` that was leaking `cpa_value`/`affiliate_priority` etc. to every quiz visitor. New `/api/quiz/score` endpoint.
+  - **#1413 wealth-stack fields** — stripped commercial broker columns (`cpa_value`, `monthly_sponsorship_fee`, `affiliate_priority`) from `/api/wealth-stack` public response. Followed #1408's lead.
+  - **#1414 versus_votes table** — created the missing `versus_votes` table (every `/versus/*` vote widget was 500ing). Closed the HELD #1317.
+  - **#1415 revenue-summary + schema-drift** — admin revenue summary made resilient to missing `broker_campaigns`; schema-drift audit of 31 phantom tables documented.
+  - **#1416 cron-health docs** — documents the ~13-day Vercel account blockage that left the cron fleet dark.
+  - **#1422 NF-20 SMS consent** — OPEN, CI running. Superseded conflicting #1180.
+  - **#1421 credit-ledger CAS fix** — OPEN, CI running. Fixes optimistic-lock retry dead predicate.
+  - **#1412 quiz_weights lock** — waiting for #1411 Netlify deploy to complete before merge.
+
 - **2026-06-06 — Bot fleet infrastructure: full suite shipped.** Completed in mega-session (context ~2 windows). All of the following are on `main`:
   - **Performance baseline** (`bots/checks/perf.ts`): Navigation Timing + FCP + JS heap captured after every `visit()`, written to `perf-baseline.json` per run.
   - **JSON-LD schema drift detection** (`bots/checks/schema-markup.ts`): every `<script type="application/ld+json">` block validated against required fields per type — critical for GEO/AI citability.
