@@ -183,7 +183,7 @@ describe("ADVISOR_PORTAL_FLOW", () => {
   });
 
   it("all steps pass on a clean happy-path run", async () => {
-    // count=1 satisfies email/password input existence and find-advisor interactive check
+    // count=1 satisfies: email input, password-tab button, find-advisor interactive check
     const page = makePage({
       url: vi.fn().mockReturnValue("http://localhost:3000/advisor-portal"),
       locator: vi.fn().mockReturnValue(locatorWith(1)),
@@ -205,7 +205,7 @@ describe("ADVISOR_PORTAL_FLOW", () => {
   });
 
   it("records a high finding and throws when email input is missing from login form", async () => {
-    // count=0 for email/password locators → hasEmail=false, hasPassword=false
+    // count=0 → email input missing → high finding + step throws
     const page = makePage({
       url: vi.fn().mockReturnValue("http://localhost:3000/advisor-portal"),
       locator: vi.fn().mockReturnValue(locatorWith(0)),
@@ -217,11 +217,12 @@ describe("ADVISOR_PORTAL_FLOW", () => {
     const emailFinding = store.all().find(
       (f) => f.severity === "high" && f.title.includes("email input missing"),
     );
-    const pwFinding = store.all().find(
-      (f) => f.severity === "high" && f.title.includes("password input missing"),
-    );
     expect(emailFinding).toBeDefined();
-    expect(pwFinding).toBeDefined();
+    // Password tab missing is now medium (not high) — form defaults to magic-link correctly
+    const tabFinding = store.all().find(
+      (f) => f.severity === "medium" && f.title.includes("password tab missing"),
+    );
+    expect(tabFinding).toBeDefined();
   });
 
   it("records a low finding for advisor-portal/health 404 and does not throw", async () => {
@@ -267,7 +268,7 @@ describe("ADVISOR_PORTAL_FLOW", () => {
       locator: vi.fn().mockReturnValue(locatorWith(0, "")),
     });
     const store = new FindingStore();
-    const results = await runFlow(ADVISOR_PORTAL_FLOW, page, store, "test", makeConfig());
+    await runFlow(ADVISOR_PORTAL_FLOW, page, store, "test", makeConfig());
 
     // login-fields step will also fail since count=0 (no email/password fields)
     // find-advisor step (step 5) should either pass or fail — key is the finding exists
