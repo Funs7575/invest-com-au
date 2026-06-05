@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 
 interface Click {
@@ -85,64 +84,18 @@ export default function RevenuePage() {
 
   async function fetchData() {
     setLoading(true);
-    const supabase = createClient();
-    const [clicksRes, brokersRes, leadsRes, billingRes, walletsRes, campaignsRes, articlesRes, prosRes, disputesRes] = await Promise.all([
-      supabase.from("affiliate_clicks").select("id, broker_slug, broker_name, source, page, created_at, placement_type").order("created_at", { ascending: false }).limit(5000),
-      supabase.from("brokers").select("slug, platform_type").eq("status", "active"),
-      supabase.from("professional_leads").select("id, billed, bill_amount_cents, status"),
-      supabase.from("advisor_billing").select("id, amount_cents, status"),
-      supabase.from("broker_wallets").select("balance_cents, lifetime_deposited_cents, lifetime_spent_cents"),
-      supabase.from("broker_campaigns").select("id, status").eq("status", "active"),
-      supabase.from("advisor_articles").select("id, status, price_cents, payment_status").not("status", "eq", "draft"),
-      supabase.from("professionals").select("id, lead_price_cents, free_leads_used, stripe_customer_id").eq("status", "active"),
-      supabase.from("lead_disputes").select("id"),
-    ]);
-
-    setClicks(clicksRes.data || []);
-    const typeMap: Record<string, string> = {};
-    for (const b of brokersRes.data || []) typeMap[b.slug] = b.platform_type || "share_broker";
-    setBrokerTypes(typeMap);
-
-    // Advisor revenue
-    const leads = leadsRes.data || [];
-    const billing = billingRes.data || [];
-    const pros = prosRes.data || [];
-    setAdvisorRev({
-      totalLeads: leads.length,
-      billedLeads: leads.filter(l => l.billed).length,
-      freeLeads: leads.filter(l => !l.billed).length,
-      pendingBillingCents: billing.filter(b => b.status === "pending").reduce((s, b) => s + (b.amount_cents || 0), 0),
-      paidBillingCents: billing.filter(b => b.status === "paid").reduce((s, b) => s + (b.amount_cents || 0), 0),
-      totalBillingCents: billing.reduce((s, b) => s + (b.amount_cents || 0), 0),
-      disputedLeads: (disputesRes.data || []).length,
-      convertedLeads: leads.filter(l => l.status === "converted").length,
-      activeAdvisors: pros.length,
-      stripeConnected: pros.filter(p => p.stripe_customer_id).length,
-      freeLeadsUsed: pros.reduce((s, p) => s + (p.free_leads_used || 0), 0),
-      avgLeadPrice: pros.length > 0 ? pros.reduce((s, p) => s + (p.lead_price_cents || 4900), 0) / pros.length : 4900,
-    });
-
-    // Marketplace revenue
-    const wallets = walletsRes.data || [];
-    setMarketplaceRev({
-      totalWallets: wallets.length,
-      totalBalanceCents: wallets.reduce((s, w) => s + (w.balance_cents || 0), 0),
-      totalDepositedCents: wallets.reduce((s, w) => s + (w.lifetime_deposited_cents || 0), 0),
-      totalSpentCents: wallets.reduce((s, w) => s + (w.lifetime_spent_cents || 0), 0),
-      activeCampaigns: (campaignsRes.data || []).length,
-    });
-
-    // Article revenue
-    const articles = articlesRes.data || [];
-    setArticleRev({
-      totalSubmitted: articles.length,
-      totalPublished: articles.filter(a => a.status === "published").length,
-      paidCents: articles.filter(a => a.payment_status === "paid").reduce((s, a) => s + (a.price_cents || 0), 0),
-      waivedCents: articles.filter(a => a.payment_status === "waived").reduce((s, a) => s + (a.price_cents || 0), 0),
-      unpaidCents: articles.filter(a => a.payment_status === "unpaid" && a.status === "approved").reduce((s, a) => s + (a.price_cents || 0), 0),
-    });
-
-    setLoading(false);
+    try {
+      const res = await fetch("/api/admin/revenue-summary");
+      if (!res.ok) throw new Error(`revenue-summary ${res.status}`);
+      const data = await res.json();
+      setClicks(data.clicks || []);
+      setBrokerTypes(data.brokerTypes || {});
+      setAdvisorRev(data.advisorRev || null);
+      setMarketplaceRev(data.marketplaceRev || null);
+      setArticleRev(data.articleRev || null);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const periodClicks = useMemo(() => {
