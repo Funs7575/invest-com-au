@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createHash } from "crypto";
 import { logger } from "@/lib/logger";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("versus:vote");
+
+const VoteBody = z.object({
+  broker_a_slug: z.string().min(1).max(120),
+  broker_b_slug: z.string().min(1).max(120),
+  chosen_slug: z.string().min(1).max(120),
+});
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -79,20 +86,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many votes — slow down" }, { status: 429 });
     }
 
-    // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing; Zod backfill is E-04 stream territory, out of scope for SSOT cleanup PR
-    const body = await request.json();
-    const { broker_a_slug, broker_b_slug, chosen_slug } = body as {
-      broker_a_slug: string;
-      broker_b_slug: string;
-      chosen_slug: string;
-    };
-
-    if (!broker_a_slug || !broker_b_slug || !chosen_slug) {
+    const parsed = VoteBody.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) {
       return NextResponse.json(
         { error: "broker_a_slug, broker_b_slug, and chosen_slug are required" },
         { status: 400 }
       );
     }
+    const { broker_a_slug, broker_b_slug, chosen_slug } = parsed.data;
 
     // Chosen must be one of the two
     if (chosen_slug !== broker_a_slug && chosen_slug !== broker_b_slug) {
