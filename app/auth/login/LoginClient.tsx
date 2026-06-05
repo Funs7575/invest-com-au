@@ -380,9 +380,9 @@ export default function LoginClient() {
             </p>
             <p className="text-xs text-slate-500">
               By signing in, you agree to our{" "}
-              <Link href="/terms" className="text-slate-700 hover:underline">Terms</Link>
+              <Link href="/terms" className="text-slate-700 underline hover:no-underline">Terms</Link>
               {" "}and{" "}
-              <Link href="/privacy" className="text-slate-700 hover:underline">Privacy Policy</Link>.
+              <Link href="/privacy" className="text-slate-700 underline hover:no-underline">Privacy Policy</Link>.
             </p>
           </div>
         </div>
