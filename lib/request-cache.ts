@@ -25,42 +25,15 @@ import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker, Article } from "@/lib/types";
 
-/**
- * Internal commercial / affiliate-economics columns that must never
- * reach the browser. These are paid-placement and revenue figures
- * (CPA, sponsorship fees, EPC, affiliate ranking weight) — useful only
- * for server-side ranking/sponsorship logic, which fetches them via
- * its own dedicated queries (lib/cached-data.ts, lib/compare-engine.ts,
- * the admin pages, exit-match, submit-lead). The broker-detail consumers
- * of `getBrokerBySlug` (page header, similar brokers, compare/versus,
- * changelog) never read them, so we strip them here before the row is
- * serialised into the RSC payload / passed to client components.
- *
- * Bot exposure sweep: a `select("*")` was leaking these to the client.
- */
-const INTERNAL_BROKER_COMMERCIAL_FIELDS = [
-  "cpa_value",
-  "affiliate_priority",
-  "monthly_sponsorship_fee",
-  "commission_type",
-  "commission_value",
-  "estimated_epc",
-  "promoted_placement",
-] as const satisfies readonly (keyof Broker)[];
-
-/**
- * Removes internal commercial/affiliate-economics fields from a broker
- * row so it is safe to serialise to the client. Server-side ranking and
- * sponsorship logic must read those columns from their own queries, not
- * from this client-facing shape.
- */
-export function stripInternalBrokerFields(broker: Broker): Broker {
-  const cleaned = { ...broker };
-  for (const field of INTERNAL_BROKER_COMMERCIAL_FIELDS) {
-    delete cleaned[field];
-  }
-  return cleaned;
-}
+// Single source of truth for the client-facing broker sanitiser lives in
+// lib/brokers/sanitize.ts (edge-safe — no server imports). Re-exported here so
+// existing importers of `stripInternalBrokerFields` from this module keep
+// working.
+export {
+  stripInternalBrokerFields,
+  INTERNAL_BROKER_COMMERCIAL_FIELDS,
+} from "@/lib/brokers/sanitize";
+import { stripInternalBrokerFields } from "@/lib/brokers/sanitize";
 
 /**
  * Memoised broker fetch by slug (with reviewer join).

@@ -2,9 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
-const mockSelect = vi.fn();
-const mockEq = vi.fn();
-const mockOrder = vi.fn();
 const mockFrom = vi.fn();
 
 vi.mock("@supabase/supabase-js", () => ({
@@ -50,56 +47,64 @@ describe("GET /api/quiz/data", () => {
   });
 
   it("returns 502 when brokers fetch errors", async () => {
-    let call = 0;
-    mockFrom.mockImplementation(() => {
-      call++;
-      if (call === 1) return makeChain({ error: { message: "relation does not exist" } });
-      return makeChain({ data: [] });
-    });
+    mockFrom.mockImplementation(() => makeChain({ error: { message: "relation does not exist" } }));
     const res = await GET();
     expect(res.status).toBe(502);
-    const json = await res.json() as { error: string };
+    const json = (await res.json()) as { error: string };
     expect(json.error).toMatch(/Failed to load quiz data/);
   });
 
-  it("returns 200 with brokers + quiz_weights on success", async () => {
+  it("returns brokers and never returns quiz_weights", async () => {
     const brokers = [{ id: 1, slug: "stake", status: "active" }];
-    const weights = [{ id: 1, label: "low_risk", weight: 0.5 }];
-    let call = 0;
-    mockFrom.mockImplementation(() => {
-      call++;
-      return makeChain({ data: call === 1 ? brokers : weights });
-    });
+    mockFrom.mockImplementation(() => makeChain({ data: brokers }));
     const res = await GET();
     expect(res.status).toBe(200);
-    const json = await res.json() as { brokers: unknown[]; quiz_weights: unknown[] };
+    const json = (await res.json()) as Record<string, unknown>;
     expect(json.brokers).toEqual(brokers);
-    expect(json.quiz_weights).toEqual(weights);
+    // Weights are no longer shipped to the browser — scoring is server-side.
+    expect(json).not.toHaveProperty("quiz_weights");
+  });
+
+  it("strips internal commercial fields from broker rows", async () => {
+    const brokers = [
+      {
+        slug: "stake",
+        status: "active",
+        rating: 4.5,
+        cpa_value: 400,
+        monthly_sponsorship_fee: 1500,
+        affiliate_priority: "high",
+        commission_type: "cpa",
+        commission_value: 400,
+        estimated_epc: 12.5,
+        promoted_placement: true,
+      },
+    ];
+    mockFrom.mockImplementation(() => makeChain({ data: brokers }));
+    const res = await GET();
+    const json = (await res.json()) as { brokers: Record<string, unknown>[] };
+    const b = json.brokers[0];
+    expect(b.slug).toBe("stake");
+    expect(b.rating).toBe(4.5);
+    for (const f of [
+      "cpa_value",
+      "monthly_sponsorship_fee",
+      "affiliate_priority",
+      "commission_type",
+      "commission_value",
+      "estimated_epc",
+      "promoted_placement",
+    ]) {
+      expect(b).not.toHaveProperty(f);
+    }
   });
 
   it("sets public Cache-Control header", async () => {
-    let call = 0;
-    mockFrom.mockImplementation(() => {
-      call++;
-      return makeChain({ data: [] });
-    });
+    mockFrom.mockImplementation(() => makeChain({ data: [] }));
     const res = await GET();
     const cc = res.headers.get("Cache-Control") ?? "";
     expect(cc).toMatch(/public/);
     expect(cc).toMatch(/max-age/);
     expect(cc).toMatch(/stale-while-revalidate/);
-  });
-
-  it("returns empty quiz_weights when that query errors but brokers succeed", async () => {
-    let call = 0;
-    mockFrom.mockImplementation(() => {
-      call++;
-      if (call === 1) return makeChain({ data: [{ slug: "stake" }] });
-      return makeChain({ data: null, error: { message: "quiz_weights missing" } });
-    });
-    const res = await GET();
-    expect(res.status).toBe(200);
-    const json = await res.json() as { quiz_weights: unknown };
-    expect(json.quiz_weights).toEqual([]);
   });
 });
