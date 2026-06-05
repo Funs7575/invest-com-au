@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 
-// top-match.ts imports the anon server client at module scope; stub it
+// top-match.ts imports the service-role admin client at module scope; stub it
 // so importing the pure reshape helper needs no env / DB.
-vi.mock("@/lib/supabase/server", () => ({ createClient: vi.fn() }));
+vi.mock("@/lib/supabase/admin", () => ({ createAdminClient: vi.fn() }));
 
 import { reshapeWeightRow } from "@/lib/getmatched/top-match";
 

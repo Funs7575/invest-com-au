@@ -12,15 +12,18 @@
  * result screen renders without the hero card (action plan + checklist
  * still display).
  *
- * Both reads target public anon-readable tables — `brokers` (anon SELECT on
- * `status = 'active'`) and `quiz_weights` (anon SELECT `USING (TRUE)`) — so we
- * use the RLS-respecting anon server client, not the service-role admin client.
- * The only caller is the public, unauthenticated `/api/get-matched/resolve`
- * route, where least-privilege matters: keeping RLS in the loop means a future
- * SELECT change can't silently leak protected rows.
+ * `brokers` is public anon-readable, but `quiz_weights` is being locked down to
+ * non-anon: its tuned ranking weights are commercially sensitive and were
+ * trivially extractable via the embedded anon key. The only caller is the
+ * public, unauthenticated `/api/get-matched/resolve` route — which carries no
+ * admin JWT — so once the `quiz_weights` SELECT policy is restricted, an
+ * RLS-respecting anon read would return nothing. These reads therefore use the
+ * service-role client; it bypasses RLS, so the `status = 'active'` broker
+ * filter is applied explicitly in the query below.
  */
 
-import { createClient } from "@/lib/supabase/server";
+// eslint-disable-next-line no-restricted-imports -- public unauthenticated get-matched path with no admin JWT reading quiz_weights, which is being locked to non-anon; service-role required so the read survives the SELECT-policy restriction.
+import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import {
   scoreQuizResults,
@@ -121,7 +124,7 @@ export async function computeTopMatch(
   vertical: Vertical | null,
 ): Promise<TopMatch | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // Load active brokers + their scoring weights in parallel.
     const [brokersRes, weightsRes] = await Promise.all([
@@ -197,7 +200,7 @@ export async function computeTopMatches(
   limit = 3,
 ): Promise<TopMatch[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     const [brokersRes, weightsRes] = await Promise.all([
       supabase.from("brokers").select("*").eq("status", "active"),
