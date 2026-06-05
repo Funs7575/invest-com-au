@@ -21,6 +21,8 @@ import { CostLedger } from "./ai/cost";
 import { PlaywrightPageDriver } from "./ai/playwright-page-driver";
 import { makeAnthropicClient } from "./ai/anthropic-client";
 import { runAiSession, type AiSessionResult } from "./ai/driver";
+import { runFlow } from "./flows/runner";
+import type { Flow, FlowStepResult } from "./flows/types";
 
 export interface SessionOptions {
   persona: string;
@@ -138,6 +140,15 @@ export class BotSession {
       ledger: this.ledger,
       maxSteps: this.config.maxStepsPerSession,
     });
+  }
+
+  /**
+   * Run a deterministic scripted flow against this session's page. Each step
+   * failure is recorded as a finding and execution continues so partial runs
+   * still produce useful signal. Returns a result array — one entry per step.
+   */
+  async runFlow(flow: Flow): Promise<FlowStepResult[]> {
+    return runFlow(flow, this.page, this.store, this.persona, this.config);
   }
 
   /** Persist this session's findings as a shard for run-level aggregation. */

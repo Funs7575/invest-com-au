@@ -2,8 +2,9 @@ import fs from "node:fs";
 import { test } from "@playwright/test";
 import { loadConfig } from "./config";
 import { BotSession } from "./session";
-import { PHASE0_PERSONAS, ADVISOR_PERSONAS, AI_PERSONAS, AUTHED_PERSONAS } from "./personas";
+import { PHASE0_PERSONAS, ADVISOR_PERSONAS, AI_PERSONAS, AUTHED_PERSONAS, LIFECYCLE_PERSONAS } from "./personas";
 import { resolveAiKey } from "./ai/anthropic-client";
+import { USER_LIFECYCLE_FLOW } from "./flows/user-lifecycle";
 
 /**
  * Fleet entrypoint.
@@ -75,6 +76,48 @@ for (const persona of AUTHED_PERSONAS) {
         await session.runAiGoal(persona.goal, persona.startPath ?? "/account");
         await session.audit();
       }
+    } finally {
+      await session.persist();
+      await session.close();
+    }
+  });
+}
+
+// Lifecycle flow — scripted user journey (quiz → account → advisor → notifications).
+// Skips unless the bot-buyer storageState exists on disk.
+for (const persona of LIFECYCLE_PERSONAS) {
+  test(`lifecycle: ${persona.name}`, async ({ browser }) => {
+    const storageStateFile = persona.storageStateFile;
+    test.skip(
+      !storageStateFile || !fs.existsSync(storageStateFile),
+      `no seeded storageState for "${persona.name}" — run bots:seed-users + auto-login first`,
+    );
+
+    const session = await BotSession.create(browser, config, {
+      persona: persona.name,
+      storageStateFile,
+    });
+    try {
+      const results = await session.runFlow(USER_LIFECYCLE_FLOW);
+
+      // Surface a roll-up finding so the report shows the overall pass/fail ratio.
+      const failed = results.filter((r) => r.status === "fail");
+      const skipped = results.filter((r) => r.status === "skip");
+      session.store.add({
+        severity: failed.length > 0 ? "high" : "info",
+        category: "flow-failure",
+        title: `lifecycle flow: ${results.length - failed.length - skipped.length}/${results.length} steps passed`,
+        detail:
+          results
+            .map((r) => `${r.status === "pass" ? "✓" : r.status === "skip" ? "⊘" : "✗"} ${r.name}${r.detail ? `: ${r.detail}` : ""}`)
+            .join("\n"),
+        url: session.page.url(),
+        persona: persona.name,
+        signatureKey: `lifecycle:rollup:${persona.name}`,
+      });
+
+      // Cross-cutting checks on wherever the flow ended up.
+      await session.audit({ links: false });
     } finally {
       await session.persist();
       await session.close();

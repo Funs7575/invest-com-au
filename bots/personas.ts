@@ -91,6 +91,21 @@ export const AUTHED_PERSONAS: Persona[] = [
 ];
 
 /**
+ * Lifecycle personas drive the full scripted user journey (quiz → account →
+ * advisor enquiry → notifications) via USER_LIFECYCLE_FLOW rather than a
+ * free-form page sweep. They skip unless the bot-buyer storageState exists.
+ */
+export const LIFECYCLE_PERSONAS: Persona[] = [
+  {
+    name: "lifecycle-investor",
+    description:
+      "Drives the full new-investor lifecycle: quiz → action plan → account surfaces → advisor enquiry → notifications.",
+    storageStateFile: stateFile("bot-buyer"),
+    startPath: "/get-matched",
+  },
+];
+
+/**
  * Advisor-area personas — anonymous coverage of the adviser directory, the
  * specialty hubs, the get-matched entry point, and a seeded profile. Designed to
  * be run against the protected Netlify mirror (writes are auto-mocked), so every

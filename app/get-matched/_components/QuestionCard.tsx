@@ -48,9 +48,9 @@ export default function QuestionCard({
       className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8"
       style={{ animation: "iv-question-in 220ms ease-out" }}
     >
-      <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
+      <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
         {question.prompt}
-      </h1>
+      </h2>
       {question.subtitle && (
         <p className="text-sm text-slate-500 mb-6">{question.subtitle}</p>
       )}
@@ -111,13 +111,19 @@ export default function QuestionCard({
             <span>Pick all that apply</span>
             <span>{selectedMulti.length} selected</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div
+            role="group"
+            aria-label={question.prompt}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-2.5"
+          >
             {question.options.map((opt) => {
               const checked = selectedMulti.includes(opt.value);
               return (
                 <button
                   type="button"
                   key={opt.value}
+                  role="checkbox"
+                  aria-checked={checked}
                   onClick={() => {
                     setSelectedMulti((prev) =>
                       checked
