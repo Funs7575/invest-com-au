@@ -135,6 +135,32 @@ describe("/api/wealth-stack", () => {
     expect(res.status).toBe(200);
   });
 
+  it("strips internal commercial fields from brokers before they reach the response", async () => {
+    const broker = {
+      slug: "stake", name: "Stake", status: "active", platform_type: "share_broker",
+      rating: 4.5, cpa_value: 400, monthly_sponsorship_fee: 1500, commission_type: "cpa",
+      affiliate_priority: "high", commission_value: 400, estimated_epc: 12.5, promoted_placement: true,
+    };
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "brokers") return makeBuilder({ data: [broker], error: null });
+      return makeBuilder({ data: [], error: null });
+    });
+    const res = await POST(makeReq({ answers: ["x"] }));
+    expect(res.status).toBe(200);
+
+    // The brokers handed to the scorer (and thus embedded in stack.components)
+    // must be sanitised — this is a public, unauthenticated endpoint.
+    const calls = mockBuildWealthStack.mock.calls as unknown as Array<[{ perKind: Record<string, { brokers: Record<string, unknown>[] }> }]>;
+    const passed = calls[0]![0].perKind.share_broker!.brokers[0]!;
+    expect(passed.slug).toBe("stake");
+    for (const f of [
+      "cpa_value", "monthly_sponsorship_fee", "commission_type",
+      "affiliate_priority", "commission_value", "estimated_epc", "promoted_placement",
+    ]) {
+      expect(passed).not.toHaveProperty(f);
+    }
+  });
+
   it("returns 500 when brokers query fails", async () => {
     mockFrom.mockImplementation((table: string) => {
       if (table === "brokers") {

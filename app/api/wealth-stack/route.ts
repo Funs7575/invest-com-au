@@ -3,6 +3,7 @@ import { z } from "zod";
 import { randomBytes } from "crypto";
 
 import { createClient } from "@/lib/supabase/server";
+import { stripInternalBrokerFields } from "@/lib/request-cache";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { sendEmail } from "@/lib/resend";
 import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
@@ -89,7 +90,13 @@ export async function POST(request: NextRequest) {
     weightsBySlug[row.broker_slug] = row.weights;
   }
 
-  const brokers = (brokerRows ?? []) as Broker[];
+  // This is a public, unauthenticated endpoint and the broker rows end up in
+  // the response (stack.components[].broker). `select("*")` pulls in internal
+  // commercial columns (cpa_value, sponsorship fees, commission terms, EPC,
+  // promoted-placement); strip them before they reach the browser. The scorer
+  // uses none of those fields, so sanitising before scoring leaves ranking
+  // unchanged.
+  const brokers = (brokerRows ?? []).map((b) => stripInternalBrokerFields(b as Broker));
   const perKind: Partial<Record<StackKind, { brokers: Broker[]; weights: Record<string, QuizWeights> }>> = {};
 
   for (const kind of STACK_KINDS) {
