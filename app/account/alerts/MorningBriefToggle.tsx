@@ -40,7 +40,8 @@ export default function MorningBriefToggle({ initialEnabled }: Props) {
       <button
         onClick={toggle}
         disabled={saving}
-        aria-pressed={enabled}
+        role="switch"
+        aria-checked={enabled}
         className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${
           enabled ? "bg-emerald-600" : "bg-slate-200"
         } ${saving ? "opacity-50 cursor-not-allowed" : ""}`}

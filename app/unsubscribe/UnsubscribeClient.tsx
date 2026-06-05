@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -8,15 +8,11 @@ export default function UnsubscribeClient() {
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || "";
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() =>
+    emailParam ? decodeURIComponent(emailParam) : "",
+  );
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    if (emailParam) {
-      setEmail(decodeURIComponent(emailParam));
-    }
-  }, [emailParam]);
 
   const handleUnsubscribe = async () => {
     if (!email || !email.includes("@")) {
@@ -86,7 +82,9 @@ export default function UnsubscribeClient() {
       </p>
 
       <div className="space-y-3">
+        <label htmlFor="unsub-email" className="sr-only">Email address</label>
         <input
+          id="unsub-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

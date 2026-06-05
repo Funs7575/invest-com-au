@@ -135,7 +135,7 @@ export const USER_LIFECYCLE_FLOW: Flow = {
             const radios = radiogroup.locator('[role="radio"]');
             if ((await radios.count()) > 0) {
               await radios.first().click();
-              await page.waitForTimeout(900); // wait for API round-trip
+              await page.waitForLoadState("networkidle", { timeout: 5_000 }).catch(() => undefined);
               continue;
             }
           }
@@ -146,7 +146,7 @@ export const USER_LIFECYCLE_FLOW: Flow = {
             await numInput.fill("50000");
             const continueBtn = page.getByRole("button", { name: /continue/i });
             if ((await continueBtn.count()) > 0) await continueBtn.click();
-            await page.waitForTimeout(900);
+            await page.waitForLoadState("networkidle", { timeout: 5_000 }).catch(() => undefined);
             continue;
           }
 
@@ -156,7 +156,7 @@ export const USER_LIFECYCLE_FLOW: Flow = {
             await textInput.fill("General investment growth");
             const continueBtn = page.getByRole("button", { name: /continue/i });
             if ((await continueBtn.count()) > 0) await continueBtn.click();
-            await page.waitForTimeout(900);
+            await page.waitForLoadState("networkidle", { timeout: 5_000 }).catch(() => undefined);
             continue;
           }
 
@@ -165,10 +165,10 @@ export const USER_LIFECYCLE_FLOW: Flow = {
           const continueBtn = page.getByRole("button", { name: /continue/i });
           if ((await continueBtn.count()) > 0) {
             // Click the first available option chip then confirm.
-            const chips = page.locator('article button:not([disabled])').first();
+            const chips = page.locator('[role="checkbox"], article button:not([disabled])').first();
             if ((await chips.count()) > 0) await chips.click();
             await continueBtn.click();
-            await page.waitForTimeout(900);
+            await page.waitForLoadState("networkidle", { timeout: 5_000 }).catch(() => undefined);
             continue;
           }
 

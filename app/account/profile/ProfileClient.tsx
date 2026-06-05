@@ -384,7 +384,11 @@ export default function ProfileClient() {
         {/* Section 4: Current Broker */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
           <h2 className="text-base font-bold text-slate-900 mb-4">Current Broker</h2>
+          <label htmlFor="preferred-broker" className="block text-sm font-medium text-slate-700 mb-1.5">
+            Current broker
+          </label>
           <input
+            id="preferred-broker"
             type="text"
             value={form.preferred_broker}
             onChange={(e) => setForm((p) => ({ ...p, preferred_broker: e.target.value }))}

@@ -93,8 +93,14 @@ npm run bots:seed-users        # creates test-bot-buyer@invest-test.local + prof
 #    Writes e2e/visual/.auth/bot-buyer.json (gitignored).
 E2E_BASE_URL=$BOTS_BASE_URL npm run screenshots:auto-login
 
-# 3. Run the fleet in sandbox mode — authed personas now activate.
+# 3a. Full fleet in sandbox mode — authed + lifecycle personas activate.
 npm run bots:sandbox
+
+# 3b. Lifecycle flow only (faster — just the 7-step scripted journey).
+npm run bots:lifecycle
+
+# 3c. Lifecycle against the Netlify mirror (writes mocked, quiz-flow skipped).
+npm run bots:lifecycle-mirror
 ```
 
 How it stays safe to run *un*seeded: each authenticated persona
@@ -204,8 +210,12 @@ bots/
 │   ├── types.ts         # Finding model + dedupe signature                [pure]
 │   ├── store.ts         # collect / dedupe / aggregate                     [pure]
 │   └── report.ts        # HTML+JSON report + shard aggregation            [pure render]
+├── flows/
+│   ├── types.ts         # FlowStep / Flow / FlowStepContext types         [pure]
+│   ├── runner.ts        # executes steps, catches → finding on failure    [pure]
+│   └── user-lifecycle.ts # quiz → action plan → account → advisor enquiry → notifications
 ├── ai/cost.ts           # token→USD ledger + budget guard                 [pure]
-├── personas.ts          # persona registry (anon / AI / authenticated)
+├── personas.ts          # persona registry (anon / AI / authenticated / lifecycle)
 ├── session.ts           # BotSession: safety + checks + findings per user
 ├── fleet.spec.ts        # entrypoint (one session per persona)
 ├── playwright.config.ts # dedicated runner config
@@ -241,8 +251,12 @@ reported on every run. In CI, set the `BOTS_ANTHROPIC_API_KEY` secret and the
   rolling results issue.
 - ✅ **AI driver** — observe→act→judge loop, action model, budget guard, live
   Playwright + Anthropic implementations, AI personas wired into the fleet.
-- **Next** — deterministic critical/money-path flows (get-matched → action plan,
-  advisor lead, signup/login) and authenticated personas via the existing auth
-  scaffold; auto-discovered full-surface coverage; opt-in per-finding GitHub
-  issues.
+- ✅ **Authenticated personas** — `AUTHED_PERSONAS` drive logged-in surfaces
+  (account dashboard, holdings, bookmarks) via captured storageState; skip
+  gracefully when auth is not seeded.
+- ✅ **Lifecycle flow** — deterministic 7-step scripted regression:
+  quiz → action plan → account surfaces → advisor enquiry → notifications
+  (`bots/flows/user-lifecycle.ts`, driven by `npm run bots:lifecycle`).
+- **Next** — auto-discovered full-surface coverage; opt-in per-finding GitHub
+  issues; sign-up / onboarding flow.
 ```
