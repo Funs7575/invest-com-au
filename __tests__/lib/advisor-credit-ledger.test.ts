@@ -34,6 +34,10 @@ interface ProRow {
 let ledger: LedgerRow[] = [];
 let pros: ProRow[] = [];
 let nextLedgerId = 1;
+// One-shot hook fired right before the first compare-and-set predicate is
+// evaluated — lets a test simulate a concurrent writer moving the balance
+// between recordLedgerEntry's read and its cache write.
+let casHook: (() => void) | null = null;
 
 function reset() {
   ledger = [];
@@ -42,6 +46,7 @@ function reset() {
     { id: 2, credit_balance_cents: 5000, lifetime_credit_cents: 5000, lifetime_lead_spend_cents: 0 },
   ];
   nextLedgerId = 1;
+  casHook = null;
 }
 
 const supabaseStub = {
@@ -158,10 +163,38 @@ function ledgerTableStub() {
 function prosTableStub() {
   let updates: Record<string, unknown> | null = null;
   const filters: Record<string, unknown> = {};
+
+  // Apply the compare-and-set: match by id, and (when present) by the
+  // optimistic-lock predicate on credit_balance_cents. Models REAL PostgREST:
+  // a 0-row match returns { data: [], error: null } — NOT an error.
+  function runCas(): { data: Array<{ id: number }>; error: null } {
+    // One-shot concurrent-writer injection (test hook) fires right before the
+    // CAS predicate is evaluated, simulating another caller landing in between.
+    if (casHook) {
+      const h = casHook;
+      casHook = null;
+      h();
+    }
+    const id = filters["id"] as number | undefined;
+    const pro = pros.find((p) => p.id === id);
+    const balanceCheck = filters["credit_balance_cents"];
+    if (
+      pro &&
+      updates &&
+      (typeof balanceCheck !== "number" || pro.credit_balance_cents === balanceCheck)
+    ) {
+      Object.assign(pro, updates);
+      updates = null;
+      return { data: [{ id: pro.id }], error: null };
+    }
+    updates = null;
+    return { data: [], error: null };
+  }
+
   const builder = {
     select: vi.fn(() => builder),
     update: vi.fn((u: Record<string, unknown>) => {
-      updates = u;
+      updates = { ...u };
       return builder;
     }),
     eq: vi.fn((col: string, val: unknown) => {
@@ -172,39 +205,12 @@ function prosTableStub() {
       const id = filters["id"] as number | undefined;
       const pro = pros.find((p) => p.id === id);
       if (!pro) return Promise.resolve({ data: null, error: { message: "not found" } });
-      // If updates were stacked, return updated row; otherwise current.
-      if (updates) {
-        const balanceCheck = filters["credit_balance_cents"];
-        if (typeof balanceCheck === "number" && pro.credit_balance_cents !== balanceCheck) {
-          updates = null;
-          return Promise.resolve({ data: null, error: { code: "P0001", message: "stale" } });
-        }
-        Object.assign(pro, updates);
-        updates = null;
-      }
       return Promise.resolve({ data: pro, error: null });
     },
-    then: (cb: (v: { data: null; error: { code?: string; message: string } | null }) => unknown) => {
-      // For update without .single() — apply
-      if (updates) {
-        const id = filters["id"] as number | undefined;
-        const pro = pros.find((p) => p.id === id);
-        const balanceCheck = filters["credit_balance_cents"];
-        if (
-          pro &&
-          (typeof balanceCheck !== "number" || pro.credit_balance_cents === balanceCheck)
-        ) {
-          Object.assign(pro, updates);
-          updates = null;
-          return Promise.resolve({ data: null, error: null }).then(cb);
-        }
-        updates = null;
-        return Promise.resolve({
-          data: null,
-          error: { code: "P0001", message: "stale" },
-        }).then(cb);
-      }
-      return Promise.resolve({ data: null, error: null }).then(cb);
+    // The CAS write path: update().eq(id).eq(balance).select("id") is awaited.
+    then: (cb: (v: { data: Array<{ id: number }>; error: null }) => unknown) => {
+      const result = updates ? runCas() : { data: [], error: null as null };
+      return Promise.resolve(result).then(cb);
     },
   };
   return builder;
@@ -345,6 +351,37 @@ describe("recordLedgerEntry", () => {
     });
     expect(pros[0]?.lifetime_credit_cents).toBe(10000); // not 20000
     expect(pros[0]?.credit_balance_cents).toBe(10000);
+  });
+
+  it("recovers under concurrency — CAS retries against the refreshed balance (no drift)", async () => {
+    // Regression: the optimistic-lock retry previously (a) re-used the stale
+    // `currentBalance` predicate on retry and (b) relied on cacheErr, which a
+    // 0-row PostgREST update never sets — so a concurrent spend silently
+    // dropped this entry's cache write, drifting the balance ABOVE the truth
+    // (advisor overspends past zero).
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 5000;
+    pros[0]!.lifetime_lead_spend_cents = 0;
+
+    // A concurrent -1000 spend lands between our read (5000) and our CAS,
+    // dropping the cached balance to 4000.
+    casHook = () => {
+      pros[0]!.credit_balance_cents = 4000;
+    };
+
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: -3900,
+      kind: "lead_spend",
+      description: "lead while another spend lands",
+      referenceType: "professional_lead",
+      referenceId: "777",
+    });
+
+    // 5000 − 1000 (concurrent) − 3900 (this) = 100. The cache must reflect the
+    // retry recomputed against the fresh 4000 base, not the stale 5000.
+    expect(pros[0]?.credit_balance_cents).toBe(100);
+    expect(result.balanceAfterCents).toBe(100);
   });
 
   it("throws when the advisor doesn't exist", async () => {
