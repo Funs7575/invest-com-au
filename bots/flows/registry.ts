@@ -21,6 +21,14 @@ import { RATE_LIMIT_FLOW } from "./rate-limit";
 import { MOBILE_NAV_FLOW } from "./mobile-nav";
 import { AUTH_EDGE_FLOW } from "./auth-edge";
 import { DARK_MODE_FLOW } from "./dark-mode";
+import { ADVISOR_PROFILE_FLOW } from "./advisor-profile";
+import { ADVISOR_ENQUIRY_FORM_FLOW } from "./advisor-enquiry-form";
+import { ADVISOR_ARTICLE_BROWSE_FLOW } from "./advisor-article-browse";
+import { COMMUNITY_BROWSE_FLOW } from "./community-browse";
+import { FIND_ADVISOR_QUIZ_FLOW } from "./find-advisor-quiz";
+import { ADVISOR_DIRECTORY_DEEP_FLOW } from "./advisor-directory-deep";
+import { ADVISOR_TEAMS_PUBLIC_FLOW } from "./advisor-teams-public";
+import { ADVISOR_PORTAL_DEEP_FLOW } from "./advisor-portal-deep";
 
 export interface FlowPersona {
   /** Persona/test name — unique across the whole fleet. */
@@ -92,5 +100,47 @@ export const COVERAGE_FLOW_PERSONAS: FlowPersona[] = [
     flow: DARK_MODE_FLOW,
     colorScheme: "dark",
     seedLocalStorage: { theme: "dark" },
+  },
+
+  // ── Advisor suite ──────────────────────────────────────────────────────────
+  {
+    name: "advisor-profile",
+    description: "Finds the first advisor from the directory and walks their profile: trust signals, CTA, reviews, articles, Person schema.",
+    flow: ADVISOR_PROFILE_FLOW,
+  },
+  {
+    name: "advisor-enquiry-form",
+    description: "Drives the advisor enquiry form with empty, invalid-email, and oversized-message inputs; verifies graceful validation.",
+    flow: ADVISOR_ENQUIRY_FORM_FLOW,
+  },
+  {
+    name: "advisor-article-browse",
+    description: "Browses the articles hub, reads an article, and checks h1, author attribution, Article JSON-LD, and advisor back-link.",
+    flow: ADVISOR_ARTICLE_BROWSE_FLOW,
+  },
+  {
+    name: "community-browse",
+    description: "Walks community hub → category → thread, checks vote controls, new-thread CTA, and DiscussionForumPosting schema.",
+    flow: COMMUNITY_BROWSE_FLOW,
+  },
+  {
+    name: "find-advisor-quiz",
+    description: "Walks the multi-step find-advisor matching quiz: renders, question interaction, progress indicator, back navigation, location step.",
+    flow: FIND_ADVISOR_QUIZ_FLOW,
+  },
+  {
+    name: "advisor-directory-deep",
+    description: "Deep directory: type sub-pages, specialist pages, leaderboard, compare page, search API, for-advisors marketing, advisor-jobs.",
+    flow: ADVISOR_DIRECTORY_DEEP_FLOW,
+  },
+  {
+    name: "advisor-teams-public",
+    description: "Public teams directory: team hub, team profile, member cards, enquiry CTA, team-creation form, ProfessionalService schema.",
+    flow: ADVISOR_TEAMS_PUBLIC_FLOW,
+  },
+  {
+    name: "advisor-portal-deep",
+    description: "Deep portal public smoke: apply/signup, pricing tiers, terms, advisor guides, portal health JSON.",
+    flow: ADVISOR_PORTAL_DEEP_FLOW,
   },
 ];
