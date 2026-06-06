@@ -199,3 +199,70 @@ export const ADVISOR_PERSONAS: Persona[] = [
     goal: "Read an adviser's profile in detail and decide whether you'd contact them. Judge whether credentials, fees, and disclosures are present and trustworthy; flag anything broken or missing.",
   },
 ];
+
+/**
+ * Mobile viewport personas — mirrors PHASE0_PERSONAS routes on an iPhone 14
+ * form factor. Catches mobile-specific failures: overlapping elements, tap
+ * targets < 44px, horizontal overflow, nav collapse regressions. The fleet
+ * creates these sessions with `devices["iPhone 14"]` viewport so they run
+ * exactly like real mobile browsers.
+ */
+export const MOBILE_PERSONAS: Persona[] = [
+  {
+    name: "mobile-broker-shopper",
+    description: "Mobile user comparing brokers on an iPhone 14.",
+    routes: ["/", "/compare", "/calculators", "/how-we-earn"],
+  },
+  {
+    name: "mobile-advice-seeker",
+    description: "Mobile user looking for a financial adviser.",
+    routes: ["/", "/advisors", "/find-advisor", "/about"],
+  },
+  {
+    name: "mobile-learner",
+    description: "Mobile user researching concepts before investing.",
+    routes: ["/", "/glossary", "/foreign-investment", "/share-trading"],
+  },
+];
+
+/**
+ * AI copy-quality personas: each is given a focused revenue page and asked to
+ * judge H1 clarity, fee/risk disclosure completeness, and CTA obviousness like
+ * a first-time visitor. Run only when AI is enabled. Costs ~$0.05–0.15 per
+ * page depending on length.
+ *
+ * These are the top revenue-generating pages — the ones where a poor first
+ * impression or missing disclosure has the highest financial/regulatory impact.
+ */
+export const AI_COPY_PERSONAS: Persona[] = [
+  {
+    name: "ai-copy-homepage",
+    description: "AI copy judge: homepage value proposition + CTA clarity.",
+    startPath: "/",
+    goal: "You are a first-time visitor who knows nothing about this site. Read this page carefully. Score (1–5) and explain: (1) Is the H1 a clear value proposition — does it tell you exactly what the site does? (2) Are fees and risks honestly disclosed? (3) Is there one obvious primary CTA and is it clear what clicking it does? (4) Is the compliance/disclaimer copy present and readable (not buried)? Report any confusion, missing information, or dark patterns. Be specific — quote the actual text that succeeds or fails.",
+  },
+  {
+    name: "ai-copy-compare",
+    description: "AI copy judge: compare page fee transparency + CTA.",
+    startPath: "/compare",
+    goal: "You are evaluating this comparison page as a potential investor. Score (1–5) and explain: (1) Is it immediately clear HOW platforms are being compared — what criteria, who collected the data, how recent is it? (2) Are sponsored/promoted listings clearly labelled as such? (3) Are brokerage fees the single most prominent piece of information for each platform? (4) Is there a clear path to learn more or open an account? Report any dark patterns, missing disclosures, or confusing UI.",
+  },
+  {
+    name: "ai-copy-advisor-directory",
+    description: "AI copy judge: advisor directory trust signals + AFSL disclosure.",
+    startPath: "/advisors",
+    goal: "You are evaluating this financial adviser directory as someone about to trust a stranger with their money. Score (1–5): (1) Is it clear how advisers were vetted — are AFSL numbers shown? (2) Are fees disclosed for listed advisers? (3) Is it obvious this is a directory/comparison site, not a personal-advice service? (4) Are there clear trust signals (ASIC licence verification, client reviews, recency of data)? Flag any areas where a user could be misled about the site's licensing status or the nature of the service.",
+  },
+  {
+    name: "ai-copy-share-trading",
+    description: "AI copy judge: share trading pillar page — clarity for beginners.",
+    startPath: "/share-trading",
+    goal: "You are a complete beginner considering their first share trading account. Score (1–5): (1) Does the page help you understand what share trading is before promoting platforms? (2) Are CHESS sponsorship and custodian model differences clearly explained? (3) Are fee comparisons prominent and easy to understand? (4) Is the general-information-only disclaimer visible and not buried? Quote specific text that works well or fails.",
+  },
+  {
+    name: "ai-copy-broker-detail",
+    description: "AI copy judge: individual broker profile page quality.",
+    startPath: "/broker/stake",
+    goal: "You are evaluating a broker profile page as a potential customer. Score (1–5): (1) Are all key fees (brokerage, FX, inactivity) prominently shown and up-to-date? (2) Is CHESS sponsorship status clearly stated? (3) Are pros and cons balanced — or does the copy read like an ad? (4) Is the affiliate/commercial relationship with the broker disclosed? Report anything that reads as promotional rather than factual.",
+  },
+];

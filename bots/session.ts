@@ -28,11 +28,18 @@ import type { PerfSample } from "./checks/perf";
 import { checkSchemaMarkup } from "./checks/schema-markup";
 import { checkAffiliateLinks } from "./checks/affiliate-links";
 import { checkGeoCitability } from "./checks/geo-citability";
+import { checkCompliance } from "./checks/compliance";
+import { checkForms } from "./checks/forms";
+import { checkBrokenImages } from "./checks/broken-images";
+import { captureVisualBaseline } from "./checks/visual-regression";
+import { checkDeepLinks } from "./checks/deep-crawl";
 
 export interface SessionOptions {
   persona: string;
   /** Storage-state file for an authenticated persona (reuses e2e auth states). */
   storageStateFile?: string;
+  /** Extra browser context options (e.g. viewport/device settings for mobile personas). */
+  contextOptions?: Parameters<Browser["newContext"]>[0];
   /**
    * Override the browser viewport. Used by mobile personas to drive a core
    * flow at a phone width (where the directory filter drawer and compare bar
@@ -58,6 +65,8 @@ export class BotSession {
   readonly store = new FindingStore();
   private readonly checkedLinks = new Set<string>();
   private readonly checkedAffiliateSlugs = new Set<string>();
+  private readonly checkedImageSrcs = new Set<string>();
+  readonly visitedUrls = new Set<string>();
   private net: SafetyNet | null = null;
   private ledger: CostLedger | null = null;
   private readonly perfSamples: PerfSample[] = [];
@@ -71,6 +80,7 @@ export class BotSession {
 
   static async create(browser: Browser, config: BotConfig, opts: SessionOptions): Promise<BotSession> {
     const context = await browser.newContext({
+      ...(opts.contextOptions ?? {}),
       ...(opts.storageStateFile ? { storageState: opts.storageStateFile } : {}),
       ...(config.ignoreHttpsErrors ? { ignoreHTTPSErrors: true } : {}),
       ...(opts.viewport ? { viewport: opts.viewport } : {}),
@@ -152,7 +162,15 @@ export class BotSession {
   }
 
   /** Run the cross-cutting checks on whatever is currently on screen. */
-  async audit(opts: { links?: boolean; affiliateLinks?: boolean; geo?: boolean } = {}): Promise<void> {
+  async audit(opts: {
+    links?: boolean;
+    affiliateLinks?: boolean;
+    geo?: boolean;
+    compliance?: boolean;
+    forms?: boolean;
+    brokenImages?: boolean;
+    visual?: boolean;
+  } = {}): Promise<void> {
     await runAxe(this.page, this.store, this.persona);
     await checkSchemaMarkup(this.page, this.store, this.persona);
     if (opts.links) {
@@ -168,6 +186,32 @@ export class BotSession {
     if (opts.geo !== false) {
       await checkGeoCitability(this.page, this.store, this.persona);
     }
+    if (opts.compliance !== false) {
+      await checkCompliance(this.page, this.store, this.persona);
+    }
+    if (opts.brokenImages !== false) {
+      await checkBrokenImages(this.page, this.store, this.persona, {
+        checkedSrcs: this.checkedImageSrcs,
+      });
+    }
+    if (opts.forms) {
+      await checkForms(this.page, this.config, this.store, this.persona);
+    }
+    if (opts.visual) {
+      await captureVisualBaseline(this.page, this.store, this.persona, {
+        runDir: this.config.runDir,
+      });
+    }
+  }
+
+  /**
+   * Crawl all internal links on the current page (depth-1), reporting 404s/5xxs.
+   * `visitedUrls` is shared across the session so each URL is only HEAD-checked once.
+   */
+  async deepCrawl(): Promise<void> {
+    await checkDeepLinks(this.page, this.config, this.store, this.persona, {
+      visitedUrls: this.visitedUrls,
+    });
   }
 
   /**

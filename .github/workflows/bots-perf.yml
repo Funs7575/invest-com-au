@@ -22,19 +22,20 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "app/layout.tsx"
-      - "app/page.tsx"
-      - "app/(content)/**"
-      - "app/compare/**"
-      - "app/broker/**"
-      - "app/advisors/**"
-      - "app/share-trading/**"
-      - "app/etfs/**"
-      - "components/layout/**"
-      - "components/directory/**"
+      # Any app page or component change can affect performance
+      - "app/**"
+      - "components/**"
+      # Library changes that affect rendering or data fetching
       - "lib/seo.ts"
       - "lib/schema-markup.ts"
+      - "lib/cached-data.ts"
+      - "lib/tracking.ts"
+      - "lib/sponsorship.ts"
+      # Budget definition changes always trigger a re-check
       - "bots/checks/perf.ts"
+      # Next.js/build config
+      - "next.config.*"
+      - "tailwind.config.*"
   workflow_dispatch:
     inputs:
       target_url:

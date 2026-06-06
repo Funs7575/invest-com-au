@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       );
     }
     return NextResponse.json(
-      { error: "review_id and review_type are required" },
+      { error: "review_id required; review_type must be 'broker' or 'advisor'" },
       { status: 400 },
     );
   }

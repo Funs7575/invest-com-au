@@ -1,12 +1,14 @@
 import fs from "node:fs";
-import { test } from "@playwright/test";
+import { test, devices } from "@playwright/test";
 import { loadConfig } from "./config";
 import { BotSession } from "./session";
-import { PHASE0_PERSONAS, ADVISOR_PERSONAS, AI_PERSONAS, AUTHED_PERSONAS, LIFECYCLE_PERSONAS, STARTUP_ECOSYSTEM_PERSONAS, ADVISOR_PORTAL_PERSONAS } from "./personas";
+import { PHASE0_PERSONAS, ADVISOR_PERSONAS, AI_PERSONAS, AUTHED_PERSONAS, LIFECYCLE_PERSONAS, STARTUP_ECOSYSTEM_PERSONAS, ADVISOR_PORTAL_PERSONAS, MOBILE_PERSONAS, AI_COPY_PERSONAS } from "./personas";
 import { resolveAiKey } from "./ai/anthropic-client";
 import { USER_LIFECYCLE_FLOW } from "./flows/user-lifecycle";
 import { STARTUP_ECOSYSTEM_FLOW } from "./flows/startup-portal";
 import { ADVISOR_PORTAL_FLOW } from "./flows/advisor-portal";
+import { RATE_ALERT_FLOW } from "./flows/rate-alert";
+import { checkCookieConsent } from "./checks/cookie-consent";
 import { COVERAGE_FLOW_PERSONAS } from "./flows/registry";
 import { recordFlowRollup } from "./flows/runner";
 
@@ -39,7 +41,9 @@ for (const persona of DETERMINISTIC_PERSONAS) {
     try {
       for (const route of persona.routes ?? []) {
         await session.visit(route);
-        await session.audit({ links: true });
+        await session.audit({ links: true, visual: true });
+        // Deep-crawl internal links on each page — catches 404s in nav/footer/related.
+        await session.deepCrawl();
       }
     } finally {
       await session.persist();
@@ -195,6 +199,82 @@ for (const persona of ADVISOR_PORTAL_PERSONAS) {
   });
 }
 
+// ── Mobile viewport personas ───────────────────────────────────────────────
+// Mirror PHASE0 routes on an iPhone 14 form factor. Catches mobile-specific
+// failures: nav collapse, tap-target size, horizontal overflow. These run
+// headlessly in Chrome's mobile emulation — no extra browsers needed.
+for (const persona of MOBILE_PERSONAS) {
+  test(`mobile bot: ${persona.name}`, async ({ browser }) => {
+    const session = await BotSession.create(browser, config, {
+      persona: persona.name,
+      contextOptions: devices["iPhone 14"],
+    });
+    try {
+      for (const route of persona.routes ?? []) {
+        await session.visit(route);
+        await session.audit({ links: false, forms: false });
+      }
+    } finally {
+      await session.persist();
+      await session.close();
+    }
+  });
+}
+
+// ── Cookie consent fleet-level check ──────────────────────────────────────
+// Runs once per fleet run: opens a fresh context (no cookies) and verifies a
+// consent banner appears and analytics is not running before consent.
+test("cookie consent: pre-consent analytics isolation", async ({ browser }) => {
+  const { FindingStore } = await import("./findings/store");
+  const { promises: fsAsync } = await import("node:fs");
+  const nodePath = await import("node:path");
+  const store = new FindingStore();
+  await checkCookieConsent(browser, config.baseUrl, store);
+  const shardsDir = nodePath.join(config.runDir, "shards");
+  await fsAsync.mkdir(shardsDir, { recursive: true });
+  const rand = Math.random().toString(36).slice(2, 8);
+  await fsAsync.writeFile(
+    nodePath.join(shardsDir, `cookie-consent-${rand}.json`),
+    JSON.stringify({ persona: "cookie-consent-check", findings: store.all() }, null, 2),
+    "utf8",
+  );
+});
+
+// ── Rate-alert authenticated flow ─────────────────────────────────────────
+// Skips unless the bot-buyer storageState exists. Tests alert creation and
+// persistence in the account/alerts surface.
+for (const persona of LIFECYCLE_PERSONAS) {
+  test(`rate-alert: ${persona.name}`, async ({ browser }) => {
+    const storageStateFile = persona.storageStateFile;
+    test.skip(
+      !storageStateFile || !fs.existsSync(storageStateFile),
+      `no seeded storageState for "${persona.name}" — run bots:seed-users + auto-login first`,
+    );
+    const session = await BotSession.create(browser, config, {
+      persona: `rate-alert-${persona.name}`,
+      storageStateFile,
+    });
+    try {
+      const results = await session.runFlow(RATE_ALERT_FLOW);
+      const failed = results.filter((r) => r.status === "fail");
+      const skipped = results.filter((r) => r.status === "skip");
+      session.store.add({
+        severity: failed.length > 0 ? "high" : "info",
+        category: "flow-failure",
+        title: `rate-alert flow: ${results.length - failed.length - skipped.length}/${results.length} steps passed`,
+        detail: results.map((r) => `${r.status === "pass" ? "✓" : r.status === "skip" ? "⊘" : "✗"} ${r.name}${r.detail ? `: ${r.detail}` : ""}`).join("\n"),
+        url: session.page.url(),
+        persona: `rate-alert-${persona.name}`,
+        signatureKey: `rate-alert:rollup:${persona.name}`,
+      });
+      await session.audit({ links: false });
+    } finally {
+      await session.persist();
+      await session.close();
+    }
+  });
+}
+
 // Coverage flows — deterministic, assertive journeys closing the highest-value
 // gaps in bot coverage (country mode, i18n, calculators, form negative-paths,
 // directory filters, content citability, rate limiting, mobile, auth edges,
@@ -244,6 +324,25 @@ if (aiEnabled) {
         );
         // Run the mechanical checks on wherever the bot ended up.
         await session.audit();
+      } finally {
+        await session.persist();
+        await session.close();
+      }
+    });
+  }
+
+  // AI copy-quality personas — focused scoring of top revenue pages.
+  for (const persona of AI_COPY_PERSONAS) {
+    test(`AI copy: ${persona.name}`, async ({ browser }) => {
+      const session = await BotSession.create(browser, config, {
+        persona: persona.name,
+      });
+      try {
+        await session.runAiGoal(
+          persona.goal ?? "Evaluate this page for copy quality, disclosure, and CTA clarity.",
+          persona.startPath ?? "/",
+        );
+        await session.audit({ forms: false, links: false });
       } finally {
         await session.persist();
         await session.close();
