@@ -1,5 +1,38 @@
 # Directory UX Unification — Mega Session Plan
 
+---
+
+## Surface-consistency pass — 2026-06-06 (bot-driven re-audit)
+
+Re-audited `/compare`, `/advisors`, `/invest` on production with the screenshot bot.
+The Phase-1/2 primitives (`components/directory/*`) shipped, so **filter chrome is
+now largely shared** between `/advisors` and `/invest`. The remaining "doesn't feel
+uniform" problem is the **page header / hero**, which is still hand-rolled per surface
+— there is **no shared `DirectoryHero`**.
+
+**Current state (prod):**
+| Surface | Hero | Toolbar | Verdict |
+|---|---|---|---|
+| `/invest` (marketplace) | Dark stat-led hero: pill + "184 live opportunities. $6.9B in aggregate ask." + 4 stat tiles (`app/invest/page.tsx:247-290`) | TabBar + search + sort + view toggle | canonical |
+| `/advisors` | Dark stat-led hero: pill + "147 licensed advisors. Three free intros." + stat tiles (`AdvisorsClient.tsx`, `advisorHeroStats` ~606) | TabBar + search + All-filters + sort | matches invest |
+| `/compare` | **Light** plain `<h1>` + `<p>`, GetMatchedEmbed card above it, logo-laden category pills + separate Features/Max-fee/Rating dropdowns (`app/compare/page.tsx:171-179`) | **outlier** | **drifted** |
+
+Root cause: invest & advisors independently render the *same* dark hero; compare renders a different light one. Extract one component, apply to all three.
+
+### Mega-changes (this pass)
+
+- **SC-1 — Extract `<DirectoryHero>`** (`components/directory/DirectoryHero.tsx`): dark gradient section, breadcrumb, `iv2-pill`, stat-led headline (lead + coral accent), subtitle, right-side stat-tile grid. Modeled exactly on the canonical `/invest` hero so adopting it there is a no-op visual.
+- **SC-2 — Adopt on `/compare`** (the visible win): replace the light `<h1>` block with `<DirectoryHero>`; add a lightweight `head:true` broker-count query for live stat tiles (platforms tracked · categories · fees-checked freshness · free). Keep the table, `GetMatchedEmbed`, `DirectoryBanners`.
+- **SC-3 — DRY-migrate `/invest`** to `<DirectoryHero>` (no visual change; proves parity).
+- **SC-4 — DRY-migrate `/advisors`** hero to `<DirectoryHero>` (no visual change).
+- **SC-5 — Toolbar semantics alignment** (advisors ↔ marketplace): advisors tabs = entity sub-types; marketplace "tabs" = filter-openers. Make both use `TabBar` for entity/category and move filter-openers into a consistent toolbar row. (Lower priority; after SC-1..4.)
+- **SC-6 — Token polish**: recolor the `bg-violet-600` advisor shortlist/featured accent to the amber/slate system; standardize hero padding, stat-tile styling, breadcrumb position across all three.
+
+Each is one mergeable PR. SC-1+SC-2 ship together (component + first adopter); SC-3, SC-4, SC-5, SC-6 follow.
+
+---
+
+
 **Status:** draft, awaiting decisions on the 6 open questions at the bottom
 **Owner:** TBD
 **Scope:** `/invest`, `/advisors`, `/find-advisor`, `/compare/*`, pillar pages, deal/discovery pages
