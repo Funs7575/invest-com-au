@@ -251,6 +251,7 @@ export default function PackagesClient() {
           <input
             id="contact-email"
             type="email"
+            autoComplete="email"
             value={contactEmail}
             onChange={(e) => setContactEmail(e.target.value)}
             placeholder="partnerships@yourcompany.com.au"
@@ -324,6 +325,7 @@ export default function PackagesClient() {
               <input
                 id="contact-email-2"
                 type="email"
+                autoComplete="email"
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
                 placeholder="you@company.com.au"

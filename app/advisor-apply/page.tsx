@@ -474,6 +474,7 @@ function AdvisorApplyInner() {
                 <div className="relative">
                   <input
                     id="aa-name"
+                    autoComplete="name"
                     value={form.name}
                     onChange={(e) => {
                       const v = e.target.value;
@@ -560,6 +561,7 @@ function AdvisorApplyInner() {
                   <input
                     id="aa-email"
                     type="email"
+                    autoComplete="email"
                     value={form.email}
                     onChange={(e) => {
                       const v = e.target.value;
@@ -592,6 +594,8 @@ function AdvisorApplyInner() {
                 <div className="relative">
                   <input
                     id="aa-phone"
+                    type="tel"
+                    autoComplete="tel"
                     value={form.phone}
                     onChange={(e) => {
                       const v = e.target.value;

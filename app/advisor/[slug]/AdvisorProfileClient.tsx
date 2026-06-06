@@ -1335,6 +1335,7 @@ export default function AdvisorProfileClient({
                       <input
                         id="advisor-contact-email"
                         type="email"
+                        autoComplete="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         onBlur={() => setTouched((p) => ({ ...p, email: true }))}
@@ -1354,6 +1355,7 @@ export default function AdvisorProfileClient({
                       <input
                         id="advisor-contact-phone"
                         type="tel"
+                        autoComplete="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="04XX XXX XXX"

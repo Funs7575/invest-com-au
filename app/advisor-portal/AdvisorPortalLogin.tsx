@@ -85,6 +85,7 @@ export default function AdvisorPortalLogin(_props: Props) {
 
               <input
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
@@ -95,6 +96,7 @@ export default function AdvisorPortalLogin(_props: Props) {
               {mode !== "magic" && (
                 <input
                   type="password"
+                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={mode === "signup" ? "Create a password (8+ characters)" : "Password"}

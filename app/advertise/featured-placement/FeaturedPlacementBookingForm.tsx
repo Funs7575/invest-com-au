@@ -217,6 +217,7 @@ export default function FeaturedPlacementBookingForm({
           <input
             id="book-contact"
             type="text"
+            autoComplete="name"
             value={contactName}
             onChange={(e) => setContactName(e.target.value)}
             placeholder="Jane Smith"
@@ -234,6 +235,7 @@ export default function FeaturedPlacementBookingForm({
           <input
             id="book-email"
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@broker.com"
