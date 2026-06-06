@@ -157,7 +157,7 @@ function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult |
           className="w-full pl-8 pr-8 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30"
         />
         {selected && (
-          <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+          <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} aria-label="Clear location" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
             <Icon name="x" size={14} />
           </button>
         )}

@@ -235,6 +235,7 @@ export default function PackagesClient() {
           <input
             id="company-name"
             type="text"
+            autoComplete="organization"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             placeholder="e.g. CommSec, Stake, SelfWealth"

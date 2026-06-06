@@ -179,21 +179,21 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
           }}
         >
           <Field label="Address line" required cols="sm:col-span-3">
-            <input type="text" name="address" required maxLength={200}
+            <input type="text" name="address" required maxLength={200} autoComplete="street-address"
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Suburb" cols="sm:col-span-2">
-            <input type="text" name="suburb" maxLength={100}
+            <input type="text" name="suburb" maxLength={100} autoComplete="address-level2"
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="State">
-            <select name="state" defaultValue="NSW"
+            <select name="state" defaultValue="NSW" autoComplete="address-level1"
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
               {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </Field>
           <Field label="Postcode">
-            <input type="text" name="postcode" maxLength={10}
+            <input type="text" name="postcode" maxLength={10} autoComplete="postal-code"
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Type">

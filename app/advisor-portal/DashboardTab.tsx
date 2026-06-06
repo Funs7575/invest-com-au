@@ -111,7 +111,7 @@ export default function DashboardTab({
         {refreshLabel && onRefresh && (
           <div className="flex items-center gap-1.5">
             <span className="text-[0.62rem] text-slate-400">Updated {refreshLabel}</span>
-            <button onClick={onRefresh} className="text-slate-400 hover:text-slate-700 transition-colors" title="Refresh data">
+            <button onClick={onRefresh} aria-label="Refresh data" className="text-slate-400 hover:text-slate-700 transition-colors">
               <Icon name="refresh-cw" size={13} />
             </button>
           </div>
@@ -222,7 +222,7 @@ export default function DashboardTab({
               <h3 className="text-sm font-bold text-violet-900">Get your profile ready</h3>
               <p className="text-xs text-violet-600 mt-0.5">Complete these steps to start receiving leads</p>
             </div>
-            <button onClick={onDismissOnboarding} className="text-violet-400 hover:text-violet-600 text-xs" title="Dismiss">✕</button>
+            <button onClick={onDismissOnboarding} aria-label="Dismiss setup checklist" className="text-violet-400 hover:text-violet-600 text-xs">✕</button>
           </div>
           <div className="space-y-2 mb-4">
             {[
@@ -348,6 +348,7 @@ export default function DashboardTab({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left">
+              <caption className="sr-only">Recent Enquiries</caption>
               <thead>
                 <tr className="bg-slate-50 text-[0.62rem] font-semibold text-slate-500 uppercase tracking-wider">
                   <th className="px-4 py-2">Name</th>

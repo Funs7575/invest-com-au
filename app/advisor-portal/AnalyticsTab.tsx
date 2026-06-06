@@ -151,6 +151,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
         {/* CSV Export */}
         <div className="flex items-center gap-2 shrink-0">
           <select
+            aria-label="Export period"
             value={exportPeriod}
             onChange={(e) => setExportPeriod(e.target.value as "30d" | "90d" | "all")}
             className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-400"

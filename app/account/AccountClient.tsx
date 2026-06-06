@@ -288,7 +288,7 @@ export default function AccountClient() {
               <p className="text-sm font-semibold text-emerald-800">Welcome to Invest.com.au{profileName ? `, ${profileName}` : ""}!</p>
               <p className="text-xs text-emerald-700 mt-0.5">Your profile is set up. Start comparing brokers, explore our tools, or take the platform quiz to find your best match.</p>
             </div>
-            <button onClick={() => setShowWelcomeBanner(false)} className="text-emerald-400 hover:text-emerald-600 shrink-0">
+            <button onClick={() => setShowWelcomeBanner(false)} aria-label="Dismiss welcome banner" className="text-emerald-400 hover:text-emerald-600 shrink-0">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>

@@ -199,6 +199,7 @@ export default function AdvisorCompareClient() {
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
+            <caption className="sr-only">Advisor comparison</caption>
             {/* ── Advisor header row ── */}
             <thead>
               <tr className="border-b border-slate-200">
@@ -215,8 +216,8 @@ export default function AdvisorCompareClient() {
                       <div className="flex justify-end mb-1">
                         <button
                           onClick={() => toggle(col.slug)}
+                          aria-label="Remove from comparison"
                           className="text-slate-300 hover:text-red-400 transition-colors"
-                          title="Remove from comparison"
                         >
                           <Icon name="x" size={14} />
                         </button>
