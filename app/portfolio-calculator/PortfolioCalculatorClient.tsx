@@ -231,7 +231,7 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                 />
               </div>
               {holdings.length > 1 && (
-                <button onClick={() => removeHolding(h.id)} className="text-xs text-red-500 hover:text-red-700 pb-1">✕</button>
+                <button onClick={() => removeHolding(h.id)} aria-label="Remove holding" className="text-xs text-red-500 hover:text-red-700 pb-1">✕</button>
               )}
             </div>
           ))}
