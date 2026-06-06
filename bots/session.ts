@@ -27,6 +27,7 @@ import { capturePerfSample } from "./checks/perf";
 import type { PerfSample } from "./checks/perf";
 import { checkSchemaMarkup } from "./checks/schema-markup";
 import { checkAffiliateLinks } from "./checks/affiliate-links";
+import { checkGeoCitability } from "./checks/geo-citability";
 
 export interface SessionOptions {
   persona: string;
@@ -119,7 +120,7 @@ export class BotSession {
   }
 
   /** Run the cross-cutting checks on whatever is currently on screen. */
-  async audit(opts: { links?: boolean; affiliateLinks?: boolean } = {}): Promise<void> {
+  async audit(opts: { links?: boolean; affiliateLinks?: boolean; geo?: boolean } = {}): Promise<void> {
     await runAxe(this.page, this.store, this.persona);
     await checkSchemaMarkup(this.page, this.store, this.persona);
     if (opts.links) {
@@ -131,6 +132,9 @@ export class BotSession {
       await checkAffiliateLinks(this.page, this.config, this.store, this.persona, {
         checkedSlugs: this.checkedAffiliateSlugs,
       });
+    }
+    if (opts.geo !== false) {
+      await checkGeoCitability(this.page, this.store, this.persona);
     }
   }
 
