@@ -22,8 +22,6 @@
     "bots:sandbox": "BOTS_TARGET_CLASS=sandbox playwright test --config bots/playwright.config.ts",
     "bots:mirror": "BOTS_BASE_URL=https://lambent-sawine-17c3dd.netlify.app BOTS_IGNORE_HTTPS_ERRORS=1 BOTS_SKIP_WEBSERVER=1 playwright test --config bots/playwright.config.ts",
     "bots:advisors": "BOTS_BASE_URL=https://lambent-sawine-17c3dd.netlify.app BOTS_IGNORE_HTTPS_ERRORS=1 BOTS_SKIP_WEBSERVER=1 playwright test --config bots/playwright.config.ts -g \"advisor\"",
-    "bots:authed": "BOTS_TARGET_CLASS=sandbox BOTS_SKIP_WEBSERVER=1 BOTS_BASE_URL=http://localhost:3000 playwright test --config bots/playwright.config.ts -g \"authed bot\"",
-    "bots:authed-and-lifecycle": "BOTS_TARGET_CLASS=sandbox BOTS_SKIP_WEBSERVER=1 BOTS_BASE_URL=http://localhost:3000 playwright test --config bots/playwright.config.ts -g \"authed bot|lifecycle\"",
     "bots:lifecycle": "BOTS_TARGET_CLASS=sandbox playwright test --config bots/playwright.config.ts -g \"lifecycle\"",
     "bots:lifecycle-mirror": "BOTS_BASE_URL=https://lambent-sawine-17c3dd.netlify.app BOTS_IGNORE_HTTPS_ERRORS=1 BOTS_SKIP_WEBSERVER=1 playwright test --config bots/playwright.config.ts -g \"lifecycle\"",
     "bots:startup": "BOTS_BASE_URL=https://lambent-sawine-17c3dd.netlify.app BOTS_IGNORE_HTTPS_ERRORS=1 BOTS_SKIP_WEBSERVER=1 playwright test --config bots/playwright.config.ts -g \"startup-ecosystem\"",
