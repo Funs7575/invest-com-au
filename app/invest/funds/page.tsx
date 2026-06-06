@@ -56,10 +56,10 @@ export default async function FundsPage() {
       />
       <div className="bg-white min-h-screen">
         {/* Hero */}
-        <section className="bg-slate-900 text-white py-10 md:py-14">
+        <section className="bg-slate-900 text-white py-5 md:py-7">
           <div className="container-custom">
             <nav
-              className="flex items-center gap-1.5 text-xs text-slate-400 mb-5"
+              className="flex items-center gap-1.5 text-xs text-slate-400 mb-2"
               aria-label="Breadcrumb"
             >
               <Link href="/" className="hover:text-white">
@@ -73,34 +73,24 @@ export default async function FundsPage() {
               <span className="text-white font-medium">Fund opportunities</span>
             </nav>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-3 max-w-3xl">
+            <h1 className="text-2xl md:text-3xl font-extrabold leading-tight mb-1.5 max-w-3xl">
               Australian Investment Fund Opportunities
             </h1>
-            <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-3xl">
+            <p className="text-[13px] md:text-sm text-slate-300 leading-snug max-w-3xl line-clamp-2">
               Browse Australian managed, syndicated property, infrastructure,
               and wholesale unlisted funds — with transparent minimums, target
               returns, and fund sizes. Filter for retail-accessible or
               SIV-relevant options. Register interest and connect with AFSL-licensed
               fund managers.
             </p>
-            <div className="mt-4 px-4 py-3 rounded-lg bg-amber-100/10 border border-amber-300/30 text-sm text-amber-50 max-w-2xl">
+            <div className="mt-2.5 px-3 py-1.5 rounded-lg bg-amber-100/10 border border-amber-300/30 text-xs text-amber-50/90 max-w-2xl">
               <strong>General information only — not financial product advice.</strong>{" "}
-              No fund is the &ldquo;best fund for you&rdquo; without personal
-              advice. Past performance is not a reliable indicator of future
-              returns.
-            </div>
-            <p className="text-xs text-slate-400 mt-3 max-w-2xl">
-              Always read the relevant PDS or Information Memorandum and
-              consider your own circumstances before registering interest.
-            </p>
-            <p className="text-xs text-slate-400 mt-2 max-w-2xl">
-              Looking to compare super funds, savings accounts, share-trading
-              platforms or ETFs?{" "}
+              No fund is the &ldquo;best fund for you&rdquo; without personal advice.
+              Always read the relevant PDS/IM before registering interest.{" "}
               <Link href="/compare" className="underline hover:no-underline">
-                Visit Compare
+                Compare super, savings, shares &amp; ETFs →
               </Link>
-              .
-            </p>
+            </div>
           </div>
         </section>
 

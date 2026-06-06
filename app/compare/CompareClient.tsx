@@ -444,7 +444,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             client only renders the meta row + table below it. */}
         {/* Meta row — the H1 + subhead live in page.tsx (single source, streamed
             for crawlers); here we keep only freshness + trust/utility links. */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-3 md:mb-5 text-[0.62rem] md:text-xs text-slate-500">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-2 md:mb-3 text-[0.62rem] md:text-xs text-slate-500">
           <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
           <span className="text-slate-300">·</span>
           <SocialProofCounter />
@@ -473,24 +473,20 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           const dealBroker = brokers.find(b => b.deal && b.deal_text);
           if (!dealBroker) return null;
           return (
-            <div className="mb-3 md:mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-lg md:rounded-xl px-3 py-2 md:p-4 flex items-center justify-between gap-2 md:gap-3">
-              <div className="flex items-center gap-2 md:gap-3 min-w-0">
-                <Icon name="flame" size={16} className="text-amber-500 shrink-0 md:hidden" />
-                <Icon name="flame" size={24} className="text-amber-500 shrink-0 hidden md:block" />
-                <div className="min-w-0">
-                  <p className="text-[0.69rem] md:text-sm text-slate-700 leading-snug">
-                    <strong>{dealBroker.name}</strong>
-                    <span className="hidden md:inline"> — {dealBroker.deal_text}</span>
-                    <span className="md:hidden text-slate-500"> — {dealBroker.deal_text}</span>
-                  </p>
-                </div>
+            <div className="mb-2.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-lg px-3 py-1.5 flex items-center justify-between gap-2 md:gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <Icon name="flame" size={15} className="text-amber-500 shrink-0" />
+                <p className="text-[0.69rem] md:text-[0.8rem] text-slate-700 leading-snug truncate">
+                  <strong>{dealBroker.name}</strong>
+                  <span className="text-slate-500"> — {dealBroker.deal_text}</span>
+                </p>
               </div>
               <a
                 href={getAffiliateLink(dealBroker)}
                 target="_blank"
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(dealBroker.slug, dealBroker.name, 'compare-deal-banner', '/compare', 'compare')}
-                className="shrink-0 px-3 md:px-4 py-1.5 md:py-2 bg-amber-600 text-slate-900 text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
+                className="shrink-0 px-3 py-1 bg-amber-600 text-slate-900 text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors"
               >
                 Claim →
               </a>
@@ -498,8 +494,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           );
         })()}
 
-        <details className="group mb-4">
-          <summary className="flex items-center justify-between gap-2 cursor-pointer list-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm hover:border-slate-300">
+        <details className="group mb-2.5">
+          <summary className="flex items-center justify-between gap-2 cursor-pointer list-none rounded-xl border border-slate-200 bg-white px-4 py-2 shadow-sm hover:border-slate-300">
             <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
               <Icon name="sliders" size={15} className="text-blue-700" />
               Rank by scenario &amp; estimate true cost
@@ -573,7 +569,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </details>
 
         {/* Desktop Filter System */}
-        <div className="hidden md:block mb-4 space-y-3">
+        <div className="hidden md:block mb-3 space-y-2.5">
           {/* Search leads the toolbar (mirrors /invest /advisors) */}
           <div className="max-w-md">
             <SearchInput
