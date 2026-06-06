@@ -17,11 +17,19 @@ effects.
 
 ```bash
 npm run bots:install          # one-time: install the chromium browser
-npm run bots                  # drive a local dev server (auto-started)
 
-# point at a deployed sandbox/staging instead of local:
-BOTS_BASE_URL=https://my-preview.vercel.app npm run bots
+# ⭐ turnkey: deterministic fleet (page sweep + API probe) → dated report, $0
+npm run bots:nightly                       # against the Netlify mirror
+BOTS_BASE_URL=https://my-preview.vercel.app npm run bots:nightly
+
+npm run bots                  # full Playwright fleet, drives a local dev server
 ```
+
+`bots:nightly` is the zero-cost, no-LLM runner meant for cron/CI: it runs the
+page sweep (`site-audit`) + API probe (`bots:probe-api`), writes
+`bots/reports/nightly-<date>.md`, and **exits non-zero** when it finds broken
+links or 5xx API routes — so it doubles as a health gate. Pure Playwright +
+fetch; no Anthropic API spend (see [Cost & billing](#cost--billing)).
 
 ## Focused flow scripts
 
@@ -34,6 +42,32 @@ npm run bots:lifecycle-mirror # same, against the Netlify mirror
 npm run bots:startup         # startup hub → for-you → listings → signup → portal gate
 npm run bots:advisor-portal  # advisor portal login form + health + directory hub
 ```
+
+## Coverage flows (deterministic, assertive)
+
+Ten deterministic flows close the highest-value gaps the older personas never
+touched. Each binds to the browser-context shape it needs (viewport / colour
+scheme / seeded storage) via `bots/flows/registry.ts`, and runs on any target —
+all writes stay auto-mocked.
+
+```bash
+npm run bots:coverage         # all ten, against the Netlify mirror
+npm run bots:coverage-local   # same, against a local dev server (sandbox class)
+# or scope to one: ... -g "flow: country-mode"
+```
+
+| Flow (`flow: <name>`) | What it drives | Key assertions |
+|---|---|---|
+| `country-mode` | `iv_intent_country` cookie across /advisors, /compare, /invest | the country recommendation card appears + reflects the country, absent without the cookie |
+| `i18n-locale` | every `/zh`, `/ko`, `/ar` known route | `<html lang>` + RTL `dir`, no untranslated-key artifacts |
+| `calculator-correctness` | the AUD currency converter + a calculator sample | identity + linearity invariants; inputs actually render |
+| `form-validation` | adviser enquiry form negative paths | empty/invalid rejected, oversized input degrades (no 5xx) |
+| `directory-filters` | search / sort / compare on /advisors | empty state, clear-restores, sort doesn't empty, CompareBar appears |
+| `academy-citability` | glossary / academy / questions content trees | runs the GEO + schema checks across a sampled crawl |
+| `rate-limit` | a read-only rate-limited GET, burst | limiter engages (429), no 5xx, Retry-After present |
+| `mobile-nav` | core surfaces at a 390px viewport | no horizontal overflow, hamburger opens, filter drawer opens/closes |
+| `auth-edge` | gated routes deep-linked while logged out | correct login redirect + preserved return path, no content leak |
+| `dark-mode` | core surfaces under a forced dark palette | dark class applied, re-runs the a11y audit for contrast |
 
 After any run, file GitHub issues for Critical/High findings:
 
@@ -311,5 +345,10 @@ reported on every run. In CI, set the `BOTS_ANTHROPIC_API_KEY` secret and the
 - ✅ **Auto GitHub issue filing** — `scripts/bots-file-issues.ts` /
   `npm run bots:file-issues` files one issue per Critical/High finding;
   deduplicates against open issues; opt-in nightly via `BOTS_AUTO_FILE_ISSUES=1`.
+- ✅ **Coverage flows** — ten deterministic flows (country mode, i18n, calculator
+  correctness, form negative-paths, directory filters, content citability, rate
+  limiting, mobile viewport, auth edges, dark mode) registered in
+  `bots/flows/registry.ts` and run via `npm run bots:coverage`. See the
+  [Coverage flows](#coverage-flows-deterministic-assertive) table.
 - **Next** — auto-discovered full-surface coverage; deeper authenticated flows.
 ```
