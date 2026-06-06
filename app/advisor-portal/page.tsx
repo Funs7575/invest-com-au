@@ -305,6 +305,9 @@ export default function AdvisorPortalPage() {
           <div className="relative sm:hidden flex items-center">
             <button
               type="button"
+              aria-expanded={moreNavOpen}
+              aria-haspopup="menu"
+              aria-label="More navigation items"
               onClick={() => setMoreNavOpen(o => !o)}
               className={`flex items-center gap-1 px-3 py-3 text-sm font-medium border-b-2 whitespace-nowrap ${
                 !MOBILE_TOP_KEYS.has(view)

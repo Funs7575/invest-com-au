@@ -75,6 +75,7 @@ export default function FloatingRightCTA({
       <div className="flex items-center gap-1.5">
         <Link
           href={href}
+          tabIndex={visible ? undefined : -1}
           onClick={() => {
             if (trackingContext && typeof window !== "undefined" && "gtag" in window) {
               try {
@@ -104,6 +105,7 @@ export default function FloatingRightCTA({
         <button
           onClick={dismiss}
           aria-label="Dismiss"
+          tabIndex={visible ? undefined : -1}
           className="w-8 h-8 rounded-full bg-white/95 hover:bg-white border border-slate-200 shadow text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors"
         >
           <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">

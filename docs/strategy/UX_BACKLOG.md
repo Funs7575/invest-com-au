@@ -240,3 +240,13 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 **[ADV-040]** Tab/toggle ARIA semantics — `role="tablist"` + `role="tab"` + `aria-selected` on advisor portal nav and scenario planner. `role="group"` + `aria-pressed` on broker analytics, reports, and dashboard period toggles.
 
 **[ADV-041]** `autoComplete="tel"` on all phone inputs — 9 phone inputs across broker-portal, property enquiry forms, invest listing, for-advisors, quotes/post, briefs, and org-portal now declare `autoComplete="tel"` for mobile autofill.
+
+**[ADV-042]** `<fieldset>/<legend>` on radio groups — five radio-button groups (`WholesaleCertClient`, `WidgetBuilderTab`, broker packages cancel dialog, borrowing power loan term, ETP age) converted from unlabeled div wrappers to semantic `<fieldset>/<legend>`.
+
+**[ADV-043]** `aria-expanded` + `aria-haspopup` on disclosure buttons — advisor portal mobile "More…" dropdown now declares `aria-expanded={moreNavOpen}` and `aria-haspopup="menu"`. `app/advisor-portal/page.tsx`
+
+**[ADV-044]** `aria-pressed` on widget builder toggles — Theme, Layout, and Rows toggle button groups in `WidgetBuilderTab` now carry `aria-pressed` and `role="group"` with labelled by IDs. `app/advisor-portal/WidgetBuilderTab.tsx`
+
+**[ADV-045]** `aria-hidden-focus` in FloatingRightCTA — `tabIndex={-1}` added to the Link and dismiss button when the CTA is scrolled out of view, preventing keyboard focus on aria-hidden elements. `components/FloatingRightCTA.tsx`
+
+**[ADV-046]** `definition-list` spec compliance in HubHero stats — `<p>` subtitle/source elements inside `<dl>/<div>` groups changed to `<dd>` (the only valid element inside a `<dl>/<div>` group). `components/HubHero.tsx`
