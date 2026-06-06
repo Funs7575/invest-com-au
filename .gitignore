@@ -67,3 +67,4 @@ scripts/_*.mjs
 bots/reports/nightly-*.md
 bots/reports/funnel-*.md
 bots/reports/seo-*.md
+bots/reports/idor-*.md
