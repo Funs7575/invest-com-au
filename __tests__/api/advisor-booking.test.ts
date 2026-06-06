@@ -18,6 +18,11 @@ vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({ from: serverFromMock })),
 }));
 
+const adminFromMock = vi.fn();
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({ from: adminFromMock })),
+}));
+
 const fetchMock = vi.fn<() => Promise<Response>>();
 vi.stubGlobal("fetch", fetchMock);
 
@@ -95,7 +100,7 @@ describe("GET /api/advisor-booking", () => {
   it("returns existingBookings when date param is provided", async () => {
     serverFromMock.mockReturnValueOnce(chain({ data: ACTIVE_ADVISOR }));
     serverFromMock.mockReturnValueOnce(chain({ data: [] })); // schedule
-    serverFromMock.mockReturnValueOnce(chain({ data: [{ booking_time: "10:00" }, { booking_time: "14:00" }] }));
+    adminFromMock.mockReturnValueOnce(chain({ data: [{ booking_time: "10:00" }, { booking_time: "14:00" }] }));
     const res = await GET(getReq({ advisor: "bob-sydney", date: "2026-05-10" }));
     expect(res.status).toBe(200);
     expect((await res.json()).existingBookings).toEqual(["10:00", "14:00"]);
@@ -141,21 +146,21 @@ describe("POST /api/advisor-booking", () => {
 
   it("returns 409 when slot is already taken", async () => {
     serverFromMock.mockReturnValueOnce(chain({ data: ACTIVE_ADVISOR }));
-    serverFromMock.mockReturnValueOnce(chain({ data: { id: 99 } })); // slot taken
+    adminFromMock.mockReturnValueOnce(chain({ data: { id: 99 } })); // slot taken
     expect((await POST(postReq(VALID_POST))).status).toBe(409);
   });
 
   it("returns 500 when booking insert fails", async () => {
     serverFromMock.mockReturnValueOnce(chain({ data: ACTIVE_ADVISOR }));
-    serverFromMock.mockReturnValueOnce(chain({ data: null })); // slot free
-    serverFromMock.mockReturnValueOnce(chain({ data: null, error: { message: "db error" } })); // insert fails
+    adminFromMock.mockReturnValueOnce(chain({ data: null })); // slot free
+    adminFromMock.mockReturnValueOnce(chain({ data: null, error: { message: "db error" } })); // insert fails
     expect((await POST(postReq(VALID_POST))).status).toBe(500);
   });
 
   it("returns 200 on success without RESEND_API_KEY", async () => {
     serverFromMock.mockReturnValueOnce(chain({ data: ACTIVE_ADVISOR }));
-    serverFromMock.mockReturnValueOnce(chain({ data: null })); // slot free
-    serverFromMock.mockReturnValueOnce(chain({ data: { id: 42 }, error: null })); // booking
+    adminFromMock.mockReturnValueOnce(chain({ data: null })); // slot free
+    adminFromMock.mockReturnValueOnce(chain({ data: { id: 42 }, error: null })); // booking
     serverFromMock.mockReturnValueOnce(chain({ error: null })); // lead insert
     const res = await POST(postReq(VALID_POST));
     expect(res.status).toBe(200);
@@ -166,9 +171,9 @@ describe("POST /api/advisor-booking", () => {
   it("returns 200 with RESEND_API_KEY and fires two confirmation emails", async () => {
     process.env.RESEND_API_KEY = "re_test_key";
     serverFromMock.mockReturnValueOnce(chain({ data: ACTIVE_ADVISOR }));
-    serverFromMock.mockReturnValueOnce(chain({ data: null }));
-    serverFromMock.mockReturnValueOnce(chain({ data: { id: 42 }, error: null }));
-    serverFromMock.mockReturnValueOnce(chain({ error: null }));
+    adminFromMock.mockReturnValueOnce(chain({ data: null })); // slot free
+    adminFromMock.mockReturnValueOnce(chain({ data: { id: 42 }, error: null })); // booking
+    serverFromMock.mockReturnValueOnce(chain({ error: null })); // lead insert
     const res = await POST(postReq(VALID_POST));
     expect(res.status).toBe(200);
     expect(fetchMock).toHaveBeenCalledTimes(2); // advisor + investor

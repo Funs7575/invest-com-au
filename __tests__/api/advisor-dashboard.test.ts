@@ -5,9 +5,14 @@ import { createChainableBuilder } from "@/__tests__/helpers";
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
 const mockFrom = vi.fn();
+const adminFromMock = vi.fn();
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({ from: mockFrom })),
+}));
+
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({ from: adminFromMock })),
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -103,6 +108,15 @@ function makeReview(rating: number) {
 describe("GET /api/advisor-dashboard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // advisor_bookings is fetched via createAdminClient — default to empty result
+    adminFromMock.mockImplementation(() => {
+      const b = createChainableBuilder("advisor_bookings");
+      b.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+        cb({ data: [], error: null });
+        return Promise.resolve();
+      });
+      return b;
+    });
   });
 
   it("returns 401 when no advisor_session cookie", async () => {
