@@ -139,7 +139,7 @@ export default function BrokerRegisterPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg">{error}</div>
+          <div role="alert" className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg">{error}</div>
         )}
 
         {/* Step 1: Account Details */}

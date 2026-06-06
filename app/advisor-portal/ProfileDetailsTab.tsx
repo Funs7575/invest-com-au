@@ -302,7 +302,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       )}

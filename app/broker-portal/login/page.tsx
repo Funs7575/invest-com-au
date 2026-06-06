@@ -80,7 +80,7 @@ export default function BrokerLoginPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg">
+        <div role="alert" className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg">
           {error}
         </div>
       )}

@@ -113,7 +113,7 @@ export default function WebhooksClient({
   return (
     <div className="space-y-6">
       {error && (
-        <div className="rounded-lg border border-rose-200 bg-rose-50 text-rose-800 text-sm p-3">
+        <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 text-rose-800 text-sm p-3">
           {error}
         </div>
       )}

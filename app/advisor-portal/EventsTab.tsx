@@ -307,7 +307,7 @@ export default function EventsTab({ advisor }: Props) {
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{error}</div>
+              <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{error}</div>
             )}
 
             <div className="flex gap-2">

@@ -648,7 +648,7 @@ export default function NewCampaignPage() {
         </p>
 
         {error && (
-          <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg mb-4 flex items-center gap-2">
+          <div role="alert" className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg mb-4 flex items-center gap-2">
             <Icon name="alert-circle" size={14} />
             {error}
           </div>

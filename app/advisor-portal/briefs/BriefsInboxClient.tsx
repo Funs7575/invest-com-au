@@ -130,7 +130,7 @@ export default function BriefsInboxClient() {
   return (
     <div className="space-y-12">
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 flex items-center justify-between gap-3">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 flex items-center justify-between gap-3">
           <span>{error}</span>
           {topUpNeeded && (
             <a

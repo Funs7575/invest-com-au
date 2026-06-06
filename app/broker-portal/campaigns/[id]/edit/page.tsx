@@ -240,7 +240,7 @@ export default function EditCampaignPage() {
   if (error && !campaign) {
     return (
       <div className="max-w-2xl">
-        <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg flex items-center gap-2">
+        <div role="alert" className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg flex items-center gap-2">
           <Icon name="alert-circle" size={14} />
           {error}
         </div>
@@ -288,7 +288,7 @@ export default function EditCampaignPage() {
 
       {/* Form error */}
       {error && campaign && (
-        <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg flex items-center gap-2">
+        <div role="alert" className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg flex items-center gap-2">
           <Icon name="alert-circle" size={14} />
           {error}
         </div>
