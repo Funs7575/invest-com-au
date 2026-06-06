@@ -250,3 +250,11 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 **[ADV-045]** `aria-hidden-focus` in FloatingRightCTA — `tabIndex={-1}` added to the Link and dismiss button when the CTA is scrolled out of view, preventing keyboard focus on aria-hidden elements. `components/FloatingRightCTA.tsx`
 
 **[ADV-046]** `definition-list` spec compliance in HubHero stats — `<p>` subtitle/source elements inside `<dl>/<div>` groups changed to `<dd>` (the only valid element inside a `<dl>/<div>` group). `components/HubHero.tsx`
+
+**[ADV-047]** `autoComplete="email"` on 4 more invite inputs + `type="search"` on articles — AdvisorsClient alert email, TeamTab invite+firm email, ReviewsTab review invite, TeamsManagerClient invite now declare `autoComplete="email"`; ArticlesClient search changed from `type="text"` to `type="search"`.
+
+**[ADV-048]** `aria-pressed` on compare feature toggle buttons and interest pill buttons — CompareClient feature filter toggles and ProfileClient InterestPill now declare `aria-pressed` so screen readers announce checked/unchecked state.
+
+**[ADV-049]** Invalid `role="tablist"` on jump-link navs replaced with `<nav>` — 7 invest sector pages (lithium, uranium, royalties, hydrogen, oil-gas, income-assets, pre-ipo) used `role="tablist"` on anchor-link navs; replaced with `<nav aria-label="Ways to invest">`.
+
+**[ADV-050]** `role="alert"` on error message containers in 6 account pages — ReferralsClient, SavedComparisonsClient, WatchlistClient, SavedSearchesClient, StartupThesisClient, AlertsClient error blocks now announce via `role="alert"` for screen readers.
