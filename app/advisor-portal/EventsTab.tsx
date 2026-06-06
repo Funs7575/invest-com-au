@@ -406,9 +406,9 @@ export default function EventsTab({ advisor }: Props) {
       {/* RSVP modal */}
       {rsvpModalEventId != null && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 max-h-[80vh] flex flex-col">
+          <div role="dialog" aria-modal="true" aria-labelledby="rsvp-modal-title" className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 max-h-[80vh] flex flex-col">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-slate-900">RSVPs</h2>
+              <h2 id="rsvp-modal-title" className="text-base font-bold text-slate-900">RSVPs</h2>
               <button onClick={() => setRsvpModalEventId(null)} className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
             </div>
             <div className="overflow-y-auto flex-1">

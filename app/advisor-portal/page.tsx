@@ -519,7 +519,7 @@ export default function AdvisorPortalPage() {
       {/* ─── DISPUTE MODAL ─── */}
       {disputeModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+          <div role="dialog" aria-modal="true" aria-labelledby="dispute-modal-title" className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
             {disputeDone ? (
               <div className="text-center py-4">
                 <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -533,7 +533,7 @@ export default function AdvisorPortalPage() {
               <>
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h2 className="text-base font-bold text-slate-900">Dispute Lead</h2>
+                    <h2 id="dispute-modal-title" className="text-base font-bold text-slate-900">Dispute Lead</h2>
                     <p className="text-xs text-slate-500 mt-0.5">Lead from <strong>{disputeModal.leadName}</strong> · {disputeModal.daysLeft} day{disputeModal.daysLeft !== 1 ? "s" : ""} left to dispute</p>
                   </div>
                   <button onClick={() => setDisputeModal(null)} className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>

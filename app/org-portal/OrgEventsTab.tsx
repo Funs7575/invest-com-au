@@ -318,8 +318,8 @@ export default function OrgEventsTab({ org: _org }: Props) {
       {/* Edit modal */}
       {editingEvent && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
-            <h2 className="text-sm font-bold text-slate-900 mb-4">Edit Event</h2>
+          <div role="dialog" aria-modal="true" aria-labelledby="org-edit-event-title" className="bg-white rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
+            <h2 id="org-edit-event-title" className="text-sm font-bold text-slate-900 mb-4">Edit Event</h2>
             <EventFormFields form={editForm} setField={setEditFormField} />
             {editError && <p className="text-xs text-red-600 mt-2">{editError}</p>}
             <div className="flex gap-2 pt-3">
@@ -344,8 +344,8 @@ export default function OrgEventsTab({ org: _org }: Props) {
       {/* Delete confirm modal */}
       {deletingId !== null && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
-            <h2 className="text-sm font-bold text-slate-900 mb-2">Delete Event?</h2>
+          <div role="dialog" aria-modal="true" aria-labelledby="org-delete-event-title" className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            <h2 id="org-delete-event-title" className="text-sm font-bold text-slate-900 mb-2">Delete Event?</h2>
             <p className="text-xs text-slate-500 mb-4">
               This will permanently delete this draft event. This cannot be undone.
             </p>
