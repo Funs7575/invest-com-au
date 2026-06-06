@@ -281,25 +281,25 @@ export default async function CityInvestingPage({
             >
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">
                     #
                   </th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">
                     Platform
                   </th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">
                     ASX Fee
                   </th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">
                     US Fee
                   </th>
-                  <th className="px-4 py-3 text-center font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">
                     CHESS
                   </th>
-                  <th className="px-4 py-3 text-center font-semibold text-sm">
+                  <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">
                     Rating
                   </th>
-                  <th className="px-4 py-3"></th>
+                  <th scope="col" className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

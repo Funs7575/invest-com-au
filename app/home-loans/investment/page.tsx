@@ -222,10 +222,10 @@ export default function InvestmentLoanPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Loan category</th>
-                  <th className="text-left px-5 py-3">Typical premium</th>
-                  <th className="text-left px-5 py-3">Risk level</th>
-                  <th className="text-left px-5 py-3">Why lenders charge more</th>
+                  <th scope="col" className="text-left px-5 py-3">Loan category</th>
+                  <th scope="col" className="text-left px-5 py-3">Typical premium</th>
+                  <th scope="col" className="text-left px-5 py-3">Risk level</th>
+                  <th scope="col" className="text-left px-5 py-3">Why lenders charge more</th>
                 </tr>
               </thead>
               <tbody>
@@ -257,9 +257,9 @@ export default function InvestmentLoanPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700 w-40">Feature</th>
-                  <th className="text-left px-5 py-3 font-semibold text-blue-700">Interest Only (IO)</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Principal & Interest (P&I)</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700 w-40">Feature</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-blue-700">Interest Only (IO)</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Principal & Interest (P&I)</th>
                 </tr>
               </thead>
               <tbody>
@@ -445,8 +445,8 @@ export default function InvestmentLoanPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Factor</th>
-                  <th className="text-left px-5 py-3">How lenders apply it</th>
+                  <th scope="col" className="text-left px-5 py-3">Factor</th>
+                  <th scope="col" className="text-left px-5 py-3">How lenders apply it</th>
                 </tr>
               </thead>
               <tbody>

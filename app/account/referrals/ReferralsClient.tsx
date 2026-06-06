@@ -312,9 +312,9 @@ export default function ReferralsClient() {
                 <caption className="sr-only">Referral History</caption>
                 <thead>
                   <tr className="border-b border-slate-100">
-                    <th className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Referral</th>
-                    <th className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Date</th>
-                    <th className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Status</th>
+                    <th scope="col" className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Referral</th>
+                    <th scope="col" className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Date</th>
+                    <th scope="col" className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Status</th>
                   </tr>
                 </thead>
                 <tbody>

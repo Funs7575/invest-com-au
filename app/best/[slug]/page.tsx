@@ -511,14 +511,14 @@ export default async function BestBrokerPage({
             <ScrollReveal animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">#</th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">Platform</th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="ASX Fee" /></th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="US Fee" /></th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="FX Rate" /></th>
-                  <th className="px-4 py-3 text-center font-semibold text-sm"><JargonTooltip term="CHESS" /></th>
-                  <th className="px-4 py-3 text-center font-semibold text-sm">Rating</th>
-                  <th className="px-4 py-3"></th>
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">#</th>
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">Platform</th>
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="ASX Fee" /></th>
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="US Fee" /></th>
+                  <th scope="col" className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="FX Rate" /></th>
+                  <th scope="col" className="px-4 py-3 text-center font-semibold text-sm"><JargonTooltip term="CHESS" /></th>
+                  <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">Rating</th>
+                  <th scope="col" className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

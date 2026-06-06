@@ -465,13 +465,13 @@ export default function BuyUSSharesFromAustraliaPage() {
             <table className="min-w-full text-xs border-collapse">
               <thead className="bg-slate-100">
                 <tr>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200 sticky left-0 bg-slate-100 z-10">Broker</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Brokerage</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">FX spread</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Custody</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">W-8BEN in flow?</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">AU friendly</th>
-                  <th className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Best for</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200 sticky left-0 bg-slate-100 z-10">Broker</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Brokerage</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">FX spread</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Custody</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">W-8BEN in flow?</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">AU friendly</th>
+                  <th scope="col" className="text-left px-3 py-2 font-bold text-slate-700 border-b border-slate-200">Best for</th>
                 </tr>
               </thead>
               <tbody>

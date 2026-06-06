@@ -351,11 +351,11 @@ export default function DashboardTab({
               <caption className="sr-only">Recent Enquiries</caption>
               <thead>
                 <tr className="bg-slate-50 text-[0.62rem] font-semibold text-slate-500 uppercase tracking-wider">
-                  <th className="px-4 py-2">Name</th>
-                  <th className="px-4 py-2">Date</th>
-                  <th className="px-4 py-2 text-center">Quality</th>
-                  <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">Message</th>
+                  <th scope="col" className="px-4 py-2">Name</th>
+                  <th scope="col" className="px-4 py-2">Date</th>
+                  <th scope="col" className="px-4 py-2 text-center">Quality</th>
+                  <th scope="col" className="px-4 py-2">Status</th>
+                  <th scope="col" className="px-4 py-2">Message</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

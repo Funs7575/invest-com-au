@@ -280,10 +280,10 @@ export default async function FeeTrackerPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-left">
-                    <th className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">Broker</th>
-                    <th className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">ASX Brokerage</th>
-                    <th className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">Fee Changes</th>
-                    <th className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide"></th>
+                    <th scope="col" className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">Broker</th>
+                    <th scope="col" className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">ASX Brokerage</th>
+                    <th scope="col" className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">Fee Changes</th>
+                    <th scope="col" className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide"></th>
                   </tr>
                 </thead>
                 <tbody>

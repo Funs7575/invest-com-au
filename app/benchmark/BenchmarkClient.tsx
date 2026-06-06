@@ -201,7 +201,7 @@ function RadarChart({
 
 function PercentileBar({
   value,
-  color,
+  color: _color,
   label,
   rank,
   total,
@@ -442,13 +442,13 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600">
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600">
                     #
                   </th>
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600">
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600">
                     Platform
                   </th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600">
+                  <th scope="col" className="text-center px-3 py-3 font-semibold text-slate-600">
                     Overall
                   </th>
                   {DIMENSIONS.map((d) => (

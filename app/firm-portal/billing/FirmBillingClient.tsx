@@ -179,12 +179,12 @@ export default function FirmBillingClient({ summary: initialSummary }: Props) {
           <table className="min-w-full divide-y divide-slate-200 text-sm">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
-                <th className="px-5 md:px-7 py-3 text-left font-semibold">Member</th>
-                <th className="px-3 py-3 text-right font-semibold">Balance</th>
-                <th className="px-3 py-3 text-right font-semibold">Lifetime spend</th>
-                <th className="px-3 py-3 text-left font-semibold">Auto-recharge</th>
-                <th className="px-3 py-3 text-left font-semibold">Last seen</th>
-                <th className="px-5 md:px-7 py-3 text-right font-semibold">Manage</th>
+                <th scope="col" className="px-5 md:px-7 py-3 text-left font-semibold">Member</th>
+                <th scope="col" className="px-3 py-3 text-right font-semibold">Balance</th>
+                <th scope="col" className="px-3 py-3 text-right font-semibold">Lifetime spend</th>
+                <th scope="col" className="px-3 py-3 text-left font-semibold">Auto-recharge</th>
+                <th scope="col" className="px-3 py-3 text-left font-semibold">Last seen</th>
+                <th scope="col" className="px-5 md:px-7 py-3 text-right font-semibold">Manage</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

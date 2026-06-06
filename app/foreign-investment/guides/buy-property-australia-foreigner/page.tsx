@@ -352,10 +352,10 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
             <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State/Territory</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State/Territory</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -391,8 +391,8 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
             <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB fee</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB fee</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

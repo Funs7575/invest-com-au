@@ -323,9 +323,9 @@ export default function PropertyFinancePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Feature</th>
-                  <th className="text-left px-5 py-3">Investment loan</th>
-                  <th className="text-left px-5 py-3">Owner-occupier loan</th>
+                  <th scope="col" className="text-left px-5 py-3">Feature</th>
+                  <th scope="col" className="text-left px-5 py-3">Investment loan</th>
+                  <th scope="col" className="text-left px-5 py-3">Owner-occupier loan</th>
                 </tr>
               </thead>
               <tbody>
@@ -362,10 +362,10 @@ export default function PropertyFinancePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Deposit</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Resulting LVR</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">LMI</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Notes</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Deposit</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Resulting LVR</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">LMI</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -444,8 +444,8 @@ export default function PropertyFinancePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Factor</th>
-                  <th className="text-left px-5 py-3">How lenders apply it</th>
+                  <th scope="col" className="text-left px-5 py-3">Factor</th>
+                  <th scope="col" className="text-left px-5 py-3">How lenders apply it</th>
                 </tr>
               </thead>
               <tbody>

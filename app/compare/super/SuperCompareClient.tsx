@@ -275,14 +275,14 @@ export default function SuperCompareClient() {
                 >
                   Fund {sortIndicator("name")}
                 </th>
-                <th className="px-4 py-3 font-semibold text-slate-700">Type</th>
+                <th scope="col" className="px-4 py-3 font-semibold text-slate-700">Type</th>
                 <th
                   className="px-4 py-3 font-semibold text-slate-700 cursor-pointer select-none"
                   onClick={() => handleSort("balanced_fee_pct")}
                 >
                   Balanced Fee % {sortIndicator("balanced_fee_pct")}
                 </th>
-                <th className="px-4 py-3 font-semibold text-slate-700 text-center">Insurance</th>
+                <th scope="col" className="px-4 py-3 font-semibold text-slate-700 text-center">Insurance</th>
                 <th
                   className="px-4 py-3 font-semibold text-slate-700 cursor-pointer select-none"
                   onClick={() => handleSort("investment_options")}

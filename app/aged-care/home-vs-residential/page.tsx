@@ -101,9 +101,9 @@ export default function HomeVsResidentialPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Factor</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Home care</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Residential care</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Factor</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Home care</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Residential care</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

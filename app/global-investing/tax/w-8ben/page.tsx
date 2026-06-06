@@ -264,9 +264,9 @@ export default function W8BENPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-700">Income type</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-700">Rate</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-700">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-700">Income type</th>
+                  <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-700">Rate</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-700">Notes</th>
                 </tr>
               </thead>
               <tbody>

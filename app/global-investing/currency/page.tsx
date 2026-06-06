@@ -88,11 +88,11 @@ export default function GlobalCurrencyPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Provider</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">FX spread</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Fixed fee</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Best for</th>
-                  <th className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Multi-currency</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Provider</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">FX spread</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Fixed fee</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Best for</th>
+                  <th scope="col" className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Multi-currency</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

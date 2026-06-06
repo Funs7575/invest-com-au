@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
@@ -216,10 +217,12 @@ export default async function BrokerVersusPage({
                   {([brokerA, brokerB] as Broker[]).map((broker) => (
                     <div key={broker.slug} className="p-5 flex flex-col items-center gap-3">
                       {broker.logo_url ? (
-                        <img
+                        <Image
                           src={broker.logo_url}
                           alt={`${broker.name} logo`}
-                          className="h-10 object-contain"
+                          width={80}
+                          height={40}
+                          className="h-10 w-auto object-contain"
                         />
                       ) : (
                         <div
@@ -262,11 +265,11 @@ export default async function BrokerVersusPage({
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-200">
-                      <th className="text-left py-2 pr-4 text-xs font-bold text-slate-500 w-36" />
-                      <th className="py-2 px-4 text-center font-extrabold text-slate-900">
+                      <th scope="col" className="text-left py-2 pr-4 text-xs font-bold text-slate-500 w-36" />
+                      <th scope="col" className="py-2 px-4 text-center font-extrabold text-slate-900">
                         {brokerA.name}
                       </th>
-                      <th className="py-2 px-4 text-center font-extrabold text-slate-900">
+                      <th scope="col" className="py-2 px-4 text-center font-extrabold text-slate-900">
                         {brokerB.name}
                       </th>
                     </tr>
@@ -316,11 +319,11 @@ export default async function BrokerVersusPage({
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-200">
-                      <th className="text-left py-2 pr-4 text-xs font-bold text-slate-500 w-36" />
-                      <th className="py-2 px-4 text-center font-extrabold text-slate-900">
+                      <th scope="col" className="text-left py-2 pr-4 text-xs font-bold text-slate-500 w-36" />
+                      <th scope="col" className="py-2 px-4 text-center font-extrabold text-slate-900">
                         {brokerA.name}
                       </th>
-                      <th className="py-2 px-4 text-center font-extrabold text-slate-900">
+                      <th scope="col" className="py-2 px-4 text-center font-extrabold text-slate-900">
                         {brokerB.name}
                       </th>
                     </tr>

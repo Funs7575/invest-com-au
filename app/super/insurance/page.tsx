@@ -374,9 +374,9 @@ export default function SuperInsurancePage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-900 text-white">
-                      <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Annual premium</th>
-                      <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Years invested</th>
-                      <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-red-300">Balance reduction at 7% p.a.</th>
+                      <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Annual premium</th>
+                      <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Years invested</th>
+                      <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-red-300">Balance reduction at 7% p.a.</th>
                     </tr>
                   </thead>
                   <tbody>

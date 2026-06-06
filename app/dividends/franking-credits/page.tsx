@@ -363,12 +363,12 @@ export default function FrankingCreditsPage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="px-4 py-3 text-left font-bold text-xs">Dividend type</th>
-                  <th className="px-4 py-3 text-right font-bold text-xs">Cash received</th>
-                  <th className="px-4 py-3 text-right font-bold text-xs">Franking credit</th>
-                  <th className="px-4 py-3 text-right font-bold text-xs">Grossed-up income</th>
-                  <th className="px-4 py-3 text-right font-bold text-xs">Tax at 32.5%</th>
-                  <th className="px-4 py-3 text-right font-bold text-xs">Net tax outcome</th>
+                  <th scope="col" className="px-4 py-3 text-left font-bold text-xs">Dividend type</th>
+                  <th scope="col" className="px-4 py-3 text-right font-bold text-xs">Cash received</th>
+                  <th scope="col" className="px-4 py-3 text-right font-bold text-xs">Franking credit</th>
+                  <th scope="col" className="px-4 py-3 text-right font-bold text-xs">Grossed-up income</th>
+                  <th scope="col" className="px-4 py-3 text-right font-bold text-xs">Tax at 32.5%</th>
+                  <th scope="col" className="px-4 py-3 text-right font-bold text-xs">Net tax outcome</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

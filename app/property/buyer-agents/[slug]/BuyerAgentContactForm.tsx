@@ -83,7 +83,7 @@ export default function BuyerAgentContactForm({
           </span>
         </label>
 
-        <button type="submit" disabled={submitting || !form.consent} className="w-full py-3 bg-amber-500 text-slate-900 font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm">
+        <button type="submit" disabled={submitting || !form.consent} aria-busy={submitting} className="w-full py-3 bg-amber-500 text-slate-900 font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm">
           {submitting ? "Sending..." : "Request Free Consultation"}
         </button>
         <p className="text-[0.56rem] text-slate-400 text-center">No obligation, no cost. You may receive follow-up communications and can opt out at any time.</p>

@@ -209,9 +209,9 @@ export default function DaspCalculatorClient() {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-slate-200">
-                  <th className="text-left pb-1 font-semibold text-slate-500">Component</th>
-                  <th className="text-right pb-1 font-semibold text-slate-500">Standard</th>
-                  <th className="text-right pb-1 font-semibold text-amber-600">WHM</th>
+                  <th scope="col" className="text-left pb-1 font-semibold text-slate-500">Component</th>
+                  <th scope="col" className="text-right pb-1 font-semibold text-slate-500">Standard</th>
+                  <th scope="col" className="text-right pb-1 font-semibold text-amber-600">WHM</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

@@ -205,8 +205,8 @@ export default function ETFScreenerClient() {
                   >
                     Ticker <SortIcon col="ticker" sortKey={sortKey} sortDir={sortDir} />
                   </th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Name</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold hidden sm:table-cell">Category</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Name</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold hidden sm:table-cell">Category</th>
                   <th
                     className="text-right py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("mer")}
@@ -225,8 +225,8 @@ export default function ETFScreenerClient() {
                   >
                     Yield <SortIcon col="distributionYield" sortKey={sortKey} sortDir={sortDir} />
                   </th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Franking</th>
-                  <th className="py-3 px-4"></th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Franking</th>
+                  <th scope="col" className="py-3 px-4"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

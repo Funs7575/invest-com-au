@@ -171,16 +171,16 @@ export default function ApiDocsPage() {
               <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
                       Tier
                     </th>
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
                       Per Minute
                     </th>
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
                       Per Day
                     </th>
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700 border-b border-slate-200">
                       Price
                     </th>
                   </tr>
@@ -903,13 +903,13 @@ if trend and trend["quarter"]:
               <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Field
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Type
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Description
                     </th>
                   </tr>
@@ -958,13 +958,13 @@ if trend and trend["quarter"]:
               <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Field
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Type
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Description
                     </th>
                   </tr>
@@ -1019,13 +1019,13 @@ if trend and trend["quarter"]:
               <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Field
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Type
                     </th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left px-4 py-2 font-semibold text-slate-700 border-b border-slate-200">
                       Description
                     </th>
                   </tr>

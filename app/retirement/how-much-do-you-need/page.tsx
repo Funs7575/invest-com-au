@@ -246,10 +246,10 @@ export default function HowMuchRetirementPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifestyle</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Annual spend</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Super needed</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">What it covers</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifestyle</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Annual spend</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Super needed</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">What it covers</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -287,10 +287,10 @@ export default function HowMuchRetirementPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Starting balance</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At 4% (conservative)</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At 5% (with Age Pension)</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Context</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Starting balance</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At 4% (conservative)</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At 5% (with Age Pension)</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Context</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -451,9 +451,9 @@ export default function HowMuchRetirementPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Variable</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Impact</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Why it matters</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Variable</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Impact</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Why it matters</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -495,10 +495,10 @@ export default function HowMuchRetirementPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Age now</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Benchmark balance today</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At age 67 (compounding only)</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Note</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Age now</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Benchmark balance today</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">At age 67 (compounding only)</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Note</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

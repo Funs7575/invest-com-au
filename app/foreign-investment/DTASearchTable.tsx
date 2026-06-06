@@ -56,11 +56,11 @@ export default function DTASearchTable({ countries, defaultRates, dtaDisclaimer 
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50">
-              <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Country</th>
-              <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">DTA</th>
-              <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Dividends</th>
-              <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Interest</th>
-              <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Royalties</th>
+              <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Country</th>
+              <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">DTA</th>
+              <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Dividends</th>
+              <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Interest</th>
+              <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Royalties</th>
             </tr>
           </thead>
           <tbody>

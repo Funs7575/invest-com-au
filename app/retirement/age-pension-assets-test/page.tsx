@@ -302,13 +302,13 @@ export default function AgePensionAssetsTestPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Situation
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Full pension (below)
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Cut-off — nil pension (above)
                   </th>
                 </tr>

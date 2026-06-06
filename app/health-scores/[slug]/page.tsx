@@ -500,16 +500,16 @@ export default async function HealthScoreDetailPage({
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">
                     Dimension
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
                     Score
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
                     Weight
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
                     Contribution
                   </th>
                 </tr>
@@ -562,19 +562,19 @@ export default async function HealthScoreDetailPage({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600">
+                    <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">
                       Date
                     </th>
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">
                       Overall
                     </th>
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden sm:table-cell">
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden sm:table-cell">
                       Regulatory
                     </th>
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden md:table-cell">
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden md:table-cell">
                       Client Money
                     </th>
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden md:table-cell">
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden md:table-cell">
                       Stability
                     </th>
                   </tr>

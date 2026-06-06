@@ -187,9 +187,9 @@ export default function PrivateEquityPage() {
                 <table className="w-full text-sm border-collapse">
                   <thead>
                     <tr className="bg-slate-50">
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASX Code</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Name</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Strategy</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASX Code</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Name</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Strategy</th>
                     </tr>
                   </thead>
                   <tbody>

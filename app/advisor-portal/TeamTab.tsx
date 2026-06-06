@@ -132,7 +132,7 @@ export default function TeamTab({ advisor }: Props) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <input value={inviteName} onChange={(e) => setInviteName(e.target.value)} placeholder="Name (optional)" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
                 <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="Email address *" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
-                <button onClick={sendInvite} disabled={inviteStatus === "sending" || !inviteEmail.trim()} className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                <button onClick={sendInvite} disabled={inviteStatus === "sending" || !inviteEmail.trim()} aria-busy={inviteStatus === "sending"} className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                   {inviteStatus === "sending" ? "Sending..." : inviteStatus === "sent" ? "Sent!" : "Send Invite"}
                 </button>
               </div>
@@ -331,12 +331,12 @@ export default function TeamTab({ advisor }: Props) {
                   <table className="w-full text-left text-xs">
                     <thead>
                       <tr className="bg-slate-50 text-[0.62rem] font-semibold text-slate-500 uppercase tracking-wider">
-                        <th className="px-4 py-2">Advisor</th>
-                        <th className="px-4 py-2 text-right">Views (30d)</th>
-                        <th className="px-4 py-2 text-right">Leads (30d)</th>
-                        <th className="px-4 py-2 text-right">Converted</th>
-                        <th className="px-4 py-2 text-right">Credits</th>
-                        <th className="px-4 py-2 text-right">Total Billed</th>
+                        <th scope="col" className="px-4 py-2">Advisor</th>
+                        <th scope="col" className="px-4 py-2 text-right">Views (30d)</th>
+                        <th scope="col" className="px-4 py-2 text-right">Leads (30d)</th>
+                        <th scope="col" className="px-4 py-2 text-right">Converted</th>
+                        <th scope="col" className="px-4 py-2 text-right">Credits</th>
+                        <th scope="col" className="px-4 py-2 text-right">Total Billed</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -474,7 +474,7 @@ export default function TeamTab({ advisor }: Props) {
                 >
                   {savingFirm ? "Saving..." : "Save Changes"}
                 </button>
-                {firmSaved && <span className="text-sm text-emerald-600 font-medium">Saved!</span>}
+                {firmSaved && <span role="status" className="text-sm text-emerald-600 font-medium">Saved!</span>}
               </div>
             </div>
           </div>

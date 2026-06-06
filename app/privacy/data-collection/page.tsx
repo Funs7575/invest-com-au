@@ -78,16 +78,16 @@ export default function DataCollectionPage() {
                 <table className="w-full text-xs border-collapse">
                   <thead>
                     <tr className="bg-slate-100 text-slate-700">
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Category
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         What we collect
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Why
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Legal basis
                       </th>
                     </tr>
@@ -232,13 +232,13 @@ export default function DataCollectionPage() {
                 <table className="w-full text-xs border-collapse">
                   <thead>
                     <tr className="bg-slate-100 text-slate-700">
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Data type
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Retention period
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Rationale
                       </th>
                     </tr>
@@ -381,16 +381,16 @@ export default function DataCollectionPage() {
                 <table className="w-full text-xs border-collapse">
                   <thead>
                     <tr className="bg-slate-100 text-slate-700">
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Processor
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Purpose
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Data transferred
                       </th>
-                      <th className="text-left p-2 border border-slate-200 font-semibold">
+                      <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
                         Location
                       </th>
                     </tr>

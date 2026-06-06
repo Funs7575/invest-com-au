@@ -621,10 +621,10 @@ export default async function CryptoTaxPage() {
             <table className="w-full text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 font-bold">Activity</th>
-                  <th className="text-left py-3 px-4 font-bold">Tax Treatment</th>
-                  <th className="text-left py-3 px-4 font-bold">Taxable Event</th>
-                  <th className="text-left py-3 px-4 font-bold">Notes</th>
+                  <th scope="col" className="text-left py-3 px-4 font-bold">Activity</th>
+                  <th scope="col" className="text-left py-3 px-4 font-bold">Tax Treatment</th>
+                  <th scope="col" className="text-left py-3 px-4 font-bold">Taxable Event</th>
+                  <th scope="col" className="text-left py-3 px-4 font-bold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

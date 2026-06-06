@@ -444,9 +444,9 @@ export default function TrustsTaxPage() {
             <table className="w-full text-sm border-collapse min-w-[640px]">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold w-1/5">Trust type</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Key features</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Common uses</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/5">Trust type</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Key features</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Common uses</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -484,10 +484,10 @@ export default function TrustsTaxPage() {
             <table className="w-full text-sm border-collapse min-w-[680px]">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold w-1/5">Feature</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Discretionary trust</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Company</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Held personally</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/5">Feature</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Discretionary trust</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Company</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Held personally</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -558,9 +558,9 @@ export default function TrustsTaxPage() {
             <table className="w-full text-sm border-collapse min-w-[560px]">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Item</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Indicative cost</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Notes</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Item</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Indicative cost</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

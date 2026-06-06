@@ -244,9 +244,9 @@ export default function RedundancyPage() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-slate-100 text-slate-700">
                   <tr>
-                    <th className="px-4 py-3 font-bold">Component</th>
-                    <th className="px-4 py-3 font-bold">What it is</th>
-                    <th className="px-4 py-3 font-bold">How it&apos;s taxed</th>
+                    <th scope="col" className="px-4 py-3 font-bold">Component</th>
+                    <th scope="col" className="px-4 py-3 font-bold">What it is</th>
+                    <th scope="col" className="px-4 py-3 font-bold">How it&apos;s taxed</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -448,9 +448,9 @@ export default function RedundancyPage() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-slate-100 text-slate-700">
                   <tr>
-                    <th className="px-4 py-3 font-bold">Option</th>
-                    <th className="px-4 py-3 font-bold">Best for</th>
-                    <th className="px-4 py-3 font-bold">Watch out for</th>
+                    <th scope="col" className="px-4 py-3 font-bold">Option</th>
+                    <th scope="col" className="px-4 py-3 font-bold">Best for</th>
+                    <th scope="col" className="px-4 py-3 font-bold">Watch out for</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

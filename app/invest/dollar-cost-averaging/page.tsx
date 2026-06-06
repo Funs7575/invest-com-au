@@ -135,11 +135,11 @@ export default function DollarCostAveragingPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Month</th>
-                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Price/unit</th>
-                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Amount invested</th>
-                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Units bought</th>
-                    <th className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Cumulative units</th>
+                    <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Month</th>
+                    <th scope="col" className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Price/unit</th>
+                    <th scope="col" className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Amount invested</th>
+                    <th scope="col" className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Units bought</th>
+                    <th scope="col" className="text-right py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Cumulative units</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -200,11 +200,11 @@ export default function DollarCostAveragingPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="text-left py-3 px-4 font-semibold">Scenario</th>
-                    <th className="text-left py-3 px-4 font-semibold">What happens</th>
-                    <th className="text-left py-3 px-4 font-semibold">Lump sum result</th>
-                    <th className="text-left py-3 px-4 font-semibold">DCA result</th>
-                    <th className="text-left py-3 px-4 font-semibold">Winner</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold">Scenario</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold">What happens</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold">Lump sum result</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold">DCA result</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold">Winner</th>
                   </tr>
                 </thead>
                 <tbody>

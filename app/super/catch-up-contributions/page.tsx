@@ -191,9 +191,9 @@ export default function CatchUpContributionsPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Financial Year</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Concessional Cap</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Non-Concessional Cap</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Financial Year</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Concessional Cap</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Non-Concessional Cap</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -377,8 +377,8 @@ export default function CatchUpContributionsPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-64">Mistake</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-red-300">Why it matters</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-64">Mistake</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-red-300">Why it matters</th>
                   </tr>
                 </thead>
                 <tbody>

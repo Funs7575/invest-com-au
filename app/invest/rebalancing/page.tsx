@@ -247,9 +247,9 @@ export default function RebalancingPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Method</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">How it works</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700">Best for</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Method</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">How it works</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-700">Best for</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -359,10 +359,10 @@ export default function RebalancingPage() {
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b border-slate-300">
-                        <th className="pb-2 text-left font-bold text-slate-700">Asset class</th>
-                        <th className="pb-2 text-right font-bold text-slate-700">Target</th>
-                        <th className="pb-2 text-right font-bold text-slate-700">Current</th>
-                        <th className="pb-2 text-right font-bold text-slate-700">Drift</th>
+                        <th scope="col" className="pb-2 text-left font-bold text-slate-700">Asset class</th>
+                        <th scope="col" className="pb-2 text-right font-bold text-slate-700">Target</th>
+                        <th scope="col" className="pb-2 text-right font-bold text-slate-700">Current</th>
+                        <th scope="col" className="pb-2 text-right font-bold text-slate-700">Drift</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200">

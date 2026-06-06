@@ -396,11 +396,11 @@ export default function BestFxProvidersPage() {
             <table className="w-full border-collapse text-left min-w-[760px]">
               <thead>
                 <tr className="border-b border-slate-300">
-                  <th className="py-3 pr-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Provider</th>
-                  <th className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Typical margin</th>
-                  <th className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Transfer fee</th>
-                  <th className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Best for</th>
-                  <th className="py-3 pl-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Regulation</th>
+                  <th scope="col" className="py-3 pr-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Provider</th>
+                  <th scope="col" className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Typical margin</th>
+                  <th scope="col" className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Transfer fee</th>
+                  <th scope="col" className="py-3 px-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Best for</th>
+                  <th scope="col" className="py-3 pl-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Regulation</th>
                 </tr>
               </thead>
               <tbody>

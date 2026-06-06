@@ -285,10 +285,10 @@ export default function StampDutyConcessionsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">State</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide whitespace-nowrap">Full exemption threshold</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Concession / partial relief</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Key notes</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">State</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide whitespace-nowrap">Full exemption threshold</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Concession / partial relief</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Key notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -509,9 +509,9 @@ export default function StampDutyConcessionsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide">Off-the-plan concession</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Duty calculated on</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide">Off-the-plan concession</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Duty calculated on</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -546,9 +546,9 @@ export default function StampDutyConcessionsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-red-300 uppercase tracking-wide whitespace-nowrap">Foreign purchaser surcharge</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-red-300 uppercase tracking-wide whitespace-nowrap">Foreign purchaser surcharge</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

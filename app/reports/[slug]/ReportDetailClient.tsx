@@ -102,10 +102,10 @@ export default function ReportDetailClient({ report, isPro, totals }: Props) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">Broker</th>
-                    <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">Fee</th>
-                    <th className="text-center px-4 py-2.5 text-xs font-semibold text-slate-600">Old</th>
-                    <th className="text-center px-4 py-2.5 text-xs font-semibold text-slate-600">New</th>
+                    <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">Broker</th>
+                    <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">Fee</th>
+                    <th scope="col" className="text-center px-4 py-2.5 text-xs font-semibold text-slate-600">Old</th>
+                    <th scope="col" className="text-center px-4 py-2.5 text-xs font-semibold text-slate-600">New</th>
                   </tr>
                 </thead>
                 <tbody>

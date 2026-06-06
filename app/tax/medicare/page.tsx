@@ -248,10 +248,10 @@ export default function MedicarePage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="text-left py-3 px-4 text-xs font-bold">Category</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">No levy (below)</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">Reduced levy</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">Full 2% levy (above)</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Category</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">No levy (below)</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Reduced levy</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Full 2% levy (above)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -307,9 +307,9 @@ export default function MedicarePage() {
                 <table className="w-full text-sm border-collapse">
                   <thead>
                     <tr className="bg-slate-800 text-white">
-                      <th className="text-left py-2.5 px-3 text-xs font-bold">Tier</th>
-                      <th className="text-center py-2.5 px-3 text-xs font-bold">Surcharge income</th>
-                      <th className="text-center py-2.5 px-3 text-xs font-bold">Rate</th>
+                      <th scope="col" className="text-left py-2.5 px-3 text-xs font-bold">Tier</th>
+                      <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Surcharge income</th>
+                      <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Rate</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
@@ -328,9 +328,9 @@ export default function MedicarePage() {
                 <table className="w-full text-sm border-collapse">
                   <thead>
                     <tr className="bg-slate-800 text-white">
-                      <th className="text-left py-2.5 px-3 text-xs font-bold">Tier</th>
-                      <th className="text-center py-2.5 px-3 text-xs font-bold">Surcharge income</th>
-                      <th className="text-center py-2.5 px-3 text-xs font-bold">Rate</th>
+                      <th scope="col" className="text-left py-2.5 px-3 text-xs font-bold">Tier</th>
+                      <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Surcharge income</th>
+                      <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Rate</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
@@ -490,10 +490,10 @@ export default function MedicarePage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="text-left py-2.5 px-3 text-xs font-bold">Income tier (singles)</th>
-                    <th className="text-center py-2.5 px-3 text-xs font-bold">Under 65</th>
-                    <th className="text-center py-2.5 px-3 text-xs font-bold">Age 65&ndash;69</th>
-                    <th className="text-center py-2.5 px-3 text-xs font-bold">Age 70+</th>
+                    <th scope="col" className="text-left py-2.5 px-3 text-xs font-bold">Income tier (singles)</th>
+                    <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Under 65</th>
+                    <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Age 65&ndash;69</th>
+                    <th scope="col" className="text-center py-2.5 px-3 text-xs font-bold">Age 70+</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">

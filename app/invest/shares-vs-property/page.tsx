@@ -126,10 +126,10 @@ export default function SharesVsPropertyPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-900 text-white">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold">Asset</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-300">Annual return (p.a.)</th>
-                    <th className="px-4 py-3 text-left font-extrabold">Period</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-300">Notes</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold">Asset</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-300">Annual return (p.a.)</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold">Period</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-300">Notes</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -160,9 +160,9 @@ export default function SharesVsPropertyPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-900 text-white">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold">Factor</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-300">Shares</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-200">Property</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold">Factor</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-300">Shares</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-200">Property</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

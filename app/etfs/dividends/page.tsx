@@ -286,11 +286,11 @@ export default function DividendETFPage() {
             <table className="w-full min-w-[680px] border-collapse text-sm">
               <thead>
                 <tr className="border-b-2 border-slate-200 text-left">
-                  <th className="py-3 pr-4 font-bold text-slate-900">ETF</th>
-                  <th className="py-3 px-4 font-bold text-slate-900">MER</th>
-                  <th className="py-3 px-4 font-bold text-slate-900">Indicative yield</th>
-                  <th className="py-3 px-4 font-bold text-slate-900">Franking</th>
-                  <th className="py-3 pl-4 font-bold text-slate-900">Notes</th>
+                  <th scope="col" className="py-3 pr-4 font-bold text-slate-900">ETF</th>
+                  <th scope="col" className="py-3 px-4 font-bold text-slate-900">MER</th>
+                  <th scope="col" className="py-3 px-4 font-bold text-slate-900">Indicative yield</th>
+                  <th scope="col" className="py-3 px-4 font-bold text-slate-900">Franking</th>
+                  <th scope="col" className="py-3 pl-4 font-bold text-slate-900">Notes</th>
                 </tr>
               </thead>
               <tbody>

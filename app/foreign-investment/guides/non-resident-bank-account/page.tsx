@@ -316,8 +316,8 @@ export default async function NonResidentBankAccountPage() {
             <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Document</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Document</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

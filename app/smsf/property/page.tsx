@@ -126,9 +126,9 @@ export default function SmsfPropertyPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 min-w-[180px]">Rule</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Residential property</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Commercial (business real) property</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 min-w-[180px]">Rule</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Residential property</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Commercial (business real) property</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
@@ -414,10 +414,10 @@ export default function SmsfPropertyPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Income or gain type</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Accumulation phase</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Pension phase</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Outside super (comparison)</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Income or gain type</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Accumulation phase</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Pension phase</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Outside super (comparison)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">

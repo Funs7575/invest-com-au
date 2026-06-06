@@ -196,15 +196,15 @@ export default function FirmPerformanceClient({ summary: initialSummary }: Props
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="text-[11px] uppercase tracking-wide text-slate-400">
-                  <th className="px-4 py-2.5 font-medium">Advisor</th>
-                  <th className="px-4 py-2.5 font-medium text-right">Views</th>
-                  <th className="px-4 py-2.5 font-medium text-right">Enquiries</th>
-                  <th className="px-4 py-2.5 font-medium text-right">Bookings</th>
-                  <th className="px-4 py-2.5 font-medium hidden md:table-cell">Rating</th>
-                  <th className="px-4 py-2.5 font-medium hidden lg:table-cell">
+                  <th scope="col" className="px-4 py-2.5 font-medium">Advisor</th>
+                  <th scope="col" className="px-4 py-2.5 font-medium text-right">Views</th>
+                  <th scope="col" className="px-4 py-2.5 font-medium text-right">Enquiries</th>
+                  <th scope="col" className="px-4 py-2.5 font-medium text-right">Bookings</th>
+                  <th scope="col" className="px-4 py-2.5 font-medium hidden md:table-cell">Rating</th>
+                  <th scope="col" className="px-4 py-2.5 font-medium hidden lg:table-cell">
                     <span title="Top bar = response score; bottom = profile score">Response / Profile</span>
                   </th>
-                  <th className="px-4 py-2.5 font-medium text-right hidden sm:table-cell">Score</th>
+                  <th scope="col" className="px-4 py-2.5 font-medium text-right hidden sm:table-cell">Score</th>
                 </tr>
               </thead>
               <tbody>

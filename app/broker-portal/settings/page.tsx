@@ -207,6 +207,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={saving}
+            aria-busy={saving}
             className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? "Saving..." : "Save Changes"}
@@ -324,7 +325,7 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
-          <button onClick={handleSaveAlerts} disabled={saving} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+          <button onClick={handleSaveAlerts} disabled={saving} aria-busy={saving} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">
             Save Alert Preferences
           </button>
         </div>

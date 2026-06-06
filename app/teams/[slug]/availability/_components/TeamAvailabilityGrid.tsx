@@ -107,7 +107,7 @@ export default function TeamAvailabilityGrid({ slots, memberCount }: Props) {
         <table className="text-xs text-slate-700 min-w-full">
           <thead>
             <tr>
-              <th className="text-left font-semibold pr-2 pb-2 sticky left-0 bg-white">
+              <th scope="col" className="text-left font-semibold pr-2 pb-2 sticky left-0 bg-white">
                 Time
               </th>
               {days.map((d) => (

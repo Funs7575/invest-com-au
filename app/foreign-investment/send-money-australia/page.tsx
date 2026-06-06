@@ -157,10 +157,10 @@ export default async function SendMoneyAustraliaPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-amber-200">
-                  <th className="text-start pb-2 font-semibold text-slate-600 text-xs">Provider</th>
-                  <th className="text-right pb-2 font-semibold text-slate-600 text-xs">Est. margin</th>
-                  <th className="text-right pb-2 font-semibold text-slate-600 text-xs">Cost on $500K</th>
-                  <th className="text-right pb-2 font-semibold text-slate-600 text-xs">You receive</th>
+                  <th scope="col" className="text-start pb-2 font-semibold text-slate-600 text-xs">Provider</th>
+                  <th scope="col" className="text-right pb-2 font-semibold text-slate-600 text-xs">Est. margin</th>
+                  <th scope="col" className="text-right pb-2 font-semibold text-slate-600 text-xs">Cost on $500K</th>
+                  <th scope="col" className="text-right pb-2 font-semibold text-slate-600 text-xs">You receive</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-amber-100">

@@ -320,13 +320,13 @@ export default function SuperContributionsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-44">
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-44">
                     Feature
                   </th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">
                     Concessional (pre-tax)
                   </th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">
                     Non-Concessional (after-tax)
                   </th>
                 </tr>
@@ -363,16 +363,16 @@ export default function SuperContributionsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                  <th scope="col" className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
                     Type
                   </th>
-                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                  <th scope="col" className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
                     Amount / Rate
                   </th>
-                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                  <th scope="col" className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
                     Tax treatment
                   </th>
-                  <th className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
+                  <th scope="col" className="px-5 py-3.5 text-left font-bold text-xs uppercase tracking-wide">
                     Key notes
                   </th>
                 </tr>

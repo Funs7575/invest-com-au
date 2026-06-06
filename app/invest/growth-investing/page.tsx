@@ -162,9 +162,9 @@ export default function GrowthInvestingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Metric</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Growth investor&apos;s lens</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Typical growth range</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Metric</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Growth investor&apos;s lens</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Typical growth range</th>
                 </tr>
               </thead>
               <tbody>
@@ -254,10 +254,10 @@ export default function GrowthInvestingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">ETF Code</th>
-                  <th className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Index / Focus</th>
-                  <th className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Manager</th>
-                  <th className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Use case</th>
+                  <th scope="col" className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">ETF Code</th>
+                  <th scope="col" className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Index / Focus</th>
+                  <th scope="col" className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Manager</th>
+                  <th scope="col" className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">Use case</th>
                 </tr>
               </thead>
               <tbody>
@@ -293,9 +293,9 @@ export default function GrowthInvestingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 w-1/3">Dimension</th>
-                  <th className="text-left py-3 px-4 font-semibold text-amber-700 border-b border-slate-200">Growth</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-600 border-b border-slate-200">Value</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 w-1/3">Dimension</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-amber-700 border-b border-slate-200">Growth</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-600 border-b border-slate-200">Value</th>
                 </tr>
               </thead>
               <tbody>

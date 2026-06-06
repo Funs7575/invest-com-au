@@ -197,11 +197,11 @@ export default async function InfrastructurePage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Company</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Infrastructure Type</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Market Cap</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Company</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Infrastructure Type</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Market Cap</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
                 </tr>
               </thead>
               <tbody>

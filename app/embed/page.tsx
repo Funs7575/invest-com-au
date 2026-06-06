@@ -188,10 +188,10 @@ function ParamsTable({ rows }: {
       <table className="w-full text-sm">
         <thead>
           <tr className="bg-slate-50 border-b border-slate-200 text-left">
-            <th className="px-5 py-3 font-bold text-slate-700">Parameter</th>
-            <th className="px-5 py-3 font-bold text-slate-700">Values</th>
-            <th className="px-5 py-3 font-bold text-slate-700 hidden sm:table-cell">Default</th>
-            <th className="px-5 py-3 font-bold text-slate-700">Description</th>
+            <th scope="col" className="px-5 py-3 font-bold text-slate-700">Parameter</th>
+            <th scope="col" className="px-5 py-3 font-bold text-slate-700">Values</th>
+            <th scope="col" className="px-5 py-3 font-bold text-slate-700 hidden sm:table-cell">Default</th>
+            <th scope="col" className="px-5 py-3 font-bold text-slate-700">Description</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">

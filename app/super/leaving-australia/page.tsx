@@ -370,9 +370,9 @@ export default async function LeavingAustraliaPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Subclass</th>
-                  <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Visa name</th>
-                  <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-slate-300">DASP rate</th>
+                  <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Subclass</th>
+                  <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Visa name</th>
+                  <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-slate-300">DASP rate</th>
                 </tr>
               </thead>
               <tbody>
@@ -411,10 +411,10 @@ export default async function LeavingAustraliaPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Visa type</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Super element</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-red-300">Rate</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-400">Notes</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Visa type</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Super element</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-red-300">Rate</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-400">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -547,9 +547,9 @@ export default async function LeavingAustraliaPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Feature</th>
-                  <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-red-300">Take DASP</th>
-                  <th className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-green-300">Transfer to KiwiSaver</th>
+                  <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Feature</th>
+                  <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-red-300">Take DASP</th>
+                  <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide text-green-300">Transfer to KiwiSaver</th>
                 </tr>
               </thead>
               <tbody>

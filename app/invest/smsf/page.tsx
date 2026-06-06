@@ -364,11 +364,11 @@ export default async function SmsfInvestmentPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Strategy</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Return Type</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Tax Efficiency</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Complexity</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Minimum</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Strategy</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Return Type</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Tax Efficiency</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Complexity</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Minimum</th>
                 </tr>
               </thead>
               <tbody>

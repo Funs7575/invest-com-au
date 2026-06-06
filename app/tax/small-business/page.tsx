@@ -264,11 +264,11 @@ export default function SmallBusinessTaxPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="text-left py-3 px-4 text-xs font-bold">Feature</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">Sole trader</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">Partnership</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold bg-amber-700">Company</th>
-                    <th className="text-center py-3 px-4 text-xs font-bold">Trust</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Feature</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Sole trader</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Partnership</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold bg-amber-700">Company</th>
+                    <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Trust</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -391,9 +391,9 @@ export default function SmallBusinessTaxPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="text-left py-3 px-4 text-xs font-bold">Concession</th>
-                    <th className="text-left py-3 px-4 text-xs font-bold">Eligibility</th>
-                    <th className="text-left py-3 px-4 text-xs font-bold">Benefit</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Concession</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Eligibility</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Benefit</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">

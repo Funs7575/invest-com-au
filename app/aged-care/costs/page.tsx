@@ -140,10 +140,10 @@ export default function AgedCareCostsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Level</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Govt subsidy/year</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Typical client gap</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Services covered</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Level</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Govt subsidy/year</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Typical client gap</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Services covered</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

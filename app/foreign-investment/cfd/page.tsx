@@ -209,9 +209,9 @@ export default async function ForeignCFDPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Market / Asset Class</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Max Leverage</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide hidden md:table-cell">Examples</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Market / Asset Class</th>
+                  <th scope="col" className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Max Leverage</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide hidden md:table-cell">Examples</th>
                 </tr>
               </thead>
               <tbody>

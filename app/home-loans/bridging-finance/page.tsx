@@ -288,9 +288,9 @@ export default function BridgingFinancePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Cost</th>
-                  <th className="text-left px-5 py-3">Typical range</th>
-                  <th className="text-left px-5 py-3">Notes</th>
+                  <th scope="col" className="text-left px-5 py-3">Cost</th>
+                  <th scope="col" className="text-left px-5 py-3">Typical range</th>
+                  <th scope="col" className="text-left px-5 py-3">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -335,8 +335,8 @@ export default function BridgingFinancePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3 text-green-300">Bridging suits</th>
-                  <th className="text-left px-5 py-3 text-red-300">Bridging doesn&apos;t suit</th>
+                  <th scope="col" className="text-left px-5 py-3 text-green-300">Bridging suits</th>
+                  <th scope="col" className="text-left px-5 py-3 text-red-300">Bridging doesn&apos;t suit</th>
                 </tr>
               </thead>
               <tbody>

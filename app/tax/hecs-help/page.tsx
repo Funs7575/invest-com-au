@@ -168,8 +168,8 @@ export default function HecsHelpPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Repayment income</th>
-                    <th className="px-4 py-3 text-right font-extrabold text-slate-700">Repayment rate</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Repayment income</th>
+                    <th scope="col" className="px-4 py-3 text-right font-extrabold text-slate-700">Repayment rate</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">

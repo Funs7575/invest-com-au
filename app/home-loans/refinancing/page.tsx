@@ -320,9 +320,9 @@ export default function RefinancingPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Cost item</th>
-                  <th className="text-left px-5 py-3">Typical amount</th>
-                  <th className="text-left px-5 py-3">Notes</th>
+                  <th scope="col" className="text-left px-5 py-3">Cost item</th>
+                  <th scope="col" className="text-left px-5 py-3">Typical amount</th>
+                  <th scope="col" className="text-left px-5 py-3">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -408,9 +408,9 @@ export default function RefinancingPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Structure</th>
-                  <th className="text-left px-5 py-3">Best suited to</th>
-                  <th className="text-left px-5 py-3">Key benefit</th>
+                  <th scope="col" className="text-left px-5 py-3">Structure</th>
+                  <th scope="col" className="text-left px-5 py-3">Best suited to</th>
+                  <th scope="col" className="text-left px-5 py-3">Key benefit</th>
                 </tr>
               </thead>
               <tbody>

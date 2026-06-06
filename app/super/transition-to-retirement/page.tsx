@@ -231,9 +231,9 @@ export default function TransitionToRetirementPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-200">
-                      <th className="text-left py-2 pr-4 font-bold text-slate-700">Item</th>
-                      <th className="text-right py-2 pr-4 font-bold text-slate-700">Without TTR strategy</th>
-                      <th className="text-right py-2 font-bold text-blue-700">With TTR strategy</th>
+                      <th scope="col" className="text-left py-2 pr-4 font-bold text-slate-700">Item</th>
+                      <th scope="col" className="text-right py-2 pr-4 font-bold text-slate-700">Without TTR strategy</th>
+                      <th scope="col" className="text-right py-2 font-bold text-blue-700">With TTR strategy</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -365,8 +365,8 @@ export default function TransitionToRetirementPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Date of birth</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Preservation age</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Date of birth</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Preservation age</th>
                   </tr>
                 </thead>
                 <tbody>

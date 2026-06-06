@@ -348,7 +348,7 @@ export default function PricingClient() {
             <table className="w-full text-sm border-collapse bg-white">
               <thead>
                 <tr>
-                  <th className="text-left px-4 py-3 text-slate-500 font-semibold w-48 border-b border-slate-200 bg-slate-50">
+                  <th scope="col" className="text-left px-4 py-3 text-slate-500 font-semibold w-48 border-b border-slate-200 bg-slate-50">
                     Feature
                   </th>
                   {TIERS.map((tier) => (

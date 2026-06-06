@@ -181,12 +181,12 @@ export default async function ForexPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Broker</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASIC AFSL</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">AUD/USD Spread</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Pairs</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Min Deposit</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Platform</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Broker</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASIC AFSL</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">AUD/USD Spread</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Pairs</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Min Deposit</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Platform</th>
                 </tr>
               </thead>
               <tbody>

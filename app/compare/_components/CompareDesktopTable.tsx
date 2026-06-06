@@ -59,7 +59,7 @@ export default function CompareDesktopTable({
               </button>
             </th>
             {schema.columns.map((column) => (
-              <th key={column.key} scope="col" className={`px-4 py-3 text-${column.align ?? 'left'} font-semibold text-sm`} aria-sort={column.sortCol && sortCol === column.sortCol ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+              <th scope="col" key={column.key} className={`px-4 py-3 text-${column.align ?? 'left'} font-semibold text-sm`} aria-sort={column.sortCol && sortCol === column.sortCol ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
                 {column.sortCol ? (
                   <button onClick={() => onSort(column.sortCol!)} className="hover:text-slate-900 transition-colors" aria-label={`Sort by ${column.label}`}>
                     {column.label}{sortArrow(column.sortCol)}

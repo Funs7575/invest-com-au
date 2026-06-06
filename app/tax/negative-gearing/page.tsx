@@ -292,8 +292,8 @@ export default function NegativeGearingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Item</th>
-                  <th className="text-right py-3 px-4 text-xs font-bold">Annual amount</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Item</th>
+                  <th scope="col" className="text-right py-3 px-4 text-xs font-bold">Annual amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -449,8 +449,8 @@ export default function NegativeGearingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold w-1/3">Expense</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Notes</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/3">Expense</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -473,8 +473,8 @@ export default function NegativeGearingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-red-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold w-1/3">Expense</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Why it&apos;s not deductible</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/3">Expense</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Why it&apos;s not deductible</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-red-100">
@@ -652,11 +652,11 @@ export default function NegativeGearingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Taxable income</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Marginal rate</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Annual loss</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Tax saving</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Real cash cost</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable income</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Marginal rate</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Annual loss</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Tax saving</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Real cash cost</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

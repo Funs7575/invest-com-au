@@ -209,11 +209,11 @@ export default async function OptionsDerivativesPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Platform</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Products</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Regulation</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Options Fee</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Best For</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Platform</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Products</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Regulation</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Options Fee</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Best For</th>
                 </tr>
               </thead>
               <tbody>

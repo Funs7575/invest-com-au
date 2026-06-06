@@ -135,9 +135,9 @@ export default function InvestScoreMethodologyPage() {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="border-b border-slate-200">
-                <th className="text-left text-xs font-semibold text-slate-500 pb-2 pr-6">Range</th>
-                <th className="text-left text-xs font-semibold text-slate-500 pb-2 pr-6">Label</th>
-                <th className="text-left text-xs font-semibold text-slate-500 pb-2">What it means</th>
+                <th scope="col" className="text-left text-xs font-semibold text-slate-500 pb-2 pr-6">Range</th>
+                <th scope="col" className="text-left text-xs font-semibold text-slate-500 pb-2 pr-6">Label</th>
+                <th scope="col" className="text-left text-xs font-semibold text-slate-500 pb-2">What it means</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

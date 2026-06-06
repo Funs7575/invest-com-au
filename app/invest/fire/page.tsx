@@ -459,13 +459,13 @@ export default function FireGuidePage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
                       Savings Rate
                     </th>
-                    <th className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
                       Years to FIRE (from zero)
                     </th>
-                    <th className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left py-3 px-5 font-semibold text-slate-700 border-b border-slate-200">
                       Approximate retirement age (starting at 25)
                     </th>
                   </tr>

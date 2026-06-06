@@ -425,11 +425,11 @@ export default async function PropertyHubPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-slate-50 border-b border-slate-200">
-                        <th className="text-left px-4 md:px-6 py-3 font-semibold text-slate-500 text-xs w-8">#</th>
-                        <th className="text-left px-2 py-3 font-semibold text-slate-500 text-xs">Suburb</th>
-                        <th className="text-right px-3 py-3 font-semibold text-slate-500 text-xs hidden md:table-cell">Median House</th>
-                        <th className="text-right px-3 py-3 font-semibold text-slate-500 text-xs">Rental Yield</th>
-                        <th className="text-right px-3 md:px-6 py-3 font-semibold text-slate-500 text-xs">10yr Growth</th>
+                        <th scope="col" className="text-left px-4 md:px-6 py-3 font-semibold text-slate-500 text-xs w-8">#</th>
+                        <th scope="col" className="text-left px-2 py-3 font-semibold text-slate-500 text-xs">Suburb</th>
+                        <th scope="col" className="text-right px-3 py-3 font-semibold text-slate-500 text-xs hidden md:table-cell">Median House</th>
+                        <th scope="col" className="text-right px-3 py-3 font-semibold text-slate-500 text-xs">Rental Yield</th>
+                        <th scope="col" className="text-right px-3 md:px-6 py-3 font-semibold text-slate-500 text-xs">10yr Growth</th>
                       </tr>
                     </thead>
                     <tbody>

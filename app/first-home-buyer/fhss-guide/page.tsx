@@ -344,11 +344,11 @@ export default function FhssGuidePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Savings method</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Contribution tax</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Earnings tax</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Withdrawal tax</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide whitespace-nowrap">Net outcome</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Savings method</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Contribution tax</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Earnings tax</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Withdrawal tax</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide whitespace-nowrap">Net outcome</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -488,8 +488,8 @@ export default function FhssGuidePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Item</th>
-                  <th className="text-right px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Amount</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Item</th>
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-bold text-amber-300 uppercase tracking-wide whitespace-nowrap">Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

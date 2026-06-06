@@ -102,9 +102,9 @@ export default function CompareHomeLoanPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Factor</th>
-                  <th className="text-left px-5 py-3">Why It Matters</th>
-                  <th className="text-left px-5 py-3">What to Look For</th>
+                  <th scope="col" className="text-left px-5 py-3">Factor</th>
+                  <th scope="col" className="text-left px-5 py-3">Why It Matters</th>
+                  <th scope="col" className="text-left px-5 py-3">What to Look For</th>
                 </tr>
               </thead>
               <tbody>
@@ -129,10 +129,10 @@ export default function CompareHomeLoanPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">LVR</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Lender Risk View</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">Rate Expectation</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700">LMI Required?</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">LVR</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Lender Risk View</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Rate Expectation</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">LMI Required?</th>
                 </tr>
               </thead>
               <tbody>

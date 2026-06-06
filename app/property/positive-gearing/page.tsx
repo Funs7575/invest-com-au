@@ -292,13 +292,13 @@ export default function PositiveGearingPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs w-1/4">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600 text-xs w-1/4">
                       Attribute
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-emerald-700 text-xs">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-emerald-700 text-xs">
                       Positive gearing
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-500 text-xs">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-500 text-xs">
                       Negative gearing
                     </th>
                   </tr>
@@ -625,19 +625,19 @@ export default function PositiveGearingPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">
                       Scenario
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
+                    <th scope="col" className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
                       Net surplus
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
+                    <th scope="col" className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
                       Marginal rate
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
+                    <th scope="col" className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
                       Tax owed
                     </th>
-                    <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
+                    <th scope="col" className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">
                       After-tax surplus
                     </th>
                   </tr>
@@ -737,9 +737,9 @@ export default function PositiveGearingPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Factor</th>
-                    <th className="text-left px-4 py-3 font-semibold text-emerald-700 text-xs">High yield / positive gearing</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-500 text-xs">Low yield / capital growth</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Factor</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-emerald-700 text-xs">High yield / positive gearing</th>
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-500 text-xs">Low yield / capital growth</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -265,11 +265,11 @@ export default function SmsfBorrowingPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Condition</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Condition</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Real property
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Listed securities
                     </th>
                   </tr>
@@ -416,11 +416,11 @@ export default function SmsfBorrowingPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Cost item</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Cost item</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Typical range
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Notes</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Notes</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
@@ -554,13 +554,13 @@ export default function SmsfBorrowingPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Tax item
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Accumulation phase
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Pension phase
                     </th>
                   </tr>

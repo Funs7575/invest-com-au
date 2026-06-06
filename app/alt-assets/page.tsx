@@ -133,10 +133,10 @@ export default function AltAssetsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Asset</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Min. entry</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Liquidity</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">AU tax treatment</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Asset</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Min. entry</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Liquidity</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">AU tax treatment</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

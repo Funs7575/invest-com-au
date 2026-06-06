@@ -70,9 +70,9 @@ export default function NegativeGearingHubPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">&nbsp;</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Negative</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Positive</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">&nbsp;</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Negative</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Positive</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

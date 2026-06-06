@@ -284,13 +284,13 @@ export default function GlobalInvestingEtfsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-white/20">
-                      <th className="text-left py-2 font-bold text-slate-300">
+                      <th scope="col" className="text-left py-2 font-bold text-slate-300">
                         Sector
                       </th>
-                      <th className="text-right py-2 font-bold text-slate-300">
+                      <th scope="col" className="text-right py-2 font-bold text-slate-300">
                         ASX 200
                       </th>
-                      <th className="text-right py-2 font-bold text-slate-300">
+                      <th scope="col" className="text-right py-2 font-bold text-slate-300">
                         MSCI World (VGS)
                       </th>
                     </tr>
@@ -349,19 +349,19 @@ export default function GlobalInvestingEtfsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Ticker
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 hidden lg:table-cell">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 hidden lg:table-cell">
                       Index Tracked
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       MER
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Hedged?
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">
                       Key Exposure
                     </th>
                   </tr>
@@ -432,13 +432,13 @@ export default function GlobalInvestingEtfsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       Feature
                     </th>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       Unhedged (e.g., VGS, IVV)
                     </th>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       Hedged (e.g., VGAD, IHVV)
                     </th>
                   </tr>
@@ -661,13 +661,13 @@ export default function GlobalInvestingEtfsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       Distribution component
                     </th>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       Tax treatment
                     </th>
-                    <th className="text-left p-4 font-bold text-slate-700 hidden md:table-cell">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700 hidden md:table-cell">
                       Example ETF
                     </th>
                   </tr>
@@ -781,16 +781,16 @@ export default function GlobalInvestingEtfsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">
                       ETF (MER)
                     </th>
-                    <th className="text-right p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-right p-4 font-bold text-slate-700">
                       10 years
                     </th>
-                    <th className="text-right p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-right p-4 font-bold text-slate-700">
                       20 years
                     </th>
-                    <th className="text-right p-4 font-bold text-slate-700">
+                    <th scope="col" className="text-right p-4 font-bold text-slate-700">
                       30 years
                     </th>
                   </tr>
@@ -1030,16 +1030,16 @@ export default function GlobalInvestingEtfsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Ticker
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Theme
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       MER
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">
                       Risk note
                     </th>
                   </tr>

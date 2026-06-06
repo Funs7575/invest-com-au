@@ -82,10 +82,10 @@ export default function ChessLookup({ brokers, searchParams }: Props) {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700">Broker</th>
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700">Model</th>
-                    <th className="text-right px-4 py-2.5 font-semibold text-slate-700">ASX Fee</th>
-                    <th className="text-right px-4 py-2.5 font-semibold text-slate-700"><span className="sr-only">Action</span></th>
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700">Broker</th>
+                    <th scope="col" className="text-left px-4 py-2.5 font-semibold text-slate-700">Model</th>
+                    <th scope="col" className="text-right px-4 py-2.5 font-semibold text-slate-700">ASX Fee</th>
+                    <th scope="col" className="text-right px-4 py-2.5 font-semibold text-slate-700"><span className="sr-only">Action</span></th>
                   </tr>
                 </thead>
                 <tbody>

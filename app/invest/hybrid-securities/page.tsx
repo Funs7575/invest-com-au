@@ -179,11 +179,11 @@ export default async function HybridSecuritiesPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Issuer</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Margin</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Franking</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Call Date</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Issuer</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Margin</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Franking</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Call Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -230,11 +230,11 @@ export default async function HybridSecuritiesPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Feature</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Term Deposit</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Govt Bond</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Bank Hybrid</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Bank Share</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Feature</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Term Deposit</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Govt Bond</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Bank Hybrid</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Bank Share</th>
                 </tr>
               </thead>
               <tbody>

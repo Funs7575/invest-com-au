@@ -283,9 +283,9 @@ export default function RetirementAnnuitiesPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide w-1/4">Feature</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Account-based pension (ABP)</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifetime annuity</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide w-1/4">Feature</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Account-based pension (ABP)</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifetime annuity</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
@@ -371,10 +371,10 @@ export default function RetirementAnnuitiesPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Product option</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Approx. annual income</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Approx. monthly income</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Product option</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Approx. annual income</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Approx. monthly income</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

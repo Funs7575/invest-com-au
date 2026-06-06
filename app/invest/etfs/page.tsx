@@ -216,10 +216,10 @@ export default function EtfsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Type</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Examples</th>
-                    <th className="text-left p-4 font-bold text-slate-700">What it tracks</th>
-                    <th className="text-right p-4 font-bold text-slate-700">Typical MER</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Type</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Examples</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">What it tracks</th>
+                    <th scope="col" className="text-right p-4 font-bold text-slate-700">Typical MER</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -330,9 +330,9 @@ export default function EtfsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Feature</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Unhedged (e.g., VGS)</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Hedged (e.g., VGAD)</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Feature</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Unhedged (e.g., VGS)</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Hedged (e.g., VGAD)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -375,9 +375,9 @@ export default function EtfsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Distribution component</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Tax treatment</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Example ETF source</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Distribution component</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Tax treatment</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Example ETF source</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -524,10 +524,10 @@ export default function EtfsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Feature</th>
-                    <th className="text-left p-4 font-bold text-slate-700">ETF</th>
-                    <th className="text-left p-4 font-bold text-slate-700">LIC (Listed Investment Company)</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Managed fund (unlisted)</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Feature</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">ETF</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">LIC (Listed Investment Company)</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Managed fund (unlisted)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

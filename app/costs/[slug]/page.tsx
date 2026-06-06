@@ -173,25 +173,25 @@ export default async function CostScenarioPage({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-200 text-left">
-                <th className="py-3 pr-4 font-semibold text-slate-900">#</th>
-                <th className="py-3 pr-4 font-semibold text-slate-900">Platform</th>
-                <th className="py-3 pr-4 font-semibold text-slate-900 text-right">
+                <th scope="col" className="py-3 pr-4 font-semibold text-slate-900">#</th>
+                <th scope="col" className="py-3 pr-4 font-semibold text-slate-900">Platform</th>
+                <th scope="col" className="py-3 pr-4 font-semibold text-slate-900 text-right">
                   ASX Fee
                 </th>
                 {scenario.inputs.usTradesPerMonth != null && (
                   <>
-                    <th className="py-3 pr-4 font-semibold text-slate-900 text-right">
+                    <th scope="col" className="py-3 pr-4 font-semibold text-slate-900 text-right">
                       US Fee
                     </th>
-                    <th className="py-3 pr-4 font-semibold text-slate-900 text-right">
+                    <th scope="col" className="py-3 pr-4 font-semibold text-slate-900 text-right">
                       FX Rate
                     </th>
                   </>
                 )}
-                <th className="py-3 font-semibold text-slate-900 text-right">
+                <th scope="col" className="py-3 font-semibold text-slate-900 text-right">
                   Total Cost
                 </th>
-                <th className="py-3 pl-4"></th>
+                <th scope="col" className="py-3 pl-4"></th>
               </tr>
             </thead>
             <tbody>

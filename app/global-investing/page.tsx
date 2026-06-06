@@ -343,10 +343,10 @@ export default function GlobalInvestingHubPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-white border-b border-slate-200">
-                    <th className="text-left px-4 py-3 text-xs font-bold text-slate-600">Sector</th>
-                    <th className="text-right px-4 py-3 text-xs font-bold text-slate-600">ASX 200</th>
-                    <th className="text-right px-4 py-3 text-xs font-bold text-slate-600">MSCI World</th>
-                    <th className="text-right px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Difference</th>
+                    <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600">Sector</th>
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-bold text-slate-600">ASX 200</th>
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-bold text-slate-600">MSCI World</th>
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Difference</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -394,11 +394,11 @@ export default function GlobalInvestingHubPage() {
             <table className="w-full text-xs md:text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Method</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Examples</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden lg:table-cell">Ownership</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Cost</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden xl:table-cell">Key notes</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Method</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Examples</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden lg:table-cell">Ownership</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Cost</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden xl:table-cell">Key notes</th>
                 </tr>
               </thead>
               <tbody>

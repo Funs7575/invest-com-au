@@ -205,9 +205,9 @@ export default function EligibilityQuizClient() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="px-4 py-3 text-left font-extrabold text-slate-700">Grant</th>
-                  <th className="px-4 py-3 text-left font-extrabold text-slate-700">Estimated value</th>
-                  <th className="px-4 py-3 text-left font-extrabold text-slate-700">Status</th>
+                  <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Grant</th>
+                  <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Estimated value</th>
+                  <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

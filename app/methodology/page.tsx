@@ -217,9 +217,9 @@ export default function MethodologyPage() {
                 <table className="w-full text-sm">
                   <thead className="bg-slate-50 text-slate-700">
                     <tr>
-                      <th className="text-left px-4 py-3 font-semibold">Tier</th>
-                      <th className="text-left px-4 py-3 font-semibold">Placement effect</th>
-                      <th className="text-right px-4 py-3 font-semibold">Monthly (AUD)</th>
+                      <th scope="col" className="text-left px-4 py-3 font-semibold">Tier</th>
+                      <th scope="col" className="text-left px-4 py-3 font-semibold">Placement effect</th>
+                      <th scope="col" className="text-right px-4 py-3 font-semibold">Monthly (AUD)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

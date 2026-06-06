@@ -397,11 +397,11 @@ function HandoffBanner({ token }: { token: string }) {
           <table className="w-full text-xs text-slate-700 border-collapse">
             <thead>
               <tr className="border-b border-emerald-200 text-emerald-800">
-                <th className="text-left pb-1 font-semibold">Ticker</th>
-                <th className="text-left pb-1 font-semibold">Exchange</th>
-                <th className="text-right pb-1 font-semibold">Shares</th>
-                <th className="text-right pb-1 font-semibold">Cost basis</th>
-                <th className="text-right pb-1 font-semibold">Acquired</th>
+                <th scope="col" className="text-left pb-1 font-semibold">Ticker</th>
+                <th scope="col" className="text-left pb-1 font-semibold">Exchange</th>
+                <th scope="col" className="text-right pb-1 font-semibold">Shares</th>
+                <th scope="col" className="text-right pb-1 font-semibold">Cost basis</th>
+                <th scope="col" className="text-right pb-1 font-semibold">Acquired</th>
               </tr>
             </thead>
             <tbody>

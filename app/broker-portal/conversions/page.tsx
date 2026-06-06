@@ -301,22 +301,22 @@ export default function ConversionsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left">
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Date
                 </th>
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Event
                 </th>
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   <span className="inline-flex items-center gap-1">Click ID <InfoTip text="Unique identifier linking this conversion back to the original ad click for attribution." /></span>
                 </th>
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Value
                 </th>
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Campaign
                 </th>
-                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Source
                 </th>
               </tr>

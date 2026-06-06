@@ -248,10 +248,10 @@ export default function DepositGuidePage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Deposit size</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Deposit amount</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">LMI payable?</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Loan size</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Deposit size</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Deposit amount</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">LMI payable?</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Loan size</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -310,10 +310,10 @@ export default function DepositGuidePage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">LVR (deposit)</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$500K purchase</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$750K purchase</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$1M purchase</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">LVR (deposit)</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$500K purchase</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$750K purchase</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">$1M purchase</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -525,10 +525,10 @@ export default function DepositGuidePage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Savings rate</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">After 12 months</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">After 24 months</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Time to $80K</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Savings rate</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">After 12 months</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">After 24 months</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Time to $80K</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -626,9 +626,9 @@ export default function DepositGuidePage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Cost</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Typical range</th>
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Notes</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Cost</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">Typical range</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Notes</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -686,9 +686,9 @@ export default function DepositGuidePage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">State</th>
-                    <th className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Stamp duty concession</th>
-                    <th className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">FHOG (new builds)</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">State</th>
+                    <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Stamp duty concession</th>
+                    <th scope="col" className="text-right px-3 py-2 font-semibold text-slate-700 border border-slate-200">FHOG (new builds)</th>
                   </tr>
                 </thead>
                 <tbody>

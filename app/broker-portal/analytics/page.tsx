@@ -862,14 +862,14 @@ export default function AnalyticsPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                      <th className="px-5 py-3 text-left">Rank</th>
-                      <th className="px-5 py-3 text-left">Campaign ID</th>
-                      <th className="px-5 py-3 text-right">Clicks</th>
-                      <th className="px-5 py-3 text-right">CTR</th>
-                      <th className="px-5 py-3 text-right">Conv. Rate</th>
-                      <th className="px-5 py-3 text-right">Avg CPC</th>
-                      <th className="px-5 py-3 text-right">Spend</th>
-                      <th className="px-5 py-3 text-center">Score</th>
+                      <th scope="col" className="px-5 py-3 text-left">Rank</th>
+                      <th scope="col" className="px-5 py-3 text-left">Campaign ID</th>
+                      <th scope="col" className="px-5 py-3 text-right">Clicks</th>
+                      <th scope="col" className="px-5 py-3 text-right">CTR</th>
+                      <th scope="col" className="px-5 py-3 text-right">Conv. Rate</th>
+                      <th scope="col" className="px-5 py-3 text-right">Avg CPC</th>
+                      <th scope="col" className="px-5 py-3 text-right">Spend</th>
+                      <th scope="col" className="px-5 py-3 text-center">Score</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

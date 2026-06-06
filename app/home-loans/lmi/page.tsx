@@ -254,9 +254,9 @@ export default function LMIPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">LVR</th>
+                  <th scope="col" className="text-left px-5 py-3">LVR</th>
                   {COST_COLUMNS.map((col) => (
-                    <th key={col} className="text-left px-5 py-3">{col}</th>
+                    <th scope="col" key={col} className="text-left px-5 py-3">{col}</th>
                   ))}
                 </tr>
               </thead>
@@ -320,8 +320,8 @@ export default function LMIPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">LVR band</th>
-                  <th className="text-left px-5 py-3">What it means for LMI</th>
+                  <th scope="col" className="text-left px-5 py-3">LVR band</th>
+                  <th scope="col" className="text-left px-5 py-3">What it means for LMI</th>
                 </tr>
               </thead>
               <tbody>

@@ -169,9 +169,9 @@ export default function PensionPhasePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Tax item</th>
-                    <th className="px-5 py-4 text-center font-bold text-xs uppercase tracking-wide text-amber-300">Accumulation phase</th>
-                    <th className="px-5 py-4 text-center font-bold text-xs uppercase tracking-wide text-emerald-300">Pension phase</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Tax item</th>
+                    <th scope="col" className="px-5 py-4 text-center font-bold text-xs uppercase tracking-wide text-amber-300">Accumulation phase</th>
+                    <th scope="col" className="px-5 py-4 text-center font-bold text-xs uppercase tracking-wide text-emerald-300">Pension phase</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -262,8 +262,8 @@ export default function PensionPhasePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Age</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-emerald-300">Minimum annual drawdown</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Age</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-emerald-300">Minimum annual drawdown</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -321,8 +321,8 @@ export default function PensionPhasePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Date of birth</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Preservation age</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Date of birth</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Preservation age</th>
                   </tr>
                 </thead>
                 <tbody>

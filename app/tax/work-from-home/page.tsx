@@ -267,13 +267,13 @@ export default function WorkFromHomePage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 w-1/3">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 w-1/3">
                       Expense item
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700 w-1/3">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-700 w-1/3">
                       Fixed rate (67c/hr)
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 w-1/3">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 w-1/3">
                       Actual cost method
                     </th>
                   </tr>
@@ -640,11 +640,11 @@ export default function WorkFromHomePage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Asset</th>
-                    <th className="px-4 py-3 text-center font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Asset</th>
+                    <th scope="col" className="px-4 py-3 text-center font-extrabold text-slate-700">
                       Effective life
                     </th>
-                    <th className="px-4 py-3 text-center font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-center font-extrabold text-slate-700">
                       Annual deduction rate
                     </th>
                   </tr>

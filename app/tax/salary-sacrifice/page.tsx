@@ -360,10 +360,10 @@ export default function SalarySacrificePage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">Benefit</th>
-                  <th className="text-left p-3 text-xs font-bold">FBT treatment</th>
-                  <th className="text-left p-3 text-xs font-bold">Tax outcome</th>
-                  <th className="text-left p-3 text-xs font-bold">Notes</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Benefit</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">FBT treatment</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Tax outcome</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -431,12 +431,12 @@ export default function SalarySacrificePage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">Annual income</th>
-                  <th className="text-right p-3 text-xs font-bold">Marginal rate</th>
-                  <th className="text-right p-3 text-xs font-bold">Take-home reduction</th>
-                  <th className="text-right p-3 text-xs font-bold">Income tax saved</th>
-                  <th className="text-right p-3 text-xs font-bold">Super tax (15%)</th>
-                  <th className="text-right p-3 text-xs font-bold text-green-300">Net benefit</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Annual income</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Marginal rate</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Take-home reduction</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Income tax saved</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Super tax (15%)</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold text-green-300">Net benefit</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -584,9 +584,9 @@ export default function SalarySacrificePage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">Measure</th>
-                  <th className="text-left p-3 text-xs font-bold">Effect</th>
-                  <th className="text-left p-3 text-xs font-bold">Detail</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Measure</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Effect</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Detail</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

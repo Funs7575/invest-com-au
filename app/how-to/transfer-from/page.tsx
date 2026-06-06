@@ -120,11 +120,11 @@ export default async function TransferFromIndex() {
                 <table className="w-full text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700">From</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">CHESS transfer fee</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">In-specie</th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">Timeline</th>
-                      <th className="px-4 py-3"></th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">From</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">CHESS transfer fee</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">In-specie</th>
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">Timeline</th>
+                      <th scope="col" className="px-4 py-3"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

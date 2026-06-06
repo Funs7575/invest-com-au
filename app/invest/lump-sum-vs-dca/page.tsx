@@ -250,9 +250,9 @@ export default function LumpSumVsDcaPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Dimension</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-emerald-700">Lump Sum</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700">DCA</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Dimension</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-emerald-700">Lump Sum</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-700">DCA</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

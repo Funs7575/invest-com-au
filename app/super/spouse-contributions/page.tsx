@@ -235,10 +235,10 @@ export default function SpouseContributionsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Spouse&apos;s Income</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Offset Rate</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Offset Applies On First</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Maximum Offset</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Spouse&apos;s Income</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Offset Rate</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Offset Applies On First</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Maximum Offset</th>
                 </tr>
               </thead>
               <tbody>
@@ -363,9 +363,9 @@ export default function SpouseContributionsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Spouse Contribution</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Super Splitting</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Spouse Contribution</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Super Splitting</th>
                 </tr>
               </thead>
               <tbody>

@@ -270,12 +270,12 @@ export default function HealthScoresClient({
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600">#</th>
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600">Platform</th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600">Score</th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600 hidden sm:table-cell">AFSL</th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell">Regulatory</th>
-                  <th className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell">Stability</th>
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600">#</th>
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600">Platform</th>
+                  <th scope="col" className="text-center px-3 py-3 font-semibold text-slate-600">Score</th>
+                  <th scope="col" className="text-center px-3 py-3 font-semibold text-slate-600 hidden sm:table-cell">AFSL</th>
+                  <th scope="col" className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell">Regulatory</th>
+                  <th scope="col" className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell">Stability</th>
                 </tr>
               </thead>
               <tbody>

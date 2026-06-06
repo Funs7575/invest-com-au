@@ -332,13 +332,13 @@ export default function SmsfWindUpPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Fund phase
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Asset held &lt; 12 months
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Asset held &gt; 12 months
                     </th>
                   </tr>
@@ -551,10 +551,10 @@ export default function SmsfWindUpPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Cost item
                     </th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
                       Indicative range
                     </th>
                   </tr>

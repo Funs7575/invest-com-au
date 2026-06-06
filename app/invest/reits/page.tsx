@@ -212,11 +212,11 @@ export default async function ReitsPage() {
                   <table className="w-full text-sm border-collapse">
                     <thead>
                       <tr className="bg-slate-50">
-                        <th className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
-                        <th className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Name</th>
-                        <th className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Market Cap</th>
-                        <th className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
-                        <th className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Notes</th>
+                        <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
+                        <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Name</th>
+                        <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Market Cap</th>
+                        <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
+                        <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Notes</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -258,11 +258,11 @@ export default async function ReitsPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ETF</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Manager</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">MER</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Holdings</th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ETF</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Manager</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">MER</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Holdings</th>
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Yield</th>
                 </tr>
               </thead>
               <tbody>

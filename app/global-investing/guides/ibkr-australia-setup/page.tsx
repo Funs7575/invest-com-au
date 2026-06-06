@@ -307,9 +307,9 @@ export default function IbkrAustraliaSetupPage() {
             <table className="w-full text-xs md:text-sm">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Account type</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Who it&apos;s for</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Account type</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Who it&apos;s for</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -528,9 +528,9 @@ export default function IbkrAustraliaSetupPage() {
             <table className="w-full text-xs md:text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Cost item</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Indicative amount</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Cost item</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Indicative amount</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody>

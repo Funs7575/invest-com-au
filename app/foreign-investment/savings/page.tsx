@@ -305,9 +305,9 @@ export default async function ForeignSavingsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-left px-5 py-3 text-xs font-bold text-slate-600">Feature</th>
-                  <th className="text-center px-5 py-3 text-xs font-bold text-green-700">Temp Visa Holder in AU</th>
-                  <th className="text-center px-5 py-3 text-xs font-bold text-amber-700">Non-Resident</th>
+                  <th scope="col" className="text-left px-5 py-3 text-xs font-bold text-slate-600">Feature</th>
+                  <th scope="col" className="text-center px-5 py-3 text-xs font-bold text-green-700">Temp Visa Holder in AU</th>
+                  <th scope="col" className="text-center px-5 py-3 text-xs font-bold text-amber-700">Non-Resident</th>
                 </tr>
               </thead>
               <tbody>

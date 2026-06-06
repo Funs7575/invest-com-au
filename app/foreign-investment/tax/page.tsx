@@ -175,10 +175,10 @@ export default async function ForeignTaxPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Income type</th>
-                  <th className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">No DTA</th>
-                  <th className="text-start px-4 py-3 text-xs font-bold text-green-700 uppercase tracking-wide">With DTA</th>
-                  <th className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide hidden md:table-cell">Notes</th>
+                  <th scope="col" className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Income type</th>
+                  <th scope="col" className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">No DTA</th>
+                  <th scope="col" className="text-start px-4 py-3 text-xs font-bold text-green-700 uppercase tracking-wide">With DTA</th>
+                  <th scope="col" className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody>

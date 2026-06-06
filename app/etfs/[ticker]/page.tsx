@@ -217,9 +217,9 @@ export default async function ETFTickerPage({
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-2.5 px-4 text-xs font-bold">Investment</th>
-                  <th className="text-right py-2.5 px-4 text-xs font-bold">Annual MER cost</th>
-                  <th className="text-right py-2.5 px-4 text-xs font-bold">10-year cost (est.)</th>
+                  <th scope="col" className="text-left py-2.5 px-4 text-xs font-bold">Investment</th>
+                  <th scope="col" className="text-right py-2.5 px-4 text-xs font-bold">Annual MER cost</th>
+                  <th scope="col" className="text-right py-2.5 px-4 text-xs font-bold">10-year cost (est.)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

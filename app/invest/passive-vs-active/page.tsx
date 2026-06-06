@@ -202,11 +202,11 @@ export default function PassiveVsActivePage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Investment vehicle</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">MER (p.a.)</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Performance fee</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-red-700">Total fee drag (20 yr)</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-emerald-700">Approx. final value</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Investment vehicle</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">MER (p.a.)</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Performance fee</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-red-700">Total fee drag (20 yr)</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-emerald-700">Approx. final value</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -545,9 +545,9 @@ export default function PassiveVsActivePage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Aspect</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700">Passive</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Active</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Aspect</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-700">Passive</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Active</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -575,9 +575,9 @@ export default function PassiveVsActivePage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Question</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-amber-700">Points toward passive</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Points toward active</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Question</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-amber-700">Points toward passive</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Points toward active</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

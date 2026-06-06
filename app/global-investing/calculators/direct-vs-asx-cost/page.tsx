@@ -161,10 +161,10 @@ export default function DirectVsAsxCostPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Cost factor</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">AU ETF (IVV)</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Direct US shares</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">Notes</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Cost factor</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">AU ETF (IVV)</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Direct US shares</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 hidden md:table-cell">Notes</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

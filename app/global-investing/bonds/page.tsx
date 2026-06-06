@@ -87,12 +87,12 @@ export default function GlobalBondsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Ticker</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Name</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Exposure</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">MER</th>
-                  <th className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">AUD hedged</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">~Yield</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Ticker</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Name</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Exposure</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">MER</th>
+                  <th scope="col" className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">AUD hedged</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">~Yield</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

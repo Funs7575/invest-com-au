@@ -189,9 +189,9 @@ export default function CurrencyConverterPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 font-medium text-slate-600">Threshold</th>
-                    <th className="text-right py-2 font-medium text-slate-600">AUD</th>
-                    <th className="text-right py-2 font-medium text-slate-600">{toCurrency}</th>
+                    <th scope="col" className="text-left py-2 font-medium text-slate-600">Threshold</th>
+                    <th scope="col" className="text-right py-2 font-medium text-slate-600">AUD</th>
+                    <th scope="col" className="text-right py-2 font-medium text-slate-600">{toCurrency}</th>
                   </tr>
                 </thead>
                 <tbody>

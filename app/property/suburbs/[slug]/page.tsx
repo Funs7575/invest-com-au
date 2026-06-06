@@ -320,9 +320,9 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Metric</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">{suburb.suburb}</th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">{suburb.state} Avg</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Metric</th>
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">{suburb.suburb}</th>
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">{suburb.state} Avg</th>
                 </tr>
               </thead>
               <tbody>

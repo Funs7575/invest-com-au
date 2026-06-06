@@ -195,9 +195,9 @@ export default function InvoiceDetailPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide print:bg-slate-100">
-                <th className="px-5 py-3 text-left">Description</th>
-                <th className="px-5 py-3 text-right">Qty</th>
-                <th className="px-5 py-3 text-right">Amount</th>
+                <th scope="col" className="px-5 py-3 text-left">Description</th>
+                <th scope="col" className="px-5 py-3 text-right">Qty</th>
+                <th scope="col" className="px-5 py-3 text-right">Amount</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

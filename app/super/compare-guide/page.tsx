@@ -271,9 +271,9 @@ export default function SuperCompareGuidePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Factor</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">What to look at</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Why it matters</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Factor</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">What to look at</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Why it matters</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -338,10 +338,10 @@ export default function SuperCompareGuidePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Type</th>
-                    <th className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Model</th>
-                    <th className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide">Examples</th>
-                    <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Notes</th>
+                    <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Type</th>
+                    <th scope="col" className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Model</th>
+                    <th scope="col" className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide">Examples</th>
+                    <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Notes</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -506,10 +506,10 @@ export default function SuperCompareGuidePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Tool</th>
-                    <th className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide">Where</th>
-                    <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide text-emerald-300">What it shows</th>
-                    <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Limitations</th>
+                    <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Tool</th>
+                    <th scope="col" className="px-3 py-4 text-left font-bold text-xs uppercase tracking-wide">Where</th>
+                    <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide text-emerald-300">What it shows</th>
+                    <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Limitations</th>
                   </tr>
                 </thead>
                 <tbody>

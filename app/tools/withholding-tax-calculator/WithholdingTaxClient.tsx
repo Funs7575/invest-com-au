@@ -300,13 +300,13 @@ export default function WithholdingTaxClient() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 border-b border-slate-200">
                   <tr>
-                    <th className="text-left px-4 py-3 font-bold text-slate-700">
+                    <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">
                       Income type
                     </th>
-                    <th className="text-left px-4 py-3 font-bold text-slate-700">
+                    <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">
                       Rate
                     </th>
-                    <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
+                    <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
                       Notes
                     </th>
                   </tr>

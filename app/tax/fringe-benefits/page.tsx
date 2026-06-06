@@ -198,10 +198,10 @@ export default function FringeBenefitsPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Type</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">What it means</th>
-                    <th className="px-4 py-3 text-right font-extrabold text-amber-700">Gross-up rate</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Example</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Type</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">What it means</th>
+                    <th scope="col" className="px-4 py-3 text-right font-extrabold text-amber-700">Gross-up rate</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Example</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

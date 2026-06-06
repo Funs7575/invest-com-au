@@ -128,9 +128,9 @@ export default function ForeignIncomeTaxPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Foreign income type</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Examples</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Key tax consideration</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Foreign income type</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Examples</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Key tax consideration</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -217,9 +217,9 @@ export default function ForeignIncomeTaxPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Country</th>
-                    <th className="text-center p-4 font-bold text-slate-700">Standard dividend WHT</th>
-                    <th className="text-center p-4 font-bold text-slate-700">DTA rate (qualifying)</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Country</th>
+                    <th scope="col" className="text-center p-4 font-bold text-slate-700">Standard dividend WHT</th>
+                    <th scope="col" className="text-center p-4 font-bold text-slate-700">DTA rate (qualifying)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -318,8 +318,8 @@ export default function ForeignIncomeTaxPage() {
               <table className="w-full text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left p-4 font-bold text-slate-700">Transaction</th>
-                    <th className="text-left p-4 font-bold text-slate-700">Exchange rate to use</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Transaction</th>
+                    <th scope="col" className="text-left p-4 font-bold text-slate-700">Exchange rate to use</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

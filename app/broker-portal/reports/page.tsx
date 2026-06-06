@@ -347,16 +347,16 @@ export default function ReportsPage() {
               <table className="w-full text-sm min-w-[700px]">
                 <thead>
                   <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                    <th className="px-3 md:px-5 py-3 text-left">Campaign</th>
-                    <th className="px-3 md:px-5 py-3 text-left">Type</th>
-                    <th className="px-3 md:px-5 py-3 text-left">Status</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Clicks</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Impr.</th>
-                    <th className="px-3 md:px-5 py-3 text-right">CTR</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Conv.</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Conv. Rate</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Avg CPC</th>
-                    <th className="px-3 md:px-5 py-3 text-right">Spend</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-left">Campaign</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-left">Type</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-left">Status</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Clicks</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Impr.</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">CTR</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Conv.</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Conv. Rate</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Avg CPC</th>
+                    <th scope="col" className="px-3 md:px-5 py-3 text-right">Spend</th>
                   </tr>
                 </thead>
               <tbody className="divide-y divide-slate-100">
@@ -428,12 +428,12 @@ export default function ReportsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                  <th className="px-5 py-3 text-left">Date</th>
-                  <th className="px-5 py-3 text-right">Clicks</th>
-                  <th className="px-5 py-3 text-right">Impressions</th>
-                  <th className="px-5 py-3 text-right">CTR</th>
-                  <th className="px-5 py-3 text-right">Conversions</th>
-                  <th className="px-5 py-3 text-right">Spend</th>
+                  <th scope="col" className="px-5 py-3 text-left">Date</th>
+                  <th scope="col" className="px-5 py-3 text-right">Clicks</th>
+                  <th scope="col" className="px-5 py-3 text-right">Impressions</th>
+                  <th scope="col" className="px-5 py-3 text-right">CTR</th>
+                  <th scope="col" className="px-5 py-3 text-right">Conversions</th>
+                  <th scope="col" className="px-5 py-3 text-right">Spend</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

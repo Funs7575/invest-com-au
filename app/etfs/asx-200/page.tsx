@@ -338,12 +338,12 @@ export default function ASX200ETFPage() {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                  <th className="px-4 py-3 font-semibold">Ticker</th>
-                  <th className="px-4 py-3 font-semibold">Name</th>
-                  <th className="px-4 py-3 font-semibold">Index</th>
-                  <th className="px-4 py-3 font-semibold">MER</th>
-                  <th className="px-4 py-3 font-semibold">Holdings</th>
-                  <th className="px-4 py-3 font-semibold">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Ticker</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Name</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Index</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">MER</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Holdings</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -440,10 +440,10 @@ export default function ASX200ETFPage() {
               <caption className="sr-only">Approximate top 10 holdings of the S&amp;P/ASX 200 and their index weights</caption>
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                  <th className="px-4 py-3 font-semibold">#</th>
-                  <th className="px-4 py-3 font-semibold">Company</th>
-                  <th className="px-4 py-3 font-semibold">Sector</th>
-                  <th className="px-4 py-3 font-semibold text-right">Approx. weight</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">#</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Company</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">Sector</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-right">Approx. weight</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

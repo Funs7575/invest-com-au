@@ -127,9 +127,9 @@ export default function HalalInvestingPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-emerald-50 text-left">
-                    <th className="px-4 py-3 font-semibold text-slate-800 border border-slate-200 w-1/4">Principle</th>
-                    <th className="px-4 py-3 font-semibold text-slate-800 border border-slate-200 w-1/4">What it means</th>
-                    <th className="px-4 py-3 font-semibold text-slate-800 border border-slate-200">Practical investing implication</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-slate-800 border border-slate-200 w-1/4">Principle</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-slate-800 border border-slate-200 w-1/4">What it means</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-slate-800 border border-slate-200">Practical investing implication</th>
                   </tr>
                 </thead>
                 <tbody>

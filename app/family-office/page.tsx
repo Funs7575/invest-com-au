@@ -123,10 +123,10 @@ export default function FamilyOfficePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Vehicle</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Primary use</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Tax treatment</th>
-                  <th className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Complexity</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Vehicle</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Primary use</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Tax treatment</th>
+                  <th scope="col" className="text-center px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Complexity</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

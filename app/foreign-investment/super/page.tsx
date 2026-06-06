@@ -192,10 +192,10 @@ export default async function ForeignSuperPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-left px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Component type</th>
-                  <th className="text-center px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">WHT rate</th>
-                  <th className="text-center px-5 py-3 text-xs font-bold text-red-600 uppercase tracking-wide">WHM rate</th>
-                  <th className="text-left px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Notes</th>
+                  <th scope="col" className="text-left px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Component type</th>
+                  <th scope="col" className="text-center px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">WHT rate</th>
+                  <th scope="col" className="text-center px-5 py-3 text-xs font-bold text-red-600 uppercase tracking-wide">WHM rate</th>
+                  <th scope="col" className="text-left px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Notes</th>
                 </tr>
               </thead>
               <tbody>

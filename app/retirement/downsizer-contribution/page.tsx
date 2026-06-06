@@ -271,9 +271,9 @@ export default function DownsizerContributionPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Standard non-concessional</th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide">Downsizer contribution</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">Standard non-concessional</th>
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide">Downsizer contribution</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">

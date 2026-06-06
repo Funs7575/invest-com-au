@@ -391,9 +391,9 @@ export default function SuperDeathBenefitPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-56">Category</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Definition</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300 w-40">Can receive?</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-56">Category</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Definition</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300 w-40">Can receive?</th>
                 </tr>
               </thead>
               <tbody>
@@ -420,10 +420,10 @@ export default function SuperDeathBenefitPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Recipient</th>
-                  <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide w-28">SIS dependant?</th>
-                  <th className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide w-28">Tax dependant?</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Lump sum tax</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Recipient</th>
+                  <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide w-28">SIS dependant?</th>
+                  <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide w-28">Tax dependant?</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Lump sum tax</th>
                 </tr>
               </thead>
               <tbody>
@@ -475,9 +475,9 @@ export default function SuperDeathBenefitPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Line item</th>
-                  <th className="px-5 py-4 text-right font-bold text-xs uppercase tracking-wide text-red-300">Adult son</th>
-                  <th className="px-5 py-4 text-right font-bold text-xs uppercase tracking-wide text-green-300">Spouse</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Line item</th>
+                  <th scope="col" className="px-5 py-4 text-right font-bold text-xs uppercase tracking-wide text-red-300">Adult son</th>
+                  <th scope="col" className="px-5 py-4 text-right font-bold text-xs uppercase tracking-wide text-green-300">Spouse</th>
                 </tr>
               </thead>
               <tbody>
@@ -505,9 +505,9 @@ export default function SuperDeathBenefitPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-48">Feature</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Binding nomination</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">Non-binding nomination</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-48">Feature</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Binding nomination</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">Non-binding nomination</th>
                 </tr>
               </thead>
               <tbody>
@@ -544,9 +544,9 @@ export default function SuperDeathBenefitPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-48">Feature</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">Lump sum death benefit</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Reversionary pension</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-48">Feature</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">Lump sum death benefit</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Reversionary pension</th>
                 </tr>
               </thead>
               <tbody>

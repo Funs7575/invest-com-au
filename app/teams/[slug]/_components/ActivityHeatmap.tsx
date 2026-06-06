@@ -45,7 +45,7 @@ export default function ActivityHeatmap({ buckets, total }: Props) {
         <table className="text-[10px] text-slate-500 select-none">
           <thead>
             <tr>
-              <th className="w-10" />
+              <th scope="col" className="w-10" />
               {Array.from({ length: 24 }).map((_, h) => (
                 <th
                   key={h}

@@ -467,19 +467,19 @@ export default function EthicalInvestingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">
                     Ticker
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Fund
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">
                     MER
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 hidden md:table-cell">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 hidden md:table-cell">
                     Index Tracked
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Key Exclusions
                   </th>
                 </tr>

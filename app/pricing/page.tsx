@@ -242,9 +242,9 @@ export default function PricingPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-100">
-                      <th className="text-left py-2 px-5 font-medium text-slate-600 w-48">Service</th>
-                      <th className="text-left py-2 px-3 font-medium text-slate-600 w-36">Typical cost</th>
-                      <th className="text-left py-2 px-3 font-medium text-slate-600">Notes</th>
+                      <th scope="col" className="text-left py-2 px-5 font-medium text-slate-600 w-48">Service</th>
+                      <th scope="col" className="text-left py-2 px-3 font-medium text-slate-600 w-36">Typical cost</th>
+                      <th scope="col" className="text-left py-2 px-3 font-medium text-slate-600">Notes</th>
                     </tr>
                   </thead>
                   <tbody>

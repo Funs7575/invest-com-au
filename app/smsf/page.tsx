@@ -197,9 +197,9 @@ export default function SmsfPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left font-bold text-slate-800 px-4 py-3">Cost item</th>
-                  <th className="text-left font-bold text-slate-800 px-4 py-3">Typical range</th>
-                  <th className="text-left font-bold text-slate-800 px-4 py-3 hidden sm:table-cell">Notes</th>
+                  <th scope="col" className="text-left font-bold text-slate-800 px-4 py-3">Cost item</th>
+                  <th scope="col" className="text-left font-bold text-slate-800 px-4 py-3">Typical range</th>
+                  <th scope="col" className="text-left font-bold text-slate-800 px-4 py-3 hidden sm:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -255,9 +255,9 @@ export default function SmsfPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left font-bold text-slate-800 px-4 py-3 w-1/3">Factor</th>
-                  <th className="text-left font-bold text-amber-700 px-4 py-3">SMSF</th>
-                  <th className="text-left font-bold text-slate-600 px-4 py-3">Industry / retail fund</th>
+                  <th scope="col" className="text-left font-bold text-slate-800 px-4 py-3 w-1/3">Factor</th>
+                  <th scope="col" className="text-left font-bold text-amber-700 px-4 py-3">SMSF</th>
+                  <th scope="col" className="text-left font-bold text-slate-600 px-4 py-3">Industry / retail fund</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

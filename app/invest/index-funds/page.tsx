@@ -282,13 +282,13 @@ export default async function IndexFundsPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-100">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                     Feature
                   </th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                     Index Managed Fund
                   </th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                     Index ETF
                   </th>
                 </tr>
@@ -454,16 +454,16 @@ export default async function IndexFundsPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-50">
-                    <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                       Year
                     </th>
-                    <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                       Index fund (0.10% MER)
                     </th>
-                    <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                       Active fund (1.00% MER)
                     </th>
-                    <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                    <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                       Cost of fees
                     </th>
                   </tr>
@@ -527,22 +527,22 @@ export default async function IndexFundsPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-100">
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                     Ticker
                   </th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                     Name &amp; Manager
                   </th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                     Index Tracked
                   </th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                     MER
                   </th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                     5-yr Return
                   </th>
-                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
                     Dist. Yield
                   </th>
                 </tr>

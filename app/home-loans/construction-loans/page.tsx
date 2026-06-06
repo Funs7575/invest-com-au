@@ -270,9 +270,9 @@ export default function ConstructionLoansPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Feature</th>
-                  <th className="text-left px-5 py-3 text-blue-300">Construction loan</th>
-                  <th className="text-left px-5 py-3 text-slate-300">Standard home loan</th>
+                  <th scope="col" className="text-left px-5 py-3">Feature</th>
+                  <th scope="col" className="text-left px-5 py-3 text-blue-300">Construction loan</th>
+                  <th scope="col" className="text-left px-5 py-3 text-slate-300">Standard home loan</th>
                 </tr>
               </thead>
               <tbody>
@@ -300,9 +300,9 @@ export default function ConstructionLoansPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Stage</th>
-                  <th className="text-left px-5 py-3">Work completed</th>
-                  <th className="text-left px-5 py-3">Typical % drawn</th>
+                  <th scope="col" className="text-left px-5 py-3">Stage</th>
+                  <th scope="col" className="text-left px-5 py-3">Work completed</th>
+                  <th scope="col" className="text-left px-5 py-3">Typical % drawn</th>
                 </tr>
               </thead>
               <tbody>
@@ -360,8 +360,8 @@ export default function ConstructionLoansPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Cost</th>
-                  <th className="text-left px-5 py-3">Typical amount</th>
+                  <th scope="col" className="text-left px-5 py-3">Cost</th>
+                  <th scope="col" className="text-left px-5 py-3">Typical amount</th>
                 </tr>
               </thead>
               <tbody>

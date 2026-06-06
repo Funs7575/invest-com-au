@@ -162,10 +162,10 @@ export default function ValueInvestingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Metric</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Formula</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Value investor&apos;s target</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">ASX context</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Metric</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Formula</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Value investor&apos;s target</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">ASX context</th>
                 </tr>
               </thead>
               <tbody>
@@ -271,9 +271,9 @@ export default function ValueInvestingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 w-1/3">Dimension</th>
-                  <th className="text-left py-3 px-4 font-semibold text-amber-700 border-b border-slate-200">Value</th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-600 border-b border-slate-200">Growth</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 w-1/3">Dimension</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-amber-700 border-b border-slate-200">Value</th>
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-600 border-b border-slate-200">Growth</th>
                 </tr>
               </thead>
               <tbody>

@@ -299,10 +299,10 @@ export default function InterestOnlyPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left px-5 py-3">Feature</th>
-                  <th className="text-left px-5 py-3 text-blue-300">Interest-only</th>
-                  <th className="text-left px-5 py-3 text-green-300">Principal &amp; interest</th>
-                  <th className="text-left px-5 py-3 text-slate-300">Notes</th>
+                  <th scope="col" className="text-left px-5 py-3">Feature</th>
+                  <th scope="col" className="text-left px-5 py-3 text-blue-300">Interest-only</th>
+                  <th scope="col" className="text-left px-5 py-3 text-green-300">Principal &amp; interest</th>
+                  <th scope="col" className="text-left px-5 py-3 text-slate-300">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -476,9 +476,9 @@ export default function InterestOnlyPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 font-semibold text-slate-700">Scenario</th>
-                    <th className="text-left py-2 font-semibold text-slate-700">Deductible amount</th>
-                    <th className="text-left py-2 font-semibold text-slate-700">After-tax cost (45% MTR)</th>
+                    <th scope="col" className="text-left py-2 font-semibold text-slate-700">Scenario</th>
+                    <th scope="col" className="text-left py-2 font-semibold text-slate-700">Deductible amount</th>
+                    <th scope="col" className="text-left py-2 font-semibold text-slate-700">After-tax cost (45% MTR)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

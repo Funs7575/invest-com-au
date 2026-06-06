@@ -307,9 +307,9 @@ export default function UsEstateTaxPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600">Asset</th>
-                  <th className="text-center px-3 py-3 text-xs font-bold text-slate-600">US-situs?</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600">Asset</th>
+                  <th scope="col" className="text-center px-3 py-3 text-xs font-bold text-slate-600">US-situs?</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -404,9 +404,9 @@ export default function UsEstateTaxPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600">US-situs assets</th>
-                  <th className="text-right px-4 py-3 text-xs font-bold text-slate-600">Marginal rate</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Note</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600">US-situs assets</th>
+                  <th scope="col" className="text-right px-4 py-3 text-xs font-bold text-slate-600">Marginal rate</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 hidden sm:table-cell">Note</th>
                 </tr>
               </thead>
               <tbody>

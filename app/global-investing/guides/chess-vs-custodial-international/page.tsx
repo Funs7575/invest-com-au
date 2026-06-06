@@ -333,9 +333,9 @@ export default function ChessVsCustodialPage() {
             <table className="w-full min-w-[640px] border-collapse text-sm">
               <thead>
                 <tr className="bg-slate-100 text-left">
-                  <th className="px-4 py-3 font-bold text-slate-900 rounded-tl-xl">Aspect</th>
-                  <th className="px-4 py-3 font-bold text-slate-900">Direct ownership</th>
-                  <th className="px-4 py-3 font-bold text-slate-900 rounded-tr-xl">Custodial</th>
+                  <th scope="col" className="px-4 py-3 font-bold text-slate-900 rounded-tl-xl">Aspect</th>
+                  <th scope="col" className="px-4 py-3 font-bold text-slate-900">Direct ownership</th>
+                  <th scope="col" className="px-4 py-3 font-bold text-slate-900 rounded-tr-xl">Custodial</th>
                 </tr>
               </thead>
               <tbody>

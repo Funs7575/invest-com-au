@@ -195,13 +195,13 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-200">
-                  <th className="text-left text-xs font-semibold text-slate-500 pb-2 pr-4">Broker</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">ASX Brokerage</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">US Brokerage</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">FX Cost</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2 font-bold">Yearly Total</th>
-                  <th className="text-left text-xs font-semibold text-slate-500 pb-2 pl-4">Cost Bar</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 pl-2">
+                  <th scope="col" className="text-left text-xs font-semibold text-slate-500 pb-2 pr-4">Broker</th>
+                  <th scope="col" className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">ASX Brokerage</th>
+                  <th scope="col" className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">US Brokerage</th>
+                  <th scope="col" className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">FX Cost</th>
+                  <th scope="col" className="text-right text-xs font-semibold text-slate-500 pb-2 px-2 font-bold">Yearly Total</th>
+                  <th scope="col" className="text-left text-xs font-semibold text-slate-500 pb-2 pl-4">Cost Bar</th>
+                  <th scope="col" className="text-right text-xs font-semibold text-slate-500 pb-2 pl-2">
                     <span className="sr-only">Action</span>
                   </th>
                 </tr>

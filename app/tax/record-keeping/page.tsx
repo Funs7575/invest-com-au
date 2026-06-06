@@ -411,10 +411,10 @@ export default function RecordKeepingPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Cost Base Element</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">What to Keep</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Shares</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Property</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Cost Base Element</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">What to Keep</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Shares</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Property</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

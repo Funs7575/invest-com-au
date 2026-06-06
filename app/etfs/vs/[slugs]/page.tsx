@@ -421,9 +421,9 @@ export default async function ETFVsPage({
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr className="border-b-2 border-slate-200">
-                  <th className="text-left py-3 pr-4 text-xs font-bold text-slate-500 uppercase tracking-wide w-40">Metric</th>
-                  <th className="text-center py-3 px-4 text-sm font-black text-amber-700 font-mono w-1/3">{etfA.ticker}</th>
-                  <th className="text-center py-3 px-4 text-sm font-black text-blue-700 font-mono w-1/3">{etfB.ticker}</th>
+                  <th scope="col" className="text-left py-3 pr-4 text-xs font-bold text-slate-500 uppercase tracking-wide w-40">Metric</th>
+                  <th scope="col" className="text-center py-3 px-4 text-sm font-black text-amber-700 font-mono w-1/3">{etfA.ticker}</th>
+                  <th scope="col" className="text-center py-3 px-4 text-sm font-black text-blue-700 font-mono w-1/3">{etfB.ticker}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -496,10 +496,10 @@ export default async function ETFVsPage({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 text-xs font-bold text-slate-500">Portfolio</th>
-                    <th className="text-center py-2 text-xs font-bold text-amber-700 font-mono">{etfA.ticker} ({etfA.merDisplay})</th>
-                    <th className="text-center py-2 text-xs font-bold text-blue-700 font-mono">{etfB.ticker} ({etfB.merDisplay})</th>
-                    <th className="text-center py-2 text-xs font-bold text-slate-500">Difference</th>
+                    <th scope="col" className="text-left py-2 text-xs font-bold text-slate-500">Portfolio</th>
+                    <th scope="col" className="text-center py-2 text-xs font-bold text-amber-700 font-mono">{etfA.ticker} ({etfA.merDisplay})</th>
+                    <th scope="col" className="text-center py-2 text-xs font-bold text-blue-700 font-mono">{etfB.ticker} ({etfB.merDisplay})</th>
+                    <th scope="col" className="text-center py-2 text-xs font-bold text-slate-500">Difference</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

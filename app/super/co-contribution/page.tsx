@@ -263,9 +263,9 @@ export default function SuperCoContributionPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-900 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Income Range</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Maximum Co-Contribution</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">How It&apos;s Calculated</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Income Range</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Maximum Co-Contribution</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-slate-300">How It&apos;s Calculated</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -360,9 +360,9 @@ export default function SuperCoContributionPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Co-Contribution</th>
-                    <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">LISTO</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Co-Contribution</th>
+                    <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">LISTO</th>
                   </tr>
                 </thead>
                 <tbody>

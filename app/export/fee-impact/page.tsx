@@ -64,12 +64,12 @@ export default async function FeeImpactExportPage({
       <table className="w-full border-collapse text-xs">
         <thead>
           <tr className="bg-slate-50 border-b-2 border-slate-200">
-            <th className="text-left px-2.5 py-2 font-semibold text-slate-600">#</th>
-            <th className="text-left px-2.5 py-2 font-semibold text-slate-600">Broker</th>
-            <th className="text-right px-2.5 py-2 font-semibold text-slate-600">ASX/yr</th>
-            <th className="text-right px-2.5 py-2 font-semibold text-slate-600">US/yr</th>
-            <th className="text-right px-2.5 py-2 font-semibold text-slate-600">FX Cost</th>
-            <th className="text-right px-2.5 py-2 font-bold text-slate-600">Total/yr</th>
+            <th scope="col" className="text-left px-2.5 py-2 font-semibold text-slate-600">#</th>
+            <th scope="col" className="text-left px-2.5 py-2 font-semibold text-slate-600">Broker</th>
+            <th scope="col" className="text-right px-2.5 py-2 font-semibold text-slate-600">ASX/yr</th>
+            <th scope="col" className="text-right px-2.5 py-2 font-semibold text-slate-600">US/yr</th>
+            <th scope="col" className="text-right px-2.5 py-2 font-semibold text-slate-600">FX Cost</th>
+            <th scope="col" className="text-right px-2.5 py-2 font-bold text-slate-600">Total/yr</th>
           </tr>
         </thead>
         <tbody>

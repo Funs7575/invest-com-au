@@ -141,13 +141,13 @@ export default function InsuranceHubPage() {
               <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700 w-1/3">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700 w-1/3">
                       Your situation
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700">
                       Recommended cover
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-700 w-28">
+                    <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700 w-28">
                       Priority
                     </th>
                   </tr>

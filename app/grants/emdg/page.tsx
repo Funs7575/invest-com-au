@@ -89,9 +89,9 @@ export default function EmdgPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Tier</th>
-                    <th className="px-4 py-3 text-left font-extrabold text-slate-700">Who it&rsquo;s for</th>
-                    <th className="px-4 py-3 text-right font-extrabold text-slate-700">Max per year</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Tier</th>
+                    <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Who it&rsquo;s for</th>
+                    <th scope="col" className="px-4 py-3 text-right font-extrabold text-slate-700">Max per year</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

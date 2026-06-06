@@ -586,10 +586,10 @@ function FeeDeltaSection({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Period</th>
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600">ASX Δ</th>
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden sm:table-cell">US Δ</th>
-                    <th className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden md:table-cell">FX Δ</th>
+                    <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Period</th>
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600">ASX Δ</th>
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden sm:table-cell">US Δ</th>
+                    <th scope="col" className="text-right px-4 py-3 text-xs font-semibold text-slate-600 hidden md:table-cell">FX Δ</th>
                   </tr>
                 </thead>
                 <tbody>

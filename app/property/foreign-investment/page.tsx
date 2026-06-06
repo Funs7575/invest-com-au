@@ -176,9 +176,9 @@ export default function ForeignInvestmentPage() {
             <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Buyer type</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB needed?</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Buyer type</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">FIRB needed?</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -262,10 +262,10 @@ export default function ForeignInvestmentPage() {
             <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs text-center">Stamp duty surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs text-center hidden sm:table-cell">Annual land tax surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs text-center">Stamp duty surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs text-center hidden sm:table-cell">Annual land tax surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -347,8 +347,8 @@ export default function ForeignInvestmentPage() {
             <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs text-right">FIRB fee (residential)</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs text-right">FIRB fee (residential)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

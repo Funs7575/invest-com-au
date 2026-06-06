@@ -94,11 +94,11 @@ export default function OrgStudentsTab({ org: _org }: Props) {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-slate-50 text-[0.62rem] font-semibold text-slate-500 uppercase tracking-wider">
-                  <th className="px-4 py-2.5">Name / Email</th>
-                  <th className="px-4 py-2.5">Course</th>
-                  <th className="px-4 py-2.5">Progress</th>
-                  <th className="px-4 py-2.5">Certificate</th>
-                  <th className="px-4 py-2.5">Enrolled</th>
+                  <th scope="col" className="px-4 py-2.5">Name / Email</th>
+                  <th scope="col" className="px-4 py-2.5">Course</th>
+                  <th scope="col" className="px-4 py-2.5">Progress</th>
+                  <th scope="col" className="px-4 py-2.5">Certificate</th>
+                  <th scope="col" className="px-4 py-2.5">Enrolled</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

@@ -211,11 +211,11 @@ export default function WalletPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                  <th className="px-5 py-3 text-left">Date</th>
-                  <th className="px-5 py-3 text-left">Type</th>
-                  <th className="px-5 py-3 text-left">Description</th>
-                  <th className="px-5 py-3 text-right">Amount</th>
-                  <th className="px-5 py-3 text-right">Balance</th>
+                  <th scope="col" className="px-5 py-3 text-left">Date</th>
+                  <th scope="col" className="px-5 py-3 text-left">Type</th>
+                  <th scope="col" className="px-5 py-3 text-left">Description</th>
+                  <th scope="col" className="px-5 py-3 text-right">Amount</th>
+                  <th scope="col" className="px-5 py-3 text-right">Balance</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

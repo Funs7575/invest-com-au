@@ -225,16 +225,16 @@ export default function IncomTestPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Situation
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Income-free area (fortnight)
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Taper rate
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Approx. cut-off
                   </th>
                 </tr>
@@ -340,16 +340,16 @@ export default function IncomTestPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Tier
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Single — asset value
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Couple — combined asset value
                   </th>
-                  <th className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-3 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Deeming rate
                   </th>
                 </tr>
@@ -710,13 +710,13 @@ export default function IncomTestPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide w-8">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide w-8">
                     Step
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     What you calculate
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
                     Notes
                   </th>
                 </tr>

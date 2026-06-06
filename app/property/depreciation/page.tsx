@@ -210,9 +210,9 @@ export default function PropertyDepreciationPage() {
                 <table className="w-full text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="text-left px-5 py-3 font-bold text-slate-700">Item</th>
-                      <th className="text-left px-5 py-3 font-bold text-slate-700">ATO effective life</th>
-                      <th className="text-left px-5 py-3 font-bold text-slate-700">Diminishing value rate</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold text-slate-700">Item</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold text-slate-700">ATO effective life</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold text-slate-700">Diminishing value rate</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

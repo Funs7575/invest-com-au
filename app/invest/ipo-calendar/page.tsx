@@ -415,13 +415,13 @@ export default async function IpoCalendarPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Code</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Company</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Sector</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Listed</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Issue</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700">Raised</th>
-                    <th className="text-left py-3 px-4 font-semibold text-slate-700 w-10"></th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Code</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Company</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Sector</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Listed</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Issue</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Raised</th>
+                    <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 w-10"></th>
                   </tr>
                 </thead>
                 <tbody>

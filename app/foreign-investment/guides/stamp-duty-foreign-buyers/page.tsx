@@ -125,10 +125,10 @@ export default function StampDutyForeignBuyersPage() {
             <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-start">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Stamp Duty Surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden lg:table-cell">Notes</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Stamp Duty Surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs hidden lg:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -174,14 +174,14 @@ export default function StampDutyForeignBuyersPage() {
             <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-start">
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State</th>
-                  <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Rate</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State</th>
+                  <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Rate</th>
                   {PRICE_EXAMPLES.map((p) => (
-                    <th key={p} className="px-3 py-3 font-semibold text-slate-600 text-xs text-right hidden sm:table-cell">
+                    <th scope="col" key={p} className="px-3 py-3 font-semibold text-slate-600 text-xs text-right hidden sm:table-cell">
                       ${(p / 1_000_000).toFixed(p < 1_000_000 ? 1 : 1)}M
                     </th>
                   ))}
-                  <th className="px-3 py-3 font-semibold text-slate-600 text-xs text-right sm:hidden">$1M</th>
+                  <th scope="col" className="px-3 py-3 font-semibold text-slate-600 text-xs text-right sm:hidden">$1M</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

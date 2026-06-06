@@ -199,9 +199,9 @@ export default function OffsetRedrawPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700 w-1/4">Feature</th>
-                  <th className="text-left px-5 py-3 font-semibold text-teal-700 w-3/8">Offset Account</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-700 w-3/8">Redraw Facility</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700 w-1/4">Feature</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-teal-700 w-3/8">Offset Account</th>
+                  <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700 w-3/8">Redraw Facility</th>
                 </tr>
               </thead>
               <tbody>
@@ -406,9 +406,9 @@ export default function OffsetRedrawPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
-                    <th className="text-left py-2 pr-4 text-slate-600 font-medium">Monthly fee</th>
-                    <th className="text-left py-2 pr-4 text-slate-600 font-medium">Annual fee cost</th>
-                    <th className="text-left py-2 text-slate-600 font-medium">Offset balance needed to break even (at 6.5%)</th>
+                    <th scope="col" className="text-left py-2 pr-4 text-slate-600 font-medium">Monthly fee</th>
+                    <th scope="col" className="text-left py-2 pr-4 text-slate-600 font-medium">Annual fee cost</th>
+                    <th scope="col" className="text-left py-2 text-slate-600 font-medium">Offset balance needed to break even (at 6.5%)</th>
                   </tr>
                 </thead>
                 <tbody>

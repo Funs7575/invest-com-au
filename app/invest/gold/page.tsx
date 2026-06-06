@@ -219,11 +219,11 @@ export default function GoldPage() {
                 <table className="w-full text-sm border-collapse">
                   <thead>
                     <tr className="bg-slate-50">
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASX Code</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Fund Name</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Type</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">~MER p.a.</th>
-                      <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Currency</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASX Code</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Fund Name</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Type</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">~MER p.a.</th>
+                      <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Currency</th>
                     </tr>
                   </thead>
                   <tbody>

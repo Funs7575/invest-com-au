@@ -288,11 +288,11 @@ export default function CommercialPropertyPage() {
             <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="text-left p-3 font-semibold text-slate-700">Factor</th>
-                  <th className="text-left p-3 font-semibold text-slate-700">
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">Factor</th>
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">
                     Commercial
                   </th>
-                  <th className="text-left p-3 font-semibold text-slate-700">
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">
                     Residential
                   </th>
                 </tr>
@@ -356,12 +356,12 @@ export default function CommercialPropertyPage() {
             <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="text-left p-3 font-semibold text-slate-700">Method</th>
-                  <th className="text-left p-3 font-semibold text-slate-700">
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">Method</th>
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">
                     What it is
                   </th>
-                  <th className="text-left p-3 font-semibold text-slate-700">Access</th>
-                  <th className="text-left p-3 font-semibold text-slate-700">
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">Access</th>
+                  <th scope="col" className="text-left p-3 font-semibold text-slate-700">
                     Liquidity
                   </th>
                 </tr>

@@ -313,8 +313,8 @@ export default function TPDInsurancePage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Profile</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Indicative Monthly Premium</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Profile</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Indicative Monthly Premium</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

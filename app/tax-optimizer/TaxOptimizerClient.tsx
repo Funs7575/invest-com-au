@@ -207,12 +207,12 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b border-slate-200 text-slate-500">
-                      <th className="text-left py-2">Ticker</th>
-                      <th className="text-right py-2">Gain/Loss</th>
-                      <th className="text-right py-2">Days Held</th>
-                      <th className="text-center py-2">CGT Discount</th>
-                      <th className="text-right py-2">Taxable</th>
-                      <th className="text-right py-2">Est. Tax</th>
+                      <th scope="col" className="text-left py-2">Ticker</th>
+                      <th scope="col" className="text-right py-2">Gain/Loss</th>
+                      <th scope="col" className="text-right py-2">Days Held</th>
+                      <th scope="col" className="text-center py-2">CGT Discount</th>
+                      <th scope="col" className="text-right py-2">Taxable</th>
+                      <th scope="col" className="text-right py-2">Est. Tax</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

@@ -473,9 +473,9 @@ export default function Division296Page() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Division 296 (proposed)</th>
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Division 293 (in force)</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-amber-300">Division 296 (proposed)</th>
+                  <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Division 293 (in force)</th>
                 </tr>
               </thead>
               <tbody>

@@ -216,3 +216,15 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 **[ADV-028]** Wizard step 2 required-template hint — "Select at least one to continue" inline hint added to the scope-selection step so the disabled "Next" button is self-explanatory. `app/teams/new/_components/TeamNewWizard.tsx`
 
 **[ADV-029]** Wizard step 3 empty-invite rows no longer block "Next" — `filledInvites` computed from non-empty rows, so partially-filled invite rows don't lock the user out. `app/teams/new/_components/TeamNewWizard.tsx`
+
+**[ADV-030]** WCAG cursor sweep — `disabled:cursor-not-allowed` added to all disabled buttons/selects/inputs across 100+ components. `(bulk sed across app/)`
+
+**[ADV-031]** Nav landmark aria-labels — `aria-label="Breadcrumb"` on all 260+ breadcrumb navs; named labels on portal sidebar, lesson, pagination, article TOC, and startup portal navs. `(bulk perl/sed across app/)`
+
+**[ADV-032]** Focus ring completeness — `focus:ring-2` added to EventsTab select and StartupThesisClient inputs that only had `focus:outline-none`. `app/advisor-portal/EventsTab.tsx`, `app/account/startup-thesis/StartupThesisClient.tsx`
+
+**[ADV-033]** role=alert on watchlist/digest toggle errors — two `<p>` error nodes got `role="alert"`. `app/account/watchlist/WatchlistAlertsToggle.tsx`, `DigestToggle.tsx`
+
+**[ADV-034]** role=alert/status sweep — all remaining `{error && <p>}` and `{success && <span>}` blocks across 14 files now carry `role="alert"` / `role="status"`. `(bulk across app/)`
+
+**[ADV-035]** Icon-only button aria-labels — four icon-only close/remove buttons got descriptive `aria-label`. `app/compare/_components/CompareSelectionBar.tsx`, `app/portfolio/PortfolioClient.tsx`, `app/quotes/[slug]/QuoteBidsClient.tsx`, `app/property/suburbs/SuburbsClient.tsx`

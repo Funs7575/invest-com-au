@@ -198,8 +198,8 @@ export default function LicScreenerClient() {
             <table className="w-full text-sm min-w-[640px]">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600 w-36">LIC</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Focus</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600 w-36">LIC</th>
+                  <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Focus</th>
                   <th
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("dividendYield")}

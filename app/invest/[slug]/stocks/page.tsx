@@ -179,25 +179,25 @@ export default async function SectorStocksPage({
                 <table className="w-full text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">
                         Ticker
                       </th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">
                         Company
                       </th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
                         Market cap
                       </th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">
                         Yield
                       </th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden lg:table-cell">
                         P/E
                       </th>
-                      <th className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
+                      <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700 hidden md:table-cell">
                         FIRB
                       </th>
-                      <th className="px-4 py-3"></th>
+                      <th scope="col" className="px-4 py-3"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

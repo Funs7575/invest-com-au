@@ -286,13 +286,13 @@ export default async function ComparePairPage({
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wide w-1/3">
+                  <th scope="col" className="text-left px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wide w-1/3">
                     Dimension
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wide w-[30%]">
+                  <th scope="col" className="text-left px-5 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wide w-[30%]">
                     <span className="mr-1">{cfgA.flag}</span> {cfgA.countryShort}
                   </th>
-                  <th className="text-left px-5 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wide w-[30%]">
+                  <th scope="col" className="text-left px-5 py-3.5 text-xs font-bold text-slate-700 uppercase tracking-wide w-[30%]">
                     <span className="mr-1">{cfgB.flag}</span> {cfgB.countryShort}
                   </th>
                 </tr>

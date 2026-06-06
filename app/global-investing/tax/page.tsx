@@ -389,10 +389,10 @@ export default function GlobalInvestingTaxPage() {
             <table className="w-full text-xs md:text-sm">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Market</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">Dividend withholding</th>
-                  <th className="text-center px-4 py-3 font-bold text-slate-600 hidden sm:table-cell">DTA with Australia</th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600 hidden lg:table-cell">Notes</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Market</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Dividend withholding</th>
+                  <th scope="col" className="text-center px-4 py-3 font-bold text-slate-600 hidden sm:table-cell">DTA with Australia</th>
+                  <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600 hidden lg:table-cell">Notes</th>
                 </tr>
               </thead>
               <tbody>

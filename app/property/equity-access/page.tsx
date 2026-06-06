@@ -273,9 +273,9 @@ export default function EquityAccessPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-800 text-white">
-                      <th className="text-left px-5 py-3 font-bold">Method</th>
-                      <th className="text-left px-5 py-3 font-bold">How it works</th>
-                      <th className="text-left px-5 py-3 font-bold">Best for</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">Method</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">How it works</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">Best for</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -326,10 +326,10 @@ export default function EquityAccessPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-slate-800 text-white">
-                      <th className="text-left px-5 py-3 font-bold">Property value</th>
-                      <th className="text-left px-5 py-3 font-bold">80% max loan</th>
-                      <th className="text-left px-5 py-3 font-bold">Current balance</th>
-                      <th className="text-left px-5 py-3 font-bold text-emerald-300">Usable equity</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">Property value</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">80% max loan</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold">Current balance</th>
+                      <th scope="col" className="text-left px-5 py-3 font-bold text-emerald-300">Usable equity</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">

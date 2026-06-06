@@ -245,8 +245,8 @@ export default function EstatePlanningTaxPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-800 text-white">
-                    <th className="text-left py-3 px-4 text-xs font-bold w-1/2">Asset type</th>
-                    <th className="text-left py-3 px-4 text-xs font-bold w-1/2">CGT outcome on death</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/2">Asset type</th>
+                    <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/2">CGT outcome on death</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">

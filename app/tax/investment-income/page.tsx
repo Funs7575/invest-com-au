@@ -305,10 +305,10 @@ export default function InvestmentIncomeTaxPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Income type</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">What&apos;s assessable</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Tax rate</th>
-                  <th className="text-left py-3 px-4 text-xs font-bold">Key note</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Income type</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">What&apos;s assessable</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Tax rate</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Key note</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -597,9 +597,9 @@ export default function InvestmentIncomeTaxPage() {
               <table className="w-full text-xs border-collapse">
                 <thead>
                   <tr className="bg-slate-700 text-white">
-                    <th className="text-left py-3 px-4 font-bold">Component</th>
-                    <th className="text-left py-3 px-4 font-bold">Tax treatment</th>
-                    <th className="text-left py-3 px-4 font-bold">Where to report</th>
+                    <th scope="col" className="text-left py-3 px-4 font-bold">Component</th>
+                    <th scope="col" className="text-left py-3 px-4 font-bold">Tax treatment</th>
+                    <th scope="col" className="text-left py-3 px-4 font-bold">Where to report</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -717,10 +717,10 @@ export default function InvestmentIncomeTaxPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Taxable income</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Marginal rate</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Medicare levy</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable income</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Marginal rate</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Medicare levy</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">
                     Combined (incl. Medicare)
                   </th>
                 </tr>

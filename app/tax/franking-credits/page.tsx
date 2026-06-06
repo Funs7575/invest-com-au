@@ -334,11 +334,11 @@ export default async function FrankingCreditsPage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">Tax bracket</th>
-                  <th className="text-right p-3 text-xs font-bold">Grossed-up income</th>
-                  <th className="text-right p-3 text-xs font-bold">Tax on grossed-up</th>
-                  <th className="text-right p-3 text-xs font-bold">Franking credit</th>
-                  <th className="text-right p-3 text-xs font-bold">Net position</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Tax bracket</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Grossed-up income</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Tax on grossed-up</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Franking credit</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Net position</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -388,10 +388,10 @@ export default async function FrankingCreditsPage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">Company</th>
-                  <th className="text-center p-3 text-xs font-bold">Typical franking</th>
-                  <th className="text-left p-3 text-xs font-bold">Reason</th>
-                  <th className="text-right p-3 text-xs font-bold">Credit per $1,000 dividend</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Company</th>
+                  <th scope="col" className="text-center p-3 text-xs font-bold">Typical franking</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Reason</th>
+                  <th scope="col" className="text-right p-3 text-xs font-bold">Credit per $1,000 dividend</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -504,10 +504,10 @@ export default async function FrankingCreditsPage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-800 text-white">
                 <tr>
-                  <th className="text-left p-3 text-xs font-bold">ETF</th>
-                  <th className="text-left p-3 text-xs font-bold">Exposure</th>
-                  <th className="text-center p-3 text-xs font-bold">Franking ratio</th>
-                  <th className="text-left p-3 text-xs font-bold">Notes</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">ETF</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Exposure</th>
+                  <th scope="col" className="text-center p-3 text-xs font-bold">Franking ratio</th>
+                  <th scope="col" className="text-left p-3 text-xs font-bold">Notes</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

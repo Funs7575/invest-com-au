@@ -246,16 +246,16 @@ export default function BondsPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Type
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Issuer / Examples
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Risk
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Notes
                   </th>
                 </tr>
@@ -363,16 +363,16 @@ export default function BondsPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     ASX Code
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Fund Name
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Exposure
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     ~MER p.a.
                   </th>
                 </tr>
@@ -595,16 +595,16 @@ export default function BondsPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Rating (S&amp;P)
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Category
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Australian Examples
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Relative Yield
                   </th>
                 </tr>
@@ -796,13 +796,13 @@ export default function BondsPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50">
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Factor
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Direct bonds
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
+                  <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
                     Bond ETFs
                   </th>
                 </tr>

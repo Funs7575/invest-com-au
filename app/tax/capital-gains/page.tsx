@@ -403,10 +403,10 @@ export default async function CapitalGainsTaxPage() {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
-                  <th className="text-left py-3 px-4 text-xs font-bold">Taxable Income</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">Marginal Rate</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">CGT Rate (&lt;12 months)</th>
-                  <th className="text-center py-3 px-4 text-xs font-bold">CGT Rate (12+ months)</th>
+                  <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable Income</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">Marginal Rate</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">CGT Rate (&lt;12 months)</th>
+                  <th scope="col" className="text-center py-3 px-4 text-xs font-bold">CGT Rate (12+ months)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">

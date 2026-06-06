@@ -319,9 +319,9 @@ export default function VariableRateHomeLoanPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left p-3 font-bold text-slate-700 w-1/3">Feature</th>
-                    <th className="text-left p-3 font-bold text-blue-700">Variable rate</th>
-                    <th className="text-left p-3 font-bold text-slate-700">Fixed rate</th>
+                    <th scope="col" className="text-left p-3 font-bold text-slate-700 w-1/3">Feature</th>
+                    <th scope="col" className="text-left p-3 font-bold text-blue-700">Variable rate</th>
+                    <th scope="col" className="text-left p-3 font-bold text-slate-700">Fixed rate</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -667,9 +667,9 @@ export default function VariableRateHomeLoanPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left p-3 font-bold text-slate-700">Cost item</th>
-                    <th className="text-left p-3 font-bold text-blue-700">Variable refinance</th>
-                    <th className="text-left p-3 font-bold text-slate-700">Fixed refinance (mid-term)</th>
+                    <th scope="col" className="text-left p-3 font-bold text-slate-700">Cost item</th>
+                    <th scope="col" className="text-left p-3 font-bold text-blue-700">Variable refinance</th>
+                    <th scope="col" className="text-left p-3 font-bold text-slate-700">Fixed refinance (mid-term)</th>
                   </tr>
                 </thead>
                 <tbody>

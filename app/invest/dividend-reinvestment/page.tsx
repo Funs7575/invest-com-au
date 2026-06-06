@@ -211,9 +211,9 @@ export default function DividendReinvestmentPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Feature</th>
-                    <th className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">ASX Shares (e.g. CBA, BHP)</th>
-                    <th className="text-left py-3 px-4 font-extrabold text-amber-700 border-b border-slate-200">ASX ETFs (e.g. VAS, VGS)</th>
+                    <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Feature</th>
+                    <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">ASX Shares (e.g. CBA, BHP)</th>
+                    <th scope="col" className="text-left py-3 px-4 font-extrabold text-amber-700 border-b border-slate-200">ASX ETFs (e.g. VAS, VGS)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -303,10 +303,10 @@ export default function DividendReinvestmentPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Year</th>
-                    <th className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Units held</th>
-                    <th className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Annual distribution</th>
-                    <th className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">New units added</th>
+                    <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Year</th>
+                    <th scope="col" className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Units held</th>
+                    <th scope="col" className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Annual distribution</th>
+                    <th scope="col" className="text-right py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">New units added</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -362,9 +362,9 @@ export default function DividendReinvestmentPage() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
-                    <th className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Situation</th>
-                    <th className="text-center py-3 px-4 font-extrabold text-amber-700 border-b border-slate-200">DRP better</th>
-                    <th className="text-center py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Cash better</th>
+                    <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Situation</th>
+                    <th scope="col" className="text-center py-3 px-4 font-extrabold text-amber-700 border-b border-slate-200">DRP better</th>
+                    <th scope="col" className="text-center py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Cash better</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
