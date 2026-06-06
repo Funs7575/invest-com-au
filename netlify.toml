@@ -45,3 +45,13 @@
 # Likewise no [build.processing] override: skip_processing is the legacy
 # post-processor toggle and does not apply to Next-runtime output, so it was
 # noise. Removing it keeps this file to only what actually changes behaviour.
+
+# ── Interim cron bridge (while Vercel Cron is parked) ───────────────────────
+# The 40 schedules in vercel.json don't run on Netlify. netlify/functions/
+# cron-tick.mts is a Scheduled Function that ticks every minute and calls the
+# due /api/cron/dispatch/* routes (Bearer CRON_SECRET). SAFE BY DEFAULT: it
+# no-ops unless CRON_BRIDGE_ENABLED="true" is set in the Netlify env. Remove
+# this block once Vercel is unparked.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
