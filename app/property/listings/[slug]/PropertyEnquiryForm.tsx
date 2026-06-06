@@ -119,6 +119,7 @@ export default function PropertyEnquiryForm({
       <div className="space-y-3">
         <input
           type="text"
+          autoComplete="name"
           placeholder="Full name *"
           aria-label="Full name"
           required

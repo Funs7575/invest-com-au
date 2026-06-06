@@ -138,8 +138,8 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
           <h2 className="text-sm font-bold text-slate-900 mb-4">Your Trading Profile</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Your current broker</label>
-              <select value={currentBroker} onChange={e => setCurrentBroker(e.target.value)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg">
+              <label htmlFor="switch-current-broker" className="block text-xs font-bold text-slate-700 mb-1">Your current broker</label>
+              <select id="switch-current-broker" value={currentBroker} onChange={e => setCurrentBroker(e.target.value)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg">
                 <option value="">Select your current broker...</option>
                 {brokers.map(b => <option key={b.slug} value={b.slug}>{b.name}</option>)}
                 <option value="_other">Other / Not listed</option>
@@ -148,16 +148,16 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
 
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Trades per year</label>
-                <input type="number" value={tradesPerYear} onChange={e => setTradesPerYear(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
+                <label htmlFor="switch-trades-per-year" className="block text-xs font-bold text-slate-700 mb-1">Trades per year</label>
+                <input id="switch-trades-per-year" type="number" value={tradesPerYear} onChange={e => setTradesPerYear(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Avg trade size ($)</label>
-                <input type="number" value={avgTradeSize} onChange={e => setAvgTradeSize(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
+                <label htmlFor="switch-avg-trade-size" className="block text-xs font-bold text-slate-700 mb-1">Avg trade size ($)</label>
+                <input id="switch-avg-trade-size" type="number" value={avgTradeSize} onChange={e => setAvgTradeSize(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">US shares (%)</label>
-                <input type="number" value={usAllocation} onChange={e => setUsAllocation(Math.min(100, parseInt(e.target.value) || 0))} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" min={0} max={100} />
+                <label htmlFor="switch-us-allocation" className="block text-xs font-bold text-slate-700 mb-1">US shares (%)</label>
+                <input id="switch-us-allocation" type="number" value={usAllocation} onChange={e => setUsAllocation(Math.min(100, parseInt(e.target.value) || 0))} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" min={0} max={100} />
               </div>
             </div>
 

@@ -206,6 +206,7 @@ export default function SponsoredClient() {
                   <input
                     type="text"
                     name="name"
+                    autoComplete="name"
                     required
                     value={formData.name}
                     onChange={handleChange}
@@ -234,6 +235,7 @@ export default function SponsoredClient() {
                   <input
                     type="text"
                     name="company"
+                    autoComplete="organization"
                     required
                     value={formData.company}
                     onChange={handleChange}

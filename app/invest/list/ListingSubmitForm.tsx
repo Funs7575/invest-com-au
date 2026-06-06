@@ -516,6 +516,7 @@ export default function ListingSubmitForm() {
             </label>
             <input
               type="text"
+              autoComplete="name"
               value={form.contact_name}
               onChange={(e) => set("contact_name", e.target.value)}
               placeholder="Full name or business name"

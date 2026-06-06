@@ -158,8 +158,8 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
 
           {/* Broker selector */}
           <div className="flex items-center gap-3">
-            <label className="text-xs font-bold text-slate-700">Your current broker:</label>
-            <select value={currentBroker} onChange={e => setCurrentBroker(e.target.value)} className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg">
+            <label htmlFor="xray-broker" className="text-xs font-bold text-slate-700">Your current broker:</label>
+            <select id="xray-broker" value={currentBroker} onChange={e => setCurrentBroker(e.target.value)} className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg">
               <option value="">Select...</option>
               {brokers.map(b => <option key={b.slug} value={b.slug}>{b.name}</option>)}
             </select>
