@@ -119,19 +119,21 @@ export interface PerfBudget {
 }
 
 export const PERF_BUDGETS: PerfBudget[] = [
-  // Money pages — tightest budgets
-  { route: "/compare",      fcpMs: 2500, loadEventMs: 4000 },
-  { route: "/",             fcpMs: 2500, loadEventMs: 4000 },
+  // Money pages — tightest budgets (Google "good" LCP: ≤ 2500ms)
+  { route: "/compare",      fcpMs: 2500, loadEventMs: 3000 },
+  { route: "/",             fcpMs: 2500, loadEventMs: 3000 },
   // Broker detail (prefix match — /broker/stake, /broker/cmc-markets …)
-  { route: "/broker/",      fcpMs: 3000, loadEventMs: 5000 },
+  { route: "/broker/",      fcpMs: 2500, loadEventMs: 3000 },
   // Advisor directory
-  { route: "/advisors",     fcpMs: 3000, loadEventMs: 5000 },
-  { route: "/find-advisor", fcpMs: 3000, loadEventMs: 5000 },
+  { route: "/advisors",     fcpMs: 2500, loadEventMs: 3000 },
+  { route: "/find-advisor", fcpMs: 2500, loadEventMs: 3000 },
   // Content pillars — key GEO/SEO pages
-  { route: "/share-trading",      fcpMs: 3000, loadEventMs: 5000 },
-  { route: "/etfs",               fcpMs: 3000, loadEventMs: 5000 },
-  { route: "/best-broker/",       fcpMs: 3000, loadEventMs: 5000 },
-  { route: "/foreign-investment", fcpMs: 3000, loadEventMs: 5000 },
+  { route: "/share-trading",      fcpMs: 2500, loadEventMs: 3000 },
+  { route: "/etfs",               fcpMs: 2500, loadEventMs: 3000 },
+  { route: "/best-broker/",       fcpMs: 2500, loadEventMs: 3000 },
+  { route: "/foreign-investment", fcpMs: 2500, loadEventMs: 3000 },
+  // Account surfaces (authenticated) — slightly more lenient (SSR + auth)
+  { route: "/account/",           fcpMs: 3000, loadEventMs: 4000 },
 ];
 
 export interface PerfViolation {

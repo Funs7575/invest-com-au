@@ -40,3 +40,34 @@ export async function runFlow(
 
   return results;
 }
+
+/**
+ * Record a single roll-up finding summarising a flow's pass/fail/skip ratio,
+ * so the report shows one line per flow run. Extracted so every flow's
+ * entrypoint records its summary identically (the `label` keys the signature,
+ * conventionally the flow's name).
+ */
+export function recordFlowRollup(
+  store: FindingStore,
+  persona: string,
+  label: string,
+  results: FlowStepResult[],
+  url: string,
+): void {
+  const failed = results.filter((r) => r.status === "fail");
+  const skipped = results.filter((r) => r.status === "skip");
+  store.add({
+    severity: failed.length > 0 ? "high" : "info",
+    category: "flow-failure",
+    title: `${label} flow: ${results.length - failed.length - skipped.length}/${results.length} steps passed`,
+    detail: results
+      .map(
+        (r) =>
+          `${r.status === "pass" ? "✓" : r.status === "skip" ? "⊘" : "✗"} ${r.name}${r.detail ? `: ${r.detail}` : ""}`,
+      )
+      .join("\n"),
+    url,
+    persona,
+    signatureKey: `${label}:rollup:${persona}`,
+  });
+}

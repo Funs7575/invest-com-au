@@ -32,6 +32,8 @@ const GEO_PRIORITY_ROUTES = new Set([
   "/glossary",
   "/questions",
   "/article",
+  "/academy",
+  "/learn",
   "/broker",
   "/best",
   "/best-for",

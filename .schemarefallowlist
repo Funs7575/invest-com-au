@@ -1,0 +1,63 @@
+# Schema-reference allowlist — consumed by scripts/check-schema-references.mjs
+#
+# Each line is a `.from()`/`.rpc()` target that application code references but
+# that does NOT exist in the LIVE database schema. Format: `from:name` / `rpc:name`
+# (bare names default to `from:`). A `# reason` after the entry documents why.
+#
+# These are a KNOWN BACKLOG, not new regressions — the sentinel ships with them
+# allowlisted (mirroring .driftallowlist) so it goes green today and its job is
+# to BLOCK NEW phantom references from here on. Each entry is a latent runtime
+# 500 against the current database: either the table lives in a migration that
+# hasn't been applied to this project, or the relation was renamed/dropped and
+# the calling code still points at the old name. Burn this list down by either
+# applying the missing migration or fixing the reference, then delete the line.
+
+# ── Startups vertical (tables absent from live; whole feature is unmigrated) ──
+from:startup_profiles
+from:startup_rounds
+from:startup_sessions
+from:startup_data_room_access
+from:startup_data_room_files
+from:startup_investor_inquiries
+from:esic_verifications
+
+# ── Academy / courses (live has courses/course_lessons/course_progress, no enrollments) ──
+from:course_enrollments
+
+# ── IPO watchlist + alerts (ipo_offers exists; watchlist/alert tables don't) ──
+from:ipo_watchlist
+from:ipo_alert_sends
+
+# ── Investment loan-rates feature (no investment_loan_rates relation live) ──
+from:investment_loan_rates
+
+# ── Referrals / review incentives ──
+from:referrals
+from:incentive_reviews
+
+# ── Push + personalized digest send logs ──
+from:push_send_log
+from:digest_sends
+
+# ── Revenue / payments (live has marketplace_payments + sponsored_placement_*; these names differ) ──
+from:sponsorship_orders
+from:stripe_payouts
+from:broker_campaigns
+
+# ── Pro tier + outbound API (live has outbound_webhook_*; api_* consumer tables differ) ──
+from:pro_subscribers
+from:api_consumer_webhooks
+from:api_key_subscriptions
+from:consumer_webhook_deliveries
+rpc:get_active_pro_count
+
+# ── Advisor search alerts + firm analytics (live has advisor_profile_views, not professional_views) ──
+from:advisor_search_alerts
+from:professional_views
+
+# ── Misc renamed/dropped relations ──
+from:deals_of_month
+from:saved_broker_comparisons              # live: user_saved_comparisons
+from:user_profiles                         # live: profiles
+from:wholesale_investor_certifications
+from:versus_votes                          # live: debate_votes / versus_editorials
