@@ -27,6 +27,7 @@ Root cause: invest & advisors independently render the *same* dark hero; compare
 - **SC-4 — DRY-migrate `/advisors`** hero to `<DirectoryHero>` (no visual change).
 - **SC-5 — Toolbar semantics alignment** (advisors ↔ marketplace): advisors tabs = entity sub-types; marketplace "tabs" = filter-openers. Make both use `TabBar` for entity/category and move filter-openers into a consistent toolbar row. (Lower priority; after SC-1..4.)
 - **SC-6 — Token polish**: recolor the `bg-violet-600` advisor shortlist/featured accent to the amber/slate system; standardize hero padding, stat-tile styling, breadcrumb position across all three.
+- **SC-7 — Streamline `/compare` filters** (added 2026-06-06, user-reported "too many different filters"): the `/compare` index showed **two** category systems — the sticky `CompareNav` tab-bar (links out to other pages) *and* the in-page category pills (filter the table). Same labels, different behaviour. Make the in-page pills the single category control on `/compare`; remove the duplicate sticky `CompareNav` there (kept on the standalone `/compare/*` sub-pages); preserve every link as a quiet, clearly-secondary "Specialised comparisons" link row so nothing is orphaned for SEO. The in-page facet filters (Features / Max fee / Rating) are already popover-based with active `FilterChips` — left as-is (already streamlined).
 
 Each is one mergeable PR. SC-1+SC-2 ship together (component + first adopter); SC-3, SC-4, SC-5, SC-6 follow.
 

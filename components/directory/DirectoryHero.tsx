@@ -42,6 +42,13 @@ export interface DirectoryHeroProps {
   speakableId?: string;
   /** Light-band content directly below the hero (e.g. `<DirectoryBanners>`). */
   children?: ReactNode;
+  /**
+   * Width container for the hero content + children band. Defaults to the
+   * directory standard (`container-custom max-w-6xl`, ~1152px). Surfaces whose
+   * results grid uses the wider plain `container-custom` (~1200px) pass that so
+   * the hero aligns with their results.
+   */
+  containerClassName?: string;
 }
 
 export default function DirectoryHero({
@@ -53,6 +60,7 @@ export default function DirectoryHero({
   stats,
   speakableId,
   children,
+  containerClassName = "container-custom max-w-6xl",
 }: DirectoryHeroProps) {
   const tiles = (stats ?? []).slice(0, 4);
   return (
@@ -63,7 +71,7 @@ export default function DirectoryHero({
           className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full"
           style={{ background: "radial-gradient(circle, rgba(242,88,34,.18), transparent 65%)" }}
         />
-        <div className="container-custom max-w-6xl relative py-8 md:py-12">
+        <div className={`${containerClassName} relative py-8 md:py-12`}>
           <nav className="text-xs md:text-sm text-white/55 mb-3" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-white">Home</Link>
             <span className="mx-2" aria-hidden>/</span>
@@ -108,7 +116,7 @@ export default function DirectoryHero({
         </div>
       </section>
       {children != null && (
-        <div className="container-custom max-w-6xl pt-4">{children}</div>
+        <div className={`${containerClassName} pt-4`}>{children}</div>
       )}
     </>
   );

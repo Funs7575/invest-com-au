@@ -95,6 +95,7 @@ async function AdvisorsData() {
       firmMemberCounts={firmMemberCounts}
       expertTeams={expertTeams}
       intentCountry={intentCountry}
+      banners={<DirectoryBanners surface="advisors" />}
     />
   );
 }
@@ -108,9 +109,8 @@ export default function AdvisorsPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <div className="container-custom pt-4">
-        <DirectoryBanners surface="advisors" />
-      </div>
+      {/* DirectoryBanners now render inside AdvisorsClient, in the canonical slot
+          directly below the shared DirectoryHero (passed in as a prop). */}
       <Suspense fallback={<AdvisorsLoading />}>
         <AdvisorsData />
       </Suspense>
