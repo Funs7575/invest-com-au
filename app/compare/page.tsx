@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import Link from "next/link";
+import Icon from "@/components/Icon";
 import CompareClient from "./CompareClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
@@ -140,18 +141,51 @@ export default async function ComparePage() {
   // Lightweight head-only count for the hero stat tiles — keeps the dark
   // stat-led hero consistent with /invest and /advisors without waiting on the
   // full broker payload (that still streams via <CompareData> in Suspense).
+  type DealBroker = { name: string; slug: string; deal_text: string | null; affiliate_url: string | null };
   let platformCount = 0;
+  let dealBroker: DealBroker | null = null;
   try {
     const supabase = await createClient();
-    const { count } = await supabase
-      .from("brokers")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "active");
+    const [{ count }, { data: deal }] = await Promise.all([
+      supabase.from("brokers").select("id", { count: "exact", head: true }).eq("status", "active"),
+      // Top live broker deal — surfaced as a slim promo strip inside the hero.
+      supabase
+        .from("brokers")
+        .select("name, slug, deal_text, affiliate_url")
+        .eq("status", "active")
+        .eq("deal", true)
+        .not("deal_text", "is", null)
+        .order("promoted_placement", { ascending: false })
+        .order("affiliate_priority", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
     platformCount = count ?? 0;
+    dealBroker = (deal as DealBroker | null) ?? null;
   } catch {
     platformCount = 0;
   }
   const platformLabel = platformCount > 0 ? `${platformCount}` : "100+";
+
+  const dealPromo = dealBroker ? (
+    <div className="flex items-center justify-between gap-3">
+      <p className="flex min-w-0 items-center gap-2 text-[12.5px] text-white/80 md:text-[13px]">
+        <Icon name="flame" size={14} className="shrink-0 text-coral-400" />
+        <span className="truncate">
+          <strong className="font-semibold text-white">{dealBroker.name}</strong>
+          {dealBroker.deal_text ? <span className="text-white/60"> — {dealBroker.deal_text}</span> : null}
+        </span>
+      </p>
+      <a
+        href={dealBroker.affiliate_url ? `/go/${dealBroker.slug}` : `/broker/${dealBroker.slug}`}
+        target="_blank"
+        rel="noopener noreferrer nofollow sponsored"
+        className="shrink-0 rounded-lg bg-coral-500 px-3 py-1 text-xs font-bold text-white transition-colors hover:bg-coral-400"
+      >
+        Claim &rarr;
+      </a>
+    </div>
+  ) : null;
   const heroStats = [
     { v: platformLabel, l: "Platforms tracked" },
     { v: "9", l: "Categories" },
@@ -216,6 +250,7 @@ export default async function ComparePage() {
         subtitle="Side-by-side comparison of fees, features, and safety for Australian share trading, crypto, super and robo-advisor platforms."
         stats={heroStats}
         speakableId="compare-hero"
+        promo={dealPromo}
       >
         <DirectoryBanners surface="compare" />
       </DirectoryHero>
