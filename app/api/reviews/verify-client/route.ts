@@ -33,21 +33,25 @@ export async function POST(request: NextRequest) {
   }
 
   // Parse + validate body
-  const parsed = VerifyBody.safeParse(await request.json().catch(() => null));
+  const rawBody = await request.json().catch(() => null);
+  const parsed = VerifyBody.safeParse(rawBody);
   if (!parsed.success) {
+    // Distinguish a present-but-invalid review_type from missing fields so the
+    // admin tooling gets an actionable message (Zod's enum check otherwise
+    // collapses both into one generic error).
+    const rt = (rawBody as { review_type?: unknown } | null)?.review_type;
+    if (rt !== undefined && rt !== "broker" && rt !== "advisor") {
+      return NextResponse.json(
+        { error: "review_type must be 'broker' or 'advisor'" },
+        { status: 400 },
+      );
+    }
     return NextResponse.json(
       { error: "review_id and review_type are required" },
       { status: 400 },
     );
   }
   const { review_id, review_type } = parsed.data;
-
-  if (review_type !== "broker" && review_type !== "advisor") {
-    return NextResponse.json(
-      { error: "review_type must be 'broker' or 'advisor'" },
-      { status: 400 },
-    );
-  }
 
   const supabase = createAdminClient();
 
