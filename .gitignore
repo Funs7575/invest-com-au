@@ -66,3 +66,4 @@ scripts/_*.mjs
 # Nightly bot fleet report — generated artifact (npm run bots:nightly)
 bots/reports/nightly-*.md
 bots/reports/funnel-*.md
+bots/reports/seo-*.md
