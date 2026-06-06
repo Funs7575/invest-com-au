@@ -212,7 +212,7 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
             {saving ? "Saving..." : "Save Changes"}
           </button>
           {saved && (
-            <span className="text-sm text-emerald-600 font-medium flex items-center gap-1">
+            <span role="status" className="text-sm text-emerald-600 font-medium flex items-center gap-1">
               <Icon name="check-circle" size={16} />
               Saved!
             </span>

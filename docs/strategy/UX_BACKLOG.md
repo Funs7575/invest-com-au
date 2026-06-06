@@ -261,4 +261,8 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 
 **[ADV-051]** `role="alert"` on error blocks in 10 advisor/broker portal pages — broker-portal campaigns, login, register; advisor-portal CaseStudiesTab, EventsTab, ProfileDetailsTab, BriefsInboxClient, TeamsManagerClient, WebhooksClient.
 
+**[ADV-054]** `role="dialog"` + `aria-modal="true"` on 6 modal overlays — VaultClient upload, advisor-portal dispute, EventsTab RSVP, DataRoomClient upload, broker-portal packages confirm, org-portal OrgEventsTab edit/delete now declare proper dialog semantics with `aria-labelledby` for screen-reader title announcements.
+
+**[ADV-053]** Skip link focus + broker portal main landmark — `tabIndex={-1}` added to root `<main id="main-content">` so anchor-link focus works in Safari; broker portal layout gained its own skip link + `id="main-content"`. `components/LayoutShell.tsx`, `app/broker-portal/layout.tsx`
+
 **[ADV-052]** `role="alert"` sweep across 25 additional user-facing pages — advertise/packages, advertise/featured-placement, community/thread, for-advisors/sponsored, invest/list, auth/reset-password, wholesale-cert, briefs (BookConsultationPanel, IntakeAnswerForm, BriefForm), pros (connect, availability, pricing-tier, intake questions), quotes/JobPostForm, events/RsvpButton, startup-portal (round/new, esic-verification), startup-signup, account/holdings, account/alerts PushOptIn, teams (new wizard, ops settings), firm-portal/performance, org-portal login. All error display elements now announce to screen readers.

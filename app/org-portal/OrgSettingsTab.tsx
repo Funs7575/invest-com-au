@@ -120,7 +120,7 @@ export default function OrgSettingsTab({ org }: Props) {
             {saving ? "Saving..." : "Save Preferences"}
           </button>
           {saved && (
-            <span className="text-sm text-emerald-600 font-medium flex items-center gap-1">
+            <span role="status" className="text-sm text-emerald-600 font-medium flex items-center gap-1">
               <Icon name="check-circle" size={16} />
               Saved!
             </span>
