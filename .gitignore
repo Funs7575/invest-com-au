@@ -71,3 +71,7 @@ bots/reports/idor-*.md
 bots/reports/perf-*.md
 bots/reports/a11y-*.md
 bots/reports/data-integrity-*.md
+bots/reports/visual-*.md
+bots/reports/conversion-*.md
+bots/reports/redteam-*.md
+bots/reports/screenshots/
