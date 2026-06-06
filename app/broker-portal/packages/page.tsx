@@ -419,10 +419,10 @@ export default function PackagesPage() {
 
             {/* Reason (for downgrade/cancel) */}
             {dialogAction !== "upgrade" && (
-              <div>
-                <label className="text-xs font-medium text-slate-700 mb-2 block">
-                  Why are you {dialogAction === "cancel" ? "cancelling" : "downgrading"}? <span className="text-red-500">*</span>
-                </label>
+              <fieldset>
+                <legend className="text-xs font-medium text-slate-700 mb-2 block">
+                  Why are you {dialogAction === "cancel" ? "cancelling" : "downgrading"}? <span className="text-red-500" aria-hidden>*</span><span className="sr-only">(required)</span>
+                </legend>
                 <div className="space-y-1.5">
                   {CANCELLATION_REASONS.map(reason => (
                     <label key={reason} className="flex items-center gap-2 cursor-pointer">
@@ -454,7 +454,7 @@ export default function PackagesPage() {
                   rows={2}
                   className="mt-3 w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30 resize-none"
                 />
-              </div>
+              </fieldset>
             )}
 
             {/* Actions */}

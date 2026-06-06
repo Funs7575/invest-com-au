@@ -205,8 +205,8 @@ export default function BorrowingPowerClient() {
           />
         </div>
 
-        <div>
-          <span className="block text-sm font-medium text-gray-700 mb-2">Loan term</span>
+        <fieldset>
+          <legend className="block text-sm font-medium text-gray-700 mb-2">Loan term</legend>
           <div className="flex gap-4">
             {LOAN_TERMS.map((t) => (
               <label key={t} className="flex items-center gap-2 cursor-pointer">
@@ -221,7 +221,7 @@ export default function BorrowingPowerClient() {
               </label>
             ))}
           </div>
-        </div>
+        </fieldset>
       </section>
 
       {/* Results */}

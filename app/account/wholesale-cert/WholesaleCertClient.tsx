@@ -180,10 +180,10 @@ export default function WholesaleCertClient({ existing }: Props) {
           </h2>
 
           {/* What type */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-2">
+          <fieldset>
+            <legend className="block text-xs font-semibold text-slate-600 mb-2">
               Certification type
-            </label>
+            </legend>
             <div className="space-y-2">
               <label className="flex items-start gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:border-violet-300 transition-colors has-[:checked]:border-violet-500 has-[:checked]:bg-violet-50">
                 <input
@@ -221,7 +221,7 @@ export default function WholesaleCertClient({ existing }: Props) {
                 </div>
               </label>
             </div>
-          </div>
+          </fieldset>
 
           {/* Evidence upload */}
           <div>

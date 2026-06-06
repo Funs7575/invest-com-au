@@ -173,10 +173,10 @@ export default function ETPCalculatorClient() {
           </p>
         </div>
 
-        <div>
-          <span className="block text-sm font-medium text-gray-700 mb-2">
+        <fieldset>
+          <legend className="block text-sm font-medium text-gray-700 mb-2">
             Your age at time of payment
-          </span>
+          </legend>
           <div className="flex gap-4">
             {[false, true].map((val) => (
               <label key={String(val)} className="flex items-center gap-2 cursor-pointer">
@@ -196,7 +196,7 @@ export default function ETPCalculatorClient() {
           <p className="text-xs text-gray-500 mt-1">
             Determines ETP concessional rate: 17% (60+) or 32% (under 60)
           </p>
-        </div>
+        </fieldset>
       </section>
 
       {/* Results */}

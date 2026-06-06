@@ -64,10 +64,10 @@ export default function WidgetBuilderTab() {
         {/* Controls */}
         <div className="space-y-4">
           {/* Widget type */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+          <fieldset>
+            <legend className="block text-xs font-semibold text-slate-700 mb-1.5">
               Comparison type
-            </label>
+            </legend>
             <div className="grid grid-cols-1 gap-2">
               {WIDGET_CATALOGUE.map((entry) => (
                 <label
@@ -95,7 +95,7 @@ export default function WidgetBuilderTab() {
                 </label>
               ))}
             </div>
-          </div>
+          </fieldset>
 
           {/* Theme */}
           <div>
