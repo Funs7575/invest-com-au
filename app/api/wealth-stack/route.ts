@@ -3,6 +3,9 @@ import { z } from "zod";
 import { randomBytes } from "crypto";
 
 import { createClient } from "@/lib/supabase/server";
+// `weights` is service-role-only RLS (commercially-sensitive ranking weights);
+// this public route reads it server-side and returns only aggregated results.
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { sendEmail } from "@/lib/resend";
 import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
@@ -73,9 +76,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: brokerErr.message }, { status: 500 });
   }
 
-  // Quiz weights live in the public `weights` table, keyed by broker slug.
-  // The exact shape mirrors scoreQuizResults: { [slug]: QuizWeights }.
-  const { data: weightRows, error: weightErr } = await supabase
+  // Ranking weights live in the `weights` table, keyed by broker slug (shape
+  // mirrors scoreQuizResults: { [slug]: QuizWeights }). Like quiz_weights these
+  // are commercially sensitive and the table is service-role-only RLS, so read
+  // it with the admin client (server-side; only aggregated stack results are
+  // returned to the browser).
+  const { data: weightRows, error: weightErr } = await createAdminClient()
     .from("weights")
     .select("broker_slug, weights");
 
