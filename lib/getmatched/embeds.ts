@@ -60,7 +60,7 @@ export function isEmbedContext(value: unknown): value is EmbedContext {
 }
 
 export const HOMEPAGE_GOAL_CHIPS: { value: IntentSlug; label: string; icon: string }[] = [
-  { value: "compare_platform", label: "Compare investing platforms", icon: "git-compare" },
+  { value: "compare_platform", label: "Compare investing platforms", icon: "scale" },
   { value: "start_investing", label: "Start investing", icon: "trending-up" },
   { value: "buy_property", label: "Buy investment property", icon: "home" },
   { value: "smsf_property", label: "Invest through my SMSF", icon: "building" },

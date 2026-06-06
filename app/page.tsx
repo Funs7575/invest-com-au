@@ -3,9 +3,7 @@ import { getActiveBrokersListing } from "@/lib/cached-data";
 import HomeHero from "@/components/HomeHero";
 import HomeRouteCards from "@/components/HomeRouteCards";
 import CountryToolsStripWrapper from "@/components/country-mode/CountryToolsStripWrapper";
-import HomePathfinder from "@/components/HomePathfinder";
-import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
-import ResumeBanner from "@/components/get-matched/ResumeBanner";
+import HomeGetMatched from "@/components/HomeGetMatched";
 import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
 import HomeSquadOfTheMonth from "@/components/HomeSquadOfTheMonth";
@@ -22,7 +20,6 @@ import CountryPopularLinks from "@/components/country-mode/CountryPopularLinks";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import HomeActivitySection from "@/components/HomeActivitySection";
 import HomepagePersonalisedStrip from "@/components/HomepagePersonalisedStrip";
-import HomeHowItWorks from "@/components/HomeHowItWorks";
 import HomeRateOfTheDay from "@/components/HomeRateOfTheDay";
 import RateChangesToday from "@/components/RateChangesToday";
 import InvestScoreGauge from "@/components/InvestScoreGauge";
@@ -294,19 +291,8 @@ export default async function HomePage() {
 
       <CountryPopularLinks />
 
-      <ScrollFadeIn>
-        <section className="container-custom my-10 space-y-4">
-          <ResumeBanner />
-          <GetMatchedEmbed context="homepage" />
-        </section>
-      </ScrollFadeIn>
-
-      <ScrollFadeIn>
-        <HomePathfinder />
-      </ScrollFadeIn>
-
       {/* Quick-access chips for buried tools */}
-      <section className="container-custom -mt-4 mb-6">
+      <section className="container-custom my-8">
         <div className="flex flex-wrap gap-2">
           <Link href="/score" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:text-amber-800 transition-colors">
             📊 Financial Health Score
@@ -335,8 +321,12 @@ export default async function HomePage() {
         <HomeListingsTeaser listings={listingList} totalCount={totalListingCount} />
       </ScrollFadeIn>
 
+      {/* Single consolidated get-matched band — the one catch-all funnel,
+          placed after platforms + opportunities and leading into experts.
+          Replaces the former top-of-page triple-up (goal-chip grid +
+          pathfinder 3-step) and the duplicate advisor how-it-works block. */}
       <ScrollFadeIn>
-        <HomeHowItWorks />
+        <HomeGetMatched />
       </ScrollFadeIn>
 
       <CountryExpertsPreview />

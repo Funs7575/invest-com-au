@@ -39,11 +39,6 @@ const SpeedInsights = dynamic(
   { ssr: false },
 );
 
-const UserOnboarding = dynamic(
-  () => import("@/components/UserOnboarding"),
-  { ssr: false },
-);
-
 export default function LayoutSideEffects() {
   return (
     <>
@@ -57,7 +52,6 @@ export default function LayoutSideEffects() {
           set only in Vercel builds, so Speed Insights renders at launch (Vercel)
           and stays off on Netlify — no more per-page 404 + MIME console error. */}
       {process.env.NEXT_PUBLIC_VERCEL_ENV ? <SpeedInsights /> : null}
-      <UserOnboarding />
     </>
   );
 }
