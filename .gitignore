@@ -62,3 +62,16 @@ supabase/.temp/
 
 # Scratch verification scripts (local screenshot/inspect helpers)
 scripts/_*.mjs
+
+# Nightly bot fleet report — generated artifact (npm run bots:nightly)
+bots/reports/nightly-*.md
+bots/reports/funnel-*.md
+bots/reports/seo-*.md
+bots/reports/idor-*.md
+bots/reports/perf-*.md
+bots/reports/a11y-*.md
+bots/reports/data-integrity-*.md
+bots/reports/visual-*.md
+bots/reports/conversion-*.md
+bots/reports/redteam-*.md
+bots/reports/screenshots/
