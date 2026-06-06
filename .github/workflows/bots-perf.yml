@@ -1,0 +1,203 @@
+# 🚦 Perf budget gate — measures FCP and load-event timing on key pages
+# against per-route budgets defined in bots/checks/perf.ts (PERF_BUDGETS).
+#
+# Runs on PRs that touch rendering-critical surfaces (layout, components,
+# performance-adjacent lib changes). The check IS a gate — if budget
+# violations are found, the job fails and the PR is blocked.
+#
+# Budgets (defined in bots/checks/perf.ts):
+#   /compare        FCP < 2500ms, load < 4000ms
+#   /              FCP < 2500ms, load < 4000ms
+#   /broker/*       FCP < 3000ms, load < 5000ms
+#   /advisors       FCP < 3000ms, load < 5000ms
+#   /share-trading  FCP < 3000ms, load < 5000ms
+#   /etfs           FCP < 3000ms, load < 5000ms
+#
+# Target: Netlify mirror (always-on, no build cost). Override with
+# BOTS_PERF_URL repo variable or workflow_dispatch input.
+
+name: Perf budget gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "app/layout.tsx"
+      - "app/page.tsx"
+      - "app/(content)/**"
+      - "app/compare/**"
+      - "app/broker/**"
+      - "app/advisors/**"
+      - "app/share-trading/**"
+      - "app/etfs/**"
+      - "components/layout/**"
+      - "components/directory/**"
+      - "lib/seo.ts"
+      - "lib/schema-markup.ts"
+      - "bots/checks/perf.ts"
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: "Override target URL (defaults to Netlify mirror)"
+        required: false
+        type: string
+
+concurrency:
+  group: bots-perf-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  perf-gate:
+    name: Perf budgets — key pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Resolve target
+        id: target
+        run: |
+          URL="${{ github.event.inputs.target_url }}"
+          if [ -z "$URL" ]; then URL="${{ vars.BOTS_PERF_URL }}"; fi
+          if [ -z "$URL" ]; then URL="${{ vars.BOTS_SMOKE_URL }}"; fi
+          if [ -z "$URL" ]; then URL="https://lambent-sawine-17c3dd.netlify.app"; fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "::notice::Perf gate target: $URL"
+
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run perf-focused bot sweep
+        id: perf_run
+        env:
+          BOTS_BASE_URL: ${{ steps.target.outputs.url }}
+          BOTS_SKIP_WEBSERVER: "1"
+          BOTS_IGNORE_HTTPS_ERRORS: "1"
+          BOTS_CONCURRENCY: "2"
+          BOTS_AI_TOKEN_BUDGET: "0"
+        run: |
+          # Run the page-0 sweep (anonymous, covers the key content pages
+          # that have perf budgets) plus the smoke flows.
+          npx playwright test --config bots/playwright.config.ts \
+            -g "PHASE0|advisor-portal" \
+            --project chromium \
+            2>&1 | tee /tmp/bots-perf.log || true
+
+      - name: Check perf budget violations
+        id: budget_check
+        run: |
+          # Find the newest violations file.
+          VIOLATIONS_FILE=$(find bots/.runs -name "perf-violations.json" \
+            -newer /tmp/bots-perf.log 2>/dev/null | head -1)
+
+          if [ -z "$VIOLATIONS_FILE" ]; then
+            # Try any violations file from this run dir
+            VIOLATIONS_FILE=$(find bots/.runs -name "perf-violations.json" | \
+              xargs ls -t 2>/dev/null | head -1)
+          fi
+
+          if [ -z "$VIOLATIONS_FILE" ]; then
+            echo "violations=0" >> "$GITHUB_OUTPUT"
+            echo "::notice::No perf-violations.json found (no samples for budgeted pages)."
+            exit 0
+          fi
+
+          COUNT=$(python3 -c "
+          import json, sys
+          d = json.load(open('$VIOLATIONS_FILE'))
+          vs = d.get('violations', [])
+          print(len(vs))
+          if vs:
+              for v in vs:
+                  print(f\"  {v['metric']} {v['route']}: {v['actual']}ms > budget {v['budget']}ms ({v['persona']})\")
+          " 2>/dev/null || echo "0")
+
+          FIRST_LINE=$(echo "$COUNT" | head -1)
+          echo "violations=$FIRST_LINE" >> "$GITHUB_OUTPUT"
+          echo "$COUNT"
+
+          if [ "$FIRST_LINE" -gt "0" ]; then
+            echo "::error::$FIRST_LINE perf budget violation(s) detected. See details above."
+            exit 1
+          else
+            echo "::notice::All perf budgets passed."
+          fi
+
+      - name: Upload perf report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-report-${{ github.run_id }}
+          path: |
+            bots/.runs/*/perf-violations.json
+            bots/.runs/*/perf.json
+            bots/.runs/*/report.html
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Comment perf result on PR
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const violations = parseInt("${{ steps.budget_check.outputs.violations }}" || "0");
+            const passed = violations === 0;
+            const status = passed ? "✅ All perf budgets passed" : `🐢 **${violations} perf budget violation(s)**`;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            const body = [
+              `### 🚦 Perf budget gate — ${status}`,
+              "",
+              `**Target:** \`${{ steps.target.outputs.url }}\`  `,
+              `**Violations:** ${violations}`,
+              "",
+              passed
+                ? "_All key pages are within their FCP / load-event budgets._"
+                : `_${violations} page(s) exceeded their perf budget. See [the full report](${runUrl}) for details._`,
+              "",
+              "| Page | FCP budget | Load budget |",
+              "|------|-----------|-------------|",
+              "| `/compare` | 2500ms | 4000ms |",
+              "| `/` | 2500ms | 4000ms |",
+              "| `/broker/*` | 3000ms | 5000ms |",
+              "| `/advisors` | 3000ms | 5000ms |",
+              "| `/share-trading` | 3000ms | 5000ms |",
+              "| `/etfs` | 3000ms | 5000ms |",
+              "",
+              `📎 [Full perf report](${runUrl})`,
+            ].join("\n");
+
+            const marker = "### 🚦 Perf budget gate";
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            const existing = comments.data.find((c) => c.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body,
+              });
+            }

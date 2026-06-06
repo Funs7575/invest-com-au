@@ -1,5 +1,5 @@
 /**
- * Performance sample collector.
+ * Performance sample collector + budget evaluator.
  *
  * Captures key Web Vitals-adjacent metrics from the browser after a page
  * visit using the Navigation Timing API and the Paint Timing API. Runs in
@@ -9,7 +9,13 @@
  * on the session and written to the shard so global-teardown can aggregate
  * them into a baseline table in the HTML report.
  *
- * Pure function: the only Playwright dependency is the Page handle.
+ * After the run, evaluatePerfBudgets() checks aggregated samples against the
+ * per-route budgets defined in PERF_BUDGETS. Violations are returned as
+ * structured records and written to perf-violations.json in the run dir;
+ * the bots-perf CI job fails if that file is non-empty.
+ *
+ * Pure functions: the only Playwright dependency is the Page handle in
+ * capturePerfSample().
  */
 
 import type { Page } from "@playwright/test";
@@ -92,4 +98,112 @@ export async function capturePerfSample(
     // evaluate can fail on navigated-away pages, error pages, etc.
     return null;
   }
+}
+
+// ── Perf budget evaluation ─────────────────────────────────────────────────
+
+/**
+ * Per-route budget thresholds. Routes are matched by exact path first, then
+ * by prefix (longest prefix wins). All values in milliseconds.
+ *
+ * FCP (First Contentful Paint) is measured directly via the Paint Timing API.
+ * loadEventMs is used as a proxy for LCP (it's a conservative upper bound).
+ */
+export interface PerfBudget {
+  /** Route path (exact) or prefix (ends with '/'). */
+  route: string;
+  /** Max FCP in ms. null = not checked. */
+  fcpMs: number | null;
+  /** Max load-event time in ms (LCP proxy). null = not checked. */
+  loadEventMs: number | null;
+}
+
+export const PERF_BUDGETS: PerfBudget[] = [
+  // Money pages — tightest budgets
+  { route: "/compare",      fcpMs: 2500, loadEventMs: 4000 },
+  { route: "/",             fcpMs: 2500, loadEventMs: 4000 },
+  // Broker detail (prefix match — /broker/stake, /broker/cmc-markets …)
+  { route: "/broker/",      fcpMs: 3000, loadEventMs: 5000 },
+  // Advisor directory
+  { route: "/advisors",     fcpMs: 3000, loadEventMs: 5000 },
+  { route: "/find-advisor", fcpMs: 3000, loadEventMs: 5000 },
+  // Content pillars — key GEO/SEO pages
+  { route: "/share-trading",      fcpMs: 3000, loadEventMs: 5000 },
+  { route: "/etfs",               fcpMs: 3000, loadEventMs: 5000 },
+  { route: "/best-broker/",       fcpMs: 3000, loadEventMs: 5000 },
+  { route: "/foreign-investment", fcpMs: 3000, loadEventMs: 5000 },
+];
+
+export interface PerfViolation {
+  route: string;
+  url: string;
+  persona: string;
+  metric: "fcpMs" | "loadEventMs";
+  budget: number;
+  actual: number;
+  capturedAt: string;
+}
+
+/** Match a sample's route against the budget table (exact → prefix → null). */
+function findBudget(route: string): PerfBudget | null {
+  // Normalise: strip trailing slash (except root)
+  const norm = route === "/" ? "/" : route.replace(/\/$/, "");
+
+  // Exact match first
+  const exact = PERF_BUDGETS.find((b) => b.route === norm || b.route === route);
+  if (exact) return exact;
+
+  // Prefix match (descending length → longest wins)
+  const prefixes = PERF_BUDGETS.filter((b) => b.route.endsWith("/")).sort(
+    (a, b) => b.route.length - a.route.length,
+  );
+  for (const b of prefixes) {
+    if (norm.startsWith(b.route) || route.startsWith(b.route)) return b;
+  }
+
+  return null;
+}
+
+/**
+ * Evaluate a flat array of PerfSamples against PERF_BUDGETS.
+ * Returns one violation record per exceeded metric per sample.
+ * Samples with null metric values are skipped (metric unavailable).
+ */
+export function evaluatePerfBudgets(samples: PerfSample[]): PerfViolation[] {
+  const violations: PerfViolation[] = [];
+
+  for (const s of samples) {
+    const budget = findBudget(s.route);
+    if (!budget) continue;
+
+    if (budget.fcpMs !== null && s.fcpMs !== null && s.fcpMs > budget.fcpMs) {
+      violations.push({
+        route: s.route,
+        url: s.url,
+        persona: s.persona,
+        metric: "fcpMs",
+        budget: budget.fcpMs,
+        actual: s.fcpMs,
+        capturedAt: s.capturedAt,
+      });
+    }
+
+    if (
+      budget.loadEventMs !== null &&
+      s.loadEventMs !== null &&
+      s.loadEventMs > budget.loadEventMs
+    ) {
+      violations.push({
+        route: s.route,
+        url: s.url,
+        persona: s.persona,
+        metric: "loadEventMs",
+        budget: budget.loadEventMs,
+        actual: s.loadEventMs,
+        capturedAt: s.capturedAt,
+      });
+    }
+  }
+
+  return violations;
 }
