@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
+import Link from "next/link";
 import CompareClient from "./CompareClient";
-import CompareNav from "./CompareNav";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 import { speakableWebPageJsonLd } from "@/lib/schema-markup";
@@ -25,6 +25,20 @@ export const metadata = {
 };
 
 export const revalidate = 1800; // ISR: revalidate every 30 min (core product page)
+
+// Dedicated comparison pages that aren't covered by the in-page category pills
+// (separate datasets/guides). Rendered as a quiet secondary link row on the
+// /compare index — see SC-7 in docs/plans/DIRECTORY_UX_UNIFICATION.md.
+const SPECIALISED_COMPARES: { label: string; href: string }[] = [
+  { label: "Share trading", href: "/share-trading" },
+  { label: "ETFs", href: "/compare/etfs" },
+  { label: "Crypto", href: "/crypto" },
+  { label: "Super funds", href: "/compare/super" },
+  { label: "Savings", href: "/savings" },
+  { label: "CFD & forex", href: "/cfd" },
+  { label: "Insurance", href: "/compare/insurance" },
+  { label: "Non-residents", href: "/compare/non-residents" },
+];
 
 function ComparePageSkeleton() {
   return (
@@ -186,7 +200,11 @@ export default async function ComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
       />
-      <Suspense fallback={<div className="h-12 bg-slate-100 animate-pulse rounded-lg mx-4" aria-hidden />}><CompareNav /></Suspense>
+      {/* SC-7: the sticky top CompareNav tab-bar was removed from the /compare
+          index — it duplicated the in-page category pills (the single category
+          control here) and read as a second, conflicting filter row. The
+          specialised comparison pages it linked to are preserved as a quiet,
+          clearly-secondary link row below the toolbar (see SPECIALISED_COMPARES). */}
       {/* Shared dark stat-led directory hero (matches /invest + /advisors).
           Server-rendered H1 streams immediately for crawlers; the speakable
           region is preserved via speakableId. */}
@@ -204,6 +222,22 @@ export default async function ComparePage() {
       <div className="container-custom max-w-6xl pt-4">
         <GetMatchedEmbed context="platform_compare" />
       </div>
+      {/* Specialised comparisons — quiet link row (replaces the duplicate sticky
+          CompareNav). Text links, deliberately not pill-styled, so they read as
+          "go to a dedicated comparison" rather than "filter this table". */}
+      <nav className="container-custom max-w-6xl pt-4" aria-label="Specialised comparisons">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs md:text-sm text-slate-500">
+          <span className="font-semibold text-slate-700">Specialised comparisons:</span>
+          {SPECIALISED_COMPARES.map((item, i) => (
+            <span key={item.href} className="inline-flex items-center gap-x-3">
+              {i > 0 && <span aria-hidden className="text-slate-300">·</span>}
+              <Link href={item.href} className="hover:text-amber-700 hover:underline">
+                {item.label}
+              </Link>
+            </span>
+          ))}
+        </div>
+      </nav>
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareData />
       </Suspense>
