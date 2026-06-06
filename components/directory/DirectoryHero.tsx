@@ -65,22 +65,22 @@ export default function DirectoryHero({
   const tiles = (stats ?? []).slice(0, 4);
   return (
     <>
-      <section className="relative overflow-hidden bg-gradient-to-b from-ink-900 to-ink-800 text-white">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(242,88,34,.18), transparent 65%)" }}
-        />
-        {/* Compact by design — directory pages must show real content (table /
-            cards) near the fold, so the hero stays a slim banner, not a
-            half-screen splash. */}
-        <div className={`${containerClassName} relative py-4 md:py-5`}>
-          <nav className="text-[11px] md:text-xs text-white/55 mb-1.5" aria-label="Breadcrumb">
+      {/* Compact rounded-box header — a contained banner at the top of the page
+          (not a full-bleed half-screen splash), so the real content (table /
+          cards) sits near the fold. */}
+      <div className={`${containerClassName} pt-3 md:pt-4`}>
+        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-ink-900 to-ink-800 text-white px-5 py-4 md:px-7 md:py-5 shadow-sm">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full"
+            style={{ background: "radial-gradient(circle, rgba(242,88,34,.2), transparent 65%)" }}
+          />
+          <nav className="relative text-[11px] md:text-xs text-white/55 mb-1.5" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-white">Home</Link>
             <span className="mx-1.5" aria-hidden>/</span>
             <span className="text-white/80">{breadcrumbLabel}</span>
           </nav>
-          <div className="grid gap-3 md:grid-cols-[1.5fr_1fr] md:items-center">
+          <div className="relative grid gap-3 md:grid-cols-[1.5fr_1fr] md:items-center">
             <div {...(speakableId ? { "data-speakable": speakableId } : {})}>
               {pill && (
                 <span className="iv2-pill border border-coral-500/30 bg-coral-500/15 text-coral-300">
@@ -116,8 +116,8 @@ export default function DirectoryHero({
               </div>
             )}
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
       {children != null && (
         <div className={`${containerClassName} pt-3`}>{children}</div>
       )}
