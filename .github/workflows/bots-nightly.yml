@@ -1,0 +1,60 @@
+# ──────────────────────────────────────────────────────────────────
+# Nightly bot fleet — autonomous deterministic regression guard.
+#
+# Runs `npm run bots:nightly` (page sweep + API probe, no LLM, $0 Anthropic
+# spend) against the production mirror on a schedule and on demand. Uploads the
+# dated report as an artifact and FAILS the job when it finds genuinely broken
+# links (404/5xx) or 5xx API routes — so a real regression pages you via the
+# normal Actions failure surface.
+#
+# GitHub-hosted runners have clean internet (no TLS-MITM proxy), so the 403
+# sandbox noise that the local runner reclassifies as "access-restricted" does
+# not occur here — a failure means a real break.
+# ──────────────────────────────────────────────────────────────────
+
+name: Bots nightly
+
+on:
+  schedule:
+    # 14:00 UTC = ~00:00 AEST — quiet hours.
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Target base URL (default: Netlify production mirror)"
+        required: false
+        default: "https://lambent-sawine-17c3dd.netlify.app"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bots-nightly
+  cancel-in-progress: false
+
+jobs:
+  fleet:
+    name: Deterministic fleet (page sweep + API probe)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run nightly fleet
+        env:
+          BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
+        run: npm run bots:nightly
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bots-nightly-report
+          path: bots/reports/nightly-*.md
+          if-no-files-found: warn
+          retention-days: 30
