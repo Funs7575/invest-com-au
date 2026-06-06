@@ -94,6 +94,7 @@ function InterestPill({
   return (
     <button
       type="button"
+      aria-pressed={selected}
       onClick={onClick}
       className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all ${
         selected

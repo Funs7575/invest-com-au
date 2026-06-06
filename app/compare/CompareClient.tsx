@@ -628,6 +628,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                     const on = activeFeatures.has(key);
                     return (
                       <button key={key} type="button"
+                        aria-pressed={on}
                         onClick={() => setActiveFeatures((prev) => { const next = new Set(prev); if (next.has(key)) next.delete(key); else next.add(key); return next; })}
                         className={`flex items-center gap-2 px-2.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${on ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
                         <Icon name={f.icon} size={13} className={on ? "text-amber-600" : "text-slate-400"} />
