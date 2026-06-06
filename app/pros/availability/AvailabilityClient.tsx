@@ -133,7 +133,7 @@ export default function AvailabilityClient({ initialSlots }: Props) {
         </div>
 
         {error && (
-          <p className="text-xs text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
+          <p role="alert" className="text-xs text-rose-600 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
             {error}
           </p>
         )}

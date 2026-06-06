@@ -263,7 +263,7 @@ export default function PackagesClient() {
 
       {/* Error */}
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+        <div role="alert" className="mb-4 bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
           {error}
         </div>
       )}

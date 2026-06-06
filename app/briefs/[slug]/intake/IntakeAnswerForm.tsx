@@ -128,7 +128,7 @@ export default function IntakeAnswerForm({ slug, questions }: FormProps) {
       </ul>
 
       {error && (
-        <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+        <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
           {error}
         </p>
       )}

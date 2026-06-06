@@ -246,7 +246,7 @@ export default function FeaturedPlacementBookingForm({
       </div>
 
       {error && (
-        <div className="bg-rose-50 border border-rose-200 rounded-lg px-3 py-2.5 text-sm text-rose-800">
+        <div role="alert" className="bg-rose-50 border border-rose-200 rounded-lg px-3 py-2.5 text-sm text-rose-800">
           {error}
         </div>
       )}

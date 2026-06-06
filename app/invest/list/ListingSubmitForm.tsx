@@ -672,7 +672,7 @@ export default function ListingSubmitForm() {
           </label>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3">
+            <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3">
               <Icon name="alert-circle" size={16} className="text-red-500 shrink-0 mt-0.5" />
               <p className="text-sm text-red-700">{error}</p>
             </div>

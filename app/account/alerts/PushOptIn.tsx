@@ -157,7 +157,7 @@ export default function PushOptIn({ initialEnabled }: Props) {
             threshold — even when you&apos;re not on the site.
           </p>
           {error && (
-            <p className="mt-1.5 text-xs text-red-600">{error}</p>
+            <p role="alert" className="mt-1.5 text-xs text-red-600">{error}</p>
           )}
           {permission === "denied" && !error && (
             <p className="mt-1.5 text-xs text-amber-600">

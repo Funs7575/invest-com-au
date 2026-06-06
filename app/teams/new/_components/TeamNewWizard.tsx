@@ -187,7 +187,7 @@ export default function TeamNewWizard() {
       </ol>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
+        <div role="alert" className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg p-3 mb-4">
           {error}
         </div>
       )}

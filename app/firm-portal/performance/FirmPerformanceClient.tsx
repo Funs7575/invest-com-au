@@ -184,7 +184,7 @@ export default function FirmPerformanceClient({ summary: initialSummary }: Props
         </div>
 
         {error && (
-          <p className="px-5 py-3 text-sm text-red-600">{error}</p>
+          <p role="alert" className="px-5 py-3 text-sm text-red-600">{error}</p>
         )}
 
         {summary.members.length === 0 ? (

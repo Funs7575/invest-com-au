@@ -176,7 +176,7 @@ export default function SharesightConnectButton({ initialStatus }: Props) {
       )}
 
       {error && (
-        <p className="text-xs text-rose-700">{error}</p>
+        <p role="alert" className="text-xs text-rose-700">{error}</p>
       )}
 
       {result && (

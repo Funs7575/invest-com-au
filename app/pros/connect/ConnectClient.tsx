@@ -159,7 +159,7 @@ export default function ConnectClient({
       </div>
 
       {error && (
-        <p className="text-sm text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
+        <p role="alert" className="text-sm text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
           {error}
         </p>
       )}

@@ -193,7 +193,7 @@ export default function SponsoredClient() {
               Book Your Sponsorship
             </h2>
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+              <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
                 {error}
               </div>
             )}

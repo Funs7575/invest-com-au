@@ -92,7 +92,7 @@ export default function RsvpButton({
         {loading ? "Registering…" : "Register Now"}
       </button>
       {error && (
-        <p className="text-xs text-red-600 text-center">{error}</p>
+        <p role="alert" className="text-xs text-red-600 text-center">{error}</p>
       )}
     </div>
   );

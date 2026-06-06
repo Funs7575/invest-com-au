@@ -87,7 +87,7 @@ export default function OrgPortalLogin() {
               </button>
 
               {error && (
-                <p className="text-xs text-red-600 mt-2 text-center">{error}</p>
+                <p role="alert" className="text-xs text-red-600 mt-2 text-center">{error}</p>
               )}
             </>
           )}

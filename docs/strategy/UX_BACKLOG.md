@@ -258,3 +258,7 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 **[ADV-049]** Invalid `role="tablist"` on jump-link navs replaced with `<nav>` — 7 invest sector pages (lithium, uranium, royalties, hydrogen, oil-gas, income-assets, pre-ipo) used `role="tablist"` on anchor-link navs; replaced with `<nav aria-label="Ways to invest">`.
 
 **[ADV-050]** `role="alert"` on error message containers in 6 account pages — ReferralsClient, SavedComparisonsClient, WatchlistClient, SavedSearchesClient, StartupThesisClient, AlertsClient error blocks now announce via `role="alert"` for screen readers.
+
+**[ADV-051]** `role="alert"` on error blocks in 10 advisor/broker portal pages — broker-portal campaigns, login, register; advisor-portal CaseStudiesTab, EventsTab, ProfileDetailsTab, BriefsInboxClient, TeamsManagerClient, WebhooksClient.
+
+**[ADV-052]** `role="alert"` sweep across 25 additional user-facing pages — advertise/packages, advertise/featured-placement, community/thread, for-advisors/sponsored, invest/list, auth/reset-password, wholesale-cert, briefs (BookConsultationPanel, IntakeAnswerForm, BriefForm), pros (connect, availability, pricing-tier, intake questions), quotes/JobPostForm, events/RsvpButton, startup-portal (round/new, esic-verification), startup-signup, account/holdings, account/alerts PushOptIn, teams (new wizard, ops settings), firm-portal/performance, org-portal login. All error display elements now announce to screen readers.
