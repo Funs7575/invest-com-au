@@ -24,6 +24,7 @@ import { loadInvestPageContext } from "@/lib/listing-page-context";
 import { computeMatchScore } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 
@@ -243,54 +244,23 @@ export default async function InvestMarketplacePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
 
-      {/* ── Dark marketplace hero (v2 confident-fintech) ─────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-ink-900 to-ink-800 text-white">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(242,88,34,.18), transparent 65%)" }}
-        />
-        <div className="container-custom max-w-6xl relative py-8 md:py-12">
-          <nav className="text-xs md:text-sm text-white/55 mb-3">
-            <Link href="/" className="hover:text-white">Home</Link>
-            <span className="mx-2">/</span>
-            <span className="text-white/80">Opportunities</span>
-          </nav>
-          <div className="grid gap-8 md:grid-cols-[1.4fr_1fr] md:items-end">
-            <div>
-              <span className="iv2-pill border border-coral-500/30 bg-coral-500/15 text-coral-300">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coral-400" />
-                Live marketplace
-              </span>
-              <h1 className="mt-4 text-3xl font-extrabold leading-[1.04] tracking-tight md:text-5xl">
-                {listings.length.toLocaleString("en-AU")} live opportunities.
-                {aggregateAskCents > 0 && (
-                  <>
-                    <br />
-                    <span className="text-coral-400">{formatAudBig(aggregateAskCents)} in aggregate ask.</span>
-                  </>
-                )}
-              </h1>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/70 md:text-base">
-                Businesses, property, projects, funds, syndicates &amp; collectibles — all filterable in one place.
-                To compare super funds or share-trading platforms,{" "}
-                <Link href="/compare" className="text-coral-300 underline hover:no-underline">visit Compare</Link>.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {heroStats.map((s) => (
-                <div key={s.l} className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-                  <div className="iv2-bignum text-2xl text-white md:text-3xl">{s.v}</div>
-                  <div className="mt-1 text-[11px] font-semibold text-white/55 md:text-xs">{s.l}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Country/FIRB notices + owner link on the light band below the hero */}
-      <div className="container-custom max-w-6xl pt-4">
+      {/* ── Shared dark stat-led directory hero (SC-3) ────────────── */}
+      <DirectoryHero
+        breadcrumbLabel="Opportunities"
+        pill={{ label: "Live marketplace", live: true }}
+        headlineLead={`${listings.length.toLocaleString("en-AU")} live opportunities.`}
+        headlineAccent={
+          aggregateAskCents > 0 ? `${formatAudBig(aggregateAskCents)} in aggregate ask.` : undefined
+        }
+        subtitle={
+          <>
+            Businesses, property, projects, funds, syndicates &amp; collectibles — all filterable in one place.
+            To compare super funds or share-trading platforms,{" "}
+            <Link href="/compare" className="text-coral-300 underline hover:no-underline">visit Compare</Link>.
+          </>
+        }
+        stats={heroStats}
+      >
         <DirectoryBanners surface="invest" />
         {ctx.isListingOwner && (
           <Link
@@ -301,7 +271,7 @@ export default async function InvestMarketplacePage() {
             My listings →
           </Link>
         )}
-      </div>
+      </DirectoryHero>
 
       {/* ── Marketplace (primary — no two-step) ───────────────── */}
       {/* Suspense required: InvestListingsClient calls useSearchParams(), which
