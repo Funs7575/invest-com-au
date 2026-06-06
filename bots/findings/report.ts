@@ -121,6 +121,46 @@ const CATEGORY_HELP: Record<FindingCategory, { what: string; fix: string }> = {
     what: "A JSON-LD structured data block is missing a required field, which reduces AI/LLM citability and may fail Google rich-result eligibility.",
     fix: "Add the missing field to the appropriate lib/schema-markup.ts builder, then verify with Google's Rich Results Test.",
   },
+  geo: {
+    what: "A content page is missing a GEO/answer-engine citability signal (schema, Speakable, FAQ, or freshness), lowering its odds of being cited by AI answer engines.",
+    fix: "Add the missing signal — see the detail and the helpers in lib/schema-markup.ts.",
+  },
+  "country-mode": {
+    what: "The country-aware experience didn't reflect the visitor's country — a foreign investor saw the generic AU experience, or the wrong country's copy.",
+    fix: "Check getIntentCountry() and the page-recommendations lookup on the listed surface (lib/country-mode/*, lib/page-recommendations.ts).",
+  },
+  i18n: {
+    what: "A localisation defect on a translated page — wrong/missing lang tag, missing RTL direction, or an untranslated key leaking into the copy.",
+    fix: "Fix the lang/dir attributes or the missing translation; see lib/i18n/* and the locale page under app/<locale>/.",
+  },
+  calculator: {
+    what: "A calculator or tool produced a wrong result, was non-linear, or failed to render its inputs.",
+    fix: "Reproduce on the listed tool and fix the compute logic or client hydration.",
+  },
+  "form-validation": {
+    what: "A form mishandled bad input — accepted an empty/invalid submission, or crashed on oversized input instead of returning a clean error.",
+    fix: "Add/verify client validation and read the body with safeParse so oversized input returns a 400, not a 500.",
+  },
+  directory: {
+    what: "A directory primitive (search, sort, filter, compare bar, or empty state) didn't behave — e.g. search didn't filter or clearing didn't restore results.",
+    fix: "Check the components/directory/* wiring on the listed surface.",
+  },
+  "rate-limit": {
+    what: "A rate-limited endpoint either never returned a 429 under a burst (limiter not engaging) or returned a 5xx instead of degrading cleanly.",
+    fix: "Verify lib/rate-limit.ts is applied to the route and returns a 429 (ideally with Retry-After), never a 500.",
+  },
+  mobile: {
+    what: "A defect that only shows at phone width — horizontal overflow, a broken hamburger menu, or a filter drawer that won't open/close.",
+    fix: "Reproduce at a 390px viewport and fix the responsive layout or mobile interaction.",
+  },
+  auth: {
+    what: "An auth-boundary defect — a gated route exposed content to a logged-out visitor, or dropped the return path on its login redirect.",
+    fix: "Check the route's auth gate and ensure it redirects to the login wall preserving the next=/redirect= return path.",
+  },
+  "dark-mode": {
+    what: "A dark-palette defect — the dark theme didn't apply, or an a11y/contrast violation surfaced only in dark mode.",
+    fix: "Check the theme is applied (<html class=\"dark\">) and fix the dark-mode colour tokens for the listed surface.",
+  },
   safety: {
     what: "The safety net intercepted real-world actions (payments, emails, etc.) so nothing actually happened.",
     fix: "No action needed — this confirms the safety net is working.",

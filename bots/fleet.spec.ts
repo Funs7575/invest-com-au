@@ -7,6 +7,8 @@ import { resolveAiKey } from "./ai/anthropic-client";
 import { USER_LIFECYCLE_FLOW } from "./flows/user-lifecycle";
 import { STARTUP_ECOSYSTEM_FLOW } from "./flows/startup-portal";
 import { ADVISOR_PORTAL_FLOW } from "./flows/advisor-portal";
+import { COVERAGE_FLOW_PERSONAS } from "./flows/registry";
+import { recordFlowRollup } from "./flows/runner";
 
 /**
  * Fleet entrypoint.
@@ -185,6 +187,39 @@ for (const persona of ADVISOR_PORTAL_PERSONAS) {
         signatureKey: `advisor-portal:rollup:${persona.name}`,
       });
 
+      await session.audit({ links: false });
+    } finally {
+      await session.persist();
+      await session.close();
+    }
+  });
+}
+
+// Coverage flows — deterministic, assertive journeys closing the highest-value
+// gaps in bot coverage (country mode, i18n, calculators, form negative-paths,
+// directory filters, content citability, rate limiting, mobile, auth edges,
+// dark mode). Each binds a flow to the browser-context shape it needs (viewport,
+// colour scheme, seeded localStorage). No storageState required — they run on
+// any target, including the protected mirror. All writes stay auto-mocked.
+for (const persona of COVERAGE_FLOW_PERSONAS) {
+  test(`flow: ${persona.name}`, async ({ browser }) => {
+    const session = await BotSession.create(browser, config, {
+      persona: persona.name,
+      viewport: persona.viewport,
+      colorScheme: persona.colorScheme,
+      seedLocalStorage: persona.seedLocalStorage,
+    });
+    try {
+      const results = await session.runFlow(persona.flow);
+      recordFlowRollup(
+        session.store,
+        persona.name,
+        persona.flow.name,
+        results,
+        session.page.url(),
+      );
+      // Cross-cutting checks on wherever the flow ended up (links off — these
+      // flows navigate a lot already; affiliate/geo stay on by default).
       await session.audit({ links: false });
     } finally {
       await session.persist();

@@ -33,6 +33,25 @@ export interface SessionOptions {
   persona: string;
   /** Storage-state file for an authenticated persona (reuses e2e auth states). */
   storageStateFile?: string;
+  /**
+   * Override the browser viewport. Used by mobile personas to drive a core
+   * flow at a phone width (where the directory filter drawer and compare bar
+   * behave very differently from desktop). Omit for the default desktop size.
+   */
+  viewport?: { width: number; height: number };
+  /**
+   * Emulate `prefers-color-scheme`. The app's theme defaults to "system", so
+   * `colorScheme: "dark"` flips resolvedTheme to dark without any UI clicks —
+   * used by the dark-mode persona to re-run a11y under the dark palette.
+   */
+  colorScheme?: "light" | "dark";
+  /**
+   * Seed `localStorage` entries before any page script runs (via
+   * `addInitScript`). Used to pin an explicit theme preference
+   * (`{ theme: "dark" }`) so the dark class is applied deterministically even
+   * where `colorScheme` emulation alone is insufficient.
+   */
+  seedLocalStorage?: Record<string, string>;
 }
 
 export class BotSession {
@@ -54,7 +73,20 @@ export class BotSession {
     const context = await browser.newContext({
       ...(opts.storageStateFile ? { storageState: opts.storageStateFile } : {}),
       ...(config.ignoreHttpsErrors ? { ignoreHTTPSErrors: true } : {}),
+      ...(opts.viewport ? { viewport: opts.viewport } : {}),
+      ...(opts.colorScheme ? { colorScheme: opts.colorScheme } : {}),
     });
+    if (opts.seedLocalStorage && Object.keys(opts.seedLocalStorage).length > 0) {
+      // Runs before any page script on every navigation, so the theme class is
+      // applied by the layout's inline script before React hydrates.
+      await context.addInitScript((entries: [string, string][]) => {
+        try {
+          for (const [k, v] of entries) localStorage.setItem(k, v);
+        } catch {
+          // Private mode / blocked storage — nothing we can do; tolerate.
+        }
+      }, Object.entries(opts.seedLocalStorage));
+    }
     const page = await context.newPage();
     const session = new BotSession(context, page, config, opts.persona);
     session.net = await installSafetyNet(page, config);

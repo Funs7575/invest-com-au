@@ -22,6 +22,16 @@ export type FindingCategory =
   | "compliance" // AI judge: missing required financial disclosure
   | "flow-failure" // a scripted/AI flow could not complete a step
   | "schema" // JSON-LD structured data missing required fields (GEO/AI-citation risk)
+  | "geo" // GEO/answer-engine citability gap (sub-signal of citability crawls)
+  | "country-mode" // country-aware experience not reflected / wrong country
+  | "i18n" // localisation defect (lang/dir/untranslated artifact)
+  | "calculator" // calculator/tool produced wrong or missing output
+  | "form-validation" // a form mishandled invalid/oversized input
+  | "directory" // directory filter/search/sort/compare primitive misbehaved
+  | "rate-limit" // rate limiter failed to engage or degraded poorly
+  | "mobile" // defect specific to a phone viewport (overflow, drawer, nav)
+  | "auth" // auth boundary defect (leak, missing redirect/return path)
+  | "dark-mode" // dark-palette defect (theme not applied / contrast)
   | "safety"; // the safety net had to intercept something unexpected
 
 export const SEVERITY_ORDER: Record<Severity, number> = {
