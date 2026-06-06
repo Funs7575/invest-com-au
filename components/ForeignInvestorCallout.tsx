@@ -21,7 +21,7 @@ export default function ForeignInvestorCallout({ href, verticalName, keyRule }: 
               <p className="text-sm font-bold text-amber-900 leading-snug">
                 Investing in {verticalName} from overseas?
               </p>
-              <p className="text-xs text-amber-700/80 mt-0.5 leading-relaxed">{keyRule}</p>
+              <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">{keyRule}</p>
             </div>
           </div>
           <Link
