@@ -1,23 +1,25 @@
 # ──────────────────────────────────────────────────────────────────
-# Nightly bot fleet — autonomous deterministic regression guard.
+# Bot fleet — autonomous health monitors. COST-BOUNDED BY DESIGN:
+#   • Targets the Netlify production mirror, NEVER Vercel → adds zero Vercel
+#     compute (can't repeat the Vercel billing/CPU issue).
+#   • Zero Anthropic spend — all monitors are deterministic/heuristic, no LLM
+#     (the gated red-team is NOT scheduled here).
+#   • GitHub Actions minutes are the only cost, and they're capped:
+#       - `light` job (no browser): ~4 min, DAILY  → ~120 min/mo
+#       - `browser` job (chromium): ~15 min, WEEKLY → ~65 min/mo
+#     ~185 min/mo total, each run hard-capped by timeout-minutes + concurrency.
+#   • Supabase reads are tiny (counts); Netlify hits are a few hundred req/run.
 #
-# Runs `npm run bots:nightly` (page sweep + API probe, no LLM, $0 Anthropic
-# spend) against the production mirror on a schedule and on demand. Uploads the
-# dated report as an artifact and FAILS the job when it finds genuinely broken
-# links (404/5xx) or 5xx API routes — so a real regression pages you via the
-# normal Actions failure surface.
-#
-# GitHub-hosted runners have clean internet (no TLS-MITM proxy), so the 403
-# sandbox noise that the local runner reclassifies as "access-restricted" does
-# not occur here — a failure means a real break.
+# A job FAILS (pages you) only on genuine breakage; sandbox-proxy noise doesn't
+# occur on clean GitHub runners.
 # ──────────────────────────────────────────────────────────────────
 
-name: Bots nightly
+name: Bots fleet
 
 on:
   schedule:
-    # 14:00 UTC = ~00:00 AEST — quiet hours.
-    - cron: "0 14 * * *"
+    - cron: "0 14 * * *"   # daily 14:00 UTC (~midnight AEST) — light job
+    - cron: "0 15 * * 1"   # Mondays 15:00 UTC — browser job
   workflow_dispatch:
     inputs:
       target:
@@ -29,74 +31,84 @@ permissions:
   contents: read
 
 concurrency:
-  group: bots-nightly
+  group: bots-fleet
   cancel-in-progress: false
 
 jobs:
-  fleet:
-    name: Deterministic fleet (page sweep + API probe)
+  # Cheap monitors — Playwright `request` (no browser binary) + Supabase reads.
+  # Daily; also on manual dispatch.
+  light:
+    name: Light monitors (funnel · seo · perf · idor · data)
+    if: github.event.schedule != '0 15 * * 1'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
+    env:
+      BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
-        with:
-          node-version: "20"
-          cache: "npm"
+        with: { node-version: "20", cache: "npm" }
       - run: npm ci
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
-      - name: Funnel uptime monitor
-        env:
-          BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
+      - name: Funnel uptime
         run: npm run bots:funnel
-      - name: SEO / structured-data sweep
+      - name: SEO / structured-data
         if: always()
-        env:
-          BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
         run: npm run bots:seo
+      - name: Performance budget
+        if: always()
+        run: npm run bots:perf
       - name: Anon-read IDOR guard
         if: always()
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: npm run bots:idor
-      - name: Performance budget
-        if: always()
-        env:
-          BOTS_BASE_URL: ${{ github.event.inputs.target || .https://lambent-sawine-17c3dd.netlify.app. }}
-        run: npm run bots:perf
-      - name: Accessibility (axe)
-        if: always()
-        env:
-          BOTS_BASE_URL: ${{ github.event.inputs.target || .https://lambent-sawine-17c3dd.netlify.app. }}
-        run: npm run bots:a11y
       - name: Data integrity
         if: always()
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npm run bots:data
-      - name: Conversion / affiliate-tracking
-        if: always()
-        env:
-          BOTS_BASE_URL: ${{ github.event.inputs.target || .https://lambent-sawine-17c3dd.netlify.app. }}
-        run: npm run bots:conversion
-      - name: Visual + layout guard
-        if: always()
-        env:
-          BOTS_BASE_URL: ${{ github.event.inputs.target || .https://lambent-sawine-17c3dd.netlify.app. }}
-        run: npm run bots:visual
-      - name: Run nightly fleet
-        if: always() # run the broad sweep even if an earlier monitor flagged a step
-        env:
-          BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
-        run: npm run bots:nightly
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bots-reports
+          name: bots-light-reports
+          path: bots/reports/*.md
+          if-no-files-found: warn
+          retention-days: 30
+
+  # Browser monitors — need chromium. Weekly (Mondays); also on manual dispatch.
+  browser:
+    name: Browser monitors (sweep · a11y · visual · conversion)
+    if: github.event.schedule != '0 14 * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with: { node-version: "20", cache: "npm" }
+      - run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Page sweep + API probe
+        run: npm run bots:nightly
+      - name: Accessibility (axe)
+        if: always()
+        run: npm run bots:a11y
+      - name: Conversion / affiliate-tracking
+        if: always()
+        run: npm run bots:conversion
+      - name: Visual + layout guard
+        if: always()
+        run: npm run bots:visual
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bots-browser-reports
           path: |
             bots/reports/*.md
             bots/reports/screenshots/**
