@@ -210,3 +210,9 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 **[ADV-025]** Find-advisor quiz localStorage sync — `update()` callback now syncs localStorage on every call so step-back + intent change is always reflected on reload. `app/find-advisor/page.tsx`
 
 **[ADV-026]** Article detail bottom share row — second `<ArticleShareRow>` added below the article body so readers don't need to scroll back up to share. `app/article/[slug]/page.tsx`
+
+**[ADV-027]** Login mode-switch buttons enlarged and "Forgot password?" added — mode-switch buttons changed from `text-xs` (12px) to `text-sm` (14px) for legibility; `aria-pressed` added to all mode-switch buttons; "Forgot password? Use magic link" button added below password-mode controls. `app/advisor-portal/AdvisorPortalLogin.tsx`
+
+**[ADV-028]** Wizard step 2 required-template hint — "Select at least one to continue" inline hint added to the scope-selection step so the disabled "Next" button is self-explanatory. `app/teams/new/_components/TeamNewWizard.tsx`
+
+**[ADV-029]** Wizard step 3 empty-invite rows no longer block "Next" — `filledInvites` computed from non-empty rows, so partially-filled invite rows don't lock the user out. `app/teams/new/_components/TeamNewWizard.tsx`

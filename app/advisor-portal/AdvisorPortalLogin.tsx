@@ -119,18 +119,20 @@ export default function AdvisorPortalLogin(_props: Props) {
 
               {error && <p className="text-xs text-red-600 mt-2 text-center">{error}</p>}
 
-              <div className="mt-4 pt-3 border-t border-slate-100 text-center space-y-1.5">
+              <div className="mt-4 pt-3 border-t border-slate-100 text-center space-y-2">
                 {mode === "magic" ? (
                   <>
                     <button
                       onClick={() => { setMode("password"); setError(""); }}
-                      className="text-xs text-slate-500 hover:text-slate-700 block w-full"
+                      aria-pressed={false}
+                      className="text-sm text-slate-600 hover:text-slate-900 block w-full"
                     >
                       Use password instead
                     </button>
                     <button
                       onClick={() => { setMode("signup"); setError(""); }}
-                      className="text-xs text-violet-600 hover:text-violet-800 block w-full font-medium"
+                      aria-pressed={false}
+                      className="text-sm text-violet-600 hover:text-violet-800 block w-full font-medium"
                     >
                       First time? Set up a password
                     </button>
@@ -139,21 +141,30 @@ export default function AdvisorPortalLogin(_props: Props) {
                   <>
                     <button
                       onClick={() => { setMode("magic"); setError(""); }}
-                      className="text-xs text-slate-500 hover:text-slate-700 block w-full"
+                      aria-pressed={false}
+                      className="text-sm text-slate-600 hover:text-slate-900 block w-full"
                     >
                       Use magic link instead
                     </button>
                     <button
                       onClick={() => { setMode("signup"); setError(""); }}
-                      className="text-xs text-violet-600 hover:text-violet-800 block w-full font-medium"
+                      aria-pressed={false}
+                      className="text-sm text-violet-600 hover:text-violet-800 block w-full font-medium"
                     >
                       First time? Create account
+                    </button>
+                    <button
+                      onClick={() => { setMode("magic"); setError(""); setEmail(""); }}
+                      className="text-xs text-slate-400 hover:text-slate-600 block w-full"
+                    >
+                      Forgot password? Use magic link
                     </button>
                   </>
                 ) : (
                   <button
                     onClick={() => { setMode("password"); setError(""); }}
-                    className="text-xs text-slate-500 hover:text-slate-700 block w-full"
+                    aria-pressed={false}
+                    className="text-sm text-slate-600 hover:text-slate-900 block w-full"
                   >
                     Already have an account? Log in
                   </button>

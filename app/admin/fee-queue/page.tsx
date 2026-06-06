@@ -138,9 +138,11 @@ export default function AdminFeeQueuePage() {
   const urgentCount = items.filter(i => i.priority === "urgent").length;
   const autoCount = items.filter(i => i.auto_applied).length;
 
+  // eslint-disable-next-line react-hooks/purity -- admin page, Date.now() used for age calculations
+  const now = Date.now();
   const staleCount = staleBrokers.filter(b => {
     if (!b.fee_last_checked) return true;
-    const daysSince = (Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000;
+    const daysSince = (now - new Date(b.fee_last_checked).getTime()) / 86400000;
     return daysSince > 30;
   }).length;
 
@@ -235,7 +237,7 @@ export default function AdminFeeQueuePage() {
                         <input type="checkbox" checked={selectedIds.has(item.id)}
                           onChange={() => setSelectedIds(prev => {
                             const n = new Set(prev);
-                            n.has(item.id) ? n.delete(item.id) : n.add(item.id);
+                            if (n.has(item.id)) { n.delete(item.id); } else { n.add(item.id); }
                             return n;
                           })}
                           className="rounded mt-1 shrink-0"
@@ -309,7 +311,7 @@ export default function AdminFeeQueuePage() {
                     className={`px-3 py-1 text-xs font-semibold rounded-lg ${rule.enabled ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
                     {rule.enabled ? "Enabled" : "Disabled"}
                   </button>
-                  <button onClick={() => deleteRule(rule.id)} className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
+                  <button onClick={() => deleteRule(rule.id)} aria-label="Delete rule" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
                 </div>
               </div>
             ))}
@@ -338,21 +340,21 @@ export default function AdminFeeQueuePage() {
           <div className="grid grid-cols-3 gap-3 mb-6">
             <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 text-center">
               <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Fresh (&lt;30d)</p>
-              <p className="text-2xl font-extrabold text-emerald-600">{staleBrokers.filter(b => b.fee_last_checked && (Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000 <= 30).length}</p>
+              <p className="text-2xl font-extrabold text-emerald-600">{staleBrokers.filter(b => b.fee_last_checked && (now - new Date(b.fee_last_checked).getTime()) / 86400000 <= 30).length}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 text-center">
               <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Stale (&gt;30d)</p>
-              <p className="text-2xl font-extrabold text-amber-600">{staleBrokers.filter(b => b.fee_last_checked && (Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000 > 30 && (Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000 <= 90).length}</p>
+              <p className="text-2xl font-extrabold text-amber-600">{staleBrokers.filter(b => b.fee_last_checked && (now - new Date(b.fee_last_checked).getTime()) / 86400000 > 30 && (now - new Date(b.fee_last_checked).getTime()) / 86400000 <= 90).length}</p>
             </div>
             <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 text-center">
               <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Critical (&gt;90d)</p>
-              <p className="text-2xl font-extrabold text-red-600">{staleBrokers.filter(b => !b.fee_last_checked || (Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000 > 90).length}</p>
+              <p className="text-2xl font-extrabold text-red-600">{staleBrokers.filter(b => !b.fee_last_checked || (now - new Date(b.fee_last_checked).getTime()) / 86400000 > 90).length}</p>
             </div>
           </div>
 
           <div className="space-y-2">
             {staleBrokers.map(b => {
-              const daysSince = b.fee_last_checked ? Math.round((Date.now() - new Date(b.fee_last_checked).getTime()) / 86400000) : 999;
+              const daysSince = b.fee_last_checked ? Math.round((now - new Date(b.fee_last_checked).getTime()) / 86400000) : 999;
               const severity = daysSince > 90 ? "critical" : daysSince > 30 ? "stale" : "fresh";
               return (
                 <div key={b.id} className={`bg-white border rounded-lg px-4 py-3 flex items-center justify-between gap-3 ${

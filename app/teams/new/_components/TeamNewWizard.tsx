@@ -63,9 +63,10 @@ export default function TeamNewWizard() {
 
   const step1Valid = name.trim().length >= 2 && name.length <= 80 && description.length <= 500;
   const step2Valid = templates.length >= 1;
+  const filledInvites = invites.filter((i) => i.email.trim().length > 0);
   const step3Valid =
-    invites.length <= 6 &&
-    invites.every((i) => /.+@.+\..+/.test(i.email));
+    filledInvites.length <= 6 &&
+    filledInvites.every((i) => /.+@.+\..+/.test(i.email));
 
   const canSubmit = step1Valid && step2Valid && step3Valid && !submitting;
 
@@ -103,9 +104,7 @@ export default function TeamNewWizard() {
           description: description.trim() || undefined,
           team_category: category,
           accepted_brief_templates: templates,
-          invites: invites
-            .map((i) => ({ email: i.email.trim(), role: i.role }))
-            .filter((i) => i.email.length > 0),
+          invites: filledInvites.map((i) => ({ email: i.email.trim(), role: i.role })),
         }),
       });
       const json = (await res.json()) as
@@ -205,7 +204,13 @@ export default function TeamNewWizard() {
               className="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"
               placeholder="e.g. SMSF Property Specialists Sydney"
             />
-            <span className="text-xs text-slate-500">{name.length}/80</span>
+            <span className="text-xs text-slate-500">
+              {name.trim().length < 2 && name.length > 0 ? (
+                <span className="text-amber-600">Minimum 2 characters</span>
+              ) : (
+                `${name.length}/80`
+              )}
+            </span>
           </label>
           <label className="block">
             <span className="text-sm font-semibold text-slate-700">Category</span>
@@ -241,7 +246,8 @@ export default function TeamNewWizard() {
       {step === 2 && (
         <div className="space-y-3">
           <p className="text-sm text-slate-600">
-            Match Requests matching your selected templates will route to this squad.
+            Match Requests matching your selected templates will route to this squad.{" "}
+            <span className="font-medium text-amber-700">Select at least one to continue.</span>
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {BRIEF_TEMPLATES.map((t) => {

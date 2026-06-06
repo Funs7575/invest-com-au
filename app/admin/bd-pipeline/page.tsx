@@ -43,6 +43,7 @@ export default function BDPipelinePage() {
     setLoading(false);
   };
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetchDeals is async; setState runs after await, not synchronously
   useEffect(() => { fetchDeals(); }, []);
 
   const save = async () => {
@@ -126,8 +127,8 @@ export default function BDPipelinePage() {
                   </div>
                 </div>
                 <div className="flex gap-1 shrink-0">
-                  <button onClick={() => setEditing(deal)} className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="settings" size={14} /></button>
-                  <button onClick={() => remove(deal.id)} className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="x-circle" size={14} /></button>
+                  <button onClick={() => setEditing(deal)} aria-label="Edit deal" className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="settings" size={14} /></button>
+                  <button onClick={() => remove(deal.id)} aria-label="Delete deal" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="x-circle" size={14} /></button>
                 </div>
               </div>
             </div>

@@ -211,6 +211,7 @@ interface TdCardProps {
 
 function TdCard({ td, onDelete }: TdCardProps) {
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const days = daysUntil(td.maturity_date);
   const badge = maturityBadge(days);
 
@@ -233,6 +234,7 @@ function TdCard({ td, onDelete }: TdCardProps) {
       onDelete(td.id);
     } catch {
       setDeleting(false);
+      setDeleteError("Could not remove term deposit — please try again.");
     }
   };
 
@@ -282,6 +284,9 @@ function TdCard({ td, onDelete }: TdCardProps) {
           </svg>
         </button>
       </div>
+      {deleteError && (
+        <p className="mt-2 text-xs text-red-600">{deleteError}</p>
+      )}
     </div>
   );
 }

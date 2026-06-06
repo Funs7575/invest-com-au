@@ -147,7 +147,7 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
                   <span className="text-slate-500">{h.name}</span>
                   <span className="text-slate-500">{h.quantity} x ${h.price.toFixed(2)}</span>
                   <span className="font-bold text-slate-900">${h.value.toLocaleString()}</span>
-                  <button onClick={() => removeHolding(h.id)} className="text-slate-400 hover:text-red-500"><Icon name="x" size={14} /></button>
+                  <button onClick={() => removeHolding(h.id)} aria-label="Remove holding" className="text-slate-400 hover:text-red-500"><Icon name="x" size={14} /></button>
                 </div>
               ))}
               <div className="flex justify-between pt-2 border-t border-slate-200 text-sm font-bold text-slate-900">

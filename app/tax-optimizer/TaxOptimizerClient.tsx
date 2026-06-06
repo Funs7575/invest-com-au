@@ -166,7 +166,7 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
                   <span className={`font-bold ${(h.currentPrice - h.buyPrice) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
                     {(h.currentPrice - h.buyPrice) >= 0 ? "+" : ""}${((h.currentPrice - h.buyPrice) * h.quantity).toFixed(0)}
                   </span>
-                  <button onClick={() => removeHolding(h.id)} className="text-slate-400 hover:text-red-500"><Icon name="x" size={14} /></button>
+                  <button onClick={() => removeHolding(h.id)} aria-label="Remove holding" className="text-slate-400 hover:text-red-500"><Icon name="x" size={14} /></button>
                 </div>
               ))}
             </div>

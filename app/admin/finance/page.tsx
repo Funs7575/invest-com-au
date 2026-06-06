@@ -279,8 +279,8 @@ export default function FinanceDashboardPage() {
                 {t.type === "income" ? "+" : "-"}{fmt(t.amount_cents)}
               </span>
               <div className="flex gap-1 shrink-0">
-                <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="pencil" size={14} /></button>
-                <button onClick={() => handleDelete(t.id)} className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
+                <button onClick={() => { setEditing(t); setAmountInput((t.amount_cents / 100).toFixed(2)); }} aria-label="Edit transaction" className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="pencil" size={14} /></button>
+                <button onClick={() => handleDelete(t.id)} aria-label="Delete transaction" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
               </div>
             </div>
           ))}
