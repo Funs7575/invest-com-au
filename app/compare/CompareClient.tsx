@@ -444,7 +444,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             client only renders the meta row + table below it. */}
         {/* Meta row — the H1 + subhead live in page.tsx (single source, streamed
             for crawlers); here we keep only freshness + trust/utility links. */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-3 md:mb-5 text-[0.62rem] md:text-xs text-slate-500">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-2 md:mb-3 text-[0.62rem] md:text-xs text-slate-500">
           <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
           <span className="text-slate-300">·</span>
           <SocialProofCounter />
@@ -498,7 +498,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           );
         })()}
 
-        <details className="group mb-4">
+        <details className="group mb-3">
           <summary className="flex items-center justify-between gap-2 cursor-pointer list-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm hover:border-slate-300">
             <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
               <Icon name="sliders" size={15} className="text-blue-700" />
@@ -573,7 +573,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </details>
 
         {/* Desktop Filter System */}
-        <div className="hidden md:block mb-4 space-y-3">
+        <div className="hidden md:block mb-3 space-y-2.5">
           {/* Search leads the toolbar (mirrors /invest /advisors) */}
           <div className="max-w-md">
             <SearchInput
