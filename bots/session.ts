@@ -26,6 +26,8 @@ import type { Flow, FlowStepResult } from "./flows/types";
 import { capturePerfSample } from "./checks/perf";
 import type { PerfSample } from "./checks/perf";
 import { checkSchemaMarkup } from "./checks/schema-markup";
+import { checkAffiliateLinks } from "./checks/affiliate-links";
+import { checkGeoCitability } from "./checks/geo-citability";
 
 export interface SessionOptions {
   persona: string;
@@ -36,6 +38,7 @@ export interface SessionOptions {
 export class BotSession {
   readonly store = new FindingStore();
   private readonly checkedLinks = new Set<string>();
+  private readonly checkedAffiliateSlugs = new Set<string>();
   private net: SafetyNet | null = null;
   private ledger: CostLedger | null = null;
   private readonly perfSamples: PerfSample[] = [];
@@ -117,13 +120,21 @@ export class BotSession {
   }
 
   /** Run the cross-cutting checks on whatever is currently on screen. */
-  async audit(opts: { links?: boolean } = {}): Promise<void> {
+  async audit(opts: { links?: boolean; affiliateLinks?: boolean; geo?: boolean } = {}): Promise<void> {
     await runAxe(this.page, this.store, this.persona);
     await checkSchemaMarkup(this.page, this.store, this.persona);
     if (opts.links) {
       await checkInternalLinks(this.page, this.config, this.store, this.persona, {
         checked: this.checkedLinks,
       });
+    }
+    if (opts.affiliateLinks !== false) {
+      await checkAffiliateLinks(this.page, this.config, this.store, this.persona, {
+        checkedSlugs: this.checkedAffiliateSlugs,
+      });
+    }
+    if (opts.geo !== false) {
+      await checkGeoCitability(this.page, this.store, this.persona);
     }
   }
 

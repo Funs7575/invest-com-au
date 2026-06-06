@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       .from("job_posts")
       .select(
         `id, title, location, type, description, status, created_at, updated_at,
-         advisor_firms ( id, firm_name, logo_url )`,
+         advisor_firms ( id, firm_name:name, logo_url )`,
         { count: "exact" },
       )
       .eq("status", "active")
