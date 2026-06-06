@@ -1,11 +1,17 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("verify-client");
+
+const VerifyBody = z.object({
+  review_id: z.number().int().positive(),
+  review_type: z.enum(["broker", "advisor"]),
+});
 
 export async function POST(request: NextRequest) {
   if (!(await isAllowed("reviews_verify_client_post", ipKey(request), { max: 30, refillPerSec: 0.2 }))) {
@@ -26,26 +32,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Parse body
-  let body: Record<string, unknown>;
-  try {
-    // eslint-disable-next-line invest/no-unvalidated-req-json -- admin-gated route (auth check above); review_id/review_type validated below
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  const { review_id, review_type } = body as {
-    review_id?: number;
-    review_type?: "broker" | "advisor";
-  };
-
-  if (!review_id || !review_type) {
+  // Parse + validate body
+  const parsed = VerifyBody.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
     return NextResponse.json(
       { error: "review_id and review_type are required" },
       { status: 400 },
     );
   }
+  const { review_id, review_type } = parsed.data;
 
   if (review_type !== "broker" && review_type !== "advisor") {
     return NextResponse.json(
