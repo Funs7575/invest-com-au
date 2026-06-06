@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   let query = supabase
     .from("advisor_events")
     .select(
-      "*, professional:professionals(id, name, firm_name, slug, profile_image_url, location_state)"
+      "*, professional:professionals(id, name, firm_name, slug, photo_url, location_state)"
     )
     .eq("status", "published")
     .gte("starts_at", new Date().toISOString())

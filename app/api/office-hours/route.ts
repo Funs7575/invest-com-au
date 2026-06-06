@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   let query = supabase
     .from("advisor_office_hours")
     .select(
-      "id, title, description, scheduled_at, ends_at, status, max_questions, rsvp_count, advisor_id, professionals(id, name, slug, type, firm_name, headshot_url)",
+      "id, title, description, scheduled_at, ends_at, status, max_questions, rsvp_count, advisor_id, professionals(id, name, slug, type, firm_name, photo_url)",
     )
     .eq("is_published", true)
     .order("scheduled_at", { ascending: true })

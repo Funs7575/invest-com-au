@@ -15,9 +15,10 @@ function makeBuilder(result: unknown = { data: [], error: null }) {
   return b;
 }
 
-const { mockIsAllowed, mockFrom, mockBuildWealthStack, mockIsValidEmail, mockIsDisposableEmail, mockSendEmail } = vi.hoisted(() => ({
+const { mockIsAllowed, mockFrom, mockAdminFrom, mockBuildWealthStack, mockIsValidEmail, mockIsDisposableEmail, mockSendEmail } = vi.hoisted(() => ({
   mockIsAllowed: vi.fn(async () => true),
   mockFrom: vi.fn(),
+  mockAdminFrom: vi.fn(),
   mockBuildWealthStack: vi.fn(() => ({
     stackId: "stack_abc123",
     components: [],
@@ -46,6 +47,10 @@ vi.mock("@/lib/supabase/server", () => ({
     auth: { getUser: vi.fn(async () => ({ data: { user: null }, error: null })) },
     from: mockFrom,
   })),
+}));
+
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
 }));
 
 vi.mock("@/lib/wealth-stack", () => ({
@@ -83,8 +88,9 @@ describe("/api/wealth-stack", () => {
     mockBuildWealthStack.mockReturnValue({ stackId: "stack_abc123", components: [] });
     mockIsValidEmail.mockReturnValue(true);
     mockIsDisposableEmail.mockReturnValue(false);
-    // Default: brokers and weights return empty arrays
+    // Default: brokers (server client) and weights (admin client) return empty arrays
     mockFrom.mockImplementation(() => makeBuilder({ data: [], error: null }));
+    mockAdminFrom.mockImplementation(() => makeBuilder({ data: [], error: null }));
   });
 
   it("returns 429 when rate limited", async () => {
