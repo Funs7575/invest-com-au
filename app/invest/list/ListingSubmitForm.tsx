@@ -540,6 +540,7 @@ export default function ListingSubmitForm() {
               <label className="block text-sm font-semibold text-slate-700 mb-1.5">Phone Number</label>
               <input
                 type="tel"
+                autoComplete="tel"
                 value={form.contact_phone}
                 onChange={(e) => set("contact_phone", e.target.value)}
                 placeholder="+61 4XX XXX XXX"

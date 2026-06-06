@@ -130,9 +130,10 @@ export default function ReportsPage() {
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {/* Date mode toggle */}
-          <div className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
+          <div role="group" aria-label="Date range mode" className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
             <button
               onClick={() => setDateMode("preset")}
+              aria-pressed={dateMode === "preset"}
               className={`px-3 py-2 min-h-9 text-[0.69rem] font-semibold rounded-md transition-colors ${
                 dateMode === "preset" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
               }`}
@@ -141,6 +142,7 @@ export default function ReportsPage() {
             </button>
             <button
               onClick={() => setDateMode("custom")}
+              aria-pressed={dateMode === "custom"}
               className={`px-3 py-2 min-h-9 text-[0.69rem] font-semibold rounded-md transition-colors ${
                 dateMode === "custom" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
               }`}

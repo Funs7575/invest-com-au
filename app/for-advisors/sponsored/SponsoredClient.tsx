@@ -247,6 +247,7 @@ export default function SponsoredClient() {
                   <input
                     type="tel"
                     name="phone"
+                    autoComplete="tel"
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all"

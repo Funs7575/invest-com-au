@@ -137,6 +137,7 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
             <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
             <input
               type="tel"
+              autoComplete="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"

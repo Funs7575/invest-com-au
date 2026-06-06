@@ -149,9 +149,9 @@ export default function DashboardClient() {
               Last updated: {new Date(data.generated_at).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" })}
             </p>
           </div>
-          <div className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
+          <div role="group" aria-label="Report period" className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
             {(["7d", "30d"] as const).map((p) => (
-              <button key={p} onClick={() => setPeriod(p)} className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${period === p ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+              <button key={p} aria-pressed={period === p} onClick={() => setPeriod(p)} className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${period === p ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
                 {p === "7d" ? "7 Days" : "30 Days"}
               </button>
             ))}

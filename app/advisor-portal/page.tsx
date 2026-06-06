@@ -251,11 +251,13 @@ export default function AdvisorPortalPage() {
 
       {/* Nav tabs — ADV-006: desktop scrollable, mobile shows top 7 + More dropdown */}
       <div className="bg-white border-b border-slate-200 px-4">
-        <div className="max-w-5xl mx-auto flex gap-1 overflow-x-auto">
+        <div role="tablist" aria-label="Advisor portal navigation" className="max-w-5xl mx-auto flex gap-1 overflow-x-auto">
           {navItems.map((item) => (
             <button
               key={item.key}
               type="button"
+              role="tab"
+              aria-selected={view === item.key}
               onClick={() => { setView(item.key as ViewType); setMoreNavOpen(false); }}
               className={`${!MOBILE_TOP_KEYS.has(item.key) ? "hidden sm:flex" : "flex"} items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset ${
                 view === item.key

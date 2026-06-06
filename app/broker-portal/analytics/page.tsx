@@ -338,9 +338,9 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
+      <div role="tablist" aria-label="Analytics sections" className="flex gap-1 bg-slate-100 rounded-lg p-1">
         {TABS.map(t => (
-          <button key={t.key} onClick={() => setTab(t.key)}
+          <button key={t.key} role="tab" aria-selected={tab === t.key} onClick={() => setTab(t.key)}
             className={`flex-1 py-2 text-xs font-semibold rounded-md transition-colors ${
               tab === t.key ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
             }`}>

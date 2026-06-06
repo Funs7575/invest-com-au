@@ -228,3 +228,11 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 **[ADV-034]** role=alert/status sweep — all remaining `{error && <p>}` and `{success && <span>}` blocks across 14 files now carry `role="alert"` / `role="status"`. `(bulk across app/)`
 
 **[ADV-035]** Icon-only button aria-labels — four icon-only close/remove buttons got descriptive `aria-label`. `app/compare/_components/CompareSelectionBar.tsx`, `app/portfolio/PortfolioClient.tsx`, `app/quotes/[slug]/QuoteBidsClient.tsx`, `app/property/suburbs/SuburbsClient.tsx`
+
+**[ADV-036]** `scope="col"` on all table headers — bulk perl sweep across 200+ `.tsx` files in `app/`; 1200+ `<th>` elements now declare column vs row scope. Duplicate/conflicting scope on multi-line `<th>` elements fixed.
+
+**[ADV-037]** `aria-busy` on submit buttons — six forms that previously had no `aria-busy` now set it during async submission. `app/account/investor-profile/InvestorProfileForm.tsx`, `app/account/upgrade/business/BusinessUpgradeForm.tsx`, `app/broker-portal/register/page.tsx`, `app/broker-portal/settings/page.tsx`, `app/advisor-portal/TeamTab.tsx`.
+
+**[ADV-038]** role=status on success feedback + autoComplete — `role="status"` on 9 more saved-state paragraphs/spans across advisor portal, broker portal, billing, ops settings, startup thesis. `autoComplete="email"` on advisor TeamTab email inputs.
+
+**[ADV-039]** `aria-sort` on all sortable tables — six screener/compare tables now declare `ascending`/`descending`/`none` on sortable column headers. `ETFScreenerClient`, `ETFCompareClient`, `SuperCompareClient`, `SuburbsClient`, `BenchmarkClient`, `LicScreenerClient`, `PricingClient`.

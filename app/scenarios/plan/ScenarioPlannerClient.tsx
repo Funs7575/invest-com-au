@@ -815,7 +815,7 @@ export default function ScenarioPlannerClient({
 
       <div className="container-custom max-w-4xl py-6 md:py-10">
         {/* ── Tabs ─────────────────────────────────────────────────────────── */}
-        <div className="flex gap-1 bg-slate-100 rounded-xl p-1 mb-6">
+        <div role="tablist" aria-label="Scenario planner sections" className="flex gap-1 bg-slate-100 rounded-xl p-1 mb-6">
           {(
             [
               { key: "inputs", label: "Inputs" },
@@ -828,6 +828,8 @@ export default function ScenarioPlannerClient({
           ).map((tab) => (
             <button
               key={tab.key}
+              role="tab"
+              aria-selected={activeTab === tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`flex-1 text-sm font-semibold rounded-lg py-2 transition-all ${
                 activeTab === tab.key

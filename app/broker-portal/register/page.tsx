@@ -200,7 +200,7 @@ export default function BrokerRegisterPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
+              <input type="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="+61 4xx xxx xxx" />
             </div>

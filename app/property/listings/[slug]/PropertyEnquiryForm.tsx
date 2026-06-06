@@ -139,6 +139,7 @@ export default function PropertyEnquiryForm({
         />
         <input
           type="tel"
+          autoComplete="tel"
           placeholder="Phone number"
           aria-label="Phone number"
           value={form.user_phone}
