@@ -32,22 +32,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Parse + validate body
-  const parsed = VerifyBody.safeParse(await request.json().catch(() => null));
+  // Parse + validate body. z.enum collapses a missing review_type and an
+  // invalid one (e.g. "company") into the same parse failure, so inspect the
+  // issues to give the caller an actionable message in each case.
+  const rawBody = await request.json().catch(() => null);
+  const parsed = VerifyBody.safeParse(rawBody);
   if (!parsed.success) {
+    const reviewTypeProvided =
+      rawBody != null &&
+      typeof rawBody === "object" &&
+      (rawBody as Record<string, unknown>).review_type != null;
+    const reviewTypeInvalid = parsed.error.issues.some(
+      (i) => i.path[0] === "review_type",
+    );
+    if (reviewTypeProvided && reviewTypeInvalid) {
+      return NextResponse.json(
+        { error: "review_type must be 'broker' or 'advisor'" },
+        { status: 400 },
+      );
+    }
     return NextResponse.json(
       { error: "review_id and review_type are required" },
       { status: 400 },
     );
   }
   const { review_id, review_type } = parsed.data;
-
-  if (review_type !== "broker" && review_type !== "advisor") {
-    return NextResponse.json(
-      { error: "review_type must be 'broker' or 'advisor'" },
-      { status: 400 },
-    );
-  }
 
   const supabase = createAdminClient();
 
