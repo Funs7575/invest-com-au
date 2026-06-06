@@ -36,18 +36,11 @@ export async function POST(request: NextRequest) {
   const parsed = VerifyBody.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "review_id and review_type are required" },
+      { error: "review_id required; review_type must be 'broker' or 'advisor'" },
       { status: 400 },
     );
   }
   const { review_id, review_type } = parsed.data;
-
-  if (review_type !== "broker" && review_type !== "advisor") {
-    return NextResponse.json(
-      { error: "review_type must be 'broker' or 'advisor'" },
-      { status: 400 },
-    );
-  }
 
   const supabase = createAdminClient();
 
