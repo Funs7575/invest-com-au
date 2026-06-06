@@ -71,13 +71,16 @@ export default function DirectoryHero({
           className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full"
           style={{ background: "radial-gradient(circle, rgba(242,88,34,.18), transparent 65%)" }}
         />
-        <div className={`${containerClassName} relative py-8 md:py-12`}>
-          <nav className="text-xs md:text-sm text-white/55 mb-3" aria-label="Breadcrumb">
+        {/* Compact by design — directory pages must show real content (table /
+            cards) near the fold, so the hero stays a slim banner, not a
+            half-screen splash. */}
+        <div className={`${containerClassName} relative py-4 md:py-5`}>
+          <nav className="text-[11px] md:text-xs text-white/55 mb-1.5" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-white">Home</Link>
-            <span className="mx-2" aria-hidden>/</span>
+            <span className="mx-1.5" aria-hidden>/</span>
             <span className="text-white/80">{breadcrumbLabel}</span>
           </nav>
-          <div className="grid gap-8 md:grid-cols-[1.4fr_1fr] md:items-end">
+          <div className="grid gap-3 md:grid-cols-[1.5fr_1fr] md:items-center">
             <div {...(speakableId ? { "data-speakable": speakableId } : {})}>
               {pill && (
                 <span className="iv2-pill border border-coral-500/30 bg-coral-500/15 text-coral-300">
@@ -87,27 +90,27 @@ export default function DirectoryHero({
                   {pill.label}
                 </span>
               )}
-              <h1 className="mt-4 text-3xl font-extrabold leading-[1.04] tracking-tight md:text-5xl">
+              <h1 className="mt-1.5 text-xl font-extrabold leading-[1.1] tracking-tight md:text-[1.7rem]">
                 {headlineLead}
                 {headlineAccent && (
                   <>
-                    <br />
+                    {" "}
                     <span className="text-coral-400">{headlineAccent}</span>
                   </>
                 )}
               </h1>
               {subtitle && (
-                <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/70 md:text-base">
+                <p className="mt-1 max-w-2xl text-[12.5px] leading-snug text-white/65 md:text-[13.5px] line-clamp-2">
                   {subtitle}
                 </p>
               )}
             </div>
             {tiles.length > 0 && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-4 gap-2 md:grid-cols-2">
                 {tiles.map((s) => (
-                  <div key={s.l} className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-                    <div className="iv2-bignum text-2xl text-white md:text-3xl">{s.v}</div>
-                    <div className="mt-1 text-[11px] font-semibold text-white/55 md:text-xs">{s.l}</div>
+                  <div key={s.l} className="rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1.5">
+                    <div className="iv2-bignum text-base text-white md:text-xl leading-tight">{s.v}</div>
+                    <div className="mt-0.5 text-[10px] font-semibold text-white/55 md:text-[11px]">{s.l}</div>
                   </div>
                 ))}
               </div>
@@ -116,7 +119,7 @@ export default function DirectoryHero({
         </div>
       </section>
       {children != null && (
-        <div className={`${containerClassName} pt-4`}>{children}</div>
+        <div className={`${containerClassName} pt-3`}>{children}</div>
       )}
     </>
   );

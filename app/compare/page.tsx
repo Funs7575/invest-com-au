@@ -219,13 +219,10 @@ export default async function ComparePage() {
       >
         <DirectoryBanners surface="compare" />
       </DirectoryHero>
-      <div className="container-custom max-w-6xl pt-4">
-        <GetMatchedEmbed context="platform_compare" />
-      </div>
       {/* Specialised comparisons — quiet link row (replaces the duplicate sticky
           CompareNav). Text links, deliberately not pill-styled, so they read as
           "go to a dedicated comparison" rather than "filter this table". */}
-      <nav className="container-custom max-w-6xl pt-4" aria-label="Specialised comparisons">
+      <nav className="container-custom max-w-6xl pt-3" aria-label="Specialised comparisons">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs md:text-sm text-slate-500">
           <span className="font-semibold text-slate-700">Specialised comparisons:</span>
           {SPECIALISED_COMPARES.map((item, i) => (
@@ -241,6 +238,11 @@ export default async function ComparePage() {
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareData />
       </Suspense>
+      {/* Get-matched moved below the table — keeps the comparison itself near the
+          fold; this is the "still not sure? build a plan" catch for scrollers. */}
+      <div className="container-custom max-w-6xl pt-6">
+        <GetMatchedEmbed context="platform_compare" />
+      </div>
       {/* Personalised next-action strip — suppresses compare CTA since the user is already here */}
       <Suspense fallback={null}>
         <NextActions surface="compare" />
