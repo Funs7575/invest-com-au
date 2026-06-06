@@ -247,7 +247,7 @@ export default async function OilGasPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-6" role="tablist">
+          <nav aria-label="Ways to invest" className="flex flex-wrap gap-2 mb-6">
             {WAYS_TO_INVEST.map((w, i) => (
               <a
                 key={w.id}
@@ -264,7 +264,7 @@ export default async function OilGasPage() {
                 {w.label}
               </a>
             ))}
-          </div>
+          </nav>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {WAYS_TO_INVEST.map((w, i) => (

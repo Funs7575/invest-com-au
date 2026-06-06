@@ -268,7 +268,7 @@ export default function PreIpoPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-6" role="tablist">
+          <nav aria-label="Ways to invest" className="flex flex-wrap gap-2 mb-6">
             {SECTIONS.map((s, i) => (
               <a
                 key={s.id}
@@ -285,7 +285,7 @@ export default function PreIpoPage() {
                 {s.label}
               </a>
             ))}
-          </div>
+          </nav>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {SECTIONS.map((s, i) => (
