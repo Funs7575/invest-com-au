@@ -17,11 +17,19 @@ effects.
 
 ```bash
 npm run bots:install          # one-time: install the chromium browser
-npm run bots                  # drive a local dev server (auto-started)
 
-# point at a deployed sandbox/staging instead of local:
-BOTS_BASE_URL=https://my-preview.vercel.app npm run bots
+# ⭐ turnkey: deterministic fleet (page sweep + API probe) → dated report, $0
+npm run bots:nightly                       # against the Netlify mirror
+BOTS_BASE_URL=https://my-preview.vercel.app npm run bots:nightly
+
+npm run bots                  # full Playwright fleet, drives a local dev server
 ```
+
+`bots:nightly` is the zero-cost, no-LLM runner meant for cron/CI: it runs the
+page sweep (`site-audit`) + API probe (`bots:probe-api`), writes
+`bots/reports/nightly-<date>.md`, and **exits non-zero** when it finds broken
+links or 5xx API routes — so it doubles as a health gate. Pure Playwright +
+fetch; no Anthropic API spend (see [Cost & billing](#cost--billing)).
 
 ## Focused flow scripts
 
