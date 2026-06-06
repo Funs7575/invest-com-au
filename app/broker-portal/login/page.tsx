@@ -101,6 +101,7 @@ export default function BrokerLoginPage() {
         <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
         <input
           type="password"
+          autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
