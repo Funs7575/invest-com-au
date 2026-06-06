@@ -9,6 +9,7 @@ import { speakableWebPageJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import NextActions from "@/components/NextActions";
 
 export const metadata = {
@@ -121,7 +122,29 @@ async function CompareData() {
   );
 }
 
-export default function ComparePage() {
+export default async function ComparePage() {
+  // Lightweight head-only count for the hero stat tiles — keeps the dark
+  // stat-led hero consistent with /invest and /advisors without waiting on the
+  // full broker payload (that still streams via <CompareData> in Suspense).
+  let platformCount = 0;
+  try {
+    const supabase = await createClient();
+    const { count } = await supabase
+      .from("brokers")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active");
+    platformCount = count ?? 0;
+  } catch {
+    platformCount = 0;
+  }
+  const platformLabel = platformCount > 0 ? `${platformCount}` : "100+";
+  const heroStats = [
+    { v: platformLabel, l: "Platforms tracked" },
+    { v: "9", l: "Categories" },
+    { v: "Weekly", l: "Fees rechecked" },
+    { v: "Free", l: "Independent" },
+  ];
+
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -164,18 +187,22 @@ export default function ComparePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
       />
       <Suspense fallback={<div className="h-12 bg-slate-100 animate-pulse rounded-lg mx-4" aria-hidden />}><CompareNav /></Suspense>
-      <div className="container-custom pt-5">
-        <GetMatchedEmbed context="platform_compare" />
-      </div>
-      {/* Server-rendered H1 for crawlers that don't execute client JS — streams immediately */}
-      <div className="container-custom pt-5 md:pt-10" data-speakable="compare-hero">
+      {/* Shared dark stat-led directory hero (matches /invest + /advisors).
+          Server-rendered H1 streams immediately for crawlers; the speakable
+          region is preserved via speakableId. */}
+      <DirectoryHero
+        breadcrumbLabel="Compare Platforms"
+        pill={{ label: "Live fee tracking", live: true }}
+        headlineLead="Compare Australian investing platforms."
+        headlineAccent={`${platformLabel} tracked · fees rechecked weekly.`}
+        subtitle="Side-by-side comparison of fees, features, and safety for Australian share trading, crypto, super and robo-advisor platforms."
+        stats={heroStats}
+        speakableId="compare-hero"
+      >
         <DirectoryBanners surface="compare" />
-        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Compare Australian Investment Platforms
-        </h1>
-        <p className="mt-2 text-sm md:text-base text-slate-600 max-w-2xl">
-          Side-by-side comparison of fees, features, and safety for 100+ Australian share trading, crypto, super and robo-advisor platforms.
-        </p>
+      </DirectoryHero>
+      <div className="container-custom max-w-6xl pt-4">
+        <GetMatchedEmbed context="platform_compare" />
       </div>
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareData />
