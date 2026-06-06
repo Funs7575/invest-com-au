@@ -30,6 +30,7 @@ import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LinkifiedText from "@/components/LinkifiedText";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
+import ArticleShareRow from "@/components/ArticleShareRow";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { pillarPathForCategory, linkDensityForCategory } from "@/lib/keyword-linking";
 import NextActions from "@/components/NextActions";
@@ -413,6 +414,11 @@ export default async function ArticlePage({
               showMethodologyLink
             />
 
+            {/* ADV-014: Article share row */}
+            <div className="mt-4 mb-1">
+              <ArticleShareRow title={a.title} url={absoluteUrl(pagePath)} />
+            </div>
+
             {/* Top-of-article broker compare — every article becomes an
                 affiliate revenue surface. Vertical comes from article
                 category; falls back to '*' for generic articles. */}
@@ -692,6 +698,11 @@ export default async function ArticlePage({
                   />
                 </div>
               )}
+
+              {/* ADV-026: Share row at bottom of article body */}
+              <div className="py-4 border-t border-slate-100 mt-4">
+                <ArticleShareRow title={a.title} url={absoluteUrl(pagePath)} />
+              </div>
 
               {/* Comments + reactions */}
               <ArticleComments slug={slug} />

@@ -781,7 +781,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             className={`inline-flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg border text-sm font-bold whitespace-nowrap transition-colors shrink-0 ${activeFilterCount > 0 ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-800 border-slate-300 hover:border-slate-400"}`}
           >
             <Icon name="sliders" size={14} />
-            <span className="hidden sm:inline">All filters</span>
+            <span>All filters</span>
             {activeFilterCount > 0 && <span className="ml-0.5 text-[10px] font-mono bg-amber-500 text-slate-900 rounded-full px-1.5 py-0.5">{activeFilterCount}</span>}
           </button>
           <SortDropdown
@@ -1379,7 +1379,19 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <EmptyState
             title="No advisors found"
             body={isLocationActive ? `No advisors within ${radius}km — try a larger radius or clear filters.` : search ? `No results for "${search}". Try a different search or clear filters.` : "Try adjusting or clearing your filters."}
-            suggestions={[{ label: "Clear all filters", onClick: clearAll }]}
+            suggestions={[
+              ...(Array.from(typeFilters).map(t => ({
+                label: `Type: ${TYPE_FILTERS.find(f => f.key === t)?.label ?? t} ×`,
+                onClick: () => setTypeFilters(prev => { const next = new Set(prev); next.delete(t as ProfessionalType); return next; }),
+              }))),
+              ...(stateFilter !== "all" ? [{ label: `State: ${stateFilter} ×`, onClick: () => setStateFilter("all") }] : []),
+              ...(feeFilter !== "all" ? [{ label: `Fee: ${FEE_OPTIONS.find(f => f.value === feeFilter)?.label ?? feeFilter} ×`, onClick: () => setFeeFilter("all") }] : []),
+              ...(minRating > 0 ? [{ label: `Rating: ${minRating}+ ★ ×`, onClick: () => setMinRating(0) }] : []),
+              ...(verifiedOnly ? [{ label: "Verified only ×", onClick: () => setVerifiedOnly(false) }] : []),
+              ...(acceptingOnly ? [{ label: "Accepting clients ×", onClick: () => setAcceptingOnly(false) }] : []),
+              ...(search ? [{ label: `"${search}" ×`, onClick: () => setSearch("") }] : []),
+              ...(activeFilterCount > 1 ? [{ label: "Clear all", onClick: clearAll }] : []),
+            ]}
           >
             <div className="mt-5 max-w-md mx-auto text-left rounded-xl border border-amber-200 bg-amber-50 p-4">
               <div className="flex items-start gap-3 mb-3">

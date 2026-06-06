@@ -18,9 +18,12 @@ const CATEGORY_COLORS: Record<string, string> = {
   news: "bg-red-100 text-red-700",
 };
 
+type SortKey = "newest" | "views" | "trending";
+
 export default function ArticlesClient({ articles }: { articles: Article[] }) {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("newest");
 
   const filtered = (() => {
     let list =
@@ -36,6 +39,26 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
           (a.category && a.category.toLowerCase().includes(q))
       );
     }
+    // ADV-021: sort
+    if (sortKey === "newest") {
+      list = [...list].sort((a, b) => {
+        const aDate = a.published_at ? new Date(a.published_at).getTime() : 0;
+        const bDate = b.published_at ? new Date(b.published_at).getTime() : 0;
+        return bDate - aDate;
+      });
+    } else if (sortKey === "views") {
+      list = [...list].sort((a, b) => (b.view_count ?? 0) - (a.view_count ?? 0));
+    } else if (sortKey === "trending") {
+      // Trending: weight views by recency — more recent high-view articles rank first
+      // eslint-disable-next-line react-hooks/purity -- client component inside useMemo, Date.now() is appropriate here
+      const now = Date.now();
+      const score = (a: Article) => {
+        const ageMs = now - (a.published_at ? new Date(a.published_at).getTime() : now);
+        const ageDays = ageMs / (1000 * 60 * 60 * 24);
+        return (a.view_count ?? 0) / Math.max(1, ageDays);
+      };
+      list = [...list].sort((a, b) => score(b) - score(a));
+    }
     return list;
   })();
 
@@ -50,17 +73,33 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
 
   return (
     <div>
-      {/* Search */}
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search articles..."
-          className="w-full md:w-80 pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
-          aria-label="Search articles"
-        />
+      {/* Search + Sort row */}
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <div className="relative flex-1 min-w-[180px] max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search articles..."
+            className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
+            aria-label="Search articles"
+          />
+        </div>
+        {/* ADV-021: sort selector */}
+        <div className="flex items-center gap-2 ml-auto">
+          <span className="text-xs text-slate-500 font-medium whitespace-nowrap">Sort:</span>
+          <select
+            value={sortKey}
+            onChange={(e) => setSortKey(e.target.value as SortKey)}
+            className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:border-blue-700"
+            aria-label="Sort articles"
+          >
+            <option value="newest">Newest</option>
+            <option value="views">Most views</option>
+            <option value="trending">Trending</option>
+          </select>
+        </div>
       </div>
 
       {/* Category Filter Pills */}

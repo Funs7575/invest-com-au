@@ -58,6 +58,9 @@ export default function AdvisorPortalPage() {
 
   // Onboarding banner
   const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
+  const [dataLoadError, setDataLoadError] = useState(false);
+  const [dataLoadedAt, setDataLoadedAt] = useState<Date | null>(null);
+  const [moreNavOpen, setMoreNavOpen] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -113,6 +116,7 @@ export default function AdvisorPortalPage() {
   };
 
   const loadData = useCallback(async () => {
+    setDataLoadError(false);
     try {
       const [dashRes, summaryRes] = await Promise.all([
         fetch("/api/advisor-dashboard"),
@@ -128,12 +132,17 @@ export default function AdvisorPortalPage() {
         setProfileCompleteness(data.profileCompleteness || null);
         if (data.categoryPricing) setCategoryPricing(data.categoryPricing);
         if (data.advisor) setAdvisor(data.advisor);
+      } else {
+        setDataLoadError(true);
       }
       if (summaryRes.ok) {
         const summary = (await summaryRes.json()) as BillingSummary;
         setBillingSummary(summary);
       }
-    } catch { /* ignore */ }
+      setDataLoadedAt(new Date());
+    } catch {
+      setDataLoadError(true);
+    }
   }, []);
 
   const logout = async () => {
@@ -200,6 +209,9 @@ export default function AdvisorPortalPage() {
   const isPending = advisor?.status === "pending";
   const isFirmAdmin = advisor?.is_firm_admin && advisor?.firm_id;
 
+  // ADV-006: top 7 tabs shown on mobile; rest collapse to "More…"
+  const MOBILE_TOP_KEYS = new Set(["dashboard", "leads", "profile", "analytics", "reviews", "billing", "articles"]);
+
   const navItems = [
     { key: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
     { key: "leads", label: "Leads", icon: "inbox" },
@@ -237,15 +249,15 @@ export default function AdvisorPortalPage() {
         </div>
       </div>
 
-      {/* Nav tabs */}
+      {/* Nav tabs — ADV-006: desktop scrollable, mobile shows top 7 + More dropdown */}
       <div className="bg-white border-b border-slate-200 px-4">
         <div className="max-w-5xl mx-auto flex gap-1 overflow-x-auto">
           {navItems.map((item) => (
             <button
               key={item.key}
               type="button"
-              onClick={() => { setView(item.key as ViewType); }}
-              className={`flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset ${
+              onClick={() => { setView(item.key as ViewType); setMoreNavOpen(false); }}
+              className={`${!MOBILE_TOP_KEYS.has(item.key) ? "hidden sm:flex" : "flex"} items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset ${
                 view === item.key
                   ? "border-slate-900 text-slate-900"
                   : "border-transparent text-slate-500 hover:text-slate-700"
@@ -258,46 +270,100 @@ export default function AdvisorPortalPage() {
               )}
             </button>
           ))}
-          {/* AJ-1: the brief/auction inbox (the core "win work" funnel) lives on
-              separate routes, not SPA views — surface it in the nav so advisors
-              who log in organically can find incoming work (was only reachable
-              via direct URL / email links). */}
+          {/* AJ-1: route-level tabs — shown on desktop only (collapse in More on mobile) */}
           <Link
             href="/advisor-portal/briefs"
-            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
           >
             <Icon name="briefcase" size={16} />
             Briefs
           </Link>
           <Link
             href="/advisor-portal/auctions"
-            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
           >
             <Icon name="activity" size={16} />
             Auctions
           </Link>
-          {/* P2-4: marketplace settings (bid templates / alert prefs) and the
-              Expert Teams (Pro Squad) manager were URL-only — surface them so
-              advisors can reach them without a direct link. */}
           <Link
             href="/advisor-portal/marketplace"
-            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
           >
             <Icon name="store" size={16} />
             Marketplace
           </Link>
           <Link
             href="/advisor-portal/teams"
-            className="flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset"
           >
             <Icon name="users" size={16} />
             Expert Teams
           </Link>
+          {/* Mobile-only "More…" dropdown for non-top-7 tabs */}
+          <div className="relative sm:hidden flex items-center">
+            <button
+              type="button"
+              onClick={() => setMoreNavOpen(o => !o)}
+              className={`flex items-center gap-1 px-3 py-3 text-sm font-medium border-b-2 whitespace-nowrap ${
+                !MOBILE_TOP_KEYS.has(view)
+                  ? "border-slate-900 text-slate-900"
+                  : "border-transparent text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              More
+              <svg className={`w-3.5 h-3.5 transition-transform ${moreNavOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            {moreNavOpen && (
+              <div className="absolute top-full left-0 z-30 bg-white border border-slate-200 rounded-xl shadow-lg py-1 min-w-[180px]">
+                {navItems.filter(i => !MOBILE_TOP_KEYS.has(i.key)).map(item => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => { setView(item.key as ViewType); setMoreNavOpen(false); }}
+                    className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-left transition-colors ${
+                      view === item.key ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    <Icon name={item.icon} size={15} />
+                    {item.label}
+                  </button>
+                ))}
+                {/* ADV-024: route-level links also in mobile More dropdown */}
+                {[
+                  { href: "/advisor-portal/briefs", icon: "briefcase", label: "Briefs" },
+                  { href: "/advisor-portal/auctions", icon: "activity", label: "Auctions" },
+                  { href: "/advisor-portal/marketplace", icon: "store", label: "Marketplace" },
+                  { href: "/advisor-portal/teams", icon: "users", label: "Expert Teams" },
+                ].map(link => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMoreNavOpen(false)}
+                    className="w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                  >
+                    <Icon name={link.icon} size={15} />
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 py-6">
+
+        {/* ─── DATA LOAD ERROR BANNER ─── */}
+        {dataLoadError && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+            <Icon name="alert-circle" size={18} className="text-red-500 shrink-0" />
+            <p className="text-sm text-red-700 flex-1">Some data couldn&apos;t be loaded — your dashboard may be incomplete.</p>
+            <button onClick={() => loadData()} className="text-xs font-semibold text-red-600 hover:text-red-800 underline whitespace-nowrap">
+              Try again
+            </button>
+          </div>
+        )}
 
         {/* ─── PENDING BANNER ─── */}
         {isPending && (
@@ -328,6 +394,8 @@ export default function AdvisorPortalPage() {
             onNavigate={setView}
             onDismissOnboarding={() => setDismissedOnboarding(true)}
             billingSummary={billingSummary}
+            dataLoadedAt={dataLoadedAt}
+            onRefresh={loadData}
           />
         )}
 

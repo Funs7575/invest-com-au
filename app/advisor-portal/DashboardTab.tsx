@@ -79,16 +79,44 @@ type Props = {
   onDismissOnboarding: () => void;
   /** Pre-fetched summary; widget renders a free-leads pill if absent. */
   billingSummary?: BillingSummary | null;
+  dataLoadedAt?: Date | null;
+  onRefresh?: () => void;
 };
+
+function useRelativeTime(date: Date | null | undefined): string {
+  const [label, setLabel] = useState("");
+  useEffect(() => {
+    if (!date) return;
+    const update = () => {
+      const mins = Math.floor((Date.now() - date.getTime()) / 60000);
+      setLabel(mins < 1 ? "just now" : mins === 1 ? "1 min ago" : `${mins} min ago`);
+    };
+    update();
+    const id = setInterval(update, 30_000);
+    return () => clearInterval(id);
+  }, [date]);
+  return label;
+}
 
 export default function DashboardTab({
   advisor, stats, leads, profileCompleteness, reviews,
   viewsByDay, weeklyEnquiries, dismissedOnboarding, isPending,
-  onNavigate, onDismissOnboarding, billingSummary,
+  onNavigate, onDismissOnboarding, billingSummary, dataLoadedAt, onRefresh,
 }: Props) {
+  const refreshLabel = useRelativeTime(dataLoadedAt);
   return (
     <>
-      <h1 className="text-xl font-bold text-slate-900 mb-1">Welcome{isPending ? "" : " back"}, {advisor?.name?.split(" ")[0]}</h1>
+      <div className="flex items-center justify-between mb-1">
+        <h1 className="text-xl font-bold text-slate-900">Welcome{isPending ? "" : " back"}, {advisor?.name?.split(" ")[0]}</h1>
+        {refreshLabel && onRefresh && (
+          <div className="flex items-center gap-1.5">
+            <span className="text-[0.62rem] text-slate-400">Updated {refreshLabel}</span>
+            <button onClick={onRefresh} className="text-slate-400 hover:text-slate-700 transition-colors" title="Refresh data">
+              <Icon name="refresh-cw" size={13} />
+            </button>
+          </div>
+        )}
+      </div>
       <p className="text-sm text-slate-500 mb-4">{advisor?.firm_name || PROFESSIONAL_TYPE_LABELS[advisor?.type as keyof typeof PROFESSIONAL_TYPE_LABELS]}</p>
 
       <AvailabilityWidget advisor={advisor} />
@@ -187,7 +215,7 @@ export default function DashboardTab({
           : null}
 
       {/* Onboarding Checklist */}
-      {profileCompleteness && profileCompleteness.score < 80 && !dismissedOnboarding && (
+      {(!profileCompleteness || profileCompleteness.score < 80) && !dismissedOnboarding && (
         <div className="bg-gradient-to-br from-violet-50 to-white border border-violet-200 rounded-xl p-5 mb-6">
           <div className="flex items-start justify-between mb-3">
             <div>
@@ -213,12 +241,18 @@ export default function DashboardTab({
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-2 bg-violet-100 rounded-full overflow-hidden">
-              <div className="h-full bg-violet-500 rounded-full transition-all duration-500" style={{ width: `${profileCompleteness.score}%` }} />
-            </div>
-            <span className="text-xs font-bold text-violet-700">{profileCompleteness.score}%</span>
-          </div>
+          {(() => {
+            const steps = [!!advisor?.photo_url, !!advisor?.bio && advisor.bio.length > 30, (advisor?.specialties?.length || 0) > 0, !!advisor?.fee_structure, !!advisor?.booking_link];
+            const score = profileCompleteness?.score ?? (steps.filter(Boolean).length * 20);
+            return (
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-2 bg-violet-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-violet-500 rounded-full transition-all duration-500" style={{ width: `${score}%` }} />
+                </div>
+                <span className="text-xs font-bold text-violet-700">{score}%</span>
+              </div>
+            );
+          })()}
         </div>
       )}
 

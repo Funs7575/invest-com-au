@@ -103,6 +103,51 @@ function clearMatchStorage() {
   try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
 }
 
+// ─── Quiz-progress persistence (localStorage, non-PII only) ──────────────────
+
+const QUIZ_PROGRESS_KEY = "quiz-progress";
+
+interface QuizProgress {
+  step: number;
+  intent: Intent | null;
+  context: string[];
+  state: string;
+  postcode: string;
+  suburb: string;
+  budget: string;
+  savedAt: number;
+}
+
+function saveQuizProgress(q: QuizState) {
+  if (q.step >= 5 || !q.intent) return;
+  try {
+    const p: QuizProgress = {
+      step: q.step, intent: q.intent, context: q.context,
+      state: q.state, postcode: q.postcode, suburb: q.suburb, budget: q.budget,
+      savedAt: Date.now(),
+    };
+    localStorage.setItem(QUIZ_PROGRESS_KEY, JSON.stringify(p));
+  } catch {}
+}
+
+function loadQuizProgress(): QuizProgress | null {
+  try {
+    const raw = typeof localStorage !== "undefined" ? localStorage.getItem(QUIZ_PROGRESS_KEY) : null;
+    if (!raw) return null;
+    const data = JSON.parse(raw) as QuizProgress;
+    if (Date.now() - data.savedAt > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(QUIZ_PROGRESS_KEY);
+      return null;
+    }
+    if (!data.intent || data.step < 2) return null;
+    return data;
+  } catch { return null; }
+}
+
+function clearQuizProgress() {
+  try { localStorage.removeItem(QUIZ_PROGRESS_KEY); } catch {}
+}
+
 // ─── Step 1 data ──────────────────────────────────────────────────────────────
 
 const INTENT_OPTIONS = [
@@ -500,19 +545,63 @@ function FindAdvisorQuiz() {
   const [otpStage, setOtpStage] = useState<"idle" | "sending" | "sent" | "verifying">("idle");
   const [otpCode, setOtpCode] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
+  const [otpSentAt, setOtpSentAt] = useState<number | null>(null);
+  const [savedProgress, setSavedProgress] = useState<QuizProgress | null>(null);
 
 
   const currentMatch = matchedAdvisors.length > 0 ? matchedAdvisors[matchedAdvisors.length - 1] : null;
 
   const update = useCallback((updates: Partial<QuizState>) => {
-    setQuiz((prev) => ({ ...prev, ...updates }));
+    setQuiz((prev) => {
+      const next = { ...prev, ...updates };
+      // ADV-025: sync localStorage on every state update so progress is always current
+      if (next.step >= 1 && next.step <= 4 && next.intent) {
+        saveQuizProgress(next);
+      } else if (next.step >= 5) {
+        clearQuizProgress();
+      }
+      return next;
+    });
   }, []);
+
+  // ADV-008: also save on mount in case quiz was initialised from URL params
+  useEffect(() => {
+    if (quiz.step >= 1 && quiz.step <= 4 && quiz.intent) {
+      saveQuizProgress(quiz);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ADV-008: on mount, offer "resume" if saved progress exists and no URL pre-fill
+  useEffect(() => {
+    if (quiz.step === 1 && !initialIntent) {
+      const p = loadQuizProgress();
+      if (p) setSavedProgress(p);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleResume = () => {
+    if (!savedProgress) return;
+    setQuiz(prev => ({
+      ...prev,
+      step: savedProgress.step,
+      intent: savedProgress.intent,
+      context: savedProgress.context,
+      state: savedProgress.state,
+      postcode: savedProgress.postcode,
+      suburb: savedProgress.suburb,
+      budget: savedProgress.budget,
+    }));
+    setSavedProgress(null);
+  };
 
   const restart = () => {
     setQuiz({ step: 1, intent: null, context: [], state: "", postcode: "", suburb: "", budget: "", firstName: "", email: "", phone: "", consent: false });
     setErrors({}); setSubmitError(null); setSubmitted(false);
     setMatchedAdvisors([]); setExcludeIds([]); setNoMoreMatches(false);
     clearMatchStorage();
+    clearQuizProgress();
   };
 
   const handleIntent = (intent: Intent) => {
@@ -614,6 +703,7 @@ function FindAdvisorQuiz() {
       const data = await res.json();
       if (!res.ok) { setOtpError(data.error || "Failed to send code."); setOtpStage("idle"); return; }
       setOtpStage("sent");
+      setOtpSentAt(Date.now());
     } catch {
       setOtpError("Network error. Please try again.");
       setOtpStage("idle");
@@ -764,6 +854,30 @@ function FindAdvisorQuiz() {
         {/* Handoff banner — rendered when investor shares holdings from the holdings page */}
         {handoffToken && <HandoffBanner token={handoffToken} />}
 
+        {/* ADV-008: Resume banner — shown when localStorage has saved quiz progress */}
+        {savedProgress && quiz.step === 1 && (
+          <div className="mb-5 bg-teal-50 border border-teal-200 rounded-xl p-4 flex items-center gap-3">
+            <span className="text-teal-600 text-base shrink-0">↩</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-slate-900">Continue where you left off</p>
+              <p className="text-xs text-slate-500 mt-0.5">You were partway through finding an advisor.</p>
+            </div>
+            <button
+              onClick={handleResume}
+              className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-lg whitespace-nowrap"
+            >
+              Resume
+            </button>
+            <button
+              onClick={() => { setSavedProgress(null); clearQuizProgress(); }}
+              className="text-slate-400 hover:text-slate-600 text-lg leading-none p-0.5 shrink-0"
+              aria-label="Dismiss"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
         {/* Breadcrumb */}
         <nav className="text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
           <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
@@ -840,6 +954,7 @@ function FindAdvisorQuiz() {
             otpStage={otpStage}
             otpCode={otpCode}
             otpError={otpError}
+            otpSentAt={otpSentAt}
             onOtpCodeChange={setOtpCode}
             onOtpVerify={handleVerifyAndSubmit}
             onOtpResend={handleSendOtp}
@@ -1236,19 +1351,33 @@ function Step3({
 function Step4({
   firstName, email, phone, consent, onChange, onSubmit, onBack,
   submitting, errors, submitError,
-  otpStage, otpCode, otpError, onOtpCodeChange, onOtpVerify, onOtpResend,
+  otpStage, otpCode, otpError, otpSentAt, onOtpCodeChange, onOtpVerify, onOtpResend,
 }: {
   firstName: string; email: string; phone: string; consent: boolean;
   onChange: (field: string, value: string | boolean) => void;
   onSubmit: (e: React.FormEvent) => void; onBack: () => void;
   submitting: boolean; errors: Record<string, string>; submitError: string | null;
   otpStage: "idle" | "sending" | "sent" | "verifying";
-  otpCode: string; otpError: string | null;
+  otpCode: string; otpError: string | null; otpSentAt: number | null;
   onOtpCodeChange: (v: string) => void;
   onOtpVerify: () => void;
   onOtpResend: (e: React.SyntheticEvent) => void;
 }) {
   const otpActive = otpStage === "sent" || otpStage === "verifying";
+
+  // ADV-015: OTP countdown timer
+  const [secondsLeft, setSecondsLeft] = useState<number>(300);
+  useEffect(() => {
+    if (!otpSentAt || !otpActive) return;
+    const target = otpSentAt + 5 * 60 * 1000;
+    const tick = () => setSecondsLeft(Math.max(0, Math.round((target - Date.now()) / 1000)));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [otpSentAt, otpActive]);
+
+  const otpExpired = otpActive && secondsLeft <= 0;
+  const countdownStr = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, "0")}`;
 
   return (
     <Card variant="default" padding="lg">
@@ -1330,6 +1459,11 @@ function Step4({
             <div>
               <p className="text-sm font-bold text-slate-900">Check your inbox</p>
               <p className="text-xs text-slate-500 mt-0.5">We sent a 6-digit code to <strong>{email}</strong></p>
+              {otpActive && (
+                otpExpired
+                  ? <p className="text-xs text-red-500 font-semibold mt-1">Code expired — resend below</p>
+                  : <p className="text-xs text-slate-400 mt-1">Expires in <span className={secondsLeft < 60 ? "text-red-500 font-semibold" : ""}>{countdownStr}</span></p>
+              )}
             </div>
           </div>
 
@@ -1367,24 +1501,34 @@ function Step4({
               {otpStage === "verifying" || submitting ? "Verifying\u2026" : "Verify & Get Matched \u2192"}
             </Button>
 
-            <p className="text-center text-xs text-slate-400">
-              Didn&apos;t get it?{" "}
+            {otpExpired ? (
               <button
                 type="button"
                 onClick={onOtpResend}
-                className="text-amber-600 hover:text-amber-700 font-semibold"
+                className="w-full py-2.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-xl"
               >
-                Resend code
+                Resend code →
               </button>
-              {" "}· Wrong email?{" "}
-              <button
-                type="button"
-                onClick={() => { clearMatchStorage(); onOtpCodeChange(""); window.location.reload(); }}
-                className="text-slate-500 hover:text-slate-700 font-semibold"
-              >
-                Start over
-              </button>
-            </p>
+            ) : (
+              <p className="text-center text-xs text-slate-400">
+                Didn&apos;t get it?{" "}
+                <button
+                  type="button"
+                  onClick={onOtpResend}
+                  className="text-amber-600 hover:text-amber-700 font-semibold"
+                >
+                  Resend code
+                </button>
+                {" "}· Wrong email?{" "}
+                <button
+                  type="button"
+                  onClick={() => { clearMatchStorage(); onOtpCodeChange(""); window.location.reload(); }}
+                  className="text-slate-500 hover:text-slate-700 font-semibold"
+                >
+                  Start over
+                </button>
+              </p>
+            )}
           </div>
         </div>
       )}
@@ -1527,6 +1671,38 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
                 <p className="text-xs text-slate-600 leading-relaxed">{currentMatch.fee_description}</p>
               </div>
             )}
+
+            {/* ADV-007: "Why we matched you" explanation */}
+            {(() => {
+              const intentLabel: Record<string, string> = {
+                buy_property: "property buying & investment",
+                grow_wealth: "wealth creation & growth",
+                protect_assets: "asset protection & insurance",
+                business_tax: "business tax & accounting",
+              };
+              const bullets: string[] = [];
+              const specialty = currentMatch.specialties?.[0];
+              if (specialty) bullets.push(`Specialises in ${specialty}`);
+              else if (userIntent) bullets.push(`Matches your goal: ${intentLabel[userIntent] ?? userIntent}`);
+              if (currentMatch.location_display) bullets.push(`Based ${currentMatch.location_display}${userState ? ` — serves ${userState}` : ""}`);
+              if (currentMatch.rating > 0 && currentMatch.review_count > 0)
+                bullets.push(`Rated ${currentMatch.rating}/5 from ${currentMatch.review_count} verified review${currentMatch.review_count !== 1 ? "s" : ""}`);
+              else if (currentMatch.verified) bullets.push("Verified AFSL / registered professional");
+              if (bullets.length === 0) return null;
+              return (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4">
+                  <p className="text-[0.65rem] font-bold text-emerald-700 uppercase tracking-wider mb-2">Why we matched you</p>
+                  <ul className="space-y-1">
+                    {bullets.map((b) => (
+                      <li key={b} className="flex items-start gap-1.5 text-xs text-emerald-800">
+                        <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })()}
 
             {/* CTA */}
             {isCurrentConfirmed ? (

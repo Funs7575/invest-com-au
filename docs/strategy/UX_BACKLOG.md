@@ -155,8 +155,70 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 - **File**: `components/VerifiedAdvisorBadge.tsx` + profile page
 - **Effort**: Medium (1–2 days)
 
+**[ADV-024] Advisor portal: mobile "More…" includes route-level links (Briefs/Auctions/Marketplace/Teams)**
+- **Problem**: Route-level nav links (Briefs, Auctions, Marketplace, Expert Teams) are hidden on mobile (`hidden sm:flex`). Mobile advisors can't reach these pages from the nav.
+- **Fix**: Include these 4 links in the mobile "More…" dropdown alongside the collapsed SPA tabs.
+- **File**: `app/advisor-portal/page.tsx` — mobile nav More dropdown
+- **Effort**: Trivial (15 min)
+
+**[ADV-025] Find-advisor quiz: step-back clears localStorage progress for empty steps**
+- **Problem**: When a user goes back from step 2 to step 1 and picks a different intent, the localStorage progress still holds the old intent on reload.
+- **Fix**: Update localStorage on each `update()` call, not just on step change, so the saved progress always reflects the current state.
+- **File**: `app/find-advisor/page.tsx` — `update()` callback + localStorage sync
+- **Effort**: Trivial (10 min)
+
+**[ADV-026] Article detail: share row at bottom of article body (not just top)**
+- **Problem**: `ArticleShareRow` only appears near the top. Users who finish reading a long article have no share option at the bottom without scrolling back up.
+- **Fix**: Add a second `<ArticleShareRow>` below the article body content.
+- **File**: `app/article/[slug]/page.tsx`
+- **Effort**: Trivial (5 min)
+
 ---
 
 ## Resolved / Shipped
 
-_(move entries here when implemented)_
+**[ADV-001]** Advisor portal: onboarding wizard — changed condition so checklist shows when `profileCompleteness` is null (new advisors), added local score fallback from advisor fields. `app/advisor-portal/DashboardTab.tsx`
+
+**[ADV-002]** Advisor profile: primary booking CTA — added prominent teal "Book a Free Call" card in right sidebar before contact form when `booking_link` is set. `app/advisor/[slug]/AdvisorProfileClient.tsx`
+
+**[ADV-003]** Advisor portal: silent API error handling — added `dataLoadError` state, error banner with "Try again" button, `dataLoadedAt` timestamp. `app/advisor-portal/page.tsx`
+
+**[ADV-004]** ALREADY IMPLEMENTED — pagination existed at lines 1424-1437. Resolved (no change needed).
+
+**[ADV-005]** For-advisors: testimonials section — added 3 advisor quote cards between "Who should apply" and FAQ. `app/for-advisors/page.tsx`
+
+**[ADV-006]** Advisor portal mobile nav — top 7 tabs always visible, items 8+ hidden on mobile behind a "More…" dropdown. `app/advisor-portal/page.tsx`
+
+**[ADV-007]** Find-advisor match explanation — added "Why we matched you" panel with 3 bullets (specialty, location, rating) in MatchConfirmation. `app/find-advisor/page.tsx`
+
+**[ADV-008]** Quiz progress in localStorage — saves non-PII fields after each step, shows "Resume" banner on return. `app/find-advisor/page.tsx`
+
+**[ADV-009]** Directory empty-state filter chips — individual clear chips for each active filter with one-click removal. `app/advisors/AdvisorsClient.tsx`
+
+**[ADV-010]** Advisor profile anchor nav — "On this page" nav between hero and two-column layout with anchors to About/Credentials/Reviews/Articles/Contact. `app/advisor/[slug]/AdvisorProfileClient.tsx`
+
+**[ADV-011]** Reviews load more — load-more button fetching next page via `/api/advisor-reviews-public`. `app/advisor/[slug]/AdvisorProfileClient.tsx`
+
+**[ADV-012]** Community coming soon — email notification signup form with `CommunityNotifyForm` client component + API + migration. `app/community/page.tsx`
+
+**[ADV-013]** Teams visibility on advisor profile — queries `expert_team_members` → `expert_teams` and renders "Part of [Squad] →" card. `app/advisor/[slug]/page.tsx` + `AdvisorProfileClient.tsx`
+
+**[ADV-014]** Article share buttons — `ArticleShareRow` client component with Web Share API / copy / LinkedIn / X / Email. `app/article/[slug]/page.tsx` + `components/ArticleShareRow.tsx`
+
+**[ADV-015]** OTP countdown timer — 5-minute countdown in Step 4 with colour change at <60s, prominent "Resend" button on expiry. `app/find-advisor/page.tsx`
+
+**[ADV-016]** Mobile "All filters" label — removed `hidden sm:inline` so label shows on all screen sizes. `app/advisors/AdvisorsClient.tsx`
+
+**[ADV-017]** For-advisors FAQ — added 3 FAQ entries addressing spam leads, first lead timeline, and follow-up support. `app/for-advisors/page.tsx`
+
+**[ADV-018]** Portal refresh indicator — "Updated X minutes ago" + refresh button in DashboardTab header. `app/advisor-portal/DashboardTab.tsx`
+
+**[ADV-019]** Advisor profile last-updated timestamp — "Profile last updated X ago" in follow strip. `app/advisor/[slug]/page.tsx`
+
+**[ADV-020]** Team creation preview — added public preview card in Step 4 of TeamNewWizard showing the squad as it will appear. `app/teams/new/_components/TeamNewWizard.tsx`
+
+**[ADV-021]** Article hub sort filter — added Newest / Most views / Trending sort selector in ArticlesClient. `app/articles/ArticlesClient.tsx`
+
+**[ADV-022]** For-advisors urgency signal — pulsing "X advisors joined this week" counter near final CTA. `app/for-advisors/page.tsx`
+
+**[ADV-023]** Credential verification display — "Verified" chip in advisor profile now shows AFSL number inline and expands to reveal full licence details on click. `app/advisor/[slug]/AdvisorProfileClient.tsx`
