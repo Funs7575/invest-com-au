@@ -144,9 +144,8 @@ export default function ComparePage() {
   // Speakable: the H1 + intro paragraph are the extractable AI-citation answer
   // region for "compare Australian investing platforms" queries.
   const speakableLd = speakableWebPageJsonLd({
-    url: absoluteUrl("/compare"),
+    path: "/compare",
     name: "Compare Australian Investment Platforms",
-    description: "Side-by-side comparison of fees, features, and safety for Australian share trading, crypto, super and robo-advisor platforms.",
     selectors: ["[data-speakable='compare-hero']"],
   });
 

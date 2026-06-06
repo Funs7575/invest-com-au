@@ -143,9 +143,8 @@ export default async function ShareTradingPage() {
 
   // Speakable: point at the hero H1 + hero subtext for AI/voice citation.
   const speakableLd = speakableWebPageJsonLd({
-    url: absoluteUrl("/share-trading"),
+    path: "/share-trading",
     name: vertical.h1,
-    description: vertical.heroSubtext,
     selectors: ["[data-speakable='hero-title']", "[data-speakable='hero-sub']"],
   });
 
