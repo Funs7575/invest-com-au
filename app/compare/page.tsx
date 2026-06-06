@@ -5,6 +5,7 @@ import CompareClient from "./CompareClient";
 import CompareNav from "./CompareNav";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
+import { speakableWebPageJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
@@ -140,6 +141,15 @@ export default function ComparePage() {
     ],
   };
 
+  // Speakable: the H1 + intro paragraph are the extractable AI-citation answer
+  // region for "compare Australian investing platforms" queries.
+  const speakableLd = speakableWebPageJsonLd({
+    url: absoluteUrl("/compare"),
+    name: "Compare Australian Investment Platforms",
+    description: "Side-by-side comparison of fees, features, and safety for Australian share trading, crypto, super and robo-advisor platforms.",
+    selectors: ["[data-speakable='compare-hero']"],
+  });
+
   return (
     <>
       <script
@@ -150,12 +160,16 @@ export default function ComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
+      />
       <Suspense fallback={<div className="h-12 bg-slate-100 animate-pulse rounded-lg mx-4" aria-hidden />}><CompareNav /></Suspense>
       <div className="container-custom pt-5">
         <GetMatchedEmbed context="platform_compare" />
       </div>
       {/* Server-rendered H1 for crawlers that don't execute client JS — streams immediately */}
-      <div className="container-custom pt-5 md:pt-10">
+      <div className="container-custom pt-5 md:pt-10" data-speakable="compare-hero">
         <DirectoryBanners surface="compare" />
         <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
           Compare Australian Investment Platforms
