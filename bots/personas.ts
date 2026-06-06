@@ -82,11 +82,24 @@ export const AUTHED_PERSONAS: Persona[] = [
   {
     name: "authed-investor",
     description:
-      "A signed-in individual investor exploring their account, holdings and saved plans.",
+      "A signed-in individual investor exploring their account, holdings, wealth-stack, notifications and saved plans.",
     storageStateFile: stateFile("bot-buyer"),
-    routes: ["/account", "/account/holdings", "/account/bookmarks", "/dashboard"],
+    routes: [
+      // Core account hub
+      "/account",
+      "/account/dashboard",
+      // Holdings & wealth-stack (portfolio management surfaces)
+      "/account/holdings",
+      "/account/net-worth",
+      // Save / bookmark / compare surfaces
+      "/account/bookmarks",
+      "/account/saved",
+      // Notifications & profile
+      "/account/notifications",
+      "/account/profile",
+    ],
     startPath: "/account",
-    goal: "As a logged-in investor, explore your account dashboard, review your holdings and saved bookmarks, and try to save a plan or send an advisor enquiry. Note anything broken, confusing, or any missing fees/risk disclosures. (Money and external actions are mocked — do not worry about real side effects.)",
+    goal: "As a logged-in investor, explore your account dashboard, review your holdings and wealth-stack (net-worth tracker), check saved bookmarks and plans, and read any notifications. Note anything broken, confusing, redirecting you to /login unexpectedly, or missing fees/risk disclosures. (Money and external actions are mocked — do not worry about real side effects.)",
   },
 ];
 
