@@ -40,6 +40,9 @@ export interface DirectoryHeroProps {
    * uses `[data-speakable='compare-hero']`).
    */
   speakableId?: string;
+  /** Optional slim promo strip rendered inside the header box (e.g. a broker
+      deal). Styled by the caller for the dark background. */
+  promo?: ReactNode;
   /** Light-band content directly below the hero (e.g. `<DirectoryBanners>`). */
   children?: ReactNode;
   /**
@@ -59,6 +62,7 @@ export default function DirectoryHero({
   subtitle,
   stats,
   speakableId,
+  promo,
   children,
   containerClassName = "container-custom max-w-6xl",
 }: DirectoryHeroProps) {
@@ -116,6 +120,9 @@ export default function DirectoryHero({
               </div>
             )}
           </div>
+          {promo && (
+            <div className="relative mt-3 border-t border-white/10 pt-2.5">{promo}</div>
+          )}
         </section>
       </div>
       {children != null && (
