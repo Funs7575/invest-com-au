@@ -426,6 +426,7 @@ export default function TeamsManagerClient() {
               <div className="flex items-center gap-2 mb-2">
                 <input
                   type="email"
+                  autoComplete="email"
                   placeholder="email@example.com"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}

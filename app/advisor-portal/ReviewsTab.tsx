@@ -304,6 +304,7 @@ export default function ReviewsTab({ advisor }: Props) {
                 </label>
                 <input
                   type="email"
+                  autoComplete="email"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   placeholder="e.g. sarah@example.com"
