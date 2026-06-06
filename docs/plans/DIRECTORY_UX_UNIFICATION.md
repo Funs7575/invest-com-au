@@ -31,6 +31,14 @@ Root cause: invest & advisors independently render the *same* dark hero; compare
 
 Each is one mergeable PR. SC-1+SC-2 ship together (component + first adopter); SC-3, SC-4, SC-5, SC-6 follow.
 
+### Status (2026-06-06) — surface-consistency pass COMPLETE
+
+- **SC-1 + SC-2 + SC-3** — shared `DirectoryHero`, adopted on `/compare` + `/invest` — **merged (#1452)**.
+- **SC-4 + SC-6 + SC-7** — `/advisors` full-bleed hero; violet→amber + breadcrumb dedupe; `/compare` filter streamline — **merged (#1453)**.
+- **SC-5 — closed (not implemented), by decision.** On inspection, `/advisors` and `/invest` already share the directory primitives (`SearchInput`, `SortDropdown`, `FilterChips`, `FacetGroup`, `RangeSlider`). The remaining delta is that Advisors uses a `TabBar` for its *few* entity types (All/Individuals/Firms/Expert Teams) while Marketplace uses a facet-pill-bar (`MarketplaceFilterBar`) suited to its *many* facets (kind + sector + budget + location + state). Forcing Marketplace into a single entity `TabBar` would reduce its usability — the facet-pill-bar is the right pattern for its data shape. Both surfaces already share the toolbar primitives and the active-chips/clear-all behaviour, so they are consistent *at the primitive level*; the layout difference is intentional and appropriate. No change made.
+
+Net result: `/compare`, `/advisors`, `/invest` now share one dark stat-led `DirectoryHero`; `/compare`'s dual-category-system confusion is resolved (single in-page pill control + a quiet "Specialised comparisons" link row); off-system colours removed.
+
 ---
 
 
