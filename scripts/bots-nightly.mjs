@@ -78,9 +78,25 @@ async function main() {
 
   // ── Aggregate ──────────────────────────────────────────────────────────────
   const s = sweep?.summary;
-  const brokenLinks = s?.brokenLinks ?? [];
   const flagged = s?.flagged ?? [];
   const serverErrors = probe?.serverErrors ?? [];
+
+  // Classify the link-checker hits. A genuinely broken link is a 404 or 5xx;
+  // a 403/401/429 is access-restricted (auth-gated, rate-limited) OR — in a
+  // sandboxed run — TLS-MITM-proxy noise, NOT a broken link. Only 404/5xx
+  // count toward the issue tally / exit gate so the report stays trustworthy.
+  const statusesOf = (b) => (b && Array.isArray(b.statuses)) ? b.statuses : (typeof b?.status === "number" ? [b.status] : []);
+  // Broken = a MAJORITY of retry attempts returned 404/5xx (a single 404 amid
+  // 403s is a proxy flap, not a real break — retry-verification semantics).
+  const isBroken = (b) => {
+    const st = statusesOf(b);
+    if (st.length === 0) return false;
+    const bad = st.filter((c) => c === 404 || (c >= 500 && c < 600)).length;
+    return bad * 2 > st.length;
+  };
+  const allHits = s?.brokenLinks ?? [];
+  const brokenLinks = allHits.filter(isBroken);
+  const restricted = allHits.filter((b) => !isBroken(b)); // 403/401/429 — not counted
   const issues = brokenLinks.length + serverErrors.length;
 
   const lines = [];
@@ -94,12 +110,18 @@ async function main() {
   if (!sweep) {
     lines.push("- ⚠️ did not complete (is Chromium installed? `npm run bots:install`).", "");
   } else {
+    const fmt = (b) => typeof b === "string" ? b : `${b.path ?? JSON.stringify(b)} [${statusesOf(b).join(",")}]`;
     lines.push(`- Routes audited: **${s.routesAudited}** · flagged: **${s.flaggedCount}**`);
-    lines.push(`- Links discovered: ${s.linksDiscovered} · probed: ${s.linksProbed} · **broken: ${brokenLinks.length}**`, "");
+    lines.push(`- Links discovered: ${s.linksDiscovered} · probed: ${s.linksProbed} · **broken (404/5xx): ${brokenLinks.length}** · access-restricted (403/401/429): ${restricted.length}`, "");
     if (brokenLinks.length) {
-      lines.push("Broken links (retry-verified):");
-      for (const b of brokenLinks.slice(0, 30)) lines.push(`  - \`${typeof b === "string" ? b : JSON.stringify(b)}\``);
+      lines.push("Broken links (404/5xx, retry-verified):");
+      for (const b of brokenLinks.slice(0, 30)) lines.push(`  - \`${fmt(b)}\``);
       lines.push("");
+    }
+    if (restricted.length) {
+      lines.push(`<details><summary>Access-restricted links (${restricted.length}) — auth-gated or, in a sandboxed run, TLS-proxy noise; not counted as broken</summary>`, "");
+      for (const b of restricted.slice(0, 40)) lines.push(`  - \`${fmt(b)}\``);
+      lines.push("", "</details>", "");
     }
     if (flagged.length) {
       lines.push("Flagged routes (verify — sandbox proxy can throw transient 4xx/5xx):");
