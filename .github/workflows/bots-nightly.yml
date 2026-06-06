@@ -77,6 +77,16 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npm run bots:data
+      - name: Conversion / affiliate-tracking
+        if: always()
+        env:
+          BOTS_BASE_URL: ${{ github.event.inputs.target || .https://lambent-sawine-17c3dd.netlify.app. }}
+        run: npm run bots:conversion
+      - name: Visual + layout guard
+        if: always()
+        env:
+          BOTS_BASE_URL: ${{ github.event.inputs.target || .https://lambent-sawine-17c3dd.netlify.app. }}
+        run: npm run bots:visual
       - name: Run nightly fleet
         if: always() # run the broad sweep even if an earlier monitor flagged a step
         env:
@@ -87,6 +97,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bots-reports
-          path: bots/reports/{nightly,funnel,seo,idor,perf,a11y,data-integrity}-*.md
+          path: |
+            bots/reports/*.md
+            bots/reports/screenshots/**
           if-no-files-found: warn
           retention-days: 30
