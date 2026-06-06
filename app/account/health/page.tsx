@@ -142,7 +142,7 @@ export default async function AccountHealthPage() {
     <div style={{ background: "var(--color-ink-50)", minHeight: "100vh", paddingTop: 40, paddingBottom: 64 }}>
       <div className="container-custom" style={{ maxWidth: 700 }}>
 
-        <nav style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 24 }}>
+        <nav aria-label="Breadcrumb" style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 24 }}>
           <Link href="/account" style={{ color: "var(--color-ink-400)", textDecoration: "none" }}>Account</Link>
           <span style={{ margin: "0 6px" }}>/</span>
           <span style={{ color: "var(--color-ink-600)" }}>Health Score</span>

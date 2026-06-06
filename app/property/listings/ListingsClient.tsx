@@ -222,7 +222,7 @@ export default function ListingsClient() {
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(245,158,11,0.08),transparent_60%)]" />
         <div className="container-custom py-8 md:py-12 relative">
-          <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-900 transition-colors">Property</Link>

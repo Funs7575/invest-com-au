@@ -197,7 +197,7 @@ export default function HealthInsurancePage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/insurance" className="hover:text-slate-900">Insurance</Link>
@@ -286,7 +286,7 @@ export default function HealthInsurancePage() {
       <section className="py-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
         <div className="container-custom text-center max-w-xl">
           <h2 className="text-xl font-extrabold mb-3">Find the right health insurance policy</h2>
-          <p className="text-sm text-slate-300 mb-6">Compare hospital and extras policies from Australia's major health funds to find the best value for your situation.</p>
+          <p className="text-sm text-slate-300 mb-6">Compare hospital and extras policies from Australia&apos;s major health funds to find the best value for your situation.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/best/insurance-brokers" className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm rounded-xl transition-colors">
               Find an Insurance Broker →

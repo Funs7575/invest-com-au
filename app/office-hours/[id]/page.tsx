@@ -202,7 +202,7 @@ export default async function OfficeHoursSessionPage({
       )}
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
         <Link href="/" className="hover:text-slate-900">Home</Link>
         <span className="text-slate-300">/</span>
         <Link href="/office-hours" className="hover:text-slate-900">Office Hours</Link>

@@ -13,7 +13,7 @@ export default function ChessLookupClient({ brokers }: { brokers: Broker[] }) {
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl">
         {/* Breadcrumb */}
-        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <Link href="/calculators" className="hover:text-slate-900">Calculators</Link>

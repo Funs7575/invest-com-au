@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import type { Broker } from "@/lib/types";
@@ -228,7 +229,7 @@ export default async function BrokerSafetyPage({
   const b = broker as Broker;
   const safetyScore = calculateSafetyScore(b);
   const scoreStyle = getScoreColor(safetyScore);
-  const gaugeGradient = getGaugeGradient(safetyScore);
+  const _gaugeGradient = getGaugeGradient(safetyScore);
 
   const hasAsic = b.regulated_by?.toLowerCase().includes("asic") || false;
   const hasAfsl =
@@ -259,24 +260,24 @@ export default async function BrokerSafetyPage({
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-slate-200">
         <div className="container-custom py-3">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500">
-            <a href="/" className="hover:text-slate-900 transition-colors">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500">
+            <Link href="/" className="hover:text-slate-900 transition-colors">
               Home
-            </a>
+            </Link>
             <span>/</span>
-            <a
+            <Link
               href="/compare"
               className="hover:text-slate-900 transition-colors"
             >
               Brokers
-            </a>
+            </Link>
             <span>/</span>
-            <a
+            <Link
               href={`/broker/${slug}`}
               className="hover:text-slate-900 transition-colors"
             >
               {b.name}
-            </a>
+            </Link>
             <span>/</span>
             <span className="text-slate-900 font-medium">Safety</span>
           </nav>

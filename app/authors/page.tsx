@@ -49,7 +49,7 @@ export default async function AuthorsIndexPage() {
     <div className="py-8 md:py-14">
       <JsonLd data={breadcrumb} testId="authors-jsonld" />
       <div className="container-custom max-w-5xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5">/</span>
           <span className="text-slate-700">Our Editorial Team</span>

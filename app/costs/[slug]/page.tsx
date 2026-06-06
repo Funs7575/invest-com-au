@@ -112,7 +112,7 @@ export default async function CostScenarioPage({
       <Header />
       <main className="max-w-4xl mx-auto px-4 py-12">
         {/* Breadcrumbs */}
-        <nav className="text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span className="mx-1.5">/</span>
           <Link href="/costs" className="hover:text-slate-600">Cost Comparisons</Link>

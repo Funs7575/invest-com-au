@@ -213,7 +213,7 @@ export default function ConstructionLoansPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-slate-900 to-slate-700 text-white py-14">
         <div className="container-custom">
-          <nav className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/home-loans" className="hover:text-white transition-colors">Home Loans</Link>

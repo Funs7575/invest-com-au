@@ -31,7 +31,7 @@ export default function PortfolioStressTestPage() {
     <>
       <JsonLd data={[breadcrumbLd, toolLd]} />
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
-      <nav className="text-xs text-slate-400">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-400">
         <Link href="/tools" className="hover:text-violet-700">Tools</Link>
         <span className="mx-1">›</span>
         <span className="text-slate-600">Portfolio Stress Test</span>

@@ -206,7 +206,7 @@ export default function FundsDirectoryClient({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <nav className="mt-10 flex justify-center gap-2">
+            <nav aria-label="Pagination" className="mt-10 flex justify-center gap-2">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}

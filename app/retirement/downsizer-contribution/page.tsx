@@ -169,7 +169,7 @@ export default function DownsizerContributionPage() {
       {/* Hero */}
       <section className="bg-slate-900 text-white py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">Home</Link><span>/</span>
             <Link href="/retirement" className="hover:text-white">Retirement</Link><span>/</span>
             <span className="text-slate-200 font-medium">Downsizer Contribution</span>

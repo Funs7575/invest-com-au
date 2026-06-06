@@ -40,7 +40,7 @@ export default function DataCollectionPage() {
       />
       <div className="py-6 md:py-12">
         <div className="container-custom max-w-3xl">
-          <nav className="text-xs text-slate-500 mb-4">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
             <Link href="/privacy" className="hover:text-slate-900">
               ← Privacy Policy
             </Link>

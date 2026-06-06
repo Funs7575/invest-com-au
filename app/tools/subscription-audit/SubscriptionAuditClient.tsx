@@ -149,7 +149,7 @@ export default function SubscriptionAuditClient() {
     <div className="py-5 md:py-10">
       <div className="container-custom max-w-3xl">
         {/* Breadcrumb */}
-        <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span>/</span>
           <Link href="/tools" className="hover:text-slate-900">Tools</Link>

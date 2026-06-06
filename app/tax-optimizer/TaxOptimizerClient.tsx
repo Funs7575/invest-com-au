@@ -115,7 +115,7 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
   return (
     <div className="min-h-screen bg-slate-50 py-5 md:py-12">
       <div className="mx-auto max-w-4xl px-4">
-        <nav className="text-xs text-slate-500 mb-3">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5">/</span>
           <span className="text-slate-700">Tax Optimization Engine</span>

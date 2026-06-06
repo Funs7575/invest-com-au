@@ -182,7 +182,7 @@ export default function PricingPage() {
       {/* Hero */}
       <section className="bg-gradient-to-r from-slate-700 to-slate-900 text-white py-12 md:py-16">
         <div className="container-custom">
-          <nav className="text-xs text-slate-400 mb-3">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3">
             <Link href="/" className="hover:text-white">
               Home
             </Link>{" "}

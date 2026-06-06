@@ -21,7 +21,7 @@ export default function AdvisorKycPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-3xl mx-auto px-4 py-8 md:py-12">
-        <nav className="text-xs text-slate-500 mb-3">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
           <Link href="/advisor-portal" className="hover:text-slate-900">
             ← Advisor portal
           </Link>

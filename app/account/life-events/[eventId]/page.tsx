@@ -58,7 +58,7 @@ export default async function LifeEventWizardPage({
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
-      <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
         <Link href="/account" className="hover:text-slate-900">Account</Link>
         <span className="text-slate-300">/</span>
         <Link href="/account/life-events" className="hover:text-slate-900">Life events</Link>

@@ -108,7 +108,7 @@ export default async function ETFTickerPage({
       {/* Hero */}
       <section className="bg-white border-b border-slate-100 py-8 md:py-10">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/etfs" className="hover:text-slate-900">ETFs</Link>

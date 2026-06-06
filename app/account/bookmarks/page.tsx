@@ -35,7 +35,7 @@ export default async function AccountBookmarksPage() {
   return (
     <div className="py-6 md:py-10">
       <div className="container-custom max-w-3xl">
-        <nav className="text-xs text-slate-500 mb-3">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
           <Link href="/account" className="hover:text-slate-900">
             ← My account
           </Link>

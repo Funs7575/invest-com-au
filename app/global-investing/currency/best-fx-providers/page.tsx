@@ -264,7 +264,7 @@ export default function BestFxProvidersPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-600 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-600 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/global-investing" className="hover:text-slate-900">Global Investing</Link>

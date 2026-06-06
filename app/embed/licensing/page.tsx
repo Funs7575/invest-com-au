@@ -75,7 +75,7 @@ export default function EmbedLicensingPage() {
 
       <section className="border-b border-slate-100 py-8 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/embed" className="hover:text-slate-900">Embed Widgets</Link>

@@ -248,7 +248,7 @@ export default async function LeavingAustraliaPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
             <Link href="/super" className="hover:text-slate-900">Super</Link>

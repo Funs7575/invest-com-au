@@ -142,7 +142,7 @@ export default async function NetWorthPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <nav className="text-xs text-slate-500 mb-3">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
         <Link href="/account" className="hover:text-slate-900">
           ← My account
         </Link>

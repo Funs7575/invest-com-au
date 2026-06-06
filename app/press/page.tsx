@@ -46,7 +46,7 @@ export default function PressPage() {
     <div className="py-8 md:py-14">
       <JsonLd data={breadcrumb} testId="press-jsonld" />
       <div className="container-custom max-w-4xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5">/</span>
           <span className="text-slate-700">Press &amp; Media</span>

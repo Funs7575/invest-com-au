@@ -248,7 +248,7 @@ export default function GlobalInvestingHubPage() {
       <section className="bg-white border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom">
           {/* Breadcrumb */}
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <span className="text-slate-900 font-medium">Global Investing</span>

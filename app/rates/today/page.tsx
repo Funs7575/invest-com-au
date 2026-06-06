@@ -82,7 +82,7 @@ export default async function RatesTodayPage() {
       <div style={{ background: "var(--color-ink-50)", minHeight: "100vh", paddingTop: 40, paddingBottom: 64 }}>
         <div className="container-custom" style={{ maxWidth: 840 }}>
 
-          <nav style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 24 }}>
+          <nav aria-label="Breadcrumb" style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 24 }}>
             <Link href="/" style={{ color: "var(--color-ink-400)", textDecoration: "none" }}>Home</Link>
             <span style={{ margin: "0 6px" }}>/</span>
             <Link href="/rates" style={{ color: "var(--color-ink-400)", textDecoration: "none" }}>Rates</Link>

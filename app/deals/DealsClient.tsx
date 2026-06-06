@@ -149,7 +149,7 @@ export default function DealsClient({ deals, advisors = [] }: { deals: Broker[];
 
   return (
     <div>
-      <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-4">
+      <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-4">
         <Link href="/" className="hover:text-slate-900">Home</Link>
         <span className="mx-1.5 md:mx-2">/</span>
         <span className="text-slate-700">Deals &amp; Promotions</span>
@@ -299,7 +299,7 @@ export default function DealsClient({ deals, advisors = [] }: { deals: Broker[];
           {advisors.filter((a) => a.offer_active && a.offer_text).length === 0 && (
             <div className="col-span-full text-center py-8">
               <p className="text-sm text-slate-500 mb-2">No advisor offers available right now.</p>
-              <a href="/advisors" className="text-xs font-bold text-violet-600 hover:text-violet-800">Browse all advisors →</a>
+              <Link href="/advisors" className="text-xs font-bold text-violet-600 hover:text-violet-800">Browse all advisors →</Link>
             </div>
           )}
         </div>

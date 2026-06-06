@@ -96,7 +96,7 @@ export default function ContactPage() {
       <div className="pt-5 pb-12 md:py-16">
         <div className="container-custom max-w-3xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>

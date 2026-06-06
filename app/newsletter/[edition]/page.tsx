@@ -121,7 +121,7 @@ export default async function NewsletterEditionPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleJsonLd) }}
       />
       <div className="container-custom">
-        <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
           <Link href="/" className="hover:text-slate-900">
             Home
           </Link>

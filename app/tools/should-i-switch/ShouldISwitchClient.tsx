@@ -110,7 +110,7 @@ export default function ShouldISwitchClient({
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">
             Home
           </Link>

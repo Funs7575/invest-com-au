@@ -199,7 +199,7 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
         {/* Breadcrumbs */}
-        <nav className="text-[0.6rem] text-slate-400 mb-4 flex gap-1.5">
+        <nav aria-label="Breadcrumb" className="text-[0.6rem] text-slate-400 mb-4 flex gap-1.5">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>/</span>
           <Link href="/find-advisor" className="hover:text-slate-600">Find Advisor</Link>

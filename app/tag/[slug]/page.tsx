@@ -64,7 +64,7 @@ export default async function TagPage({ params }: Props) {
     <div className="py-6 md:py-12">
       <JsonLd data={breadcrumb} testId="tag-jsonld" />
       <div className="container-custom">
-        <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5">/</span>
           <Link href="/articles" className="hover:text-slate-900">Articles</Link>

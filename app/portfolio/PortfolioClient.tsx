@@ -128,7 +128,7 @@ export default function PortfolioClient() {
     <div className="max-w-3xl mx-auto px-4 pt-6 pb-12 md:pt-10 md:pb-16">
       {/* Header */}
       <div className="mb-6 md:mb-8">
-        <nav className="text-xs text-slate-400 mb-2 flex items-center gap-1">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-2 flex items-center gap-1">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span>/</span>
           <span className="text-slate-700">Portfolio Monitor</span>

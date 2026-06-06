@@ -171,7 +171,7 @@ export default async function WhatsNewPage() {
       {/* legacy <Header/> removed: the root layout already renders Navigation */}
       <main className="max-w-3xl mx-auto px-4 py-12">
         {/* Breadcrumbs */}
-        <nav className="text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
           <Link href="/" className="hover:text-slate-600">Home</Link>
           <span className="mx-1.5">/</span>
           <span className="text-slate-600">What Changed</span>

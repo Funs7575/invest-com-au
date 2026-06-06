@@ -26,7 +26,7 @@ export default async function FindHubPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      <nav className="text-xs text-slate-500 mb-3">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
         <Link href="/" className="hover:underline">Home</Link>
         <span className="mx-2">/</span>
         <span className="text-slate-700">Find a provider</span>

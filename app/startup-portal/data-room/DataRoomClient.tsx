@@ -122,7 +122,7 @@ export default function DataRoomClient({
             <h1 className="text-lg font-semibold text-gray-900 mt-0.5">{profile.company_name}</h1>
           </div>
         </div>
-        <nav className="max-w-5xl mx-auto px-4 sm:px-6 flex gap-1 pb-0">
+        <nav aria-label="Portal navigation" className="max-w-5xl mx-auto px-4 sm:px-6 flex gap-1 pb-0">
           {NAV.map((n) => (
             <Link
               key={n.href}

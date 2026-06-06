@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Link from "next/link";
 import { CURRENT_YEAR, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { calculatorJsonLd, faqJsonLd, type FaqItem } from "@/lib/schema-markup";
 import CGTCalculatorClient from "./CGTCalculatorClient";
@@ -78,10 +79,10 @@ export default function CGTCalculatorPage() {
       />
 
       <div className="container-custom max-w-2xl py-8">
-        <nav className="text-sm text-slate-400 mb-6 flex gap-1.5 flex-wrap">
-          <a href="/" className="hover:text-slate-600">Home</a>
+        <nav aria-label="Breadcrumb" className="text-sm text-slate-400 mb-6 flex gap-1.5 flex-wrap">
+          <Link href="/" className="hover:text-slate-600">Home</Link>
           <span>›</span>
-          <a href="/tools" className="hover:text-slate-600">Tools</a>
+          <Link href="/tools" className="hover:text-slate-600">Tools</Link>
           <span>›</span>
           <span className="text-slate-600">CGT Calculator</span>
         </nav>

@@ -108,7 +108,7 @@ export default async function DealsPage() {
         <div className="container-custom max-w-5xl">
           {/* Breadcrumb + disclosure */}
           <div className="flex items-center justify-between mb-3 md:mb-5">
-            <nav className="text-xs md:text-sm text-slate-500">
+            <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500">
               <Link href="/" className="hover:text-slate-900">
                 Home
               </Link>

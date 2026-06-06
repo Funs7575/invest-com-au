@@ -23,7 +23,7 @@ export default function DataRightsPage() {
   return (
     <div className="py-6 md:py-12">
       <div className="container-custom max-w-2xl">
-        <nav className="text-xs text-slate-500 mb-4">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
           <Link href="/privacy" className="hover:text-slate-900">
             ← Privacy policy
           </Link>
@@ -34,7 +34,7 @@ export default function DataRightsPage() {
           Under the Australian Privacy Act 1988 and GDPR, you can ask
           us for a copy of every piece of personal data we hold linked
           to your email — or request permanent erasure. Both requests
-          require email verification: we'll send a one-time link to
+          require email verification: we&apos;ll send a one-time link to
           the address below that you need to click to confirm.
         </p>
 

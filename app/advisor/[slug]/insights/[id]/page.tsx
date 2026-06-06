@@ -141,7 +141,7 @@ export default async function AdvisorInsightPage({ params }: { params: Promise<{
         <div className="container-custom" style={{ maxWidth: 760 }}>
 
           {/* Breadcrumb */}
-          <nav style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 28 }}>
+          <nav aria-label="Breadcrumb" style={{ fontSize: 12, color: "var(--color-ink-400)", marginBottom: 28 }}>
             <Link href="/advisors" style={{ color: "var(--color-ink-400)", textDecoration: "none" }}>Advisors</Link>
             <span style={{ margin: "0 6px" }}>/</span>
             <Link href={`/advisor/${slug}`} style={{ color: "var(--color-ink-400)", textDecoration: "none" }}>{pro.name}</Link>

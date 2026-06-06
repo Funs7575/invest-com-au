@@ -152,7 +152,7 @@ export default async function FullServiceBrokerDetailPage({
       <div className="py-6 md:py-12">
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-2">/</span>
             <Link href="/brokers/full-service" className="hover:text-slate-900">

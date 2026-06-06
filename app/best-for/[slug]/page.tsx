@@ -7,7 +7,7 @@ import {
   type BrokerForScoring,
   type ScenarioInput,
 } from "@/lib/best-for-scorer";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { itemListJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
@@ -148,7 +148,7 @@ export default async function BestForPage({
       <div>
         <section className="bg-white border-b border-slate-100 py-8 md:py-12">
           <div className="container-custom">
-            <nav className="text-xs text-slate-500 mb-4">
+            <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
               <Link href="/" className="hover:text-slate-900">Home</Link>
               <span className="mx-1.5">/</span>
               <Link href="/best" className="hover:text-slate-900">Best</Link>

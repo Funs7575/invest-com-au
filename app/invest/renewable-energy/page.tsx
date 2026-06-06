@@ -36,7 +36,7 @@ export default function RenewableEnergyPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -180,7 +180,7 @@ export default function RenewableEnergyPage() {
 
             <h3>5. Critical Minerals</h3>
             <p>
-              Investing in Australian lithium, cobalt, nickel, and rare earth companies provides indirect exposure to the energy transition supply chain. The "picks and shovels" approach to clean energy.
+              Investing in Australian lithium, cobalt, nickel, and rare earth companies provides indirect exposure to the energy transition supply chain. The &ldquo;picks and shovels&rdquo; approach to clean energy.
             </p>
 
             <h3>FIRB for Energy Infrastructure</h3>

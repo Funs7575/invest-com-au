@@ -36,7 +36,7 @@ export default function FranchisePage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -139,7 +139,7 @@ export default function FranchisePage() {
           <div className="prose prose-slate max-w-none mb-12">
             <h3>The Franchise Disclosure Document (FDD)</h3>
             <p>
-              All Australian franchisors must provide a Franchise Disclosure Document at least 14 days before signing. The FDD includes: franchisor's financial history, litigation history, list of existing franchisees, marketing fund details, territory rights, and renewal terms.
+              All Australian franchisors must provide a Franchise Disclosure Document at least 14 days before signing. The FDD includes: franchisor&apos;s financial history, litigation history, list of existing franchisees, marketing fund details, territory rights, and renewal terms.
             </p>
 
             <h3>Franchise Agreement Key Terms</h3>
@@ -157,8 +157,8 @@ export default function FranchisePage() {
               <li>Talk to existing and former franchisees (list provided in FDD)</li>
               <li>Have a franchise lawyer review the agreement</li>
               <li>Have an accountant review the financial model</li>
-              <li>Review the franchisor's own financial accounts</li>
-              <li>Research the brand's reputation and competitive position</li>
+              <li>Review the franchisor&apos;s own financial accounts</li>
+              <li>Research the brand&apos;s reputation and competitive position</li>
               <li>Understand the support, training, and ongoing assistance provided</li>
             </ul>
 

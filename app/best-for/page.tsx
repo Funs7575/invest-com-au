@@ -156,7 +156,7 @@ export default async function BestForHubPage() {
 
       <div className="py-8 md:py-14">
         <div className="container-custom max-w-5xl">
-          <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5 flex-wrap" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" aria-hidden="true" />
             <span className="text-slate-700 font-medium">Best Broker For</span>

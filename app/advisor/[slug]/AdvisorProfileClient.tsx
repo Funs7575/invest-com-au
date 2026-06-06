@@ -273,7 +273,7 @@ export default function AdvisorProfileClient({
       <div className="container-custom max-w-[1280px] py-5 md:py-8">
 
         {/* ── Breadcrumb ─────────────────────────────── */}
-        <nav className="flex items-center gap-1.5 text-sm text-slate-400 mb-5">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-slate-400 mb-5">
           <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
           <Icon name="chevron-right" size={14} className="text-slate-300" />
           <Link href="/advisors" className="hover:text-slate-700 transition-colors">Advisors</Link>

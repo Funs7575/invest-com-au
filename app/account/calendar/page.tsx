@@ -224,7 +224,7 @@ export default async function CalendarPage() {
       {/* Header */}
       <section className="bg-white border-b border-slate-200 py-8">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-3 flex gap-1">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3 flex gap-1">
             <Link href="/account" className="hover:underline">
               My Account
             </Link>

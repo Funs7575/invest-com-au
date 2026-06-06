@@ -251,7 +251,7 @@ export default async function InvestMarketplacePage() {
           style={{ background: "radial-gradient(circle, rgba(242,88,34,.18), transparent 65%)" }}
         />
         <div className="container-custom max-w-6xl relative py-8 md:py-12">
-          <nav className="text-xs md:text-sm text-white/55 mb-3">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-white/55 mb-3">
             <Link href="/" className="hover:text-white">Home</Link>
             <span className="mx-2">/</span>
             <span className="text-white/80">Opportunities</span>

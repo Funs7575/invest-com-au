@@ -36,7 +36,7 @@ export default function BuyBusinessPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
@@ -161,7 +161,7 @@ export default function BuyBusinessPage() {
           <div className="prose prose-slate max-w-none mb-10">
             <h3>Earnings-Based Valuation (Most Common)</h3>
             <p>
-              Australian businesses are typically valued as a multiple of EBITDA (Earnings Before Interest, Tax, Depreciation, and Amortisation) or SDE (Seller's Discretionary Earnings). Multiples range from 1.5x–3x for small businesses to 5x–10x+ for larger, established businesses.
+              Australian businesses are typically valued as a multiple of EBITDA (Earnings Before Interest, Tax, Depreciation, and Amortisation) or SDE (Seller&apos;s Discretionary Earnings). Multiples range from 1.5x–3x for small businesses to 5x–10x+ for larger, established businesses.
             </p>
             <ul>
               <li><strong>Small business (&lt;$500K revenue)</strong> — 1.5x–2.5x SDE</li>

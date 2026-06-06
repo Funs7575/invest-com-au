@@ -129,7 +129,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
       {/* Hero */}
       <section className="bg-white border-b border-slate-100">
         <div className="container-custom py-6 md:py-8">
-          <nav className="text-xs text-slate-400 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-600">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-600">Property</Link>

@@ -43,7 +43,7 @@ export default async function NewsletterSubscribePage() {
       />
       <div className="container-custom max-w-2xl">
         {/* Breadcrumbs */}
-        <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
           <Link href="/" className="hover:text-slate-900">
             Home
           </Link>

@@ -41,7 +41,7 @@ export default function DigestToggle({ digestKey, label, description, initialEna
         <p className="text-sm font-medium text-slate-800">{label}</p>
         <p className="text-xs text-slate-500 mt-0.5">{description}</p>
         {error && (
-          <p className="text-xs text-red-600 mt-1">{error}</p>
+          <p className="text-xs text-red-600 mt-1" role="alert">{error}</p>
         )}
       </div>
       <button

@@ -204,7 +204,7 @@ export default function ChessVsCustodialPage() {
       <section className="relative bg-white border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom">
           {/* Breadcrumb */}
-          <nav className="text-xs text-slate-600 mb-5 flex flex-wrap items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-600 mb-5 flex flex-wrap items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>

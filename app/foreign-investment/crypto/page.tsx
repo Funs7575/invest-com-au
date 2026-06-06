@@ -127,7 +127,7 @@ export default async function ForeignCryptoPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
@@ -163,7 +163,7 @@ export default async function ForeignCryptoPage() {
             <div className="bg-white rounded-2xl border border-amber-200 p-5">
               <p className="text-xs font-bold text-amber-800 uppercase tracking-wide mb-1">CGT for Non-Residents</p>
               <p className="text-xl font-black text-amber-700">Likely Exempt</p>
-              <p className="text-xs text-slate-600 mt-1 leading-relaxed">Crypto likely not 'taxable Australian property' — but not settled law. Home country CGT still applies.</p>
+              <p className="text-xs text-slate-600 mt-1 leading-relaxed">Crypto likely not &apos;taxable Australian property&apos; — but not settled law. Home country CGT still applies.</p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
               <p className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Withholding Tax</p>

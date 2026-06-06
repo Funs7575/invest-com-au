@@ -110,7 +110,7 @@ export default async function AnnualReportPage() {
       <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 30% 40%, white 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
         <div className="container-custom max-w-5xl relative py-12 md:py-20">
-          <nav className="text-xs text-slate-400 mb-6 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white">Home</Link>
             <span className="text-slate-600">/</span>
             <Link href="/reports" className="hover:text-white">Reports</Link>

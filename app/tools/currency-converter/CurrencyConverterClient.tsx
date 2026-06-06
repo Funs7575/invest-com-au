@@ -80,7 +80,7 @@ export default function CurrencyConverterPage() {
       {/* Hero */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-10 md:py-14">
         <div className="container-custom">
-          <nav className="text-xs text-blue-200 mb-3">
+          <nav aria-label="Breadcrumb" className="text-xs text-blue-200 mb-3">
             <Link href="/" className="hover:text-white">
               Home
             </Link>{" "}

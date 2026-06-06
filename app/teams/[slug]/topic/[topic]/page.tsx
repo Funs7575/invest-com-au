@@ -62,7 +62,7 @@ export default async function SquadTopicLeadMagnetPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
       />
 
-      <nav className="text-xs text-slate-500 mb-4">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
         <Link href="/" className="hover:underline">Home</Link>
         <span className="mx-2">/</span>
         <Link href={`/teams/${data.team.slug}`} className="hover:underline">

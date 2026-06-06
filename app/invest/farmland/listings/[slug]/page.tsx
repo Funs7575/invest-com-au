@@ -126,7 +126,7 @@ export default async function FarmlandListingDetailPage({
 
       <section className="bg-white border-b border-slate-100 py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-4">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest/farmland/listings" className="hover:text-slate-900 transition-colors">Farmland Listings</Link>

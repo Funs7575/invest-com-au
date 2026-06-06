@@ -410,7 +410,7 @@ export default function ToolsClient() {
       {/* Hero */}
       <section className="bg-gradient-to-r from-purple-600 to-purple-800 text-white py-10 md:py-16">
         <div className="container-custom">
-          <nav className="text-xs text-purple-200 mb-3">
+          <nav aria-label="Breadcrumb" className="text-xs text-purple-200 mb-3">
             <Link href="/" className="hover:text-white">
               Home
             </Link>

@@ -464,7 +464,7 @@ export default async function ArticlePage({
 
               {/* Inline Table of Contents — hidden on mobile where floating TOC serves the same purpose */}
               {a.sections && a.sections.length > 1 && (
-                <nav className="hidden md:block border border-slate-200 rounded-xl p-6 mb-10 bg-slate-50">
+                <nav aria-label="On this page" className="hidden md:block border border-slate-200 rounded-xl p-6 mb-10 bg-slate-50">
                   <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">
                     Table of Contents
                   </h2>

@@ -222,7 +222,7 @@ export default function PropertyFinancePage() {
       <div className="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-14">
         <div className="container-custom">
           {/* Breadcrumb */}
-          <nav className="text-sm text-blue-200 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-blue-200 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-white transition-colors">Property</Link>

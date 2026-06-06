@@ -69,7 +69,7 @@ export default async function QuickAuditPage() {
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-3xl">
           {/* Breadcrumbs */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-1.5">/</span>
             <Link href="/calculators" className="hover:text-slate-900">Calculators</Link>

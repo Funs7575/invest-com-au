@@ -151,7 +151,7 @@ export default async function AccountUpgradeHubPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-8 md:py-12">
       <div className="container-custom max-w-5xl">
-        <nav className="text-xs text-slate-500 mb-3">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
           <Link href="/account" className="hover:text-slate-900">
             ← Back to account
           </Link>

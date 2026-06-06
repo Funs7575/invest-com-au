@@ -167,7 +167,7 @@ export default function WriteReviewClient() {
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl">
         {/* Breadcrumb */}
-        <nav className="text-xs text-slate-500 mb-4">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
           <Link href="/reviews" className="hover:text-slate-900">Reviews</Link>
           <span className="mx-1.5">/</span>
           <span className="text-slate-700">Write a Review</span>

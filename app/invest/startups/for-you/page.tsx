@@ -81,7 +81,7 @@ export default async function StartupsForYouPage() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-      <nav className="text-xs text-slate-500 mb-6">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-6">
         <Link href="/account/dashboard" className="hover:text-violet-600">Dashboard</Link>
         <span className="mx-1.5">/</span>
         <Link href="/invest/startups" className="hover:text-violet-600">Startups</Link>

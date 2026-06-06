@@ -112,7 +112,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
   return (
     <div className={inline ? "" : "py-5 md:py-12"}>
       <div className={inline ? "" : "container-custom max-w-3xl"}>
-        {!inline && <nav className="text-xs md:text-sm text-slate-500 mb-3">
+        {!inline && <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5">/</span>
           <Link href="/calculators" className="hover:text-slate-900">Calculators</Link>
@@ -230,7 +230,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                 {/* Transfer info */}
                 <div className="text-[0.65rem] text-slate-500 space-y-1">
                   <p><strong className="text-slate-700">How to switch:</strong> {cheapest?.broker.chess_sponsored ? "Both brokers use CHESS sponsorship — your HIN transfers directly. Shares stay in your name. Takes 3-5 business days." : "Check if your new broker supports CHESS transfer or if you'll need to sell and rebuy."}</p>
-                  <p>Read our <a href="/switch" className="text-violet-600 hover:underline">complete switching guide</a> for step-by-step instructions.</p>
+                  <p>Read our <Link href="/switch" className="text-violet-600 hover:underline">complete switching guide</Link> for step-by-step instructions.</p>
                 </div>
               </div>
             )}

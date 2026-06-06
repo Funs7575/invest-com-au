@@ -674,7 +674,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <span className="text-slate-700">{activeTypeLabel || "Find an Advisor"}</span>
@@ -898,7 +898,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <span className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5"><Icon name="map-pin" size={13} className="text-amber-500" />Location</span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div className="sm:col-span-2"><LocationSearch selected={locationSearch} onSelect={(p) => { setLocationSearch(p); if (!p) { setUserLat(null); setUserLng(null); } }} /></div>
-                <select value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" disabled={!isLocationActive}>
+                <select aria-label="Search radius" value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isLocationActive}>
                   {RADIUS_OPTIONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
                 </select>
               </div>

@@ -74,7 +74,7 @@ export default function CareersPage() {
         {/* Hero */}
         <div className="bg-slate-900 text-white py-10 md:py-16 px-4">
           <div className="container-custom max-w-3xl">
-            <nav className="text-xs text-slate-400 mb-3">
+            <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-3">
               <Link href="/" className="hover:text-white">Home</Link>
               <span className="mx-1.5">/</span>
               <Link href="/about" className="hover:text-white">About Us</Link>

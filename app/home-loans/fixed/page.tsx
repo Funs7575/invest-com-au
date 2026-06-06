@@ -126,7 +126,7 @@ export default function FixedRateHomeLoanPage() {
         <div className="container-custom max-w-3xl">
 
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-1.5 md:mx-2">/</span>
             <Link href="/home-loans" className="hover:text-slate-900">Home Loans</Link>

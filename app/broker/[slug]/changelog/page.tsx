@@ -145,7 +145,7 @@ export default async function BrokerChangelogPage({
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-3xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-4">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-4">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-2">/</span>
             <Link href="/best" className="hover:text-slate-900">Brokers</Link>

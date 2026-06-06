@@ -71,7 +71,7 @@ export default async function HelpArticlePage(
         {/* Breadcrumb nav */}
         <div className="bg-slate-50 border-b border-slate-100 py-3 px-4">
           <div className="container-custom max-w-3xl">
-            <nav className="text-xs text-slate-500">
+            <nav aria-label="Breadcrumb" className="text-xs text-slate-500">
               <Link href="/" className="hover:text-slate-700">Home</Link>
               <span className="mx-1.5">/</span>
               <Link href="/help" className="hover:text-slate-700">Help Centre</Link>

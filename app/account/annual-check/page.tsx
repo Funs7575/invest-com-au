@@ -229,7 +229,7 @@ export default async function AnnualCheckPage() {
   return (
     <main className="max-w-2xl mx-auto px-4 sm:px-6 py-8">
       <header className="mb-8">
-        <nav className="text-xs text-slate-500 mb-2">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-2">
           <Link href="/account" className="hover:underline">
             My Account
           </Link>{" "}

@@ -49,7 +49,7 @@ export default function HelpIndexPage() {
 
         <div className="container-custom max-w-4xl py-8 md:py-12 px-4">
           {/* Breadcrumb */}
-          <nav className="text-xs text-slate-500 mb-8">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-8">
             <Link href="/" className="hover:text-slate-700">Home</Link>
             <span className="mx-1.5">/</span>
             <span className="text-slate-700">Help Centre</span>

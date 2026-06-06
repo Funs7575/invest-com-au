@@ -77,7 +77,7 @@ function SidebarContent({
         </Link>
       </div>
 
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+      <nav aria-label="Sidebar navigation" className="flex-1 p-3 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href ||
             (item.href !== "/broker-portal" && !!pathname?.startsWith(item.href));

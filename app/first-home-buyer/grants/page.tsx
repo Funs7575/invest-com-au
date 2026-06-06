@@ -220,7 +220,7 @@ export default function FirstHomeOwnerGrantsPage() {
       {/* Hero */}
       <section className="bg-slate-900 py-10 md:py-14">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-white">Home</Link><span>/</span>
             <Link href="/first-home-buyer" className="hover:text-white">First Home Buyer</Link><span>/</span>
             <span className="text-slate-200 font-medium">First Home Owner Grants</span>

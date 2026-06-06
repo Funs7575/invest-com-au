@@ -100,7 +100,7 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
         {/* Breadcrumb */}
         <div className="bg-white border-b border-slate-200">
           <div className="max-w-3xl mx-auto px-4 py-3">
-            <nav className="flex items-center gap-1.5 text-xs text-slate-500">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500">
               <Link href="/" className="hover:text-violet-600">Home</Link>
               <span>/</span>
               <Link href="/glossary" className="hover:text-violet-600">Glossary</Link>

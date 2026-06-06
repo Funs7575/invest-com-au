@@ -193,7 +193,7 @@ export default function AdvisorReviewsClient({ advisorName: _advisorName, review
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
-      <nav className="text-xs text-slate-500 mb-4">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
         <Link href="/advisor-portal" className="hover:text-slate-900">
           ← Advisor portal
         </Link>

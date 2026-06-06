@@ -22,7 +22,7 @@ export default function ComplaintsSubmitPage() {
   return (
     <div className="py-6 md:py-12">
       <div className="container-custom max-w-2xl">
-        <nav className="text-xs text-slate-500 mb-4">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-4">
           <Link href="/complaints" className="hover:text-slate-900">
             ← Complaints &amp; dispute resolution
           </Link>

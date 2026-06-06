@@ -171,7 +171,7 @@ export default async function ExpatPlanPage({
       <section className="relative bg-white border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom">
           {/* Breadcrumb */}
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -255,7 +255,7 @@ export default async function ExpatPlanPage({
             <p className="text-[0.65rem] font-bold uppercase tracking-widest text-slate-400 mb-3">
               Planner steps
             </p>
-            <nav className="space-y-1">
+            <nav aria-label="Navigation" className="space-y-1">
               {plan.items.map((item) => (
                 <a
                   key={item.id}

@@ -64,7 +64,7 @@ export default function WatchlistAlertsToggle({ initialOptedIn, hasItems }: Prop
         </button>
       </div>
       {error && (
-        <p className="mt-2 text-xs text-red-600">{error}</p>
+        <p className="mt-2 text-xs text-red-600" role="alert">{error}</p>
       )}
     </div>
   );

@@ -146,7 +146,7 @@ export default function RateAlertsPage() {
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-3xl">
           {/* Breadcrumb */}
-          <nav className="mb-3 text-xs text-slate-500 md:mb-6 md:text-sm">
+          <nav aria-label="Breadcrumb" className="mb-3 text-xs text-slate-500 md:mb-6 md:text-sm">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>

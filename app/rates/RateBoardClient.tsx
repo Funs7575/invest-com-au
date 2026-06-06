@@ -183,7 +183,7 @@ export default function RateBoardClient({
       <div className="py-6 md:py-12">
         <div className="container-custom max-w-5xl">
           {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">
+          <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>

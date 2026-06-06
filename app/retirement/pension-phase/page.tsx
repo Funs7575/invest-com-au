@@ -77,7 +77,7 @@ export default function PensionPhasePage() {
       {/* Hero */}
       <section className="border-b border-slate-100 py-8 md:py-12">
         <div className="container-custom max-w-4xl">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-900">Home</Link><span>/</span>
             <Link href="/retirement" className="hover:text-slate-900">Retirement</Link><span>/</span>
             <span className="text-slate-900 font-medium">Pension Phase</span>

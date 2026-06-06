@@ -440,7 +440,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   return (
     <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom">
-        <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
+        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <span className="text-slate-700">Compare Platforms</span>

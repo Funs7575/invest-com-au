@@ -137,7 +137,7 @@ export default function LessonClient({
             </div>
           )}
 
-          <nav className="space-y-3 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
+          <nav aria-label="Course lessons" className="space-y-3 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
             {modules.map((mod) => (
               <div key={mod.index}>
                 <p className="text-[0.69rem] font-bold uppercase tracking-wide text-slate-400 mb-1">

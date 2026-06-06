@@ -45,7 +45,7 @@ export default function CostsHub() {
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="text-sm text-slate-500 mb-6">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-2">/</span>
             <span className="text-slate-700">Cost Comparisons</span>

@@ -879,7 +879,7 @@ function FindAdvisorQuiz() {
         )}
 
         {/* Breadcrumb */}
-        <nav className="text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+        <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
           <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
           <span className="mx-1.5 text-slate-300">/</span>
           <Link href="/advisors" className="hover:text-slate-700 transition-colors">Advisors</Link>

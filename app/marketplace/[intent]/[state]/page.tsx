@@ -69,7 +69,7 @@ export default async function FindIntentStatePage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      <nav className="text-xs text-slate-500 mb-3">
+      <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-3">
         <Link href="/" className="hover:underline">Home</Link>
         <span className="mx-2">/</span>
         <Link href="/marketplace" className="hover:underline">Find</Link>

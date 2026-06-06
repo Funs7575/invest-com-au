@@ -116,7 +116,7 @@ export default function FHSSCalculatorClient() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-10">
-      <nav className="text-sm text-slate-500 mb-6">
+      <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
         <Link href="/" className="hover:underline">Home</Link>
         {" / "}
         <Link href="/tools" className="hover:underline">Tools</Link>

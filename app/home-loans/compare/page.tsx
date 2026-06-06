@@ -75,7 +75,7 @@ export default function CompareHomeLoanPage() {
       {/* Hero */}
       <div className="bg-gradient-to-br from-violet-900 to-violet-700 text-white py-14">
         <div className="container-custom">
-          <nav className="text-sm text-violet-200 mb-4 flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="text-sm text-violet-200 mb-4 flex items-center gap-1.5">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <Link href="/home-loans" className="hover:text-white transition-colors">Home Loans</Link>

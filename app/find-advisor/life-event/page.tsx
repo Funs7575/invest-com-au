@@ -64,7 +64,7 @@ export default function LifeEventPage() {
       <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white">
         {/* Hero */}
         <div className="max-w-4xl mx-auto px-4 pt-10 pb-4">
-          <nav className="text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="text-xs text-slate-400 mb-6">
             <Link href="/" className="hover:text-slate-700 transition-colors">
               Home
             </Link>

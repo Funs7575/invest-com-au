@@ -79,7 +79,7 @@ export default async function PrivateCreditPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-slate-500 mb-6">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span className="text-slate-300">/</span>
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
