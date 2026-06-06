@@ -50,8 +50,13 @@ jobs:
         env:
           BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
         run: npm run bots:funnel
+      - name: SEO / structured-data sweep
+        if: always()
+        env:
+          BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
+        run: npm run bots:seo
       - name: Run nightly fleet
-        if: always() # run the broad sweep even if the funnel monitor flagged a step
+        if: always() # run the broad sweep even if an earlier monitor flagged a step
         env:
           BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
         run: npm run bots:nightly
@@ -60,6 +65,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bots-reports
-          path: bots/reports/{nightly,funnel}-*.md
+          path: bots/reports/{nightly,funnel,seo}-*.md
           if-no-files-found: warn
           retention-days: 30
