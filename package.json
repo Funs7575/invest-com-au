@@ -28,6 +28,8 @@
     "bots:lifecycle-mirror": "BOTS_BASE_URL=https://lambent-sawine-17c3dd.netlify.app BOTS_IGNORE_HTTPS_ERRORS=1 BOTS_SKIP_WEBSERVER=1 playwright test --config bots/playwright.config.ts -g \"lifecycle\"",
     "bots:startup": "BOTS_BASE_URL=https://lambent-sawine-17c3dd.netlify.app BOTS_IGNORE_HTTPS_ERRORS=1 BOTS_SKIP_WEBSERVER=1 playwright test --config bots/playwright.config.ts -g \"startup-ecosystem\"",
     "bots:advisor-portal": "BOTS_BASE_URL=https://lambent-sawine-17c3dd.netlify.app BOTS_IGNORE_HTTPS_ERRORS=1 BOTS_SKIP_WEBSERVER=1 playwright test --config bots/playwright.config.ts -g \"advisor-portal\"",
+    "bots:coverage": "BOTS_BASE_URL=https://lambent-sawine-17c3dd.netlify.app BOTS_IGNORE_HTTPS_ERRORS=1 BOTS_SKIP_WEBSERVER=1 playwright test --config bots/playwright.config.ts -g \"flow: \"",
+    "bots:coverage-local": "BOTS_TARGET_CLASS=sandbox playwright test --config bots/playwright.config.ts -g \"flow: \"",
     "bots:file-issues": "npx tsx scripts/bots-file-issues.ts",
     "bots:diff": "npx tsx scripts/bots-diff-baseline.ts",
     "bots:probe-api": "npx tsx scripts/bots-probe-api.ts",
