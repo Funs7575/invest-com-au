@@ -10,7 +10,7 @@ export const SITE_DESCRIPTION =
 
 /* ─── Date constants — update once here when refreshing content ─── */
 export const CURRENT_YEAR = 2026;
-export const CURRENT_MONTH_YEAR = "March 2026";
+export const CURRENT_MONTH_YEAR = "June 2026";
 /** Short form for meta descriptions */
 export const UPDATED_LABEL = `Updated ${CURRENT_MONTH_YEAR}`;
 export const FEES_VERIFIED_LABEL = `Fees verified ${CURRENT_MONTH_YEAR}`;

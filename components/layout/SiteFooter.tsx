@@ -7,14 +7,9 @@ import {
   COMPANY_ACN,
   COMPANY_ABN,
 } from "@/lib/compliance";
+import { CURRENT_YEAR, CURRENT_MONTH_YEAR } from "@/lib/seo";
 
 export function SiteFooter() {
-  const year = new Date().getFullYear();
-  const updatedDate = new Date().toLocaleDateString("en-AU", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
 
   return (
     <footer
@@ -157,7 +152,7 @@ export function SiteFooter() {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1">
               <p className="text-sm text-slate-400">
-                © {year} Invest.com.au Pty Ltd. All rights reserved.
+                © {CURRENT_YEAR} Invest.com.au Pty Ltd. All rights reserved.
               </p>
               <p className="text-xs text-slate-400">
                 ACN {COMPANY_ACN} · ABN {COMPANY_ABN}
@@ -187,7 +182,7 @@ export function SiteFooter() {
           </div>
 
           <p className="text-xs text-slate-400 mt-4">
-            100+ platforms · licensed professionals · Updated {updatedDate}
+            100+ platforms · licensed professionals · Updated {CURRENT_MONTH_YEAR}
           </p>
 
           {/* Social media */}
