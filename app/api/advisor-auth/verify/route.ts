@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+// Magic-link verification is a server-side auth operation for an UNauthenticated
+// caller (no Supabase JWT). It reads/updates advisor_auth_tokens (locked to
+// non-anon) and inserts into advisor_sessions (deny-all by design), so it uses
+// the service-role client throughout. The token value in the body is the secret
+// being verified; rate-limited above.
+import { createAdminClient } from "@/lib/supabase/admin";
 import { randomBytes } from "crypto";
 import { logger } from "@/lib/logger";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
@@ -18,7 +23,7 @@ export async function POST(request: NextRequest) {
     const { token } = await request.json();
     if (!token) return NextResponse.json({ error: "Token required" }, { status: 400 });
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // Find valid token
     const { data: authToken } = await supabase

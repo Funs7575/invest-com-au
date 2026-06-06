@@ -116,14 +116,14 @@ describe("POST /api/advisor-auth/verify", () => {
   });
 
   it("401 — token not found in advisor_auth_tokens", async () => {
-    mockServerFrom.mockReturnValueOnce(chain({ data: null }));
+    mockAdminFrom.mockReturnValueOnce(chain({ data: null }));
     const res = await verifyPost({ token: "bad-token" });
     expect(res.status).toBe(401);
     expect(await res.json()).toMatchObject({ error: "Invalid or expired link" });
   });
 
   it("401 — token already used", async () => {
-    mockServerFrom.mockReturnValueOnce(
+    mockAdminFrom.mockReturnValueOnce(
       chain({ data: { ...AUTH_TOKEN, used_at: PAST } }),
     );
     const res = await verifyPost({ token: "used-token" });
@@ -132,7 +132,7 @@ describe("POST /api/advisor-auth/verify", () => {
   });
 
   it("401 — token is expired (expires_at in the past)", async () => {
-    mockServerFrom.mockReturnValueOnce(
+    mockAdminFrom.mockReturnValueOnce(
       chain({ data: { ...AUTH_TOKEN, expires_at: PAST } }),
     );
     const res = await verifyPost({ token: "expired-token" });
@@ -141,7 +141,7 @@ describe("POST /api/advisor-auth/verify", () => {
   });
 
   it("200 — success: marks token used, creates session, sets HttpOnly cookie", async () => {
-    mockServerFrom
+    mockAdminFrom
       .mockReturnValueOnce(chain({ data: AUTH_TOKEN })) // token lookup
       .mockReturnValueOnce(chain({ data: null })) // update used_at
       .mockReturnValueOnce(chain({ data: null })) // insert session
