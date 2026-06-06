@@ -329,7 +329,7 @@ export default function LoginClient() {
                     type="button"
                     onClick={handleForgotPassword}
                     disabled={loading}
-                    className="text-xs font-medium text-slate-500 hover:text-slate-700 hover:underline disabled:opacity-50"
+                    className="text-xs font-medium text-slate-500 hover:text-slate-700 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Forgot password?
                   </button>

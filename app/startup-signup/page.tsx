@@ -383,7 +383,7 @@ export default function StartupSignupPage() {
               <button
                 onClick={submit}
                 disabled={loading}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
               >
                 {loading ? "Submitting…" : "Submit application"}
               </button>

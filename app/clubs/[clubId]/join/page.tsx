@@ -75,7 +75,7 @@ export default function JoinClubPage({ params }: { params: Promise<{ clubId: str
         <button
           type="submit"
           disabled={joining || !clubId}
-          className="w-full px-4 py-2 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-900 transition-colors disabled:opacity-50"
+          className="w-full px-4 py-2 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {joining ? "Joining…" : "Join club"}
         </button>

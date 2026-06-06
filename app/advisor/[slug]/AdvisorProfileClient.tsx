@@ -1085,7 +1085,7 @@ export default function AdvisorProfileClient({
                     <button
                       onClick={loadMoreReviews}
                       disabled={loadingMoreReviews}
-                      className="px-5 py-2 text-sm font-semibold border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-60 transition-colors"
+                      className="px-5 py-2 text-sm font-semibold border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                     >
                       {loadingMoreReviews ? "Loading…" : "Load more reviews"}
                     </button>

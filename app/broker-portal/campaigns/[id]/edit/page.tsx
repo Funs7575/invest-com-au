@@ -562,7 +562,7 @@ export default function EditCampaignPage() {
             type="button"
             onClick={handleSaveAsTemplate}
             disabled={savingTemplate || !templateName.trim()}
-            className="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold text-sm rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-50 whitespace-nowrap"
+            className="px-5 py-2.5 bg-slate-100 text-slate-700 font-bold text-sm rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
           >
             {savingTemplate ? "Saving..." : "Save as Template"}
           </button>
@@ -575,7 +575,7 @@ export default function EditCampaignPage() {
           type="submit"
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+          className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? "Saving..." : "Save Changes"}
         </button>

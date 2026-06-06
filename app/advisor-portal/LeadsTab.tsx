@@ -56,7 +56,9 @@ export default function LeadsTab({
 
   useEffect(() => {
     if (!firmView || !isFirmAdmin) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- synchronous setup before async fetch; no cascade risk
     setFirmLoading(true);
+     
     setFirmError(null);
     fetch("/api/advisor-portal/firm-leads")
       .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
@@ -370,7 +372,7 @@ export default function LeadsTab({
                   value={lead.pipeline_stage ?? "new"}
                   disabled={pipelineUpdating === lead.id}
                   onChange={(e) => updatePipeline(lead.id, { pipeline_stage: e.target.value })}
-                  className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-50"
+                  className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label="Pipeline stage"
                 >
                   {PIPELINE_STAGES.map((s) => (
@@ -390,7 +392,7 @@ export default function LeadsTab({
                           : null,
                       })
                     }
-                    className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-50"
+                    className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Next follow-up date"
                   />
                 </div>

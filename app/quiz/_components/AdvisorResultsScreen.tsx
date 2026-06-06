@@ -634,7 +634,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           <button
             onClick={handleContactNext}
             disabled={!canSubmitContact}
-            className="w-full mt-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
+            className="w-full mt-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Continue — choose my location →
           </button>

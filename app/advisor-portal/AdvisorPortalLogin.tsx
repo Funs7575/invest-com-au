@@ -108,7 +108,7 @@ export default function AdvisorPortalLogin(_props: Props) {
               <button
                 onClick={handleLogin}
                 disabled={status === "sending" || !email || (mode !== "magic" && !password)}
-                className="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                className="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {status === "sending"
                   ? "Please wait..."

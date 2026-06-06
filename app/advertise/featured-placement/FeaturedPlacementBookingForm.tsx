@@ -255,7 +255,7 @@ export default function FeaturedPlacementBookingForm({
         <button
           type="submit"
           disabled={submitting}
-          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg text-sm transition-colors disabled:opacity-60"
+          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-lg text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {submitting
             ? "Redirecting to checkout…"

@@ -307,7 +307,7 @@ export default function MyListingsPage() {
                   type="button"
                   onClick={handleResendCode}
                   disabled={sendingCode}
-                  className="hover:text-slate-700 underline-offset-2 hover:underline disabled:opacity-50"
+                  className="hover:text-slate-700 underline-offset-2 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {sendingCode ? "Sending..." : "Resend code"}
                 </button>

@@ -205,7 +205,7 @@ export default function DataRoomClient({
                   <button
                     type="submit"
                     disabled={uploading}
-                    className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium disabled:opacity-50 transition-colors"
+                    className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {uploading ? "Uploading…" : "Upload"}
                   </button>

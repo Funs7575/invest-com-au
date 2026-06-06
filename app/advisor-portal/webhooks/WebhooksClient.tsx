@@ -215,7 +215,7 @@ export default function WebhooksClient({
               type="button"
               onClick={submit}
               disabled={pending}
-              className="rounded-md bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-xs font-semibold px-3 py-2"
+              className="rounded-md bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold px-3 py-2"
             >
               {pending ? "Saving…" : "Save endpoint"}
             </button>

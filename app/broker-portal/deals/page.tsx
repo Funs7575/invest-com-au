@@ -20,7 +20,7 @@ export default function BrokerDealsPage() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [brokerSlug, setBrokerSlug] = useState("");
+  const [_brokerSlug, setBrokerSlug] = useState("");
   const [brokerName, setBrokerName] = useState("");
 
   // Deal form state
@@ -227,7 +227,7 @@ export default function BrokerDealsPage() {
             <button
               onClick={handleSave}
               disabled={saving || (enabled && !dealText.trim())}
-              className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 disabled:opacity-40 transition-colors"
+              className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {saving ? "Saving..." : enabled ? "Save & Publish Deal" : "Disable Deal"}
             </button>

@@ -107,12 +107,12 @@ export default function CompareSelectionBar({
                   required
                   autoComplete="email"
                   disabled={alertStatus === "sending"}
-                  className="flex-1 min-w-[130px] rounded-lg border border-slate-600 bg-slate-800 text-white placeholder-slate-500 px-3 py-1.5 text-xs focus:border-amber-400 focus:outline-none disabled:opacity-60"
+                  className="flex-1 min-w-[130px] rounded-lg border border-slate-600 bg-slate-800 text-white placeholder-slate-500 px-3 py-1.5 text-xs focus:border-amber-400 focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                 />
                 <button
                   type="submit"
                   disabled={alertStatus === "sending"}
-                  className="shrink-0 px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60"
+                  className="shrink-0 px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {alertStatus === "sending" ? "Saving…" : "Alert me"}
                 </button>

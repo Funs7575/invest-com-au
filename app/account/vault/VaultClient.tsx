@@ -223,7 +223,7 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
                   onClick={() => handleDelete(doc.id)}
                   disabled={deletingId === doc.id}
                   aria-label={`Delete ${doc.file_name}`}
-                  className="text-gray-400 hover:text-red-600 transition-colors disabled:opacity-40 text-sm"
+                  className="text-gray-400 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
                 >
                   {deletingId === doc.id ? "…" : "✕"}
                 </button>

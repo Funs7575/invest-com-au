@@ -47,7 +47,7 @@ export default function PackagesPage() {
   const [currentPackageId, setCurrentPackageId] = useState<number | null>(null);
   const [brokerSlug, setBrokerSlug] = useState("");
   const [loading, setLoading] = useState(true);
-  const [selecting, setSelecting] = useState(false);
+  const [selecting, _setSelecting] = useState(false);
   const { toast } = useToast();
 
   // Change/cancel confirmation dialog
@@ -294,7 +294,7 @@ export default function PackagesPage() {
                 <button
                   onClick={() => initiateChange(pkg)}
                   disabled={selecting}
-                  className={`w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
+                  className={`w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     isDowngrade
                       ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
                       : "bg-slate-900 text-white hover:bg-slate-800"
@@ -468,7 +468,7 @@ export default function PackagesPage() {
               <button
                 onClick={handleConfirm}
                 disabled={confirming || (dialogAction !== "upgrade" && !cancelReason) || (cancelReason === "Other" && !cancelReasonOther.trim())}
-                className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors disabled:opacity-50 ${
+                className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   dialogAction === "cancel"
                     ? "bg-red-600 text-slate-900 hover:bg-red-700"
                     : dialogAction === "downgrade"

@@ -62,7 +62,7 @@ interface Props {
 }
 
 export default function AdvisorMatchedScreen({
-  userEmail, userFirstName, currentMatch, allMatches,
+  userEmail: _userEmail, userFirstName, currentMatch, allMatches,
   matchIndex, onRematch, rematching, noMoreMatches, onRestart,
   submitError, onConfirm, confirming,
 }: Props) {
@@ -252,7 +252,7 @@ export default function AdvisorMatchedScreen({
             <button
               onClick={() => onConfirm(currentMatch)}
               disabled={confirming}
-              className="w-full py-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-bold text-sm rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-md shadow-amber-200"
+              className="w-full py-4 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-bold text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md shadow-amber-200"
             >
               {confirming ? (
                 <>

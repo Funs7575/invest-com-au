@@ -445,7 +445,7 @@ export default function AdvisorAuctionsPage() {
                             type="button"
                             onClick={() => handleBid(auction.id)}
                             disabled={bidLoading[auction.id]}
-                            className="px-5 py-2 bg-emerald-600 text-white font-bold text-sm rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                            className="px-5 py-2 bg-emerald-600 text-white font-bold text-sm rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {bidLoading[auction.id]
                               ? "Bidding..."
@@ -653,7 +653,7 @@ export default function AdvisorAuctionsPage() {
                             <button
                               onClick={() => handleRetractBid(bid.id)}
                               disabled={retractingBid === bid.id}
-                              className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 disabled:opacity-50 transition-colors"
+                              className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                               <Icon name="x-circle" size={12} />
                               {retractingBid === bid.id ? "Retracting…" : "Retract bid"}

@@ -427,7 +427,7 @@ export default function AlertsClient({ alerts: initial, userEmail }: Props) {
                     type="button"
                     disabled={removing === alert.id}
                     onClick={() => handleRemove(alert)}
-                    className="shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-500 hover:border-red-200 hover:text-red-600 transition-colors disabled:opacity-40"
+                    className="shrink-0 rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-500 hover:border-red-200 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {removing === alert.id ? "Removing…" : "Remove"}
                   </button>

@@ -278,7 +278,7 @@ export default function BrokerRegisterPage() {
                 ← Back
               </button>
               <button onClick={handleSubmit} disabled={loading || !termsAccepted}
-                className="flex-1 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50">
+                className="flex-1 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 {loading ? "Submitting..." : "Submit Application"}
               </button>
             </div>

@@ -167,7 +167,7 @@ export default function WebhooksPage() {
           <button
             onClick={saveWebhookUrl}
             disabled={webhookSaving || webhookInput === webhookUrl}
-            className="px-4 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 shrink-0"
+            className="px-4 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
           >
             {webhookSaving ? "Saving..." : "Save"}
           </button>
@@ -357,7 +357,7 @@ export default function WebhooksPage() {
         <button
           onClick={testEndpoint}
           disabled={testing || !apiKey}
-          className="px-4 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+          className="px-4 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {testing ? "Testing..." : "Send Test Request"}
         </button>

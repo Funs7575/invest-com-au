@@ -582,7 +582,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
               <button
                 onClick={saveCourseDetails}
                 disabled={saving || !form.title.trim() || form.title.trim().length < 5}
-                className="px-5 py-2.5 bg-slate-900 text-white font-semibold text-sm rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                className="px-5 py-2.5 bg-slate-900 text-white font-semibold text-sm rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving..." : "Save & Continue →"}
               </button>
@@ -763,7 +763,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                   <button
                     onClick={saveLesson}
                     disabled={lessonSaving || !lessonForm.title.trim() || lessonForm.title.trim().length < 2}
-                    className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                    className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {lessonSaving ? "Saving..." : editingLesson ? "Update Lesson" : "Add Lesson"}
                   </button>
@@ -788,7 +788,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
               <button
                 onClick={() => setStep(3)}
                 disabled={lessons.length === 0}
-                className="px-5 py-2.5 bg-slate-900 text-white font-semibold text-sm rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                className="px-5 py-2.5 bg-slate-900 text-white font-semibold text-sm rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Continue to Preview →
               </button>
@@ -923,7 +923,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                   <button
                     onClick={submitForReview}
                     disabled={submitting}
-                    className="px-5 py-2.5 bg-violet-600 text-white font-bold text-sm rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                    className="px-5 py-2.5 bg-violet-600 text-white font-bold text-sm rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {submitting ? "Submitting..." : "Submit for Review"}
                   </button>
@@ -1133,7 +1133,7 @@ function LessonGroupList({
                         <button
                           onClick={() => onDelete(lesson.id)}
                           disabled={deletingLessonId === lesson.id}
-                          className="text-xs px-2 py-1 text-red-500 hover:text-red-700 border border-red-200 rounded-lg hover:bg-red-50 disabled:opacity-50 transition-colors"
+                          className="text-xs px-2 py-1 text-red-500 hover:text-red-700 border border-red-200 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           {deletingLessonId === lesson.id ? "..." : "Delete"}
                         </button>

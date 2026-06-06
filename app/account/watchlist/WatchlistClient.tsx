@@ -149,7 +149,7 @@ export default function WatchlistClient({ initialItems }: Props) {
                   onClick={() => removeItem(item.id)}
                   disabled={removingIds.has(item.id)}
                   aria-label={`Remove ${item.display_name ?? item.item_slug} from watchlist`}
-                  className="shrink-0 text-xs text-slate-400 hover:text-red-500 disabled:opacity-40 transition-colors"
+                  className="shrink-0 text-xs text-slate-400 hover:text-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   {removingIds.has(item.id) ? "Removing…" : "Remove"}
                 </button>

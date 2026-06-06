@@ -304,7 +304,7 @@ export default function ABTestsPage() {
               Cancel
             </button>
             <button type="submit" disabled={saving}
-              className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50">
+              className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               {saving ? "Creating..." : "Create Test"}
             </button>
           </div>

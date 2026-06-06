@@ -177,7 +177,7 @@ export default function FirmPerformanceClient({ summary: initialSummary }: Props
           <button
             onClick={refresh}
             disabled={refreshing}
-            className="text-xs text-violet-700 hover:text-violet-900 font-medium disabled:opacity-50 flex items-center gap-1"
+            className="text-xs text-violet-700 hover:text-violet-900 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
           >
             {refreshing ? "Refreshing…" : "↻ Refresh"}
           </button>

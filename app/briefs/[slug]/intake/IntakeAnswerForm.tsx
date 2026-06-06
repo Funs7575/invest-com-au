@@ -136,7 +136,7 @@ export default function IntakeAnswerForm({ slug, questions }: FormProps) {
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-slate-900 disabled:opacity-60"
+        className="rounded-lg bg-amber-500 px-5 py-2.5 text-sm font-semibold text-slate-900 disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {submitting ? "Sending…" : "Submit answers"}
       </button>

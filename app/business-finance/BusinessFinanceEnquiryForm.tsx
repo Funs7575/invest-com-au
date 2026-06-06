@@ -258,7 +258,7 @@ export default function BusinessFinanceEnquiryForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="w-full rounded-xl bg-indigo-700 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-800 transition-colors disabled:opacity-50"
+        className="w-full rounded-xl bg-indigo-700 px-6 py-3 text-sm font-bold text-white hover:bg-indigo-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {status === "submitting" ? "Submitting…" : "Submit Enquiry"}
       </button>

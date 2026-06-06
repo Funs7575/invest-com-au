@@ -213,7 +213,7 @@ export default function CreativesPage() {
               Cancel
             </button>
             <button type="submit" disabled={uploading}
-              className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50">
+              className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               {uploading ? "Saving..." : "Save Creative"}
             </button>
           </div>

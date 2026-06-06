@@ -160,7 +160,7 @@ export default function PortfolioClient() {
             <button
               onClick={checkExisting}
               disabled={loading || !email.trim()}
-              className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all disabled:opacity-50 text-sm"
+              className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               {loading ? "Checking..." : "Get Started — Free"}
             </button>
@@ -240,7 +240,7 @@ export default function PortfolioClient() {
           <button
             onClick={savePortfolio}
             disabled={loading || holdings.some(h => !h.broker_slug)}
-            className="w-full py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all disabled:opacity-50 text-sm"
+            className="w-full py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           >
             {loading ? "Calculating..." : "Calculate My Fees & Start Monitoring"}
           </button>

@@ -290,7 +290,7 @@ export default function IntakeQuestionsEditor({
                   type="button"
                   onClick={() => persist(index)}
                   disabled={submitting === index || draft.prompt.trim().length < 3}
-                  className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+                  className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting === index ? "Saving…" : draft.id == null ? "Add" : "Save"}
                 </button>
@@ -312,7 +312,7 @@ export default function IntakeQuestionsEditor({
         type="button"
         disabled={!canAdd}
         onClick={() => setDrafts((prev) => [...prev, emptyDraft(prev.length)])}
-        className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 disabled:opacity-50"
+        className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {canAdd ? "Add question" : `Max ${maxQuestions} questions reached`}
       </button>

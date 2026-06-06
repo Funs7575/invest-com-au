@@ -207,7 +207,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
@@ -255,7 +255,7 @@ export default function SettingsPage() {
             <button
               onClick={handleAcceptTerms}
               disabled={!termsChecked || saving}
-              className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+              className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Accept Terms
             </button>
@@ -324,7 +324,7 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
-          <button onClick={handleSaveAlerts} disabled={saving} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50">
+          <button onClick={handleSaveAlerts} disabled={saving} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed">
             Save Alert Preferences
           </button>
         </div>
@@ -339,7 +339,7 @@ export default function SettingsPage() {
           <h3 className="text-base font-bold text-slate-900">Email Notifications</h3>
         </div>
         <p className="text-sm text-slate-500 mb-4">
-          Choose which email notifications you'd like to receive. Changes save automatically.
+          Choose which email notifications you&apos;d like to receive. Changes save automatically.
         </p>
         <BrokerNotificationPreferences brokerSlug={account.broker_slug} />
       </div>

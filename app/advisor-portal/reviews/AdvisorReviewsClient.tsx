@@ -160,7 +160,7 @@ function ReviewCard({
                   <button
                     type="submit"
                     disabled={status === "saving" || responseText.trim().length < 10}
-                    className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                    className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {status === "saving"
                       ? "Saving…"

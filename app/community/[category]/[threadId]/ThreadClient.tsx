@@ -174,7 +174,7 @@ function VoteButtons({
           vote === "up"
             ? "text-emerald-600"
             : "text-slate-400 hover:text-slate-600"
-        } disabled:opacity-50`}
+        } disabled:opacity-50 disabled:cursor-not-allowed`}
         aria-label="Upvote"
       >
         <Icon name="arrow-up" size={16} />
@@ -197,7 +197,7 @@ function VoteButtons({
           vote === "down"
             ? "text-red-500"
             : "text-slate-400 hover:text-slate-600"
-        } disabled:opacity-50`}
+        } disabled:opacity-50 disabled:cursor-not-allowed`}
         aria-label="Downvote"
       >
         <Icon name="arrow-down" size={16} />
@@ -666,7 +666,7 @@ export default function ThreadClient({
                 <button
                   onClick={handleSaveEdit}
                   disabled={submitting || !editBody.trim()}
-                  className="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
+                  className="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting ? "Saving..." : "Save"}
                 </button>
@@ -771,7 +771,7 @@ export default function ThreadClient({
             <button
               onClick={handleSubmitReply}
               disabled={submitting || !replyBody.trim()}
-              className="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50"
+              className="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? "Posting..." : "Post Reply"}
             </button>

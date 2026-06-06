@@ -406,7 +406,7 @@ export default function TeamNewWizard() {
           type="button"
           disabled={step === 1}
           onClick={() => setStep((s) => (s > 1 ? ((s - 1) as 1 | 2 | 3 | 4) : s))}
-          className="text-sm text-slate-600 hover:text-slate-900 disabled:opacity-40"
+          className="text-sm text-slate-600 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           ← Back
         </button>
@@ -419,7 +419,7 @@ export default function TeamNewWizard() {
               (step === 3 && !step3Valid)
             }
             onClick={() => setStep((s) => ((s + 1) as 1 | 2 | 3 | 4))}
-            className="bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-semibold px-5 py-2 rounded-lg text-sm"
+            className="bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-5 py-2 rounded-lg text-sm"
           >
             Next →
           </button>
@@ -428,7 +428,7 @@ export default function TeamNewWizard() {
             type="button"
             disabled={!canSubmit}
             onClick={handleSubmit}
-            className="bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-900 font-bold px-5 py-2 rounded-lg text-sm"
+            className="bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-900 font-bold px-5 py-2 rounded-lg text-sm"
           >
             {submitting ? "Submitting…" : "Submit for verification"}
           </button>

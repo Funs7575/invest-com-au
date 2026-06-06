@@ -141,7 +141,7 @@ export default function AvailabilityClient({ initialSlots }: Props) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-400 disabled:opacity-50"
+          className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {pending ? "Saving…" : "Add slot"}
         </button>
@@ -187,7 +187,7 @@ export default function AvailabilityClient({ initialSlots }: Props) {
                     type="button"
                     onClick={() => handleDelete(s.id)}
                     disabled={pending}
-                    className="text-xs text-slate-500 hover:text-rose-600 disabled:opacity-50"
+                    className="text-xs text-slate-500 hover:text-rose-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Remove
                   </button>

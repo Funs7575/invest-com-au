@@ -140,7 +140,7 @@ export default function OrgTeamTab({ org: _org }: Props) {
             <button
               onClick={handleInvite}
               disabled={inviting || !inviteEmail.trim()}
-              className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Icon name="user-plus" size={16} />
               {inviting ? "Inviting..." : "Invite"}

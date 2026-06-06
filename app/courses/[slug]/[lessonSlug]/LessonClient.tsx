@@ -45,7 +45,7 @@ export default function LessonClient({
   isFreePreview,
   isLoggedIn,
   totalLessons,
-  courseTitle,
+  courseTitle: _courseTitle,
   creator,
 }: Props) {
   const [completed, setCompleted] = useState(
@@ -255,7 +255,7 @@ export default function LessonClient({
                   <button
                     onClick={handleMarkComplete}
                     disabled={marking}
-                    className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+                    className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {marking ? "Saving..." : "Mark as Complete"}
                   </button>

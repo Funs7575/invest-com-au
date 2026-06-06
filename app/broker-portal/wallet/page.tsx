@@ -17,7 +17,7 @@ export default function WalletPage() {
   const [loading, setLoading] = useState(true);
   const [topupLoading, setTopupLoading] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
-  const [brokerSlug, setBrokerSlug] = useState("");
+  const [_brokerSlug, setBrokerSlug] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -68,6 +68,7 @@ export default function WalletPage() {
       const data = await res.json();
       if (data.url) {
         toast("Redirecting to Stripe...", "info");
+        // eslint-disable-next-line react-hooks/immutability -- standard Stripe redirect
         window.location.href = data.url;
       } else {
         toast(data.error || "Failed to create checkout session", "error");
@@ -155,7 +156,7 @@ export default function WalletPage() {
               key={amt}
               onClick={() => handleTopup(amt)}
               disabled={topupLoading}
-              className="py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700 transition-all hover-lift active:scale-95 disabled:opacity-50"
+              className="py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700 transition-all hover-lift active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               ${amt}
             </button>
@@ -182,7 +183,7 @@ export default function WalletPage() {
               else toast("Amount must be between $50 and $50,000", "error");
             }}
             disabled={topupLoading || !customAmount}
-            className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {topupLoading ? "Processing..." : "Top Up"}
           </button>

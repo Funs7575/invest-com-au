@@ -301,7 +301,7 @@ export default function OrgEventsTab({ org: _org }: Props) {
             <button
               onClick={handleCreate}
               disabled={creating || !form.title.trim() || !form.starts_at}
-              className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {creating ? "Creating..." : "Create Event"}
             </button>
@@ -326,7 +326,7 @@ export default function OrgEventsTab({ org: _org }: Props) {
               <button
                 onClick={handleSaveEdit}
                 disabled={saving || !editForm.title.trim() || !editForm.starts_at}
-                className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+                className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </button>

@@ -276,7 +276,7 @@ function TdCard({ td, onDelete }: TdCardProps) {
         <button
           onClick={() => { void handleDelete(); }}
           disabled={deleting}
-          className="shrink-0 text-slate-400 hover:text-red-500 disabled:opacity-40 transition-colors"
+          className="shrink-0 text-slate-400 hover:text-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           aria-label="Remove term deposit"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -806,7 +806,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   const selected = typeFilters.has(f.key as ProfessionalType);
                   return (
                     <button key={f.key} type="button" disabled={count === 0 && !selected} onClick={() => toggleType(f.key)}
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-semibold disabled:opacity-40 transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
                       <Icon name={f.icon} size={11} />
                       {f.label}
                       <span className="font-mono text-[10px] text-slate-500">{count}</span>
@@ -830,7 +830,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   const selected = stateFilter === s;
                   return (
                     <button key={s} type="button" disabled={count === 0 && !selected} onClick={() => { setStateFilter(selected ? "all" : s); setOpenPill(null); }}
-                      className={`py-2 rounded-lg border text-xs font-bold disabled:opacity-40 transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
+                      className={`py-2 rounded-lg border text-xs font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${selected ? "border-amber-400 bg-amber-50 text-amber-800" : "border-slate-200 text-slate-700 hover:border-slate-300"}`}>
                       {s}
                       <span className="block text-[9px] font-mono text-slate-500">{count}</span>
                     </button>
@@ -941,7 +941,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
               <div>
                 <label htmlFor="adv-state" className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 block">State</label>
-                <select id="adv-state" value={stateFilter} onChange={(e) => setStateFilter(e.target.value)} disabled={isLocationActive} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50">
+                <select id="adv-state" value={stateFilter} onChange={(e) => setStateFilter(e.target.value)} disabled={isLocationActive} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-50 disabled:cursor-not-allowed">
                   <option value="all">All States</option>
                   {AU_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
@@ -1422,7 +1422,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   <button
                     onClick={saveAlert}
                     disabled={alertStatus === "submitting"}
-                    className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                    className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
                   >
                     {alertStatus === "submitting" ? "Saving..." : "Notify Me"}
                   </button>
@@ -1568,7 +1568,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <button
                 onClick={saveAlert}
                 disabled={alertStatus === "submitting"}
-                className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
               >
                 {alertStatus === "submitting" ? "Saving..." : "Set Alert"}
               </button>

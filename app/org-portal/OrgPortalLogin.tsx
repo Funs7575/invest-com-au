@@ -81,7 +81,7 @@ export default function OrgPortalLogin() {
               <button
                 onClick={handleSendLink}
                 disabled={status === "sending" || !email}
-                className="w-full py-2.5 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+                className="w-full py-2.5 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {status === "sending" ? "Sending..." : "Send magic link"}
               </button>

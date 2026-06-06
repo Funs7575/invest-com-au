@@ -202,7 +202,7 @@ export default function StartupThesisClient({ initial }: Props) {
               value={minTicket ?? ""}
               onChange={(e) => setMinTicket(e.target.value ? Number(e.target.value) : null)}
               placeholder="e.g. 10000"
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-400"
+              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400"
             />
           </div>
           <div>
@@ -212,7 +212,7 @@ export default function StartupThesisClient({ initial }: Props) {
               value={maxTicket ?? ""}
               onChange={(e) => setMaxTicket(e.target.value ? Number(e.target.value) : null)}
               placeholder="e.g. 100000"
-              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-400"
+              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-violet-400"
             />
           </div>
         </div>

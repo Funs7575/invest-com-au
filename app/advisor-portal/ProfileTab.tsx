@@ -245,7 +245,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
           <button
             onClick={saveProfile}
             disabled={savingProfile}
-            className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+            className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {savingProfile ? "Saving..." : "Save Changes"}
           </button>

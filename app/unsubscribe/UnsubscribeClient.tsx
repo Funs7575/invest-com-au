@@ -99,7 +99,7 @@ export default function UnsubscribeClient() {
         <button
           onClick={handleUnsubscribe}
           disabled={status === "loading" || !email}
-          className="w-full py-3 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50"
+          className="w-full py-3 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {status === "loading" ? "Processing..." : "Unsubscribe"}
         </button>

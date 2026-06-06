@@ -1724,7 +1724,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
                 <button
                   onClick={() => onConfirm(currentMatch)}
                   disabled={confirming}
-                  className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-slate-900 font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed text-slate-900 font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
                 >
                   {confirming ? "Sending request…" : `Connect with ${currentMatch.name}`}
                   {!confirming && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
@@ -1779,7 +1779,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
         <button
           onClick={onRematch}
           disabled={rematching}
-          className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50/50 transition-all disabled:opacity-50"
+          className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {rematching ? (
             <span className="flex items-center justify-center gap-2">

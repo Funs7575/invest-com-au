@@ -406,7 +406,7 @@ export default function ConciergeClient() {
                 type="button"
                 onClick={() => void clearSession()}
                 disabled={streaming}
-                className="text-[11px] font-semibold text-slate-300 hover:text-white disabled:opacity-40 border border-slate-700 hover:border-slate-500 rounded-full px-3 py-1 transition-colors"
+                className="text-[11px] font-semibold text-slate-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed border border-slate-700 hover:border-slate-500 rounded-full px-3 py-1 transition-colors"
               >
                 Clear conversation
               </button>

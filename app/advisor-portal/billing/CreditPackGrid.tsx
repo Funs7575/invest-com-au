@@ -75,7 +75,7 @@ export default function CreditPackGrid() {
               type="button"
               disabled={busySlug !== null}
               onClick={() => buy(pack.slug, pack.priceCents)}
-              className={`w-full py-2.5 rounded-lg text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 disabled:opacity-50 ${
+              className={`w-full py-2.5 rounded-lg text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
                 pack.slug === "growth"
                   ? "bg-violet-600 text-white hover:bg-violet-700"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"

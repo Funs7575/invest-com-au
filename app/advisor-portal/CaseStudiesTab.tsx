@@ -311,14 +311,14 @@ export default function CaseStudiesTab({ advisor }: Props) {
               <button
                 onClick={() => { void handleSave("draft"); }}
                 disabled={saving}
-                className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 transition-colors"
+                className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving..." : "Save Draft"}
               </button>
               <button
                 onClick={() => { void handleSave("published"); }}
                 disabled={saving}
-                className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 transition-colors"
+                className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving..." : "Publish"}
               </button>
@@ -374,7 +374,7 @@ export default function CaseStudiesTab({ advisor }: Props) {
                   <button
                     onClick={() => { void handleDelete(cs.id); }}
                     disabled={deletingId === cs.id}
-                    className="text-xs px-2.5 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-40"
+                    className="text-xs px-2.5 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {deletingId === cs.id ? "..." : "Delete"}
                   </button>

@@ -215,7 +215,7 @@ export default function EventsTab({ advisor }: Props) {
                 <select
                   value={form.event_type}
                   onChange={(e) => setForm((f) => ({ ...f, event_type: e.target.value }))}
-                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none"
+                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
                 >
                   {["webinar", "seminar", "workshop", "conference", "networking", "other"].map((t) => (
                     <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
@@ -314,7 +314,7 @@ export default function EventsTab({ advisor }: Props) {
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {submitting ? "Creating..." : "Create Event"}
               </button>

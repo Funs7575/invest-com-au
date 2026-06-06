@@ -579,7 +579,7 @@ export default function AdvisorPortalPage() {
                   <button
                     onClick={submitDispute}
                     disabled={disputeSubmitting || !disputeReason || (disputeReason === "other" && !disputeDetails.trim())}
-                    className="flex-1 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                    className="flex-1 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {disputeSubmitting ? "Submitting..." : "Submit Dispute"}
                   </button>
@@ -864,13 +864,13 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
           </div>
 
           <div className="flex gap-2">
-            <button onClick={() => handleSave("save")} disabled={saving || !title.trim() || !content.trim()} className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 transition-colors">
+            <button onClick={() => handleSave("save")} disabled={saving || !title.trim() || !content.trim()} className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
               {saving ? "Saving..." : "Save Draft"}
             </button>
             <button
               onClick={() => handleSave("submit")}
               disabled={saving || !title.trim() || !content.trim() || wc < 300 || hasErrors || !acknowledged}
-              className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 transition-colors"
+              className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {saving ? "Submitting..." : "Submit for Review"}
             </button>

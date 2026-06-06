@@ -320,7 +320,7 @@ export default function NewThreadClient() {
           <button
             onClick={handleSubmit}
             disabled={submitting}
-            className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors disabled:opacity-50 text-sm"
+            className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           >
             {submitting ? "Posting..." : "Post Thread"}
           </button>

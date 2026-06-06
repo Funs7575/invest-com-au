@@ -64,7 +64,7 @@ export default function MarkCompleteButton({ slug, contactEmail }: Props) {
               type="button"
               onClick={onComplete}
               disabled={busy}
-              className="rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-xs font-semibold px-3 py-2"
+              className="rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold px-3 py-2"
             >
               {busy ? "Opening review…" : "Yes, leave a review"}
             </button>

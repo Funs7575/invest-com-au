@@ -307,21 +307,21 @@ export default function CampaignsPage() {
               <button
                 onClick={() => handleBulkAction("pause")}
                 disabled={bulkLoading}
-                className="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 disabled:opacity-50"
+                className="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Pause Selected
               </button>
               <button
                 onClick={() => handleBulkAction("resume")}
                 disabled={bulkLoading}
-                className="px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 disabled:opacity-50"
+                className="px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Resume Selected
               </button>
               <button
                 onClick={() => handleBulkAction("cancel")}
                 disabled={bulkLoading}
-                className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-50"
+                className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel Selected
               </button>

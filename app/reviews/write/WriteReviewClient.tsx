@@ -471,7 +471,7 @@ export default function WriteReviewClient() {
                   <button
                     onClick={handleSubmit}
                     disabled={submitting}
-                    className="px-6 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                    className="px-6 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? "Submitting..." : "Submit Review"}
                   </button>

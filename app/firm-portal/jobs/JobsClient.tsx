@@ -346,7 +346,7 @@ export default function JobsClient() {
               <button
                 type="submit"
                 disabled={saving}
-                className="text-sm font-semibold bg-blue-700 text-white rounded-xl px-5 py-2 hover:bg-blue-800 disabled:opacity-50 transition-colors"
+                className="text-sm font-semibold bg-blue-700 text-white rounded-xl px-5 py-2 hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving…" : mode === "create" ? "Create" : "Save changes"}
               </button>

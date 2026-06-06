@@ -99,7 +99,7 @@ export default function DataRightsForm() {
             <div>
               <div className="text-sm font-semibold text-slate-900">Delete my data</div>
               <div className="text-xs text-slate-500 mt-0.5">
-                Permanently erase or anonymise everything we hold. Can't be undone.
+                Permanently erase or anonymise everything we hold. Can&apos;t be undone.
               </div>
             </div>
           </label>
@@ -120,7 +120,7 @@ export default function DataRightsForm() {
       <button
         type="submit"
         disabled={busy}
-        className="w-full py-2 rounded bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50"
+        className="w-full py-2 rounded bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {busy ? "Sending…" : `Send ${type === "export" ? "export" : "deletion"} confirmation link`}
       </button>

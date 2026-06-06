@@ -202,7 +202,7 @@ export default function OrgCoursesTab({ org }: Props) {
               <button
                 onClick={handleCreate}
                 disabled={creating || !title.trim()}
-                className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 transition-colors"
+                className="px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg text-sm hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {creating ? "Creating..." : "Create Course"}
               </button>
