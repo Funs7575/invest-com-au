@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+// advisor_bookings holds investor PII (name/email/phone) + confirmation_token
+// and is locked to non-anon RLS. This public route's availability/dedup reads
+// and the insert are server-side logic returning only booking_time / id (never
+// PII), so they use the service-role client; anon visitors never read the table.
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
@@ -56,7 +61,7 @@ export async function GET(request: NextRequest) {
   // If a specific date requested, check existing bookings
   let existingBookings: string[] = [];
   if (dateStr) {
-    const { data: booked } = await supabase
+    const { data: booked } = await createAdminClient()
       .from("advisor_bookings")
       .select("booking_time")
       .eq("professional_id", advisor.id)
@@ -93,6 +98,7 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await createClient();
+    const admin = createAdminClient();
 
     const { data: advisor } = await supabase
       .from("professionals")
@@ -105,8 +111,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Booking not available" }, { status: 400 });
     }
 
-    // Check slot not already taken
-    const { data: existing } = await supabase
+    // Check slot not already taken (service-role: advisor_bookings is non-anon)
+    const { data: existing } = await admin
       .from("advisor_bookings")
       .select("id")
       .eq("professional_id", advisor.id)
@@ -118,7 +124,7 @@ export async function POST(request: NextRequest) {
     if (existing) return NextResponse.json({ error: "This time slot is no longer available" }, { status: 409 });
 
     // Create booking
-    const { data: booking, error } = await supabase
+    const { data: booking, error } = await admin
       .from("advisor_bookings")
       .insert({
         professional_id: advisor.id,
