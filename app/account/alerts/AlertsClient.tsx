@@ -131,7 +131,7 @@ function CreateAlertForm({
     >
       <p className="text-xs font-semibold text-violet-800 mb-3">New Alert</p>
       {error && (
-        <div className="mb-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
+        <div role="alert" className="mb-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
           {error}
         </div>
       )}
@@ -326,7 +326,7 @@ export default function AlertsClient({ alerts: initial, userEmail }: Props) {
   return (
     <div className="space-y-4">
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-xs text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-xs text-red-700">
           {error}
         </div>
       )}
