@@ -7,11 +7,11 @@ explorers** (Claude picks what to click and *judges* whether pages make sense),
 and runs everything behind a **safety net** that guarantees no real-world side
 effects.
 
-> Status: **Phase 0 (foundation)** — safety net, cross-cutting checks, finding
-> store, report aggregation, and a deterministic smoke fleet are in place. AI
-> driver, authenticated personas, deep critical-path flows, full-surface
-> coverage, GitHub-issue filing and a CI workflow land in later phases (see
-> [Roadmap](#roadmap)).
+> Status: **Active** — safety net, cross-cutting checks, finding store, report
+> aggregation, perf baseline, JSON-LD schema drift detection, scripted flows
+> (lifecycle, startup ecosystem, advisor portal), CI PR smoke gate, and
+> auto-GitHub-issue filing are all in place. AI driver + authenticated personas
+> activate when auth is seeded (see [Roadmap](#roadmap)).
 
 ## Quick start
 
@@ -22,6 +22,28 @@ npm run bots                  # drive a local dev server (auto-started)
 # point at a deployed sandbox/staging instead of local:
 BOTS_BASE_URL=https://my-preview.vercel.app npm run bots
 ```
+
+## Focused flow scripts
+
+Run individual flows against the Netlify mirror without running the full fleet:
+
+```bash
+npm run bots:advisors        # advisor directory personas
+npm run bots:lifecycle       # quiz → account → advisor → notifications (needs auth seed)
+npm run bots:lifecycle-mirror # same, against the Netlify mirror
+npm run bots:startup         # startup hub → for-you → listings → signup → portal gate
+npm run bots:advisor-portal  # advisor portal login form + health + directory hub
+```
+
+After any run, file GitHub issues for Critical/High findings:
+
+```bash
+npm run bots:file-issues     # files issues from the latest run
+BOTS_DRY_RUN=1 npm run bots:file-issues  # dry run — print what would be filed
+```
+
+Set `BOTS_AUTO_FILE_ISSUES=1` as a repo **Variable** to enable automatic filing
+after every nightly workflow run.
 
 ## Testing the Netlify mirror (/advisors)
 
@@ -93,8 +115,14 @@ npm run bots:seed-users        # creates test-bot-buyer@invest-test.local + prof
 #    Writes e2e/visual/.auth/bot-buyer.json (gitignored).
 E2E_BASE_URL=$BOTS_BASE_URL npm run screenshots:auto-login
 
-# 3. Run the fleet in sandbox mode — authed personas now activate.
+# 3a. Full fleet in sandbox mode — authed + lifecycle personas activate.
 npm run bots:sandbox
+
+# 3b. Lifecycle flow only (faster — just the 7-step scripted journey).
+npm run bots:lifecycle
+
+# 3c. Lifecycle against the Netlify mirror (writes mocked, quiz-flow skipped).
+npm run bots:lifecycle-mirror
 ```
 
 How it stays safe to run *un*seeded: each authenticated persona
@@ -149,6 +177,14 @@ Cross-cutting, on every page a bot lands on:
 - **broken internal links** — a capped sample, fetched safely (side-effecting
   links like `/go/*` are skipped) (`checks/links.ts`)
 - **dead ends** — 2xx pages that render almost nothing
+- **JSON-LD schema drift** — every `<script type="application/ld+json">` block is
+  validated against required fields per type (Article, FAQPage, BreadcrumbList,
+  Product, Organization, etc.) — missing fields are `schema` category findings
+  (`checks/schema-markup.ts`). Critical for Google rich results + GEO/AI citability.
+- **performance baseline** — DOMContentLoaded, load event, FCP, and JS heap are
+  captured after every `visit()` call and written to `perf-baseline.json` with
+  the run report. Green &lt;1 s · amber 1–3 s · red &gt;3 s in the HTML report
+  (`checks/perf.ts`).
 
 Findings are deduplicated by a stable signature so the same broken thing seen by
 50 bots collapses to one row with an occurrence count
@@ -204,8 +240,21 @@ bots/
 │   ├── types.ts         # Finding model + dedupe signature                [pure]
 │   ├── store.ts         # collect / dedupe / aggregate                     [pure]
 │   └── report.ts        # HTML+JSON report + shard aggregation            [pure render]
+├── checks/
+│   ├── console.ts       # console error / page exception collector
+│   ├── network.ts       # HTTP + network error collector
+│   ├── a11y.ts          # axe-core accessibility checker
+│   ├── links.ts         # internal broken-link checker
+│   ├── perf.ts          # Navigation Timing + Paint Timing sampler        [pure]
+│   └── schema-markup.ts # JSON-LD schema drift validator                  [pure]
+├── flows/
+│   ├── types.ts         # FlowStep / Flow / FlowStepContext types         [pure]
+│   ├── runner.ts        # executes steps, catches → finding on failure    [pure]
+│   ├── user-lifecycle.ts # quiz → action plan → account → advisor enquiry → notifications
+│   ├── startup-portal.ts # startup hub → for-you → listings → signup → portal gate
+│   └── advisor-portal.ts # login form render + health + directory hub + find-advisor
 ├── ai/cost.ts           # token→USD ledger + budget guard                 [pure]
-├── personas.ts          # persona registry (anon / AI / authenticated)
+├── personas.ts          # persona registry (anon / AI / authenticated / lifecycle)
 ├── session.ts           # BotSession: safety + checks + findings per user
 ├── fleet.spec.ts        # entrypoint (one session per persona)
 ├── playwright.config.ts # dedicated runner config
@@ -241,8 +290,26 @@ reported on every run. In CI, set the `BOTS_ANTHROPIC_API_KEY` secret and the
   rolling results issue.
 - ✅ **AI driver** — observe→act→judge loop, action model, budget guard, live
   Playwright + Anthropic implementations, AI personas wired into the fleet.
-- **Next** — deterministic critical/money-path flows (get-matched → action plan,
-  advisor lead, signup/login) and authenticated personas via the existing auth
-  scaffold; auto-discovered full-surface coverage; opt-in per-finding GitHub
-  issues.
+- ✅ **Authenticated personas** — `AUTHED_PERSONAS` drive logged-in surfaces
+  (account dashboard, holdings, bookmarks) via captured storageState; skip
+  gracefully when auth is not seeded.
+- ✅ **Lifecycle flow** — deterministic 7-step scripted regression:
+  quiz → action plan → account surfaces → advisor enquiry → notifications
+  (`bots/flows/user-lifecycle.ts`, driven by `npm run bots:lifecycle`).
+- ✅ **Startup ecosystem flow** — hub → for-you → listings → signup → portal
+  gate (`bots/flows/startup-portal.ts`, `npm run bots:startup`).
+- ✅ **Advisor portal flow** — login form render/fields → health → directory
+  hub → find-advisor (`bots/flows/advisor-portal.ts`, `npm run bots:advisor-portal`).
+- ✅ **Performance baseline** — DOMContentLoaded / FCP / JS heap captured per
+  page visit; written to `perf-baseline.json` and rendered in the HTML report
+  (`checks/perf.ts`).
+- ✅ **JSON-LD schema drift** — every `application/ld+json` block validated
+  against required fields; findings surface AI-citability gaps (`checks/schema-markup.ts`).
+- ✅ **CI smoke gate** — `.github/workflows/bots-pr-smoke.yml` runs the
+  advisor + flow subset on PRs touching affected paths; posts a PR comment;
+  never blocks a merge.
+- ✅ **Auto GitHub issue filing** — `scripts/bots-file-issues.ts` /
+  `npm run bots:file-issues` files one issue per Critical/High finding;
+  deduplicates against open issues; opt-in nightly via `BOTS_AUTO_FILE_ISSUES=1`.
+- **Next** — auto-discovered full-surface coverage; deeper authenticated flows.
 ```

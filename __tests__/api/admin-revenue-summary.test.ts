@@ -74,4 +74,16 @@ describe("/api/admin/revenue-summary", () => {
     const res = await GET();
     expect(res.status).toBe(500);
   });
+
+  it("survives a missing broker_campaigns relation (schema drift) with 0 campaigns", async () => {
+    // broker_campaigns does not exist in prod — must not 500 the whole dashboard.
+    tableResults = {
+      brokers: { data: [], error: null },
+      broker_campaigns: { data: null, error: { message: 'relation "broker_campaigns" does not exist' } },
+    };
+    const res = await GET();
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.marketplaceRev.activeCampaigns).toBe(0);
+  });
 });

@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
 import { trackEvent as phTrack } from "@/lib/posthog/events";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
-import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey, buildStackResults, type StackQuizInputs, type VerticalScoredResult } from "@/lib/quiz-scoring";
+import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey, buildStackResults, type StackQuizInputs, type VerticalScoredResult, type ScoredResult } from "@/lib/quiz-scoring";
 import { intentCountryFromSlug, quizKeyForIntentCode } from "@/lib/intent-context";
 
 import QuizQuestionScreen from "./_components/QuizQuestionScreen";
@@ -38,18 +38,6 @@ interface UnifiedAnswers {
   stack_risk?: string;
   stack_super?: string;
   stack_savings?: string;
-}
-
-interface QuizWeight {
-  broker_slug: string;
-  beginner_weight: number;
-  low_fee_weight: number;
-  us_shares_weight: number;
-  smsf_weight: number;
-  crypto_weight: number;
-  advanced_weight: number;
-  property_weight: number;
-  robo_weight: number;
 }
 
 /* ─── Unified question definitions ─── */
@@ -428,6 +416,70 @@ const fallbackScores: Record<string, Record<WeightKey, number>> = {
   "fp-markets": { beginner: 3, low_fee: 7, us_shares: 3, smsf: 0, crypto: 2, advanced: 8, property: 0, robo: 0 },
 };
 
+/**
+ * Build the wealth-stack scorer inputs from the quiz answers. Pure — used
+ * both for the live `stackInputs` memo and inside `runScoring` at completion.
+ */
+function computeStackInputs(answers: UnifiedAnswers): StackQuizInputs {
+  const riskMap: Record<string, StackQuizInputs["riskBand"]> = {
+    conservative: "conservative", balanced: "balanced", growth: "growth",
+  };
+  const horizonMap: Record<string, StackQuizInputs["horizon"]> = {
+    small: "short", medium: "mid", large: "long", xlarge: "long", whale: "long",
+  };
+  return {
+    amount: answers.amount as AmountKey | undefined,
+    riskBand: answers.stack_risk ? riskMap[answers.stack_risk] : undefined,
+    horizon: answers.amount ? horizonMap[answers.amount] : undefined,
+    superInterest: answers.stack_super === "super_yes" || answers.goal === "super",
+    roboInterest: answers.goal === "automate",
+    savingsInterest: answers.stack_savings === "savings_yes",
+    goal: answers.goal,
+  };
+}
+
+/**
+ * Client fallback for the wealth-stack results — only used when
+ * /api/quiz/score is unreachable. Scores locally with the coarse public
+ * `fallbackScores` (the tuned weights never ship to the browser).
+ */
+function buildLocalStack(
+  answers: UnifiedAnswers,
+  stackInputs: StackQuizInputs,
+  brokers: Broker[],
+): Partial<Record<"super_fund" | "savings_account" | "robo_advisor", VerticalScoredResult[]>> {
+  const superInterest = stackInputs.superInterest ?? false;
+  const savingsInterest = stackInputs.savingsInterest ?? false;
+  const roboInterest = stackInputs.roboInterest ?? (answers.goal === "automate");
+  const perKind: Parameters<typeof buildStackResults>[0]["perKind"] = {};
+
+  if (superInterest || answers.goal === "super" || answers.goal === "grow") {
+    const superBrokers = brokers.filter(b => b.platform_type === "super_fund");
+    if (superBrokers.length > 0) {
+      const w: Record<string, QuizWeights> = {};
+      for (const b of superBrokers) w[b.slug] = fallbackScores[b.slug] ?? { beginner: 5, low_fee: 5, us_shares: 0, smsf: 7, crypto: 0, advanced: 3, property: 3, robo: 7 };
+      perKind["super_fund"] = { brokers: superBrokers, weights: w };
+    }
+  }
+  if (savingsInterest || answers.amount === "small" || answers.goal === "property") {
+    const savingsBrokers = brokers.filter(b => b.platform_type === "savings_account" || b.platform_type === "term_deposit");
+    if (savingsBrokers.length > 0) {
+      const w: Record<string, QuizWeights> = {};
+      for (const b of savingsBrokers) w[b.slug] = fallbackScores[b.slug] ?? { beginner: 6, low_fee: 8, us_shares: 0, smsf: 3, crypto: 0, advanced: 2, property: 0, robo: 3 };
+      perKind["savings_account"] = { brokers: savingsBrokers, weights: w };
+    }
+  }
+  if (roboInterest || answers.goal === "automate") {
+    const roboBrokers = brokers.filter(b => b.platform_type === "robo_advisor");
+    if (roboBrokers.length > 0) {
+      const w: Record<string, QuizWeights> = {};
+      for (const b of roboBrokers) w[b.slug] = fallbackScores[b.slug] ?? { beginner: 8, low_fee: 6, us_shares: 3, smsf: 3, crypto: 0, advanced: 2, property: 2, robo: 9 };
+      perKind["robo_advisor"] = { brokers: roboBrokers, weights: w };
+    }
+  }
+  return buildStackResults({ inputs: stackInputs, perKind, limit: 1 });
+}
+
 const QUIZ_STORAGE_KEY = "invest-quiz-v2-progress";
 
 function loadSavedProgress(): { currentId: QuestionId; answers: UnifiedAnswers; history: QuestionId[] } | null {
@@ -478,8 +530,11 @@ export default function QuizPage() {
 
   // Data
   const [brokers, setBrokers] = useState<Broker[]>([]);
-  const [weights, setWeights] = useState<Record<string, QuizWeights>>(fallbackScores);
   const [quizCampaignWinners, setQuizCampaignWinners] = useState<PlacementWinner[]>([]);
+  // Scored results — computed server-side via /api/quiz/score at completion so
+  // the tuned ranking weights never reach the browser. Falls back to a local
+  // coarse score (public `fallbackScores`) if the endpoint is unreachable.
+  const [results, setResults] = useState<ScoredResult[]>([]);
   // Wealth-stack per-vertical scored results (populated after DIY results phase)
   const [stackResults, setStackResults] = useState<Partial<Record<"super_fund" | "savings_account" | "robo_advisor", VerticalScoredResult[]>>>({});
 
@@ -546,34 +601,21 @@ export default function QuizPage() {
     });
   }, []);
 
+  // Broker display data for the results UI. Scoring no longer happens here —
+  // /api/quiz/data returns only sanitised broker rows (no weights, no internal
+  // commercial fields). Ranking is computed server-side in /api/quiz/score.
   useEffect(() => {
     fetch("/api/quiz/data")
       .then((r) => {
         if (!r.ok) throw new Error("quiz data fetch failed");
-        return r.json() as Promise<{ brokers: Broker[]; quiz_weights: QuizWeight[] }>;
+        return r.json() as Promise<{ brokers: Broker[] }>;
       })
-      .then(({ brokers: bData, quiz_weights: wData }) => {
+      .then(({ brokers: bData }) => {
         if (!mountedRef.current) return;
         if (bData.length > 0) {
           setBrokers(bData);
         } else {
           setFetchError("Failed to load broker data. Using cached results.");
-        }
-        if (wData.length > 0) {
-          const w: Record<string, QuizWeights> = {};
-          wData.forEach((row: QuizWeight) => {
-            w[row.broker_slug] = {
-              beginner: row.beginner_weight || 0,
-              low_fee: row.low_fee_weight || 0,
-              us_shares: row.us_shares_weight || 0,
-              smsf: row.smsf_weight || 0,
-              crypto: row.crypto_weight || 0,
-              advanced: row.advanced_weight || 0,
-              property: row.property_weight || 0,
-              robo: row.robo_weight || 0,
-            };
-          });
-          setWeights(w);
         }
       })
       .catch(() => {
@@ -584,96 +626,49 @@ export default function QuizPage() {
 
   // Compute scored results (memoised)
   const scoringAnswers = useMemo(() => toScoringAnswers(answers), [answers]);
-  const results = useMemo(() => {
-    return scoreQuizResults(
-      scoringAnswers,
-      weights,
-      brokers,
-      quizCampaignWinners,
-      answers.amount as AmountKey | undefined,
-      answers.goal,
-    );
-  }, [scoringAnswers, weights, brokers, quizCampaignWinners, answers.amount, answers.goal]);
-
   const hasCryptoResult = useMemo(() => results.some(r => r.broker?.is_crypto), [results]);
 
-  // Build wealth-stack vertical inputs from quiz answers
-  const stackInputs = useMemo((): StackQuizInputs => {
-    const riskMap: Record<string, StackQuizInputs["riskBand"]> = {
-      conservative: "conservative",
-      balanced: "balanced",
-      growth: "growth",
-    };
-    const horizonMap: Record<string, StackQuizInputs["horizon"]> = {
-      small: "short",
-      medium: "mid",
-      large: "long",
-      xlarge: "long",
-      whale: "long",
-    };
-    return {
-      amount: answers.amount as AmountKey | undefined,
-      riskBand: answers.stack_risk ? riskMap[answers.stack_risk] : undefined,
-      horizon: answers.amount ? horizonMap[answers.amount] : undefined,
-      superInterest: answers.stack_super === "super_yes" || answers.goal === "super",
-      roboInterest: answers.goal === "automate",
-      savingsInterest: answers.stack_savings === "savings_yes",
-      goal: answers.goal,
-    };
-  }, [answers]);
+  // Live stack inputs (for the results screen prop). Same pure builder
+  // runScoring uses, so the displayed inputs match what was scored.
+  const stackInputs = useMemo(() => computeStackInputs(answers), [answers]);
 
-  // Compute wealth-stack vertical results (memoised)
-  useEffect(() => {
-    if (phase !== "diy-results" && phase !== "analyzing") return;
-    const superInterest = stackInputs.superInterest ?? false;
-    const savingsInterest = stackInputs.savingsInterest ?? false;
-    const roboInterest = stackInputs.roboInterest ?? (answers.goal === "automate");
-
-    // Build per-kind slices from the same broker + weights data
-    const perKind: Parameters<typeof buildStackResults>[0]["perKind"] = {};
-
-    if (superInterest || answers.goal === "super" || answers.goal === "grow") {
-      const superBrokers = brokers.filter(b => b.platform_type === "super_fund");
-      if (superBrokers.length > 0) {
-        const superWeights: Record<string, QuizWeights> = {};
-        for (const b of superBrokers) {
-          superWeights[b.slug] = weights[b.slug] ?? fallbackScores[b.slug] ?? {
-            beginner: 5, low_fee: 5, us_shares: 0, smsf: 7, crypto: 0, advanced: 3, property: 3, robo: 7,
-          };
-        }
-        perKind["super_fund"] = { brokers: superBrokers, weights: superWeights };
-      }
+  // Compute the ranking server-side (/api/quiz/score) so the tuned quiz_weights
+  // never reach the browser. Fires once at quiz completion; on any failure it
+  // falls back to a local coarse score so a real user is never left without
+  // results on this revenue-critical funnel.
+  const runScoring = useCallback(async (finalAnswers: UnifiedAnswers): Promise<void> => {
+    const sAnswers = toScoringAnswers(finalAnswers);
+    const amount = finalAnswers.amount as AmountKey | undefined;
+    const goal = finalAnswers.goal;
+    const stack = computeStackInputs(finalAnswers);
+    try {
+      const res = await fetch("/api/quiz/score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          answers: sAnswers,
+          amount,
+          goal,
+          stack,
+          campaignWinners: quizCampaignWinners.map((w) => ({ broker_slug: w.broker_slug })),
+        }),
+      });
+      if (!res.ok) throw new Error(`quiz score ${res.status}`);
+      const data = (await res.json()) as {
+        results: ScoredResult[];
+        stackResults: Partial<Record<"super_fund" | "savings_account" | "robo_advisor", VerticalScoredResult[]>>;
+      };
+      if (!mountedRef.current) return;
+      setResults(data.results ?? []);
+      setStackResults(data.stackResults ?? {});
+    } catch {
+      if (!mountedRef.current) return;
+      // Graceful degradation — coarse public fallback weights, scored locally.
+      setResults(scoreQuizResults(sAnswers, fallbackScores, brokers, quizCampaignWinners, amount, goal));
+      setStackResults(buildLocalStack(finalAnswers, stack, brokers));
+      setFetchError("Showing cached results.");
     }
-
-    if (savingsInterest || answers.amount === "small" || answers.goal === "property") {
-      const savingsBrokers = brokers.filter(b => b.platform_type === "savings_account" || b.platform_type === "term_deposit");
-      if (savingsBrokers.length > 0) {
-        const savingsWeights: Record<string, QuizWeights> = {};
-        for (const b of savingsBrokers) {
-          savingsWeights[b.slug] = weights[b.slug] ?? fallbackScores[b.slug] ?? {
-            beginner: 6, low_fee: 8, us_shares: 0, smsf: 3, crypto: 0, advanced: 2, property: 0, robo: 3,
-          };
-        }
-        perKind["savings_account"] = { brokers: savingsBrokers, weights: savingsWeights };
-      }
-    }
-
-    if (roboInterest || answers.goal === "automate") {
-      const roboBrokers = brokers.filter(b => b.platform_type === "robo_advisor");
-      if (roboBrokers.length > 0) {
-        const roboWeights: Record<string, QuizWeights> = {};
-        for (const b of roboBrokers) {
-          roboWeights[b.slug] = weights[b.slug] ?? fallbackScores[b.slug] ?? {
-            beginner: 8, low_fee: 6, us_shares: 3, smsf: 3, crypto: 0, advanced: 2, property: 2, robo: 9,
-          };
-        }
-        perKind["robo_advisor"] = { brokers: roboBrokers, weights: roboWeights };
-      }
-    }
-
-    const built = buildStackResults({ inputs: stackInputs, perKind, limit: 1 });
-    setStackResults(built);
-  }, [phase, stackInputs, brokers, weights, answers.goal, answers.amount, answers.stack_super, answers.stack_savings]);
+  }, [brokers, quizCampaignWinners]);
 
   // Track completion + persist results
   useEffect(() => {
@@ -739,27 +734,23 @@ export default function QuizPage() {
       const newHistory = [...history, currentId];
 
       if (nextId === null) {
-        // Last question answered
+        // Last question answered. Kick off server-side scoring now and let the
+        // analyzing animation mask the round-trip. Advance only when BOTH the
+        // scoring response AND the minimum animation time have completed — so
+        // the results are guaranteed ready (no empty flash) and the animation
+        // never feels cut short. Email capture is inline in the results screen
+        // (warm capture post-value, not cold capture pre-value).
         clearProgress();
-        if (track === "advisor") {
-          // Advisor track — brief analyzing moment then advisor results
-          setHistory(newHistory);
-          setPhase("advisor-analyzing");
-          setTimeout(() => {
-            if (!mountedRef.current) return;
-            setPhase("advisor-results");
-          }, 2200);
-        } else {
-          // DIY track — go straight to analyzing then results. Email
-          // capture is now inline in the results screen (warm capture
-          // post-value, not cold capture pre-value).
-          setHistory(newHistory);
-          setPhase("analyzing");
-          setTimeout(() => {
-            if (!mountedRef.current) return;
-            setPhase("diy-results");
-          }, 1800);
-        }
+        const advisor = track === "advisor";
+        setHistory(newHistory);
+        setPhase(advisor ? "advisor-analyzing" : "analyzing");
+        const minDelay = new Promise<void>((resolve) =>
+          setTimeout(resolve, advisor ? 2200 : 1800),
+        );
+        Promise.all([minDelay, runScoring(newAnswers)]).then(() => {
+          if (!mountedRef.current) return;
+          setPhase(advisor ? "advisor-results" : "diy-results");
+        });
       } else {
         setHistory(newHistory);
         setCurrentId(nextId);

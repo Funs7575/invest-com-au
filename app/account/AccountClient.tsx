@@ -480,7 +480,7 @@ export default function AccountClient() {
             </div>
 
             {portalError && (
-              <p className="mt-2 text-xs text-red-500">{portalError}</p>
+              <p role="alert" className="mt-2 text-xs text-red-500">{portalError}</p>
             )}
 
             {showCancelConfirm && (
@@ -513,7 +513,7 @@ export default function AccountClient() {
                   </button>
                 </div>
                 {cancelError && (
-                  <p className="mt-2 text-xs text-red-500">{cancelError}</p>
+                  <p role="alert" className="mt-2 text-xs text-red-500">{cancelError}</p>
                 )}
               </div>
             )}
@@ -540,7 +540,7 @@ export default function AccountClient() {
                   </button>
                 </div>
                 {refundError && (
-                  <p className="mt-2 text-xs text-red-500">{refundError}</p>
+                  <p role="alert" className="mt-2 text-xs text-red-500">{refundError}</p>
                 )}
               </div>
             )}

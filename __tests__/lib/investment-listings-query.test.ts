@@ -104,8 +104,17 @@ describe("fetchListingsByVertical", () => {
 
   it("filters by vertical + status=active", async () => {
     await fetchListingsByVertical("mining");
-    expect(eqCalls).toContainEqual({ col: "vertical", val: "mining" });
+    expect(inCalls).toContainEqual({ col: "vertical", val: ["mining"] });
     expect(eqCalls).toContainEqual({ col: "status", val: "active" });
+  });
+
+  it("matches drifted vertical variants via .in()", async () => {
+    await fetchListingsByVertical("energy");
+    // "renewable-energy" drift listings must be picked up alongside "energy".
+    expect(inCalls).toContainEqual({
+      col: "vertical",
+      val: ["energy", "renewable-energy"],
+    });
   });
 
   it("passes subCategories to .in() when provided", async () => {
@@ -164,6 +173,8 @@ describe("fetchListingsBySubCategory", () => {
     listingsData = [];
     queryError = null;
     throwOnCreate = false;
+    eqCalls.length = 0;
+    inCalls.length = 0;
   });
 
   it("returns [] for empty subCategory", async () => {
@@ -174,7 +185,7 @@ describe("fetchListingsBySubCategory", () => {
     listingsData = [{ id: 1 }];
     const res = await fetchListingsBySubCategory("fund", "art");
     expect(res).toEqual([{ id: 1 }]);
-    expect(eqCalls).toContainEqual({ col: "vertical", val: "fund" });
+    expect(inCalls).toContainEqual({ col: "vertical", val: ["fund", "funds"] });
     expect(eqCalls).toContainEqual({ col: "sub_category", val: "art" });
     expect(eqCalls).toContainEqual({ col: "status", val: "active" });
   });

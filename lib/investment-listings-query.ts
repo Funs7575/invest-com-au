@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { InvestmentListing, InvestListingVertical } from "@/lib/types";
 import { logger } from "@/lib/logger";
+import { rawVerticalVariants } from "@/lib/listing-url";
 
 const log = logger("invest-listings-query");
 
@@ -47,7 +48,7 @@ export async function fetchListingsByVertical(
     let query = supabase
       .from("investment_listings")
       .select("*")
-      .eq("vertical", vertical)
+      .in("vertical", rawVerticalVariants(vertical))
       .eq("status", "active")
       .order("listing_type", { ascending: false })
       .order("created_at", { ascending: false })
@@ -101,7 +102,7 @@ export async function countListingsByVertical(
     let query = supabase
       .from("investment_listings")
       .select("id", { count: "exact", head: true })
-      .eq("vertical", vertical)
+      .in("vertical", rawVerticalVariants(vertical))
       .eq("status", "active");
 
     if (subCategories && subCategories.length > 0) {
@@ -168,7 +169,7 @@ export async function fetchListingsBySubCategory(
     const { data, error } = await supabase
       .from("investment_listings")
       .select("*")
-      .eq("vertical", vertical)
+      .in("vertical", rawVerticalVariants(vertical))
       .eq("sub_category", subCategory)
       .eq("status", "active")
       .order("listing_type", { ascending: false })
@@ -251,7 +252,7 @@ export async function fetchRelatedListings(
     let query = supabase
       .from("investment_listings")
       .select("*")
-      .eq("vertical", vertical)
+      .in("vertical", rawVerticalVariants(vertical))
       .eq("status", "active")
       .neq("slug", excludeSlug)
       .limit(limit);

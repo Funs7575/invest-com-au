@@ -1,16 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Regression guard for the service-role → anon-client swap:
-// `brokers` (anon SELECT on status='active') and `quiz_weights` (anon SELECT
-// USING TRUE) are public anon-readable tables, so top-match must use the
-// RLS-respecting anon server client — NOT the service-role admin client.
-const { mockCreateClient } = vi.hoisted(() => ({ mockCreateClient: vi.fn() }));
-
-vi.mock("@/lib/supabase/server", () => ({ createClient: mockCreateClient }));
-// If the production code ever reaches for the admin client again, importing it
-// would pull in this mock; assert it is never instantiated.
+// `quiz_weights` is being locked to non-anon (commercially-sensitive tuned
+// weights, previously extractable via the embedded anon key). top-match is the
+// public, unauthenticated /api/get-matched/resolve path with no admin JWT, so
+// it must read via the service-role admin client — NOT the RLS-respecting anon
+// server client, which would return nothing once the SELECT policy is locked.
 const { mockCreateAdminClient } = vi.hoisted(() => ({ mockCreateAdminClient: vi.fn() }));
 vi.mock("@/lib/supabase/admin", () => ({ createAdminClient: mockCreateAdminClient }));
+// The anon server client must NOT be used; importing it pulls in this mock so
+// we can assert it is never instantiated.
+const { mockCreateClient } = vi.hoisted(() => ({ mockCreateClient: vi.fn() }));
+vi.mock("@/lib/supabase/server", () => ({ createClient: mockCreateClient }));
 vi.mock("@/lib/logger", () => ({
   logger: () => ({ warn: vi.fn(), info: vi.fn(), error: vi.fn() }),
 }));
@@ -60,30 +60,30 @@ function makeClient() {
   };
 }
 
-describe("top-match uses the anon server client (least-privilege)", () => {
+describe("top-match uses the service-role client (quiz_weights is non-anon)", () => {
   beforeEach(() => {
     mockCreateClient.mockReset();
     mockCreateAdminClient.mockReset();
   });
 
-  it("computeTopMatch reads via createClient(), never the admin client", async () => {
-    mockCreateClient.mockResolvedValue(makeClient());
+  it("computeTopMatch reads via createAdminClient(), never the anon client", async () => {
+    mockCreateAdminClient.mockReturnValue(makeClient());
 
     const res = await computeTopMatch({ intent: "grow" }, null);
 
-    expect(mockCreateClient).toHaveBeenCalledTimes(1);
-    expect(mockCreateAdminClient).not.toHaveBeenCalled();
+    expect(mockCreateAdminClient).toHaveBeenCalledTimes(1);
+    expect(mockCreateClient).not.toHaveBeenCalled();
     expect(res).not.toBeNull();
     expect(res?.slug).toBe("acme");
   });
 
-  it("computeTopMatches reads via createClient(), never the admin client", async () => {
-    mockCreateClient.mockResolvedValue(makeClient());
+  it("computeTopMatches reads via createAdminClient(), never the anon client", async () => {
+    mockCreateAdminClient.mockReturnValue(makeClient());
 
     const res = await computeTopMatches({ intent: "grow" }, null, 3);
 
-    expect(mockCreateClient).toHaveBeenCalledTimes(1);
-    expect(mockCreateAdminClient).not.toHaveBeenCalled();
+    expect(mockCreateAdminClient).toHaveBeenCalledTimes(1);
+    expect(mockCreateClient).not.toHaveBeenCalled();
     expect(res.length).toBeGreaterThan(0);
     expect(res[0]?.slug).toBe("acme");
   });

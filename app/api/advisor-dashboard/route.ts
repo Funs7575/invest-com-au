@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+// advisor_bookings is non-anon RLS; this route authenticates via the custom
+// advisor_session cookie (no Supabase JWT), so its booking read uses the
+// service-role client, scoped in-query to the validated advisorId.
+import { createAdminClient } from "@/lib/supabase/admin";
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
   const sessionToken = request.cookies.get("advisor_session")?.value;
@@ -71,8 +75,9 @@ export async function GET(request: NextRequest) {
       .eq("professional_id", advisorId)
       .eq("status", "approved")
       .order("created_at", { ascending: false }),
-    // Bookings count (for booking clicks stat)
-    supabase
+    // Bookings count (for booking clicks stat) — service-role: non-anon table,
+    // scoped to the validated advisorId.
+    createAdminClient()
       .from("advisor_bookings")
       .select("id, created_at")
       .eq("professional_id", advisorId)

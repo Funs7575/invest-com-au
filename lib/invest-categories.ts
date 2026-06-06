@@ -2175,6 +2175,11 @@ const categoriesRaw: Omit<InvestCategory, "intent">[] = [
     slug: "sda-housing",
     label: "SDA Housing (NDIS)",
     dbVerticals: ["commercial_property"],
+    // SDA listings share the commercial_property vertical with generic
+    // commercial real estate; the sub_category is what distinguishes them.
+    // Without this, /invest/sda-housing/listings would show all commercial
+    // property rather than only the NDIS-accommodation listings.
+    dbFundSubCategories: ["sda_housing"],
     color: {
       bg: "bg-fuchsia-50",
       border: "border-fuchsia-200",

@@ -1,0 +1,189 @@
+# 🤖 Bot smoke gate — runs the lightweight advisor + flow subset on PRs that
+# touch surfaces the bots exercise. Never blocks a merge (continue-on-error),
+# but posts findings as an artifact and a PR comment so regressions are visible
+# before they reach the nightly full-fleet run.
+#
+# Trigger: PRs to main that touch advisor, account, quiz/get-matched, or key
+# component files. Intentionally scoped — general CSS/docs changes don't need
+# a bot run.
+#
+# Target: the Netlify mirror (always-on, zero cost, auto-mocked writes).
+# Switch BOTS_SMOKE_URL to a Vercel preview by setting the repo variable, or
+# override per-run via the workflow_dispatch input.
+
+name: Bot smoke (PR)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "app/advisor/**"
+      - "app/advisor-portal/**"
+      - "app/account/**"
+      - "app/get-matched/**"
+      - "app/advisors/**"
+      - "app/find-advisor/**"
+      - "app/invest/startups/**"
+      - "app/startup-portal/**"
+      - "app/startup-signup/**"
+      - "components/AdvisorReviewForm.tsx"
+      - "components/AdvisorCalendarEmbed.tsx"
+      - "components/BookingWidget.tsx"
+      - "components/BrokerComparisonTable.tsx"
+      - "components/layout/Navigation.tsx"
+      - "bots/**"
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: "Override target URL (defaults to Netlify mirror)"
+        required: false
+        type: string
+
+concurrency:
+  # One smoke run per PR at a time — cancel in-progress if a new commit lands.
+  group: bots-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write   # for posting the comment summary
+
+jobs:
+  smoke:
+    name: Bot smoke — advisor + flows
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Resolve target
+        id: target
+        run: |
+          URL="${{ github.event.inputs.target_url }}"
+          if [ -z "$URL" ]; then URL="${{ vars.BOTS_SMOKE_URL }}"; fi
+          if [ -z "$URL" ]; then URL="https://lambent-sawine-17c3dd.netlify.app"; fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "::notice::Bot smoke target: $URL"
+
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run advisor + flow smoke
+        id: smoke
+        # Never block the PR — findings are advisory, not a gate.
+        continue-on-error: true
+        env:
+          BOTS_BASE_URL: ${{ steps.target.outputs.url }}
+          BOTS_SKIP_WEBSERVER: "1"
+          BOTS_IGNORE_HTTPS_ERRORS: "1"
+          BOTS_CONCURRENCY: "2"
+          # AI bots off for smoke (cost + latency).
+          BOTS_AI_TOKEN_BUDGET: "0"
+        run: |
+          # Run advisors + startup/advisor portal flows (fast subset).
+          npx playwright test --config bots/playwright.config.ts \
+            -g "advisor|startup-ecosystem|advisor-portal" \
+            2>&1 | tee /tmp/bots-smoke.log || true
+
+      - name: Upload smoke report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bot-smoke-report-${{ github.run_id }}
+          path: |
+            bots/.runs/*/report.html
+            bots/.runs/*/summary.md
+            bots/.runs/*/findings.json
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Comment summary on PR
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const path = require("path");
+
+            // Find the newest run dir.
+            let summary = "⚠️ Bot smoke did not produce a summary — check the artifact.";
+            let criticalCount = 0;
+            let highCount = 0;
+            try {
+              const runsDir = "bots/.runs";
+              const dirs = fs.readdirSync(runsDir)
+                .map((d) => path.join(runsDir, d))
+                .filter((p) => fs.statSync(p).isDirectory())
+                .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
+              if (dirs.length > 0) {
+                const summaryPath = path.join(dirs[0], "summary.md");
+                if (fs.existsSync(summaryPath)) {
+                  summary = fs.readFileSync(summaryPath, "utf8");
+                }
+                const jsonPath = path.join(dirs[0], "findings.json");
+                if (fs.existsSync(jsonPath)) {
+                  const data = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+                  criticalCount = (data.findings || []).filter((f) => f.severity === "critical").length;
+                  highCount = (data.findings || []).filter((f) => f.severity === "high").length;
+                }
+              }
+            } catch (e) {
+              core.warning("Could not read bot smoke output: " + e.message);
+            }
+
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const status = criticalCount > 0
+              ? "🛑 **Critical findings detected**"
+              : highCount > 0
+              ? "⚠️ **High findings detected**"
+              : "✅ No critical/high findings";
+
+            const body = [
+              `### 🤖 Bot smoke — ${status}`,
+              "",
+              `**Target:** \`${{ steps.target.outputs.url }}\`  `,
+              `**Critical:** ${criticalCount}  **High:** ${highCount}`,
+              "",
+              "<details><summary>Full summary</summary>",
+              "",
+              summary,
+              "",
+              "</details>",
+              "",
+              `📎 [Full report artifact](${runUrl})`,
+              "",
+              "_This is an advisory check — it never blocks the merge._",
+            ].join("\n");
+
+            // Find and update any existing smoke comment, or create a new one.
+            const marker = "### 🤖 Bot smoke";
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            const existing = comments.data.find((c) => c.body?.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body,
+              });
+            }

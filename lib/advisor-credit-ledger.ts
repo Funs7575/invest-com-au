@@ -198,29 +198,45 @@ export async function recordLedgerEntry(
       (pro.lifetime_lead_spend_cents ?? 0) + Math.abs(input.amountCents);
   }
 
-  // Optimistic-lock cache write — if a concurrent call updated the
-  // balance between our read and write we retry once with a fresh
-  // read. Any further loss is logged and surfaced; the ledger row is
-  // already in place so the SUM is still authoritative.
+  // Optimistic-lock (compare-and-set) cache write. The predicate
+  // `credit_balance_cents = expectedBalance` only matches if no concurrent
+  // call moved the balance since our read. CONTENTION IS SIGNALLED BY ZERO
+  // ROWS UPDATED, NOT BY AN ERROR — PostgREST returns `{ data: [], error: null }`
+  // for a 0-row match, so we must inspect the returned rows (via `.select()`),
+  // not just `cacheErr`. On a miss we refetch, recompute BOTH the new balance
+  // and the lifetime totals against the fresh base, and retry the CAS against
+  // that fresh expected value. The ledger row is already inserted, so the
+  // ledger SUM stays authoritative even if the cache write is ultimately lost.
+  let expectedBalance = currentBalance;
   let cacheOk = false;
   for (let attempt = 0; attempt < 2 && !cacheOk; attempt++) {
-    const { error: cacheErr } = await supabase
+    const { data: updatedRows, error: cacheErr } = await supabase
       .from("professionals")
       .update(updates)
       .eq("id", input.professionalId)
-      .eq("credit_balance_cents", attempt === 0 ? currentBalance : currentBalance);
-    if (!cacheErr) {
+      .eq("credit_balance_cents", expectedBalance)
+      .select("id");
+    if (!cacheErr && (updatedRows?.length ?? 0) > 0) {
       cacheOk = true;
       break;
     }
-    // Refetch + recompute the delta against the latest cached balance.
+    // Lost the race (0 rows matched) or errored — refetch and recompute the
+    // delta against the latest cached balance, then retry the CAS.
     const { data: refreshed } = await supabase
       .from("professionals")
       .select("credit_balance_cents, lifetime_credit_cents, lifetime_lead_spend_cents")
       .eq("id", input.professionalId)
       .single();
     if (!refreshed) break;
-    updates.credit_balance_cents = (refreshed.credit_balance_cents ?? 0) + input.amountCents;
+    expectedBalance = refreshed.credit_balance_cents ?? 0;
+    updates.credit_balance_cents = expectedBalance + input.amountCents;
+    if (updates.lifetime_credit_cents !== undefined && input.amountCents > 0) {
+      updates.lifetime_credit_cents = (refreshed.lifetime_credit_cents ?? 0) + input.amountCents;
+    }
+    if (updates.lifetime_lead_spend_cents !== undefined && input.amountCents < 0) {
+      updates.lifetime_lead_spend_cents =
+        (refreshed.lifetime_lead_spend_cents ?? 0) + Math.abs(input.amountCents);
+    }
   }
 
   if (!cacheOk) {

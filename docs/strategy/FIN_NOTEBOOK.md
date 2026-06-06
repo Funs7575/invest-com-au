@@ -578,6 +578,28 @@ Time-bound items that need a check-in at a specific date. Don't delete — strik
 
 Move items here once they ship OR are formally killed. Don't delete — keep the trail so we can see what we built and what we walked away from.
 
+- **2026-06-06 — Batch security + feature merges (mega-session continuation).**
+  Six PRs merged in a single pass during the `/goal do all to high quality` session:
+  - **#1409 P0 security** — owner-scope RLS on `broker_wallets`, `wallet_transactions`, `marketplace_invoices`. `USING (true)` gave every authenticated user all broker Stripe/PII data via PostgREST; replaced with per-broker-slug + is_admin() guard. 6 regression tests.
+  - **#1411 quiz server-side scoring** — moved all `quiz_weights` reads server-side (service-role); stripped `select("*")` on `/api/quiz/data` that was leaking `cpa_value`/`affiliate_priority` etc. to every quiz visitor. New `/api/quiz/score` endpoint.
+  - **#1413 wealth-stack fields** — stripped commercial broker columns (`cpa_value`, `monthly_sponsorship_fee`, `affiliate_priority`) from `/api/wealth-stack` public response. Followed #1408's lead.
+  - **#1414 versus_votes table** — created the missing `versus_votes` table (every `/versus/*` vote widget was 500ing). Closed the HELD #1317.
+  - **#1415 revenue-summary + schema-drift** — admin revenue summary made resilient to missing `broker_campaigns`; schema-drift audit of 31 phantom tables documented.
+  - **#1416 cron-health docs** — documents the ~13-day Vercel account blockage that left the cron fleet dark.
+  - **#1422 NF-20 SMS consent** — OPEN, CI running. Superseded conflicting #1180.
+  - **#1421 credit-ledger CAS fix** — OPEN, CI running. Fixes optimistic-lock retry dead predicate.
+  - **#1412 quiz_weights lock** — waiting for #1411 Netlify deploy to complete before merge.
+
+- **2026-06-06 — Bot fleet infrastructure: full suite shipped.** Completed in mega-session (context ~2 windows). All of the following are on `main`:
+  - **Performance baseline** (`bots/checks/perf.ts`): Navigation Timing + FCP + JS heap captured after every `visit()`, written to `perf-baseline.json` per run.
+  - **JSON-LD schema drift detection** (`bots/checks/schema-markup.ts`): every `<script type="application/ld+json">` block validated against required fields per type — critical for GEO/AI citability.
+  - **Startup ecosystem flow** + **Advisor portal flow** (`bots/flows/startup-portal.ts`, `bots/flows/advisor-portal.ts`): 5-step scripted regressions for each.
+  - **CI smoke gate** (`.github/workflows/bots-pr-smoke.yml`): runs advisor/startup flows on PRs touching those paths, posts advisory comment, never blocks merge.
+  - **Auto GitHub issue filer** (`scripts/bots-file-issues.ts`): deduplicates open issues, files one per Critical/High finding; opt-in nightly via `BOTS_AUTO_FILE_ISSUES=1`.
+  - **Cross-run regression diff** (`scripts/bots-diff-baseline.ts`, `npm run bots:diff`): compares any two `findings.json` using stable ID hashes; surfaces new/resolved/stable/occurrence-change; exits 1 on critical/high regressions; 16 unit tests.
+  - **API surface probe** (`scripts/bots-probe-api.ts`, `npm run bots:probe-api`): enumerates 403 GET handlers, probes 186 non-admin/non-cron static routes against the mirror; found 5 server errors on first run (see DISC-20260606 in REMEDIATION_QUEUE); writes `bots/.runs/latest-api-probe.json`.
+  - Live runs: two full mirror runs executed. First probe found React hydration error #418 on every page (cross-cutting Netlify mirror issue), advisor portal login form missing inputs, and 5 API 500s. Diff script confirmed 12 new findings, 16 resolved between runs.
+
 - **2026-05-02 — Quiz funnel rebuilt.** PR #434 shipped: 7-outcome resolver (post-job, advisor-match, advisor-browse, calculator-first, education-first, diy-broker, bundle-stack) replaces binary DIY-vs-advisor track; email gate moved post-results (warm capture); 12 structured columns added to `quiz_leads`; 9 vertical drip-template variants × 3 steps = 27 drip templates; `applyQuizSponsorBoost` is vertical-aware (no crypto-sponsor over super result); `/quotes/post` prefills from quiz handoff. Migration applied to prod (project `guggzyqceattncjwvgyc`), 125 tests passing, all 25 CI gates green. Squash commit `f1d2017c` on main. Co-author Claude Opus 4.7.
 
 - **2026-05-02 — Tracker reality-audit findings.** Two queue items I was about to scope as fresh work were already done:

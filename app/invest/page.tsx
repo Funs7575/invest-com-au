@@ -17,7 +17,7 @@ import {
 } from "@/lib/compliance";
 import type { InvestmentListing } from "@/lib/types";
 import { logger } from "@/lib/logger";
-import { listingUrl } from "@/lib/listing-url";
+import { listingUrl, categoryForListing } from "@/lib/listing-url";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { loadInvestPageContext } from "@/lib/listing-page-context";
@@ -172,8 +172,20 @@ export default async function InvestMarketplacePage() {
   const categories = getOpportunityCategories();
   const categoryTabs = categories.map((c) => ({ slug: c.slug, label: c.label }));
 
+  // Discovery-card counts must match what the client filter actually shows
+  // when a card is clicked, so we bucket each listing the same way the
+  // client does — via categoryForListing — rather than summing raw
+  // dbVerticals (which misses drifted vertical strings like
+  // "renewable-energy"/"startups" and double-counts fund sub-categories
+  // that belong to other categories).
+  const categoryCounts: Record<string, number> = {};
+  for (const l of listings) {
+    const slug = categoryForListing(l);
+    categoryCounts[slug] = (categoryCounts[slug] || 0) + 1;
+  }
+
   function getCategoryCount(cat: InvestCategory): number {
-    return cat.dbVerticals.reduce((sum, v) => sum + (verticalCounts[v] || 0), 0);
+    return categoryCounts[cat.slug] || 0;
   }
 
   // ── JSON-LD ──

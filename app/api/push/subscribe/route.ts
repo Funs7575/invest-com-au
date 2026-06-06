@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
@@ -11,16 +12,16 @@ export const dynamic = "force-dynamic";
 
 const VALID_TOPICS = ["fee_changes", "deals", "articles", "price_drops"] as const;
 
-interface SubscribeBody {
-  subscription: {
-    endpoint: string;
-    keys: {
-      p256dh: string;
-      auth: string;
-    };
-  };
-  topics: string[];
-}
+const SubscribeBody = z.object({
+  subscription: z.object({
+    endpoint: z.string().min(1).max(2000),
+    keys: z.object({
+      p256dh: z.string().min(1).max(500),
+      auth: z.string().min(1).max(500),
+    }),
+  }),
+  topics: z.array(z.string().max(64)).max(20).optional().default([]),
+});
 
 /**
  * POST /api/push/subscribe
@@ -33,20 +34,14 @@ export async function POST(request: NextRequest) {
     if (!(await isAllowed("push_subscribe", ipKey(request), { max: 5, refillPerSec: 5 / 3600 }))) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
-    // eslint-disable-next-line invest/no-unvalidated-req-json -- subscription shape is hand-validated immediately below (endpoint + keys.p256dh + keys.auth required)
-    const body = (await request.json()) as SubscribeBody;
-
-    // Validate subscription shape
-    if (
-      !body.subscription?.endpoint ||
-      !body.subscription?.keys?.p256dh ||
-      !body.subscription?.keys?.auth
-    ) {
+    const parsed = SubscribeBody.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) {
       return NextResponse.json(
         { error: "Invalid subscription object. Required: endpoint, keys.p256dh, keys.auth" },
         { status: 400 }
       );
     }
+    const body = parsed.data;
 
     // Validate topics
     const topics = (body.topics || []).filter((t) =>

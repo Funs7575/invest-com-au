@@ -61,6 +61,10 @@ function createChainableBuilder(tableName: string) {
     return Promise.resolve({ data: null, error: null });
   });
 
+  // Makes `await builder` (e.g. awaited UPDATE chains) resolve to a row array
+  // so the CAS predicate check `(updatedRows?.length ?? 0) > 0` passes by default.
+  builder.then = vi.fn((cb: (v: unknown) => unknown) => Promise.resolve(cb({ data: [{}], error: null })));
+
   return builder;
 }
 
@@ -890,6 +894,16 @@ describe("POST /api/stripe/webhook", () => {
               error: null,
             }),
           );
+        }
+        if (table === "advisor_credit_ledger") {
+          builder.maybeSingle = vi.fn(() => Promise.resolve({ data: null, error: null }));
+          builder.insert = vi.fn(() => ({
+            select: vi.fn(() => ({
+              single: vi.fn(() =>
+                Promise.resolve({ data: { id: 99, balance_after_cents: 15000 }, error: null }),
+              ),
+            })),
+          }));
         }
         return builder;
       });

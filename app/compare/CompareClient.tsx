@@ -420,7 +420,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         })}
         {logos.length > max && (
           <span
-            className="rounded-full border-2 border-white bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 shadow-sm"
+            className="rounded-full border-2 border-white bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 shadow-sm"
             style={{
               width: size, height: size,
               marginLeft: -overlap,

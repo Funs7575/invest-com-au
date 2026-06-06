@@ -240,10 +240,12 @@ export default function ResetPasswordClient() {
                 placeholder="Re-enter your password"
                 required
                 autoComplete="new-password"
+                aria-describedby={confirmPassword.length > 0 && password !== confirmPassword ? "confirm-mismatch" : undefined}
+                aria-invalid={confirmPassword.length > 0 && password !== confirmPassword}
                 className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
               />
               {confirmPassword.length > 0 && password !== confirmPassword && (
-                <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
+                <p id="confirm-mismatch" role="alert" className="text-xs text-red-500 mt-1">Passwords do not match</p>
               )}
             </div>
 

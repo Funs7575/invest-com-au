@@ -111,6 +111,7 @@ export async function POST(request: NextRequest) {
     prev_lead_ids,
     dry_run,
     confirm_advisor_id,
+    sms_consent,
     preferred_specialty,
   } = body as {
     lead_type?: string;
@@ -129,6 +130,12 @@ export async function POST(request: NextRequest) {
     dry_run?: boolean;
     /** If set: skip matching, create lead directly for this advisor ID */
     confirm_advisor_id?: number;
+    /**
+     * Spam Act 2003 s.16: user explicitly opted in to SMS/WhatsApp contact.
+     * Stored on the lead so advisors have a legal signal before using
+     * user_phone for outbound SMS or WhatsApp messages.
+     */
+    sms_consent?: boolean;
     /**
      * Cross-border Phase A: when the user arrives from a country page
      * (/foreign-investment/uk → ?specialty=UK+Pension+Transfer), prefer
@@ -189,6 +196,7 @@ export async function POST(request: NextRequest) {
         user_email: normalizedEmail,
         user_name: typeof user_name === "string" ? user_name.trim() : null,
         user_phone: typeof user_phone === "string" ? user_phone.trim() : null,
+        sms_consent: sms_consent === true,
         source_page: typeof source_page === "string" ? source_page : null,
         utm_source: (utm as UtmParams).utm_source ?? null,
         utm_medium: (utm as UtmParams).utm_medium ?? null,
@@ -320,6 +328,7 @@ export async function POST(request: NextRequest) {
         user_email: normalizedEmail,
         user_name: typeof user_name === "string" ? user_name.trim() : null,
         user_phone: typeof user_phone === "string" ? user_phone.trim() : null,
+        sms_consent: sms_consent === true,
         user_location_state: userState,
         user_intent: user_intent ?? null,
         revenue_value_cents: revenue_value_cents_confirmed,
@@ -672,6 +681,7 @@ export async function POST(request: NextRequest) {
       user_email: normalizedEmail,
       user_name: typeof user_name === "string" ? user_name.trim() : null,
       user_phone: typeof user_phone === "string" ? user_phone.trim() : null,
+      sms_consent: sms_consent === true,
       user_location_state: userState,
       user_intent: user_intent ?? null,
       revenue_value_cents,
