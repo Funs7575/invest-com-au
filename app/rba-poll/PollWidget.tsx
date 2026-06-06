@@ -216,7 +216,7 @@ export default function PollWidget({ poll, isAuthenticated }: Props) {
         </p>
       )}
 
-      {err && <p className="text-sm text-red-600 mb-3">{err}</p>}
+      {err && <p role="alert" className="text-sm text-red-600 mb-3">{err}</p>}
 
       {/* Distribution bars */}
       {tally.total > 0 && (

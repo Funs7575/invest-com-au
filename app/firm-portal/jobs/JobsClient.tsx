@@ -491,7 +491,7 @@ function ApplicationsPanel({ jobId, jobTitle }: { jobId: string; jobTitle: strin
       </h4>
 
       {loading && <p className="text-xs text-slate-400">Loading…</p>}
-      {err && <p className="text-xs text-red-600">{err}</p>}
+      {err && <p role="alert" className="text-xs text-red-600">{err}</p>}
 
       {!loading && !err && apps.length === 0 && (
         <p className="text-xs text-slate-500 italic">No applications yet.</p>

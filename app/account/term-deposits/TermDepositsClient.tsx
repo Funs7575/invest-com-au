@@ -189,7 +189,7 @@ function AddForm({ onAdd }: AddFormProps) {
             className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
           />
         </div>
-        {err && <p className="sm:col-span-6 text-sm text-red-600">{err}</p>}
+        {err && <p role="alert" className="sm:col-span-6 text-sm text-red-600">{err}</p>}
         <div className="sm:col-span-6">
           <button
             type="submit"

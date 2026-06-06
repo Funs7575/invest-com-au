@@ -353,6 +353,7 @@ export default function PricingClient() {
                   </th>
                   {TIERS.map((tier) => (
                     <th
+              scope="col"
                       key={tier.id}
                       className={`px-4 py-3 text-center font-extrabold border-b border-slate-200 ${
                         tier.id === "pro"

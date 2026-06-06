@@ -200,28 +200,36 @@ export default function ETFScreenerClient() {
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th
+                    scope="col"
                     className="text-left py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("ticker")}
+                    aria-sort={sortKey === "ticker" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   >
                     Ticker <SortIcon col="ticker" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Name</th>
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold hidden sm:table-cell">Category</th>
                   <th
+                    scope="col"
                     className="text-right py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("mer")}
+                    aria-sort={sortKey === "mer" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   >
                     MER <SortIcon col="mer" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+                    scope="col"
                     className="text-right py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("aumMillions")}
+                    aria-sort={sortKey === "aumMillions" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   >
                     AUM <SortIcon col="aumMillions" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+                    scope="col"
                     className="text-right py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("distributionYield")}
+                    aria-sort={sortKey === "distributionYield" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   >
                     Yield <SortIcon col="distributionYield" sortKey={sortKey} sortDir={sortDir} />
                   </th>

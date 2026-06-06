@@ -201,30 +201,35 @@ export default function LicScreenerClient() {
                   <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600 w-36">LIC</th>
                   <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Focus</th>
                   <th
+              scope="col"
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("dividendYield")}
                   >
                     Yield <SortIcon col="dividendYield" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+              scope="col"
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("frankingPct")}
                   >
                     Franking <SortIcon col="frankingPct" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+              scope="col"
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("ntaDiscount")}
                   >
                     NTA ±% <SortIcon col="ntaDiscount" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+              scope="col"
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("managementCostPct")}
                   >
                     Mgmt % <SortIcon col="managementCostPct" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
+              scope="col"
                     className="text-right px-4 py-3 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900"
                     onClick={() => toggleSort("aumMillions")}
                   >

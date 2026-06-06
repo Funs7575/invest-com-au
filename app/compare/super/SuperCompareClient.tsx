@@ -270,6 +270,8 @@ export default function SuperCompareClient() {
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-left">
                 <th
+                  scope="col"
+                  aria-sort={sortKey === "name" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   className="px-4 py-3 font-semibold text-slate-700 cursor-pointer select-none"
                   onClick={() => handleSort("name")}
                 >
@@ -277,6 +279,8 @@ export default function SuperCompareClient() {
                 </th>
                 <th scope="col" className="px-4 py-3 font-semibold text-slate-700">Type</th>
                 <th
+                  scope="col"
+                  aria-sort={sortKey === "balanced_fee_pct" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   className="px-4 py-3 font-semibold text-slate-700 cursor-pointer select-none"
                   onClick={() => handleSort("balanced_fee_pct")}
                 >
@@ -284,6 +288,8 @@ export default function SuperCompareClient() {
                 </th>
                 <th scope="col" className="px-4 py-3 font-semibold text-slate-700 text-center">Insurance</th>
                 <th
+                  scope="col"
+                  aria-sort={sortKey === "investment_options" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
                   className="px-4 py-3 font-semibold text-slate-700 cursor-pointer select-none"
                   onClick={() => handleSort("investment_options")}
                 >

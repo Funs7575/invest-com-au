@@ -453,6 +453,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
                   </th>
                   {DIMENSIONS.map((d) => (
                     <th
+              scope="col"
                       key={d.key}
                       className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell"
                     >

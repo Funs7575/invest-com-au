@@ -179,7 +179,7 @@ function AddForm({ onAdd }: { onAdd: (list: ListRow) => void }) {
             Make public (shareable with anyone)
           </label>
         </div>
-        {err && <p className="text-sm text-red-600">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600">{err}</p>}
         <button
           type="submit"
           disabled={busy}

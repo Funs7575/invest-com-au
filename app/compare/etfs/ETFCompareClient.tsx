@@ -128,14 +128,14 @@ export default function ETFCompareClient() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-left text-slate-500 text-xs uppercase tracking-wide">
-                <th scope="col" className="px-4 py-3 cursor-pointer select-none hover:text-slate-900" onClick={() => handleSort("ticker")}>
+                <th scope="col" aria-sort={sortKey === "ticker" ? (sortAsc ? "ascending" : "descending") : "none"} className="px-4 py-3 cursor-pointer select-none hover:text-slate-900" onClick={() => handleSort("ticker")}>
                   Ticker <SortIndicator column="ticker" sortKey={sortKey} sortAsc={sortAsc} />
                 </th>
-                <th scope="col" className="px-4 py-3 cursor-pointer select-none hover:text-slate-900" onClick={() => handleSort("name")}>
+                <th scope="col" aria-sort={sortKey === "name" ? (sortAsc ? "ascending" : "descending") : "none"} className="px-4 py-3 cursor-pointer select-none hover:text-slate-900" onClick={() => handleSort("name")}>
                   Fund Name <SortIndicator column="name" sortKey={sortKey} sortAsc={sortAsc} />
                 </th>
                 <th scope="col" className="px-4 py-3">Provider</th>
-                <th scope="col" className="px-4 py-3 cursor-pointer select-none hover:text-slate-900 text-right" onClick={() => handleSort("mer")}>
+                <th scope="col" aria-sort={sortKey === "mer" ? (sortAsc ? "ascending" : "descending") : "none"} className="px-4 py-3 cursor-pointer select-none hover:text-slate-900 text-right" onClick={() => handleSort("mer")}>
                   MER % <SortIndicator column="mer" sortKey={sortKey} sortAsc={sortAsc} />
                 </th>
                 <th scope="col" className="px-4 py-3">Category</th>
