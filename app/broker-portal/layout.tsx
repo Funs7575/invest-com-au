@@ -210,6 +210,12 @@ export default function BrokerPortalLayout({ children }: { children: React.React
   return (
     <div className="min-h-screen bg-slate-50 md:flex">
       <meta name="robots" content="noindex, nofollow" />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] focus:px-4 focus:py-2 focus:bg-slate-900 focus:text-white focus:rounded-lg focus:text-sm focus:font-semibold"
+      >
+        Skip to main content
+      </a>
       {/* Mobile top bar */}
       <div className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <button
@@ -260,7 +266,7 @@ export default function BrokerPortalLayout({ children }: { children: React.React
       </aside>
 
       {/* Main */}
-      <main className="flex-1 overflow-auto">
+      <main id="main-content" tabIndex={-1} className="flex-1 overflow-auto outline-none">
         <div key={pathname} className="p-4 md:p-6 lg:p-8 portal-page-enter">{children}</div>
       </main>
       <BrokerHelpPanel />

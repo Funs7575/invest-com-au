@@ -61,7 +61,7 @@ export default function LayoutShell({ children, countryModeBanner }: LayoutShell
 
       <Navigation />
       {countryModeBanner}
-      <main id="main-content" className="min-h-screen pb-14 sm:pb-0">{children}</main>
+      <main id="main-content" tabIndex={-1} className="min-h-screen pb-14 sm:pb-0 outline-none">{children}</main>
       <SiteFooter />
       {/* MobileBottomNav — persistent across all non-admin routes.
           The component itself handles hiding on /admin, /auth, /quiz etc.
