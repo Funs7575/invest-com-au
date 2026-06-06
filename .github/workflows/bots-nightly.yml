@@ -66,6 +66,11 @@ jobs:
         env:
           BOTS_BASE_URL: ${{ github.event.inputs.target || .https://lambent-sawine-17c3dd.netlify.app. }}
         run: npm run bots:perf
+      - name: Accessibility (axe)
+        if: always()
+        env:
+          BOTS_BASE_URL: ${{ github.event.inputs.target || .https://lambent-sawine-17c3dd.netlify.app. }}
+        run: npm run bots:a11y
       - name: Run nightly fleet
         if: always() # run the broad sweep even if an earlier monitor flagged a step
         env:
@@ -76,6 +81,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bots-reports
-          path: bots/reports/{nightly,funnel,seo,idor,perf}-*.md
+          path: bots/reports/{nightly,funnel,seo,idor,perf,a11y}-*.md
           if-no-files-found: warn
           retention-days: 30
