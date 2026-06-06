@@ -1234,7 +1234,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                         onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
                         disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
                         title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
-                        className={`shrink-0 p-1.5 rounded-lg backdrop-blur transition-colors ${inShortlist(pro.slug) ? "text-white bg-violet-600 hover:bg-violet-700" : shortlistCount >= shortlistMax ? "text-white/40 bg-black/30 cursor-not-allowed" : "text-white/90 bg-black/45 hover:text-white hover:bg-black/60"}`}
+                        className={`shrink-0 p-1.5 rounded-lg backdrop-blur transition-colors ${inShortlist(pro.slug) ? "text-slate-900 bg-amber-500 hover:bg-amber-400" : shortlistCount >= shortlistMax ? "text-white/40 bg-black/30 cursor-not-allowed" : "text-white/90 bg-black/45 hover:text-white hover:bg-black/60"}`}
                       >
                         <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
                       </button>
