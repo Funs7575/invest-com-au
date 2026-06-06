@@ -35,6 +35,7 @@
     "bots:idor": "node scripts/bots-idor-probe.mjs",
     "bots:perf": "node scripts/bots-perf-budget.mjs",
     "bots:a11y": "node scripts/bots-a11y.mjs",
+    "bots:data": "node scripts/bots-data-integrity.mjs",
     "screenshots": "playwright test --config e2e/visual/playwright.config.ts e2e/visual/screenshots.spec.ts",
     "screenshots:seed": "node scripts/screenshots-seed.mjs",
     "screenshots:auto-seed": "node scripts/screenshots-auto-seed.mjs",

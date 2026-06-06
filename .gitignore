@@ -70,3 +70,4 @@ bots/reports/seo-*.md
 bots/reports/idor-*.md
 bots/reports/perf-*.md
 bots/reports/a11y-*.md
+bots/reports/data-integrity-*.md
