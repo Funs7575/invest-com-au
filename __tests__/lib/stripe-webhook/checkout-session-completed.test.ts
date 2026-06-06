@@ -38,7 +38,7 @@ function thenable(data: unknown = null) {
     single: vi.fn().mockResolvedValue({ data, error: null }),
     maybeSingle: vi.fn().mockResolvedValue({ data, error: null }),
     then: vi.fn((cb: (v: unknown) => void) => {
-      cb({ data: null, error: null });
+      cb({ data: data !== null ? [data] : [], error: null });
       return Promise.resolve();
     }),
   };
@@ -47,6 +47,16 @@ function thenable(data: unknown = null) {
 function makeCtx(tableFactories: Record<string, () => ReturnType<typeof thenable>> = {}): WebhookContext {
   const adminFrom = vi.fn().mockImplementation((table: string) => {
     if (tableFactories[table]) return tableFactories[table]!();
+    if (table === "advisor_credit_ledger") {
+      return {
+        ...thenable(),
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({ data: { id: 1, balance_after_cents: 0, kind: "topup" }, error: null }),
+          }),
+        }),
+      } as ReturnType<typeof thenable>;
+    }
     return thenable();
   });
 
@@ -561,10 +571,8 @@ describe("handleCheckoutSessionCompleted", () => {
   it("advisor_credit_topup: updates lead_price_cents when per_lead_cents metadata present", async () => {
     const updateFn = vi.fn().mockReturnThis();
     const eqFn = vi.fn().mockReturnThis();
-    let profCallCount = 0;
     const ctx = makeCtx({
       professionals: () => {
-        profCallCount++;
         const t = thenable({ credit_balance_cents: 0, lifetime_credit_cents: 0, email: "adv@test.com", name: "Adv" });
         return { ...t, update: updateFn, eq: eqFn };
       },

@@ -8,6 +8,7 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, UPDATED_LABEL, SITE_NAME }
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import InvestListingCard from "@/components/InvestListingCard";
 import InvestOpportunitiesCallout from "@/components/invest/InvestOpportunitiesCallout";
+import { listingUrl } from "@/lib/listing-url";
 import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
@@ -73,9 +74,47 @@ export default async function BestForComboPage({
     { name: combo.title },
   ]);
 
+  // ItemList JSON-LD over matching listings so search results can show
+  // a rich, list-style preview rather than just the page title.
+  const itemListJsonLd = listings.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: combo.title,
+        numberOfItems: total,
+        itemListElement: listings.slice(0, 20).map((l, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: l.title,
+          url: absoluteUrl(listingUrl(l)),
+        })),
+      }
+    : null;
+
+  // FAQPage JSON-LD from the curated "why this fits" reasons — paired
+  // with the visible <ul> so Google can confirm the on-page presence.
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: `Why is ${combo.verticalLabel} suited to ${combo.profileLabel}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: combo.why.join(" "),
+        },
+      },
+    ],
+  };
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {itemListJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+      )}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
       <div className="container-custom max-w-5xl py-8 md:py-12">
         <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-5">
@@ -175,7 +214,7 @@ export default async function BestForComboPage({
             blurb="Compare every opportunity type side by side, filter by ticket size, FIRB eligibility and SMSF-suitability, and shortlist what fits your mandate."
             href={browseHref}
             ctaLabel="Open the marketplace"
-            secondary={{ label: "All curated picks", href: "/invest" }}
+            secondary={{ label: "Browse all opportunities", href: "/invest" }}
           />
         </div>
 

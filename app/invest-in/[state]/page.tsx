@@ -7,6 +7,7 @@ import { getInvestCategoryBySlug } from "@/lib/invest-categories";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, UPDATED_LABEL, SITE_NAME } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import InvestListingCard from "@/components/InvestListingCard";
+import { listingUrl } from "@/lib/listing-url";
 import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
@@ -75,9 +76,29 @@ export default async function InvestInStatePage({
     { name: st.name },
   ]);
 
+  // ItemList JSON-LD over the sample listings so the state page is
+  // eligible for rich-list previews in search results.
+  const itemListJsonLd = data.listings.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: `Investment opportunities in ${st.name}`,
+        numberOfItems: data.total,
+        itemListElement: data.listings.slice(0, 20).map((l, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: l.title,
+          url: absoluteUrl(listingUrl(l)),
+        })),
+      }
+    : null;
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {itemListJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
+      )}
 
       <div className="container-custom max-w-5xl py-8 md:py-12">
         <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-5">
