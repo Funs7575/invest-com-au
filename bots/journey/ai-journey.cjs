@@ -23,6 +23,15 @@ const MAX_STEPS = parseInt(process.env.JOURNEY_STEPS || "10", 10);
 const OUT = process.env.JOURNEY_OUT || "/tmp/journey";
 fs.mkdirSync(OUT, { recursive: true });
 
+// ── Viewport: JOURNEY_VIEWPORT=mobile|tablet|desktop (default desktop). Lets the
+// UX/UI pass exercise responsive layouts (nav collapse, tap targets, reflow).
+const VIEWPORTS = {
+  mobile: { width: 390, height: 844, ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1", isMobile: true },
+  tablet: { width: 820, height: 1180, ua: "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1", isMobile: true },
+  desktop: { width: 1366, height: 900, ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36", isMobile: false },
+};
+const VP = VIEWPORTS[(process.env.JOURNEY_VIEWPORT || "desktop").toLowerCase()] || VIEWPORTS.desktop;
+
 // ── Protective firewall (PROTECTED target). Faithful to bots/safety/money-paths.ts.
 function shouldMock(url, method) {
   let path;
