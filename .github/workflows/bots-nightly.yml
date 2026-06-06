@@ -81,6 +81,16 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npm run audit:financial-invariants
+      - name: Cross-tenant RLS fuzzer (authenticated IDOR)
+        if: always()
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          BOTS_RLS_USER_A_EMAIL: ${{ secrets.BOTS_RLS_USER_A_EMAIL }}
+          BOTS_RLS_USER_A_PASSWORD: ${{ secrets.BOTS_RLS_USER_A_PASSWORD }}
+          BOTS_RLS_USER_B_EMAIL: ${{ secrets.BOTS_RLS_USER_B_EMAIL }}
+          BOTS_RLS_USER_B_PASSWORD: ${{ secrets.BOTS_RLS_USER_B_PASSWORD }}
+        run: npm run audit:cross-tenant-rls
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
