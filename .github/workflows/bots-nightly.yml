@@ -46,15 +46,20 @@ jobs:
       - run: npm ci
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
+      - name: Funnel uptime monitor
+        env:
+          BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
+        run: npm run bots:funnel
       - name: Run nightly fleet
+        if: always() # run the broad sweep even if the funnel monitor flagged a step
         env:
           BOTS_BASE_URL: ${{ github.event.inputs.target || 'https://lambent-sawine-17c3dd.netlify.app' }}
         run: npm run bots:nightly
-      - name: Upload report
+      - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bots-nightly-report
-          path: bots/reports/nightly-*.md
+          name: bots-reports
+          path: bots/reports/{nightly,funnel}-*.md
           if-no-files-found: warn
           retention-days: 30
