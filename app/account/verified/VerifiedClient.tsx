@@ -72,7 +72,7 @@ function VerifiedCard({ row, onRemove }: CardProps) {
         type="button"
         onClick={() => { void handleRemove(); }}
         disabled={removing}
-        className="shrink-0 text-xs text-slate-400 hover:text-red-600 disabled:opacity-50 transition-colors"
+        className="shrink-0 text-xs text-slate-400 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {removing ? "Removing…" : "Remove"}
       </button>

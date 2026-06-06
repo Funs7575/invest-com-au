@@ -239,7 +239,7 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
           </Field>
           <div className="sm:col-span-6 flex justify-end">
             <button type="submit" disabled={adding}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50">
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
               {adding ? "Adding…" : "Add property"}
             </button>
           </div>
@@ -284,7 +284,7 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
                     )}
                     <button type="button" onClick={() => void handleDelete(p.id)}
                       disabled={deletingId === p.id}
-                      className="text-xs text-red-700 hover:text-red-900 mt-1 disabled:opacity-50">
+                      className="text-xs text-red-700 hover:text-red-900 mt-1 disabled:opacity-50 disabled:cursor-not-allowed">
                       {deletingId === p.id ? "Removing…" : "Remove"}
                     </button>
                   </div>

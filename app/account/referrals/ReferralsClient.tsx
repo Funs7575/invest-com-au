@@ -309,6 +309,7 @@ export default function ReferralsClient() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
+                <caption className="sr-only">Referral History</caption>
                 <thead>
                   <tr className="border-b border-slate-100">
                     <th className="text-left py-2 text-xs font-semibold text-slate-500 uppercase">Referral</th>

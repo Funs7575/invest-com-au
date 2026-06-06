@@ -159,7 +159,7 @@ export default function InvestorProfileForm({ initial }: Props) {
       {saved && <p className="text-sm text-emerald-700">Saved ✓</p>}
 
       <button type="submit" disabled={submitting}
-        className="w-full px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-lg disabled:opacity-50">
+        className="w-full px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
         {submitting ? "Saving…" : "Save investor profile"}
       </button>
       <p className="text-xs text-slate-500 italic">

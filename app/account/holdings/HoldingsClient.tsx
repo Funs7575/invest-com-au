@@ -391,7 +391,7 @@ export default function HoldingsClient({
             <button
               type="submit"
               disabled={adding}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50"
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {adding ? "Adding…" : "Add holding"}
             </button>
@@ -458,7 +458,7 @@ export default function HoldingsClient({
                     type="button"
                     onClick={() => void handleDelete(h.id)}
                     disabled={deletingId === h.id}
-                    className="text-xs text-red-700 hover:text-red-900 mt-1 disabled:opacity-50"
+                    className="text-xs text-red-700 hover:text-red-900 mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {deletingId === h.id ? "Removing…" : "Remove"}
                   </button>

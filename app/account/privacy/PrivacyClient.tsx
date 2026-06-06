@@ -203,7 +203,7 @@ export default function PrivacyClient({
           type="button"
           onClick={requestExport}
           disabled={exportBusy || !!exportPending}
-          className="px-4 py-2 rounded-lg bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 rounded-lg bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:cursor-not-allowed"
         >
           {exportBusy
             ? "Requesting…"
@@ -256,7 +256,7 @@ export default function PrivacyClient({
               type="button"
               onClick={cancelDeletion}
               disabled={cancelBusy}
-              className="px-4 py-2 rounded-lg bg-white border border-red-300 text-red-800 font-semibold text-sm hover:bg-red-50 disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-white border border-red-300 text-red-800 font-semibold text-sm hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {cancelBusy ? "Cancelling…" : "Cancel deletion"}
             </button>
@@ -277,7 +277,7 @@ export default function PrivacyClient({
             type="button"
             onClick={requestDeletion}
             disabled={deleteBusy}
-            className="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold text-sm hover:bg-red-700 disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold text-sm hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {deleteBusy ? "Scheduling…" : "Delete my account"}
           </button>

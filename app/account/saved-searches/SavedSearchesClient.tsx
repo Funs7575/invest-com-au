@@ -205,7 +205,7 @@ export default function SavedSearchesClient() {
                   <button
                     onClick={() => remove(row.id)}
                     disabled={busy}
-                    className="p-1.5 text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50"
+                    className="p-1.5 text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Delete saved search"
                     title="Delete"
                   >
@@ -229,7 +229,7 @@ export default function SavedSearchesClient() {
                         updateFrequency(row.id, e.target.value as Frequency)
                       }
                       disabled={busy}
-                      className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white disabled:opacity-50"
+                      className="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <option value="off">Off</option>
                       <option value="daily">Daily</option>

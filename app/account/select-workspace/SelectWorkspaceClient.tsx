@@ -91,7 +91,7 @@ export default function SelectWorkspaceClient({ memberships }: Props) {
             type="button"
             onClick={() => void choose(m.kind)}
             disabled={selecting !== null}
-            className={`w-full text-left border-2 ${meta.tone} rounded-xl p-5 transition-colors disabled:opacity-50`}
+            className={`w-full text-left border-2 ${meta.tone} rounded-xl p-5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <div className="flex items-start gap-4">
               <span className="text-3xl shrink-0" aria-hidden>{meta.icon}</span>

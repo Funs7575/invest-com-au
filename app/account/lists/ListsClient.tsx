@@ -93,14 +93,14 @@ function ListCard({
           <button
             onClick={() => { void handleToggle(); }}
             disabled={toggling}
-            className="text-xs text-slate-500 hover:text-violet-700 disabled:opacity-50"
+            className="text-xs text-slate-500 hover:text-violet-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {toggling ? "…" : list.is_public ? "Make private" : "Make public"}
           </button>
           <button
             onClick={() => { void handleDelete(); }}
             disabled={deleting}
-            className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+            className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {deleting ? "Deleting…" : "Delete"}
           </button>
@@ -183,7 +183,7 @@ function AddForm({ onAdd }: { onAdd: (list: ListRow) => void }) {
         <button
           type="submit"
           disabled={busy}
-          className="bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg"
+          className="bg-violet-600 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2 rounded-lg"
         >
           {busy ? "Creating…" : "Create list"}
         </button>

@@ -211,7 +211,7 @@ export default function SavedComparisonsClient() {
                       <button
                         type="submit"
                         disabled={renameLoading || !editName.trim()}
-                        className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
+                        className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {renameLoading ? "Saving..." : "Save"}
                       </button>
@@ -292,7 +292,7 @@ export default function SavedComparisonsClient() {
                     <button
                       onClick={() => handleDelete(comparison.id)}
                       disabled={deleteLoading}
-                      className="px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                      className="px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {deleteLoading ? "Deleting..." : "Delete"}
                     </button>

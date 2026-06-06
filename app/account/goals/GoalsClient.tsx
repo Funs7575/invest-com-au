@@ -167,7 +167,7 @@ export default function GoalsClient({ initialItems }: Props) {
               to upload bank or super statements as a reference for current balances.
             </p>
             <button type="submit" disabled={adding}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 shrink-0">
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
               {adding ? "Adding…" : "Add goal"}
             </button>
           </div>
@@ -262,7 +262,7 @@ function GoalCard({
         type="button"
         onClick={onDelete}
         disabled={deleting}
-        className="text-xs text-red-700 hover:text-red-900 mt-2 disabled:opacity-50"
+        className="text-xs text-red-700 hover:text-red-900 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {deleting ? "Removing…" : "Remove goal"}
       </button>

@@ -162,7 +162,7 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
               <button
                 onClick={handleUpload}
                 disabled={!file || uploading}
-                className="flex-1 bg-blue-600 text-white text-sm font-medium py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                className="flex-1 bg-blue-600 text-white text-sm font-medium py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {uploading ? "Uploading…" : "Upload"}
               </button>

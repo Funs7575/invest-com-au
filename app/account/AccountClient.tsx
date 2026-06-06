@@ -455,7 +455,7 @@ export default function AccountClient() {
               <button
                 onClick={handleManageSubscription}
                 disabled={portalLoading}
-                className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50"
+                className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {portalLoading ? "Opening..." : "Manage Subscription"}
               </button>
@@ -501,7 +501,7 @@ export default function AccountClient() {
                   <button
                     onClick={handleCancelSubscription}
                     disabled={cancelLoading}
-                    className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {cancelLoading ? "Cancelling..." : "Yes, Cancel"}
                   </button>
@@ -528,7 +528,7 @@ export default function AccountClient() {
                   <button
                     onClick={handleRefundSubscription}
                     disabled={refundLoading}
-                    className="px-4 py-2 bg-amber-600 text-slate-900 text-sm font-semibold rounded-xl hover:bg-amber-700 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-amber-600 text-slate-900 text-sm font-semibold rounded-xl hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {refundLoading ? "Processing..." : "Yes, Refund & Cancel"}
                   </button>

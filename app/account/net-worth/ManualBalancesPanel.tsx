@@ -201,7 +201,7 @@ export default function ManualBalancesPanel({
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 py-2 bg-violet-700 hover:bg-violet-800 text-white text-sm font-medium rounded-lg disabled:opacity-50"
+              className="flex-1 py-2 bg-violet-700 hover:bg-violet-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saving ? "Saving…" : "Save balance"}
             </button>
