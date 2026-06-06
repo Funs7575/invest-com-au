@@ -59,6 +59,7 @@ supabase/.temp/
 
 # Bot fleet run artifacts (bots/)
 /bots/.runs/
+/bots/.baselines/
 
 # Scratch verification scripts (local screenshot/inspect helpers)
 scripts/_*.mjs
