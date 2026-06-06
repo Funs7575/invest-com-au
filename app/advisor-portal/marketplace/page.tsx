@@ -167,8 +167,8 @@ export default function MarketplaceSettingsPage() {
         </p>
       </header>
 
-      {err && <p className="text-sm text-red-600">{err}</p>}
-      {savedAt && <p className="text-xs text-emerald-700">Saved.</p>}
+      {err && <p role="alert" className="text-sm text-red-600">{err}</p>}
+      {savedAt && <p role="status" className="text-xs text-emerald-700">Saved.</p>}
 
       {/* Analytics */}
       {analytics && (

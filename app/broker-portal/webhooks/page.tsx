@@ -150,7 +150,7 @@ export default function WebhooksPage() {
             <h2 className="font-bold text-slate-900">Outbound Webhook URL</h2>
             <InfoTip text="We send JSON POST requests to this URL when events occur. Must be a publicly accessible HTTPS endpoint." />
           </div>
-          {webhookSaved && <span className="text-xs text-emerald-600 font-medium">✓ Saved</span>}
+          {webhookSaved && <span role="status" className="text-xs text-emerald-600 font-medium">✓ Saved</span>}
         </div>
         <p className="text-xs text-slate-500 mb-3">
           When a conversion is recorded via postback, we&apos;ll automatically send a webhook notification to this URL.

@@ -360,7 +360,7 @@ export default function BillingClient(props: Props) {
                 {savingSettings ? "Saving…" : "Save"}
               </button>
               {settingsSaved && (
-                <span className="text-xs text-emerald-700 font-semibold">Saved ✓</span>
+                <span role="status" className="text-xs text-emerald-700 font-semibold">Saved ✓</span>
               )}
               {settingsError && (
                 <span className="text-xs text-red-700">{settingsError}</span>

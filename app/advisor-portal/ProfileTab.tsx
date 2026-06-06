@@ -249,7 +249,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
           >
             {savingProfile ? "Saving..." : "Save Changes"}
           </button>
-          {profileSaved && <span className="text-sm text-emerald-600 font-medium">Saved!</span>}
+          {profileSaved && <span role="status" className="text-sm text-emerald-600 font-medium">Saved!</span>}
         </div>
       </div>
 

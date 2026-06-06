@@ -145,7 +145,7 @@ export default function SettingsTab({ advisor }: Props) {
           >
             {savingNotifs ? "Saving..." : "Save Preferences"}
           </button>
-          {notifSaved && <span className="text-sm text-emerald-600 font-medium">Saved!</span>}
+          {notifSaved && <span role="status" className="text-sm text-emerald-600 font-medium">Saved!</span>}
         </div>
       </div>
 
@@ -178,9 +178,9 @@ export default function SettingsTab({ advisor }: Props) {
           >
             {savingPrice ? "Saving..." : "Save"}
           </button>
-          {priceSaved && <span className="text-sm text-emerald-600 font-medium">Saved!</span>}
+          {priceSaved && <span role="status" className="text-sm text-emerald-600 font-medium">Saved!</span>}
         </div>
-        {priceError && <p className="text-xs text-red-600 mt-2">{priceError}</p>}
+        {priceError && <p role="alert" className="text-xs text-red-600 mt-2">{priceError}</p>}
         {sessionPriceDollars && !priceError && (
           <p className="text-xs text-slate-400 mt-2">
             Client pays A${sessionPriceDollars} → you receive ~A${Math.floor(Number(sessionPriceDollars) * 0.85)} after 15% platform fee.
@@ -221,8 +221,8 @@ export default function SettingsTab({ advisor }: Props) {
             {savingSlack ? "Saving…" : "Save"}
           </button>
         </div>
-        {slackError && <p className="text-xs text-red-600 mt-2">{slackError}</p>}
-        {slackSaved && <p className="text-xs text-emerald-600 font-medium mt-2">Slack connected! You&rsquo;ll get a ping for every new lead.</p>}
+        {slackError && <p role="alert" className="text-xs text-red-600 mt-2">{slackError}</p>}
+        {slackSaved && <p role="status" className="text-xs text-emerald-600 font-medium mt-2">Slack connected! You&rsquo;ll get a ping for every new lead.</p>}
         {slackUrl && !slackSaved && !slackError && (
           <p className="text-xs text-slate-500 mt-2">Connected — to disconnect, clear the URL and save.</p>
         )}

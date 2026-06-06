@@ -253,7 +253,7 @@ export default function OpsSettingsClient({
           {pending ? "Saving…" : "Save settings"}
         </button>
         {savedAt && (
-          <p className="text-xs text-emerald-700 font-semibold">
+          <p role="status" className="text-xs text-emerald-700 font-semibold">
             Saved ·{" "}
             {new Date(savedAt).toLocaleTimeString(undefined, {
               hour: "numeric",

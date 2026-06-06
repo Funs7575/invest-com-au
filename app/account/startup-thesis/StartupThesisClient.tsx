@@ -253,7 +253,7 @@ export default function StartupThesisClient({ initial }: Props) {
           {saving ? "Saving…" : "Save thesis"}
         </button>
         {savedAt && !error && (
-          <p className="text-xs text-emerald-600">
+          <p role="status" className="text-xs text-emerald-600">
             Saved at {savedAt.toLocaleTimeString("en-AU", { hour: "2-digit", minute: "2-digit" })}
           </p>
         )}
