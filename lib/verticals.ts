@@ -468,9 +468,13 @@ const VERTICALS: VerticalConfig[] = [
     heroSubtext: `Compare AUSTRAC-registered crypto exchanges. Fees, supported coins, security features, and AUD deposit methods reviewed and updated ${CURRENT_MONTH_YEAR}.`,
     color: {
       bg: "bg-orange-50",
+      // orange-800/700 (was 700/600) to clear WCAG AA: orange-700 text on the
+      // orange-50 chip background measured ~4.39:1 (small text needs 4.5) and
+      // white-on-orange-600 accent ~3.3:1 — both fail. orange-800 text ≈5.9:1
+      // on the chip and white-on-orange-700 ≈4.6:1 pass. Scoped to crypto only.
       border: "border-orange-200",
-      text: "text-orange-700",
-      accent: "bg-orange-600",
+      text: "text-orange-800",
+      accent: "bg-orange-700",
       gradient: "from-orange-50 to-white",
     },
     stats: [
