@@ -155,7 +155,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
               Cancel
             </button>
           </div>
-          {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
+          {error && <p role="alert" className="text-xs text-red-600 mt-2">{error}</p>}
         </div>
       )}
 
@@ -165,7 +165,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
           <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[85vh] overflow-y-auto shadow-2xl">
             <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
               <h3 className="font-bold text-slate-900">Side-by-side comparison</h3>
-              <button onClick={() => setShowCompare(false)} className="text-slate-500 hover:text-slate-900">
+              <button onClick={() => setShowCompare(false)} aria-label="Close comparison" className="text-slate-500 hover:text-slate-900">
                 <Icon name="x" size={18} />
               </button>
             </div>

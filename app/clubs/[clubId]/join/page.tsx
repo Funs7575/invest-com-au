@@ -71,7 +71,7 @@ export default function JoinClubPage({ params }: { params: Promise<{ clubId: str
             className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
           />
         </div>
-        {error && <p className="text-red-600 text-xs">{error}</p>}
+        {error && <p role="alert" className="text-red-600 text-xs">{error}</p>}
         <button
           type="submit"
           disabled={joining || !clubId}

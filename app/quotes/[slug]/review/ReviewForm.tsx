@@ -137,7 +137,7 @@ export default function ReviewForm({ slug, token, advisorName, defaultDisplayNam
         <p className="text-xs text-slate-400 mt-1">{body.length}/2000</p>
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
 
       <button
         type="submit"

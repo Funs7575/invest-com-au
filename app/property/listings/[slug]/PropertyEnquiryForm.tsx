@@ -114,7 +114,7 @@ export default function PropertyEnquiryForm({
       <h3 className="text-base font-bold text-slate-900 mb-1">Enquire About {listingTitle}</h3>
       <p className="text-xs text-slate-400 mb-4">Free, no obligation. {developerName} responds within 24–48 hours.</p>
 
-      {error && <p className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">{error}</p>}
 
       <div className="space-y-3">
         <input

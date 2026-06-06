@@ -56,7 +56,7 @@ export default function BuyerAgentContactForm({
       <h3 className="text-base font-bold text-slate-900 mb-1">Get a Free Consultation</h3>
       <p className="text-xs text-slate-400 mb-4">with {agentName}{agencyName ? ` at ${agencyName}` : ""}. No obligation.</p>
 
-      {error && <p className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">{error}</p>}
 
       <div className="space-y-3">
         <input type="text" placeholder="Full name *" aria-label="Full name" required maxLength={200} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500" />

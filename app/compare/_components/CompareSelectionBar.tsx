@@ -201,7 +201,7 @@ export default function CompareSelectionBar({
                         <div className="text-sm font-bold truncate">{br.name}</div>
                         <div className="text-amber-700 text-xs">{renderStars(br.rating || 0)} {br.rating}</div>
                       </div>
-                      <button onClick={() => onToggleSelected(br.slug)} className="ml-auto text-slate-400 hover:text-red-500 shrink-0">
+                      <button onClick={() => onToggleSelected(br.slug)} aria-label={`Remove ${br.name} from comparison`} className="ml-auto text-slate-400 hover:text-red-500 shrink-0">
                         <Icon name="x" size={14} />
                       </button>
                     </div>

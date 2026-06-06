@@ -222,8 +222,8 @@ export default function BrokerDealsPage() {
             )}
           </div>
           <div className="flex items-center gap-3">
-            {error && <span className="text-xs text-red-600 font-semibold">{error}</span>}
-            {success && <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1"><Icon name="check" size={14} /> Saved</span>}
+            {error && <span role="alert" className="text-xs text-red-600 font-semibold">{error}</span>}
+            {success && <span role="status" className="text-xs text-emerald-600 font-semibold flex items-center gap-1"><Icon name="check" size={14} /> Saved</span>}
             <button
               onClick={handleSave}
               disabled={saving || (enabled && !dealText.trim())}

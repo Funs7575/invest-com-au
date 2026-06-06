@@ -180,7 +180,7 @@ export default function PortfolioClient() {
               {holdings.map((h, idx) => (
                 <div key={idx} className="bg-slate-50 rounded-xl p-4 relative">
                   {holdings.length > 1 && (
-                    <button onClick={() => removeHolding(idx)} className="absolute top-2 right-2 p-1 text-slate-400 hover:text-red-500">
+                    <button onClick={() => removeHolding(idx)} aria-label="Remove holding" className="absolute top-2 right-2 p-1 text-slate-400 hover:text-red-500">
                       <Icon name="x-circle" size={16} />
                     </button>
                   )}

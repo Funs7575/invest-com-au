@@ -83,7 +83,7 @@ export default function AvailabilityWidget({ advisor }: Props) {
           </button>
         ))}
       </div>
-      {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-600 mt-2">{error}</p>}
     </div>
   );
 }

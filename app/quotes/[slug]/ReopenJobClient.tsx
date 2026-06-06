@@ -77,7 +77,7 @@ export default function ReopenJobClient({ slug, ownerEmailFromUrl }: Props) {
           {loading ? "Re-opening…" : "Re-open for 7 days"}
         </button>
       </div>
-      {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-600 mt-2">{error}</p>}
     </div>
   );
 }

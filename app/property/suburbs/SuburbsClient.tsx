@@ -192,7 +192,7 @@ export default function SuburbsClient() {
                 <div className="border border-slate-200 rounded-2xl p-5 lg:sticky lg:top-24">
                   <div className="flex items-center justify-between mb-3">
                     <h2 className="text-lg font-bold text-slate-900">{selected.suburb}, {selected.state}</h2>
-                    <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-slate-600">
+                    <button onClick={() => setSelected(null)} aria-label="Close suburb detail" className="text-slate-400 hover:text-slate-600">
                       <Icon name="x-circle" size={18} />
                     </button>
                   </div>

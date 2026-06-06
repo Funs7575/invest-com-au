@@ -119,7 +119,7 @@ export default function AdvisorPortalLogin(_props: Props) {
                   : "Log In"}
               </button>
 
-              {error && <p className="text-xs text-red-600 mt-2 text-center">{error}</p>}
+              {error && <p role="alert" className="text-xs text-red-600 mt-2 text-center">{error}</p>}
 
               <div className="mt-4 pt-3 border-t border-slate-100 text-center space-y-2">
                 {mode === "magic" ? (
