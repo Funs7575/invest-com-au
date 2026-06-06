@@ -155,24 +155,6 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 - **File**: `components/VerifiedAdvisorBadge.tsx` + profile page
 - **Effort**: Medium (1–2 days)
 
-**[ADV-024] Advisor portal: mobile "More…" includes route-level links (Briefs/Auctions/Marketplace/Teams)**
-- **Problem**: Route-level nav links (Briefs, Auctions, Marketplace, Expert Teams) are hidden on mobile (`hidden sm:flex`). Mobile advisors can't reach these pages from the nav.
-- **Fix**: Include these 4 links in the mobile "More…" dropdown alongside the collapsed SPA tabs.
-- **File**: `app/advisor-portal/page.tsx` — mobile nav More dropdown
-- **Effort**: Trivial (15 min)
-
-**[ADV-025] Find-advisor quiz: step-back clears localStorage progress for empty steps**
-- **Problem**: When a user goes back from step 2 to step 1 and picks a different intent, the localStorage progress still holds the old intent on reload.
-- **Fix**: Update localStorage on each `update()` call, not just on step change, so the saved progress always reflects the current state.
-- **File**: `app/find-advisor/page.tsx` — `update()` callback + localStorage sync
-- **Effort**: Trivial (10 min)
-
-**[ADV-026] Article detail: share row at bottom of article body (not just top)**
-- **Problem**: `ArticleShareRow` only appears near the top. Users who finish reading a long article have no share option at the bottom without scrolling back up.
-- **Fix**: Add a second `<ArticleShareRow>` below the article body content.
-- **File**: `app/article/[slug]/page.tsx`
-- **Effort**: Trivial (5 min)
-
 ---
 
 ## Resolved / Shipped
@@ -222,3 +204,9 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 **[ADV-022]** For-advisors urgency signal — pulsing "X advisors joined this week" counter near final CTA. `app/for-advisors/page.tsx`
 
 **[ADV-023]** Credential verification display — "Verified" chip in advisor profile now shows AFSL number inline and expands to reveal full licence details on click. `app/advisor/[slug]/AdvisorProfileClient.tsx`
+
+**[ADV-024]** Advisor portal mobile More dropdown — Briefs, Auctions, Marketplace, Expert Teams links added to the mobile "More…" dropdown alongside collapsed SPA tabs. `app/advisor-portal/page.tsx`
+
+**[ADV-025]** Find-advisor quiz localStorage sync — `update()` callback now syncs localStorage on every call so step-back + intent change is always reflected on reload. `app/find-advisor/page.tsx`
+
+**[ADV-026]** Article detail bottom share row — second `<ArticleShareRow>` added below the article body so readers don't need to scroll back up to share. `app/article/[slug]/page.tsx`

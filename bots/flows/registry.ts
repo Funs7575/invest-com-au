@@ -29,6 +29,7 @@ import { FIND_ADVISOR_QUIZ_FLOW } from "./find-advisor-quiz";
 import { ADVISOR_DIRECTORY_DEEP_FLOW } from "./advisor-directory-deep";
 import { ADVISOR_TEAMS_PUBLIC_FLOW } from "./advisor-teams-public";
 import { ADVISOR_PORTAL_DEEP_FLOW } from "./advisor-portal-deep";
+import { ADVISOR_JOURNEY_UX_FLOW } from "./advisor-journey-ux";
 
 export interface FlowPersona {
   /** Persona/test name — unique across the whole fleet. */
@@ -142,5 +143,10 @@ export const COVERAGE_FLOW_PERSONAS: FlowPersona[] = [
     name: "advisor-portal-deep",
     description: "Deep portal public smoke: apply/signup, pricing tiers, terms, advisor guides, portal health JSON.",
     flow: ADVISOR_PORTAL_DEEP_FLOW,
+  },
+  {
+    name: "advisor-journey-ux",
+    description: "Full pre-auth advisor journey UX: marketing page, login form, team creation wizard, mobile nav More dropdown, find-advisor quiz, health.",
+    flow: ADVISOR_JOURNEY_UX_FLOW,
   },
 ];
