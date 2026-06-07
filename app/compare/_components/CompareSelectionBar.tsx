@@ -114,6 +114,7 @@ export default function CompareSelectionBar({
                 <button
                   type="submit"
                   disabled={alertStatus === "sending"}
+                  aria-busy={alertStatus === "sending"}
                   className="shrink-0 px-3 py-1.5 bg-amber-500 text-slate-900 text-xs font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {alertStatus === "sending" ? "Saving…" : "Alert me"}

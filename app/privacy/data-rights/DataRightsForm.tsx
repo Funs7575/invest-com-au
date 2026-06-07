@@ -127,6 +127,7 @@ export default function DataRightsForm() {
             <button
               type="submit"
               disabled={busy}
+              aria-busy={busy}
               className="px-4 py-2 rounded bg-red-600 text-white font-semibold text-sm hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {busy ? "Sending…" : "Yes, delete my data"}
@@ -145,6 +146,7 @@ export default function DataRightsForm() {
         <button
           type="submit"
           disabled={busy}
+          aria-busy={busy}
           className="w-full py-2 rounded bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {busy ? "Sending…" : `Send ${type === "export" ? "export" : "deletion"} confirmation link`}
