@@ -149,15 +149,15 @@ export default function AdminPlacementsPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Slug *</label>
-                <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} required
+                <label htmlFor="mpl-slug" className="block text-sm font-medium text-slate-700 mb-1">Slug *</label>
+                <input id="mpl-slug" type="text" value={slug} onChange={(e) => setSlug(e.target.value)} required
                   disabled={!!editing}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 disabled:bg-slate-50"
                   placeholder="e.g. compare-top" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Display Name *</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required
+                <label htmlFor="mpl-name" className="block text-sm font-medium text-slate-700 mb-1">Display Name *</label>
+                <input id="mpl-name" type="text" value={name} onChange={(e) => setName(e.target.value)} required
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30"
                   placeholder="e.g. Compare Page Top" />
               </div>
@@ -165,14 +165,14 @@ export default function AdminPlacementsPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Page *</label>
-                <input type="text" value={page} onChange={(e) => setPage(e.target.value)} required
+                <label htmlFor="mpl-page" className="block text-sm font-medium text-slate-700 mb-1">Page *</label>
+                <input id="mpl-page" type="text" value={page} onChange={(e) => setPage(e.target.value)} required
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30"
                   placeholder="e.g. /compare, /homepage, /quiz" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Position</label>
-                <input type="text" value={position} onChange={(e) => setPosition(e.target.value)}
+                <label htmlFor="mpl-position" className="block text-sm font-medium text-slate-700 mb-1">Position</label>
+                <input id="mpl-position" type="text" value={position} onChange={(e) => setPosition(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30"
                   placeholder="e.g. top, sidebar, inline" />
               </div>
@@ -180,8 +180,8 @@ export default function AdminPlacementsPage() {
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Inventory Type</label>
-                <select value={inventoryType} onChange={(e) => setInventoryType(e.target.value as "featured" | "cpc")}
+                <label htmlFor="mpl-inventory-type" className="block text-sm font-medium text-slate-700 mb-1">Inventory Type</label>
+                <select id="mpl-inventory-type" value={inventoryType} onChange={(e) => setInventoryType(e.target.value as "featured" | "cpc")}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white">
                   <option value="cpc">CPC (Cost per Click)</option>
                   <option value="featured">Featured (Flat Rate)</option>

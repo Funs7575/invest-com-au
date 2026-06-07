@@ -332,15 +332,15 @@ export default function FinanceDashboardPage() {
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Type</label>
-                  <select value={editing.type} onChange={e => setEditing({ ...editing, type: e.target.value as "income" | "expense", category: e.target.value === "income" ? "advisor_credits" : "hosting" })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <label htmlFor="fin-type" className="block text-xs font-semibold text-slate-600 mb-1">Type</label>
+                  <select id="fin-type" value={editing.type} onChange={e => setEditing({ ...editing, type: e.target.value as "income" | "expense", category: e.target.value === "income" ? "advisor_credits" : "hosting" })} className="w-full px-3 py-2 border rounded-lg text-sm">
                     <option value="income">Income</option>
                     <option value="expense">Expense</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Category</label>
-                  <select value={editing.category} onChange={e => setEditing({ ...editing, category: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <label htmlFor="fin-category" className="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+                  <select id="fin-category" value={editing.category} onChange={e => setEditing({ ...editing, category: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
                     {(editing.type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map(c => (
                       <option key={c.key} value={c.key}>{c.label}</option>
                     ))}
@@ -348,27 +348,27 @@ export default function FinanceDashboardPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
-                <input value={editing.description || ""} onChange={e => setEditing({ ...editing, description: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Vercel Pro monthly" />
+                <label htmlFor="fin-description" className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
+                <input id="fin-description" value={editing.description || ""} onChange={e => setEditing({ ...editing, description: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Vercel Pro monthly" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Amount ($)</label>
-                  <input type="number" step="0.01" value={amountInput} onChange={e => { setAmountInput(e.target.value); setEditing({ ...editing, amount_cents: Math.round(parseFloat(e.target.value || "0") * 100) }); }} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="49.00" />
+                  <label htmlFor="fin-amount" className="block text-xs font-semibold text-slate-600 mb-1">Amount ($)</label>
+                  <input id="fin-amount" type="number" step="0.01" value={amountInput} onChange={e => { setAmountInput(e.target.value); setEditing({ ...editing, amount_cents: Math.round(parseFloat(e.target.value || "0") * 100) }); }} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="49.00" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Date</label>
-                  <input type="date" value={editing.date?.slice(0, 10) || ""} onChange={e => setEditing({ ...editing, date: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  <label htmlFor="fin-date" className="block text-xs font-semibold text-slate-600 mb-1">Date</label>
+                  <input id="fin-date" type="date" value={editing.date?.slice(0, 10) || ""} onChange={e => setEditing({ ...editing, date: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Counterparty</label>
-                  <input value={editing.counterparty || ""} onChange={e => setEditing({ ...editing, counterparty: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Vercel, Stripe" />
+                  <label htmlFor="fin-counterparty" className="block text-xs font-semibold text-slate-600 mb-1">Counterparty</label>
+                  <input id="fin-counterparty" value={editing.counterparty || ""} onChange={e => setEditing({ ...editing, counterparty: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Vercel, Stripe" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Reference</label>
-                  <input value={editing.reference || ""} onChange={e => setEditing({ ...editing, reference: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Invoice #, Stripe ID" />
+                  <label htmlFor="fin-reference" className="block text-xs font-semibold text-slate-600 mb-1">Reference</label>
+                  <input id="fin-reference" value={editing.reference || ""} onChange={e => setEditing({ ...editing, reference: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Invoice #, Stripe ID" />
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -385,8 +385,8 @@ export default function FinanceDashboardPage() {
                 )}
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Notes</label>
-                <textarea value={editing.notes || ""} onChange={e => setEditing({ ...editing, notes: e.target.value })} rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                <label htmlFor="fin-notes" className="block text-xs font-semibold text-slate-600 mb-1">Notes</label>
+                <textarea id="fin-notes" value={editing.notes || ""} onChange={e => setEditing({ ...editing, notes: e.target.value })} rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" />
               </div>
             </div>
             <div className="flex gap-2 mt-5">

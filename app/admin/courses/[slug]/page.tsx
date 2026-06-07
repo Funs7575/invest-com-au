@@ -71,10 +71,6 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
     content: "",
   });
 
-  useEffect(() => {
-    fetchData();
-  }, [slug]);
-
   const fetchData = async () => {
     const supabase = createClient();
 
@@ -99,6 +95,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
     setLessons((lessonData as LessonRow[]) || []);
     setLoading(false);
   };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { void fetchData(); }, [slug]);
 
   const autoSlug = (title: string) =>
     title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -273,8 +272,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Title</label>
+              <label htmlFor="cs-title" className="block text-xs font-semibold text-slate-700 mb-1">Title</label>
               <input
+                id="cs-title"
                 type="text"
                 value={courseForm.title || ""}
                 onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
@@ -282,8 +282,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
+              <label htmlFor="cs-status" className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
               <select
+                id="cs-status"
                 value={courseForm.status || "draft"}
                 onChange={(e) => setCourseForm({ ...courseForm, status: e.target.value })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
@@ -296,8 +297,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Subtitle</label>
+            <label htmlFor="cs-subtitle" className="block text-xs font-semibold text-slate-700 mb-1">Subtitle</label>
             <input
+              id="cs-subtitle"
               type="text"
               value={courseForm.subtitle || ""}
               onChange={(e) => setCourseForm({ ...courseForm, subtitle: e.target.value })}
@@ -306,8 +308,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Description</label>
+            <label htmlFor="cs-description" className="block text-xs font-semibold text-slate-700 mb-1">Description</label>
             <textarea
+              id="cs-description"
               value={courseForm.description || ""}
               onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })}
               rows={3}
@@ -317,8 +320,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
 
           <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Price (AUD)</label>
+              <label htmlFor="cs-price" className="block text-xs font-semibold text-slate-700 mb-1">Price (AUD)</label>
               <input
+                id="cs-price"
                 type="number"
                 step="0.01"
                 value={courseForm.price ? (courseForm.price / 100).toFixed(2) : "0"}
@@ -328,8 +332,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Pro Price (AUD)</label>
+              <label htmlFor="cs-pro-price" className="block text-xs font-semibold text-slate-700 mb-1">Pro Price (AUD)</label>
               <input
+                id="cs-pro-price"
                 type="number"
                 step="0.01"
                 value={courseForm.pro_price ? (courseForm.pro_price / 100).toFixed(2) : ""}
@@ -339,8 +344,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Level</label>
+              <label htmlFor="cs-level" className="block text-xs font-semibold text-slate-700 mb-1">Level</label>
               <select
+                id="cs-level"
                 value={courseForm.level || "beginner"}
                 onChange={(e) => setCourseForm({ ...courseForm, level: e.target.value })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
@@ -354,8 +360,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Stripe Price ID</label>
+              <label htmlFor="cs-stripe-price-id" className="block text-xs font-semibold text-slate-700 mb-1">Stripe Price ID</label>
               <input
+                id="cs-stripe-price-id"
                 type="text"
                 value={courseForm.stripe_price_id || ""}
                 onChange={(e) => setCourseForm({ ...courseForm, stripe_price_id: e.target.value })}
@@ -363,8 +370,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Stripe Pro Price ID</label>
+              <label htmlFor="cs-stripe-pro-price-id" className="block text-xs font-semibold text-slate-700 mb-1">Stripe Pro Price ID</label>
               <input
+                id="cs-stripe-pro-price-id"
                 type="text"
                 value={courseForm.stripe_pro_price_id || ""}
                 onChange={(e) => setCourseForm({ ...courseForm, stripe_pro_price_id: e.target.value })}
@@ -375,8 +383,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
 
           <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Estimated Hours</label>
+              <label htmlFor="cs-estimated-hours" className="block text-xs font-semibold text-slate-700 mb-1">Estimated Hours</label>
               <input
+                id="cs-estimated-hours"
                 type="number"
                 step="0.5"
                 value={courseForm.estimated_hours || ""}
@@ -386,8 +395,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Revenue Share %</label>
+              <label htmlFor="cs-rev-share" className="block text-xs font-semibold text-slate-700 mb-1">Revenue Share %</label>
               <input
+                id="cs-rev-share"
                 type="number"
                 min="0"
                 max="100"
@@ -397,8 +407,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Guarantee</label>
+              <label htmlFor="cs-guarantee" className="block text-xs font-semibold text-slate-700 mb-1">Guarantee</label>
               <input
+                id="cs-guarantee"
                 type="text"
                 value={courseForm.guarantee || ""}
                 onChange={(e) => setCourseForm({ ...courseForm, guarantee: e.target.value })}
@@ -417,8 +428,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               Featured
             </label>
             <div>
-              <label className="text-xs font-semibold text-slate-700 mr-2">Sort Order</label>
+              <label htmlFor="cs-sort-order" className="text-xs font-semibold text-slate-700 mr-2">Sort Order</label>
               <input
+                id="cs-sort-order"
                 type="number"
                 value={courseForm.sort_order || 0}
                 onChange={(e) => setCourseForm({ ...courseForm, sort_order: parseInt(e.target.value) || 0 })}
@@ -457,8 +469,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Title *</label>
+              <label htmlFor="lf-title" className="block text-xs font-semibold text-slate-700 mb-1">Title *</label>
               <input
+                id="lf-title"
                 type="text"
                 value={lessonForm.title}
                 onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value, slug: autoSlug(e.target.value) })}
@@ -467,8 +480,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Slug</label>
+              <label htmlFor="lf-slug" className="block text-xs font-semibold text-slate-700 mb-1">Slug</label>
               <input
+                id="lf-slug"
                 type="text"
                 value={lessonForm.slug}
                 onChange={(e) => setLessonForm({ ...lessonForm, slug: e.target.value })}
@@ -479,8 +493,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
 
           <div className="grid md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Module #</label>
+              <label htmlFor="lf-module-index" className="block text-xs font-semibold text-slate-700 mb-1">Module #</label>
               <input
+                id="lf-module-index"
                 type="number"
                 min="1"
                 value={lessonForm.module_index}
@@ -489,8 +504,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Module Title</label>
+              <label htmlFor="lf-module-title" className="block text-xs font-semibold text-slate-700 mb-1">Module Title</label>
               <input
+                id="lf-module-title"
                 type="text"
                 value={lessonForm.module_title}
                 onChange={(e) => setLessonForm({ ...lessonForm, module_title: e.target.value })}
@@ -498,8 +514,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Lesson #</label>
+              <label htmlFor="lf-lesson-index" className="block text-xs font-semibold text-slate-700 mb-1">Lesson #</label>
               <input
+                id="lf-lesson-index"
                 type="number"
                 min="1"
                 value={lessonForm.lesson_index}
@@ -508,8 +525,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Duration (min)</label>
+              <label htmlFor="lf-duration" className="block text-xs font-semibold text-slate-700 mb-1">Duration (min)</label>
               <input
+                id="lf-duration"
                 type="number"
                 value={lessonForm.duration_minutes}
                 onChange={(e) => setLessonForm({ ...lessonForm, duration_minutes: e.target.value })}
@@ -519,8 +537,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Video URL (YouTube / Vimeo)</label>
+            <label htmlFor="lf-video-url" className="block text-xs font-semibold text-slate-700 mb-1">Video URL (YouTube / Vimeo)</label>
             <input
+              id="lf-video-url"
               type="url"
               value={lessonForm.video_url}
               onChange={(e) => setLessonForm({ ...lessonForm, video_url: e.target.value })}
@@ -530,8 +549,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Content (HTML)</label>
+            <label htmlFor="lf-content" className="block text-xs font-semibold text-slate-700 mb-1">Content (HTML)</label>
             <textarea
+              id="lf-content"
               value={lessonForm.content}
               onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
               rows={6}
@@ -639,8 +659,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                     <div className="space-y-3">
                       <div className="grid md:grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">Title</label>
+                          <label htmlFor="el-title" className="block text-xs font-semibold text-slate-700 mb-1">Title</label>
                           <input
+                            id="el-title"
                             type="text"
                             value={lessonForm.title}
                             onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
@@ -648,8 +669,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">Video URL</label>
+                          <label htmlFor="el-video-url" className="block text-xs font-semibold text-slate-700 mb-1">Video URL</label>
                           <input
+                            id="el-video-url"
                             type="url"
                             value={lessonForm.video_url}
                             onChange={(e) => setLessonForm({ ...lessonForm, video_url: e.target.value })}
@@ -660,8 +682,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                       </div>
                       <div className="grid md:grid-cols-4 gap-3">
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">Module #</label>
+                          <label htmlFor="el-module-index" className="block text-xs font-semibold text-slate-700 mb-1">Module #</label>
                           <input
+                            id="el-module-index"
                             type="number"
                             min="1"
                             value={lessonForm.module_index}
@@ -670,8 +693,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">Module Title</label>
+                          <label htmlFor="el-module-title" className="block text-xs font-semibold text-slate-700 mb-1">Module Title</label>
                           <input
+                            id="el-module-title"
                             type="text"
                             value={lessonForm.module_title}
                             onChange={(e) => setLessonForm({ ...lessonForm, module_title: e.target.value })}
@@ -679,8 +703,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">Lesson #</label>
+                          <label htmlFor="el-lesson-index" className="block text-xs font-semibold text-slate-700 mb-1">Lesson #</label>
                           <input
+                            id="el-lesson-index"
                             type="number"
                             min="1"
                             value={lessonForm.lesson_index}
@@ -700,8 +725,9 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                         </div>
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Content (HTML)</label>
+                        <label htmlFor="el-content" className="block text-xs font-semibold text-slate-700 mb-1">Content (HTML)</label>
                         <textarea
+                          id="el-content"
                           value={lessonForm.content}
                           onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
                           rows={4}

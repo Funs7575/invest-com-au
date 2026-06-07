@@ -221,8 +221,9 @@ export default function PlacementExperimentsEditor() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600">Status</label>
+          <label htmlFor="pe-filter-status" className="text-sm text-slate-600">Status</label>
           <select
+            id="pe-filter-status"
             value={filter}
             onChange={(e) =>
               setFilter(e.target.value as "" | PlacementExperimentStatus)

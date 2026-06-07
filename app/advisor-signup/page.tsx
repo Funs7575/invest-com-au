@@ -478,7 +478,7 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Specialties</label>
+                <p className={labelClass}>Specialties</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-1">
                   {SPECIALTY_OPTIONS.map((s) => (
                     <label

@@ -270,10 +270,11 @@ function QueueCard({
 
       {rejecting ? (
         <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-3">
-          <label className="block text-xs font-semibold text-red-800 mb-1">
+          <label htmlFor="pq-reject-reason" className="block text-xs font-semibold text-red-800 mb-1">
             Rejection reason (sent to applicant)
           </label>
           <textarea
+            id="pq-reject-reason"
             value={rejectReason}
             onChange={(e) => setRejectReason(e.target.value)}
             rows={2}

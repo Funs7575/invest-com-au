@@ -309,7 +309,7 @@ export default function QuizQuestionsPage() {
             {/* Options Editor */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-medium text-slate-600">Options</label>
+                <span className="text-sm font-medium text-slate-600">Options</span>
                 <button
                   onClick={handleAddOption}
                   className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-300 transition-colors border border-slate-300"

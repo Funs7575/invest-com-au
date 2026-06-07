@@ -119,8 +119,9 @@ export default function AlertsEditor() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600">Country</label>
+          <label htmlFor="cra-filter-country" className="text-sm text-slate-600">Country</label>
           <select
+            id="cra-filter-country"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="text-sm border rounded px-2 py-1"

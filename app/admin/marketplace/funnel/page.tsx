@@ -170,6 +170,7 @@ export default function FunnelAnalyticsPage() {
 
   // Core data
   const [events, setEvents] = useState<CampaignEvent[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [dailyStats, setDailyStats] = useState<DailyStat[]>([]);
@@ -361,6 +362,7 @@ export default function FunnelAnalyticsPage() {
       setBrokerA(brokerFunnels[0].broker_slug);
       if (brokerFunnels.length > 1) setBrokerB(brokerFunnels[1].broker_slug);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brokerFunnels.length]);
 
   /* ─────────── Sort helper ─────────── */
@@ -908,8 +910,9 @@ export default function FunnelAnalyticsPage() {
                 <div className="bg-white border border-slate-200 rounded-lg p-4">
                   <div className="flex flex-col sm:flex-row sm:items-end gap-4">
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-slate-500 mb-1">Broker A</label>
+                      <label htmlFor="mpf-broker-a" className="block text-xs font-medium text-slate-500 mb-1">Broker A</label>
                       <select
+                        id="mpf-broker-a"
                         value={brokerA}
                         onChange={(e) => setBrokerA(e.target.value)}
                         className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
@@ -924,8 +927,9 @@ export default function FunnelAnalyticsPage() {
                     </div>
                     <div className="text-xs text-slate-400 font-medium pb-2.5">vs</div>
                     <div className="flex-1">
-                      <label className="block text-xs font-medium text-slate-500 mb-1">Broker B</label>
+                      <label htmlFor="mpf-broker-b" className="block text-xs font-medium text-slate-500 mb-1">Broker B</label>
                       <select
+                        id="mpf-broker-b"
                         value={brokerB}
                         onChange={(e) => setBrokerB(e.target.value)}
                         className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"

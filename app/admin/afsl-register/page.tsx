@@ -88,10 +88,11 @@ afsl_number,licensee_name,status,address,effective_date,cancelled_date
 
         <section className="rounded-xl border border-slate-200 bg-white p-5 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-2">
+            <label htmlFor="afsl-upload-csv" className="block text-sm font-semibold text-slate-900 mb-2">
               Upload CSV
             </label>
             <input
+              id="afsl-upload-csv"
               type="file"
               accept=".csv,text/csv"
               onChange={(e) => {

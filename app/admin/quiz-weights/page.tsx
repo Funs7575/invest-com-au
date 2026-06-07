@@ -55,7 +55,9 @@ export default function QuizWeightsPage() {
   const [simResults, setSimResults] = useState<SimResult[]>([]);
 
   useEffect(() => {
+     
     fetchWeights();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchWeights() {
@@ -201,8 +203,9 @@ export default function QuizWeightsPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
               {WEIGHT_FIELDS.map((f) => (
                 <div key={f.key}>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">{f.label} (0-3)</label>
+                  <label htmlFor={`qw-sim-${f.key}`} className="block text-xs font-medium text-slate-500 mb-1">{f.label} (0-3)</label>
                   <input
+                    id={`qw-sim-${f.key}`}
                     type="number"
                     min="0"
                     max="3"

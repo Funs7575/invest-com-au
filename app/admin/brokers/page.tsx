@@ -46,6 +46,7 @@ export default function AdminBrokersPage() {
     if (data) setBrokers(data as Broker[]);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
 
   const handleSave = async (formData: FormData, feeChangelog: FeeChangeEntry[]) => {
@@ -395,8 +396,8 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
         <Field label="US Fee Value ($)" name="us_fee_value" defaultValue={broker.us_fee_value?.toString()} type="number" step="0.01" hint="Numeric value in dollars used for calculator comparisons." />
         <Field label="FX Rate (%)" name="fx_rate" defaultValue={broker.fx_rate?.toString()} type="number" step="0.001" hint="Currency conversion fee as a percentage, e.g. 0.70" />
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Inactivity Fee <InfoTip text="Monthly charge if the account has no trades — important for comparison." /></label>
-          <input name="inactivity_fee" type="text" defaultValue={broker.inactivity_fee || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+          <label htmlFor="inactivity_fee" className="block text-xs font-medium text-slate-500 mb-1">Inactivity Fee <InfoTip text="Monthly charge if the account has no trades — important for comparison." /></label>
+          <input id="inactivity_fee" name="inactivity_fee" type="text" defaultValue={broker.inactivity_fee || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -455,8 +456,9 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
           <div className="border border-slate-500 rounded-lg p-3 space-y-3">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Date</label>
+                <label htmlFor="fh-date" className="block text-xs font-medium text-slate-500 mb-1">Date</label>
                 <input
+                  id="fh-date"
                   type="date"
                   value={newEntry.date}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, date: e.target.value }))}
@@ -464,8 +466,9 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Field</label>
+                <label htmlFor="fh-field" className="block text-xs font-medium text-slate-500 mb-1">Field</label>
                 <select
+                  id="fh-field"
                   value={newEntry.field}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, field: e.target.value }))}
                   className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -482,8 +485,9 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Old Value</label>
+                <label htmlFor="fh-old-value" className="block text-xs font-medium text-slate-500 mb-1">Old Value</label>
                 <input
+                  id="fh-old-value"
                   type="text"
                   value={newEntry.old_value}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, old_value: e.target.value }))}
@@ -492,8 +496,9 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">New Value</label>
+                <label htmlFor="fh-new-value" className="block text-xs font-medium text-slate-500 mb-1">New Value</label>
                 <input
+                  id="fh-new-value"
                   type="text"
                   value={newEntry.new_value}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, new_value: e.target.value }))}
@@ -542,8 +547,8 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Tier</label>
-            <select name="sponsorship_tier" defaultValue={broker.sponsorship_tier || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+            <label htmlFor="sponsorship_tier" className="block text-xs font-medium text-slate-500 mb-1">Tier</label>
+            <select id="sponsorship_tier" name="sponsorship_tier" defaultValue={broker.sponsorship_tier || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
               <option value="">None</option>
               <option value="featured_partner">Featured Partner ($1,500/mo)</option>
               <option value="editors_pick">Editor&apos;s Pick ($800/mo)</option>
@@ -611,8 +616,8 @@ function SectionHeading({ title, badge, badgeColor, count }: { title: string; ba
 function Field({ label, name, defaultValue, required, type = "text", placeholder, hint, ...props }: { label: string; name: string; defaultValue?: string; required?: boolean; type?: string; placeholder?: string; hint?: string; [key: string]: unknown; }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
-      <input name={name} type={type} defaultValue={defaultValue || ""} required={required} placeholder={placeholder} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" {...props} />
+      <label htmlFor={name} className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
+      <input id={name} name={name} type={type} defaultValue={defaultValue || ""} required={required} placeholder={placeholder} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" {...props} />
       {hint && <p className="text-xs text-slate-400 mt-0.5">{hint}</p>}
     </div>
   );
@@ -621,8 +626,8 @@ function Field({ label, name, defaultValue, required, type = "text", placeholder
 function TextArea({ label, name, defaultValue, rows = 3 }: { label: string; name: string; defaultValue?: string; rows?: number; }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
-      <textarea name={name} defaultValue={defaultValue || ""} rows={rows} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+      <label htmlFor={name} className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
+      <textarea id={name} name={name} defaultValue={defaultValue || ""} rows={rows} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
     </div>
   );
 }
