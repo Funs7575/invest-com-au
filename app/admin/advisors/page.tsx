@@ -182,56 +182,56 @@ export default function AdminAdvisorsPage() {
               <h2 className="text-lg font-bold mb-4">{editing.id ? "Edit Advisor" : "Add New Advisor"}</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Name *</label>
-                  <input value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value, ...(!editing.id ? { slug: autoSlug(e.target.value) } : {}) })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sarah Chen" />
+                  <label htmlFor="adv-name" className="block text-xs font-semibold text-slate-600 mb-1">Name *</label>
+                  <input id="adv-name" value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value, ...(!editing.id ? { slug: autoSlug(e.target.value) } : {}) })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sarah Chen" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Slug *</label>
-                  <input value={editing.slug || ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah-chen" />
+                  <label htmlFor="adv-slug" className="block text-xs font-semibold text-slate-600 mb-1">Slug *</label>
+                  <input id="adv-slug" value={editing.slug || ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah-chen" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
-                  <input value={editing.firm_name || ""} onChange={(e) => setEditing({ ...editing, firm_name: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Chen Advisory" />
+                  <label htmlFor="adv-firm-name" className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
+                  <input id="adv-firm-name" value={editing.firm_name || ""} onChange={(e) => setEditing({ ...editing, firm_name: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Chen Advisory" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Type *</label>
-                  <select value={editing.type || "smsf_accountant"} onChange={(e) => setEditing({ ...editing, type: e.target.value as Professional["type"] })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <label htmlFor="adv-type" className="block text-xs font-semibold text-slate-600 mb-1">Type *</label>
+                  <select id="adv-type" value={editing.type || "smsf_accountant"} onChange={(e) => setEditing({ ...editing, type: e.target.value as Professional["type"] })} className="w-full px-3 py-2 border rounded-lg text-sm">
                     {Object.entries(PROFESSIONAL_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
-                  <input type="email" value={editing.email || ""} onChange={(e) => setEditing({ ...editing, email: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
+                  <label htmlFor="adv-email" className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+                  <input id="adv-email" type="email" value={editing.email || ""} onChange={(e) => setEditing({ ...editing, email: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
-                  <input value={editing.phone || ""} onChange={(e) => setEditing({ ...editing, phone: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="02 1234 5678" />
+                  <label htmlFor="adv-phone" className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
+                  <input id="adv-phone" value={editing.phone || ""} onChange={(e) => setEditing({ ...editing, phone: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="02 1234 5678" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Location (Display)</label>
-                  <input value={editing.location_display || ""} onChange={(e) => setEditing({ ...editing, location_display: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sydney CBD, NSW" />
+                  <label htmlFor="adv-location" className="block text-xs font-semibold text-slate-600 mb-1">Location (Display)</label>
+                  <input id="adv-location" value={editing.location_display || ""} onChange={(e) => setEditing({ ...editing, location_display: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sydney CBD, NSW" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">State</label>
-                  <select value={editing.location_state || ""} onChange={(e) => setEditing({ ...editing, location_state: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
+                  <label htmlFor="adv-state" className="block text-xs font-semibold text-slate-600 mb-1">State</label>
+                  <select id="adv-state" value={editing.location_state || ""} onChange={(e) => setEditing({ ...editing, location_state: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm">
                     <option value="">Select state</option>
                     {["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"].map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">AFSL / Registration #</label>
-                  <input value={editing.afsl_number || ""} onChange={(e) => setEditing({ ...editing, afsl_number: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="AFSL 234567" />
+                  <label htmlFor="adv-afsl" className="block text-xs font-semibold text-slate-600 mb-1">AFSL / Registration #</label>
+                  <input id="adv-afsl" value={editing.afsl_number || ""} onChange={(e) => setEditing({ ...editing, afsl_number: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="AFSL 234567" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Fee Description</label>
-                  <input value={editing.fee_description || ""} onChange={(e) => setEditing({ ...editing, fee_description: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="From $2,200/yr" />
+                  <label htmlFor="adv-fee-desc" className="block text-xs font-semibold text-slate-600 mb-1">Fee Description</label>
+                  <input id="adv-fee-desc" value={editing.fee_description || ""} onChange={(e) => setEditing({ ...editing, fee_description: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="From $2,200/yr" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
-                  <input value={editing.website || ""} onChange={(e) => setEditing({ ...editing, website: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://..." />
+                  <label htmlFor="adv-website" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
+                  <input id="adv-website" value={editing.website || ""} onChange={(e) => setEditing({ ...editing, website: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Photo</label>
+                  <p className="block text-xs font-semibold text-slate-600 mb-1">Photo</p>
                   <div className="flex items-center gap-3">
                     {editing.photo_url && (
                       <Image src={editing.photo_url} alt="Preview" width={48} height={48} className="w-12 h-12 rounded-full object-cover border border-slate-200" />
@@ -268,25 +268,25 @@ export default function AdminAdvisorsPage() {
                 </div>
               </div>
               <div className="mt-4">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Bio</label>
-                <textarea value={editing.bio || ""} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Professional bio..." />
+                <label htmlFor="adv-bio" className="block text-xs font-semibold text-slate-600 mb-1">Bio</label>
+                <textarea id="adv-bio" value={editing.bio || ""} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Professional bio..." />
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">LinkedIn URL</label>
-                  <input value={(editing as Record<string, unknown>).linkedin_url as string || ""} onChange={(e) => setEditing({ ...editing, linkedin_url: e.target.value } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://linkedin.com/in/..." />
+                  <label htmlFor="adv-linkedin" className="block text-xs font-semibold text-slate-600 mb-1">LinkedIn URL</label>
+                  <input id="adv-linkedin" value={(editing as Record<string, unknown>).linkedin_url as string || ""} onChange={(e) => setEditing({ ...editing, linkedin_url: e.target.value } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://linkedin.com/in/..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Years Experience</label>
-                  <input type="number" value={(editing as Record<string, unknown>).years_experience as number || ""} onChange={(e) => setEditing({ ...editing, years_experience: e.target.value ? parseInt(e.target.value) : undefined } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="15" />
+                  <label htmlFor="adv-years-exp" className="block text-xs font-semibold text-slate-600 mb-1">Years Experience</label>
+                  <input id="adv-years-exp" type="number" value={(editing as Record<string, unknown>).years_experience as number || ""} onChange={(e) => setEditing({ ...editing, years_experience: e.target.value ? parseInt(e.target.value) : undefined } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="15" />
                 </div>
               </div>
               <div className="mt-4">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Admin Notes (internal only)</label>
-                <textarea value={(editing as Record<string, unknown>).admin_notes as string || ""} onChange={(e) => setEditing({ ...editing, admin_notes: e.target.value } as Partial<Professional>)} rows={2} className="w-full px-3 py-2 border border-amber-200 bg-amber-50 rounded-lg text-sm" placeholder="Internal notes — not visible to the advisor..." />
+                <label htmlFor="adv-admin-notes" className="block text-xs font-semibold text-slate-600 mb-1">Admin Notes (internal only)</label>
+                <textarea id="adv-admin-notes" value={(editing as Record<string, unknown>).admin_notes as string || ""} onChange={(e) => setEditing({ ...editing, admin_notes: e.target.value } as Partial<Professional>)} rows={2} className="w-full px-3 py-2 border border-amber-200 bg-amber-50 rounded-lg text-sm" placeholder="Internal notes — not visible to the advisor..." />
               </div>
               <div className="mt-4">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Specialties</label>
+                <p className="block text-xs font-semibold text-slate-600 mb-1">Specialties</p>
                 <div className="flex gap-2 mb-2">
                   <input value={specialtyInput} onChange={(e) => setSpecialtyInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSpecialty())} className="flex-1 px-3 py-2 border rounded-lg text-sm" placeholder="e.g. SMSF Setup" />
                   <button onClick={addSpecialty} className="px-3 py-2 bg-slate-100 rounded-lg text-sm font-semibold hover:bg-slate-200">Add</button>
@@ -582,19 +582,19 @@ export default function AdminAdvisorsPage() {
           <p className="text-sm text-slate-600 mb-4">Send an invitation email to a financial professional to list on invest.com.au. The email explains the free listing model and asks them to reply with their details.</p>
           <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Advisor Name *</label>
+              <label htmlFor="outreach-name" className="block text-xs font-semibold text-slate-600 mb-1">Advisor Name *</label>
               <input id="outreach-name" className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sarah Chen" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
+              <label htmlFor="outreach-email" className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
               <input id="outreach-email" type="email" className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
+              <label htmlFor="outreach-firm" className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
               <input id="outreach-firm" className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Chen Advisory" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Advisor Type</label>
+              <label htmlFor="outreach-type" className="block text-xs font-semibold text-slate-600 mb-1">Advisor Type</label>
               <select id="outreach-type" className="w-full px-3 py-2 border rounded-lg text-sm">
                 {Object.entries(PROFESSIONAL_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>

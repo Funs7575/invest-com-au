@@ -110,9 +110,9 @@ export default function PackagesClient() {
     <div className="max-w-2xl mx-auto">
       {/* Tier Selection */}
       <div className="mb-8">
-        <label className="block text-sm font-bold text-slate-900 mb-3">
+        <p className="block text-sm font-bold text-slate-900 mb-3">
           1. Choose your tier
-        </label>
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {TIERS.map((t) => (
             <button
@@ -158,9 +158,9 @@ export default function PackagesClient() {
 
       {/* Duration Picker */}
       <div className="mb-8">
-        <label className="block text-sm font-bold text-slate-900 mb-3">
+        <p className="block text-sm font-bold text-slate-900 mb-3">
           {selectedTier === "category_sponsor" ? "3" : "2"}. Choose duration
-        </label>
+        </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {DURATIONS.map((d) => (
             <button

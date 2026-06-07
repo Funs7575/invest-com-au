@@ -292,9 +292,9 @@ export default function EmbedBuilder() {
 
             {/* Broker selection */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+              <p className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                 Select Brokers (optional)
-              </label>
+              </p>
               <div className="flex flex-wrap gap-2">
                 {POPULAR_BROKERS.map((b) => {
                   const active = selectedSlugs.includes(b.slug);
@@ -364,9 +364,9 @@ export default function EmbedBuilder() {
           <>
             {/* Preset picker */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+              <p className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                 Preset
-              </label>
+              </p>
               <div className="grid sm:grid-cols-3 gap-3">
                 {CALCULATOR_WIDGET_CATALOGUE.map((preset) => (
                   <button
@@ -575,9 +575,9 @@ export default function EmbedBuilder() {
           <>
             {/* Broker selection */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+              <p className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                 Select Brokers (optional — leave blank for top by rating)
-              </label>
+              </p>
               <div className="flex flex-wrap gap-2">
                 {POPULAR_BROKERS.map((b) => {
                   const active = healthSlugs.includes(b.slug);
@@ -788,7 +788,7 @@ export default function EmbedBuilder() {
 
         {/* Code output — shared */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Your Embed Code</label>
+          <p className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Your Embed Code</p>
           <div className="relative">
             <div className="bg-slate-900 rounded-lg p-4 pr-24">
               <code className="text-xs text-emerald-400 font-mono break-all">{snippet}</code>
@@ -804,7 +804,7 @@ export default function EmbedBuilder() {
 
         {/* Live Preview — shared */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Live Preview</label>
+          <p className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Live Preview</p>
           <div
             ref={previewRef}
             className={`rounded-lg border border-slate-200 overflow-hidden min-h-50 ${

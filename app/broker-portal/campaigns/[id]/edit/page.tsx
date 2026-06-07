@@ -509,10 +509,10 @@ export default function EditCampaignPage() {
 
         {/* Active days */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <p className="block text-sm font-medium text-slate-700 mb-2">
             Active Days
             <InfoTip text="Uncheck days when you want the campaign to be paused. Days are stored as 0 (Sunday) through 6 (Saturday)." />
-          </label>
+          </p>
           <div className="flex flex-wrap gap-2">
             {DAY_LABELS.map((label, index) => {
               const isActive = activeDays.includes(index);

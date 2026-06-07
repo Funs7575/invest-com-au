@@ -222,8 +222,8 @@ export default function AdminAdvisorArticlesPage() {
 
                     {/* Admin notes */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Admin Notes <span className="font-normal text-slate-400">(visible to advisor)</span></label>
-                      <textarea value={adminNotes} onChange={e => setAdminNotes(e.target.value)} rows={2} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Feedback for the advisor..." />
+                      <label htmlFor="aa-admin-notes" className="block text-xs font-bold text-slate-700 mb-1">Admin Notes <span className="font-normal text-slate-400">(visible to advisor)</span></label>
+                      <textarea id="aa-admin-notes" value={adminNotes} onChange={e => setAdminNotes(e.target.value)} rows={2} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Feedback for the advisor..." />
                     </div>
 
                     {/* Action buttons */}
@@ -259,33 +259,33 @@ export default function AdminAdvisorArticlesPage() {
                   <div className="space-y-3">
                     <p className="text-xs text-slate-500">Edit the article content before publishing. Changes are saved separately from status actions.</p>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Title</label>
-                      <input value={editTitle} onChange={e => setEditTitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                      <label htmlFor="aa-title" className="block text-xs font-bold text-slate-700 mb-1">Title</label>
+                      <input id="aa-title" value={editTitle} onChange={e => setEditTitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Excerpt</label>
-                      <textarea value={editExcerpt} onChange={e => setEditExcerpt(e.target.value)} rows={2} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                      <label htmlFor="aa-excerpt" className="block text-xs font-bold text-slate-700 mb-1">Excerpt</label>
+                      <textarea id="aa-excerpt" value={editExcerpt} onChange={e => setEditExcerpt(e.target.value)} rows={2} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                     </div>
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="text-xs font-bold text-slate-700">Content (Markdown)</label>
+                        <label htmlFor="aa-content" className="text-xs font-bold text-slate-700">Content (Markdown)</label>
                         <span className="text-[0.62rem] text-slate-400">{wordCount(editContent)} words</span>
                       </div>
-                      <textarea value={editContent} onChange={e => setEditContent(e.target.value)} rows={14} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg font-mono resize-vertical" />
+                      <textarea id="aa-content" value={editContent} onChange={e => setEditContent(e.target.value)} rows={14} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg font-mono resize-vertical" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">Meta Title <span className="font-normal text-slate-400">(SEO)</span></label>
-                        <input value={editMetaTitle} onChange={e => setEditMetaTitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Auto-generated if empty" />
+                        <label htmlFor="aa-meta-title" className="block text-xs font-bold text-slate-700 mb-1">Meta Title <span className="font-normal text-slate-400">(SEO)</span></label>
+                        <input id="aa-meta-title" value={editMetaTitle} onChange={e => setEditMetaTitle(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Auto-generated if empty" />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">Meta Description</label>
-                        <input value={editMetaDesc} onChange={e => setEditMetaDesc(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Auto-generated if empty" />
+                        <label htmlFor="aa-meta-desc" className="block text-xs font-bold text-slate-700 mb-1">Meta Description</label>
+                        <input id="aa-meta-desc" value={editMetaDesc} onChange={e => setEditMetaDesc(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Auto-generated if empty" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Related Broker Slugs <span className="font-normal text-slate-400">(comma-separated, shows on those broker pages)</span></label>
-                      <input value={editRelatedBrokers} onChange={e => setEditRelatedBrokers(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. selfwealth, stake, superhero" />
+                      <label htmlFor="aa-related-brokers" className="block text-xs font-bold text-slate-700 mb-1">Related Broker Slugs <span className="font-normal text-slate-400">(comma-separated, shows on those broker pages)</span></label>
+                      <input id="aa-related-brokers" value={editRelatedBrokers} onChange={e => setEditRelatedBrokers(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. selfwealth, stake, superhero" />
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" checked={editFeatured} onChange={e => setEditFeatured(e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500" />

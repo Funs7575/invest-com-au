@@ -256,7 +256,7 @@ export default function ABTestsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Test Type</label>
+            <p className="block text-sm font-medium text-slate-700 mb-1">Test Type</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {TEST_TYPES.map(t => (
                 <button key={t.value} type="button" onClick={() => setType(t.value)}

@@ -179,7 +179,7 @@ export default function CompoundInterestClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-2">Compounding frequency</label>
+                <p className="block text-xs font-semibold text-slate-600 mb-2">Compounding frequency</p>
                 <div className="grid grid-cols-3 gap-1.5">
                   {FREQ_OPTIONS.map((o) => (
                     <button

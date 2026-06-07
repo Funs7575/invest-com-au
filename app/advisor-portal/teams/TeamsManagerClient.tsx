@@ -300,9 +300,9 @@ export default function TeamsManagerClient() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <p className="block text-xs font-semibold text-slate-700 mb-1">
                 Accepted brief templates
-              </label>
+              </p>
               <div className="flex flex-wrap gap-2">
                 {BRIEF_TEMPLATES.map((t) => {
                   const checked = newTeam.accepted_brief_templates.includes(t);

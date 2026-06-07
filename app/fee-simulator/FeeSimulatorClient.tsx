@@ -185,7 +185,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
               {/* Trades per year */}
               <div className="mb-5">
                 <div className="flex justify-between items-baseline mb-1.5">
-                  <label className="text-xs font-bold text-slate-700">
+                  <label htmlFor="fs-trades" className="text-xs font-bold text-slate-700">
                     Trades per year
                   </label>
                   <span className="text-sm font-extrabold text-emerald-700">
@@ -193,6 +193,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   </span>
                 </div>
                 <input
+                  id="fs-trades"
                   type="range"
                   min={1}
                   max={200}
@@ -211,7 +212,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
               {/* Average trade size */}
               <div className="mb-5">
                 <div className="flex justify-between items-baseline mb-1.5">
-                  <label className="text-xs font-bold text-slate-700">
+                  <label htmlFor="fs-avg-trade" className="text-xs font-bold text-slate-700">
                     Average trade size
                   </label>
                   <span className="text-sm font-extrabold text-emerald-700">
@@ -219,6 +220,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   </span>
                 </div>
                 <input
+                  id="fs-avg-trade"
                   type="range"
                   min={100}
                   max={50000}
@@ -238,7 +240,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
               {/* US allocation */}
               <div className="mb-5">
                 <div className="flex justify-between items-baseline mb-1.5">
-                  <label className="text-xs font-bold text-slate-700">
+                  <label htmlFor="fs-us-alloc" className="text-xs font-bold text-slate-700">
                     US share allocation
                   </label>
                   <span className="text-sm font-extrabold text-emerald-700">
@@ -246,6 +248,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   </span>
                 </div>
                 <input
+                  id="fs-us-alloc"
                   type="range"
                   min={0}
                   max={100}

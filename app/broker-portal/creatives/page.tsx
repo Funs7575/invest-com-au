@@ -176,7 +176,7 @@ export default function CreativesPage() {
           <h3 className="font-bold text-slate-900">Add New Creative</h3>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Type <InfoTip text="Logo: square PNG/SVG. Banner: 1200x300px. Icon: 64x64px. Screenshot: platform images for article sidebars." /></label>
+            <p className="block text-sm font-medium text-slate-700 mb-1">Type <InfoTip text="Logo: square PNG/SVG. Banner: 1200x300px. Icon: 64x64px. Screenshot: platform images for article sidebars." /></p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {CREATIVE_TYPES.map(t => (
                 <button key={t.value} type="button" onClick={() => setUploadType(t.value)}

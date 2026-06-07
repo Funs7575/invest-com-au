@@ -83,7 +83,7 @@ export default function CompoundInterestCalculator({ searchParams }: Props) {
           <InputField label="Monthly Contribution" value={monthly} onChange={setMonthly} prefix="$" placeholder="0" />
           <InputField label="Time Period (years)" value={years} onChange={setYears} placeholder="10" />
           <div>
-            <label className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 md:mb-1.5">Compounding Frequency</label>
+            <p className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 md:mb-1.5">Compounding Frequency</p>
             <div className="grid grid-cols-3 gap-1.5">
               {FREQ_OPTIONS.map((o) => (
                 <button

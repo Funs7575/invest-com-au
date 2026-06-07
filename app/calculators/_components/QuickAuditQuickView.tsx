@@ -75,10 +75,11 @@ export default function QuickAuditQuickView({ brokers, searchParams }: Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
         <div>
-          <label className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 md:mb-1.5">
+          <label htmlFor="qa-broker" className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 md:mb-1.5">
             Current Broker
           </label>
           <select
+            id="qa-broker"
             value={brokerSlug}
             onChange={(e) => setBrokerSlug(e.target.value)}
             className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 md:py-2.5 text-sm shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium"

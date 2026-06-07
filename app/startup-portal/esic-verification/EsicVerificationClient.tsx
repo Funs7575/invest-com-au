@@ -149,7 +149,7 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
 
           {/* Method selection */}
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-2">Evidence type</label>
+            <p className="block text-xs font-semibold text-gray-600 mb-2">Evidence type</p>
             <div className="grid grid-cols-2 gap-2">
               <label className="flex items-center gap-2 p-3 border border-gray-200 rounded-lg cursor-pointer has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 transition-colors">
                 <input
@@ -182,10 +182,10 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
 
           {method === "file" && (
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-2">
+              <p className="block text-xs font-semibold text-gray-600 mb-2">
                 ESIC evidence document
                 <span className="text-gray-400 font-normal ml-1">(PDF, JPG, or PNG · max 10 MB)</span>
-              </label>
+              </p>
               <div
                 className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center cursor-pointer hover:border-blue-300 transition-colors"
                 onClick={() => fileRef.current?.click()}

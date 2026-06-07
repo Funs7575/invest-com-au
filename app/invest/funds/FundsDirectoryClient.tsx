@@ -116,10 +116,11 @@ export default function FundsDirectoryClient({
         <div className="container-custom">
           <div className="flex flex-wrap items-end gap-3 md:gap-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
+              <label htmlFor="fd-fund-type" className="block text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
                 Fund type
               </label>
               <select
+                id="fd-fund-type"
                 value={selectedType}
                 onChange={(e) =>
                   resetToPageOne(setSelectedType)(
@@ -138,10 +139,11 @@ export default function FundsDirectoryClient({
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
+              <label htmlFor="fd-min-investment" className="block text-[11px] font-bold uppercase tracking-wide text-slate-500 mb-1">
                 Minimum investment
               </label>
               <select
+                id="fd-min-investment"
                 value={minBand}
                 onChange={(e) =>
                   resetToPageOne(setMinBand)(parseInt(e.target.value, 10))

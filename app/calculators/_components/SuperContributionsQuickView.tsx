@@ -49,9 +49,9 @@ export default function SuperContributionsQuickView({ searchParams }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
         <InputField label="Annual Income" value={income} onChange={setIncome} prefix="$" placeholder="100000" />
         <div>
-          <label className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 md:mb-1.5">
+          <p className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 md:mb-1.5">
             SG Contributions (auto)
-          </label>
+          </p>
           <div className="w-full bg-slate-50 border border-slate-200 rounded-lg py-2 md:py-2.5 px-3 md:px-4 text-sm font-semibold text-slate-700">
             {fmt(result.sg)}
           </div>

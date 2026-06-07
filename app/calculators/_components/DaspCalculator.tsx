@@ -56,7 +56,7 @@ export default function DaspCalculator({ searchParams }: Props) {
             <InputField label="Super Balance" value={balance} onChange={setBalance} placeholder="30000" prefix="$" />
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Visa Type</label>
+              <p className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Visa Type</p>
               <div className="grid grid-cols-1 gap-1.5">
                 <button
                   onClick={() => setIsWhm(false)}

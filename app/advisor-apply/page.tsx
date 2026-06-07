@@ -382,7 +382,7 @@ function AdvisorApplyInner() {
             {/* Account Type Selector — hidden in invite flow */}
             {!isInviteFlow && (
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-2">I&apos;m applying as *</label>
+                <p className="block text-xs font-semibold text-slate-600 mb-2">I&apos;m applying as *</p>
                 <div className="grid grid-cols-2 gap-3">
                   <button type="button" onClick={() => setAccountType("individual")} className={`p-3 rounded-lg border-2 text-left transition-all ${accountType === "individual" ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
                     <div className="flex items-center gap-2 mb-1">
@@ -404,7 +404,7 @@ function AdvisorApplyInner() {
 
             {/* Photo Upload */}
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-2">Profile Photo *</label>
+              <p className="block text-xs font-semibold text-slate-600 mb-2">Profile Photo *</p>
               <div className="flex items-start gap-4">
                 <button
                   type="button"

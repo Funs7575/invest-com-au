@@ -676,7 +676,7 @@ export default function NewCampaignPage() {
 
           {/* Placement selection — card grid */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Select Placement *</label>
+            <p className="block text-sm font-medium text-slate-700 mb-2">Select Placement *</p>
             <div className="grid gap-3">
               {placements.map((p) => {
                 const vis = PLACEMENT_VISUALS[p.slug];
@@ -852,7 +852,7 @@ export default function NewCampaignPage() {
             </h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Active Hours (UTC)</label>
+                <p className="block text-xs font-medium text-slate-600 mb-1">Active Hours (UTC)</p>
                 <div className="flex items-center gap-2">
                   <select
                     value={activeHoursStart ?? ""}
@@ -878,7 +878,7 @@ export default function NewCampaignPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Active Days</label>
+                <p className="block text-xs font-medium text-slate-600 mb-1">Active Days</p>
                 <div className="flex gap-1.5">
                   {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day, i) => (
                     <button

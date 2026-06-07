@@ -79,7 +79,7 @@ export default function CGTCalculatorClient() {
 
         {/* Asset type */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">Asset type</label>
+          <p className="block text-sm font-semibold text-slate-700 mb-2">Asset type</p>
           <div className="grid grid-cols-4 gap-1.5">
             {(["shares", "property", "crypto", "other"] as const).map((t) => (
               <button
@@ -173,9 +173,9 @@ export default function CGTCalculatorClient() {
 
         {/* Income */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
+          <p className="block text-sm font-semibold text-slate-700 mb-2">
             Your other annual income (for marginal rate)
-          </label>
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {INCOME_PRESETS.map((p) => (
               <button

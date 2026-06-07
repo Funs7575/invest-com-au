@@ -205,9 +205,9 @@ export default function FHSSCalculatorClient() {
 
         {/* Income bracket */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <p className="block text-sm font-medium text-slate-700 mb-2">
             Annual income (determines marginal tax rate)
-          </label>
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {INCOME_OPTIONS.map((opt, i) => (
               <button

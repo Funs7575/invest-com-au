@@ -192,9 +192,9 @@ export default function FeeAlertsPage() {
 
                 {/* Broker multi-select */}
                 <div className="mb-4">
-                  <label className="block text-xs font-semibold text-slate-300 mb-2">
+                  <p className="block text-xs font-semibold text-slate-300 mb-2">
                     Brokers to watch <span className="text-slate-500 font-normal">(leave empty for all)</span>
-                  </label>
+                  </p>
                   <div className="relative">
                     <button
                       type="button"
@@ -234,7 +234,7 @@ export default function FeeAlertsPage() {
 
                 {/* Frequency toggle */}
                 <div className="mb-4">
-                  <label className="block text-xs font-semibold text-slate-300 mb-2">Frequency</label>
+                  <p className="block text-xs font-semibold text-slate-300 mb-2">Frequency</p>
                   <div className="flex gap-2">
                     {(["instant", "weekly"] as Frequency[]).map((f) => (
                       <button
@@ -255,7 +255,7 @@ export default function FeeAlertsPage() {
 
                 {/* Alert type */}
                 <div className="mb-5">
-                  <label className="block text-xs font-semibold text-slate-300 mb-2">Alert type</label>
+                  <p className="block text-xs font-semibold text-slate-300 mb-2">Alert type</p>
                   <div className="flex gap-2 flex-wrap">
                     {(Object.entries(ALERT_TYPE_LABELS) as [AlertType, string][]).map(([value, label]) => (
                       <button

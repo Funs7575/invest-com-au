@@ -77,7 +77,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
 
         {/* Availability Status */}
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Availability Status</label>
+          <p className="block text-xs font-semibold text-slate-600 mb-1">Availability Status</p>
           <p className="text-[0.62rem] text-slate-400 mb-2">
             Shown as a badge on your profile and in the advisor directory.
           </p>
@@ -202,7 +202,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
         <div className="border-t border-slate-100 pt-4 mt-2">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <label className="block text-sm font-bold text-slate-900">Special Offer</label>
+              <p className="block text-sm font-bold text-slate-900">Special Offer</p>
               <p className="text-[0.62rem] text-slate-500">Create a promotional offer shown on your profile and the Deals page.</p>
             </div>
             <button
@@ -313,9 +313,9 @@ function CountriesServedField({ value, onChange }: CountriesServedFieldProps) {
   const selected = new Set(value);
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-600 mb-1">
+      <p className="block text-xs font-semibold text-slate-600 mb-1">
         Cross-border corridors you serve
-      </label>
+      </p>
       <p className="text-[0.62rem] text-slate-400 mb-2">
         Tick the countries you actively help clients with. Investors landing on
         country pages get matched to you first when their country is one you

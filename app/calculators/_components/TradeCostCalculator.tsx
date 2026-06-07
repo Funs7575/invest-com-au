@@ -67,7 +67,7 @@ export default function TradeCostCalculator({ brokers, searchParams }: Props) {
           </div>
         </div>
         <div>
-          <label className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">Market</label>
+          <p className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">Market</p>
           <div className="flex gap-1">
             <button
               onClick={() => setMarket("asx")}

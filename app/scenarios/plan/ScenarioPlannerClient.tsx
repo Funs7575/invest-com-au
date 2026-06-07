@@ -1004,9 +1004,9 @@ export default function ScenarioPlannerClient({
                     step={1000}
                   />
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1">
+                    <p className="block text-xs font-semibold text-slate-600 mb-1">
                       CGT 50% discount eligible?
-                    </label>
+                    </p>
                     <div className="flex gap-3">
                       {[
                         { val: false, label: "No" },

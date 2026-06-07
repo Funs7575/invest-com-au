@@ -97,7 +97,7 @@ export default function DividendReinvestmentCalculator({ searchParams }: Props) 
           <InputField label="Share Price Growth (p.a.)" value={growth} onChange={setGrowth} suffix="%" placeholder="6" />
           <InputField label="Investment Period (years)" value={years} onChange={setYears} placeholder="20" />
           <div>
-            <label className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Reinvest Dividends?</label>
+            <p className="block text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Reinvest Dividends?</p>
             <div className="grid grid-cols-2 gap-1.5">
               {[{ label: "Yes (DRP)", val: true }, { label: "No (Cash)", val: false }].map((o) => (
                 <button

@@ -369,7 +369,7 @@ export default function DebtCalculatorClient() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Loan term</label>
+                <p className="block text-xs font-bold text-slate-700 mb-1">Loan term</p>
                 <div className="flex gap-2">
                   {[3, 5, 7].map(years => (
                     <button
