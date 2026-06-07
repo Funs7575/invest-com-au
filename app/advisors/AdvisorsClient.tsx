@@ -1394,45 +1394,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               ...(search ? [{ label: `"${search}" ×`, onClick: () => setSearch("") }] : []),
               ...(activeFilterCount > 1 ? [{ label: "Clear all", onClick: clearAll }] : []),
             ]}
-          >
-            <div className="mt-5 max-w-md mx-auto text-left rounded-xl border border-amber-200 bg-amber-50 p-4">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
-                  <Icon name="bell" size={16} className="text-amber-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-slate-800">Get notified when one joins</p>
-                  <p className="text-xs text-slate-500 mt-0.5">We&apos;ll email you when a matching advisor joins Invest.com.au.</p>
-                </div>
-              </div>
-              {alertStatus === "done" ? (
-                <div className="flex items-center gap-2 text-sm text-emerald-700 font-semibold">
-                  <Icon name="check-circle" size={16} className="text-emerald-500" />
-                  Alert saved! We&apos;ll email you when a match is available.
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <input
-                    type="email"
-                    autoComplete="email"
-                    value={alertEmail}
-                    onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
-                    placeholder="your@email.com"
-                    className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
-                    onKeyDown={(e) => e.key === "Enter" && saveAlert()}
-                  />
-                  <button
-                    onClick={saveAlert}
-                    disabled={alertStatus === "submitting"}
-                    className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
-                  >
-                    {alertStatus === "submitting" ? "Saving..." : "Notify Me"}
-                  </button>
-                </div>
-              )}
-              {alertError && <p className="text-xs text-red-600 mt-1">{alertError}</p>}
-            </div>
-          </EmptyState>
+          />
         )}
 
         {/* Pagination */}

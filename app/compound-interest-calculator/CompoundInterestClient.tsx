@@ -25,6 +25,7 @@ export default function CompoundInterestClient() {
   const [years, setYears] = useState(20);
   const [monthly, setMonthly] = useState(200);
   const [freq, setFreq] = useState(12);
+  const [savedFlash, setSavedFlash] = useState(false);
 
   // Cross-calc persistence (CMP W2 Phase 1).
   const {
@@ -216,18 +217,21 @@ export default function CompoundInterestClient() {
                   <span className="text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
                     {result.effectiveRate.toFixed(2)}% effective
                   </span>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2">
                     <button
-                      onClick={() =>
+                      onClick={() => {
                         addEntry(
                           { principal, rate, years, monthly, freq },
                           `$${principal.toLocaleString("en-AU")} at ${rate}% for ${years} yrs`,
                           `→ ${fmt(result.finalAmount)}`,
-                        )
-                      }
-                      className="text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
+                        );
+                        setSavedFlash(true);
+                        setTimeout(() => setSavedFlash(false), 2000);
+                      }}
+                      disabled={savedFlash}
+                      className="text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors disabled:opacity-60"
                     >
-                      Save
+                      {savedFlash ? "Saved ✓" : "Save"}
                     </button>
                     <CalculatorShareButton
                       calculatorKey="compound_interest_calculator"

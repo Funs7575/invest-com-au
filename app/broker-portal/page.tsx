@@ -295,7 +295,7 @@ export default function BrokerDashboard() {
             return changePct !== 0 ? (
               <p className={`text-[0.62rem] font-bold mt-0.5 flex items-center gap-0.5 ${changePct > 0 ? "text-emerald-600" : "text-red-500"}`}>
                 <Icon name={changePct > 0 ? "arrow-up" : "arrow-down"} size={10} />
-                {Math.abs(changePct)}% vs prev week
+                {Math.abs(changePct)}% vs prev 7 days
               </p>
             ) : null;
           })()}
@@ -326,7 +326,7 @@ export default function BrokerDashboard() {
             return changePct !== 0 ? (
               <p className={`text-[0.62rem] font-bold mt-0.5 flex items-center gap-0.5 ${changePct > 0 ? "text-red-500" : "text-emerald-600"}`}>
                 <Icon name={changePct > 0 ? "arrow-up" : "arrow-down"} size={10} />
-                {Math.abs(changePct)}% vs prev week
+                {Math.abs(changePct)}% vs prev 7 days
               </p>
             ) : null;
           })()}
@@ -342,9 +342,19 @@ export default function BrokerDashboard() {
         const clicksChange = pctChange(currWeekClicks, prevClicks);
         const spendChange = pctChange(currWeekSpend, prevSpend);
         const conversionsChange = pctChange(currWeekConversions, prevConversions);
+        const now = new Date();
+        const d = (offset: number) => { const x = new Date(now); x.setDate(now.getDate() + offset); return x; };
+        const fmtD = (x: Date) => x.toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+        const thisLabel = `${fmtD(d(-7))}–${fmtD(d(-1))}`;
+        const prevLabel = `${fmtD(d(-14))}–${fmtD(d(-8))}`;
         return (
           <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
-            <h2 className="font-bold text-slate-900 text-sm mb-4">This Week vs Last Week</h2>
+            <h2 className="font-bold text-slate-900 text-sm mb-1">Last 7 days vs previous 7 days</h2>
+            <p className="text-[0.65rem] text-slate-400 mb-3">
+              <span className="font-medium text-slate-600">{thisLabel}</span>
+              {" "}vs{" "}
+              <span>{prevLabel}</span>
+            </p>
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
                 <p className="text-xs text-slate-500 mb-1">Clicks</p>
