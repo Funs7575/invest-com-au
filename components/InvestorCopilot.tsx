@@ -200,6 +200,7 @@ export default function InvestorCopilot() {
             <button
               type="button"
               disabled={!input.trim() || loading}
+              aria-busy={loading}
               onClick={() => send(input)}
               className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white hover:bg-slate-700 transition-colors disabled:opacity-40"
               aria-label="Send"

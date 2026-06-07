@@ -78,6 +78,7 @@ export default function AdvisorFeeOpinionButton(props: Props) {
       <button
         onClick={handleOpinion}
         disabled={loading}
+        aria-busy={loading}
         aria-expanded={open}
         className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >

@@ -87,6 +87,7 @@ export default function ClubCreateForm() {
       <button
         type="submit"
         disabled={submitting}
+        aria-busy={submitting}
         className="px-4 py-2 bg-slate-800 text-white text-sm font-semibold rounded-lg hover:bg-slate-900 transition-colors disabled:opacity-50"
       >
         {submitting ? "Creating…" : "Create club"}

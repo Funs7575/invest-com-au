@@ -212,6 +212,7 @@ export default function BrokerReliabilityScore({ brokerId, brokerName }: Props) 
               <button
                 type="submit"
                 disabled={submitting}
+                aria-busy={submitting}
                 className="px-3 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded-lg hover:bg-slate-900 transition-colors disabled:opacity-50"
               >
                 {submitting ? "Submitting…" : "Submit report"}
