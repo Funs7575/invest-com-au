@@ -224,7 +224,7 @@ export default function NewRoundPage() {
                     </label>
                     <input
                       id="sr-discount"
-                      type="number"
+                      type="number" inputMode="decimal"
                       min={0}
                       max={50}
                       value={form.discount_pct}
@@ -242,7 +242,7 @@ export default function NewRoundPage() {
                       <label htmlFor="sr-interest-rate" className="block text-sm font-medium text-gray-700 mb-1">Interest rate %</label>
                       <input
                         id="sr-interest-rate"
-                        type="number"
+                        type="number" inputMode="decimal"
                         min={0}
                         max={30}
                         step={0.5}
@@ -256,7 +256,7 @@ export default function NewRoundPage() {
                       <label htmlFor="sr-maturity" className="block text-sm font-medium text-gray-700 mb-1">Maturity (months)</label>
                       <input
                         id="sr-maturity"
-                        type="number"
+                        type="number" inputMode="decimal"
                         min={6}
                         max={60}
                         value={form.maturity_months}

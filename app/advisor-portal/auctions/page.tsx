@@ -427,7 +427,7 @@ export default function AdvisorAuctionsPage() {
                               </span>
                               <input
                                 id={`bid-${auction.id}`}
-                                type="number"
+                                type="number" inputMode="decimal"
                                 min={50}
                                 step={5}
                                 value={bidInputs[auction.id] || ""}

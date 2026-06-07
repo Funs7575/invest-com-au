@@ -162,7 +162,7 @@ export default function OrgCoursesTab({ org }: Props) {
                 <label htmlFor="oc-price" className="block text-xs font-semibold text-slate-600 mb-1">Price (AUD)</label>
                 <input
                   id="oc-price"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min="0"
                   step="0.01"
                   value={priceDollars}
@@ -188,7 +188,7 @@ export default function OrgCoursesTab({ org }: Props) {
                 <label htmlFor="oc-cpd-hours" className="block text-xs font-semibold text-slate-600 mb-1">CPD Hours</label>
                 <input
                   id="oc-cpd-hours"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min="0"
                   step="0.5"
                   value={estimatedHours}

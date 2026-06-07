@@ -287,6 +287,7 @@ function TdCard({ td, onDelete }: TdCardProps) {
             <button
               onClick={() => { void handleDelete(); }}
               disabled={deleting}
+              aria-busy={deleting}
               className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
             >{deleting ? "…" : "Yes"}</button>
             <button

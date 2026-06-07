@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-pulse" aria-busy="true" aria-label="Loading page…">
       {/* Ticker placeholder */}
       <div className="h-10 bg-slate-100" />
 

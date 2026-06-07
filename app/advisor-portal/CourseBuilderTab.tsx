@@ -530,7 +530,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">$</span>
                   <input
                     id="cb-price"
-                    type="number"
+                    type="number" inputMode="decimal"
                     step="0.01"
                     min="0"
                     value={form.price}
@@ -547,7 +547,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 <label htmlFor="cb-hours" className="block text-xs font-bold text-slate-700 mb-1">Estimated Hours</label>
                 <input
                   id="cb-hours"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.5"
                   min="0"
                   value={form.estimated_hours}
@@ -680,7 +680,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                       <label htmlFor="cb-module-index" className="block text-xs font-bold text-slate-600 mb-1">Module #</label>
                       <input
                         id="cb-module-index"
-                        type="number"
+                        type="number" inputMode="decimal"
                         min="1"
                         value={lessonForm.module_index}
                         onChange={(e) => setLessonForm({ ...lessonForm, module_index: parseInt(e.target.value) || 1 })}
@@ -691,7 +691,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                       <label htmlFor="cb-lesson-index" className="block text-xs font-bold text-slate-600 mb-1">Lesson #</label>
                       <input
                         id="cb-lesson-index"
-                        type="number"
+                        type="number" inputMode="decimal"
                         min="1"
                         value={lessonForm.lesson_index}
                         onChange={(e) => setLessonForm({ ...lessonForm, lesson_index: parseInt(e.target.value) || 1 })}
@@ -734,7 +734,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                     <label htmlFor="lesson-duration" className="block text-xs font-bold text-slate-600 mb-1">Duration (minutes)</label>
                     <input
                       id="lesson-duration"
-                      type="number"
+                      type="number" inputMode="decimal"
                       min="0"
                       value={lessonForm.duration_minutes}
                       onChange={(e) => setLessonForm({ ...lessonForm, duration_minutes: e.target.value })}

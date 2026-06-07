@@ -550,7 +550,7 @@ export default function TeamTab({ advisor }: Props) {
                     <label htmlFor="seat-req-count" className="block text-xs font-semibold text-slate-600 mb-1">Requested Seats</label>
                     <input
                       id="seat-req-count"
-                      type="number"
+                      type="number" inputMode="decimal"
                       value={seatRequestSeats}
                       onChange={(e) => setSeatRequestSeats(e.target.value)}
                       min={(firmDetails?.max_seats || 10) + 1}

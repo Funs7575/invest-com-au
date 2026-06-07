@@ -415,7 +415,7 @@ function ROIEstimator({ rate, type, monthlyImpressions, avgCtrPct }: {
           <label htmlFor="cn-conv-value" className="text-[0.6rem] text-slate-500 font-medium block mb-0.5">Avg Customer Value ($)</label>
           <input
             id="cn-conv-value"
-            type="number"
+            type="number" inputMode="decimal"
             min={1}
             value={convValue}
             onChange={e => setConvValue(Math.max(1, Number(e.target.value) || 50))}
@@ -430,7 +430,7 @@ function ROIEstimator({ rate, type, monthlyImpressions, avgCtrPct }: {
           <label htmlFor="cn-conv-rate" className="text-[0.6rem] text-slate-500 font-medium block mb-0.5">Conv. Rate (%)</label>
           <input
             id="cn-conv-rate"
-            type="number"
+            type="number" inputMode="decimal"
             step={0.1}
             min={0.1}
             max={100}
@@ -788,7 +788,7 @@ export default function NewCampaignPage() {
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
                 <input
                   id="cn-rate"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.01"
                   min="0.01"
                   value={rateCents}
@@ -812,7 +812,7 @@ export default function NewCampaignPage() {
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
                 <input
                   id="cn-daily-budget"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="1"
                   min="1"
                   value={dailyBudget}
@@ -832,7 +832,7 @@ export default function NewCampaignPage() {
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
                 <input
                   id="cn-total-budget"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="1"
                   min="1"
                   value={totalBudget}

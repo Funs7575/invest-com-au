@@ -72,6 +72,7 @@ export default function AvailabilityWidget({ advisor }: Props) {
             key={s}
             type="button"
             disabled={saving}
+            aria-busy={saving}
             onClick={() => { void update(s); }}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
               status === s

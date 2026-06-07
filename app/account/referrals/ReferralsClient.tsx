@@ -95,7 +95,7 @@ export default function ReferralsClient() {
     return (
       <div className="py-16">
         <div className="container-custom max-w-2xl">
-          <div className="animate-pulse space-y-4">
+          <div className="animate-pulse space-y-4" aria-busy="true" aria-label="Loading referrals…">
             <div className="h-8 bg-slate-200 rounded w-48" />
             <div className="h-40 bg-slate-100 rounded-xl" />
             <div className="h-32 bg-slate-100 rounded-xl" />

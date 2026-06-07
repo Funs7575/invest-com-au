@@ -50,6 +50,7 @@ export default function DigestToggle({ digestKey, label, description, initialEna
         aria-checked={enabled}
         aria-label={label}
         disabled={saving}
+        aria-busy={saving}
         onClick={toggle}
         className={[
           "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent",

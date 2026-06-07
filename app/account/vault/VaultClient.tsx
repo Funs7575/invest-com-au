@@ -247,6 +247,7 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
                     <button
                       onClick={() => handleDelete(doc.id)}
                       disabled={deletingId === doc.id}
+                      aria-busy={deletingId === doc.id}
                       className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
                     >
                       {deletingId === doc.id ? "…" : "Yes"}

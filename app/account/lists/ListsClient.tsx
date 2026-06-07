@@ -129,6 +129,7 @@ function ListCard({
             <button
               onClick={() => setPendingDelete(true)}
               disabled={deleting}
+              aria-busy={deleting}
               className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {deleting ? "Deleting…" : "Delete"}

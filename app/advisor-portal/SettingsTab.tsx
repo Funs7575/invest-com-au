@@ -189,7 +189,7 @@ export default function SettingsTab({ advisor }: Props) {
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-medium">A$</span>
               <input
-                type="number"
+                type="number" inputMode="decimal"
                 min={0}
                 max={10000}
                 step={1}

@@ -250,6 +250,7 @@ export default function StartupThesisClient({ initial }: Props) {
           type="button"
           onClick={handleSave}
           disabled={saving}
+          aria-busy={saving}
           className="bg-violet-600 hover:bg-violet-700 disabled:bg-violet-300 text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
         >
           {saving ? "Saving…" : "Save thesis"}

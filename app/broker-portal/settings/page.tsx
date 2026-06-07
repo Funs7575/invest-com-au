@@ -265,6 +265,7 @@ export default function SettingsPage() {
             <button
               onClick={handleAcceptTerms}
               disabled={!termsChecked || saving}
+              aria-busy={saving}
               className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Accept Terms
@@ -325,7 +326,7 @@ export default function SettingsPage() {
                 <span className="text-slate-500">$</span>
                 <input
                   id="bp-alert-threshold"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={alertThreshold}
                   onChange={(e) => setAlertThreshold(Number(e.target.value))}
                   className="w-32 border border-slate-300 rounded-lg px-3 py-2 text-sm"

@@ -471,7 +471,7 @@ export default function EditCampaignPage() {
             <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
             <input
               id="camp-rate"
-              type="number"
+              type="number" inputMode="decimal"
               step="0.01"
               min="0.01"
               value={rateCents}
@@ -501,7 +501,7 @@ export default function EditCampaignPage() {
               <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
               <input
                 id="camp-daily-budget"
-                type="number"
+                type="number" inputMode="decimal"
                 step="1"
                 min="1"
                 value={dailyBudget}
@@ -522,7 +522,7 @@ export default function EditCampaignPage() {
               <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
               <input
                 id="camp-total-budget"
-                type="number"
+                type="number" inputMode="decimal"
                 step="1"
                 min="1"
                 value={totalBudget}

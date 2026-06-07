@@ -229,7 +229,7 @@ export default function EventsTab({ advisor }: Props) {
                 <label htmlFor="evt-price" className="block text-xs font-bold text-slate-700 mb-1">Price (AUD)</label>
                 <input
                   id="evt-price"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={0}
                   step={1}
                   value={form.price_cents === "0" ? "0" : form.price_cents}
@@ -291,7 +291,7 @@ export default function EventsTab({ advisor }: Props) {
                 <label htmlFor="evt-max-attendees" className="block text-xs font-bold text-slate-700 mb-1">Max Attendees <span className="font-normal text-slate-400">(optional)</span></label>
                 <input
                   id="evt-max-attendees"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={1}
                   max={10000}
                   value={form.max_attendees}

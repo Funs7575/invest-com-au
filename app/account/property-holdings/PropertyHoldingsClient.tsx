@@ -238,7 +238,7 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <div className="sm:col-span-6 flex justify-end">
-            <button type="submit" disabled={adding}
+            <button type="submit" disabled={adding} aria-busy={adding}
               className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
               {adding ? "Adding…" : "Add property"}
             </button>

@@ -597,7 +597,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                   </label>
                   <input
                     id="svc-price-from"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min="0"
                     step="1"
                     value={servicePriceFrom}
@@ -616,7 +616,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                   </label>
                   <input
                     id="svc-price-to"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min="0"
                     step="1"
                     value={servicePriceTo}

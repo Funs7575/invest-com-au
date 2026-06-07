@@ -517,7 +517,7 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
           <label htmlFor="org-evt-price" className="block text-xs font-semibold text-slate-600 mb-1">Price (AUD)</label>
           <input
             id="org-evt-price"
-            type="number"
+            type="number" inputMode="decimal"
             min="0"
             step="0.01"
             value={form.price_dollars}
@@ -578,7 +578,7 @@ function EventFormFields({ form, setField }: EventFormFieldsProps) {
         <label htmlFor="org-evt-capacity" className="block text-xs font-semibold text-slate-600 mb-1">Capacity (leave blank for unlimited)</label>
         <input
           id="org-evt-capacity"
-          type="number"
+          type="number" inputMode="decimal"
           min="1"
           max="10000"
           value={form.max_attendees}

@@ -166,7 +166,7 @@ export default function WalletPage() {
           <div className="relative flex-1">
             <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               min="50"
               max="50000"
               step="1"
