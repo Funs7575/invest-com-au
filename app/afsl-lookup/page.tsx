@@ -22,6 +22,28 @@ import {
   SITE_NAME,
 } from "@/lib/seo";
 import AfslLookupClient from "./AfslLookupClient";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const AFSL_FAQS = [
+  {
+    q: "What is an AFSL and why does it matter?",
+    a: "An Australian Financial Services Licence (AFSL) is issued by ASIC and authorises a business or individual to provide financial services in Australia. Without an AFSL (or operating as an authorised representative under one), giving financial product advice, dealing in financial products, or providing certain financial services is illegal. When engaging any financial advisor or broker, checking their AFSL status confirms they are legally authorised, regulated, and subject to ASIC oversight — including professional indemnity insurance requirements and ongoing compliance obligations.",
+  },
+  {
+    q: "How do I check if a financial advisor is licensed in Australia?",
+    a: "Use this AFSL Lookup tool (searches our weekly-refreshed cache), or search ASIC Connect (connectonline.asic.gov.au) for the real-time register. Enter the firm name or AFSL number. Check that the licence status shows 'Current' and that the specific authorisations cover the service you need (e.g. 'deal in' or 'provide general advice' for shares, 'provide personal advice' for financial planning). Also check the Financial Advisers Register (FAR) on MoneySmart for individual adviser registration — AFSL holders must list all their advisers there.",
+  },
+  {
+    q: "What is the difference between an AFSL holder and an authorised representative?",
+    a: "An AFSL holder holds the licence directly from ASIC and bears full regulatory responsibility. An authorised representative (AR) is a person or business authorised by an AFSL holder to provide specific financial services on the licensee's behalf — the licensee takes on responsibility for the AR's conduct. Many financial advisers are ARs of a dealer group rather than direct AFSL holders. Both ARs and direct licensees must appear on the ASIC registers. If your adviser is an AR, verify both that the AFSL holder is current and that the AR is listed and active.",
+  },
+  {
+    q: "What should I do if an AFSL appears cancelled or suspended?",
+    a: "Do not engage with a firm or individual whose AFSL has been cancelled or suspended — they are not legally authorised to provide financial services. If you already have money or products with them, contact ASIC (1300 300 630) or a solicitor immediately. Document everything. ASIC's Moneysmart website has resources for consumers who have dealt with unlicensed operators. For compensation claims, check AFCA (Australian Financial Complaints Authority) if the firm was licensed at the time of the relevant conduct.",
+  },
+];
+
+const afslFaqLd = faqJsonLd(AFSL_FAQS);
 
 export const revalidate = 86400;
 
@@ -81,6 +103,9 @@ export default function AfslLookupPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
       />
+      {afslFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(afslFaqLd) }} />
+      )}
 
       <nav aria-label="Breadcrumb" className="text-xs text-slate-500">
         <Link href="/" className="hover:text-slate-700">
@@ -127,6 +152,21 @@ export default function AfslLookupPage() {
           </a>{" "}
           directly.
         </p>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-base font-bold text-slate-900">Frequently asked questions</h2>
+        {AFSL_FAQS.map((faq) => (
+          <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+            <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+              {faq.q}
+              <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+            </summary>
+            <div className="px-5 pb-4">
+              <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </div>
+          </details>
+        ))}
       </section>
 
       <section className="border border-slate-200 rounded-xl p-5 flex items-start gap-4 flex-wrap">
