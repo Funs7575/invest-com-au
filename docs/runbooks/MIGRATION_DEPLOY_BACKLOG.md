@@ -25,6 +25,27 @@ Composition of the 118:
 - Feature/seed/repair migrations across the marketplace, advisor, content, and
   API surfaces.
 
+## Root cause of the backlog (confirmed 2026-06-07)
+
+The backlog is not just "we forgot to deploy" — the auto-deploy was never wired
+up. `.github/workflows/supabase-migrate.yml` is meant to `supabase db push` on
+every push to `main`, but its `SUPABASE_PROJECT_REF` and `SUPABASE_DB_PASSWORD`
+secrets were never set (only `SUPABASE_ACCESS_TOKEN` was), so its secret-precheck
+**green-skipped every run since the workflow landed** — it has never applied a
+single migration, while reporting success the whole time. That false-green is why
+drift accumulated unseen and why migrations only ever reached prod via manual
+`apply_migration` / direct SQL (e.g. the `drift_backfill_*` batch hand-applied on
+2026-06-04). The workflow now **fails loudly** when the secrets are missing, so the
+gap is visible.
+
+**Do not simply add the two secrets to "fix" it.** The first `db push
+--include-all` would replay this entire backlog at once — including the `#97` CSF
+compliance-hold migration below and ~35 hard-to-reverse data-backfills. Drain the
+backlog via the pipeline here first (snapshot → dry-run → resolve the compliance
+hold → push → regen types); only once the live ledger is at parity should the
+secrets be added to enable auto-apply for the steady state (where `--include-all`
+only ever has 0–1 pending migration).
+
 ## ⚠️ Compliance hold — review BEFORE deploy
 
 One migration in the backlog touches an **avoid-list** area (see
