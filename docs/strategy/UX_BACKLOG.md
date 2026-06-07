@@ -680,6 +680,28 @@ Sourced from a parallel code-review sweep across 7 feature areas (69 compiled fi
 
 **[ADV-075]** TaxOptimizerClient — Marginal tax rate label gets InfoTip: "ATO Stage 3 rates 2024–25 including Medicare levy." `app/tax-optimizer/TaxOptimizerClient.tsx`
 
+**[ADV-091]** GoalsClient — Target date validated client-side before API call; if date ≤ today returns "Target date must be in the future." `app/account/goals/GoalsClient.tsx`
+
+**[ADV-095]** AccountClient — Saved comparisons count: non-ok response, network error, and 3s timeout all now set count to 0 instead of leaving "Loading…" indefinitely. `app/account/AccountClient.tsx`
+
+**[ADV-109]** DashboardTab — "Enquiries Per Week" section always rendered; empty state "No enquiries yet — they'll appear here once investors reach out." shown when no data. `app/advisor-portal/DashboardTab.tsx`
+
+**[ADV-111]** Academy empty state — "Browse guides →" CTA linking to /articles added below the "Check back soon" copy. `app/academy/page.tsx`
+
+**[ADV-103]** TeamTab — Seat request input shows inline amber validation "Must be more than your current limit ({N} seats)" when value ≤ current max. `app/advisor-portal/TeamTab.tsx`
+
+**[ADV-106]** LeadsTab — "Hot leads only" button gets InfoTip: "Quality score 70+ — investors who provided more detail and showed higher intent." `app/advisor-portal/LeadsTab.tsx`
+
+**[ADV-108]** LeadsTab — Notes input onBlur shows "Saving…" / "Saved" (2s) inline indicator per lead ID. `app/advisor-portal/LeadsTab.tsx`
+
+**[ADV-119]** Broker register success — Added "Preview placements →" secondary CTA alongside "Back to Login"; copy updated to mention approval → login → first campaign flow. `app/broker-portal/register/page.tsx`
+
+**[ADV-130]** Compare page reordered: H1 → intro → GetMatchedEmbed. GetMatched no longer appears before the page title. `app/compare/page.tsx`
+
+**[ADV-128]** For-Advisors — Stats band (advisor count, lead count, 9 categories) moved from after Pricing to immediately below the hero. `app/for-advisors/page.tsx`
+
+**[ADV-129]** For-Advisors pricing — "Most Popular" Pay Per Lead card upgraded: gradient bg (violet-50 → indigo-50), md:scale-[1.03], stronger badge with ★ and shadow, heavier button shadow. `app/for-advisors/page.tsx`
+
 ---
 
 ## UX / UI / Feature sweep — 2026-06-07
