@@ -55,6 +55,7 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const handleUpload = useCallback(async () => {
     if (!file) return;
@@ -89,7 +90,7 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
   }, [file, docType, description]);
 
   const handleDelete = useCallback(async (id: string) => {
-    if (!confirm("Delete this document? This cannot be undone.")) return;
+    setPendingDeleteId(null);
     setDeletingId(id);
     await fetch(`/api/account/documents/${id}`, { method: "DELETE" });
     setDocs((prev: Document[]) => prev.filter((d: Document) => d.id !== id));
@@ -222,14 +223,33 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
                     Download
                   </a>
                 )}
-                <button
-                  onClick={() => handleDelete(doc.id)}
-                  disabled={deletingId === doc.id}
-                  aria-label={`Delete ${doc.file_name}`}
-                  className="text-gray-400 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
-                >
-                  {deletingId === doc.id ? "…" : "✕"}
-                </button>
+                {pendingDeleteId === doc.id ? (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-red-600 font-medium">Delete?</span>
+                    <button
+                      onClick={() => handleDelete(doc.id)}
+                      disabled={deletingId === doc.id}
+                      className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+                    >
+                      {deletingId === doc.id ? "…" : "Yes"}
+                    </button>
+                    <button
+                      onClick={() => setPendingDeleteId(null)}
+                      className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+                    >
+                      No
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setPendingDeleteId(doc.id)}
+                    disabled={deletingId === doc.id}
+                    aria-label={`Delete ${doc.file_name}`}
+                    className="text-gray-400 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+                  >
+                    {deletingId === doc.id ? "…" : "✕"}
+                  </button>
+                )}
               </div>
             </li>
           ))}

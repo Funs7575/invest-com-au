@@ -218,6 +218,7 @@ interface TdCardProps {
 function TdCard({ td, onDelete }: TdCardProps) {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState(false);
   const days = daysUntil(td.maturity_date);
   const badge = maturityBadge(days);
 
@@ -228,7 +229,7 @@ function TdCard({ td, onDelete }: TdCardProps) {
   });
 
   const handleDelete = async () => {
-    if (!confirm("Remove this term deposit?")) return;
+    setPendingDelete(false);
     setDeleting(true);
     try {
       const res = await fetch("/api/account/term-deposits", {
@@ -279,16 +280,31 @@ function TdCard({ td, onDelete }: TdCardProps) {
             <p className="mt-2 text-xs text-slate-500 truncate">{td.notes}</p>
           )}
         </div>
-        <button
-          onClick={() => { void handleDelete(); }}
-          disabled={deleting}
-          className="shrink-0 text-slate-400 hover:text-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-          aria-label="Remove term deposit"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </button>
+        {pendingDelete ? (
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-xs text-red-600 font-medium">Remove?</span>
+            <button
+              onClick={() => { void handleDelete(); }}
+              disabled={deleting}
+              className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+            >{deleting ? "…" : "Yes"}</button>
+            <button
+              onClick={() => setPendingDelete(false)}
+              className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+            >No</button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setPendingDelete(true)}
+            disabled={deleting}
+            className="shrink-0 text-slate-400 hover:text-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            aria-label="Remove term deposit"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        )}
       </div>
       {deleteError && (
         <p className="mt-2 text-xs text-red-600">{deleteError}</p>

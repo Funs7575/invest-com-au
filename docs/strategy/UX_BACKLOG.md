@@ -568,5 +568,11 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-118]** Advisor Apply: 4-step progress indicator (Account type → Contact details → Your profile → Photo & submit) shown above the form for individual applications (hidden in invite flow); step dots fill violet as required fields are completed; mobile fallback shows "Step N of 4: Label" in text. `app/advisor-apply/page.tsx`
 
+**[ADV-193]** Vault document delete: replaced native `confirm()` with inline "Delete? Yes / No" confirmation — consistent with ADV-083 pattern. `app/account/vault/VaultClient.tsx`
+
+**[ADV-194]** Saved searches delete: replaced native `confirm()` with inline "Delete? Yes / No" confirmation. `app/account/saved-searches/SavedSearchesClient.tsx`
+
+**[ADV-195]** Term deposits remove: replaced native `confirm()` with inline "Remove? Yes / No" confirmation. `app/account/term-deposits/TermDepositsClient.tsx`
+
 ---
 
