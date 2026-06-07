@@ -153,6 +153,22 @@ export default function RetirementCalculatorClient() {
     return { monthly, projected: bal };
   });
 
+  const handleReset = () => {
+    setCurrentAge(35);
+    setRetirementAge(67);
+    setCurrentSuper(150000);
+    setAnnualSalary(100000);
+    setEmployerRate(12);
+    setAdditionalContributions(0);
+    setExpectedReturn(7);
+    setInflationRate(3);
+    setDesiredIncome(60000);
+    setShowResults(false);
+    setEmailGated(false);
+    setEmail("");
+    setEmailSubmitted(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     trackEvent("retirement_calc_result", {
@@ -344,12 +360,23 @@ export default function RetirementCalculatorClient() {
             </div>
           </div>
 
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-violet-600 text-white text-base font-bold rounded-xl hover:bg-violet-700 transition-all shadow-lg hover:shadow-xl"
-          >
-            Calculate My Retirement →
-          </button>
+          <div className="flex items-center gap-3 mt-5">
+            <button
+              onClick={handleCalculate}
+              className="flex-1 px-6 py-3.5 bg-violet-600 text-white text-base font-bold rounded-xl hover:bg-violet-700 transition-all shadow-lg hover:shadow-xl"
+            >
+              Calculate My Retirement →
+            </button>
+            {(currentAge !== 35 || retirementAge !== 67 || currentSuper !== 150000 || annualSalary !== 100000 || employerRate !== 12 || additionalContributions !== 0 || expectedReturn !== 7 || inflationRate !== 3 || desiredIncome !== 60000) && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Results */}

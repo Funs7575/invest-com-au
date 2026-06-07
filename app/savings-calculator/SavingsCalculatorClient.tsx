@@ -90,6 +90,15 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
   const maxExtra = topAccount ? topAccount.extraEarnings : 0;
   const currentInterest = balance * (currentRate / 100);
 
+  const handleReset = () => {
+    setBalance(25000);
+    setCurrentRate(0.5);
+    setShowResults(false);
+    setEmailGated(false);
+    setEmail("");
+    setEmailSubmitted(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     storeQualificationData("savings_calculator", {
@@ -177,12 +186,23 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
               </div>
             </div>
           </div>
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-amber-500 text-slate-900 text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
-          >
-            Calculate My Savings →
-          </button>
+          <div className="flex items-center gap-3 mt-5">
+            <button
+              onClick={handleCalculate}
+              className="flex-1 px-6 py-3.5 bg-amber-500 text-slate-900 text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
+            >
+              Calculate My Savings →
+            </button>
+            {(balance !== 25000 || currentRate !== 0.5) && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Results */}

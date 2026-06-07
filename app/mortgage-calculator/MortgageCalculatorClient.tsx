@@ -167,6 +167,17 @@ export default function MortgageCalculatorClient() {
 
   /* ── handlers ─────────────────────────────────────── */
 
+  const handleReset = () => {
+    setLoanAmount(600000);
+    setInterestRate(6.0);
+    setLoanTerm(30);
+    setRepaymentType("pi");
+    setShowResults(false);
+    setEmailGated(false);
+    setEmail("");
+    setEmailSubmitted(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     storeQualificationData("mortgage_calculator", {
@@ -296,12 +307,23 @@ export default function MortgageCalculatorClient() {
             </div>
           </div>
 
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-rose-600 text-white text-base font-bold rounded-xl hover:bg-rose-700 transition-all shadow-lg hover:shadow-xl"
-          >
-            Calculate My Repayments <Icon name="arrow-right" className="inline w-4 h-4 ml-1" />
-          </button>
+          <div className="flex items-center gap-3 mt-5">
+            <button
+              onClick={handleCalculate}
+              className="flex-1 px-6 py-3.5 bg-rose-600 text-white text-base font-bold rounded-xl hover:bg-rose-700 transition-all shadow-lg hover:shadow-xl"
+            >
+              Calculate My Repayments <Icon name="arrow-right" className="inline w-4 h-4 ml-1" />
+            </button>
+            {(loanAmount !== 600000 || interestRate !== 6.0 || loanTerm !== 30 || repaymentType !== "pi") && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Results */}
