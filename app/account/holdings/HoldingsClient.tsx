@@ -441,7 +441,12 @@ export default function HoldingsClient({
                       />
                     </>
                   ) : (
-                    <div className="text-sm text-slate-400">—</div>
+                    <div
+                      className="text-sm text-slate-400"
+                      title="Price unavailable — may be invalid ticker, unsupported exchange, or temporary data issue."
+                    >
+                      —
+                    </div>
                   )}
                   <div className="text-[11px] text-slate-500 mt-0.5">
                     cost {fmtCents(h.shares * h.costBasisPerShareCents)}

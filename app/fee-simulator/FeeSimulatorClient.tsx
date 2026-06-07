@@ -90,6 +90,7 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
     const p = searchParams.get("us");
     return p ? Math.min(100, Math.max(0, parseInt(p) || 30)) : 30;
   });
+  const [linkCopied, setLinkCopied] = useState(false);
 
   useEffect(() => {
     trackPageDuration("/fee-simulator");
@@ -117,8 +118,13 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
         url,
       });
     } else {
-      navigator.clipboard.writeText(url);
-      alert("Link copied to clipboard!");
+      navigator.clipboard.writeText(url).then(() => {
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2000);
+      }).catch(() => {
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2000);
+      });
     }
     trackEvent("fee_simulator_share", {
       trades: tradesPerYear,
@@ -280,6 +286,11 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                 <Icon name="share-2" size={14} />
                 Share this simulation
               </button>
+              {linkCopied && (
+                <p className="mt-1.5 text-center text-xs text-emerald-600" role="status">
+                  Link copied to clipboard
+                </p>
+              )}
             </div>
           </div>
 

@@ -391,6 +391,17 @@ function SaveGoalButton({
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "signin" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (status === "saved") {
+      const t = setTimeout(() => setStatus("idle"), 4000);
+      return () => clearTimeout(t);
+    }
+    if (status === "error") {
+      const t = setTimeout(() => { setStatus("idle"); setError(null); }, 8000);
+      return () => clearTimeout(t);
+    }
+  }, [status]);
+
   async function save() {
     setStatus("saving");
     setError(null);
@@ -432,9 +443,16 @@ function SaveGoalButton({
 
   if (status === "saved") {
     return (
-      <p className="mt-3 text-xs text-emerald-700" role="status" aria-live="polite">
-        ✓ Saved — view + edit on your account dashboard.
-      </p>
+      <div
+        className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2"
+        role="status"
+        aria-live="polite"
+      >
+        <span className="text-emerald-600 font-semibold text-sm">✓ Goal saved</span>
+        <Link href="/account" className="ml-auto text-xs text-emerald-700 underline font-medium">
+          View dashboard
+        </Link>
+      </div>
     );
   }
   if (status === "signin") {
@@ -458,9 +476,11 @@ function SaveGoalButton({
         {status === "saving" ? "Saving…" : "Save this FIRE goal"}
       </button>
       {error && (
-        <span role="alert" className="ml-2 text-xs text-red-700">
-          {error}
-        </span>
+        <div role="alert" className="mt-2 flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
+          <span className="flex-1">{error}</span>
+          <button type="button" onClick={save} className="font-semibold underline shrink-0">Retry</button>
+          <button type="button" onClick={() => { setStatus("idle"); setError(null); }} aria-label="Dismiss error" className="shrink-0">✕</button>
+        </div>
       )}
     </div>
   );
