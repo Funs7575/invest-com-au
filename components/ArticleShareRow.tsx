@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trackEvent } from "@/lib/tracking";
 
 // ADV-166: brief scale feedback on click
@@ -15,8 +15,6 @@ function usePressEffect() {
 
 export default function ArticleShareRow({ title, url }: { title: string; url: string }) {
   const [copied, setCopied] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [saveBusy, setSaveBusy] = useState(false);
   const copyPress = usePressEffect();
   const liPress = usePressEffect();
   const xPress = usePressEffect();
@@ -24,51 +22,6 @@ export default function ArticleShareRow({ title, url }: { title: string; url: st
   const waPress = usePressEffect();
   const fbPress = usePressEffect();
   const printPress = usePressEffect();
-  const savePress = usePressEffect();
-
-  // ADV-115: extract article slug from URL as the bookmark ref
-  const articleSlug = url.split("/").filter(Boolean).pop() ?? url;
-
-  // Check localStorage for a previously saved state (no API call on mount)
-  useEffect(() => {
-    try {
-      setSaved(localStorage.getItem(`bm:article:${articleSlug}`) === "1");
-    } catch {}
-  }, [articleSlug]);
-
-  const handleSave = async () => {
-    savePress.trigger();
-    const next = !saved;
-    setSaved(next);
-    try {
-      localStorage.setItem(`bm:article:${articleSlug}`, next ? "1" : "0");
-    } catch {}
-    if (saveBusy) return;
-    setSaveBusy(true);
-    try {
-      if (next) {
-        await fetch("/api/account/bookmarks", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type: "article", ref: articleSlug, label: title }),
-        });
-        trackEvent("article_bookmark_add", { slug: articleSlug });
-      } else {
-        await fetch("/api/account/bookmarks", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type: "article", ref: articleSlug }),
-        });
-        trackEvent("article_bookmark_remove", { slug: articleSlug });
-      }
-    } catch {
-      // API failure: revert optimistic state
-      setSaved(!next);
-      try { localStorage.setItem(`bm:article:${articleSlug}`, next ? "0" : "1"); } catch {}
-    } finally {
-      setSaveBusy(false);
-    }
-  };
 
   const track = (channel: string) => {
     trackEvent("article_share", { channel, url });
@@ -241,25 +194,6 @@ export default function ArticleShareRow({ title, url }: { title: string; url: st
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
           Print
-        </button>
-
-        {/* ADV-115: Save article to /account/saved bookmarks */}
-        <button
-          onClick={handleSave}
-          disabled={saveBusy}
-          style={{ transform: savePress.pressed ? "scale(0.92)" : "scale(1)", transition: "transform 0.15s ease" }}
-          aria-label={saved ? "Remove from saved articles" : "Save article for later"}
-          aria-pressed={saved}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-            saved
-              ? "bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100"
-              : "border border-slate-200 bg-white hover:bg-slate-50 text-slate-500"
-          }`}
-        >
-          <svg className="w-3.5 h-3.5" fill={saved ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-          </svg>
-          {saved ? "Saved" : "Save"}
         </button>
       </div>
     </>

@@ -31,6 +31,7 @@ import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LinkifiedText from "@/components/LinkifiedText";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
 import ArticleShareRow from "@/components/ArticleShareRow";
+import ArticleBookmarkButton from "@/components/ArticleBookmarkButton";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { pillarPathForCategory, linkDensityForCategory } from "@/lib/keyword-linking";
 import NextActions from "@/components/NextActions";
@@ -418,9 +419,12 @@ export default async function ArticlePage({
               showMethodologyLink
             />
 
-            {/* ADV-014: Article share row */}
-            <div className="mt-4 mb-1">
-              <ArticleShareRow title={a.title} url={absoluteUrl(pagePath)} />
+            {/* ADV-014: Article share row + ADV-115: bookmark */}
+            <div className="mt-4 mb-1 flex items-center gap-2 flex-wrap">
+              <div className="flex-1 min-w-0">
+                <ArticleShareRow title={a.title} url={absoluteUrl(pagePath)} />
+              </div>
+              <ArticleBookmarkButton slug={a.slug} title={a.title} />
             </div>
 
             {/* Top-of-article broker compare — every article becomes an
