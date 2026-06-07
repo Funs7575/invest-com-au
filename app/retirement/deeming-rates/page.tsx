@@ -173,7 +173,7 @@ export default function DeemingRatesPage() {
             rate above it. The thresholds differ for singles and couples.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Centrelink deeming rates 2024–25">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Tier</th>

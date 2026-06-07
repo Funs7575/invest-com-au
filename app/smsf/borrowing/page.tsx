@@ -262,7 +262,7 @@ export default function SmsfBorrowingPage() {
               {" "}{CURRENT_YEAR}.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="ATO LRBA safe-harbour conditions for real property and listed securities">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Condition</th>
@@ -413,7 +413,7 @@ export default function SmsfBorrowingPage() {
               become negative once all fees are included.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="LRBA costs for SMSF borrowing">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Cost item</th>
@@ -551,7 +551,7 @@ export default function SmsfBorrowingPage() {
               apply a 45% tax rate if the arrangement is not at arm&apos;s length.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Tax treatment of LRBA income in accumulation and pension phase">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">

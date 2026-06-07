@@ -207,7 +207,7 @@ export default function PropertyDepreciationPage() {
                 <h3 className="font-extrabold text-sm">Common plant &amp; equipment items (ATO TR 2023/1)</h3>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table aria-label="Common plant and equipment depreciation items under ATO TR 2023/1" className="w-full text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
                       <th scope="col" className="text-left px-5 py-3 font-bold text-slate-700">Item</th>

@@ -232,7 +232,7 @@ export default function SpouseContributionsPage() {
             sub="The offset phases out progressively as your spouse's income rises from $37,000 to $40,000."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Spouse contribution tax offset rates by income" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Spouse&apos;s Income</th>
@@ -360,7 +360,7 @@ export default function SpouseContributionsPage() {
             sub="Two different tools for equalising super balances — understanding both helps you choose the right approach."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Spouse contributions vs super splitting comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>

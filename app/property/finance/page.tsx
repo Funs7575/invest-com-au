@@ -320,7 +320,7 @@ export default function PropertyFinancePage() {
             indicative and vary by lender, LVR, and loan size.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Investment loan vs owner-occupier loan comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Feature</th>
@@ -359,7 +359,7 @@ export default function PropertyFinancePage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table aria-label="Deposit and equity requirements for investment loans" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">Deposit</th>
@@ -441,7 +441,7 @@ export default function PropertyFinancePage() {
             suggests. Each of these factors shapes your assessed capacity.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table aria-label="Borrowing capacity factors for property investors" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Factor</th>

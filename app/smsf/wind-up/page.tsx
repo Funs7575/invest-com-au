@@ -329,7 +329,7 @@ export default function SmsfWindUpPage() {
               each asset.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="CGT rates when winding up an SMSF by fund phase and holding period">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
@@ -548,7 +548,7 @@ export default function SmsfWindUpPage() {
               significantly more if property is involved.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="SMSF wind-up costs by item">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">

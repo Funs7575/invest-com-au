@@ -123,7 +123,7 @@ export default function SmsfPropertyPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="SMSF residential vs commercial property rules comparison">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 min-w-[180px]">Rule</th>
@@ -411,7 +411,7 @@ export default function SmsfPropertyPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Tax treatment of SMSF property in accumulation and pension phase">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Income or gain type</th>

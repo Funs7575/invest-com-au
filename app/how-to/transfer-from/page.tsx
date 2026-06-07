@@ -117,7 +117,7 @@ export default async function TransferFromIndex() {
               </div>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-slate-200">
-                <table className="w-full text-sm">
+                <table aria-label="Broker share transfer guides: CHESS fees, in-specie support, and timelines" className="w-full text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
                       <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">From</th>

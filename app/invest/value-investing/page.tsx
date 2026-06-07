@@ -159,7 +159,7 @@ export default function ValueInvestingPage() {
           <p className="text-slate-500 text-sm mb-6">Five ratios value investors use to identify potentially undervalued ASX stocks.</p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Key value investing valuation metrics">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Metric</th>
@@ -268,7 +268,7 @@ export default function ValueInvestingPage() {
           <p className="text-slate-500 text-sm mb-6">Two distinct philosophies with different risk profiles and ASX fit.</p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Value vs growth investing comparison">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 w-1/3">Dimension</th>

@@ -280,7 +280,7 @@ export default function RetirementAnnuitiesPage() {
             most retirees benefit from holding both.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Account-based pension vs lifetime annuity comparison">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide w-1/4">Feature</th>
@@ -368,7 +368,7 @@ export default function RetirementAnnuitiesPage() {
             calculators (Challenger, Allianz) or consult a financial adviser for a current quote.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-5">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Annuity pricing illustration for $200,000 lump sum at age 65">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Product option</th>

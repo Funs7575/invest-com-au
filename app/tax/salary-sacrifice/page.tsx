@@ -357,7 +357,7 @@ export default function SalarySacrificePage() {
             deliver the full pre-tax saving; benefits like cars carry FBT that has to be managed.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Common salary sacrifice items and FBT treatment">
               <thead className="bg-slate-800 text-white">
                 <tr>
                   <th scope="col" className="text-left p-3 text-xs font-bold">Benefit</th>
@@ -428,7 +428,7 @@ export default function SalarySacrificePage() {
             inside the fund. Figures use 2024-25 marginal rates including the 2% Medicare Levy and are illustrative.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Tax saving from sacrificing $10,000 at different income levels">
               <thead className="bg-slate-800 text-white">
                 <tr>
                   <th scope="col" className="text-left p-3 text-xs font-bold">Annual income</th>
@@ -581,7 +581,7 @@ export default function SalarySacrificePage() {
             reportable super contributions back, so salary sacrifice does not always help — and occasionally it costs.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Impact of salary sacrifice on government entitlements and tests">
               <thead className="bg-slate-800 text-white">
                 <tr>
                   <th scope="col" className="text-left p-3 text-xs font-bold">Measure</th>

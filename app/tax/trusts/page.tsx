@@ -441,7 +441,7 @@ export default function TrustsTaxPage() {
             </p>
           </div>
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse min-w-[640px]">
+            <table className="w-full text-sm border-collapse min-w-[640px]" aria-label="Types of trusts in Australia: features and common uses">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/5">Trust type</th>
@@ -481,7 +481,7 @@ export default function TrustsTaxPage() {
             </p>
           </div>
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse min-w-[680px]">
+            <table className="w-full text-sm border-collapse min-w-[680px]" aria-label="Discretionary trust vs company vs personal ownership comparison">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/5">Feature</th>
@@ -555,7 +555,7 @@ export default function TrustsTaxPage() {
             </p>
           </div>
           <div className="mt-6 overflow-x-auto max-w-3xl">
-            <table className="w-full text-sm border-collapse min-w-[560px]">
+            <table className="w-full text-sm border-collapse min-w-[560px]" aria-label="Trust setup and ongoing costs">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Item</th>

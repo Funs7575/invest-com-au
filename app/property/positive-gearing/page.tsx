@@ -289,7 +289,7 @@ export default function PositiveGearingPage() {
               most to Australian property investors.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table aria-label="Positive vs negative gearing comparison" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600 text-xs w-1/4">
@@ -622,7 +622,7 @@ export default function PositiveGearingPage() {
 
             <h3 className="text-lg font-semibold mb-3">Example tax impact</h3>
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table aria-label="Example tax impact of positive gearing income" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">
@@ -734,7 +734,7 @@ export default function PositiveGearingPage() {
               but where 20-year median price growth has been significant.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-5">
-              <table className="w-full text-sm">
+              <table aria-label="Positive cash flow vs capital growth trade-off" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Factor</th>

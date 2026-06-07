@@ -261,7 +261,7 @@ export default function SmallBusinessTaxPage() {
               Each structure has different tax rates, liability exposure, and complexity.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Business structure comparison: sole trader, partnership, company, trust">
                 <thead>
                   <tr className="bg-slate-800 text-white">
                     <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Feature</th>
@@ -388,7 +388,7 @@ export default function SmallBusinessTaxPage() {
           <div className="container-custom max-w-4xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Small business tax concessions</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Small business tax concessions eligibility and benefits">
                 <thead>
                   <tr className="bg-slate-800 text-white">
                     <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Concession</th>

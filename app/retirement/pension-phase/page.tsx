@@ -99,7 +99,7 @@ export default function PensionPhasePage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Accumulation vs pension vs TTR</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Superannuation accumulation vs pension vs TTR phase comparison">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>
@@ -129,7 +129,7 @@ export default function PensionPhasePage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Minimum annual drawdown rates</h2>
           <p className="text-sm text-slate-500 mb-5">Applied to the opening balance on 1 July each year. TTR pensions: same minimums but capped at 10% maximum.</p>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Minimum annual superannuation drawdown rates by age">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Age</th>

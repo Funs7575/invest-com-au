@@ -194,7 +194,7 @@ export default function SmsfPage() {
             The ATO does not mandate a minimum balance, but fixed costs make SMSFs less competitive below roughly $200,000. Here are the typical cost categories:
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="SMSF annual cost categories and typical ranges">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left font-bold text-slate-800 px-4 py-3">Cost item</th>
@@ -252,7 +252,7 @@ export default function SmsfPage() {
             There is no universal winner — the right answer depends entirely on your balance, investment goals, and willingness to take on trustee responsibilities.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="SMSF vs industry and retail superannuation fund comparison">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left font-bold text-slate-800 px-4 py-3 w-1/3">Factor</th>

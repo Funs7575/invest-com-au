@@ -361,7 +361,7 @@ export default async function SmsfInvestmentPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">SMSF Investment Strategies Compared</h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="SMSF investment strategies compared">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Strategy</th>

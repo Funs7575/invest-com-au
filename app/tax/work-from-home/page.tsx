@@ -264,7 +264,7 @@ export default function WorkFromHomePage() {
 
             {/* Methods comparison table */}
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Work from home deduction methods comparison: fixed rate vs actual cost">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700 w-1/3">
@@ -637,7 +637,7 @@ export default function WorkFromHomePage() {
 
             {/* Depreciation table */}
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Home office asset depreciation rates and effective life">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Asset</th>

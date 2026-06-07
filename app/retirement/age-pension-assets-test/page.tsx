@@ -299,7 +299,7 @@ export default function AgePensionAssetsTestPage() {
             financial year.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Age Pension assets test thresholds 2024–25">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">

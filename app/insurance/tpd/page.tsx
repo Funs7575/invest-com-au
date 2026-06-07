@@ -310,7 +310,7 @@ export default function TPDInsurancePage() {
             sub="Monthly premiums vary significantly by age, occupation, definition, and health. These are indicative ranges only — get personalised quotes."
           />
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table aria-label="Indicative TPD insurance costs by profile" className="w-full text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Profile</th>

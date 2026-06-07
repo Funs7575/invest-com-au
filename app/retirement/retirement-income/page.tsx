@@ -198,7 +198,7 @@ export default function RetirementIncomePage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Income sources — the layered approach</h2>
           <p className="text-sm text-slate-500 mb-5">Most retirees draw from several sources simultaneously. The mix determines your overall tax rate and Centrelink position.</p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Retirement income sources: amounts, tax treatment, and reliability">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Source</th>
@@ -233,7 +233,7 @@ export default function RetirementIncomePage() {
           </p>
           <div className="grid md:grid-cols-2 gap-8 items-start">
             <div className="rounded-xl border border-slate-200 overflow-hidden">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Account-based pension minimum annual drawdown rates by age">
                 <thead>
                   <tr className="bg-slate-900">
                     <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Age</th>

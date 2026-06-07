@@ -243,7 +243,7 @@ export default function HowMuchRetirementPage() {
             more — add $300,000–$500,000 to cover housing costs.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="ASFA Retirement Standard benchmarks by lifestyle">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Lifestyle</th>
@@ -284,7 +284,7 @@ export default function HowMuchRetirementPage() {
             reduces how much you need to pull from super.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-5">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Safe withdrawal rate examples by starting super balance">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Starting balance</th>
@@ -448,7 +448,7 @@ export default function HowMuchRetirementPage() {
             ASFA benchmarks are averages. Your personal number depends on these factors.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Key variables that affect how much retirement savings you need">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Variable</th>
@@ -492,7 +492,7 @@ export default function HowMuchRetirementPage() {
             sacrifice to get your real projected balance.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Superannuation balance projection to age 67 by current age">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Age now</th>

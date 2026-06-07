@@ -222,7 +222,7 @@ export default function IncomTestPage() {
             rises.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Age Pension income-free area and taper rate 2024–25">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
@@ -337,7 +337,7 @@ export default function IncomTestPage() {
             <em>deems</em> a standard return regardless of what the asset actually earns.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden mb-5">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Centrelink deeming rates on financial assets 2024–25">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">
@@ -707,7 +707,7 @@ export default function IncomTestPage() {
             Full income test calculation — step by step
           </h2>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Age Pension income test full calculation steps">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide w-8">
