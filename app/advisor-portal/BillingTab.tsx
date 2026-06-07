@@ -90,6 +90,12 @@ export default function BillingTab({ advisor, stats, onNavigate, initialSummary 
           <div className="text-2xl font-extrabold text-amber-600 mt-1">
             ${((stats?.pendingBilledCents || 0) / 100).toFixed(0)}
           </div>
+          {(stats?.pendingBilledCents ?? 0) > 0 && (
+            <p className="text-[0.6rem] text-amber-700 mt-0.5">
+              Pending —{" "}
+              <a href="#ledger" className="underline">see payment history</a>
+            </p>
+          )}
         </div>
       </div>
 

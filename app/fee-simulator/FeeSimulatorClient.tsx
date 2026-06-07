@@ -209,8 +209,8 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                 />
                 <div className="flex justify-between text-[0.6rem] text-slate-400 mt-0.5">
                   <span>1</span>
-                  <span>50</span>
-                  <span>100</span>
+                  <span className="hidden sm:inline">50</span>
+                  <span className="hidden sm:inline">100</span>
                   <span>200</span>
                 </div>
               </div>
@@ -237,8 +237,8 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                 />
                 <div className="flex justify-between text-[0.6rem] text-slate-400 mt-0.5">
                   <span>$100</span>
-                  <span>$10k</span>
-                  <span>$25k</span>
+                  <span className="hidden sm:inline">$10k</span>
+                  <span className="hidden sm:inline">$25k</span>
                   <span>$50k</span>
                 </div>
               </div>
@@ -263,9 +263,9 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
                 <div className="flex justify-between text-[0.6rem] text-slate-400 mt-0.5">
-                  <span>0% (ASX only)</span>
-                  <span>50%</span>
-                  <span>100% (US only)</span>
+                  <span>0%<span className="hidden sm:inline"> (ASX only)</span></span>
+                  <span className="hidden sm:inline">50%</span>
+                  <span>100%<span className="hidden sm:inline"> (US only)</span></span>
                 </div>
               </div>
 

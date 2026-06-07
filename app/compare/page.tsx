@@ -168,7 +168,7 @@ export default function ComparePage() {
       <div className="container-custom pt-5 md:pt-10" data-speakable="compare-hero">
         <DirectoryBanners surface="compare" />
         <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Compare Australian Investment Platforms
+          Compare Australian Investment Platforms — Fees, Features &amp; Safety
         </h1>
         <p className="mt-2 text-sm md:text-base text-slate-600 max-w-2xl">
           Compare 100+ Australian investing platforms. See fees, features, and safety ratings side-by-side. Whether you trade shares, crypto, or super — find your best fit.

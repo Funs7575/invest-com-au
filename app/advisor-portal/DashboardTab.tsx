@@ -51,7 +51,7 @@ function YourRankWidget() {
   }
 
   return (
-    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 flex items-center justify-between gap-4">
+    <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 mb-6 flex items-center justify-between gap-4">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-teal-100 border border-teal-200 rounded-full flex items-center justify-center shrink-0">
           <Icon name="award" size={18} className="text-teal-600" />

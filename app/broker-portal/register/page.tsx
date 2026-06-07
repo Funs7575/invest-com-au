@@ -220,7 +220,10 @@ export default function BrokerRegisterPage() {
               <input id="bp-reg-slug" type="text" value={brokerSlug} onChange={(e) => setBrokerSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="e.g. commsec (leave blank to auto-generate)" />
-              <p className="text-xs text-slate-400 mt-1">Must match your broker listing on Invest.com.au, if you have one.</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Your URL identifier — lowercase letters, numbers, and hyphens only (e.g.{" "}
+                <span className="font-mono">commsec</span>). Must match your broker listing on Invest.com.au if you have one, or leave blank to auto-generate.
+              </p>
             </div>
             <div>
               <label htmlFor="bp-reg-website" className="block text-sm font-medium text-slate-700 mb-1">Website</label>

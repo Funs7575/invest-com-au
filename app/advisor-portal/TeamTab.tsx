@@ -299,8 +299,13 @@ export default function TeamTab({ advisor }: Props) {
       {firmTab === "analytics" && (
         <>
           {!firmAnalytics ? (
-            <div className="flex items-center justify-center py-12">
-              <div role="status" aria-label="Loading" className="w-6 h-6 border-2 border-slate-200 border-t-violet-600 rounded-full animate-spin" />
+            <div className="space-y-4 animate-pulse" role="status" aria-label="Loading team analytics">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className="h-20 bg-slate-100 rounded-xl" />
+                ))}
+              </div>
+              <div className="h-48 bg-slate-100 rounded-xl" />
             </div>
           ) : (
             <>

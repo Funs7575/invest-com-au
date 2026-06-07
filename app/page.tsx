@@ -295,8 +295,12 @@ export default async function HomePage() {
       <CountryPopularLinks />
 
       <ScrollFadeIn>
-        <section className="container-custom my-10 space-y-4">
+        <section className="container-custom my-6">
           <ResumeBanner />
+        </section>
+      </ScrollFadeIn>
+      <ScrollFadeIn>
+        <section className="container-custom mb-10">
           <GetMatchedEmbed context="homepage" />
         </section>
       </ScrollFadeIn>
