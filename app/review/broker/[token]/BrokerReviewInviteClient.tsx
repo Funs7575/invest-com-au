@@ -284,11 +284,12 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">
+              <label htmlFor="bri-title" className="block text-xs font-semibold text-slate-600 mb-1">
                 Review title{" "}
                 <span className="text-slate-400 font-normal">(optional)</span>
               </label>
               <input
+                id="bri-title"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -299,10 +300,11 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">
+              <label htmlFor="bri-body" className="block text-xs font-semibold text-slate-600 mb-1">
                 Your review *
               </label>
               <textarea
+                id="bri-body"
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 rows={5}
@@ -319,13 +321,14 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="bri-display-name" className="block text-xs font-semibold text-slate-600 mb-1">
                   Display name{" "}
                   <span className="text-slate-400 font-normal">
                     (or leave blank for Anonymous)
                   </span>
                 </label>
                 <input
+                  id="bri-display-name"
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
@@ -335,11 +338,12 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="bri-months" className="block text-xs font-semibold text-slate-600 mb-1">
                   Months using{" "}
                   <span className="text-slate-400 font-normal">(optional)</span>
                 </label>
                 <input
+                  id="bri-months"
                   type="number"
                   min={0}
                   max={600}

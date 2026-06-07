@@ -754,10 +754,11 @@ export default function ThreadClient({
             </div>
           )}
 
-          <label className="text-sm font-semibold text-slate-900 block mb-2">
+          <label htmlFor="tc-reply-body" className="text-sm font-semibold text-slate-900 block mb-2">
             {replyTo ? "Your Reply" : "Add a Reply"}
           </label>
           <textarea
+            id="tc-reply-body"
             ref={replyRef}
             value={replyBody}
             onChange={(e) => setReplyBody(e.target.value)}

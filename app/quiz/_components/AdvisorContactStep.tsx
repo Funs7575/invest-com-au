@@ -121,8 +121,9 @@ export default function AdvisorContactStep({
 
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Verification code</label>
+              <label htmlFor="acs-otp-code" className="block text-xs font-semibold text-slate-700 mb-1.5">Verification code</label>
               <input
+                id="acs-otp-code"
                 type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"

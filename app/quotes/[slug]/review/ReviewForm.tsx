@@ -65,7 +65,7 @@ export default function ReviewForm({ slug, token, advisorName, defaultDisplayNam
   return (
     <form onSubmit={submit} className="space-y-5">
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-2">Your rating</label>
+        <p className="block text-sm font-semibold text-slate-700 mb-2">Your rating</p>
         <div className="flex items-center gap-1">
           {[1, 2, 3, 4, 5].map((n) => (
             <button

@@ -76,10 +76,11 @@ export default function QuoteBuilderForm({ slug, briefId }: Props) {
     <div className="space-y-6">
       {/* Amount */}
       <section className="bg-white border border-slate-200 rounded-2xl p-5">
-        <label className="block text-sm font-semibold text-slate-900 mb-2">
+        <label htmlFor="qbf-amount" className="block text-sm font-semibold text-slate-900 mb-2">
           Total amount (A$)
         </label>
         <input
+          id="qbf-amount"
           type="number"
           inputMode="decimal"
           value={amountDollars}

@@ -217,10 +217,11 @@ export default function MortgageCalculatorClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Loan amount */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Loan amount</label>
+              <label htmlFor="mc-loan-amount" className="block text-sm font-bold text-slate-700 mb-1.5">Loan amount</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
+                  id="mc-loan-amount"
                   type="number"
                   value={loanAmount}
                   onChange={e => setLoanAmount(Math.max(0, parseInt(e.target.value) || 0))}
@@ -238,9 +239,10 @@ export default function MortgageCalculatorClient() {
 
             {/* Interest rate */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Interest rate</label>
+              <label htmlFor="mc-interest-rate" className="block text-sm font-bold text-slate-700 mb-1.5">Interest rate</label>
               <div className="relative">
                 <input
+                  id="mc-interest-rate"
                   type="number"
                   step="0.1"
                   value={interestRate}
@@ -262,7 +264,7 @@ export default function MortgageCalculatorClient() {
           {/* Loan term & repayment type toggles */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4">
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Loan term</label>
+              <p className="block text-sm font-bold text-slate-700 mb-1.5">Loan term</p>
               <div className="flex rounded-lg border border-slate-200 overflow-hidden">
                 {([25, 30] as const).map(y => (
                   <button
@@ -276,7 +278,7 @@ export default function MortgageCalculatorClient() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Repayment type</label>
+              <p className="block text-sm font-bold text-slate-700 mb-1.5">Repayment type</p>
               <div className="flex rounded-lg border border-slate-200 overflow-hidden">
                 <button
                   onClick={() => setRepaymentType("pi")}

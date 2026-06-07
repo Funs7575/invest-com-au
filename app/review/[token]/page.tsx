@@ -251,8 +251,9 @@ export default function ReviewPage() {
 
             {/* Review title */}
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Review title <span className="text-slate-400 font-normal">(optional)</span></label>
+              <label htmlFor="rv-title" className="block text-xs font-semibold text-slate-600 mb-1">Review title <span className="text-slate-400 font-normal">(optional)</span></label>
               <input
+                id="rv-title"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -264,8 +265,9 @@ export default function ReviewPage() {
 
             {/* Review body */}
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Your review *</label>
+              <label htmlFor="rv-body" className="block text-xs font-semibold text-slate-600 mb-1">Your review *</label>
               <textarea
+                id="rv-body"
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 rows={5}
@@ -281,8 +283,9 @@ export default function ReviewPage() {
             {/* Reviewer details */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Your name <span className="text-slate-400 font-normal">(or leave blank for Anonymous)</span></label>
+                <label htmlFor="rv-name" className="block text-xs font-semibold text-slate-600 mb-1">Your name <span className="text-slate-400 font-normal">(or leave blank for Anonymous)</span></label>
                 <input
+                  id="rv-name"
                   type="text"
                   value={reviewerName}
                   onChange={(e) => setReviewerName(e.target.value)}
@@ -292,8 +295,9 @@ export default function ReviewPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Email <span className="text-slate-400 font-normal">(not published, helps prevent duplicates)</span></label>
+                <label htmlFor="rv-email" className="block text-xs font-semibold text-slate-600 mb-1">Email <span className="text-slate-400 font-normal">(not published, helps prevent duplicates)</span></label>
                 <input
+                  id="rv-email"
                   type="email"
                   value={reviewerEmail}
                   onChange={(e) => setReviewerEmail(e.target.value)}

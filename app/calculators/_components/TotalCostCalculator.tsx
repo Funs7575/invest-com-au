@@ -69,10 +69,11 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
       {/* Inputs */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-3 md:mb-6">
         <div>
-          <label className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="tc-asx-trades" className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
             ASX Trades / Month
           </label>
           <input
+            id="tc-asx-trades"
             type="number"
             value={asxTradesMonth}
             onChange={(e) => setAsxTradesMonth(e.target.value)}
@@ -83,10 +84,11 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
           />
         </div>
         <div>
-          <label className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="tc-us-trades" className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
             US Trades / Month
           </label>
           <input
+            id="tc-us-trades"
             type="number"
             value={usTradesMonth}
             onChange={(e) => setUsTradesMonth(e.target.value)}
@@ -97,12 +99,13 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
           />
         </div>
         <div>
-          <label className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="tc-avg-trade" className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">
             Avg Trade Size (AUD)
           </label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
             <input
+              id="tc-avg-trade"
               type="number"
               value={tradeAmount}
               onChange={(e) => setTradeAmount(e.target.value)}

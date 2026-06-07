@@ -19,7 +19,7 @@
  * Mobile-first: tested at 375px, single column at every breakpoint.
  */
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { PROFESSIONAL_TYPE_LABELS, type ProfessionalType } from "@/lib/types";
 
@@ -467,10 +467,11 @@ export default function ProsJoinWizard() {
             </div>
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="pj-state" className="block text-xs font-semibold text-slate-600 mb-1">
                   State
                 </label>
                 <select
+                  id="pj-state"
                   value={state.location_state}
                   onChange={(e) => update("location_state", e.target.value)}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white"
@@ -713,12 +714,14 @@ function Field({
   type = "text",
   small,
 }: FieldProps) {
+  const id = useId();
   return (
     <div>
-      <label className={`block ${small ? "text-[0.65rem]" : "text-xs"} font-semibold text-slate-600 mb-1`}>
+      <label htmlFor={id} className={`block ${small ? "text-[0.65rem]" : "text-xs"} font-semibold text-slate-600 mb-1`}>
         {label}
       </label>
       <input
+        id={id}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}

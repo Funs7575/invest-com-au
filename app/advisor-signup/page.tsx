@@ -423,8 +423,9 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Advisor Type *</label>
+                <label htmlFor="as-advisor-type" className={labelClass}>Advisor Type *</label>
                 <select
+                  id="as-advisor-type"
                   value={form.type}
                   onChange={(e) => updateField("type", e.target.value)}
                   className={inputClass}
@@ -445,8 +446,9 @@ export default function AdvisorSignupPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className={labelClass}>AFSL Number</label>
+                  <label htmlFor="as-afsl-number" className={labelClass}>AFSL Number</label>
                   <input
+                    id="as-afsl-number"
                     value={form.afsl_number}
                     onChange={(e) => updateField("afsl_number", e.target.value)}
                     className={inputClass}
@@ -454,8 +456,9 @@ export default function AdvisorSignupPage() {
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>ABN</label>
+                  <label htmlFor="as-abn" className={labelClass}>ABN</label>
                   <input
+                    id="as-abn"
                     value={form.abn}
                     onChange={(e) => updateField("abn", e.target.value)}
                     className={inputClass}
@@ -463,8 +466,9 @@ export default function AdvisorSignupPage() {
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Registration / TAN</label>
+                  <label htmlFor="as-registration" className={labelClass}>Registration / TAN</label>
                   <input
+                    id="as-registration"
                     value={form.registration_number}
                     onChange={(e) => updateField("registration_number", e.target.value)}
                     className={inputClass}
@@ -563,8 +567,9 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Short Bio</label>
+                <label htmlFor="as-bio" className={labelClass}>Short Bio</label>
                 <textarea
+                  id="as-bio"
                   value={form.bio}
                   onChange={(e) => updateField("bio", e.target.value)}
                   rows={4}
@@ -577,8 +582,9 @@ export default function AdvisorSignupPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className={labelClass}>Years of Experience</label>
+                  <label htmlFor="as-years-exp" className={labelClass}>Years of Experience</label>
                   <input
+                    id="as-years-exp"
                     type="number"
                     min="0"
                     max="60"
@@ -589,8 +595,9 @@ export default function AdvisorSignupPage() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className={labelClass}>Languages Spoken</label>
+                  <label htmlFor="as-languages" className={labelClass}>Languages Spoken</label>
                   <input
+                    id="as-languages"
                     value={form.languages}
                     onChange={(e) => updateField("languages", e.target.value)}
                     className={inputClass}
@@ -601,8 +608,9 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Ideal Client Types</label>
+                <label htmlFor="as-client-types" className={labelClass}>Ideal Client Types</label>
                 <input
+                  id="as-client-types"
                   value={form.client_types}
                   onChange={(e) => updateField("client_types", e.target.value)}
                   className={inputClass}
@@ -622,8 +630,9 @@ export default function AdvisorSignupPage() {
               </p>
 
               <div>
-                <label className={labelClass}>Fee Type *</label>
+                <label htmlFor="as-fee-type" className={labelClass}>Fee Type *</label>
                 <select
+                  id="as-fee-type"
                   value={form.fee_structure}
                   onChange={(e) => updateField("fee_structure", e.target.value)}
                   className={inputClass}
@@ -635,8 +644,9 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Fee Description</label>
+                <label htmlFor="as-fee-description" className={labelClass}>Fee Description</label>
                 <textarea
+                  id="as-fee-description"
                   value={form.fee_description}
                   onChange={(e) => updateField("fee_description", e.target.value)}
                   rows={4}

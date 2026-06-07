@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -1021,14 +1021,16 @@ function DynamicField({
   value: unknown;
   onChange: (v: unknown) => void;
 }) {
+  const id = useId();
   if (field.kind === "text") {
     return (
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+        <label htmlFor={id} className="block text-sm font-semibold text-slate-700 mb-1.5">
           {field.label}
           {field.required && <span className="text-red-500"> *</span>}
         </label>
         <input
+          id={id}
           type="text"
           maxLength={field.maxLength}
           placeholder={field.placeholder}
@@ -1042,11 +1044,12 @@ function DynamicField({
   if (field.kind === "textarea") {
     return (
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+        <label htmlFor={id} className="block text-sm font-semibold text-slate-700 mb-1.5">
           {field.label}
           {field.required && <span className="text-red-500"> *</span>}
         </label>
         <textarea
+          id={id}
           rows={3}
           maxLength={field.maxLength}
           placeholder={field.placeholder}
@@ -1060,11 +1063,12 @@ function DynamicField({
   if (field.kind === "select") {
     return (
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+        <label htmlFor={id} className="block text-sm font-semibold text-slate-700 mb-1.5">
           {field.label}
           {field.required && <span className="text-red-500"> *</span>}
         </label>
         <select
+          id={id}
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value)}
           className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"

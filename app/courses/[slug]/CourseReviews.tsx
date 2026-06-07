@@ -208,9 +208,9 @@ export default function CourseReviews({
           <h3 className="font-bold text-slate-900">Write Your Review</h3>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <p className="block text-sm font-medium text-slate-700 mb-1">
               Your Rating <span className="text-red-500">*</span>
-            </label>
+            </p>
             <StarSelector value={rating} onChange={setRating} />
           </div>
 

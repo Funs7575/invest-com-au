@@ -136,8 +136,9 @@ export default function ETFScreenerClient() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Asset Class</label>
+              <label htmlFor="etf-asset-class" className="block text-xs font-semibold text-slate-700 mb-1.5">Asset Class</label>
               <select
+                id="etf-asset-class"
                 value={assetClass}
                 onChange={(e) => setAssetClass(e.target.value as ETFAssetClass | "all")}
                 className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -148,8 +149,9 @@ export default function ETFScreenerClient() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Provider</label>
+              <label htmlFor="etf-provider" className="block text-xs font-semibold text-slate-700 mb-1.5">Provider</label>
               <select
+                id="etf-provider"
                 value={provider}
                 onChange={(e) => setProvider(e.target.value as ETFProvider | "all")}
                 className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"

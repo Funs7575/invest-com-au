@@ -43,7 +43,7 @@ export default function DASPCalculator() {
       <div className="grid sm:grid-cols-2 gap-4 mb-5">
         {/* Visa type */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1.5">Visa type</label>
+          <p className="block text-xs font-bold text-slate-700 mb-1.5">Visa type</p>
           <div className="grid grid-cols-2 gap-2">
             {(["standard", "whm"] as VisaType[]).map((v) => (
               <button

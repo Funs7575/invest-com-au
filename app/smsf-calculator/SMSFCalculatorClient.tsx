@@ -207,10 +207,11 @@ export default function SMSFCalculatorClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Super balance */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Current super balance</label>
+              <label htmlFor="smsf-balance" className="block text-sm font-bold text-slate-700 mb-1.5">Current super balance</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
+                  id="smsf-balance"
                   type="number"
                   value={balance}
                   onChange={e => setBalance(Math.max(0, parseInt(e.target.value) || 0))}
@@ -228,10 +229,11 @@ export default function SMSFCalculatorClient() {
 
             {/* Annual contribution */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Annual contribution</label>
+              <label htmlFor="smsf-contribution" className="block text-sm font-bold text-slate-700 mb-1.5">Annual contribution</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
+                  id="smsf-contribution"
                   type="number"
                   value={annualContribution}
                   onChange={e => setAnnualContribution(Math.max(0, parseInt(e.target.value) || 0))}
@@ -243,9 +245,10 @@ export default function SMSFCalculatorClient() {
 
             {/* Current fund fee */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Current fund annual fee</label>
+              <label htmlFor="smsf-fund-fee" className="block text-sm font-bold text-slate-700 mb-1.5">Current fund annual fee</label>
               <div className="relative">
                 <input
+                  id="smsf-fund-fee"
                   type="number"
                   step="0.1"
                   value={currentFeePercent}
@@ -265,9 +268,10 @@ export default function SMSFCalculatorClient() {
 
             {/* Expected return */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Expected annual return</label>
+              <label htmlFor="smsf-expected-return" className="block text-sm font-bold text-slate-700 mb-1.5">Expected annual return</label>
               <div className="relative">
                 <input
+                  id="smsf-expected-return"
                   type="number"
                   step="0.5"
                   value={expectedReturn}
@@ -287,9 +291,10 @@ export default function SMSFCalculatorClient() {
 
             {/* Years to retirement */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Years to retirement</label>
+              <label htmlFor="smsf-years" className="block text-sm font-bold text-slate-700 mb-1.5">Years to retirement</label>
               <div className="relative">
                 <input
+                  id="smsf-years"
                   type="number"
                   value={yearsToRetirement}
                   onChange={e => setYearsToRetirement(Math.max(1, Math.min(50, parseInt(e.target.value) || 0)))}

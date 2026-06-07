@@ -119,10 +119,11 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
         {/* Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">
+            <label htmlFor="sc-current-broker" className="block text-sm font-semibold text-slate-700 mb-1">
               Current Broker
             </label>
             <select
+              id="sc-current-broker"
               value={currentSlug}
               onChange={(e) => setCurrentSlug(e.target.value)}
               className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
@@ -136,10 +137,11 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">
+            <label htmlFor="sc-target-broker" className="block text-sm font-semibold text-slate-700 mb-1">
               Switch To
             </label>
             <select
+              id="sc-target-broker"
               value={targetSlug}
               onChange={(e) => setTargetSlug(e.target.value)}
               className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
@@ -155,10 +157,11 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">
+            <label htmlFor="sc-holdings" className="block text-sm font-semibold text-slate-700 mb-1">
               Number of Holdings
             </label>
             <input
+              id="sc-holdings"
               type="number"
               min={1}
               max={100}
@@ -170,10 +173,11 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">
+            <label htmlFor="sc-trades-per-month" className="block text-sm font-semibold text-slate-700 mb-1">
               Trades per Month
             </label>
             <input
+              id="sc-trades-per-month"
               type="number"
               min={0}
               max={100}

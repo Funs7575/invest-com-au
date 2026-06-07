@@ -92,10 +92,11 @@ function BrokerEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-broker-trades" className="block text-xs font-semibold text-slate-600 mb-1">
             Trades per year
           </label>
           <input
+            id="st-broker-trades"
             type="number"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={trades}
@@ -104,10 +105,11 @@ function BrokerEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-broker-avg-size" className="block text-xs font-semibold text-slate-600 mb-1">
             Avg trade size ($)
           </label>
           <input
+            id="st-broker-avg-size"
             type="number"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={avgSize}
@@ -116,10 +118,11 @@ function BrokerEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-broker-us-pct" className="block text-xs font-semibold text-slate-600 mb-1">
             US shares (%)
           </label>
           <input
+            id="st-broker-us-pct"
             type="number"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={usPct}
@@ -175,10 +178,11 @@ function SuperEstimateForm() {
       </p>
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div className="col-span-2">
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-super-balance" className="block text-xs font-semibold text-slate-600 mb-1">
             Super balance ($)
           </label>
           <input
+            id="st-super-balance"
             type="number"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={balance}
@@ -187,10 +191,11 @@ function SuperEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-super-current-rate" className="block text-xs font-semibold text-slate-600 mb-1">
             Current fund fee (% p.a.)
           </label>
           <input
+            id="st-super-current-rate"
             type="number"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
@@ -200,10 +205,11 @@ function SuperEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-super-target-rate" className="block text-xs font-semibold text-slate-600 mb-1">
             Target fund fee (% p.a.)
           </label>
           <input
+            id="st-super-target-rate"
             type="number"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
@@ -213,10 +219,11 @@ function SuperEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-super-current-fixed" className="block text-xs font-semibold text-slate-600 mb-1">
             Current fixed fee ($/yr)
           </label>
           <input
+            id="st-super-current-fixed"
             type="number"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentFixed}
@@ -225,10 +232,11 @@ function SuperEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-super-target-fixed" className="block text-xs font-semibold text-slate-600 mb-1">
             Target fixed fee ($/yr)
           </label>
           <input
+            id="st-super-target-fixed"
             type="number"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetFixed}
@@ -283,10 +291,11 @@ function SavingsEstimateForm() {
       </p>
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div className="col-span-2">
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-sav-balance" className="block text-xs font-semibold text-slate-600 mb-1">
             Savings balance ($)
           </label>
           <input
+            id="st-sav-balance"
             type="number"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={balance}
@@ -295,10 +304,11 @@ function SavingsEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-sav-current-rate" className="block text-xs font-semibold text-slate-600 mb-1">
             Current rate (% p.a., ongoing)
           </label>
           <input
+            id="st-sav-current-rate"
             type="number"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
@@ -308,10 +318,11 @@ function SavingsEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-sav-target-rate" className="block text-xs font-semibold text-slate-600 mb-1">
             Target rate (% p.a., ongoing)
           </label>
           <input
+            id="st-sav-target-rate"
             type="number"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
@@ -321,10 +332,11 @@ function SavingsEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-sav-current-fee" className="block text-xs font-semibold text-slate-600 mb-1">
             Current monthly fee ($)
           </label>
           <input
+            id="st-sav-current-fee"
             type="number"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentFee}
@@ -333,10 +345,11 @@ function SavingsEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="st-sav-target-fee" className="block text-xs font-semibold text-slate-600 mb-1">
             Target monthly fee ($)
           </label>
           <input
+            id="st-sav-target-fee"
             type="number"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetFee}

@@ -136,10 +136,11 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
         <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 shadow-sm mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Your savings balance</label>
+              <label htmlFor="sav-balance" className="block text-sm font-bold text-slate-700 mb-1.5">Your savings balance</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
+                  id="sav-balance"
                   type="number"
                   value={balance}
                   onChange={e => setBalance(Math.max(0, parseInt(e.target.value) || 0))}
@@ -155,9 +156,10 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
               </div>
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Your current interest rate</label>
+              <label htmlFor="sav-current-rate" className="block text-sm font-bold text-slate-700 mb-1.5">Your current interest rate</label>
               <div className="relative">
                 <input
+                  id="sav-current-rate"
                   type="number"
                   step="0.1"
                   value={currentRate}

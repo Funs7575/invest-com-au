@@ -202,10 +202,11 @@ export default function QuoteReviewForm(props: Props) {
         </div>
       ) : (
         <section className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
-          <label className="block text-sm font-semibold text-slate-900">
+          <label htmlFor="qr-reason" className="block text-sm font-semibold text-slate-900">
             Reason (optional)
           </label>
           <textarea
+            id="qr-reason"
             value={declineReason}
             onChange={(e) => setDeclineReason(e.target.value.slice(0, 500))}
             rows={3}

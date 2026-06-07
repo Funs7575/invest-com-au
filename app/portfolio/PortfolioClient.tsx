@@ -186,8 +186,9 @@ export default function PortfolioClient() {
                   )}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="col-span-2">
-                      <label className="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
+                      <label htmlFor={`po-platform-${idx}`} className="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
                       <select
+                        id={`po-platform-${idx}`}
                         value={h.broker_slug}
                         onChange={e => updateHolding(idx, "broker_slug", e.target.value)}
                         className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm bg-white"
@@ -199,8 +200,9 @@ export default function PortfolioClient() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 mb-1">Portfolio Value ($)</label>
+                      <label htmlFor={`po-value-${idx}`} className="block text-xs font-semibold text-slate-600 mb-1">Portfolio Value ($)</label>
                       <input
+                        id={`po-value-${idx}`}
                         type="number"
                         value={h.balance}
                         onChange={e => updateHolding(idx, "balance", Number(e.target.value))}
@@ -208,8 +210,9 @@ export default function PortfolioClient() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-600 mb-1">Trades/Year</label>
+                      <label htmlFor={`po-trades-${idx}`} className="block text-xs font-semibold text-slate-600 mb-1">Trades/Year</label>
                       <input
+                        id={`po-trades-${idx}`}
                         type="number"
                         value={h.trades_per_year}
                         onChange={e => updateHolding(idx, "trades_per_year", Number(e.target.value))}
@@ -217,8 +220,9 @@ export default function PortfolioClient() {
                       />
                     </div>
                     <div className="col-span-2">
-                      <label className="block text-xs font-semibold text-slate-600 mb-1">US Share Allocation ({h.us_allocation}%)</label>
+                      <label htmlFor={`po-us-alloc-${idx}`} className="block text-xs font-semibold text-slate-600 mb-1">US Share Allocation ({h.us_allocation}%)</label>
                       <input
+                        id={`po-us-alloc-${idx}`}
                         type="range"
                         min={0}
                         max={100}

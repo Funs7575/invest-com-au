@@ -198,8 +198,9 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
           {holdings.map((h) => (
             <div key={h.id} className="flex flex-wrap items-end gap-2 md:gap-3 mb-3 pb-3 border-b border-slate-100 last:border-b-0 last:mb-0 last:pb-0">
               <div>
-                <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Market</label>
+                <label htmlFor={`pc-market-${h.id}`} className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Market</label>
                 <select
+                  id={`pc-market-${h.id}`}
                   value={h.market}
                   onChange={(e) => updateHolding(h.id, "market", e.target.value)}
                   className="px-2 py-1.5 border border-slate-200 rounded-lg text-xs md:text-sm"
@@ -210,8 +211,9 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                 </select>
               </div>
               <div>
-                <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Trades / Year</label>
+                <label htmlFor={`pc-trades-${h.id}`} className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Trades / Year</label>
                 <input
+                  id={`pc-trades-${h.id}`}
                   type="number"
                   value={h.trades_per_year}
                   onChange={(e) => updateHolding(h.id, "trades_per_year", parseInt(e.target.value) || 0)}
@@ -220,8 +222,9 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                 />
               </div>
               <div>
-                <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Avg Trade ($)</label>
+                <label htmlFor={`pc-avg-trade-${h.id}`} className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Avg Trade ($)</label>
                 <input
+                  id={`pc-avg-trade-${h.id}`}
                   type="number"
                   value={h.avg_trade_size}
                   onChange={(e) => updateHolding(h.id, "avg_trade_size", parseInt(e.target.value) || 0)}
@@ -249,8 +252,9 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
           </div>
 
           <div className="mt-4 pt-4 border-t border-slate-100">
-            <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Your Current Broker (optional)</label>
+            <label htmlFor="pc-current-broker" className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Your Current Broker (optional)</label>
             <select
+              id="pc-current-broker"
               value={currentBroker}
               onChange={(e) => setCurrentBroker(e.target.value)}
               className="w-full max-w-xs px-3 py-2 border border-slate-200 rounded-lg text-sm"

@@ -51,10 +51,11 @@ export default function TradeCostCalculator({ brokers, searchParams }: Props) {
       {/* Inputs */}
       <div className="flex gap-2.5 md:gap-4 mb-3 md:mb-6">
         <div className="flex-1">
-          <label className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">Amount (AUD)</label>
+          <label htmlFor="trc-amount" className="block text-[0.69rem] md:text-xs font-semibold text-slate-600 mb-1">Amount (AUD)</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
             <input
+              id="trc-amount"
               type="number"
               value={tradeAmount}
               onChange={(e) => setTradeAmount(e.target.value)}

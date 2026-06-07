@@ -52,10 +52,11 @@ export default function FxFeeCalculator({ brokers, searchParams }: Props) {
       {/* Slider + amount */}
       <div className="mb-5 md:mb-8">
         <div className="flex justify-between items-baseline mb-2">
-          <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Trade Amount</label>
+          <label htmlFor="fxf-amount" className="text-xs font-bold uppercase tracking-wider text-slate-500">Trade Amount</label>
           <span className="text-xl md:text-2xl font-extrabold text-brand tracking-tight">${amount.toLocaleString("en-AU")}</span>
         </div>
         <input
+          id="fxf-amount"
           type="range"
           min={1000}
           max={50000}

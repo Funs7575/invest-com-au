@@ -137,8 +137,9 @@ export default function OrgCoursesTab({ org }: Props) {
           <h2 className="text-sm font-bold text-slate-900 mb-4">New Course</h2>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Title *</label>
+              <label htmlFor="oc-title" className="block text-xs font-semibold text-slate-600 mb-1">Title *</label>
               <input
+                id="oc-title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Introduction to Self-Managed Super Funds"
@@ -146,8 +147,9 @@ export default function OrgCoursesTab({ org }: Props) {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
+              <label htmlFor="oc-description" className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
               <textarea
+                id="oc-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
@@ -157,8 +159,9 @@ export default function OrgCoursesTab({ org }: Props) {
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Price (AUD)</label>
+                <label htmlFor="oc-price" className="block text-xs font-semibold text-slate-600 mb-1">Price (AUD)</label>
                 <input
+                  id="oc-price"
                   type="number"
                   min="0"
                   step="0.01"
@@ -169,8 +172,9 @@ export default function OrgCoursesTab({ org }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Level</label>
+                <label htmlFor="oc-level" className="block text-xs font-semibold text-slate-600 mb-1">Level</label>
                 <select
+                  id="oc-level"
                   value={level}
                   onChange={(e) => setLevel(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -181,8 +185,9 @@ export default function OrgCoursesTab({ org }: Props) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">CPD Hours</label>
+                <label htmlFor="oc-cpd-hours" className="block text-xs font-semibold text-slate-600 mb-1">CPD Hours</label>
                 <input
+                  id="oc-cpd-hours"
                   type="number"
                   min="0"
                   step="0.5"

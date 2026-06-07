@@ -450,8 +450,9 @@ export default function EmbedBuilder() {
           <>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Advisor Type (optional)</label>
+                <label htmlFor="eb-adv-type" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Advisor Type (optional)</label>
                 <select
+                  id="eb-adv-type"
                   value={advisorType}
                   onChange={(e) => setAdvisorType(e.target.value)}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -463,8 +464,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">State (optional)</label>
+                <label htmlFor="eb-adv-state" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">State (optional)</label>
                 <select
+                  id="eb-adv-state"
                   value={advisorState}
                   onChange={(e) => setAdvisorState(e.target.value)}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -476,8 +478,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+                <label htmlFor="eb-adv-theme" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
                 <select
+                  id="eb-adv-theme"
                   value={advisorTheme}
                   onChange={(e) => setAdvisorTheme(e.target.value as "light" | "dark")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -487,8 +490,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Advisors</label>
+                <label htmlFor="eb-adv-limit" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Advisors</label>
                 <select
+                  id="eb-adv-limit"
                   value={advisorLimit}
                   onChange={(e) => setAdvisorLimit(parseInt(e.target.value, 10))}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -510,8 +514,9 @@ export default function EmbedBuilder() {
           <>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Market</label>
+                <label htmlFor="eb-fee-market" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Market</label>
                 <select
+                  id="eb-fee-market"
                   value={feeMarket}
                   onChange={(e) => setFeeMarket(e.target.value as "asx" | "us")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -521,8 +526,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Sort by</label>
+                <label htmlFor="eb-fee-sort" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Sort by</label>
                 <select
+                  id="eb-fee-sort"
                   value={feeSort}
                   onChange={(e) => setFeeSort(e.target.value as "asx_fee" | "us_fee" | "rating")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -533,8 +539,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+                <label htmlFor="eb-fee-theme" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
                 <select
+                  id="eb-fee-theme"
                   value={feeTheme}
                   onChange={(e) => setFeeTheme(e.target.value as "light" | "dark")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -544,8 +551,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
+                <label htmlFor="eb-fee-limit" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
                 <select
+                  id="eb-fee-limit"
                   value={feeLimit}
                   onChange={(e) => setFeeLimit(parseInt(e.target.value, 10))}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -593,8 +601,9 @@ export default function EmbedBuilder() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+                <label htmlFor="eb-health-theme" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
                 <select
+                  id="eb-health-theme"
                   value={healthTheme}
                   onChange={(e) => setHealthTheme(e.target.value as "light" | "dark")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -604,8 +613,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
+                <label htmlFor="eb-health-limit" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
                 <select
+                  id="eb-health-limit"
                   value={healthLimit}
                   onChange={(e) => setHealthLimit(parseInt(e.target.value, 10))}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -633,8 +643,9 @@ export default function EmbedBuilder() {
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Score Type</label>
+                <label htmlFor="eb-badge-type" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Score Type</label>
                 <select
+                  id="eb-badge-type"
                   value={badgeType}
                   onChange={(e) => setBadgeType(e.target.value as "advisor" | "broker")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -644,10 +655,11 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                <label htmlFor="eb-badge-slug" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                   {badgeType === "advisor" ? "Advisor Slug" : "Broker Slug"}
                 </label>
                 <input
+                  id="eb-badge-slug"
                   type="text"
                   value={badgeSlug}
                   onChange={(e) => setBadgeSlug(e.target.value)}
@@ -660,8 +672,9 @@ export default function EmbedBuilder() {
                 </p>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+                <label htmlFor="eb-badge-theme" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
                 <select
+                  id="eb-badge-theme"
                   value={badgeTheme}
                   onChange={(e) => setBadgeTheme(e.target.value as "light" | "dark")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -684,10 +697,11 @@ export default function EmbedBuilder() {
           <>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                <label htmlFor="eb-rates-type" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                   Product type
                 </label>
                 <select
+                  id="eb-rates-type"
                   value={ratesType}
                   onChange={(e) => setRatesType(e.target.value as "savings" | "term_deposit" | "all")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -698,10 +712,11 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                <label htmlFor="eb-rates-limit" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                   Rows to show
                 </label>
                 <select
+                  id="eb-rates-limit"
                   value={ratesLimit}
                   onChange={(e) => setRatesLimit(Number(e.target.value))}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -714,10 +729,11 @@ export default function EmbedBuilder() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+              <label htmlFor="eb-rates-advisor" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                 Advisor co-branding <span className="text-slate-400 font-normal lowercase">(optional)</span>
               </label>
               <input
+                id="eb-rates-advisor"
                 type="text"
                 value={ratesAdvisorSlug}
                 onChange={(e) => setRatesAdvisorSlug(e.target.value)}
@@ -732,8 +748,9 @@ export default function EmbedBuilder() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+              <label htmlFor="eb-rates-theme" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
               <select
+                id="eb-rates-theme"
                 value={ratesTheme}
                 onChange={(e) => setRatesTheme(e.target.value as "light" | "dark")}
                 className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -752,10 +769,11 @@ export default function EmbedBuilder() {
 
         {/* ── Shared partner ref ── */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+          <label htmlFor="eb-partner-ref" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
             Partner ID <span className="text-slate-400 font-normal lowercase">(optional — adds ?ref= to outbound links)</span>
           </label>
           <input
+            id="eb-partner-ref"
             type="text"
             value={partnerRef}
             onChange={(e) => setPartnerRef(e.target.value)}

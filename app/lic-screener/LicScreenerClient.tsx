@@ -143,8 +143,9 @@ export default function LicScreenerClient() {
         <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Investment Focus</label>
+              <label htmlFor="lic-focus" className="block text-xs font-semibold text-slate-600 mb-1">Investment Focus</label>
               <select
+                id="lic-focus"
                 value={focus}
                 onChange={(e) => setFocus(e.target.value as LICFocus | "all")}
                 className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -153,8 +154,9 @@ export default function LicScreenerClient() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Franking</label>
+              <label htmlFor="lic-franking" className="block text-xs font-semibold text-slate-600 mb-1">Franking</label>
               <select
+                id="lic-franking"
                 value={franking}
                 onChange={(e) => setFranking(e.target.value as typeof franking)}
                 className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -163,8 +165,9 @@ export default function LicScreenerClient() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Max Mgmt Cost (%)</label>
+              <label htmlFor="lic-max-mer" className="block text-xs font-semibold text-slate-600 mb-1">Max Mgmt Cost (%)</label>
               <input
+                id="lic-max-mer"
                 type="number"
                 min="0.1"
                 max="2"

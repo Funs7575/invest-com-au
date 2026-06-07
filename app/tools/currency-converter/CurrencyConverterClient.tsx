@@ -107,7 +107,7 @@ export default function CurrencyConverterPage() {
             <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr]">
               {/* From */}
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Amount</label>
+                <p className="block text-xs font-medium text-slate-600 mb-1">Amount</p>
                 <div className="flex gap-2">
                   <select
                     value={fromCurrency}
@@ -148,7 +148,7 @@ export default function CurrencyConverterPage() {
 
               {/* To */}
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Converted to</label>
+                <p className="block text-xs font-medium text-slate-600 mb-1">Converted to</p>
                 <div className="flex gap-2">
                   <select
                     value={toCurrency}

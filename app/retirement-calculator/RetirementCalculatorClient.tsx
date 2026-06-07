@@ -206,8 +206,9 @@ export default function RetirementCalculatorClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Current Age */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Current age</label>
+              <label htmlFor="rc-current-age" className="block text-sm font-bold text-slate-700 mb-1.5">Current age</label>
               <input
+                id="rc-current-age"
                 type="number"
                 value={currentAge}
                 onChange={e => setCurrentAge(Math.max(18, Math.min(75, parseInt(e.target.value) || 18)))}
@@ -217,8 +218,9 @@ export default function RetirementCalculatorClient() {
 
             {/* Retirement Age */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Retirement age</label>
+              <label htmlFor="rc-retirement-age" className="block text-sm font-bold text-slate-700 mb-1.5">Retirement age</label>
               <input
+                id="rc-retirement-age"
                 type="number"
                 value={retirementAge}
                 onChange={e => setRetirementAge(Math.max(currentAge + 1, Math.min(80, parseInt(e.target.value) || 67)))}
@@ -228,10 +230,11 @@ export default function RetirementCalculatorClient() {
 
             {/* Current Super Balance */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Current super balance</label>
+              <label htmlFor="rc-super-balance" className="block text-sm font-bold text-slate-700 mb-1.5">Current super balance</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
+                  id="rc-super-balance"
                   type="number"
                   value={currentSuper}
                   onChange={e => setCurrentSuper(Math.max(0, parseInt(e.target.value) || 0))}
@@ -242,10 +245,11 @@ export default function RetirementCalculatorClient() {
 
             {/* Annual Salary */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Annual salary (pre-tax)</label>
+              <label htmlFor="rc-annual-salary" className="block text-sm font-bold text-slate-700 mb-1.5">Annual salary (pre-tax)</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
+                  id="rc-annual-salary"
                   type="number"
                   value={annualSalary}
                   onChange={e => setAnnualSalary(Math.max(0, parseInt(e.target.value) || 0))}
@@ -263,9 +267,10 @@ export default function RetirementCalculatorClient() {
 
             {/* Employer Super Rate */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Employer super rate</label>
+              <label htmlFor="rc-employer-rate" className="block text-sm font-bold text-slate-700 mb-1.5">Employer super rate</label>
               <div className="relative">
                 <input
+                  id="rc-employer-rate"
                   type="number"
                   step="0.5"
                   value={employerRate}
@@ -278,10 +283,11 @@ export default function RetirementCalculatorClient() {
 
             {/* Additional Contributions */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Additional contributions (yearly)</label>
+              <label htmlFor="rc-add-contrib" className="block text-sm font-bold text-slate-700 mb-1.5">Additional contributions (yearly)</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
+                  id="rc-add-contrib"
                   type="number"
                   value={additionalContributions}
                   onChange={e => setAdditionalContributions(Math.max(0, parseInt(e.target.value) || 0))}
@@ -292,9 +298,10 @@ export default function RetirementCalculatorClient() {
 
             {/* Expected Return */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Expected return (p.a.)</label>
+              <label htmlFor="rc-expected-return" className="block text-sm font-bold text-slate-700 mb-1.5">Expected return (p.a.)</label>
               <div className="relative">
                 <input
+                  id="rc-expected-return"
                   type="number"
                   step="0.5"
                   value={expectedReturn}
@@ -307,9 +314,10 @@ export default function RetirementCalculatorClient() {
 
             {/* Inflation Rate */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Inflation rate (p.a.)</label>
+              <label htmlFor="rc-inflation-rate" className="block text-sm font-bold text-slate-700 mb-1.5">Inflation rate (p.a.)</label>
               <div className="relative">
                 <input
+                  id="rc-inflation-rate"
                   type="number"
                   step="0.5"
                   value={inflationRate}
@@ -322,10 +330,11 @@ export default function RetirementCalculatorClient() {
 
             {/* Desired Retirement Income */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Desired retirement income (per year)</label>
+              <label htmlFor="rc-desired-income" className="block text-sm font-bold text-slate-700 mb-1.5">Desired retirement income (per year)</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
+                  id="rc-desired-income"
                   type="number"
                   value={desiredIncome}
                   onChange={e => setDesiredIncome(Math.max(0, parseInt(e.target.value) || 0))}

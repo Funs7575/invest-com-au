@@ -61,8 +61,9 @@ export default function JoinClubPage({ params }: { params: Promise<{ clubId: str
       </p>
       <form onSubmit={handleJoin} className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Your display name</label>
+          <label htmlFor="cj-display-name" className="block text-xs font-semibold text-slate-600 mb-1">Your display name</label>
           <input
+            id="cj-display-name"
             type="text"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}

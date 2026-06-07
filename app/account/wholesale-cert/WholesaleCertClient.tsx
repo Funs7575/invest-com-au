@@ -225,7 +225,7 @@ export default function WholesaleCertClient({ existing }: Props) {
 
           {/* Evidence upload */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-2">
+            <label htmlFor="wc-evidence-doc" className="block text-xs font-semibold text-slate-600 mb-2">
               Evidence document
               <span className="text-slate-400 font-normal ml-1">(PDF, JPG, or PNG · max 10 MB)</span>
             </label>
@@ -243,6 +243,7 @@ export default function WholesaleCertClient({ existing }: Props) {
               )}
             </div>
             <input
+              id="wc-evidence-doc"
               ref={fileRef}
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"

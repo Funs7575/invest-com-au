@@ -289,7 +289,7 @@ export default function StartupSignupPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Sector (select all that apply)</label>
+              <p className="block text-sm font-medium text-gray-700 mb-2">Sector (select all that apply)</p>
               <div className="flex flex-wrap gap-2">
                 {SECTORS.map((s) => (
                   <button

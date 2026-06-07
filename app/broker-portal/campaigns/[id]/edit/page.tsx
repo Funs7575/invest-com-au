@@ -554,10 +554,11 @@ export default function EditCampaignPage() {
         </div>
         <div className="flex items-end gap-3">
           <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="ce-template-name" className="block text-sm font-medium text-slate-700 mb-1">
               Template Name
             </label>
             <input
+              id="ce-template-name"
               type="text"
               value={templateName}
               onChange={(e) => setTemplateName(e.target.value)}
