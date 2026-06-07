@@ -367,6 +367,14 @@ export default function ReviewsTab({ advisor }: Props) {
           <p className="text-xs text-slate-500 mb-4">
             Send review invitations to your past clients to start building your reputation.
           </p>
+          <button
+            type="button"
+            onClick={() => document.getElementById("rt-invite-name")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+          >
+            <Icon name="send" size={13} aria-hidden />
+            Send an invitation
+          </button>
         </div>
       ) : (
         <div className="space-y-4">

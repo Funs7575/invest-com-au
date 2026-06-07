@@ -293,7 +293,7 @@ function AlertForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveError 
         </Field>
         <Field label="Display order (low first)">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             value={draft.display_order}
             onChange={(e) => set("display_order", parseInt(e.target.value, 10) || 0)}
             className="w-full text-sm border rounded px-2 py-1.5"

@@ -233,7 +233,7 @@ export default function AdminArticlesPage() {
             </div>
             <div>
               <label htmlFor="art-read-time" className="block text-xs font-medium text-slate-500 mb-1">Read Time (min)</label>
-              <input id="art-read-time" name="read_time" type="number" defaultValue={formArticle.read_time?.toString()} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <input id="art-read-time" name="read_time" type="number" inputMode="decimal" defaultValue={formArticle.read_time?.toString()} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label htmlFor="art-tags" className="block text-xs font-medium text-slate-500 mb-1">Tags (comma-separated)</label>

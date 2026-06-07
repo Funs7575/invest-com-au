@@ -155,7 +155,7 @@ function SurfaceSection({
                   </td>
                   <td className="px-4 py-2">
                     <input
-                      type="number"
+                      type="number" inputMode="decimal"
                       step="100"
                       min="0"
                       max="100000"

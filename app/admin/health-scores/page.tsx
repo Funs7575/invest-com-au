@@ -297,7 +297,7 @@ export default function HealthScoresPage() {
                 </label>
                 <input
                   id="hs-overall-score"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.overall_score}
@@ -319,7 +319,7 @@ export default function HealthScoresPage() {
                 </label>
                 <input
                   id="hs-regulatory-score"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.regulatory_score}
@@ -355,7 +355,7 @@ export default function HealthScoresPage() {
                 </label>
                 <input
                   id="hs-client-money-score"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.client_money_score}
@@ -391,7 +391,7 @@ export default function HealthScoresPage() {
                 </label>
                 <input
                   id="hs-fin-stability-score"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.financial_stability_score}
@@ -431,7 +431,7 @@ export default function HealthScoresPage() {
                 </label>
                 <input
                   id="hs-platform-score"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.platform_reliability_score}
@@ -471,7 +471,7 @@ export default function HealthScoresPage() {
                 </label>
                 <input
                   id="hs-insurance-score"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={0}
                   max={100}
                   value={form.insurance_score}

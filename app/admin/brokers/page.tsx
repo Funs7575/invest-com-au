@@ -389,12 +389,12 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
       <SectionHeading title="Fees & Costs" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="ASX Fee (display)" name="asx_fee" defaultValue={broker.asx_fee} hint={'Display text for ASX brokerage, e.g. "$5 flat" or "0.08%"'} />
-        <Field label="ASX Fee Value ($)" name="asx_fee_value" defaultValue={broker.asx_fee_value?.toString()} type="number" step="0.01" hint="Numeric value in dollars used for calculator comparisons." />
+        <Field label="ASX Fee Value ($)" name="asx_fee_value" defaultValue={broker.asx_fee_value?.toString()} type="number" inputMode="decimal" step="0.01" hint="Numeric value in dollars used for calculator comparisons." />
         <Field label="US Fee (display)" name="us_fee" defaultValue={broker.us_fee} hint={'Display text for US brokerage, e.g. "$0" or "US$2"'} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Field label="US Fee Value ($)" name="us_fee_value" defaultValue={broker.us_fee_value?.toString()} type="number" step="0.01" hint="Numeric value in dollars used for calculator comparisons." />
-        <Field label="FX Rate (%)" name="fx_rate" defaultValue={broker.fx_rate?.toString()} type="number" step="0.001" hint="Currency conversion fee as a percentage, e.g. 0.70" />
+        <Field label="US Fee Value ($)" name="us_fee_value" defaultValue={broker.us_fee_value?.toString()} type="number" inputMode="decimal" step="0.01" hint="Numeric value in dollars used for calculator comparisons." />
+        <Field label="FX Rate (%)" name="fx_rate" defaultValue={broker.fx_rate?.toString()} type="number" inputMode="decimal" step="0.001" hint="Currency conversion fee as a percentage, e.g. 0.70" />
         <div>
           <label htmlFor="inactivity_fee" className="block text-xs font-medium text-slate-500 mb-1">Inactivity Fee <InfoTip text="Monthly charge if the account has no trades — important for comparison." /></label>
           <input id="inactivity_fee" name="inactivity_fee" type="text" defaultValue={broker.inactivity_fee || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
@@ -402,7 +402,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="Min Deposit" name="min_deposit" defaultValue={broker.min_deposit} />
-        <Field label="Rating" name="rating" defaultValue={broker.rating?.toString()} type="number" step="0.1" min="0" max="5" hint="Score from 0-5. Determines default sort order on comparison pages." />
+        <Field label="Rating" name="rating" defaultValue={broker.rating?.toString()} type="number" inputMode="decimal" step="0.1" min="0" max="5" hint="Score from 0-5. Determines default sort order on comparison pages." />
         <Field label="Status" name="status" defaultValue={broker.status || "active"} hint="Only active brokers appear on the public site." />
       </div>
 
@@ -573,7 +573,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
       <SectionHeading title="Company Info" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="Regulated By" name="regulated_by" defaultValue={broker.regulated_by} />
-        <Field label="Year Founded" name="year_founded" defaultValue={broker.year_founded?.toString()} type="number" />
+        <Field label="Year Founded" name="year_founded" defaultValue={broker.year_founded?.toString()} type="number" inputMode="decimal" />
         <Field label="Headquarters" name="headquarters" defaultValue={broker.headquarters} />
       </div>
 

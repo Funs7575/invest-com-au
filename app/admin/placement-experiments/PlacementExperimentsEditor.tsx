@@ -582,7 +582,7 @@ function ExperimentForm({
               className="col-span-6 text-sm border rounded px-2 py-1 font-mono"
             />
             <input
-              type="number"
+              type="number" inputMode="decimal"
               value={v.weight}
               onChange={(e) => setVariant(i, { weight: parseInt(e.target.value, 10) || 0 })}
               min={0}

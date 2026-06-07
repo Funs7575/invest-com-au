@@ -334,7 +334,7 @@ export default function BrokerTransferGuidesPage() {
                 </label>
                 <input
                   id="btg-chess-fee"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={form.chess_transfer_fee}
                   onChange={(e) =>
                     setForm({
@@ -351,7 +351,7 @@ export default function BrokerTransferGuidesPage() {
                 </label>
                 <input
                   id="btg-timeline"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={form.estimated_timeline_days}
                   onChange={(e) =>
                     setForm({

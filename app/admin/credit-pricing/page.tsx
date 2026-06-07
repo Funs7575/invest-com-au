@@ -92,7 +92,7 @@ export default function AdminCreditPricingPage() {
                     <td className="py-2 pr-3">{r.provider_type}</td>
                     <td className="py-2 pr-3">
                       <input
-                        type="number"
+                        type="number" inputMode="decimal"
                         min={0}
                         max={1000}
                         value={edited[r.id] ?? r.credits_cost}

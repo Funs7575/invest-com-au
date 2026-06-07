@@ -115,7 +115,7 @@ export default function CalculatorConfigPage() {
             </label>
             <input
               id="cc-corporate-tax"
-              type="number"
+              type="number" inputMode="decimal"
               step="0.01"
               value={(config.corporate_tax_rate as number | string | undefined) ?? ""}
               onChange={(e) =>
@@ -134,7 +134,7 @@ export default function CalculatorConfigPage() {
             </label>
             <input
               id="cc-transfer-fee"
-              type="number"
+              type="number" inputMode="decimal"
               step="0.01"
               value={(config.transfer_fee as number | string | undefined) ?? ""}
               onChange={(e) =>

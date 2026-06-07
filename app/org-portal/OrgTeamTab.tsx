@@ -161,7 +161,16 @@ export default function OrgTeamTab({ org: _org }: Props) {
       {members.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-xl p-6 text-center">
           <Icon name="users" size={28} className="text-slate-300 mx-auto mb-2" />
-          <p className="text-sm text-slate-500">No team members yet. Invite someone above.</p>
+          <p className="text-sm text-slate-700 font-semibold mb-1">No team members yet</p>
+          <p className="text-sm text-slate-500 mb-3">Use the form above to invite your first team member.</p>
+          <button
+            type="button"
+            onClick={() => document.getElementById("ot-email")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white text-sm font-semibold rounded-lg hover:bg-teal-700 transition-colors"
+          >
+            <Icon name="user-plus" size={13} aria-hidden />
+            Invite a team member
+          </button>
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">

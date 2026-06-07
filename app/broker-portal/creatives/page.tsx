@@ -48,8 +48,8 @@ function DeleteModal({ creativeName, onConfirm, onCancel }: DeleteModalProps) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
       onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}
     >
-      <div className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full mx-4 space-y-4">
-        <h3 className="text-base font-bold text-slate-900">Delete creative</h3>
+      <div role="dialog" aria-modal="true" aria-labelledby="del-creative-title" className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full mx-4 space-y-4">
+        <h3 id="del-creative-title" className="text-base font-bold text-slate-900">Delete creative</h3>
         <p className="text-sm text-slate-600">
           Delete creative <span className="font-semibold">&lsquo;{creativeName}&rsquo;</span>?{" "}
           This cannot be undone.
@@ -371,6 +371,14 @@ export default function CreativesPage() {
               </div>
               <p className="text-sm font-medium text-slate-700 mb-1">No creative assets yet</p>
               <p className="text-xs text-slate-400 mb-4">Upload your brand logos, banners, and screenshots to use in ad campaigns.</p>
+              <button
+                type="button"
+                onClick={() => document.getElementById("cre-image-url")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                <Icon name="upload" size={13} aria-hidden />
+                Add your first asset
+              </button>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

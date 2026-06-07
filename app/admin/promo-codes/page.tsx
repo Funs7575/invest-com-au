@@ -216,7 +216,7 @@ export default function PromoCodesAdminPage() {
                   : "(ignored)"}
             </span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               min={kind === "free_brief" ? undefined : 1}
               max={kind === "percent_off_accept" ? 100 : undefined}
               step="1"
@@ -232,7 +232,7 @@ export default function PromoCodesAdminPage() {
               Max uses
             </span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               min={1}
               max={10000}
               step="1"

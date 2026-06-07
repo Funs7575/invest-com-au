@@ -480,8 +480,8 @@ export default function ABTestsPage() {
       {/* Confirmation modal for End / Declare Winner */}
       {confirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setConfirmModal(null)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-6" onClick={e => e.stopPropagation()}>
-            <h2 className="text-base font-extrabold text-slate-900 mb-2">
+          <div role="dialog" aria-modal="true" aria-labelledby="abt-confirm-title" className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <h2 id="abt-confirm-title" className="text-base font-extrabold text-slate-900 mb-2">
               {confirmModal.type === "winner"
                 ? `Declare Variant ${confirmModal.winner?.toUpperCase()} as winner?`
                 : "End this test?"}

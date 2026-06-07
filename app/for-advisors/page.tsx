@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600; // 1 hour
 import Icon from "@/components/Icon";
@@ -17,6 +18,15 @@ export const metadata: Metadata = {
   },
 };
 
+const FOR_ADVISORS_FAQS = [
+  { q: "How much does it cost to list?", a: "It's free to create your profile and receive your first 3 leads. After that, top up with a A$150 credit balance — each lead costs A$39 and deducts from your balance. No monthly fees, no setup costs, no lock-in contracts." },
+  { q: "What qualifies as a 'lead'?", a: "A lead is an enquiry submitted through your profile — the investor provides their name, email, and usually a phone number and message. Booking clicks (Calendly) are tracked separately." },
+  { q: "How are leads allocated?", a: "Leads go directly to the advisor whose profile the investor enquires through. We don't share leads with multiple advisors — each lead is exclusive to you." },
+  { q: "Can I set my own Calendly link?", a: "Yes. In your advisor portal, paste your Calendly or Cal.com link and it appears as a prominent 'Book Free Call' button on your profile. We handle the rest." },
+  { q: "How long before I get my first lead?", a: "Most advisors receive their first enquiry within 2–4 weeks of going live, depending on your category, location, and how complete your profile is. Advisors with a photo, detailed bio, and clear fee structure typically appear higher in our directory and convert better." },
+  { q: "What if I get spam or low-quality leads?", a: "Every lead goes through our automated quality filters — we check for valid email, complete contact details, and a coherent message. Obvious spam is blocked before it reaches you. For borderline cases, our one-click dispute process means you're never paying for something that doesn't meet our quality standard." },
+];
+
 export default async function ForAdvisorsPage() {
   const supabase = await createClient();
   const { count: advisorCount } = await supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active");
@@ -25,7 +35,11 @@ export default async function ForAdvisorsPage() {
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const { count: joinedThisWeek } = await supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active").gte("created_at", weekAgo);
 
+  const faqSchema = faqJsonLd(FOR_ADVISORS_FAQS);
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <div className="min-h-screen bg-white">
       {/* Hero */}
       <section className="bg-gradient-to-br from-violet-600 via-violet-700 to-indigo-800 text-white py-16 md:py-24 px-4">
@@ -333,5 +347,6 @@ export default async function ForAdvisorsPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

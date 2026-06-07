@@ -150,9 +150,9 @@ export default function BDPipelinePage() {
       {/* Edit / Add modal */}
       {editing && (
         <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4" onClick={() => setEditing(null)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div role="dialog" aria-modal="true" aria-labelledby="bdp-modal-title" className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="p-5 border-b border-slate-100">
-              <h2 className="text-base font-bold">{editing.id ? "Edit Deal" : "New Deal"}</h2>
+              <h2 id="bdp-modal-title" className="text-base font-bold">{editing.id ? "Edit Deal" : "New Deal"}</h2>
             </div>
             <div className="p-5 space-y-3">
               <div>

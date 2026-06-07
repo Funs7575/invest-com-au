@@ -188,8 +188,8 @@ export default function AdminPackagesPage() {
         {/* Edit Modal */}
         {editing && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-6 w-full max-w-md space-y-4">
-              <h3 className="text-lg font-bold text-slate-900">
+            <div role="dialog" aria-modal="true" aria-labelledby="pkg-modal-title" className="bg-white rounded-xl p-6 w-full max-w-md space-y-4">
+              <h3 id="pkg-modal-title" className="text-lg font-bold text-slate-900">
                 Edit Package
               </h3>
 
@@ -230,7 +230,7 @@ export default function AdminPackagesPage() {
                   </label>
                   <input
                     id="pkg-monthly-fee"
-                    type="number"
+                    type="number" inputMode="decimal"
                     value={(editForm.monthly_fee_cents || 0) / 100}
                     onChange={(e) =>
                       setEditForm({
@@ -247,7 +247,7 @@ export default function AdminPackagesPage() {
                   </label>
                   <input
                     id="pkg-cpc-discount"
-                    type="number"
+                    type="number" inputMode="decimal"
                     value={editForm.cpc_rate_discount_pct || 0}
                     onChange={(e) =>
                       setEditForm({
@@ -269,7 +269,7 @@ export default function AdminPackagesPage() {
                   </label>
                   <input
                     id="pkg-featured-slots"
-                    type="number"
+                    type="number" inputMode="decimal"
                     value={editForm.featured_slots_included || 0}
                     onChange={(e) =>
                       setEditForm({

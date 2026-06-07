@@ -413,7 +413,7 @@ export default function CommodityHubsClient({ initialSectors }: Props) {
                 MER %
               </span>
               <input
-                type="number"
+                type="number" inputMode="decimal"
                 step="0.01"
                 min="0"
                 max="10"

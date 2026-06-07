@@ -268,7 +268,7 @@ export default function AdminBrokersPage() {
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
                 <input
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.01"
                   placeholder="Amount (negative to debit)"
                   value={adjustAmount}

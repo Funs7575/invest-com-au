@@ -189,7 +189,7 @@ export default function AdminPlacementsPage() {
               </div>
               <div>
                 <label htmlFor="mp-max-slots" className="block text-sm font-medium text-slate-700 mb-1">Max Slots</label>
-                <input id="mp-max-slots" type="number" value={maxSlots} onChange={(e) => setMaxSlots(Number(e.target.value))}
+                <input id="mp-max-slots" type="number" inputMode="decimal" value={maxSlots} onChange={(e) => setMaxSlots(Number(e.target.value))}
                   min={1} max={10}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" />
               </div>
@@ -197,7 +197,7 @@ export default function AdminPlacementsPage() {
                 <label htmlFor="mp-base-rate" className="block text-sm font-medium text-slate-700 mb-1">
                   Base Rate {inventoryType === "cpc" ? "(¢/click)" : "(¢/month)"}
                 </label>
-                <input id="mp-base-rate" type="number" value={baseRateCents} onChange={(e) => setBaseRateCents(Number(e.target.value))}
+                <input id="mp-base-rate" type="number" inputMode="decimal" value={baseRateCents} onChange={(e) => setBaseRateCents(Number(e.target.value))}
                   min={0}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" />
                 <p className="text-xs text-slate-400 mt-0.5">${(baseRateCents / 100).toFixed(2)}</p>

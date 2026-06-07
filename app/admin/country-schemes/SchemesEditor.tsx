@@ -360,7 +360,7 @@ function SchemeForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveError
         </Field>
         <Field label="Threshold cents (numeric, optional)">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             value={draft.threshold_cents ?? ""}
             onChange={(e) =>
               set(
@@ -411,7 +411,7 @@ function SchemeForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveError
         </Field>
         <Field label="Display order">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             value={draft.display_order}
             onChange={(e) =>
               set("display_order", parseInt(e.target.value, 10) || 0)

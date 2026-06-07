@@ -490,7 +490,7 @@ export default function AdminConsultationsPage() {
               </label>
               <input
                 id="con-price"
-                type="number"
+                type="number" inputMode="decimal"
                 step="0.01"
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
@@ -504,7 +504,7 @@ export default function AdminConsultationsPage() {
               </label>
               <input
                 id="con-pro-price"
-                type="number"
+                type="number" inputMode="decimal"
                 step="0.01"
                 value={form.pro_price}
                 onChange={(e) =>
@@ -591,7 +591,7 @@ export default function AdminConsultationsPage() {
               </label>
               <input
                 id="con-sort-order"
-                type="number"
+                type="number" inputMode="decimal"
                 value={form.sort_order}
                 onChange={(e) =>
                   setForm({ ...form, sort_order: e.target.value })

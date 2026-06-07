@@ -720,8 +720,8 @@ export default function ContentCalendarPage() {
 
       {pendingDraftItem && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setPendingDraftItem(null)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-3" onClick={e => e.stopPropagation()}>
-            <h2 className="text-sm font-bold text-slate-900">AI Draft — Authorize</h2>
+          <div role="dialog" aria-modal="true" aria-labelledby="cal-draft-modal-title" className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-3" onClick={e => e.stopPropagation()}>
+            <h2 id="cal-draft-modal-title" className="text-sm font-bold text-slate-900">AI Draft — Authorize</h2>
             <p className="text-xs text-slate-500">Enter the CRON_SECRET to generate a draft for <strong>{pendingDraftItem.title}</strong>.</p>
             <input
               type="password"

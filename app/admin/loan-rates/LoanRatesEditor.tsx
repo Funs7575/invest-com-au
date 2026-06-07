@@ -281,7 +281,7 @@ function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveErr
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Field label="Rate % (p.a.)">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             step="0.01"
             min="0"
             max="99"
@@ -292,7 +292,7 @@ function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveErr
         </Field>
         <Field label="Comparison rate % (p.a.)">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             step="0.01"
             min="0"
             max="99"
@@ -303,7 +303,7 @@ function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveErr
         </Field>
         <Field label="Max LVR %">
           <input
-            type="number"
+            type="number" inputMode="decimal"
             step="1"
             min="1"
             max="100"
@@ -316,7 +316,7 @@ function LoanRateForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveErr
 
       <Field label="Min loan (cents — e.g. 500000000 = $5,000,000)">
         <input
-          type="number"
+          type="number" inputMode="decimal"
           step="100"
           min="0"
           value={draft.min_loan_cents}

@@ -185,7 +185,7 @@ export default function AdminIntentsPage() {
                   </td>
                   <td className="py-2 pr-3">
                     <input
-                      type="number"
+                      type="number" inputMode="decimal"
                       value={row.sort_order}
                       onChange={(e) =>
                         setIntents((rs) =>

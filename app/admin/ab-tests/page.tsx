@@ -313,7 +313,7 @@ export default function ABTestsPage() {
                 <label htmlFor="abt-split" className="block text-sm font-medium text-slate-700 mb-1">Traffic Split (% to Variant A)</label>
                 <input
                   id="abt-split"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={formSplit}
                   onChange={(e) => setFormSplit(Number(e.target.value))}
                   min={1}

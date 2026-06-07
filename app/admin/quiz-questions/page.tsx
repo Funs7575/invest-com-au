@@ -266,7 +266,7 @@ export default function QuizQuestionsPage() {
                 </label>
                 <input
                   id="qq-order-index"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={form.order_index}
                   onChange={(e) =>
                     setForm((prev) => ({

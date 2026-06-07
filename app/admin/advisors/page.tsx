@@ -290,7 +290,7 @@ export default function AdminAdvisorsPage() {
                 </div>
                 <div>
                   <label htmlFor="adv-years-exp" className="block text-xs font-semibold text-slate-600 mb-1">Years Experience</label>
-                  <input id="adv-years-exp" type="number" value={(editing as Record<string, unknown>).years_experience as number || ""} onChange={(e) => setEditing({ ...editing, years_experience: e.target.value ? parseInt(e.target.value) : undefined } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="15" />
+                  <input id="adv-years-exp" type="number" inputMode="decimal" value={(editing as Record<string, unknown>).years_experience as number || ""} onChange={(e) => setEditing({ ...editing, years_experience: e.target.value ? parseInt(e.target.value) : undefined } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="15" />
                 </div>
               </div>
               <div className="mt-4">

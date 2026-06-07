@@ -117,7 +117,7 @@ export default function AdminRoutingRulesPage() {
                       className="flex-1 border border-slate-300 rounded-md px-2 py-1 text-sm font-bold"
                     />
                     <input
-                      type="number"
+                      type="number" inputMode="decimal"
                       value={merged.priority}
                       onChange={(e) =>
                         setEdited({

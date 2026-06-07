@@ -449,7 +449,7 @@ export default function AffiliateLinksPage() {
                             </td>
                             <td className="px-4 py-3">
                               <input
-                                type="number"
+                                type="number" inputMode="decimal"
                                 step="0.01"
                                 min="0"
                                 value={getFieldValue(broker, "commission_value")}
@@ -462,7 +462,7 @@ export default function AffiliateLinksPage() {
                             </td>
                             <td className="px-4 py-3">
                               <input
-                                type="number"
+                                type="number" inputMode="decimal"
                                 step="0.01"
                                 min="0"
                                 value={getFieldValue(broker, "estimated_epc")}

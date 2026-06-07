@@ -135,7 +135,7 @@ export default function ConfigEditor({ initialRows }: { initialRows: ConfigRow[]
                     </td>
                     <td className="px-4 py-2">
                       <input
-                        type="number"
+                        type="number" inputMode="decimal"
                         step="any"
                         defaultValue={row.value}
                         onChange={(e) =>

@@ -302,7 +302,7 @@ export default function AdminCoursesPage() {
               <label htmlFor="c-price" className="block text-xs font-semibold text-slate-700 mb-1">Price (AUD)</label>
               <input
                 id="c-price"
-                type="number"
+                type="number" inputMode="decimal"
                 step="0.01"
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
@@ -314,7 +314,7 @@ export default function AdminCoursesPage() {
               <label htmlFor="c-pro-price" className="block text-xs font-semibold text-slate-700 mb-1">Pro Price (AUD)</label>
               <input
                 id="c-pro-price"
-                type="number"
+                type="number" inputMode="decimal"
                 step="0.01"
                 value={form.pro_price}
                 onChange={(e) => setForm({ ...form, pro_price: e.target.value })}
@@ -357,7 +357,7 @@ export default function AdminCoursesPage() {
               <label htmlFor="c-rev-share" className="block text-xs font-semibold text-slate-700 mb-1">Revenue Share %</label>
               <input
                 id="c-rev-share"
-                type="number"
+                type="number" inputMode="decimal"
                 min="0"
                 max="100"
                 value={form.revenue_share_percent}

@@ -516,7 +516,7 @@ export default function ProDealsPage() {
                 </label>
                 <input
                   id="pd-sort-order"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={form.sort_order}
                   onChange={(e) =>
                     setForm({

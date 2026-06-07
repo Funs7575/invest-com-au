@@ -366,7 +366,7 @@ export default function QuarterlyReportsPage() {
                 </label>
                 <input
                   id="qr-year"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={form.year}
                   onChange={(e) =>
                     setForm({

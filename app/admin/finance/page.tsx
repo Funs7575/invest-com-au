@@ -331,8 +331,8 @@ export default function FinanceDashboardPage() {
       {/* ─── EDIT MODAL ─── */}
       {editing && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => { setEditing(null); setAmountInput(""); }}>
-          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-slate-900 mb-4">{editing.id ? "Edit" : "Add"} Transaction</h3>
+          <div role="dialog" aria-modal="true" aria-labelledby="fin-modal-title" className="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+            <h3 id="fin-modal-title" className="text-lg font-bold text-slate-900 mb-4">{editing.id ? "Edit" : "Add"} Transaction</h3>
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -358,7 +358,7 @@ export default function FinanceDashboardPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="fin-amount" className="block text-xs font-semibold text-slate-600 mb-1">Amount ($)</label>
-                  <input id="fin-amount" type="number" step="0.01" value={amountInput} onChange={e => { setAmountInput(e.target.value); setEditing({ ...editing, amount_cents: Math.round(parseFloat(e.target.value || "0") * 100) }); }} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="49.00" />
+                  <input id="fin-amount" type="number" inputMode="decimal" step="0.01" value={amountInput} onChange={e => { setAmountInput(e.target.value); setEditing({ ...editing, amount_cents: Math.round(parseFloat(e.target.value || "0") * 100) }); }} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="49.00" />
                 </div>
                 <div>
                   <label htmlFor="fin-date" className="block text-xs font-semibold text-slate-600 mb-1">Date</label>

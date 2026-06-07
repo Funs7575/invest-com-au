@@ -212,7 +212,7 @@ export default function QuizWeightsPage() {
                   <label htmlFor={`qw-sim-${f.key}`} className="block text-xs font-medium text-slate-500 mb-1">{f.label} (0-3)</label>
                   <input
                     id={`qw-sim-${f.key}`}
-                    type="number"
+                    type="number" inputMode="decimal"
                     min="0"
                     max="3"
                     step="0.5"
@@ -301,7 +301,7 @@ export default function QuizWeightsPage() {
                       {WEIGHT_FIELDS.map((f) => (
                         <td key={f.key} className="px-4 py-3">
                           <input
-                            type="number"
+                            type="number" inputMode="decimal"
                             step="1"
                             value={row[f.key] as number}
                             onChange={(e) =>

@@ -290,7 +290,7 @@ export default function AdminPricingPage() {
                         <div className="flex items-center justify-center gap-1">
                           <span className="text-slate-400">$</span>
                           <input
-                            type="number"
+                            type="number" inputMode="decimal"
                             className="w-16 px-2 py-1 border border-blue-300 rounded text-center text-sm font-bold"
                             value={centsToInput(editValues.price_cents || 0)}
                             onChange={(e) => setEditValues({ ...editValues, price_cents: inputToCents(e.target.value) })}
@@ -305,7 +305,7 @@ export default function AdminPricingPage() {
                         <div className="flex items-center justify-center gap-1">
                           <span className="text-slate-400">$</span>
                           <input
-                            type="number"
+                            type="number" inputMode="decimal"
                             className="w-16 px-2 py-1 border border-blue-300 rounded text-center text-sm font-bold"
                             value={centsToInput(editValues.qualified_price_cents || 0)}
                             onChange={(e) => setEditValues({ ...editValues, qualified_price_cents: inputToCents(e.target.value) })}
@@ -320,7 +320,7 @@ export default function AdminPricingPage() {
                         <div className="flex items-center justify-center gap-1">
                           <span className="text-slate-400">$</span>
                           <input
-                            type="number"
+                            type="number" inputMode="decimal"
                             className="w-16 px-2 py-1 border border-violet-300 rounded text-center text-sm font-bold"
                             value={centsToInput(editValues.exclusive_price_cents || 0)}
                             onChange={(e) => setEditValues({ ...editValues, exclusive_price_cents: inputToCents(e.target.value) })}
@@ -333,7 +333,7 @@ export default function AdminPricingPage() {
                     <td className="px-3 py-3 text-center hidden md:table-cell">
                       {isEditing ? (
                         <input
-                          type="number"
+                          type="number" inputMode="decimal"
                           className="w-14 px-1 py-1 border border-slate-300 rounded text-center text-xs"
                           value={centsToInput(editValues.min_price_cents || 0)}
                           onChange={(e) => setEditValues({ ...editValues, min_price_cents: inputToCents(e.target.value) })}
@@ -345,7 +345,7 @@ export default function AdminPricingPage() {
                     <td className="px-3 py-3 text-center hidden md:table-cell">
                       {isEditing ? (
                         <input
-                          type="number"
+                          type="number" inputMode="decimal"
                           className="w-14 px-1 py-1 border border-slate-300 rounded text-center text-xs"
                           value={centsToInput(editValues.max_price_cents || 0)}
                           onChange={(e) => setEditValues({ ...editValues, max_price_cents: inputToCents(e.target.value) })}
@@ -357,7 +357,7 @@ export default function AdminPricingPage() {
                     <td className="px-3 py-3 text-center">
                       {isEditing ? (
                         <input
-                          type="number"
+                          type="number" inputMode="decimal"
                           className="w-12 px-1 py-1 border border-slate-300 rounded text-center text-xs"
                           value={editValues.free_trial_leads || 0}
                           onChange={(e) => setEditValues({ ...editValues, free_trial_leads: parseInt(e.target.value) || 0 })}
@@ -371,7 +371,7 @@ export default function AdminPricingPage() {
                         <div className="flex items-center justify-center gap-1">
                           <span className="text-slate-400 text-xs">$</span>
                           <input
-                            type="number"
+                            type="number" inputMode="decimal"
                             className="w-14 px-1 py-1 border border-slate-300 rounded text-center text-xs"
                             value={centsToInput(editValues.featured_monthly_cents || 0)}
                             onChange={(e) => setEditValues({ ...editValues, featured_monthly_cents: inputToCents(e.target.value) })}

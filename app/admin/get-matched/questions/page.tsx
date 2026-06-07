@@ -236,7 +236,7 @@ export default function AdminGmQuestionsPage() {
                   <label className="flex items-center gap-1">
                     sort
                     <input
-                      type="number"
+                      type="number" inputMode="decimal"
                       value={merged.sort_order}
                       onChange={(e) =>
                         setEdited({
