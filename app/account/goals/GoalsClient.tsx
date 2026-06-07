@@ -179,7 +179,7 @@ export default function GoalsClient({ initialItems }: Props) {
               </a>{" "}
               to upload bank or super statements as a reference for current balances.
             </p>
-            <button type="submit" disabled={adding}
+            <button type="submit" disabled={adding} aria-busy={adding}
               className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
               {adding && (
                 <svg className="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" aria-hidden>
