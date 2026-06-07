@@ -482,10 +482,11 @@ export default function CourseBuilderTab({ advisor }: Props) {
         {step === 1 && (
           <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="course-title" className="block text-xs font-bold text-slate-700 mb-1">
                 Course Title <span className="text-red-500">*</span>
               </label>
               <input
+                id="course-title"
                 type="text"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -498,8 +499,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Description</label>
+              <label htmlFor="course-description" className="block text-xs font-bold text-slate-700 mb-1">Description</label>
               <textarea
+                id="course-description"
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                 placeholder="What will students learn? Who is this course for? What topics does it cover?"
@@ -693,10 +695,11 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label htmlFor="lesson-title" className="block text-xs font-bold text-slate-600 mb-1">
                     Lesson Title <span className="text-red-500">*</span>
                   </label>
                   <input
+                    id="lesson-title"
                     type="text"
                     value={lessonForm.title}
                     onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
@@ -707,11 +710,12 @@ export default function CourseBuilderTab({ advisor }: Props) {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-1">
+                    <label htmlFor="lesson-video-url" className="block text-xs font-bold text-slate-600 mb-1">
                       Video URL{" "}
                       <span className="text-slate-400 font-normal">(YouTube / Vimeo)</span>
                     </label>
                     <input
+                      id="lesson-video-url"
                       type="url"
                       value={lessonForm.video_url}
                       onChange={(e) => setLessonForm({ ...lessonForm, video_url: e.target.value })}
@@ -720,8 +724,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-1">Duration (minutes)</label>
+                    <label htmlFor="lesson-duration" className="block text-xs font-bold text-slate-600 mb-1">Duration (minutes)</label>
                     <input
+                      id="lesson-duration"
                       type="number"
                       min="0"
                       value={lessonForm.duration_minutes}
@@ -733,10 +738,11 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label htmlFor="lesson-content" className="block text-xs font-bold text-slate-600 mb-1">
                     Description / Notes
                   </label>
                   <textarea
+                    id="lesson-content"
                     value={lessonForm.content}
                     onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
                     placeholder="Brief notes or summary for this lesson..."

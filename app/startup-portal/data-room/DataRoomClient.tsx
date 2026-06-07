@@ -161,8 +161,9 @@ export default function DataRoomClient({
               <h3 id="data-room-upload-title" className="text-base font-semibold text-gray-900 mb-4">Upload document</h3>
               <form onSubmit={handleUpload} className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Category</label>
+                  <label htmlFor="dr-category" className="text-sm font-medium text-gray-700">Category</label>
                   <select
+                    id="dr-category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -173,10 +174,11 @@ export default function DataRoomClient({
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label htmlFor="dr-file" className="text-sm font-medium text-gray-700">
                     File <span className="font-normal text-gray-400">(PDF, JPG, PNG, WebP — max 50 MB)</span>
                   </label>
                   <input
+                    id="dr-file"
                     ref={fileRef}
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png,.webp"

@@ -198,8 +198,9 @@ export default function EventsTab({ advisor }: Props) {
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
+                <label htmlFor="evt-title" className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
                 <input
+                  id="evt-title"
                   required
                   minLength={3}
                   maxLength={200}
@@ -211,8 +212,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Event Type</label>
+                <label htmlFor="evt-type" className="block text-xs font-bold text-slate-700 mb-1">Event Type</label>
                 <select
+                  id="evt-type"
                   value={form.event_type}
                   onChange={(e) => setForm((f) => ({ ...f, event_type: e.target.value }))}
                   className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
@@ -224,8 +226,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Price (AUD)</label>
+                <label htmlFor="evt-price" className="block text-xs font-bold text-slate-700 mb-1">Price (AUD)</label>
                 <input
+                  id="evt-price"
                   type="number"
                   min={0}
                   step={1}
@@ -238,8 +241,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Starts At *</label>
+                <label htmlFor="evt-starts-at" className="block text-xs font-bold text-slate-700 mb-1">Starts At *</label>
                 <input
+                  id="evt-starts-at"
                   required
                   type="datetime-local"
                   value={form.starts_at}
@@ -249,8 +253,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Ends At <span className="font-normal text-slate-400">(optional)</span></label>
+                <label htmlFor="evt-ends-at" className="block text-xs font-bold text-slate-700 mb-1">Ends At <span className="font-normal text-slate-400">(optional)</span></label>
                 <input
+                  id="evt-ends-at"
                   type="datetime-local"
                   value={form.ends_at}
                   onChange={(e) => setForm((f) => ({ ...f, ends_at: e.target.value }))}
@@ -259,8 +264,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Location <span className="font-normal text-slate-400">(optional)</span></label>
+                <label htmlFor="evt-location" className="block text-xs font-bold text-slate-700 mb-1">Location <span className="font-normal text-slate-400">(optional)</span></label>
                 <input
+                  id="evt-location"
                   maxLength={300}
                   value={form.location}
                   onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
@@ -270,8 +276,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Meeting URL <span className="font-normal text-slate-400">(optional)</span></label>
+                <label htmlFor="evt-meeting-url" className="block text-xs font-bold text-slate-700 mb-1">Meeting URL <span className="font-normal text-slate-400">(optional)</span></label>
                 <input
+                  id="evt-meeting-url"
                   type="url"
                   value={form.meeting_url}
                   onChange={(e) => setForm((f) => ({ ...f, meeting_url: e.target.value }))}
@@ -281,8 +288,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Max Attendees <span className="font-normal text-slate-400">(optional)</span></label>
+                <label htmlFor="evt-max-attendees" className="block text-xs font-bold text-slate-700 mb-1">Max Attendees <span className="font-normal text-slate-400">(optional)</span></label>
                 <input
+                  id="evt-max-attendees"
                   type="number"
                   min={1}
                   max={10000}

@@ -649,10 +649,11 @@ export default function BriefForm({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="brief-title" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Title <span className="text-red-500">*</span>
             </label>
             <input
+              id="brief-title"
               type="text"
               maxLength={120}
               value={form.job_title}
@@ -663,10 +664,11 @@ export default function BriefForm({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="brief-description" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Describe the situation <span className="text-red-500">*</span>
             </label>
             <textarea
+              id="brief-description"
               rows={5}
               maxLength={3000}
               value={form.job_description}
@@ -681,10 +683,11 @@ export default function BriefForm({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="brief-state" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 State <span className="text-red-500">*</span>
               </label>
               <select
+                id="brief-state"
                 value={form.location_state}
                 onChange={(e) => setField("location_state", e.target.value)}
                 className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -698,10 +701,11 @@ export default function BriefForm({
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="brief-budget" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Budget band <span className="text-red-500">*</span>
               </label>
               <select
+                id="brief-budget"
                 value={form.budget_band}
                 onChange={(e) => setField("budget_band", e.target.value)}
                 className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -851,10 +855,11 @@ export default function BriefForm({
 
           {form.routing_mode === "direct" && (
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="brief-target-slug" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Target team / firm / individual slug
               </label>
               <input
+                id="brief-target-slug"
                 type="text"
                 value={form.target_team_slug}
                 onChange={(e) => setField("target_team_slug", e.target.value)}
@@ -907,10 +912,11 @@ export default function BriefForm({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="brief-contact-name" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Name <span className="text-red-500">*</span>
             </label>
             <input
+              id="brief-contact-name"
               type="text"
               value={form.contact_name}
               onChange={(e) => setField("contact_name", e.target.value)}
@@ -920,10 +926,11 @@ export default function BriefForm({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="brief-contact-email" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Email <span className="text-red-500">*</span>
               </label>
               <input
+                id="brief-contact-email"
                 type="email"
                 value={form.contact_email}
                 onChange={(e) => setField("contact_email", e.target.value)}
@@ -932,10 +939,11 @@ export default function BriefForm({
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="brief-contact-phone" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Phone
               </label>
               <input
+                id="brief-contact-phone"
                 type="tel"
                 autoComplete="tel"
                 value={form.contact_phone}

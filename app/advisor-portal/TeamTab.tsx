@@ -392,8 +392,9 @@ export default function TeamTab({ advisor }: Props) {
             <h3 className="text-sm font-bold text-slate-900 mb-4">Firm Profile</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
+                <label htmlFor="firm-name" className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
                 <input
+                  id="firm-name"
                   value={editingFirm.name || ""}
                   onChange={(e) => setEditingFirm(f => ({ ...f, name: e.target.value }))}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -401,8 +402,9 @@ export default function TeamTab({ advisor }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">About the Firm</label>
+                <label htmlFor="firm-bio" className="block text-xs font-semibold text-slate-600 mb-1">About the Firm</label>
                 <textarea
+                  id="firm-bio"
                   value={editingFirm.bio || ""}
                   onChange={(e) => setEditingFirm(f => ({ ...f, bio: e.target.value }))}
                   rows={4}
@@ -412,40 +414,40 @@ export default function TeamTab({ advisor }: Props) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
-                  <input value={editingFirm.website || ""} onChange={(e) => setEditingFirm(f => ({ ...f, website: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                  <label htmlFor="firm-website" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
+                  <input id="firm-website" value={editingFirm.website || ""} onChange={(e) => setEditingFirm(f => ({ ...f, website: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
-                  <input value={editingFirm.phone || ""} onChange={(e) => setEditingFirm(f => ({ ...f, phone: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="02 XXXX XXXX" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
-                  <input type="email" autoComplete="email" value={editingFirm.email || ""} onChange={(e) => setEditingFirm(f => ({ ...f, email: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="info@firm.com.au" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
-                  <input value={editingFirm.abn || ""} onChange={(e) => setEditingFirm(f => ({ ...f, abn: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="XX XXX XXX XXX" />
+                  <label htmlFor="firm-phone" className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
+                  <input id="firm-phone" value={editingFirm.phone || ""} onChange={(e) => setEditingFirm(f => ({ ...f, phone: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="02 XXXX XXXX" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">AFSL Number</label>
-                  <input value={editingFirm.afsl_number || ""} onChange={(e) => setEditingFirm(f => ({ ...f, afsl_number: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. 234567" />
+                  <label htmlFor="firm-email" className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+                  <input id="firm-email" type="email" autoComplete="email" value={editingFirm.email || ""} onChange={(e) => setEditingFirm(f => ({ ...f, email: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="info@firm.com.au" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">State</label>
-                  <select value={editingFirm.location_state || ""} onChange={(e) => setEditingFirm(f => ({ ...f, location_state: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                  <label htmlFor="firm-abn" className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
+                  <input id="firm-abn" value={editingFirm.abn || ""} onChange={(e) => setEditingFirm(f => ({ ...f, abn: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="XX XXX XXX XXX" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="firm-afsl" className="block text-xs font-semibold text-slate-600 mb-1">AFSL Number</label>
+                  <input id="firm-afsl" value={editingFirm.afsl_number || ""} onChange={(e) => setEditingFirm(f => ({ ...f, afsl_number: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. 234567" />
+                </div>
+                <div>
+                  <label htmlFor="firm-state" className="block text-xs font-semibold text-slate-600 mb-1">State</label>
+                  <select id="firm-state" value={editingFirm.location_state || ""} onChange={(e) => setEditingFirm(f => ({ ...f, location_state: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
                     <option value="">Select...</option>
                     {["NSW","VIC","QLD","WA","SA","TAS","ACT","NT"].map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Suburb</label>
-                <input value={editingFirm.location_suburb || ""} onChange={(e) => setEditingFirm(f => ({ ...f, location_suburb: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sydney CBD" />
+                <label htmlFor="firm-suburb" className="block text-xs font-semibold text-slate-600 mb-1">Suburb</label>
+                <input id="firm-suburb" value={editingFirm.location_suburb || ""} onChange={(e) => setEditingFirm(f => ({ ...f, location_suburb: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sydney CBD" />
               </div>
               <div className="flex items-center gap-3 pt-2">
                 <button

@@ -241,10 +241,11 @@ export default function JobPostForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="job-title" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Title <span className="text-red-500">*</span>
             </label>
             <input
+              id="job-title"
               type="text"
               maxLength={120}
               value={form.job_title}
@@ -256,10 +257,11 @@ export default function JobPostForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="job-description" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Describe your situation <span className="text-red-500">*</span>
             </label>
             <textarea
+              id="job-description"
               rows={6}
               maxLength={3000}
               value={form.job_description}
@@ -272,10 +274,11 @@ export default function JobPostForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="job-state" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 State <span className="text-red-500">*</span>
               </label>
               <select
+                id="job-state"
                 value={form.location_state}
                 onChange={(e) => set("location_state", e.target.value)}
                 className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -285,10 +288,11 @@ export default function JobPostForm() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="job-budget" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Budget <span className="text-red-500">*</span>
               </label>
               <select
+                id="job-budget"
                 value={form.budget_band}
                 onChange={(e) => set("budget_band", e.target.value)}
                 className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -355,10 +359,11 @@ export default function JobPostForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="contact-name" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Name <span className="text-red-500">*</span>
             </label>
             <input
+              id="contact-name"
               type="text"
               value={form.contact_name}
               onChange={(e) => set("contact_name", e.target.value)}
@@ -368,10 +373,11 @@ export default function JobPostForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label htmlFor="contact-email" className="block text-sm font-semibold text-slate-700 mb-1.5">
                 Email <span className="text-red-500">*</span>
               </label>
               <input
+                id="contact-email"
                 type="email"
                 value={form.contact_email}
                 onChange={(e) => set("contact_email", e.target.value)}
@@ -380,8 +386,9 @@ export default function JobPostForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">Phone</label>
+              <label htmlFor="contact-phone" className="block text-sm font-semibold text-slate-700 mb-1.5">Phone</label>
               <input
+                id="contact-phone"
                 type="tel"
                 autoComplete="tel"
                 value={form.contact_phone}

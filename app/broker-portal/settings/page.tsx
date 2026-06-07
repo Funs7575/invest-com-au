@@ -140,8 +140,9 @@ export default function SettingsPage() {
           <h3 className="font-bold text-slate-900">Account Details</h3>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+          <label htmlFor="broker-email" className="block text-sm font-medium text-slate-700 mb-1">Email</label>
           <input
+            id="broker-email"
             type="email"
             value={account.email}
             disabled
@@ -151,8 +152,9 @@ export default function SettingsPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+          <label htmlFor="broker-full-name" className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
           <input
+            id="broker-full-name"
             type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
@@ -162,8 +164,9 @@ export default function SettingsPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
+          <label htmlFor="broker-company" className="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
           <input
+            id="broker-company"
             type="text"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
@@ -172,8 +175,9 @@ export default function SettingsPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+          <label htmlFor="broker-phone" className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
           <input
+            id="broker-phone"
             type="tel"
             autoComplete="tel"
             value={phone}
@@ -185,8 +189,9 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Broker</label>
+            <label htmlFor="broker-slug-display" className="block text-sm font-medium text-slate-700 mb-1">Broker</label>
             <input
+              id="broker-slug-display"
               type="text"
               value={account.broker_slug}
               disabled
@@ -194,8 +199,9 @@ export default function SettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
+            <label htmlFor="broker-role-display" className="block text-sm font-medium text-slate-700 mb-1">Role</label>
             <input
+              id="broker-role-display"
               type="text"
               value={account.role}
               disabled

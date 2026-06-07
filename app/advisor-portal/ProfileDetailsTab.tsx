@@ -520,10 +520,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
             <h4 className="text-xs font-bold text-slate-700">New Service</h4>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
+              <label htmlFor="svc-name" className="block text-xs font-medium text-slate-600 mb-1">
                 Service name <span className="text-red-400">*</span>
               </label>
               <input
+                id="svc-name"
                 value={serviceName}
                 onChange={(e) => setServiceName(e.target.value)}
                 placeholder="e.g. Retirement Planning Review"
@@ -532,10 +533,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
+              <label htmlFor="svc-desc" className="block text-xs font-medium text-slate-600 mb-1">
                 Description <span className="text-slate-400">(optional)</span>
               </label>
               <textarea
+                id="svc-desc"
                 value={serviceDesc}
                 onChange={(e) => setServiceDesc(e.target.value)}
                 placeholder="Brief description of what this service includes..."
@@ -546,8 +548,9 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Pricing type</label>
+                <label htmlFor="svc-price-type" className="block text-xs font-medium text-slate-600 mb-1">Pricing type</label>
                 <select
+                  id="svc-price-type"
                   value={servicePriceType}
                   onChange={(e) =>
                     setServicePriceType(e.target.value as typeof servicePriceType)
@@ -562,10 +565,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
               </div>
               {(servicePriceType === "fixed" || servicePriceType === "hourly") && (
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="svc-price-from" className="block text-xs font-medium text-slate-600 mb-1">
                     Price from ($)
                   </label>
                   <input
+                    id="svc-price-from"
                     type="number"
                     min="0"
                     step="1"
@@ -580,10 +584,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
             {(servicePriceType === "fixed" || servicePriceType === "hourly") &&
               servicePriceFrom && (
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="svc-price-to" className="block text-xs font-medium text-slate-600 mb-1">
                     Price to ($) <span className="text-slate-400">(optional upper bound)</span>
                   </label>
                   <input
+                    id="svc-price-to"
                     type="number"
                     min="0"
                     step="1"
@@ -683,10 +688,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
             <h4 className="text-xs font-bold text-slate-700">New Qualification</h4>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-name" className="block text-xs font-medium text-slate-600 mb-1">
                   Qualification name <span className="text-red-400">*</span>
                 </label>
                 <input
+                  id="cert-name"
                   value={certName}
                   onChange={(e) => setCertName(e.target.value)}
                   placeholder="e.g. CFP® Certification"
@@ -695,10 +701,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-issuer" className="block text-xs font-medium text-slate-600 mb-1">
                   Issuing body <span className="text-red-400">*</span>
                 </label>
                 <input
+                  id="cert-issuer"
                   value={certIssuer}
                   onChange={(e) => setCertIssuer(e.target.value)}
                   placeholder="e.g. Financial Planning Association"
@@ -707,10 +714,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-cred-id" className="block text-xs font-medium text-slate-600 mb-1">
                   Credential / Licence ID <span className="text-slate-400">(optional)</span>
                 </label>
                 <input
+                  id="cert-cred-id"
                   value={certCredId}
                   onChange={(e) => setCertCredId(e.target.value)}
                   placeholder="e.g. 123456"
@@ -719,10 +727,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-issued-at" className="block text-xs font-medium text-slate-600 mb-1">
                   Date issued <span className="text-slate-400">(optional)</span>
                 </label>
                 <input
+                  id="cert-issued-at"
                   type="date"
                   value={certIssuedAt}
                   onChange={(e) => setCertIssuedAt(e.target.value)}
@@ -730,10 +739,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-expires-at" className="block text-xs font-medium text-slate-600 mb-1">
                   Expiry date <span className="text-slate-400">(optional)</span>
                 </label>
                 <input
+                  id="cert-expires-at"
                   type="date"
                   value={certExpiresAt}
                   onChange={(e) => setCertExpiresAt(e.target.value)}
@@ -741,10 +751,11 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="cert-url" className="block text-xs font-medium text-slate-600 mb-1">
                   Certificate URL <span className="text-slate-400">(optional)</span>
                 </label>
                 <input
+                  id="cert-url"
                   type="url"
                   value={certUrl}
                   onChange={(e) => setCertUrl(e.target.value)}

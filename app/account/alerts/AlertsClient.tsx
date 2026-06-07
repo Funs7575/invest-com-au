@@ -138,10 +138,11 @@ function CreateAlertForm({
       <div className="grid gap-3 sm:grid-cols-2">
         {/* Metric kind */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">
+          <label htmlFor="alert-metric-kind" className="block text-xs font-medium text-slate-700 mb-1">
             Alert type
           </label>
           <select
+            id="alert-metric-kind"
             value={form.metric_kind}
             onChange={(e) =>
               setForm((f) => ({
@@ -160,10 +161,11 @@ function CreateAlertForm({
 
         {/* Direction */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">
+          <label htmlFor="alert-direction" className="block text-xs font-medium text-slate-700 mb-1">
             Trigger when rate
           </label>
           <select
+            id="alert-direction"
             value={form.direction}
             onChange={(e) =>
               setForm((f) => ({
@@ -180,10 +182,11 @@ function CreateAlertForm({
 
         {/* Threshold */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">
+          <label htmlFor="alert-threshold" className="block text-xs font-medium text-slate-700 mb-1">
             Threshold (%)
           </label>
           <input
+            id="alert-threshold"
             type="number"
             min="0"
             max="100"
@@ -202,10 +205,11 @@ function CreateAlertForm({
 
         {/* Frequency */}
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">
+          <label htmlFor="alert-frequency" className="block text-xs font-medium text-slate-700 mb-1">
             Notification frequency
           </label>
           <select
+            id="alert-frequency"
             value={form.frequency}
             onChange={(e) =>
               setForm((f) => ({
@@ -224,10 +228,11 @@ function CreateAlertForm({
         {/* Broker slug — only for broker_fee */}
         {showBrokerSlug && (
           <div className="sm:col-span-2">
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label htmlFor="alert-broker-slug" className="block text-xs font-medium text-slate-700 mb-1">
               Broker slug (optional — leave blank to watch all)
             </label>
             <input
+              id="alert-broker-slug"
               type="text"
               placeholder="e.g. commsec"
               value={form.broker_slug}
@@ -242,10 +247,11 @@ function CreateAlertForm({
         {/* Lender slug — only for loan_rate */}
         {showLenderSlug && (
           <div className="sm:col-span-2">
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label htmlFor="alert-lender-slug" className="block text-xs font-medium text-slate-700 mb-1">
               Lender slug (optional — leave blank to watch best rate)
             </label>
             <input
+              id="alert-lender-slug"
               type="text"
               placeholder="e.g. commonwealth-bank"
               value={form.lender_slug}

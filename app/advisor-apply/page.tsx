@@ -534,8 +534,8 @@ function AdvisorApplyInner() {
               )}
               {isInviteFlow && (
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Firm</label>
-                  <input value={inviteContext.firmName || ""} disabled className="w-full px-3 py-2 border border-slate-100 bg-slate-50 rounded-lg text-sm text-slate-500 cursor-not-allowed" />
+                  <label htmlFor="aa-firm-display" className="block text-xs font-semibold text-slate-600 mb-1">Firm</label>
+                  <input id="aa-firm-display" value={inviteContext.firmName || ""} disabled className="w-full px-3 py-2 border border-slate-100 bg-slate-50 rounded-lg text-sm text-slate-500 cursor-not-allowed" />
                 </div>
               )}
             </div>
@@ -544,12 +544,12 @@ function AdvisorApplyInner() {
             {accountType === "firm" && !isInviteFlow && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
-                  <input value={form.abn} onChange={(e) => setForm({ ...form, abn: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="XX XXX XXX XXX" />
+                  <label htmlFor="aa-abn" className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
+                  <input id="aa-abn" value={form.abn} onChange={(e) => setForm({ ...form, abn: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="XX XXX XXX XXX" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Website</label>
-                  <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                  <label htmlFor="aa-website" className="block text-xs font-semibold text-slate-600 mb-1">Firm Website</label>
+                  <input id="aa-website" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
                 </div>
               </div>
             )}
@@ -624,40 +624,40 @@ function AdvisorApplyInner() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Advisor Type *</label>
-              <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+              <label htmlFor="aa-type" className="block text-xs font-semibold text-slate-600 mb-1">Advisor Type *</label>
+              <select id="aa-type" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
                 {Object.entries(PROFESSIONAL_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">AFSL Number</label>
-                <input value={form.afsl_number} onChange={(e) => setForm({ ...form, afsl_number: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. 234567" />
+                <label htmlFor="aa-afsl" className="block text-xs font-semibold text-slate-600 mb-1">AFSL Number</label>
+                <input id="aa-afsl" value={form.afsl_number} onChange={(e) => setForm({ ...form, afsl_number: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. 234567" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Registration / TAN</label>
-                <input value={form.registration_number} onChange={(e) => setForm({ ...form, registration_number: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="For tax agents" />
+                <label htmlFor="aa-reg-number" className="block text-xs font-semibold text-slate-600 mb-1">Registration / TAN</label>
+                <input id="aa-reg-number" value={form.registration_number} onChange={(e) => setForm({ ...form, registration_number: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="For tax agents" />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">State</label>
-                <select value={form.location_state} onChange={(e) => setForm({ ...form, location_state: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                <label htmlFor="aa-state" className="block text-xs font-semibold text-slate-600 mb-1">State</label>
+                <select id="aa-state" value={form.location_state} onChange={(e) => setForm({ ...form, location_state: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
                   <option value="">Select...</option>
                   {STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Suburb</label>
-                <input value={form.location_suburb} onChange={(e) => setForm({ ...form, location_suburb: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sydney CBD" />
+                <label htmlFor="aa-suburb" className="block text-xs font-semibold text-slate-600 mb-1">Suburb</label>
+                <input id="aa-suburb" value={form.location_suburb} onChange={(e) => setForm({ ...form, location_suburb: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sydney CBD" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Specialties</label>
-              <input value={form.specialties} onChange={(e) => setForm({ ...form, specialties: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="SMSF Setup, Retirement Planning, ETF Portfolios" />
+              <label htmlFor="aa-specialties" className="block text-xs font-semibold text-slate-600 mb-1">Specialties</label>
+              <input id="aa-specialties" value={form.specialties} onChange={(e) => setForm({ ...form, specialties: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="SMSF Setup, Retirement Planning, ETF Portfolios" />
               <p className="text-[0.56rem] text-slate-400 mt-0.5">Comma-separated</p>
             </div>
 

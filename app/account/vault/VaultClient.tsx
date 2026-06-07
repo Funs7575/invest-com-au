@@ -119,8 +119,9 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
           <div role="dialog" aria-modal="true" aria-labelledby="vault-upload-dialog-title" className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
             <h2 id="vault-upload-dialog-title" className="text-lg font-semibold mb-4">Upload a document</h2>
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">Document type</label>
+            <label htmlFor="vault-doc-type" className="block text-sm font-medium text-gray-700 mb-1">Document type</label>
             <select
+              id="vault-doc-type"
               value={docType}
               onChange={(e) => setDocType(e.target.value as DocType)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-4"
@@ -132,20 +133,22 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
               ))}
             </select>
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="vault-file" className="block text-sm font-medium text-gray-700 mb-1">
               File <span className="text-gray-400">(PDF, JPG, PNG — max 20 MB)</span>
             </label>
             <input
+              id="vault-file"
               type="file"
               accept=".pdf,.jpg,.jpeg,.png,.webp"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               className="w-full text-sm text-gray-700 mb-4 file:mr-3 file:rounded-md file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-sm"
             />
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="vault-description" className="block text-sm font-medium text-gray-700 mb-1">
               Description <span className="text-gray-400">(optional)</span>
             </label>
             <input
+              id="vault-description"
               type="text"
               maxLength={500}
               value={description}
