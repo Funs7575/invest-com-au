@@ -449,6 +449,7 @@ export default function AdvisorProfileClient({
                   {pro.booking_link ? (
                     <>
                       <a href={pro.booking_link} target="_blank" rel="noopener noreferrer"
+                        aria-label={`Book a free call with ${pro.name}`}
                         className="px-7 py-3 bg-teal-600 text-white font-bold text-sm rounded-xl hover:bg-teal-500 transition-all shadow-md shadow-teal-200/50 active:scale-[0.98]"
                         onClick={() => phTrack('advisor_booking_click', { advisor_id: pro.id, source: 'hero' })}>
                         Book a Free Call

@@ -1691,7 +1691,7 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
               else if (currentMatch.verified) bullets.push("Verified AFSL / registered professional");
               if (bullets.length === 0) return null;
               return (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4">
+                <div role="status" aria-live="polite" className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4">
                   <p className="text-[0.65rem] font-bold text-emerald-700 uppercase tracking-wider mb-2">Why we matched you</p>
                   <ul className="space-y-1">
                     {bullets.map((b) => (
