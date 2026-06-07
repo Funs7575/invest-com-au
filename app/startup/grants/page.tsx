@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import HubPage from "@/components/HubPage";
@@ -19,6 +19,7 @@ export const metadata: Metadata = {
       "R&D Tax Incentive, EMDG, Industry Growth Program — Australia's full grants stack in one hub.",
     url: `${SITE_URL}/startup/grants`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Startup Grants Australia")}&sub=${encodeURIComponent("R&D Tax Incentive · EMDG · Industry Growth Program · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

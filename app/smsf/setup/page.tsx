@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     description: "Trustee structure, trust deed, ATO registration, costs and 7-step setup.",
     url: `${SITE_URL}/smsf/setup`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Set Up an SMSF")}&sub=${encodeURIComponent("Step-by-Step · Costs · Trustee Obligations · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

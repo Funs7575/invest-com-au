@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "How the government co-contribution works, who is eligible, income thresholds, and step-by-step examples for low-to-middle income earners.",
     url: `${SITE_URL}/super/co-contribution`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Super Co-Contribution Guide")}&sub=${encodeURIComponent("$500 Government Match · Income Thresholds · How to Claim · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };

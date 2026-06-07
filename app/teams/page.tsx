@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     title: "Expert Teams — Specialist Adviser Squads",
     description:
       "Verified squads of complementary Australian financial professionals who collaborate on complex briefs.",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Expert Financial Teams Australia")}&sub=${encodeURIComponent("SMSF · Tax · Property · Planning · Verified Squads")}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: "/teams" },

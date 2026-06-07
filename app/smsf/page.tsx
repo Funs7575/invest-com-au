@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Trustee-controlled super: costs, rules, investment options, and how to set up an SMSF in Australia.",
     url: `${SITE_URL}/smsf`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Investment Hub")}&sub=${encodeURIComponent("Property · Shares · Crypto · Setup · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

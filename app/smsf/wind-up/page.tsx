@@ -17,6 +17,7 @@ export const metadata: Metadata = {
       "Step-by-step guide to closing your SMSF correctly — ATO notifications, CGT events, final annual return, and how to avoid unexpected tax bills.",
     url: `${SITE_URL}/smsf/wind-up`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Wind Up an SMSF")}&sub=${encodeURIComponent("7-Step Process · Tax · Rollover · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

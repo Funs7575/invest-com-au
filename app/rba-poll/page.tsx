@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 import PollWidget from "./PollWidget";
 
@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "RBA Rate Prediction — Invest.com.au",
     description: "Will the RBA hike, hold, or cut? Cast your prediction and see how the community calls it.",
+    images: [{ url: `/api/og?title=${encodeURIComponent("RBA Rate Prediction")}&sub=${encodeURIComponent("Hike · Hold · Cut · Community Forecasts · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

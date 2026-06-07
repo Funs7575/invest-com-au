@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import DividendCalendar from "@/components/DividendCalendar";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, CURRENT_YEAR, SITE_URL } from "@/lib/seo";
 import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "ETF Dividend Calendar | Invest.com.au",
   description: "Upcoming ASX ETF distribution ex-dates and payment dates. Know when to own shares to receive your distribution.",
-  openGraph: { title: "ETF Dividend Calendar", description: "Track upcoming ETF ex-dates and distribution payments." },
+  openGraph: { title: "ASX Dividend Calendar", description: "Track upcoming ETF ex-dates and distribution payments.", images: [{ url: `/api/og?title=${encodeURIComponent("ASX Dividend Calendar")}&sub=${encodeURIComponent("Ex-Dividend Dates · Payment Dates · Franking · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
   alternates: { canonical: `${SITE_URL}/tools/dividend-calendar` },
 };
 

@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "How much will salary sacrifice actually save you? Enter your salary and sacrifice amount for a before/after comparison using FY2025-26 tax rates.",
     url: `${SITE_URL}/tools/salary-sacrifice-optimiser`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Salary Sacrifice Optimiser")}&sub=${encodeURIComponent("Super · Novated Lease · Tax Savings · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

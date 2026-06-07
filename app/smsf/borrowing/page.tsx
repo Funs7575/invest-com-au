@@ -23,6 +23,7 @@ export const metadata: Metadata = {
       "Bare trust structure, ATO safe-harbour rates, eligible assets, lender comparison, and the tax treatment of LRBA income inside super.",
     url: `${SITE_URL}/smsf/borrowing`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Borrowing (LRBA)")}&sub=${encodeURIComponent("Limited Recourse · Property · Rules · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

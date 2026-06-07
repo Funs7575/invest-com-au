@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Step-by-step checker for whether residential property, shares, collectables, crypto or business real property can sit inside an SMSF.",
     url: absoluteUrl("/tools/smsf-checker"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Suitability Checker")}&sub=${encodeURIComponent("Is an SMSF Right for Me · Costs · Benefits · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

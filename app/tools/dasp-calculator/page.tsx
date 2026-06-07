@@ -29,6 +29,7 @@ export const metadata: Metadata = {
     description:
       "Estimate net DASP payment after ATO withholding. 35% standard / 65% WHM. Free and instant.",
     url: absoluteUrl("/tools/dasp-calculator"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("DASP Calculator")}&sub=${encodeURIComponent("Departing Australia Super Payment · Tax · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import ValuationClient from "./ValuationClient";
 
@@ -16,7 +16,9 @@ export const metadata: Metadata = {
     description: "EBITDA, revenue and asset-based valuation — across the three methods.",
     url: `${SITE_URL}/sell-business/valuation`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Business Valuation Australia")}&sub=${encodeURIComponent("EBIT Multiple · DCF · Market Comparison · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 const VALUATION_FAQS = [

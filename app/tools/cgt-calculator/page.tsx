@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Enter your purchase price, sale price, and holding period. The calculator applies the 50% CGT discount and your marginal tax rate to estimate CGT owed.",
     url: `${SITE_URL}/tools/cgt-calculator`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("CGT Calculator Australia")}&sub=${encodeURIComponent("Capital Gains Tax · 50% Discount · Cost Base · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

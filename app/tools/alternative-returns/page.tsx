@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Compare luxury watch, classic car, fine wine, ASX 200 and Australian property returns from a chosen purchase year.",
     url: absoluteUrl("/tools/alternative-returns"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Alternative Investment Returns")}&sub=${encodeURIComponent("Private Credit · PE · Infrastructure · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

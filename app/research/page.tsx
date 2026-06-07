@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Editorial investment research — Australian energy, SMSF, foreign investment and more.",
     url: `${SITE_URL}/research`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investment Research & Reports")}&sub=${encodeURIComponent("SMSF · Foreign Investment · Energy · Sector Reports · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

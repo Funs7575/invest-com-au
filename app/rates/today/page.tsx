@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: "Rate Changes Today — Invest.com.au",
     description: "Which Australian savings accounts and term deposits changed rates today.",
     url: "/rates/today",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Rate Changes Today")}&sub=${encodeURIComponent("Savings Accounts · Term Deposits · Daily Updates · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

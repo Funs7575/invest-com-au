@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Estimate your FHSS releasable amount and tax saving across all income brackets.",
     url: `${SITE_URL}/tools/fhss-calculator`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("FHSS Calculator")}&sub=${encodeURIComponent("First Home Super Saver · Tax Savings · Withdrawal · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

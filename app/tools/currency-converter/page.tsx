@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { absoluteUrl, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_URL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import CurrencyConverterClient from "./CurrencyConverterClient";
 
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "Convert AUD to USD, GBP, EUR, JPY, SGD, NZD and more. Plus Australian FIRB threshold and super cap reference table.",
     url: absoluteUrl("/tools/currency-converter"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("AUD Currency Converter")}&sub=${encodeURIComponent("Live Rates · USD · GBP · EUR · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

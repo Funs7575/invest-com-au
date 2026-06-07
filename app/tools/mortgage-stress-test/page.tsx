@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Find your repayment breakeven rate and test nine rate-rise scenarios including APRA's mandatory 3% buffer.",
     url: `${SITE_URL}/tools/mortgage-stress-test`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Mortgage Stress Test Calculator")}&sub=${encodeURIComponent("Rate Rises · Buffer · Repayment · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

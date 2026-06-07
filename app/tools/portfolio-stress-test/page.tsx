@@ -3,14 +3,14 @@ import Link from "next/link";
 import PortfolioStressTest from "@/components/PortfolioStressTest";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, CURRENT_YEAR, SITE_URL } from "@/lib/seo";
 import { calculatorJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Portfolio Stress Test | Invest.com.au",
   description: "See how your portfolio allocation would have fared during the GFC, COVID crash, dot-com bust and 2022 rate hike cycle.",
-  openGraph: { title: "Portfolio Stress Test", description: "Stress-test your portfolio against historical market crises." },
+  openGraph: { title: "Portfolio Stress Test", description: "Stress-test your portfolio against historical market crises.", images: [{ url: `/api/og?title=${encodeURIComponent("Portfolio Stress Test")}&sub=${encodeURIComponent("Crash Scenarios · Drawdown · Recovery Time · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
   alternates: { canonical: `${SITE_URL}/tools/portfolio-stress-test` },
 };
 

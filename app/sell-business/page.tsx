@@ -38,7 +38,9 @@ export const metadata: Metadata = {
     description: "Valuation, broker selection, CGT concessions and the 12-month exit plan.",
     url: `${SITE_URL}/sell-business`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Selling a Business in Australia")}&sub=${encodeURIComponent("Valuation · CGT Concessions · Process · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function SellBusinessHubPage() {

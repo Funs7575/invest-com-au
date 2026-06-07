@@ -3,14 +3,14 @@ import Link from "next/link";
 import EtfOverlapDetector from "@/components/EtfOverlapDetector";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, CURRENT_YEAR, SITE_URL } from "@/lib/seo";
 import { calculatorJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "ETF Overlap Detector | Invest.com.au",
   description: "See how much your ETFs overlap. Holding VGS and NDQ? You may have more US tech concentration than you realise.",
-  openGraph: { title: "ETF Overlap Detector", description: "Check for unintentional concentration across your ETFs." },
+  openGraph: { title: "ETF Overlap Checker", description: "Check for unintentional concentration across your ETFs.", images: [{ url: `/api/og?title=${encodeURIComponent("ETF Overlap Checker")}&sub=${encodeURIComponent("Portfolio Overlap · Diversification · Holdings · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
   alternates: { canonical: `${SITE_URL}/tools/etf-overlap` },
 };
 

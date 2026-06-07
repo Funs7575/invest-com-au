@@ -35,7 +35,9 @@ export async function generateMetadata({
       description,
       url: absoluteUrl(`/switch-scripts/${slug}`),
       type: "article",
+      images: [{ url: `/api/og?title=${encodeURIComponent("Switch from " + script.brokerName)}&sub=${encodeURIComponent("Negotiation Script · Transfer Steps · CGT Notes")}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

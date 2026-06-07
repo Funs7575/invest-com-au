@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Complete guide to rental property tax in Australia — what you can deduct, how depreciation works, negative vs positive gearing, and ATO record-keeping rules.",
     url: absoluteUrl("/tax/rental-property"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Rental Property Tax Australia")}&sub=${encodeURIComponent("Deductions · Depreciation · Negative Gearing · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: absoluteUrl("/tax/rental-property") },

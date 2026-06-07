@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     title: `Redundancy Hub (${CURRENT_YEAR}) — ETP Tax & Financial Rebuild`,
     description: redundancyHubConfig.metaDescription,
     url: `${SITE_URL}/redundancy`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Redundancy Payment Guide")}&sub=${encodeURIComponent("Tax · Super · What to Do Next · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import SellChecklistClient from "./SellChecklistClient";
 
@@ -16,7 +16,9 @@ export const metadata: Metadata = {
     description: "Interactive checklist — what to do 12, 6, 3 months out and at sale.",
     url: `${SITE_URL}/sell-business/checklist`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Business Sale Checklist")}&sub=${encodeURIComponent("Preparation · Due Diligence · Legal · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 const CHECKLIST_FAQS = [
