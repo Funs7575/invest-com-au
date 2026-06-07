@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { verifyMfaCookieEdge, MFA_COOKIE_NAME } from '@/lib/admin-mfa-cookie-edge'
+import { LISTING_PAGE_SLUGS } from '@/lib/invest-listing-routes'
 
 // Admin paths where the MFA step-up page itself lives — must never be
 // gated, otherwise they redirect to themselves infinitely.
@@ -44,6 +45,26 @@ export async function proxy(request: NextRequest) {
     request.headers.get('x-request-id') ||
     request.headers.get('x-vercel-id') ||
     crypto.randomUUID()
+
+  // ── Marketplace sector canonicalisation ────────────────────────
+  // Each /invest sector has ONE canonical home: the path page
+  // `/invest/<slug>/listings`. The legacy `/invest?category=<slug>`
+  // filter state rendered the same listings at a second URL (the source
+  // of the "why are there two pages?" confusion). Collapse it onto the
+  // canonical page so there's a single destination. Other filter params
+  // (state, price, sub, q, …) are preserved. 307 (temporary) keeps this
+  // fully reversible; the target page self-canonicalises for SEO.
+  if (pathname === '/invest') {
+    const category = request.nextUrl.searchParams.get('category')
+    if (category && LISTING_PAGE_SLUGS.has(category)) {
+      const url = request.nextUrl.clone()
+      url.pathname = `/invest/${category}/listings`
+      url.searchParams.delete('category')
+      const redirect = NextResponse.redirect(url, 307)
+      redirect.headers.set('x-request-id', requestId)
+      return redirect
+    }
+  }
 
   // ── Cron route protection ──────────────────────────────────────
   // Vercel cron jobs send a Bearer token — reject unauthorized callers.

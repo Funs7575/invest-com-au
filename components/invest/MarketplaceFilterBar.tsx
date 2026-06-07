@@ -83,6 +83,14 @@ export interface MarketplaceFilterBarProps {
   onClearAll: () => void;
   /** Hide the Sector pill on vertical pages where the category is locked. */
   showSector?: boolean;
+  /**
+   * Marketplace-only: navigate to a sector's canonical
+   * `/invest/<slug>/listings` page instead of applying an in-place
+   * `?category=` filter. When provided, picking a sector leaves the
+   * cross-sector marketplace for the dedicated sector page (the single
+   * canonical destination). Omitted on locked vertical pages.
+   */
+  onSelectCategory?: (slug: string) => void;
 }
 
 export default function MarketplaceFilterBar({
@@ -98,6 +106,7 @@ export default function MarketplaceFilterBar({
   activeChips,
   onClearAll,
   showSector = true,
+  onSelectCategory,
 }: MarketplaceFilterBarProps) {
   const [open, setOpen] = useState<string | null>(null);
   const toggle = useCallback((id: string) => setOpen((o) => (o === id ? null : id)), []);
@@ -242,9 +251,17 @@ export default function MarketplaceFilterBar({
                     <button
                       key={c.slug}
                       type="button"
-                      disabled={count === 0}
+                      // When navigating to a dedicated page, never disable —
+                      // the marketplace count (categoryForListing-based) can
+                      // read 0 for sub-category sectors that DO have a page
+                      // with listings (e.g. royalties).
+                      disabled={!onSelectCategory && count === 0}
                       onClick={() => {
-                        setParams({ category: selected ? "" : c.slug, sub: "" });
+                        if (onSelectCategory) {
+                          onSelectCategory(c.slug);
+                        } else {
+                          setParams({ category: selected ? "" : c.slug, sub: "" });
+                        }
                         close();
                       }}
                       className={`flex items-center justify-between gap-1 px-2.5 py-2 rounded-lg border text-xs font-semibold disabled:opacity-40 transition-colors ${

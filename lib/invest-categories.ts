@@ -1143,7 +1143,12 @@ const categoriesRaw: Omit<InvestCategory, "intent">[] = [
   {
     slug: "income-assets",
     label: "Income-Asset Businesses",
-    dbVerticals: ["business"],
+    // No distinct DB vertical is seeded for income-assets yet. The old
+    // ["business"] value collided with the buy-business category (same
+    // vertical), so the /invest/income-assets/listings page surfaced
+    // unrelated business-for-sale rows. Empty until a dedicated vertical
+    // or sub_category is seeded — the page shows a graceful empty state.
+    dbVerticals: [],
     color: {
       bg: "bg-emerald-50",
       border: "border-emerald-200",

@@ -18,6 +18,7 @@ import {
 import type { InvestmentListing } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import { listingUrl, categoryForListing } from "@/lib/listing-url";
+import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { loadInvestPageContext } from "@/lib/listing-page-context";
@@ -330,7 +331,7 @@ export default async function InvestMarketplacePage() {
                 return (
                   <Link
                     key={cat.slug}
-                    href={`/invest?category=${cat.slug}`}
+                    href={categoryListingsHref(cat.slug)}
                     className={`group relative block rounded-xl border bg-white p-3 md:p-4 transition-all duration-200 hover:shadow-lg hover:scale-[1.01] ${accent.card}`}
                   >
                     <div className="flex items-start gap-2 mb-2">
