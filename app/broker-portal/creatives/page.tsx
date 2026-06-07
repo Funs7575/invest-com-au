@@ -193,16 +193,16 @@ export default function CreativesPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Image URL *</label>
-            <input type="url" value={uploadUrl} onChange={(e) => setUploadUrl(e.target.value)} required
+            <label htmlFor="cre-image-url" className="block text-sm font-medium text-slate-700 mb-1">Image URL *</label>
+            <input id="cre-image-url" type="url" value={uploadUrl} onChange={(e) => setUploadUrl(e.target.value)} required
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
               placeholder="https://yourdomain.com/logo.png" />
             <p className="text-xs text-slate-400 mt-1">Paste a publicly accessible image URL. Supports PNG, JPG, SVG, WebP.</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Label (optional)</label>
-            <input type="text" value={uploadLabel} onChange={(e) => setUploadLabel(e.target.value)}
+            <label htmlFor="cre-label" className="block text-sm font-medium text-slate-700 mb-1">Label (optional)</label>
+            <input id="cre-label" type="text" value={uploadLabel} onChange={(e) => setUploadLabel(e.target.value)}
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
               placeholder="e.g. Primary Logo Dark" />
           </div>

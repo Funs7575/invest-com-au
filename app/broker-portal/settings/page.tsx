@@ -318,10 +318,11 @@ export default function SettingsPage() {
           </label>
           {alertEnabled && (
             <div>
-              <label className="block text-sm text-slate-600 mb-1">Alert when balance drops below <InfoTip text="We recommend setting this to at least 2x your average daily spend to give you time to top up." /></label>
+              <label htmlFor="bp-alert-threshold" className="block text-sm text-slate-600 mb-1">Alert when balance drops below <InfoTip text="We recommend setting this to at least 2x your average daily spend to give you time to top up." /></label>
               <div className="flex items-center gap-2">
                 <span className="text-slate-500">$</span>
                 <input
+                  id="bp-alert-threshold"
                   type="number"
                   value={alertThreshold}
                   onChange={(e) => setAlertThreshold(Number(e.target.value))}

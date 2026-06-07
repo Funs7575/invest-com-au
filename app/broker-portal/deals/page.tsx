@@ -159,10 +159,11 @@ export default function BrokerDealsPage() {
         {enabled && (
           <>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="deal-text" className="block text-xs font-bold text-slate-700 mb-1">
                 Deal Text * <span className="font-normal text-slate-400">({dealText.length}/200)</span>
               </label>
               <textarea
+                id="deal-text"
                 value={dealText}
                 onChange={e => setDealText(e.target.value)}
                 maxLength={200}
@@ -175,8 +176,9 @@ export default function BrokerDealsPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Expiry Date</label>
+                <label htmlFor="deal-expiry" className="block text-xs font-bold text-slate-700 mb-1">Expiry Date</label>
                 <input
+                  id="deal-expiry"
                   type="date"
                   value={dealExpiry}
                   onChange={e => setDealExpiry(e.target.value)}
@@ -186,8 +188,9 @@ export default function BrokerDealsPage() {
                 <p className="text-[0.6rem] text-slate-400 mt-1">Optional. Deal auto-hides after this date.</p>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Category</label>
+                <label htmlFor="deal-category" className="block text-xs font-bold text-slate-700 mb-1">Category</label>
                 <select
+                  id="deal-category"
                   value={dealCategory}
                   onChange={e => setDealCategory(e.target.value)}
                   className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
@@ -198,10 +201,11 @@ export default function BrokerDealsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="deal-terms" className="block text-xs font-bold text-slate-700 mb-1">
                 Terms &amp; Conditions <span className="font-normal text-slate-400">({dealTerms.length}/500)</span>
               </label>
               <textarea
+                id="deal-terms"
                 value={dealTerms}
                 onChange={e => setDealTerms(e.target.value)}
                 maxLength={500}

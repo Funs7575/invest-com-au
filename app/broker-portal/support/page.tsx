@@ -310,16 +310,16 @@ export default function SupportPage() {
           <h3 className="font-bold text-slate-900">Submit a Support Ticket</h3>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Subject *</label>
-            <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} required
+            <label htmlFor="sup-subject" className="block text-sm font-medium text-slate-700 mb-1">Subject *</label>
+            <input id="sup-subject" type="text" value={subject} onChange={(e) => setSubject(e.target.value)} required
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
               placeholder="Brief description of your issue" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Category</label>
-              <select value={category} onChange={(e) => setCategory(e.target.value)}
+              <label htmlFor="sup-category" className="block text-sm font-medium text-slate-700 mb-1">Category</label>
+              <select id="sup-category" value={category} onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 bg-white">
                 {CATEGORIES.map(c => (
                   <option key={c.value} value={c.value}>{c.label}</option>
@@ -327,8 +327,8 @@ export default function SupportPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Priority</label>
-              <select value={priority} onChange={(e) => setPriority(e.target.value)}
+              <label htmlFor="sup-priority" className="block text-sm font-medium text-slate-700 mb-1">Priority</label>
+              <select id="sup-priority" value={priority} onChange={(e) => setPriority(e.target.value)}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 bg-white">
                 <option value="low">Low</option>
                 <option value="normal">Normal</option>
@@ -339,8 +339,8 @@ export default function SupportPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Message *</label>
-            <textarea value={initialMessage} onChange={(e) => setInitialMessage(e.target.value)} required
+            <label htmlFor="sup-message" className="block text-sm font-medium text-slate-700 mb-1">Message *</label>
+            <textarea id="sup-message" value={initialMessage} onChange={(e) => setInitialMessage(e.target.value)} required
               rows={4}
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-none"
               placeholder="Describe your issue in detail..." />

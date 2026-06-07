@@ -87,8 +87,9 @@ export default function BrokerLoginPage() {
       )}
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+        <label htmlFor="bp-login-email" className="block text-sm font-medium text-slate-700 mb-1">Email</label>
         <input
+          id="bp-login-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -99,9 +100,10 @@ export default function BrokerLoginPage() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+        <label htmlFor="bp-login-password" className="block text-sm font-medium text-slate-700 mb-1">Password</label>
         <div className="relative">
           <input
+            id="bp-login-password"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             value={password}

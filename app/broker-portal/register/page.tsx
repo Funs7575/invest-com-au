@@ -148,21 +148,21 @@ export default function BrokerRegisterPage() {
         {step === 0 && (
           <form onSubmit={handleStep1} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Full Name *</label>
-              <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required
+              <label htmlFor="bp-reg-name" className="block text-sm font-medium text-slate-700 mb-1">Full Name *</label>
+              <input id="bp-reg-name" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="John Smith" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Work Email *</label>
-              <input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+              <label htmlFor="bp-reg-email" className="block text-sm font-medium text-slate-700 mb-1">Work Email *</label>
+              <input id="bp-reg-email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="you@broker.com" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Password *</label>
+              <label htmlFor="bp-reg-password" className="block text-sm font-medium text-slate-700 mb-1">Password *</label>
               <div className="relative">
-                <input type={showPassword ? "text" : "password"} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8}
+                <input id="bp-reg-password" type={showPassword ? "text" : "password"} autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8}
                   className="w-full px-4 py-2.5 pr-11 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                   placeholder="Min. 8 characters" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -176,9 +176,9 @@ export default function BrokerRegisterPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Confirm Password *</label>
+              <label htmlFor="bp-reg-confirm" className="block text-sm font-medium text-slate-700 mb-1">Confirm Password *</label>
               <div className="relative">
-                <input type={showConfirmPassword ? "text" : "password"} autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required
+                <input id="bp-reg-confirm" type={showConfirmPassword ? "text" : "password"} autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required
                   className="w-full px-4 py-2.5 pr-11 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                   placeholder="••••••••" />
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -202,27 +202,27 @@ export default function BrokerRegisterPage() {
         {step === 1 && (
           <form onSubmit={handleStep2} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Company / Brokerage Name *</label>
-              <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required
+              <label htmlFor="bp-reg-company" className="block text-sm font-medium text-slate-700 mb-1">Company / Brokerage Name *</label>
+              <input id="bp-reg-company" type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="e.g. CommSec, Stake, eToro" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Broker Slug</label>
-              <input type="text" value={brokerSlug} onChange={(e) => setBrokerSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+              <label htmlFor="bp-reg-slug" className="block text-sm font-medium text-slate-700 mb-1">Broker Slug</label>
+              <input id="bp-reg-slug" type="text" value={brokerSlug} onChange={(e) => setBrokerSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="e.g. commsec (leave blank to auto-generate)" />
               <p className="text-xs text-slate-400 mt-1">Must match your broker listing on Invest.com.au, if you have one.</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Website</label>
-              <input type="url" value={website} onChange={(e) => setWebsite(e.target.value)}
+              <label htmlFor="bp-reg-website" className="block text-sm font-medium text-slate-700 mb-1">Website</label>
+              <input id="bp-reg-website" type="url" value={website} onChange={(e) => setWebsite(e.target.value)}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="https://www.yourbrokerage.com.au" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
-              <input type="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
+              <label htmlFor="bp-reg-phone" className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
+              <input id="bp-reg-phone" type="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="+61 4xx xxx xxx" />
             </div>
