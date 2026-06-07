@@ -55,6 +55,26 @@ export default async function ForAdvisorsPage() {
         </div>
       </section>
 
+      {/* Stats band — social proof immediately below hero */}
+      <section className="py-8 md:py-10 px-4 bg-white border-b border-slate-100">
+        <div className="max-w-3xl mx-auto">
+          <div className="grid grid-cols-3 gap-6 text-center">
+            <div>
+              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{advisorCount && advisorCount > 0 ? `${advisorCount}+` : "Growing"}</p>
+              <p className="text-xs md:text-sm text-slate-500">Listed Advisors</p>
+            </div>
+            <div>
+              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{leadCount && leadCount > 0 ? `${leadCount}+` : "Active"}</p>
+              <p className="text-xs md:text-sm text-slate-500">Investor Leads Submitted</p>
+            </div>
+            <div>
+              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">9</p>
+              <p className="text-xs md:text-sm text-slate-500">Advisor Categories</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How it works */}
       <section className="py-12 md:py-20 px-4">
         <div className="max-w-4xl mx-auto">
@@ -121,19 +141,19 @@ export default async function ForAdvisorsPage() {
               </Link>
             </div>
 
-            {/* Pay Per Lead */}
-            <div className="border-2 border-violet-500 rounded-xl p-6 relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-violet-500 text-white text-xs font-bold rounded-full">Most Popular</div>
+            {/* Pay Per Lead — Most Popular */}
+            <div className="border-2 border-violet-500 rounded-xl p-6 relative bg-gradient-to-br from-violet-50 to-indigo-50 shadow-lg shadow-violet-100 md:scale-[1.03] md:z-10">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-violet-600 text-white text-xs font-extrabold rounded-full shadow-sm shadow-violet-300 tracking-wide">★ Most Popular</div>
               <p className="text-sm font-bold text-violet-600 uppercase tracking-wider mb-1">Pay Per Lead</p>
               <p className="text-3xl font-extrabold text-slate-900 mb-1">$39<span className="text-lg text-slate-400 font-normal">/lead</span></p>
               <p className="text-sm text-slate-500 mb-5">After 3 free trial leads</p>
               <ul className="space-y-2 mb-6">
                 {["Everything in Free", "Unlimited leads", "Lead quality scoring", "Priority listing", "Email notifications", "Response time tracking"].map(f => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-violet-500">✓</span>{f}</li>
+                  <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-violet-500 font-bold">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/advisor-signup" className="block w-full text-center py-3 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 text-sm">
-                Get Started
+              <Link href="/advisor-signup" className="block w-full text-center py-3.5 bg-violet-600 text-white font-extrabold rounded-xl hover:bg-violet-700 text-sm shadow-md shadow-violet-200 transition-all hover:shadow-lg">
+                Get Started Free
               </Link>
             </div>
 
@@ -152,31 +172,6 @@ export default async function ForAdvisorsPage() {
               </Link>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Social proof */}
-      <section className="py-12 md:py-16 px-4 bg-slate-50">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="grid grid-cols-3 gap-6 mb-8">
-            <div>
-              <p className="text-3xl font-extrabold text-slate-900">{advisorCount && advisorCount > 0 ? `${advisorCount}+` : "Growing"}</p>
-              <p className="text-sm text-slate-500">Listed Advisors</p>
-            </div>
-            <div>
-              <p className="text-3xl font-extrabold text-slate-900">{leadCount && leadCount > 0 ? `${leadCount}+` : "Active"}</p>
-              <p className="text-sm text-slate-500">Investor Leads Submitted</p>
-            </div>
-            <div>
-              <p className="text-3xl font-extrabold text-slate-900">9</p>
-              <p className="text-sm text-slate-500">Advisor Categories</p>
-            </div>
-          </div>
-          <p className="text-slate-600 max-w-lg mx-auto">
-            Invest.com.au is Australia&apos;s independent investing hub — helping everyday Australians compare
-            platforms, find trusted advisors, and learn to invest smarter. Our visitors are actively researching
-            financial products and professional guidance.
-          </p>
         </div>
       </section>
 
