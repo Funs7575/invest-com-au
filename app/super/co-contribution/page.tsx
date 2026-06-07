@@ -260,7 +260,7 @@ export default function SuperCoContributionPage() {
               The formula for partial co-contributions is: <strong>Maximum = $500 &minus; [(income &minus; $45,400) &times; 0.03333]</strong>.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Government co-contribution income thresholds 2024-25">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Income Range</th>
@@ -357,7 +357,7 @@ export default function SuperCoContributionPage() {
               You can receive <strong>both in the same year</strong> if you are eligible for each.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-amber-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Co-contribution vs LISTO comparison">
                 <thead>
                   <tr className="bg-slate-800 text-white">
                     <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>

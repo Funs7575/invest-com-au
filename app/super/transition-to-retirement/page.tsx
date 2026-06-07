@@ -228,7 +228,7 @@ export default function TransitionToRetirementPage() {
             <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
               <h3 className="font-extrabold text-slate-900 mb-4">Example: age 60, $120K salary, $400K TSB</h3>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="TTR strategy tax minimisation worked example">
                   <thead>
                     <tr className="border-b border-slate-200">
                       <th scope="col" className="text-left py-2 pr-4 font-bold text-slate-700">Item</th>
@@ -362,7 +362,7 @@ export default function TransitionToRetirementPage() {
               up to 60 for those born from 1 July 1964 onwards.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Preservation age by date of birth">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Date of birth</th>

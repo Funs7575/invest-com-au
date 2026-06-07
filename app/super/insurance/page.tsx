@@ -371,7 +371,7 @@ export default function SuperInsurancePage() {
             <div className="rounded-xl border border-slate-200 bg-white p-5 mb-4">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Illustrative example</p>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Long-run cost of super insurance premiums">
                   <thead>
                     <tr className="bg-slate-900 text-white">
                       <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Annual premium</th>

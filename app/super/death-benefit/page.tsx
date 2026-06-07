@@ -388,7 +388,7 @@ export default function SuperDeathBenefitPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Who can receive a death benefit (SIS dependants)</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-6 max-w-3xl">Under the Superannuation Industry (Supervision) Act, only certain people can receive your death benefit directly from the fund. Anyone else must receive it via your estate.</p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="SIS dependants eligible to receive super death benefit">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-56">Category</th>
@@ -417,7 +417,7 @@ export default function SuperDeathBenefitPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Tax treatment — dependants vs non-dependants</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-6 max-w-3xl">Two different definitions of &quot;dependant&quot; apply at the same time. SIS dependants can <em> receive</em> your super; tax dependants receive it <em>tax-free</em>. The mismatch — adult children are SIS dependants but usually not tax dependants — is the most common and costly surprise in Australian estate planning.</p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Death benefit tax treatment dependants vs non-dependants">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Recipient</th>
@@ -472,7 +472,7 @@ export default function SuperDeathBenefitPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-3 tracking-tight">$500,000 super: adult son vs spouse</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-4">Scenario: a $500,000 balance made up of a $400,000 taxable component and a $100,000 tax-free component. Compare paying it to an adult, financially independent son (a non-tax-dependant) with paying the identical balance to a spouse (a tax dependant).</p>
           <div className="overflow-x-auto rounded-2xl border border-amber-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Death benefit tax comparison adult son vs spouse">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Line item</th>
@@ -502,7 +502,7 @@ export default function SuperDeathBenefitPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Binding vs non-binding nominations</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-6 max-w-3xl">A nomination tells the trustee who you want to receive your death benefit. A <strong>binding</strong>{" "} nomination legally compels the trustee to follow it; a <strong>non-binding</strong> nomination is only a preference the trustee may choose to ignore.</p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-8">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Binding vs non-binding nomination comparison">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-48">Feature</th>
@@ -541,7 +541,7 @@ export default function SuperDeathBenefitPage() {
           <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Reversionary pensions vs lump sum death benefits</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-6 max-w-3xl">A reversionary pension is an income stream set up so that, on your death, it automatically continues to a nominated beneficiary (usually your spouse). It is an alternative to taking the benefit as a one-off lump sum.</p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Reversionary pension vs lump sum death benefit comparison">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-48">Feature</th>

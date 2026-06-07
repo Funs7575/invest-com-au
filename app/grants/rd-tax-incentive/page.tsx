@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import RdTaxCalculator from "@/components/RdTaxCalculator";
 
@@ -35,6 +36,27 @@ const NOT_ELIGIBLE = [
   "Regulatory compliance testing",
 ];
 
+const RD_FAQS = [
+  {
+    q: "What is the R&D Tax Incentive (RDTI)?",
+    a: "The R&D Tax Incentive is an Australian government program that provides a tax offset — effectively a refund — for eligible R&D expenditure. Companies with annual turnover under $20 million receive a refundable 43.5% offset (you get cash back even if you're in a tax loss). Larger companies receive a non-refundable 38.5% offset. It's one of the most valuable innovation incentives available to Australian businesses.",
+  },
+  {
+    q: "When is the RDTI registration deadline?",
+    a: "You must register your R&D activities with AusIndustry within 10 months of the end of the income year. For a 30 June year-end (FY2025), the deadline is 30 April 2026. Registration is done through the customer portal on business.gov.au. Late registration is only permitted in narrow circumstances — missing the deadline means losing the claim for that year.",
+  },
+  {
+    q: "What counts as eligible R&D expenditure?",
+    a: "Eligible expenditure includes salaries and wages for staff directly conducting R&D activities, contractor costs, and overheads incurred in the conduct of eligible activities. The activities must involve experimental work aimed at generating new knowledge (core R&D activities) or activities that support those core experiments (supporting R&D activities). Software development qualifies when there is genuine technical uncertainty — that is, you are attempting something that a competent professional cannot determine in advance will work.",
+  },
+  {
+    q: "How is the RDTI different from a government grant?",
+    a: "A grant is money paid to you to fund specific activities, usually with milestone conditions and reporting requirements. The RDTI is a tax offset: you conduct your own R&D with your own money, then claim back a proportion of your expenditure through the tax system. Unlike most grants, there's no competitive application — every eligible company that meets the criteria can claim. You do not have to wait to hear if you've been approved before starting work.",
+  },
+];
+
+const rdFaqLd = faqJsonLd(RD_FAQS);
+
 export default function RdTaxIncentivePage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -45,6 +67,9 @@ export default function RdTaxIncentivePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {rdFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rdFaqLd) }} />
+      )}
 
       <div className="bg-white min-h-screen">
         {/* Hero */}
@@ -166,6 +191,25 @@ export default function RdTaxIncentivePage() {
               <Link href="/grants" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">All grants →</Link>
               <Link href="/grants/emdg" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">EMDG export grant →</Link>
               <Link href="/grants/industry-growth-program" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">Industry Growth Program →</Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-10 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-3xl">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {RD_FAQS.map((faq) => (
+                <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                  <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                    {faq.q}
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                  </summary>
+                  <div className="px-5 pb-4">
+                    <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                  </div>
+                </details>
+              ))}
             </div>
           </div>
         </section>
