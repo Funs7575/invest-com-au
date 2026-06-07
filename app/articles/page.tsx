@@ -9,7 +9,26 @@ import LeadMagnet from "@/components/LeadMagnet";
 import Icon from "@/components/Icon";
 import JsonLd from "@/components/JsonLd";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
-import { itemListJsonLd } from "@/lib/schema-markup";
+import { itemListJsonLd, faqJsonLd } from "@/lib/schema-markup";
+
+const ARTICLES_FAQS = [
+  {
+    q: "What investing topics does Invest.com.au cover?",
+    a: "Our editorial team publishes guides across every major Australian investing category: share trading and broker comparisons, ETFs and index funds, superannuation and SMSF, cryptocurrency, property investing, tax (CGT, franking credits, negative gearing), robo-advisors, research tools, and international investing. All content is written specifically for Australian investors, covering ASIC-regulated products, ASX-listed securities, ATO rules, and the Australian superannuation system.",
+  },
+  {
+    q: "Are your investing guides specific to Australian investors?",
+    a: "Yes. Every guide is written for the Australian market. We cover ASX-listed securities and products, Australian tax rules (including the CGT discount, franking credits, and SMSF rules), ASIC-regulated brokers and platforms, and the Australian superannuation system. We do not publish generic global investing content — when an article covers international investing (e.g. US shares, overseas ETFs), it always frames the topic from an Australian tax and regulatory perspective.",
+  },
+  {
+    q: "How do I find a guide for my specific investing situation?",
+    a: "Use the category filter at the top of this page to narrow guides by topic (ETFs, Tax, SMSF, etc.). The search bar searches guide titles and summaries. If you're new to investing, start with the 'Getting Started' cluster — the pillar guide 'Investing for Beginners Australia' links to spoke articles for your next steps. For professional guidance, the advisor guides section covers when and how to choose a financial planner, SMSF accountant, or tax agent.",
+  },
+  {
+    q: "How does Invest.com.au verify facts in its investing guides?",
+    a: "Our editorial team sources fee data from broker pricing pages and product disclosure statements (PDS), regulatory data from ASIC registers, and tax rules from the ATO website and relevant legislation. Fee-sensitive pages are hash-checked weekly for changes. Time-sensitive content is updated when broker offerings change. Guides are reviewed at least quarterly. We also apply an independent reviewer layer — a second team member checks compliance-sensitive claims before publication.",
+  },
+];
 
 export const metadata = {
   title: "Investing Guides & Articles",
@@ -322,9 +341,12 @@ export default async function ArticlesPage({
         )
       : null;
 
+  const faqLd = faqJsonLd(ARTICLES_FAQS);
+  const jsonLdItems = [breadcrumb, ...(listLd ? [listLd] : []), ...(faqLd ? [faqLd] : [])];
+
   return (
     <div className="pt-5 pb-8 md:py-12">
-      <JsonLd data={listLd ? [breadcrumb, listLd] : breadcrumb} testId="articles-jsonld" />
+      <JsonLd data={jsonLdItems.length === 1 ? jsonLdItems[0] : jsonLdItems} testId="articles-jsonld" />
       <div className="container-custom">
         <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
           <Link href="/" className="hover:text-slate-900">Home</Link>
@@ -449,6 +471,22 @@ export default async function ArticlesPage({
             )}
           </>
         )}
+
+        {/* ─── FAQ ─── */}
+        <section className="border-t border-slate-200 pt-6 md:pt-10 mt-6 md:mt-10">
+          <h2 className="text-base md:text-2xl font-extrabold text-slate-900 mb-4 md:mb-6">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {ARTICLES_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
 
         {/* ─── Advisor Guides + How-To Guides ─── */}
         <section className="border-t border-slate-200 pt-6 md:pt-10 mt-6 md:mt-10">
