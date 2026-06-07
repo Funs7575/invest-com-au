@@ -168,8 +168,8 @@ export default function CompetitorWatchPage() {
                       </a>
                     )}
                   </div>
-                  <button onClick={() => handleDelete(entry.id)} className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-500 transition-all shrink-0">
-                    <Icon name="trash-2" size={14} />
+                  <button onClick={() => handleDelete(entry.id)} aria-label="Delete entry" className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-500 transition-all shrink-0">
+                    <Icon name="trash-2" size={14} aria-hidden />
                   </button>
                 </div>
               );

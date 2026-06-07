@@ -254,11 +254,11 @@ export default function LegalDashboardPage() {
                     <Icon name="external-link" size={14} />
                   </a>
                 )}
-                <button onClick={() => setEditing(doc)} className="p-1.5 text-slate-400 hover:text-slate-700 rounded">
-                  <Icon name="pencil" size={14} />
+                <button onClick={() => setEditing(doc)} aria-label="Edit document" className="p-1.5 text-slate-400 hover:text-slate-700 rounded">
+                  <Icon name="pencil" size={14} aria-hidden />
                 </button>
-                <button onClick={() => handleDelete(doc.id)} className="p-1.5 text-slate-400 hover:text-red-600 rounded">
-                  <Icon name="trash-2" size={14} />
+                <button onClick={() => handleDelete(doc.id)} aria-label="Delete document" className="p-1.5 text-slate-400 hover:text-red-600 rounded">
+                  <Icon name="trash-2" size={14} aria-hidden />
                 </button>
               </div>
             </div>
