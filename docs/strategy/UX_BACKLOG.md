@@ -703,5 +703,19 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-262]** `aria-label` sweep across 131 public content pages (2026-06-08) — Comprehensive WCAG 1.3.1 sweep: `aria-label` added to every unlabelled `<table>` element across all remaining public routes. ~220+ tables labelled across: invest/* (28 files, 56 tables), tax/* (16 files, 58 tables), retirement/* (11 files), smsf/* (5 files), home-loans/* (7 files), first-home-buyer/* (6 files), foreign-investment/* (10 files), global-investing/* (14 files), etfs/* (4 files), property/* (6 files), super/* (2 files), aged-care/* (3 files), insurance/* (2 files), grants/emdg, negative-gearing, mortgage, alt-assets, family-office, halal-investing, wholesale, lump-sum-investing/redundancy, and dynamic routes ([suburb]/property-investing, invest/[slug]/stocks, invest/[slug]/etfs, etfs/[ticker], etfs/vs/[slugs], property/suburbs/[slug]). Tables in admin pages, interactive screeners with `<caption>`, and rate boards with sr-only captions were left unchanged.
 
+**[ADV-263]** FAQ JSON-LD on /foreign-investment/guides — GEO pivot: FAQPage structured data + visible `<details>/<summary>` accordion added to the FI guides hub. 4 FAQs covering foreigners+Australian shares, FIRB approval triggers, tax obligations, and super access. `app/foreign-investment/guides/page.tsx`
+
+**[ADV-264]** FAQ JSON-LD on /non-resident-cgt-checker — GEO pivot: FAQPage schema + visible accordion added to the non-resident CGT checker page. 4 FAQs covering Section 855-10 share exemption, land-rich property rules, cryptocurrency treatment, and treaty interactions. `app/non-resident-cgt-checker/page.tsx`
+
+**[ADV-265]** FAQ JSON-LD on /invest/private-equity and /invest/mining — GEO pivot: FAQPage schema + visible accordion on both sector pages. Private equity: retail access routes, return expectations, minimum investment, FIRB treatment. Mining: non-stock exposure, FIRB critical minerals, 2026 investment case, tax treatment. `app/invest/private-equity/page.tsx`, `app/invest/mining/page.tsx`
+
+**[ADV-266]** FAQ JSON-LD on /costs — GEO pivot: FAQPage schema + visible accordion on the brokerage costs guide. 4 FAQs covering typical brokerage fees, annual platform cost, fee drag on returns, and cheapest way to invest. `app/costs/page.tsx`
+
+**[ADV-267]** FAQ JSON-LD on 4 sector pages — GEO pivot: FAQPage schema + visible accordion added to /invest/hydrogen, /invest/oil-gas, /invest/lithium, /invest/uranium. Each page has 4 answer-first FAQs optimised for AI citation on sector-specific queries. `app/invest/hydrogen/page.tsx`, `app/invest/oil-gas/page.tsx`, `app/invest/lithium/page.tsx`, `app/invest/uranium/page.tsx`
+
+**[ADV-268]** FAQ JSON-LD on /brokers/full-service — GEO pivot: FAQPage schema + visible accordion added to the full-service brokers guide. 4 FAQs covering full-service vs discount differences, ASIC regulation, fee structures, and discretionary portfolio management. `app/brokers/full-service/page.tsx`
+
+**[ADV-269]** FAQ JSON-LD on /foreign-investment/siv — GEO pivot: FAQPage schema + visible accordion added to the Significant Investor Visa page. 4 FAQs covering what the SIV was, its 2023 closure, the complying investment framework, and country source breakdown. `app/foreign-investment/siv/page.tsx`
+
 ---
 
