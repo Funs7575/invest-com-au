@@ -420,10 +420,10 @@ export default function SpouseContributionsPage() {
               Compare Super Funds
             </Link>
             <Link
-              href="/super/contributions"
+              href="/advisors/financial-planners"
               className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap"
             >
-              Super Contributions Guide
+              Find a Financial Planner
             </Link>
           </div>
         </div>

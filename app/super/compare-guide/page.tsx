@@ -648,10 +648,10 @@ export default function SuperCompareGuidePage() {
                 Compare Super Funds
               </Link>
               <Link
-                href="/super/consolidation"
+                href="/advisors/financial-planners"
                 className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap"
               >
-                Consolidate Super
+                Find a Financial Planner
               </Link>
             </div>
           </div>
