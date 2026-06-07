@@ -1384,7 +1384,7 @@ export default function AdvisorProfileClient({
                     >
                       {formState === "submitting" ? (
                         <span className="flex items-center justify-center gap-2">
-                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span aria-hidden="true" className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           Sending...
                         </span>
                       ) : (

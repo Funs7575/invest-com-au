@@ -87,7 +87,7 @@ export default function AcceptInviteClient({ token }: { token: string }) {
   if (loading) {
     return (
       <Card>
-        <div className="w-8 h-8 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin mx-auto mb-3" />
+        <div aria-hidden="true" className="w-8 h-8 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin mx-auto mb-3" />
         <p className="text-sm text-slate-500">Loading your invitation…</p>
       </Card>
     );

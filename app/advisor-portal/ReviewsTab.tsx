@@ -328,7 +328,7 @@ export default function ReviewsTab({ advisor }: Props) {
               >
                 {inviteSubmitting ? (
                   <>
-                    <div className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    <div aria-hidden="true" className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                     Sending...
                   </>
                 ) : (

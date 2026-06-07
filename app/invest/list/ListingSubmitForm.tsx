@@ -695,7 +695,7 @@ export default function ListingSubmitForm() {
             >
               {loading ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                  <div aria-hidden="true" className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
                   Submitting...
                 </>
               ) : (

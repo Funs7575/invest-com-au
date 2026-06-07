@@ -372,7 +372,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
         <div className="container-custom max-w-2xl mx-auto">
           {loadingMatches ? (
             <div className="text-center py-16">
-              <div className="w-12 h-12 border-4 border-amber-200 border-t-amber-500 rounded-full animate-spin mx-auto mb-4" />
+              <div aria-hidden="true" className="w-12 h-12 border-4 border-amber-200 border-t-amber-500 rounded-full animate-spin mx-auto mb-4" />
               <p className="text-sm text-slate-500 font-medium">Filtering professionals…</p>
             </div>
           ) : allMatches.length === 0 ? (

@@ -300,7 +300,7 @@ export default function TeamTab({ advisor }: Props) {
         <>
           {!firmAnalytics ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-6 h-6 border-2 border-slate-200 border-t-violet-600 rounded-full animate-spin" />
+              <div role="status" aria-label="Loading" className="w-6 h-6 border-2 border-slate-200 border-t-violet-600 rounded-full animate-spin" />
             </div>
           ) : (
             <>

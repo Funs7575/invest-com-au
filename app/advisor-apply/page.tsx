@@ -280,7 +280,7 @@ function AdvisorApplyInner() {
   if (inviteLoading) {
     return (
       <div className="py-20 text-center">
-        <div className="w-8 h-8 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
+        <div aria-hidden="true" className="w-8 h-8 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
         <p className="text-sm text-slate-500">Loading invitation...</p>
       </div>
     );
@@ -730,7 +730,7 @@ export default function AdvisorApplyPage() {
   return (
     <Suspense fallback={
       <div className="py-20 text-center">
-        <div className="w-8 h-8 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
+        <div role="status" aria-label="Loading" className="w-8 h-8 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
       </div>
     }>
       <AdvisorApplyInner />

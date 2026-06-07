@@ -526,7 +526,7 @@ export default function ProsJoinWizard() {
             />
             {docUploading ? (
               <div className="text-sm text-slate-600">
-                <div className="mx-auto mb-2 w-6 h-6 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin" />
+                <div aria-hidden="true" className="mx-auto mb-2 w-6 h-6 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin" />
                 Uploading {docFile?.name}…
               </div>
             ) : docStoragePath && docFile ? (

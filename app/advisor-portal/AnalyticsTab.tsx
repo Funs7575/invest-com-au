@@ -383,7 +383,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
 
         {benchmarkLoading && (
           <div className="flex items-center gap-2 py-4 text-xs text-slate-400">
-            <span className="w-4 h-4 border-2 border-slate-200 border-t-slate-400 rounded-full animate-spin shrink-0" />
+            <span aria-hidden="true" className="w-4 h-4 border-2 border-slate-200 border-t-slate-400 rounded-full animate-spin shrink-0" />
             Loading peer benchmarks...
           </div>
         )}
@@ -469,7 +469,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
 
         {profileScoreLoading && (
           <div className="flex items-center gap-2 py-4 text-xs text-slate-400">
-            <span className="w-4 h-4 border-2 border-slate-200 border-t-slate-400 rounded-full animate-spin shrink-0" />
+            <span aria-hidden="true" className="w-4 h-4 border-2 border-slate-200 border-t-slate-400 rounded-full animate-spin shrink-0" />
             Calculating score…
           </div>
         )}
