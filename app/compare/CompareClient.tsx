@@ -569,7 +569,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 <label key={key} className="text-[0.7rem] font-semibold text-slate-600">
                   {label}
                   <input
-                    type="number"
+                    type="number" inputMode="decimal"
                     min="0"
                     value={costInputs[key as keyof CostInputs]}
                     onChange={(e) => setCostInputs((prev) => ({ ...prev, [key]: Number(e.target.value) }))}

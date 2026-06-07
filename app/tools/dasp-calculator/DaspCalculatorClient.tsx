@@ -74,7 +74,7 @@ function NumericInput({ label, id, value, onChange, hint }: NumericInputProps) {
         </span>
         <input
           id={id}
-          type="number"
+          type="number" inputMode="decimal"
           min="0"
           step="100"
           value={value}

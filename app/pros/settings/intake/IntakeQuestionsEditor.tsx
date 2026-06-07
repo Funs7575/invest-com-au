@@ -272,7 +272,7 @@ export default function IntakeQuestionsEditor({
                 <label className="inline-flex items-center gap-2">
                   Sort
                   <input
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={99}
                     value={draft.sort_order}

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 interface AssetClass {
   key: string;
@@ -186,7 +187,7 @@ export default function AlternativeReturnsClient() {
               </label>
               <input
                 id="alt-year"
-                type="number"
+                type="number" inputMode="decimal"
                 value={year}
                 min={MIN_YEAR}
                 max={CURRENT_YEAR_LOCAL}
@@ -206,7 +207,7 @@ export default function AlternativeReturnsClient() {
                 <span className="text-slate-500">$</span>
                 <input
                   id="alt-amount"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={amount}
                   min={0}
                   step={1000}
@@ -354,6 +355,15 @@ export default function AlternativeReturnsClient() {
             </details>
           </div>
         </div>
+      </section>
+
+      <section className="container-custom max-w-3xl py-8">
+        <CalculatorLeadCapture
+          calcSlug="alternative-returns"
+          calcTitle="alternative asset returns"
+          need="wealth"
+          contextKeys={["alternative-assets", "collectibles", "wealth"]}
+        />
       </section>
 
       <section className="py-10 bg-white border-t border-slate-200">

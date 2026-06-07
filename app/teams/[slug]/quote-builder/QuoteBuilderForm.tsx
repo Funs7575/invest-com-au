@@ -114,7 +114,7 @@ export default function QuoteBuilderForm({ slug, briefId }: Props) {
               className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
             />
             <input
-              type="number"
+              type="number" inputMode="decimal"
               value={it.estimated_hours}
               onChange={(e) => updateItem(i, { estimated_hours: e.target.value })}
               placeholder="hrs"
@@ -155,7 +155,7 @@ export default function QuoteBuilderForm({ slug, briefId }: Props) {
             Estimated delivery (days) <span className="text-xs text-slate-400">(optional)</span>
           </span>
           <input
-            type="number"
+            type="number" inputMode="decimal"
             value={deliveryDays}
             onChange={(e) => setDeliveryDays(e.target.value)}
             placeholder="e.g. 21"

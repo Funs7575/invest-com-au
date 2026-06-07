@@ -168,7 +168,7 @@ export default function LicScreenerClient() {
               <label htmlFor="lic-max-mer" className="block text-xs font-semibold text-slate-600 mb-1">Max Mgmt Cost (%)</label>
               <input
                 id="lic-max-mer"
-                type="number"
+                type="number" inputMode="decimal"
                 min="0.1"
                 max="2"
                 step="0.1"

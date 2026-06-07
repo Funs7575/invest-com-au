@@ -11,6 +11,7 @@ import {
 } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER, FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import CostCalculator from "./CostCalculator";
 import FaqAccordion from "./FaqAccordion";
 import SectionHeading from "@/components/SectionHeading";
@@ -53,6 +54,7 @@ function formatCurrency(n: number) {
 }
 
 export default function ForeignInvestmentPage() {
+  const faqSchema = faqJsonLd(FIRB_FAQS.map((f) => ({ q: f.question, a: f.answer })));
   return (
     <div className="bg-white min-h-screen">
       <script
@@ -67,6 +69,12 @@ export default function ForeignInvestmentPage() {
           ),
         }}
       />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
 
       {/* ── ESTABLISHED DWELLING BAN ALERT — prominent ──────────────────── */}
       <div className="bg-red-600 text-white">

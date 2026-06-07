@@ -196,7 +196,7 @@ export default function BorrowingPowerClient() {
           </label>
           <input
             id="bp-dependents"
-            type="number"
+            type="number" inputMode="decimal"
             min={0}
             max={10}
             step={1}
@@ -328,7 +328,7 @@ function InputField({
         )}
         <input
           id={id}
-          type="number"
+          type="number" inputMode="decimal"
           min={0}
           max={max}
           step={step}

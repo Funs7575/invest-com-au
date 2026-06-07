@@ -122,7 +122,7 @@ export default function CurrencyConverterPage() {
                     ))}
                   </select>
                   <input
-                    type="number"
+                    type="number" inputMode="decimal"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     min={0}

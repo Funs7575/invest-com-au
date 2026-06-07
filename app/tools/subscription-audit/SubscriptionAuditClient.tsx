@@ -253,7 +253,7 @@ export default function SubscriptionAuditClient() {
                     <label htmlFor={`${formId}-price`} className="block text-xs font-semibold text-slate-600 mb-1">Price (A$)</label>
                     <input
                       id={`${formId}-price`}
-                      type="number"
+                      type="number" inputMode="decimal"
                       min="0.01"
                       step="0.01"
                       value={price}

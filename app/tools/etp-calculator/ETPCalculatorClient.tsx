@@ -139,7 +139,7 @@ export default function ETPCalculatorClient() {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
             <input
               id="etp-total-payout"
-              type="number"
+              type="number" inputMode="decimal"
               min={0}
               max={2_000_000}
               step={1000}
@@ -159,7 +159,7 @@ export default function ETPCalculatorClient() {
           </label>
           <input
             id="etp-years"
-            type="number"
+            type="number" inputMode="decimal"
             min={0}
             max={50}
             step={1}
@@ -180,7 +180,7 @@ export default function ETPCalculatorClient() {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">$</span>
             <input
               id="etp-annual-income"
-              type="number"
+              type="number" inputMode="decimal"
               min={0}
               max={2_000_000}
               step={1000}

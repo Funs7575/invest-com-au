@@ -585,7 +585,7 @@ export default function AdvisorSignupPage() {
                   <label htmlFor="as-years-exp" className={labelClass}>Years of Experience</label>
                   <input
                     id="as-years-exp"
-                    type="number"
+                    type="number" inputMode="numeric"
                     min="0"
                     max="60"
                     value={form.years_experience}

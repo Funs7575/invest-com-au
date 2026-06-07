@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { incomeTax, marginalRate as marginalRateOf } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── FY2025-26 tax constants ──────────────────────────────────────────────────
 
@@ -91,7 +92,7 @@ export default function SalarySacrificeOptimiserClient() {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">$</span>
             <input
               id="ss-gross-salary"
-              type="number"
+              type="number" inputMode="decimal"
               min={0}
               step={5000}
               value={grossSalary}
@@ -110,7 +111,7 @@ export default function SalarySacrificeOptimiserClient() {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">$</span>
             <input
               id="ss-sacrifice-amount"
-              type="number"
+              type="number" inputMode="decimal"
               min={0}
               step={500}
               value={sacrificeAmount}
@@ -244,6 +245,13 @@ export default function SalarySacrificeOptimiserClient() {
           </div>
         </div>
       )}
+
+      <CalculatorLeadCapture
+        calcSlug="salary-sacrifice-optimiser"
+        calcTitle="salary sacrifice"
+        need="tax"
+        contextKeys={["salary-sacrifice", "super-contribution", "tax"]}
+      />
 
       <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </div>

@@ -242,7 +242,7 @@ export default function WithholdingTaxClient() {
                 <span className="text-slate-500">$</span>
                 <input
                   id="wht-amount"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   min={0}

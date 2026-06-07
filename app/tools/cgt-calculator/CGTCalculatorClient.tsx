@@ -145,7 +145,7 @@ export default function CGTCalculatorClient() {
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
                 id="cgt-purchase-price"
-                type="number" min={0} step={1000}
+                type="number" inputMode="decimal" min={0} step={1000}
                 value={purchasePrice}
                 onChange={(e) => setPurchasePrice(e.target.value)}
                 className="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -158,7 +158,7 @@ export default function CGTCalculatorClient() {
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
                 id="cgt-sale-price"
-                type="number" min={0} step={1000}
+                type="number" inputMode="decimal" min={0} step={1000}
                 value={salePrice}
                 onChange={(e) => setSalePrice(e.target.value)}
                 className="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -174,7 +174,7 @@ export default function CGTCalculatorClient() {
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
                 id="cgt-purchase-costs"
-                type="number" min={0} step={100}
+                type="number" inputMode="decimal" min={0} step={100}
                 value={purchaseCosts}
                 onChange={(e) => setPurchaseCosts(e.target.value)}
                 className="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -190,7 +190,7 @@ export default function CGTCalculatorClient() {
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
                 id="cgt-sale-costs"
-                type="number" min={0} step={100}
+                type="number" inputMode="decimal" min={0} step={100}
                 value={saleCosts}
                 onChange={(e) => setSaleCosts(e.target.value)}
                 className="w-full pl-8 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"

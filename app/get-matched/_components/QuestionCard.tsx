@@ -236,7 +236,7 @@ function NumberInput({
   return (
     <div className="space-y-3">
       <input
-        type="number"
+        type="number" inputMode="decimal"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"

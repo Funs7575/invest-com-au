@@ -262,6 +262,7 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
           <button
             type="submit"
             disabled={submitting}
+            aria-busy={submitting}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-semibold text-sm py-2.5 rounded-lg transition-colors"
           >
             {submitting ? "Submitting…" : "Submit for review"}

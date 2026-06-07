@@ -344,7 +344,7 @@ export default function BrokerReviewInviteClient({ token }: { token: string }) {
                 </label>
                 <input
                   id="bri-months"
-                  type="number"
+                  type="number" inputMode="numeric"
                   min={0}
                   max={600}
                   value={experienceMonths}

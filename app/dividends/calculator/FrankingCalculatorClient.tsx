@@ -85,7 +85,7 @@ export default function FrankingCalculatorClient() {
           <label className="block">
             <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Dividend amount (AUD)</span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               min={0}
               step={50}
               value={dividend}

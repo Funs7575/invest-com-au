@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Icon from "@/components/Icon";
 import type { Organisation } from "./types";
 
@@ -50,7 +51,7 @@ export default function OrgStudentsTab({ org: _org }: Props) {
 
   if (loading) {
     return (
-      <div className="animate-pulse space-y-3">
+      <div className="animate-pulse space-y-3" aria-busy="true" aria-label="Loading students…">
         <div className="h-8 w-48 bg-slate-200 rounded" />
         <div className="h-48 bg-slate-100 rounded-xl" />
       </div>
@@ -71,6 +72,7 @@ export default function OrgStudentsTab({ org: _org }: Props) {
         <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
         <input
           type="search" enterKeyHint="search"
+          aria-label="Search students by name or email"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name or email..."
@@ -82,11 +84,25 @@ export default function OrgStudentsTab({ org: _org }: Props) {
         <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
           <Icon name="users" size={32} className="text-slate-300 mx-auto mb-3" />
           <h3 className="text-sm font-bold text-slate-900 mb-1">No students yet</h3>
-          <p className="text-xs text-slate-500">Students will appear here once they enroll in your courses.</p>
+          <p className="text-xs text-slate-500 mb-4">Students will appear here once they enroll in your courses.</p>
+          <Link
+            href="/org-portal/courses"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white text-sm font-semibold rounded-lg hover:bg-teal-700 transition-colors"
+          >
+            <Icon name="book-open" size={13} aria-hidden />
+            Browse your courses
+          </Link>
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-xl p-6 text-center">
-          <p className="text-sm text-slate-500">No students match &ldquo;{search}&rdquo;.</p>
+          <p className="text-sm text-slate-500 mb-3">No students match &ldquo;{search}&rdquo;.</p>
+          <button
+            type="button"
+            onClick={() => setSearch("")}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-200 transition-colors"
+          >
+            Clear search
+          </button>
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">

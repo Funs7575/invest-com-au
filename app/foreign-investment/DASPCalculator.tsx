@@ -98,7 +98,7 @@ export default function DASPCalculator() {
             <div className="relative">
               <input
                 id="dasp-tax-free-pct"
-                type="number"
+                type="number" inputMode="decimal"
                 min={0}
                 max={100}
                 value={taxFreePercent}

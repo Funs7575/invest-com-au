@@ -230,7 +230,7 @@ export default function VisaCalculatorClient() {
             <span className="text-slate-500">$</span>
             <input
               id="visa-budget"
-              type="number"
+              type="number" inputMode="decimal"
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
               min={0}

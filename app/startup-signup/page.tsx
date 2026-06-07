@@ -264,7 +264,7 @@ export default function StartupSignupPage() {
                 <label htmlFor={foundedYearId} className="block text-sm font-medium text-gray-700 mb-1">Founded year</label>
                 <input
                   id={foundedYearId}
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={2000}
                   max={new Date().getFullYear()}
                   value={form.founded_year}
@@ -342,7 +342,7 @@ export default function StartupSignupPage() {
               <label htmlFor={teamSizeId} className="block text-sm font-medium text-gray-700 mb-1">Team size</label>
               <input
                 id={teamSizeId}
-                type="number"
+                type="number" inputMode="decimal"
                 min={1}
                 value={form.team_size}
                 onChange={(e) => set("team_size", e.target.value)}

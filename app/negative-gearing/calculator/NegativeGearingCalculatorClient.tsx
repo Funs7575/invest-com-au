@@ -101,19 +101,19 @@ export default function NegativeGearingCalculatorClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Property value (AUD)</span>
-              <input type="number" min={0} step={50_000} value={propertyValue} onChange={(e) => setPropertyValue(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              <input type="number" inputMode="decimal" min={0} step={50_000} value={propertyValue} onChange={(e) => setPropertyValue(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </label>
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Annual rental income</span>
-              <input type="number" min={0} step={500} value={rentalIncome} onChange={(e) => setRentalIncome(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              <input type="number" inputMode="decimal" min={0} step={500} value={rentalIncome} onChange={(e) => setRentalIncome(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </label>
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Annual mortgage interest</span>
-              <input type="number" min={0} step={500} value={interest} onChange={(e) => setInterest(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              <input type="number" inputMode="decimal" min={0} step={500} value={interest} onChange={(e) => setInterest(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </label>
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Other annual costs (rates, insurance, maintenance)</span>
-              <input type="number" min={0} step={500} value={otherCosts} onChange={(e) => setOtherCosts(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              <input type="number" inputMode="decimal" min={0} step={500} value={otherCosts} onChange={(e) => setOtherCosts(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
             </label>
             <label className="block">
               <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Your marginal tax rate</span>

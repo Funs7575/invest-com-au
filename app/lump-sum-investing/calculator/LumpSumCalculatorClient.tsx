@@ -97,11 +97,11 @@ export default function LumpSumCalculatorClient() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <label className="block">
             <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Lump sum (AUD)</span>
-            <input type="number" min={0} step={5_000} value={lumpSum} onChange={(e) => setLumpSum(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            <input type="number" inputMode="decimal" min={0} step={5_000} value={lumpSum} onChange={(e) => setLumpSum(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
           </label>
           <label className="block">
             <span className="block text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">Monthly contribution (AUD)</span>
-            <input type="number" min={0} step={100} value={monthly} onChange={(e) => setMonthly(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+            <input type="number" inputMode="decimal" min={0} step={100} value={monthly} onChange={(e) => setMonthly(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
           </label>
           <label className="block">
             <span className="flex items-center justify-between text-xs font-bold uppercase tracking-wide text-slate-700 mb-1">
