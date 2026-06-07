@@ -317,7 +317,7 @@ export default function OrgEventsTab({ org: _org }: Props) {
 
       {/* Edit modal */}
       {editingEvent && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onKeyDown={(e) => { if (e.key === "Escape") { setEditingEvent(null); setEditError(""); } }}>
           <div role="dialog" aria-modal="true" aria-labelledby="org-edit-event-title" className="bg-white rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
             <h2 id="org-edit-event-title" className="text-sm font-bold text-slate-900 mb-4">Edit Event</h2>
             <EventFormFields form={editForm} setField={setEditFormField} />
@@ -343,7 +343,7 @@ export default function OrgEventsTab({ org: _org }: Props) {
 
       {/* Delete confirm modal */}
       {deletingId !== null && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onKeyDown={(e) => { if (e.key === "Escape") { setDeletingId(null); setDeleteError(""); } }}>
           <div role="dialog" aria-modal="true" aria-labelledby="org-delete-event-title" className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
             <h2 id="org-delete-event-title" className="text-sm font-bold text-slate-900 mb-2">Delete Event?</h2>
             <p className="text-xs text-slate-500 mb-4">

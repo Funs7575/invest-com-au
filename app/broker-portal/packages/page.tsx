@@ -343,7 +343,7 @@ export default function PackagesPage() {
 
       {/* Confirmation Dialog */}
       {showDialog && targetPackage && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setShowDialog(false)}>
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setShowDialog(false)} onKeyDown={(e) => { if (e.key === "Escape") setShowDialog(false); }}>
           <div role="dialog" aria-modal="true" aria-labelledby="pkg-confirm-dialog-title" className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 bounce-in-up" onClick={e => e.stopPropagation()}>
             {/* Header */}
             <div>

@@ -161,7 +161,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
 
       {/* Compare drawer */}
       {showCompare && compareBids.length > 0 && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 flex items-end sm:items-center justify-center p-4" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 flex items-end sm:items-center justify-center p-4" role="dialog" aria-modal="true" onKeyDown={(e) => { if (e.key === "Escape") setShowCompare(false); }}>
           <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[85vh] overflow-y-auto shadow-2xl">
             <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
               <h3 className="font-bold text-slate-900">Side-by-side comparison</h3>

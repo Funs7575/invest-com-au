@@ -518,7 +518,7 @@ export default function AdvisorPortalPage() {
 
       {/* ─── DISPUTE MODAL ─── */}
       {disputeModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onKeyDown={(e) => { if (e.key === "Escape") setDisputeModal(null); }}>
           <div role="dialog" aria-modal="true" aria-labelledby="dispute-modal-title" className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
             {disputeDone ? (
               <div className="text-center py-4">

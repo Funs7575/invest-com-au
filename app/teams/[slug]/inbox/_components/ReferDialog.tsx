@@ -102,6 +102,7 @@ export default function ReferDialog({
       role="dialog"
       aria-modal="true"
       aria-labelledby="refer-dialog-title"
+      onKeyDown={(e) => { if (e.key === "Escape") onClose(); }}
     >
       <form
         onSubmit={handleSubmit}

@@ -115,7 +115,7 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
 
       {/* Upload modal */}
       {showUpload && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onKeyDown={(e) => { if (e.key === "Escape") { setShowUpload(false); setUploadError(null); setFile(null); } }}>
           <div role="dialog" aria-modal="true" aria-labelledby="vault-upload-dialog-title" className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
             <h2 id="vault-upload-dialog-title" className="text-lg font-semibold mb-4">Upload a document</h2>
 
