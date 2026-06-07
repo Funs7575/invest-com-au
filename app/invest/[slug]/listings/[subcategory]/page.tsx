@@ -23,7 +23,7 @@ import InvestListingCard from "@/components/InvestListingCard";
 import ListingsEmptyState from "@/components/ListingsEmptyState";
 import ListingDetailView from "@/components/invest/ListingDetailView";
 import { fetchRelatedListings } from "@/lib/investment-listings-query";
-import { listingUrl } from "@/lib/listing-url";
+import { listingUrl, rawVerticalVariants } from "@/lib/listing-url";
 import ScrollReveal from "@/components/ScrollReveal";
 import SubCategoryNav from "@/components/SubCategoryNav";
 
@@ -60,7 +60,7 @@ export async function generateMetadata({
       const { data: listing } = await supabase
         .from("investment_listings")
         .select("title, description")
-        .in("vertical", filter.verticals)
+        .in("vertical", filter.verticals.flatMap(rawVerticalVariants))
         .eq("slug", subcategory)
         .eq("status", "active")
         .maybeSingle();
@@ -119,7 +119,7 @@ export default async function InvestSubcategoryListingsPage({
       const { data: listingRaw } = await supabaseForDetail
         .from("investment_listings")
         .select("*")
-        .in("vertical", detailFilter.verticals)
+        .in("vertical", detailFilter.verticals.flatMap(rawVerticalVariants))
         .eq("slug", subcategory)
         .eq("status", "active")
         .maybeSingle();
@@ -152,7 +152,7 @@ export default async function InvestSubcategoryListingsPage({
     .from("investment_listings")
     .select("*")
     .eq("status", "active")
-    .in("vertical", filter.verticals)
+    .in("vertical", filter.verticals.flatMap(rawVerticalVariants))
     .eq("sub_category", sub.dbValue)
     .order("created_at", { ascending: false });
 
