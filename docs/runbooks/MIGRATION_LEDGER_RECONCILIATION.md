@@ -48,6 +48,11 @@ SUPABASE_MIGRATIONS_JSON=ledger.json npm run audit:ledger-drift
 
 ## Procedure
 
+> **Helper:** `scripts/db/baseline-squash.sh` automates the safe, reversible
+> local steps (2 + the archive) and prints the prod commands to run by hand. Run
+> it dry first; `SNAPSHOT_CONFIRMED=1 scripts/db/baseline-squash.sh --execute`
+> after step 0. It stops before the irreversible `migration repair`.
+
 ### 0. 🛑 Snapshot prod — non-negotiable
 Supabase Dashboard → Database → Backups → take a fresh snapshot (or
 `pg_dump`/PITR confirmed). 35 ledger entries are data backfills; this is the
