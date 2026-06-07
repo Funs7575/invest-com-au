@@ -659,5 +659,15 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-240]** Co-contribution page CTA + InvestorProCheckout `aria-busy` — `super/co-contribution` page was missing any conversion CTA; added a dark gradient section with "Compare Super Funds" + "Find a Financial Planner" buttons before the related-links block. InvestorProCheckout checkout button now has `aria-busy={loading || authLoading}` and uses proper `…` ellipsis. `app/super/co-contribution/page.tsx`, `app/account/upgrade/InvestorProCheckout.tsx`
 
+**[ADV-241]** Dialog `aria-labelledby` + `<time dateTime>` + reviews empty-state CTA — QuoteBidsClient compare-bids dialog: added `aria-labelledby="compare-bids-title"` + `id` on h3 (WCAG 4.1.2). BriefActivityPanel `<time>` gets `dateTime={item.createdAt}` for AT and parser. ReviewsClient "No advisors in this category" empty state: Browse Advisors CTA button so users have a next action.
+
+**[ADV-242]** Touch target enlargements on portal/portfolio/push-notification buttons — LeadsTab lead-status buttons (px-2 py-1 → px-3 py-1.5), PortfolioClient remove-holding button (p-1 → p-2), PushNotificationPrompt dismiss/close buttons (p-1 → p-2). WCAG 2.5.5 minimum 44×44 px.
+
+**[ADV-243]** Financial planner CTAs on spouse-contributions + compare-guide super pages — both pages mentioned advisers in body copy but lacked a Link. Second CTA slot replaced with "Find a Financial Planner → /advisors/financial-planners" to provide a conversion path for complex super decisions.
+
+**[ADV-244]** FAQ JSON-LD on /for-advisors, /for-providers, /advertise/packages — GEO pivot: FAQPage structured data added to 3 commercial pages that had FAQ sections but no schema markup, making them citable by Google AI for queries like "cost of advisor directory listing" and "CPD provider AFSL Australia".
+
+**[ADV-245]** `aria-live` on loading status text in 3 components — BookConsultationPanel, broker analytics, and JobsClient loading paragraphs/spans now have `aria-live="polite" aria-atomic="true"` so screen readers announce when data is loading without interrupting user focus.
+
 ---
 
