@@ -21,11 +21,12 @@ describe("invest-categories data integrity", () => {
     for (const cat of cats) {
       expect(cat.slug).toBeTruthy();
       expect(cat.label).toBeTruthy();
-      // income-assets is a placeholder sector with no distinct DB vertical
-      // seeded yet — it intentionally carries an empty dbVerticals (the old
-      // ["business"] value collided with buy-business). Its listings page
-      // renders a graceful empty state until a vertical/sub_category exists.
-      if (cat.slug !== "income-assets") {
+      // Two categories intentionally carry empty dbVerticals:
+      //  - income-assets: placeholder with no distinct vertical seeded yet
+      //    (the old ["business"] value collided with buy-business).
+      //  - listed-securities: grouped by listing_kind, not vertical (its
+      //    /listings page fetches by kind across many verticals).
+      if (!["income-assets", "listed-securities"].includes(cat.slug)) {
         expect(cat.dbVerticals.length).toBeGreaterThan(0);
       }
       expect(cat.color).toBeDefined();
@@ -163,6 +164,8 @@ describe("IA intent (2026-05-07 refactor)", () => {
         "carbon-credits",
         "sda-housing",
         "water-rights",
+        // 2026-06 — ASX-listed securities (instrument-class category)
+        "listed-securities",
       ].sort(),
     );
   });
