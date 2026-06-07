@@ -402,72 +402,6 @@ function AdvisorApplyInner() {
               </div>
             )}
 
-            {/* Photo Upload */}
-            <div>
-              <p className="block text-xs font-semibold text-slate-600 mb-2">Profile Photo *</p>
-              <div className="flex items-start gap-4">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={photoUploading}
-                  className={`
-                    relative w-24 h-24 rounded-full border-2 border-dashed overflow-hidden flex-shrink-0
-                    transition-all duration-200 cursor-pointer group
-                    ${photoPreview ? "border-slate-300" : "border-slate-300 hover:border-slate-400"}
-                    ${photoUploading ? "opacity-70 cursor-wait" : ""}
-                  `}
-                >
-                  {photoPreview ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- photoPreview is a blob: URL from URL.createObjectURL(); next/image does not support blob: scheme
-                    <img
-                      src={photoPreview}
-                      alt="Profile photo preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center w-full h-full bg-slate-100 text-slate-600">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                    </div>
-                  )}
-                  {!photoUploading && (
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="17 8 12 3 7 8" />
-                        <line x1="12" y1="3" x2="12" y2="15" />
-                      </svg>
-                    </div>
-                  )}
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={handlePhotoSelect}
-                  className="hidden"
-                />
-                <div className="pt-1">
-                  <p className="text-xs text-slate-500">Click to upload a headshot photo.</p>
-                  <p className="text-[0.56rem] text-slate-400 mt-0.5">JPG, PNG, or WebP. Max 5MB.</p>
-                  {photoPreview && (
-                    <button
-                      type="button"
-                      onClick={removePhoto}
-                      className="text-[0.62rem] text-red-500 hover:text-red-600 font-medium mt-1.5"
-                    >
-                      Remove photo
-                    </button>
-                  )}
-                  {photoError && (
-                    <p className="text-xs text-red-600 font-medium mt-1">{photoError}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label htmlFor="aa-name" className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Your Full Name *" : "Full Name *"}</label>
@@ -683,6 +617,72 @@ function AdvisorApplyInner() {
                 <input id="aa-fee" value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
               </div>
             )}
+
+            {/* ADV-117: Photo upload moved here (end of form) to reduce early abandonment */}
+            <div>
+              <p className="block text-xs font-semibold text-slate-600 mb-2">Profile Photo *</p>
+              <div className="flex items-start gap-4">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={photoUploading}
+                  className={`
+                    relative w-24 h-24 rounded-full border-2 border-dashed overflow-hidden flex-shrink-0
+                    transition-all duration-200 cursor-pointer group
+                    ${photoPreview ? "border-slate-300" : "border-slate-300 hover:border-slate-400"}
+                    ${photoUploading ? "opacity-70 cursor-wait" : ""}
+                  `}
+                >
+                  {photoPreview ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- photoPreview is a blob: URL from URL.createObjectURL(); next/image does not support blob: scheme
+                    <img
+                      src={photoPreview}
+                      alt="Profile photo preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center w-full h-full bg-slate-100 text-slate-600">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                    </div>
+                  )}
+                  {!photoUploading && (
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                      </svg>
+                    </div>
+                  )}
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handlePhotoSelect}
+                  className="hidden"
+                />
+                <div className="pt-1">
+                  <p className="text-xs text-slate-500">Almost done — add a headshot photo to complete your profile.</p>
+                  <p className="text-[0.56rem] text-slate-400 mt-0.5">JPG, PNG, or WebP. Max 5MB.</p>
+                  {photoPreview && (
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="text-[0.62rem] text-red-500 hover:text-red-600 font-medium mt-1.5"
+                    >
+                      Remove photo
+                    </button>
+                  )}
+                  {photoError && (
+                    <p className="text-xs text-red-600 font-medium mt-1">{photoError}</p>
+                  )}
+                </div>
+              </div>
+            </div>
 
             {errorMsg && <p className="text-xs text-red-600">{errorMsg}</p>}
 
