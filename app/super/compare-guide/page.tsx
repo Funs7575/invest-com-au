@@ -268,7 +268,7 @@ export default function SuperCompareGuidePage() {
               single one decides it.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Super fund comparison factors">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Factor</th>
@@ -335,7 +335,7 @@ export default function SuperCompareGuidePage() {
               the main categories you will come across.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Types of super fund">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Type</th>
@@ -503,7 +503,7 @@ export default function SuperCompareGuidePage() {
               cross-check with independent research.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Super fund research tools">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th scope="col" className="px-4 py-4 text-left font-bold text-xs uppercase tracking-wide">Tool</th>

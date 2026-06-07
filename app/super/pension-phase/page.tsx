@@ -166,7 +166,7 @@ export default function PensionPhasePage() {
           <div className="container-custom max-w-4xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Accumulation vs pension phase: tax comparison</h2>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Accumulation vs pension phase tax comparison">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Tax item</th>

@@ -470,7 +470,7 @@ export default function Division296Page() {
             earners, while Division 296 taxes <strong>earnings</strong> for very large balances.
           </p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Division 296 vs Division 293 comparison">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-40">Feature</th>
