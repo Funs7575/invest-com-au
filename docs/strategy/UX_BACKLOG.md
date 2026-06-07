@@ -651,5 +651,13 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-236]** Table `aria-label` sweep — WCAG 1.3.1 accessible names added to all data `<table>` elements without an existing `<caption>` or `aria-label`. ~60+ files covered: admin/automation/* (15 files), admin/* (30+ files, including subscribers, team-members, fund-reviews, switch-stories, user-reviews, affiliate-links, advisor-performance, geo, loop-status, marketplace/*, property/*, and more), public pages (api-docs, etfs/screener, export/comparison, export/fee-impact, insurance, grants/eligibility-quiz, firm-portal billing/performance, org-portal, property, teams availability/heatmap, tools/dasp-calculator, foreign-investment/DTASearchTable). All data tables now have accessible names for screen readers.
 
+**[ADV-237]** `FloatingRightCTA` aria-hidden-focus axe fix — Added `inert={!visible}` alongside the existing `aria-hidden={!visible}`. Without `inert`, the keyboard-focusable `<Link>` and `<button>` children inside the hidden container were still reachable by screen readers (axe rule `aria-hidden-focus`). React 19 supports `inert` natively in `@types/react`; no TS errors. `components/FloatingRightCTA.tsx`
+
+**[ADV-238]** `inputMode="decimal"` on account + additional calculator client components — Extends ADV-226's sweep to cover account client components (alerts, goals, holdings, startup-thesis, term-deposits, BusinessUpgradeForm, vault) and calculator client components (debt, mortgage, property-yield, retirement, savings, smsf). Mobile numeric keyboard now shown on all financial numeric inputs.
+
+**[ADV-239]** Empty-state CTAs for account activity feed + referrals — `AccountActivityFeed` empty state (when no plans/matches) now shows "Build a plan" + "Match with an advisor" buttons instead of dead-end text. `ReferralsClient` empty state adds a "Copy referral link" CTA so users with no referrals still have a clear next action. `app/account/_components/AccountActivityFeed.tsx`, `app/account/referrals/ReferralsClient.tsx`
+
+**[ADV-240]** Co-contribution page CTA + InvestorProCheckout `aria-busy` — `super/co-contribution` page was missing any conversion CTA; added a dark gradient section with "Compare Super Funds" + "Find a Financial Planner" buttons before the related-links block. InvestorProCheckout checkout button now has `aria-busy={loading || authLoading}` and uses proper `…` ellipsis. `app/super/co-contribution/page.tsx`, `app/account/upgrade/InvestorProCheckout.tsx`
+
 ---
 

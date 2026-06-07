@@ -180,7 +180,7 @@ export default async function BriefActivityPanel() {
                   </span>
                   {item.briefTitle}
                 </p>
-                <time className="text-[11px] text-slate-500 flex-shrink-0">
+                <time dateTime={item.createdAt} className="text-[11px] text-slate-500 flex-shrink-0">
                   {formatRelative(item.createdAt)}
                 </time>
               </div>
