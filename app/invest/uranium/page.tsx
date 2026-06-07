@@ -12,6 +12,28 @@ import GeneralAdviceWarning from "@/components/commodities/GeneralAdviceWarning"
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const URANIUM_FAQS = [
+  {
+    q: "How do I invest in uranium in Australia?",
+    a: "Australian uranium investment options: (1) ASX producers — Boss Energy (BOE) operates the Honeymoon mine in South Australia, the only Australian uranium mine producing in 2024–2025; Paladin Energy (PDN) operates the Langer Heinrich mine in Namibia (listed on ASX). (2) ASX developers — Peninsula Energy, Vimy Resources (now Areva acquired), and Deep Yellow are advancing Australian and Namibian projects. (3) ETFs — Global X Uranium ETF (not ASX-listed; US-listed URA) provides global uranium exposure including Canadian and Kazakh producers. (4) Uranium royalties — Yellow Cake plc (YCA on LSE) holds physical uranium. Note: Australia has significant uranium reserves (30%+ of world's known resources) but only one producing mine due to strict state regulations.",
+  },
+  {
+    q: "Can I buy physical uranium as an investment?",
+    a: "Direct physical uranium purchase is not available to retail investors — uranium is a controlled substance requiring ARPANSA (Australian Radiation Protection and Nuclear Safety Agency) licences for possession. Listed uranium exposure options include: Yellow Cake plc (YCA on LSE) which holds physical U3O8; Sprott Physical Uranium Trust (U.U on TSX) which holds spot uranium. These trade at premiums or discounts to NAV. Most Australian retail investors access uranium exposure through ASX-listed uranium producers or the Global X Uranium ETF (URA) via international brokers. Boss Energy (BOE) is the purest Australian uranium play on ASX.",
+  },
+  {
+    q: "Why is uranium demand growing in 2026?",
+    a: "Uranium demand is being driven by a global nuclear energy renaissance. Key drivers: (1) Net-zero commitments — nuclear is recognised in the IEA's net-zero scenario as essential for baseload carbon-free electricity. (2) New reactor construction — China has 30+ reactors under construction; India, Korea, and Eastern Europe are expanding. (3) Small modular reactors (SMRs) — US, Canada, UK, and Australia are advancing SMR programs. (4) Life extensions — existing US, French, and Japanese plants are being granted 20-year licence extensions, increasing long-term fuel demand. (5) Supply constraints — Kazakhstan (45% of world supply) faces geopolitical risks; many western mines were shut during the 2012–2020 price slump and take years to restart. Long-term uranium contract prices (~US$80/lb) are 2× higher than spot in 2020.",
+  },
+  {
+    q: "Do foreign investors need FIRB approval for Australian uranium investments?",
+    a: "Yes — uranium is both a critical mineral and a controlled nuclear material, making it subject to strict FIRB scrutiny. The Nuclear Non-Proliferation regime imposes strict controls on uranium export agreements; Australia only sells uranium to countries with safeguards agreements. For direct uranium project investments: any foreign acquisition of an Australian uranium tenement requires FIRB approval, regardless of value. State-owned enterprises from non-agreement countries face particularly strict review. Portfolio share purchases below 10% in ASX-listed uranium companies (Boss Energy, Paladin) are generally FIRB-exempt. Also note: individual states have different uranium mining policies — SA allows mining; WA and QLD had historical bans (WA's was lifted in 2022).",
+  },
+];
+
+const uraniumFaqLd = faqJsonLd(URANIUM_FAQS);
 
 export const revalidate = 1800;
 
@@ -90,6 +112,9 @@ export default async function UraniumPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {uraniumFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(uraniumFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -461,6 +486,26 @@ export default async function UraniumPage() {
               Find a foreign investment lawyer
               <Icon name="arrow-right" size={14} />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="max-w-3xl mx-auto px-4 container-custom">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {URANIUM_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

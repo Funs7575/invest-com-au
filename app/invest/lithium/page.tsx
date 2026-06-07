@@ -11,6 +11,28 @@ import EtfComparisonCard from "@/components/commodities/EtfComparisonCard";
 import GeneralAdviceWarning from "@/components/commodities/GeneralAdviceWarning";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const LITHIUM_FAQS = [
+  {
+    q: "How do I invest in Australian lithium companies?",
+    a: "You can invest in Australian lithium through: (1) ASX producers — Pilbara Minerals (PLS) is the world's largest independent hard-rock lithium producer; Mineral Resources (MIN) has significant lithium exposure alongside iron ore; Liontown Resources (LTR) is a major spodumene developer; IGO Limited owns a 49% stake in the Greenbushes mine (world's largest). (2) Lithium ETFs — VanEck Battery Metals ETF (ACDC) and Global X Battery Tech & Lithium ETF (ACDC equivalent) provide diversified exposure. (3) Diversified majors — Albemarle, Sociedad Quimica (SQM), and Pilbara Minerals dominate global supply; Glencore has cobalt and lithium exposure. (4) Direct project investment — unlisted Australian lithium project equity via the marketplace below, available to wholesale investors.",
+  },
+  {
+    q: "Why is Australia important for global lithium supply?",
+    a: "Australia is the world's largest lithium producer by volume, supplying approximately 55% of global mined lithium (as spodumene concentrate). Australia's Pilbara region hosts the world's highest-grade hard-rock lithium deposits. The Greenbushes mine (WA) has been producing for 40+ years and holds the world's largest known lithium resource. Australia is moving downstream — Albemarle's Kemerton hydroxide plant and Tianqi's Kwinana plant process Australian spodumene into battery-grade lithium hydroxide, capturing more of the EV supply chain value. Government support includes $500M in NAIF loans for downstream processing and preferential investment treatment under the US-Australia Critical Minerals Partnership.",
+  },
+  {
+    q: "Is lithium a good investment in 2026?",
+    a: "Lithium pricing has been volatile — the spodumene spot price fell from ~US$8,000/t in late 2022 to ~US$800/t by late 2024 as Chinese inventory overhang and new supply came online. A recovery is expected as EV adoption accelerates in Europe and North America, but the timing of the price floor is uncertain. Australian lithium ASX stocks have followed prices down — PLS fell ~80% from peak, creating potential value for long-term investors who believe in EV structural demand. Key risks: Chinese processing dominance (80% of global lithium chemicals production), sodium-ion battery competition, and project development timelines. Suitable for investors with 5–10 year horizons who understand commodity price cycles.",
+  },
+  {
+    q: "Do foreign investors need FIRB approval for Australian lithium investments?",
+    a: "Yes, in many cases. Australia designates lithium as a 'critical mineral,' meaning lower FIRB notification thresholds apply. For state-owned enterprises from most countries: any direct lithium project acquisition requires FIRB approval regardless of value (A$0 threshold). For private foreign investors from non-agreement countries: the threshold is A$0 for investments in businesses whose principal activity involves critical minerals. US, UK, Japanese, Korean, and EU investors benefit from bilateral critical minerals agreements that facilitate (but don't exempt) investments. Portfolio share purchases below 10% in ASX-listed lithium companies are generally FIRB-exempt. Always seek advice before direct project acquisitions.",
+  },
+];
+
+const lithiumFaqLd = faqJsonLd(LITHIUM_FAQS);
 
 export const revalidate = 1800;
 
@@ -89,6 +111,9 @@ export default async function LithiumPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {lithiumFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(lithiumFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -465,6 +490,26 @@ export default async function LithiumPage() {
               Find a foreign investment lawyer
               <Icon name="arrow-right" size={14} />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="max-w-3xl mx-auto px-4 container-custom">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {LITHIUM_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>
