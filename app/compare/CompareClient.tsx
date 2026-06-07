@@ -174,6 +174,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [columnExpandedForFilter, setColumnExpandedForFilter] = useState<string | null>(null);
   const showAllMobileColumns = columnExpandedForFilter === activeFilter;
   const [scenario, setScenario] = useState<ScenarioMode | "none">((searchParams.get("scenario") as ScenarioMode) || "none");
+  const [shareLinkCopied, setShareLinkCopied] = useState(false);
   const [costInputs, setCostInputs] = useState<CostInputs>(DEFAULT_COST_INPUTS);
 
   // Sync URL when filter, search or sort changes (for sharing/bookmarking).
@@ -461,12 +462,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               if (navigator.share) {
                 navigator.share({ title: 'Compare Platforms — invest.com.au', url }).catch(() => {});
               } else {
-                navigator.clipboard.writeText(url).then(() => alert('Link copied!')).catch(() => {});
+                navigator.clipboard.writeText(url).then(() => {
+                  setShareLinkCopied(true);
+                  setTimeout(() => setShareLinkCopied(false), 2000);
+                }).catch(() => {});
               }
             }}
             className="underline hover:text-slate-700"
           >
-            Share this view
+            {shareLinkCopied ? "Copied!" : "Share this view"}
           </button>
           <span className="text-slate-300">·</span>
           <Link href="/how-we-earn" className="underline hover:text-slate-700">How we earn</Link>

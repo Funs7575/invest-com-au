@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
@@ -196,6 +196,7 @@ export default function BrokerReviewClient({
   relatedDeals = [],
   screenshots = [],
 }: BrokerReviewProps) {
+  const [reviewLinkCopied, setReviewLinkCopied] = useState(false);
   // Track this broker for "Recently Viewed"
   useEffect(() => { trackView(b); trackPageDuration(`/broker/${b.slug}`); }, [b]);
 
@@ -371,11 +372,21 @@ export default function BrokerReviewClient({
         <div className="flex items-center gap-2 mb-4">
           <span className="text-[0.62rem] text-slate-400 font-medium">Share:</span>
           <button
-            onClick={() => { if (navigator.share) { navigator.share({ title: `${b.name} Review — Invest.com.au`, url: window.location.href }); } else { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); } }}
+            onClick={() => {
+              if (navigator.share) {
+                void navigator.share({ title: `${b.name} Review — Invest.com.au`, url: window.location.href });
+              } else {
+                void navigator.clipboard.writeText(window.location.href).then(() => {
+                  setReviewLinkCopied(true);
+                  setTimeout(() => setReviewLinkCopied(false), 2000);
+                });
+              }
+            }}
             className="text-[0.62rem] px-2 py-1 border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 transition-colors"
             aria-label="Share this review"
           >
-            <Icon name="share-2" size={12} className="inline mr-1" />Copy Link
+            <Icon name="share-2" size={12} className="inline mr-1" />
+            {reviewLinkCopied ? "Copied!" : "Copy Link"}
           </button>
           <a
             href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${b.name} Review — ${b.rating}/5 on Invest.com.au`)}&url=${encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : 'https://invest.com.au'}/broker/${b.slug}`)}`}
