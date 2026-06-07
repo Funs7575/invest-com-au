@@ -29,16 +29,16 @@ async function bodyText(page: Page): Promise<string> {
   return page.locator("main, body").first().innerText().catch(() => "");
 }
 
-/** Navigate and assert 2xx. */
+/** Navigate and assert 2xx. Generous timeout for dev-server cold-start. */
 async function goto(
   page: Page,
   url: string,
   label: string,
 ): Promise<number> {
-  const res = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30_000 });
+  const res = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 120_000 });
   const status = res?.status() ?? 0;
-  await page.waitForLoadState("load", { timeout: 20_000 }).catch(() => undefined);
-  await page.waitForTimeout(400);
+  await page.waitForLoadState("load", { timeout: 30_000 }).catch(() => undefined);
+  await page.waitForTimeout(500);
   if (status >= 400) throw new Error(`${label} → HTTP ${status}`);
   return status;
 }
@@ -132,7 +132,7 @@ export const ADVISOR_JOURNEY_UX_FLOW: Flow = {
 
         // Navigate to the apply destination.
         const applyUrl = href.startsWith("http") ? href : config.baseUrl.replace(/\/$/, "") + href;
-        const res = await page.goto(applyUrl, { waitUntil: "domcontentloaded", timeout: 30_000 }).catch(() => null);
+        const res = await page.goto(applyUrl, { waitUntil: "domcontentloaded", timeout: 120_000 }).catch(() => null);
         const status = res?.status() ?? 0;
 
         if (status >= 400) {
