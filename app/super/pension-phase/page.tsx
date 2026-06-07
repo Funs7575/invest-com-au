@@ -259,7 +259,7 @@ export default function PensionPhasePage() {
               estate accumulation.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Account-based pension minimum drawdown rates">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Age</th>
@@ -318,7 +318,7 @@ export default function PensionPhasePage() {
               in limited compassionate grounds cases. Preservation age depends on your date of birth.
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Super preservation ages by date of birth">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Date of birth</th>
