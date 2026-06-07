@@ -85,9 +85,15 @@ export default function NotificationsList({ initialItems }: Props) {
           📭
         </div>
         <p className="text-sm text-slate-600">No notifications yet.</p>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-500 mt-1 mb-4">
           We&rsquo;ll let you know about fee changes, replies and deals here.
         </p>
+        <a
+          href="/account/alerts"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 text-white text-xs font-semibold rounded-lg hover:bg-slate-700 transition-colors"
+        >
+          Set up alerts →
+        </a>
       </div>
     );
   }
