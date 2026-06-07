@@ -47,18 +47,21 @@ export default function CommunityNotifyForm() {
           onChange={(e) => { setEmail(e.target.value); setErrorMsg(""); }}
           onKeyDown={(e) => e.key === "Enter" && submit()}
           placeholder="your@email.com"
+          autoComplete="email"
+          aria-label="Email address"
           className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
           disabled={status === "submitting"}
         />
         <button
           onClick={submit}
           disabled={status === "submitting"}
+          aria-busy={status === "submitting"}
           className="px-4 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
         >
           {status === "submitting" ? "Saving…" : "Notify Me"}
         </button>
       </div>
-      {errorMsg && <p className="text-xs text-red-600 mt-1">{errorMsg}</p>}
+      {errorMsg && <p role="alert" className="text-xs text-red-600 mt-1">{errorMsg}</p>}
       {status === "error" && <p className="text-xs text-red-600 mt-1">Something went wrong — please try again.</p>}
     </div>
   );

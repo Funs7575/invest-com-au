@@ -101,6 +101,7 @@ export default function ResendMagicLinkForm({ next }: { next: string }) {
       <button
         type="submit"
         disabled={status === "loading"}
+        aria-busy={status === "loading"}
         className="w-full py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {status === "loading" ? "Sending..." : "Send me a new sign-in link"}
