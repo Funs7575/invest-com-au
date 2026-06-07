@@ -10,6 +10,7 @@ import {
   courseJsonLd as buildCourseJsonLd,
   REVIEW_AUTHOR,
 } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { getCourse, getCourseLessons, groupLessonsIntoModules } from "@/lib/course";
 import { GENERAL_ADVICE_WARNING, COURSE_AFFILIATE_DISCLOSURE, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import CoursePageClient from "./CoursePageClient";
@@ -73,6 +74,14 @@ export default async function CourseDetailPage({ params }: PageProps) {
   const priceDisplay = (course.price / 100).toFixed(0);
   const proPriceDisplay = course.pro_price ? (course.pro_price / 100).toFixed(0) : null;
 
+  const courseFaqs: { q: string; a: string }[] = [
+    { q: "Is this financial advice?", a: "No. This course provides general education about investing in Australia. It is not personal financial advice. Always consider your own circumstances and consult a licensed adviser if needed." },
+    ...(proPriceDisplay ? [{ q: "What if I already have an Investor Pro subscription?", a: `Pro subscribers get a discount — pay just $${proPriceDisplay} instead of $${priceDisplay}. The discount is applied automatically at checkout.` }] : []),
+    ...(course.guarantee ? [{ q: "Is there a money-back guarantee?", a: course.guarantee }] : []),
+    { q: "How long do I have access?", a: "Lifetime. You pay once and keep access to all lessons forever, including any future updates." },
+  ];
+  const courseFaqLd = faqJsonLd(courseFaqs);
+
   return (
     <>
       <script
@@ -83,6 +92,12 @@ export default async function CourseDetailPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {courseFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(courseFaqLd) }}
+        />
+      )}
 
       <Suspense>
         <CoursesGate>
