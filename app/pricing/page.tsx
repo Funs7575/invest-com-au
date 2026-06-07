@@ -1,7 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { AFSL_STATUS_DISCLOSURE } from "@/lib/compliance";
+
+const PRICING_FAQS = [
+  {
+    q: "How much does a financial planner charge in Australia?",
+    a: "Typical fees for a full financial plan in Australia range from $3,000 to $8,000 for an initial Statement of Advice (SoA), and $3,000 to $6,000 per year for ongoing advice. Simpler, single-issue advice (e.g. superannuation rollover, insurance review) generally costs $1,500–$3,000. Fees vary significantly based on the complexity of your situation and the advisor's model.",
+  },
+  {
+    q: "Do Australian financial advisors charge upfront fees or ongoing fees?",
+    a: "Most licensed financial planners charge both. An upfront fee covers the initial advice and Statement of Advice document (legally required for personal advice). Ongoing fees apply if you enter a continuing advice arrangement — these must be re-authorised annually under the Fee Disclosure Statement (FDS) regime introduced by ASIC. You can always choose to engage only for a one-off plan.",
+  },
+  {
+    q: "Are financial advisor fees tax-deductible in Australia?",
+    a: "Ongoing advice fees for managing taxable investments (e.g. share portfolio management, tax-effective income strategies) are generally deductible under section 8-1 of the ITAA 1997. Initial advice fees and fees for establishing a financial plan from scratch are generally not deductible. Fees charged to an SMSF for managing the fund's investments may also be deductible at the fund level. Always confirm with your accountant.",
+  },
+  {
+    q: "What is the difference between fee-for-service and commission-based financial advice?",
+    a: "Since the Future of Financial Advice (FoFA) reforms, most conflicted remuneration (trailing commissions) has been banned for investment and superannuation advice in Australia. Fee-for-service advisors charge you directly — by the hour, a flat project fee, or a percentage of assets under management. Commission arrangements are still permitted for general insurance and mortgage broking, and must be disclosed in the Credit Guide or Financial Services Guide.",
+  },
+];
 
 export const revalidate = 86400;
 
@@ -173,12 +193,16 @@ const FEE_TABLES: {
 ];
 
 export default function PricingPage() {
+  const faqLd = faqJsonLd(PRICING_FAQS);
   return (
     <main className="bg-white min-h-screen">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="bg-gradient-to-r from-slate-700 to-slate-900 text-white py-12 md:py-16">
@@ -299,6 +323,24 @@ export default function PricingPage() {
                 <h3 className="font-semibold text-slate-900 text-sm mb-1">{title}</h3>
                 <p className="text-sm text-slate-700">{body}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="container-custom py-10">
+        <div className="max-w-3xl">
+          <h2 className="text-xl font-semibold text-slate-900 mb-6">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {PRICING_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
             ))}
           </div>
         </div>
