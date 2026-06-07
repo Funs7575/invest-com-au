@@ -36,11 +36,12 @@ export default function MfaEnrollmentClient({ enrolled: initialEnrolled, email }
   const [result, setResult] = useState<EnrollResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [pendingEnroll, setPendingEnroll] = useState(false);
+  const [pendingDisable, setPendingDisable] = useState(false);
+  const [disableReason, setDisableReason] = useState("");
 
   async function startEnroll() {
-    if (!window.confirm("Enroll two-factor authentication on this account? You will be asked to scan a QR code with an authenticator app.")) {
-      return;
-    }
+    setPendingEnroll(false);
     setBusy(true);
     setError(null);
     try {
@@ -61,21 +62,18 @@ export default function MfaEnrollmentClient({ enrolled: initialEnrolled, email }
   }
 
   async function disableMfa() {
-    const reason = window.prompt(
-      "Reason for disabling MFA? This is logged.",
-      "",
-    );
-    if (reason == null || reason.trim().length < 5) {
+    if (disableReason.trim().length < 5) {
       setError("Reason must be at least 5 characters");
       return;
     }
+    setPendingDisable(false);
     setBusy(true);
     setError(null);
     try {
       const res = await fetch("/api/admin/mfa/enroll", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason }),
+        body: JSON.stringify({ reason: disableReason }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -84,6 +82,7 @@ export default function MfaEnrollmentClient({ enrolled: initialEnrolled, email }
       setEnrolled(false);
       setPhase("idle");
       setResult(null);
+      setDisableReason("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Disable failed");
     } finally {
@@ -106,15 +105,37 @@ export default function MfaEnrollmentClient({ enrolled: initialEnrolled, email }
         </div>
       )}
 
-      {!enrolled && phase === "idle" && (
+      {!enrolled && phase === "idle" && !pendingEnroll && (
         <button
           type="button"
-          onClick={startEnroll}
+          onClick={() => setPendingEnroll(true)}
           disabled={busy}
           className="px-4 py-2 rounded bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50"
         >
           {busy ? "…" : "Enable MFA"}
         </button>
+      )}
+      {!enrolled && phase === "idle" && pendingEnroll && (
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+          <p className="text-sm text-slate-700">Enroll two-factor authentication on this account? You will be asked to scan a QR code with an authenticator app.</p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => void startEnroll()}
+              disabled={busy}
+              className="px-4 py-2 rounded bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-50"
+            >
+              {busy ? "…" : "Yes, enable MFA"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPendingEnroll(false)}
+              className="px-4 py-2 rounded bg-white border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
 
       {phase === "enrolling" && result && (
@@ -218,15 +239,45 @@ export default function MfaEnrollmentClient({ enrolled: initialEnrolled, email }
         </section>
       )}
 
-      {enrolled && phase !== "enrolling" && (
+      {enrolled && phase !== "enrolling" && !pendingDisable && (
         <button
           type="button"
-          onClick={disableMfa}
+          onClick={() => { setPendingDisable(true); setDisableReason(""); }}
           disabled={busy}
           className="px-4 py-2 rounded bg-white border border-red-300 text-red-700 font-semibold text-sm hover:bg-red-50 disabled:opacity-50"
         >
           {busy ? "…" : "Disable MFA"}
         </button>
+      )}
+      {enrolled && phase !== "enrolling" && pendingDisable && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-3">
+          <p className="text-sm font-semibold text-red-900">Disable MFA?</p>
+          <p className="text-xs text-red-700">This action is logged. Provide a reason (min 5 characters).</p>
+          <input
+            type="text"
+            value={disableReason}
+            onChange={(e) => setDisableReason(e.target.value)}
+            placeholder="Reason for disabling MFA…"
+            className="w-full px-3 py-2 border border-red-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-red-400"
+          />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => void disableMfa()}
+              disabled={busy || disableReason.trim().length < 5}
+              className="px-4 py-2 rounded bg-red-600 text-white font-semibold text-sm hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {busy ? "…" : "Yes, disable MFA"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPendingDisable(false)}
+              className="px-4 py-2 rounded bg-white border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
