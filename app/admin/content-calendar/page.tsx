@@ -113,6 +113,7 @@ export default function ContentCalendarPage() {
     load();
     loadTeamMembers();
     loadStaleArticles();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSave = async (formData: FormData) => {
@@ -290,10 +291,11 @@ export default function ContentCalendarPage() {
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-xs font-medium text-slate-500 mb-1">
+              <label htmlFor="cal-title" className="block text-xs font-medium text-slate-500 mb-1">
                 Title <span className="text-red-600">*</span>
               </label>
               <input
+                id="cal-title"
                 name="title"
                 defaultValue={formItem.title}
                 required
@@ -301,8 +303,9 @@ export default function ContentCalendarPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Article Type</label>
+              <label htmlFor="cal-article-type" className="block text-xs font-medium text-slate-500 mb-1">Article Type</label>
               <select
+                id="cal-article-type"
                 name="article_type"
                 defaultValue={formItem.article_type || "article"}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -318,8 +321,9 @@ export default function ContentCalendarPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Target Keyword</label>
+              <label htmlFor="cal-target-keyword" className="block text-xs font-medium text-slate-500 mb-1">Target Keyword</label>
               <input
+                id="cal-target-keyword"
                 name="target_keyword"
                 defaultValue={formItem.target_keyword || ""}
                 placeholder="best online broker australia"
@@ -327,16 +331,18 @@ export default function ContentCalendarPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Secondary Keywords (comma-separated)</label>
+              <label htmlFor="cal-secondary-kw" className="block text-xs font-medium text-slate-500 mb-1">Secondary Keywords (comma-separated)</label>
               <input
+                id="cal-secondary-kw"
                 name="secondary_keywords"
                 defaultValue={(formItem.secondary_keywords || []).join(", ")}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Category</label>
+              <label htmlFor="cal-category" className="block text-xs font-medium text-slate-500 mb-1">Category</label>
               <input
+                id="cal-category"
                 name="category"
                 defaultValue={formItem.category || ""}
                 placeholder="brokers, investing, guides"
@@ -346,8 +352,9 @@ export default function ContentCalendarPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Brief / Instructions for AI</label>
+            <label htmlFor="cal-brief" className="block text-xs font-medium text-slate-500 mb-1">Brief / Instructions for AI</label>
             <textarea
+              id="cal-brief"
               name="brief"
               defaultValue={formItem.brief || ""}
               rows={3}
@@ -358,8 +365,9 @@ export default function ContentCalendarPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Author</label>
+              <label htmlFor="cal-author" className="block text-xs font-medium text-slate-500 mb-1">Author</label>
               <select
+                id="cal-author"
                 name="assigned_author_id"
                 defaultValue={formItem.assigned_author_id?.toString() || ""}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -375,8 +383,9 @@ export default function ContentCalendarPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Reviewer</label>
+              <label htmlFor="cal-reviewer" className="block text-xs font-medium text-slate-500 mb-1">Reviewer</label>
               <select
+                id="cal-reviewer"
                 name="assigned_reviewer_id"
                 defaultValue={formItem.assigned_reviewer_id?.toString() || ""}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -390,8 +399,9 @@ export default function ContentCalendarPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Target Publish Date</label>
+              <label htmlFor="cal-target-date" className="block text-xs font-medium text-slate-500 mb-1">Target Publish Date</label>
               <input
+                id="cal-target-date"
                 name="target_publish_date"
                 type="date"
                 defaultValue={formItem.target_publish_date || ""}
@@ -402,16 +412,18 @@ export default function ContentCalendarPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Related Brokers (slugs, comma-separated)</label>
+              <label htmlFor="cal-related-brokers" className="block text-xs font-medium text-slate-500 mb-1">Related Brokers (slugs, comma-separated)</label>
               <input
+                id="cal-related-brokers"
                 name="related_brokers"
                 defaultValue={(formItem.related_brokers || []).join(", ")}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Related Tools (slugs, comma-separated)</label>
+              <label htmlFor="cal-related-tools" className="block text-xs font-medium text-slate-500 mb-1">Related Tools (slugs, comma-separated)</label>
               <input
+                id="cal-related-tools"
                 name="related_tools"
                 defaultValue={(formItem.related_tools || []).join(", ")}
                 placeholder="fee-impact, compare, quiz"
@@ -419,8 +431,9 @@ export default function ContentCalendarPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Priority</label>
+              <label htmlFor="cal-priority" className="block text-xs font-medium text-slate-500 mb-1">Priority</label>
               <select
+                id="cal-priority"
                 name="priority"
                 defaultValue={formItem.priority || "normal"}
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -437,8 +450,9 @@ export default function ContentCalendarPage() {
           {editing && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
+                <label htmlFor="cal-status" className="block text-xs font-medium text-slate-500 mb-1">Status</label>
                 <select
+                  id="cal-status"
                   name="status"
                   defaultValue={formItem.status}
                   className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
@@ -451,8 +465,9 @@ export default function ContentCalendarPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Notes</label>
+                <label htmlFor="cal-notes" className="block text-xs font-medium text-slate-500 mb-1">Notes</label>
                 <input
+                  id="cal-notes"
                   name="notes"
                   defaultValue={formItem.notes || ""}
                   className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"

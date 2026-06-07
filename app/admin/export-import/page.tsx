@@ -245,10 +245,11 @@ export default function ExportImportPage() {
           </p>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-slate-600 mb-2">
+            <label htmlFor="ei-backup-file" className="block text-sm font-medium text-slate-600 mb-2">
               Select Backup File
             </label>
             <input
+              id="ei-backup-file"
               type="file"
               accept=".json"
               onChange={handleFileSelect}

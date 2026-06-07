@@ -145,58 +145,58 @@ export default function BDPipelinePage() {
             </div>
             <div className="p-5 space-y-3">
               <div>
-                <label className="text-xs font-bold text-slate-700">Company Name *</label>
-                <input value={editing.company_name || ""} onChange={e => setEditing({ ...editing, company_name: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. Pepperstone" />
+                <label htmlFor="bdp-company-name" className="text-xs font-bold text-slate-700">Company Name *</label>
+                <input id="bdp-company-name" value={editing.company_name || ""} onChange={e => setEditing({ ...editing, company_name: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. Pepperstone" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Contact Name</label>
-                  <input value={editing.contact_name || ""} onChange={e => setEditing({ ...editing, contact_name: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                  <label htmlFor="bdp-contact-name" className="text-xs font-bold text-slate-700">Contact Name</label>
+                  <input id="bdp-contact-name" value={editing.contact_name || ""} onChange={e => setEditing({ ...editing, contact_name: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Contact Email</label>
-                  <input value={editing.contact_email || ""} onChange={e => setEditing({ ...editing, contact_email: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                  <label htmlFor="bdp-contact-email" className="text-xs font-bold text-slate-700">Contact Email</label>
+                  <input id="bdp-contact-email" value={editing.contact_email || ""} onChange={e => setEditing({ ...editing, contact_email: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-700">LinkedIn URL</label>
-                <input value={editing.contact_linkedin || ""} onChange={e => setEditing({ ...editing, contact_linkedin: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="https://linkedin.com/in/..." />
+                <label htmlFor="bdp-linkedin" className="text-xs font-bold text-slate-700">LinkedIn URL</label>
+                <input id="bdp-linkedin" value={editing.contact_linkedin || ""} onChange={e => setEditing({ ...editing, contact_linkedin: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="https://linkedin.com/in/..." />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Type</label>
-                  <select value={editing.partnership_type || "affiliate"} onChange={e => setEditing({ ...editing, partnership_type: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg">
+                  <label htmlFor="bdp-type" className="text-xs font-bold text-slate-700">Type</label>
+                  <select id="bdp-type" value={editing.partnership_type || "affiliate"} onChange={e => setEditing({ ...editing, partnership_type: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg">
                     {TYPES.map(t => <option key={t} value={t} className="capitalize">{t.replace("_", " ")}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Status</label>
-                  <select value={editing.status || "cold"} onChange={e => setEditing({ ...editing, status: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg">
+                  <label htmlFor="bdp-status" className="text-xs font-bold text-slate-700">Status</label>
+                  <select id="bdp-status" value={editing.status || "cold"} onChange={e => setEditing({ ...editing, status: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg">
                     {STATUSES.map(s => <option key={s} value={s} className="capitalize">{s}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-700">CPA Rate / Deal Terms</label>
-                <input value={editing.cpa_rate || ""} onChange={e => setEditing({ ...editing, cpa_rate: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. $400 per account, 60-day cookie" />
+                <label htmlFor="bdp-cpa-rate" className="text-xs font-bold text-slate-700">CPA Rate / Deal Terms</label>
+                <input id="bdp-cpa-rate" value={editing.cpa_rate || ""} onChange={e => setEditing({ ...editing, cpa_rate: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. $400 per account, 60-day cookie" />
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-700">Notes</label>
-                <textarea value={editing.deal_notes || ""} onChange={e => setEditing({ ...editing, deal_notes: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg h-20" placeholder="Conversation history, key details..." />
+                <label htmlFor="bdp-notes" className="text-xs font-bold text-slate-700">Notes</label>
+                <textarea id="bdp-notes" value={editing.deal_notes || ""} onChange={e => setEditing({ ...editing, deal_notes: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg h-20" placeholder="Conversation history, key details..." />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Next Action</label>
-                  <input value={editing.next_action || ""} onChange={e => setEditing({ ...editing, next_action: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. Follow up email" />
+                  <label htmlFor="bdp-next-action" className="text-xs font-bold text-slate-700">Next Action</label>
+                  <input id="bdp-next-action" value={editing.next_action || ""} onChange={e => setEditing({ ...editing, next_action: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. Follow up email" />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700">Next Action Date</label>
-                  <input type="date" value={editing.next_action_date || ""} onChange={e => setEditing({ ...editing, next_action_date: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                  <label htmlFor="bdp-next-action-date" className="text-xs font-bold text-slate-700">Next Action Date</label>
+                  <input id="bdp-next-action-date" type="date" value={editing.next_action_date || ""} onChange={e => setEditing({ ...editing, next_action_date: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-700">Last Contact Date</label>
-                <input type="date" value={editing.last_contact_date || ""} onChange={e => setEditing({ ...editing, last_contact_date: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                <label htmlFor="bdp-last-contact" className="text-xs font-bold text-slate-700">Last Contact Date</label>
+                <input id="bdp-last-contact" type="date" value={editing.last_contact_date || ""} onChange={e => setEditing({ ...editing, last_contact_date: e.target.value })} className="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
               </div>
             </div>
             <div className="p-5 border-t border-slate-100 flex justify-end gap-2">

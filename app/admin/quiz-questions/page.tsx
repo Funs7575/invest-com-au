@@ -257,10 +257,11 @@ export default function QuizQuestionsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-600 mb-1">
+                <label htmlFor="qq-order-index" className="block text-sm font-medium text-slate-600 mb-1">
                   Order Index
                 </label>
                 <input
+                  id="qq-order-index"
                   type="number"
                   value={form.order_index}
                   onChange={(e) =>
@@ -289,10 +290,11 @@ export default function QuizQuestionsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-600 mb-1">
+              <label htmlFor="qq-question-text" className="block text-sm font-medium text-slate-600 mb-1">
                 Question Text
               </label>
               <textarea
+                id="qq-question-text"
                 value={form.question_text}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, question_text: e.target.value }))

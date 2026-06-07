@@ -37,6 +37,7 @@ export default function AdminPackagesPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, []);
 
@@ -193,10 +194,11 @@ export default function AdminPackagesPage() {
               </h3>
 
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="pkg-name" className="block text-xs font-medium text-slate-600 mb-1">
                   Name
                 </label>
                 <input
+                  id="pkg-name"
                   type="text"
                   value={editForm.name || ""}
                   onChange={(e) =>
@@ -207,10 +209,11 @@ export default function AdminPackagesPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">
+                <label htmlFor="pkg-description" className="block text-xs font-medium text-slate-600 mb-1">
                   Description
                 </label>
                 <textarea
+                  id="pkg-description"
                   value={editForm.description || ""}
                   onChange={(e) =>
                     setEditForm({ ...editForm, description: e.target.value })
@@ -222,10 +225,11 @@ export default function AdminPackagesPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="pkg-monthly-fee" className="block text-xs font-medium text-slate-600 mb-1">
                     Monthly Fee ($)
                   </label>
                   <input
+                    id="pkg-monthly-fee"
                     type="number"
                     value={(editForm.monthly_fee_cents || 0) / 100}
                     onChange={(e) =>
@@ -238,10 +242,11 @@ export default function AdminPackagesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="pkg-cpc-discount" className="block text-xs font-medium text-slate-600 mb-1">
                     CPC Discount (%)
                   </label>
                   <input
+                    id="pkg-cpc-discount"
                     type="number"
                     value={editForm.cpc_rate_discount_pct || 0}
                     onChange={(e) =>
@@ -259,10 +264,11 @@ export default function AdminPackagesPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="pkg-featured-slots" className="block text-xs font-medium text-slate-600 mb-1">
                     Featured Slots
                   </label>
                   <input
+                    id="pkg-featured-slots"
                     type="number"
                     value={editForm.featured_slots_included || 0}
                     onChange={(e) =>
@@ -276,10 +282,11 @@ export default function AdminPackagesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                  <label htmlFor="pkg-active" className="block text-xs font-medium text-slate-600 mb-1">
                     Active
                   </label>
                   <select
+                    id="pkg-active"
                     value={editForm.is_active ? "true" : "false"}
                     onChange={(e) =>
                       setEditForm({

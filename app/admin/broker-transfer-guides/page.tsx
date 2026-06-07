@@ -74,6 +74,7 @@ export default function BrokerTransferGuidesPage() {
   }, [supabase]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
@@ -282,10 +283,11 @@ export default function BrokerTransferGuidesPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="btg-broker" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Broker
                 </label>
                 <select
+                  id="btg-broker"
                   value={form.broker_slug}
                   onChange={(e) =>
                     setForm({ ...form, broker_slug: e.target.value })
@@ -301,9 +303,9 @@ export default function BrokerTransferGuidesPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <p className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Transfer Type
-                </label>
+                </p>
                 <div className="flex gap-4 mt-1">
                   {(["outbound", "inbound"] as const).map((t) => (
                     <label key={t} className="flex items-center gap-2 text-sm">
@@ -327,10 +329,11 @@ export default function BrokerTransferGuidesPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="btg-chess-fee" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   CHESS Transfer Fee (cents) <InfoTip text="The fee charged by the originating broker to transfer CHESS-sponsored holdings" />
                 </label>
                 <input
+                  id="btg-chess-fee"
                   type="number"
                   value={form.chess_transfer_fee}
                   onChange={(e) =>
@@ -343,10 +346,11 @@ export default function BrokerTransferGuidesPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="btg-timeline" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Timeline (days)
                 </label>
                 <input
+                  id="btg-timeline"
                   type="number"
                   value={form.estimated_timeline_days}
                   onChange={(e) =>
@@ -360,10 +364,11 @@ export default function BrokerTransferGuidesPage() {
                 <p className="text-xs text-slate-400 mt-0.5">Business days to complete the transfer</p>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                <label htmlFor="btg-exit-fees" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                   Exit Fees
                 </label>
                 <input
+                  id="btg-exit-fees"
                   type="text"
                   value={form.exit_fees}
                   onChange={(e) =>
@@ -393,10 +398,11 @@ export default function BrokerTransferGuidesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="btg-in-specie-notes" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 In-Specie Notes
               </label>
               <input
+                id="btg-in-specie-notes"
                 type="text"
                 value={form.in_specie_notes}
                 onChange={(e) =>
@@ -407,10 +413,11 @@ export default function BrokerTransferGuidesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="btg-special-req" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Special Requirements (one per line)
               </label>
               <textarea
+                id="btg-special-req"
                 rows={3}
                 value={form.special_requirements}
                 onChange={(e) =>
@@ -421,10 +428,11 @@ export default function BrokerTransferGuidesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="btg-steps" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Steps (JSON)
               </label>
               <textarea
+                id="btg-steps"
                 rows={12}
                 value={form.steps}
                 onChange={(e) =>
@@ -436,10 +444,11 @@ export default function BrokerTransferGuidesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+              <label htmlFor="btg-helpful-links" className="block text-xs font-bold text-slate-500 uppercase mb-1">
                 Helpful Links (JSON)
               </label>
               <textarea
+                id="btg-helpful-links"
                 rows={4}
                 value={form.helpful_links}
                 onChange={(e) =>
