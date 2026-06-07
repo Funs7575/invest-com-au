@@ -208,8 +208,9 @@ export default function NewRoundPage() {
               {(form.instrument === "safe" || form.instrument === "safe_t" || form.instrument === "convertible_note") && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Valuation cap (AUD)</label>
+                    <label htmlFor="sr-val-cap" className="block text-sm font-medium text-gray-700 mb-1">Valuation cap (AUD)</label>
                     <input
+                      id="sr-val-cap"
                       type="text"
                       value={form.valuation_cap_aud}
                       onChange={(e) => set("valuation_cap_aud", e.target.value)}
@@ -218,10 +219,11 @@ export default function NewRoundPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="sr-discount" className="block text-sm font-medium text-gray-700 mb-1">
                       Discount % {form.instrument === "convertible_note" ? "(optional)" : ""}
                     </label>
                     <input
+                      id="sr-discount"
                       type="number"
                       min={0}
                       max={50}
@@ -237,8 +239,9 @@ export default function NewRoundPage() {
                 <>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Interest rate %</label>
+                      <label htmlFor="sr-interest-rate" className="block text-sm font-medium text-gray-700 mb-1">Interest rate %</label>
                       <input
+                        id="sr-interest-rate"
                         type="number"
                         min={0}
                         max={30}
@@ -250,8 +253,9 @@ export default function NewRoundPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Maturity (months)</label>
+                      <label htmlFor="sr-maturity" className="block text-sm font-medium text-gray-700 mb-1">Maturity (months)</label>
                       <input
+                        id="sr-maturity"
                         type="number"
                         min={6}
                         max={60}
@@ -266,8 +270,9 @@ export default function NewRoundPage() {
               )}
               {form.instrument === "priced_equity" && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Pre-money valuation (AUD)</label>
+                  <label htmlFor="sr-pre-money" className="block text-sm font-medium text-gray-700 mb-1">Pre-money valuation (AUD)</label>
                   <input
+                    id="sr-pre-money"
                     type="text"
                     value={form.pre_money_valuation_aud}
                     onChange={(e) => set("pre_money_valuation_aud", e.target.value)}
@@ -298,8 +303,9 @@ export default function NewRoundPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Target raise (AUD)</label>
+                  <label htmlFor="sr-target-raise" className="block text-sm font-medium text-gray-700 mb-1">Target raise (AUD)</label>
                   <input
+                    id="sr-target-raise"
                     type="text"
                     value={form.target_aud}
                     onChange={(e) => set("target_aud", e.target.value)}
@@ -308,8 +314,9 @@ export default function NewRoundPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Min ticket (AUD)</label>
+                  <label htmlFor="sr-min-ticket" className="block text-sm font-medium text-gray-700 mb-1">Min ticket (AUD)</label>
                   <input
+                    id="sr-min-ticket"
                     type="text"
                     value={form.min_ticket_aud}
                     onChange={(e) => set("min_ticket_aud", e.target.value)}
@@ -319,8 +326,9 @@ export default function NewRoundPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Close date (optional)</label>
+                <label htmlFor="sr-close-date" className="block text-sm font-medium text-gray-700 mb-1">Close date (optional)</label>
                 <input
+                  id="sr-close-date"
                   type="date"
                   value={form.closes_at}
                   onChange={(e) => set("closes_at", e.target.value)}
@@ -328,8 +336,9 @@ export default function NewRoundPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Lead investor name (optional)</label>
+                <label htmlFor="sr-lead-investor" className="block text-sm font-medium text-gray-700 mb-1">Lead investor name (optional)</label>
                 <input
+                  id="sr-lead-investor"
                   type="text"
                   value={form.lead_investor_name}
                   onChange={(e) => set("lead_investor_name", e.target.value)}

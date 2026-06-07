@@ -276,8 +276,9 @@ export default function DebtCalculatorClient() {
                 <div className="text-xs font-bold text-slate-500 mb-3">Debt {index + 1}</div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Type</label>
+                    <label htmlFor={`dc-type-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Type</label>
                     <select
+                      id={`dc-type-${debt.id}`}
                       value={debt.type}
                       onChange={e => updateDebt(debt.id, "type", e.target.value as DebtType)}
                       className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
@@ -288,10 +289,11 @@ export default function DebtCalculatorClient() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Balance</label>
+                    <label htmlFor={`dc-balance-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Balance</label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
                       <input
+                        id={`dc-balance-${debt.id}`}
                         type="number"
                         value={debt.balance || ""}
                         onChange={e => updateDebt(debt.id, "balance", Math.max(0, parseInt(e.target.value) || 0))}
@@ -301,9 +303,10 @@ export default function DebtCalculatorClient() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Interest Rate</label>
+                    <label htmlFor={`dc-rate-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Interest Rate</label>
                     <div className="relative">
                       <input
+                        id={`dc-rate-${debt.id}`}
                         type="number"
                         step="0.1"
                         value={debt.rate || ""}
@@ -315,10 +318,11 @@ export default function DebtCalculatorClient() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">Min Payment</label>
+                    <label htmlFor={`dc-min-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Min Payment</label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
                       <input
+                        id={`dc-min-${debt.id}`}
                         type="number"
                         value={debt.minPayment || ""}
                         onChange={e => updateDebt(debt.id, "minPayment", Math.max(0, parseInt(e.target.value) || 0))}
@@ -344,9 +348,10 @@ export default function DebtCalculatorClient() {
             <h3 className="text-sm font-bold text-slate-900 mb-3">Consolidation Loan Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Consolidation loan rate</label>
+                <label htmlFor="dc-consol-rate" className="block text-xs font-bold text-slate-700 mb-1">Consolidation loan rate</label>
                 <div className="relative">
                   <input
+                    id="dc-consol-rate"
                     type="number"
                     step="0.1"
                     value={consolidationRate}

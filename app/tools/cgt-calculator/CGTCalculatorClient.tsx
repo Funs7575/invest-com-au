@@ -99,10 +99,11 @@ export default function CGTCalculatorClient() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Purchase price</label>
+            <label htmlFor="cgt-purchase-price" className="block text-sm font-semibold text-slate-700 mb-1.5">Purchase price</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
+                id="cgt-purchase-price"
                 type="number" min={0} step={1000}
                 value={purchasePrice}
                 onChange={(e) => setPurchasePrice(e.target.value)}
@@ -111,10 +112,11 @@ export default function CGTCalculatorClient() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Sale price</label>
+            <label htmlFor="cgt-sale-price" className="block text-sm font-semibold text-slate-700 mb-1.5">Sale price</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
+                id="cgt-sale-price"
                 type="number" min={0} step={1000}
                 value={salePrice}
                 onChange={(e) => setSalePrice(e.target.value)}
@@ -123,13 +125,14 @@ export default function CGTCalculatorClient() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="cgt-purchase-costs" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Purchase costs
               <span className="text-slate-400 font-normal ml-1">(stamp duty, brokerage)</span>
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
+                id="cgt-purchase-costs"
                 type="number" min={0} step={100}
                 value={purchaseCosts}
                 onChange={(e) => setPurchaseCosts(e.target.value)}
@@ -138,13 +141,14 @@ export default function CGTCalculatorClient() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label htmlFor="cgt-sale-costs" className="block text-sm font-semibold text-slate-700 mb-1.5">
               Sale costs
               <span className="text-slate-400 font-normal ml-1">(agent fees, brokerage)</span>
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
               <input
+                id="cgt-sale-costs"
                 type="number" min={0} step={100}
                 value={saleCosts}
                 onChange={(e) => setSaleCosts(e.target.value)}

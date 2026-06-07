@@ -412,8 +412,9 @@ function ROIEstimator({ rate, type, monthlyImpressions, avgCtrPct }: {
       {/* Inputs */}
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="text-[0.6rem] text-slate-500 font-medium block mb-0.5">Avg Customer Value ($)</label>
+          <label htmlFor="cn-conv-value" className="text-[0.6rem] text-slate-500 font-medium block mb-0.5">Avg Customer Value ($)</label>
           <input
+            id="cn-conv-value"
             type="number"
             min={1}
             value={convValue}
@@ -422,8 +423,9 @@ function ROIEstimator({ rate, type, monthlyImpressions, avgCtrPct }: {
           />
         </div>
         <div>
-          <label className="text-[0.6rem] text-slate-500 font-medium block mb-0.5">Conv. Rate (%)</label>
+          <label htmlFor="cn-conv-rate" className="text-[0.6rem] text-slate-500 font-medium block mb-0.5">Conv. Rate (%)</label>
           <input
+            id="cn-conv-rate"
             type="number"
             step={0.1}
             min={0.1}
@@ -657,11 +659,12 @@ export default function NewCampaignPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Campaign name */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="cn-name" className="block text-sm font-medium text-slate-700 mb-1">
               Campaign Name *
               <InfoTip text="A name for your reference only -- not shown to users. Use something descriptive like 'Compare Page Q1 2026'." />
             </label>
             <input
+              id="cn-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -744,7 +747,7 @@ export default function NewCampaignPage() {
           {/* Rate */}
           {selectedPlacement && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="cn-rate" className="block text-sm font-medium text-slate-700 mb-1">
                 Rate (AUD) * — {selectedPlacement.inventory_type === "cpc" ? "per click" : "per month"}
                 {selectedPlacement.inventory_type === "cpc"
                   ? <InfoTip text="The amount you pay each time a user clicks your ad. Higher rates may win more placement opportunities." />
@@ -754,6 +757,7 @@ export default function NewCampaignPage() {
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
                 <input
+                  id="cn-rate"
                   type="number"
                   step="0.01"
                   min="0.01"
@@ -769,7 +773,7 @@ export default function NewCampaignPage() {
           {/* Budget */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="cn-daily-budget" className="block text-sm font-medium text-slate-700 mb-1">
                 Daily Budget (AUD)
                 <span className="text-xs text-slate-400 ml-1">optional</span>
                 <InfoTip text="Maximum amount that can be charged per day. Prevents unexpected high-spend days. Leave blank for unlimited." />
@@ -777,6 +781,7 @@ export default function NewCampaignPage() {
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
                 <input
+                  id="cn-daily-budget"
                   type="number"
                   step="1"
                   min="1"
@@ -788,7 +793,7 @@ export default function NewCampaignPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="cn-total-budget" className="block text-sm font-medium text-slate-700 mb-1">
                 Total Budget (AUD)
                 <span className="text-xs text-slate-400 ml-1">optional</span>
                 <InfoTip text="Maximum cumulative spend for the entire campaign. Campaign automatically pauses when reached." />
@@ -796,6 +801,7 @@ export default function NewCampaignPage() {
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
                 <input
+                  id="cn-total-budget"
                   type="number"
                   step="1"
                   min="1"
@@ -811,8 +817,9 @@ export default function NewCampaignPage() {
           {/* Dates */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Start Date *</label>
+              <label htmlFor="cn-start-date" className="block text-sm font-medium text-slate-700 mb-1">Start Date *</label>
               <input
+                id="cn-start-date"
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
@@ -821,11 +828,12 @@ export default function NewCampaignPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="cn-end-date" className="block text-sm font-medium text-slate-700 mb-1">
                 End Date
                 <span className="text-xs text-slate-400 ml-1">optional</span>
               </label>
               <input
+                id="cn-end-date"
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}

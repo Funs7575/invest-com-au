@@ -209,8 +209,9 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
           {method === "ato_register" && (
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Entity name</label>
+                <label htmlFor="esic-entity-name" className="block text-xs font-semibold text-gray-600 mb-1">Entity name</label>
                 <input
+                  id="esic-entity-name"
                   type="text"
                   value={entityName}
                   onChange={(e) => setEntityName(e.target.value)}
@@ -219,8 +220,9 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">ABN</label>
+                <label htmlFor="esic-abn" className="block text-xs font-semibold text-gray-600 mb-1">ABN</label>
                 <input
+                  id="esic-abn"
                   type="text"
                   value={abn}
                   onChange={(e) => setAbn(e.target.value)}
@@ -229,8 +231,9 @@ export default function EsicVerificationClient({ existing, esicVerifiedAt }: Pro
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">ESIC registration date</label>
+                <label htmlFor="esic-reg-date" className="block text-xs font-semibold text-gray-600 mb-1">ESIC registration date</label>
                 <input
+                  id="esic-reg-date"
                   type="date"
                   value={esicRegDate}
                   onChange={(e) => setEsicRegDate(e.target.value)}

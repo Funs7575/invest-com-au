@@ -272,7 +272,7 @@ export default function WriteReviewClient() {
 
                 {/* Star Rating */}
                 <div className="mb-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Rating</label>
+                  <p className="block text-sm font-semibold text-slate-700 mb-1.5">Rating</p>
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
@@ -305,8 +305,9 @@ export default function WriteReviewClient() {
 
                 {/* Title */}
                 <div className="mb-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Review Title</label>
+                  <label htmlFor="wrv-title" className="block text-sm font-semibold text-slate-700 mb-1.5">Review Title</label>
                   <input
+                    id="wrv-title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -319,8 +320,9 @@ export default function WriteReviewClient() {
 
                 {/* Body */}
                 <div className="mb-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Your Review</label>
+                  <label htmlFor="wrv-body" className="block text-sm font-semibold text-slate-700 mb-1.5">Your Review</label>
                   <textarea
+                    id="wrv-body"
                     value={body}
                     onChange={(e) => setBody(e.target.value)}
                     placeholder="Share your detailed experience with this broker. What did you like? What could be improved? How are the fees, platform, and support?"
@@ -335,7 +337,7 @@ export default function WriteReviewClient() {
 
                 {/* Pros */}
                 <div className="mb-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Pros (optional)</label>
+                  <p className="block text-sm font-semibold text-slate-700 mb-1.5">Pros (optional)</p>
                   {pros.map((pro, i) => (
                     <input
                       key={i}
@@ -355,7 +357,7 @@ export default function WriteReviewClient() {
 
                 {/* Cons */}
                 <div className="mb-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Cons (optional)</label>
+                  <p className="block text-sm font-semibold text-slate-700 mb-1.5">Cons (optional)</p>
                   {cons.map((con, i) => (
                     <input
                       key={i}

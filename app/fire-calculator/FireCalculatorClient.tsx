@@ -124,8 +124,9 @@ export default function FireCalculatorClient() {
               <h2 className="font-bold text-slate-900">Your Details</h2>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Current age</label>
+                <label htmlFor="fire-age" className="block text-xs font-semibold text-slate-600 mb-1">Current age</label>
                 <input
+                  id="fire-age"
                   type="number"
                   min={18}
                   max={80}
@@ -137,10 +138,11 @@ export default function FireCalculatorClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Current savings / investments</label>
+                <label htmlFor="fire-savings" className="block text-xs font-semibold text-slate-600 mb-1">Current savings / investments</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
+                    id="fire-savings"
                     type="number"
                     min={0}
                     step={5000}
@@ -152,10 +154,11 @@ export default function FireCalculatorClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Annual savings / investments</label>
+                <label htmlFor="fire-annual-savings" className="block text-xs font-semibold text-slate-600 mb-1">Annual savings / investments</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
+                    id="fire-annual-savings"
                     type="number"
                     min={0}
                     step={1000}
@@ -167,13 +170,14 @@ export default function FireCalculatorClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="fire-expenses" className="block text-xs font-semibold text-slate-600 mb-1">
                   Annual expenses in retirement
                   <span className="text-slate-400 font-normal ml-1">today&apos;s dollars</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
+                    id="fire-expenses"
                     type="number"
                     min={0}
                     step={1000}
@@ -185,9 +189,10 @@ export default function FireCalculatorClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Expected annual return</label>
+                <label htmlFor="fire-return" className="block text-xs font-semibold text-slate-600 mb-1">Expected annual return</label>
                 <div className="relative">
                   <input
+                    id="fire-return"
                     type="number"
                     min={0}
                     max={30}
@@ -201,12 +206,13 @@ export default function FireCalculatorClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="fire-withdrawal" className="block text-xs font-semibold text-slate-600 mb-1">
                   Safe withdrawal rate
                   <span className="text-slate-400 font-normal ml-1">4% = 25× rule</span>
                 </label>
                 <div className="relative">
                   <input
+                    id="fire-withdrawal"
                     type="number"
                     min={1}
                     max={10}

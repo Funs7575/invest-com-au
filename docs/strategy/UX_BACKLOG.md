@@ -289,3 +289,13 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 **[ADV-061]** Password show/hide toggle on all sign-in/sign-up forms — eye-icon toggle added to advisor portal login (magic/password/signup modes), broker portal login, broker portal registration (separate toggles for password and confirm-password fields), and startup signup. Eliminates guesswork when typing masked passwords. `app/advisor-portal/AdvisorPortalLogin.tsx`, `app/broker-portal/login/page.tsx`, `app/broker-portal/register/page.tsx`, `app/startup-signup/page.tsx`
 
 **[ADV-062]** WCAG 1.3.1 label-control `htmlFor`/`id` associations across 13 form pages — sibling `<label>` elements without `htmlFor` are a Level A violation (screen readers can't programmatically associate label to control). Fixed 70+ label/control pairs: alerts (6), vault (3), advisor profile-details (11), course builder (6), events (8), case studies (6), team/firm (9), broker settings (6), job-post form (7), brief form (8), data room (2), org-events (9), advisor-apply (9). Controls now have matching `id` attributes so AT announces correct context on focus.
+
+**[ADV-063]** WCAG 1.3.1 label sweep batch 2 — 8 more form pages: advisor-apply short bio/website/fee (3), startup-thesis min/max ticket (2), term-deposits 6 fields, advisor portal ProfileTab 9 fields, CourseBuilderTab 7 fields, ReviewsTab invite name+email, lists title+description, advertise packages category.
+
+**[ADV-064]** WCAG 1.3.1 label sweep batch 3 — 7 more pages: advisor-portal main page (dispute details, 6 article fields), EventsTab description, TeamTab seat request, TeamsManagerClient 5 fields, BenchmarkClient 2 selects, broker ab-tests 4 fields, broker campaigns edit 7 fields.
+
+**[ADV-065]** WCAG 1.3.1 label sweep batch 4 — 6 broker-portal pages: login 2, register 8, support 4, creatives 2, deals 4, settings alert threshold.
+
+**[ADV-066]** WCAG 1.3.1 label sweep batch 5 — 6 public-facing pages: find-advisor OTP code, quiz AdvisorResultsScreen (name/phone/email), for-advisors sponsored form (5), ScenarioPlannerClient auto-id InputField, health-scores platform select, switch current/target ASX fee.
+
+**[ADV-067]** WCAG 1.3.1 label sweep batch 6 — 11 calculator and tool pages: reviews/write (title, body), CGT calculator (4 inputs), FHSS calculator (3 range sliders), startup-portal round/new (9 fields), ESIC verification (3 fields), compound-interest calculator (4 inputs), dividend-reinvestment calculator (5 inputs), debt calculator (4 per-row + consolidation rate), FIRE calculator (6 inputs), fee-impact calculator (useId() on InputField+SelectField), embed builder (8 selects).

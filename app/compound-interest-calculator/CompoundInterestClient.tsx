@@ -113,10 +113,11 @@ export default function CompoundInterestClient() {
               <h2 className="font-bold text-slate-900">Your Investment</h2>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Initial investment</label>
+                <label htmlFor="ci-principal" className="block text-xs font-semibold text-slate-600 mb-1">Initial investment</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
+                    id="ci-principal"
                     type="number"
                     min={0}
                     step={1000}
@@ -128,10 +129,11 @@ export default function CompoundInterestClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Monthly contribution</label>
+                <label htmlFor="ci-monthly" className="block text-xs font-semibold text-slate-600 mb-1">Monthly contribution</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
+                    id="ci-monthly"
                     type="number"
                     min={0}
                     step={50}
@@ -143,9 +145,10 @@ export default function CompoundInterestClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Annual interest rate</label>
+                <label htmlFor="ci-rate" className="block text-xs font-semibold text-slate-600 mb-1">Annual interest rate</label>
                 <div className="relative">
                   <input
+                    id="ci-rate"
                     type="number"
                     min={0}
                     max={50}
@@ -159,9 +162,10 @@ export default function CompoundInterestClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Investment period</label>
+                <label htmlFor="ci-years" className="block text-xs font-semibold text-slate-600 mb-1">Investment period</label>
                 <div className="relative">
                   <input
+                    id="ci-years"
                     type="number"
                     min={1}
                     max={60}

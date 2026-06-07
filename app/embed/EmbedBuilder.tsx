@@ -271,10 +271,11 @@ export default function EmbedBuilder() {
           <>
             {/* Curated widget filter */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+              <label htmlFor="eb-widget-type" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                 Widget type
               </label>
               <select
+                id="eb-widget-type"
                 value={widgetCatalogueSlug}
                 onChange={(e) => setWidgetCatalogueSlug(e.target.value)}
                 className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -318,8 +319,9 @@ export default function EmbedBuilder() {
             {/* Layout + Theme */}
             <div className="grid sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Layout</label>
+                <label htmlFor="eb-layout" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Layout</label>
                 <select
+                  id="eb-layout"
                   value={widgetType}
                   onChange={(e) => setWidgetType(e.target.value as "table" | "compact")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -329,8 +331,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+                <label htmlFor="eb-broker-theme" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
                 <select
+                  id="eb-broker-theme"
                   value={brokerTheme}
                   onChange={(e) => setBrokerTheme(e.target.value as "light" | "dark")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -340,8 +343,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
+                <label htmlFor="eb-broker-limit" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
                 <select
+                  id="eb-broker-limit"
                   value={limit}
                   onChange={(e) => setLimit(parseInt(e.target.value, 10))}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -383,8 +387,9 @@ export default function EmbedBuilder() {
             {/* Market + Amount + Theme + Limit */}
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Market</label>
+                <label htmlFor="eb-calc-market" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Market</label>
                 <select
+                  id="eb-calc-market"
                   value={calcMarket}
                   onChange={(e) => setCalcMarket(e.target.value as "asx" | "us")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -394,8 +399,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Default Amount (AUD)</label>
+                <label htmlFor="eb-calc-amount" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Default Amount (AUD)</label>
                 <select
+                  id="eb-calc-amount"
                   value={calcAmount}
                   onChange={(e) => setCalcAmount(parseInt(e.target.value, 10))}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -406,8 +412,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
+                <label htmlFor="eb-calc-theme" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Theme</label>
                 <select
+                  id="eb-calc-theme"
                   value={calcTheme}
                   onChange={(e) => setCalcTheme(e.target.value as "light" | "dark")}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
@@ -417,8 +424,9 @@ export default function EmbedBuilder() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
+                <label htmlFor="eb-calc-limit" className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Max Brokers</label>
                 <select
+                  id="eb-calc-limit"
                   value={calcLimit}
                   onChange={(e) => setCalcLimit(parseInt(e.target.value, 10))}
                   className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"

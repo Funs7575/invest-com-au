@@ -125,10 +125,11 @@ export default function DividendReinvestmentClient() {
               <h2 className="font-bold text-slate-900">Your Portfolio</h2>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Share price</label>
+                <label htmlFor="drp-price" className="block text-xs font-semibold text-slate-600 mb-1">Share price</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
+                    id="drp-price"
                     type="number"
                     min={0.01}
                     step={0.5}
@@ -140,8 +141,9 @@ export default function DividendReinvestmentClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Number of shares</label>
+                <label htmlFor="drp-shares" className="block text-xs font-semibold text-slate-600 mb-1">Number of shares</label>
                 <input
+                  id="drp-shares"
                   type="number"
                   min={1}
                   step={100}
@@ -152,12 +154,13 @@ export default function DividendReinvestmentClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                <label htmlFor="drp-yield" className="block text-xs font-semibold text-slate-600 mb-1">
                   Dividend yield (p.a.)
                   <span className="text-slate-400 font-normal ml-1">e.g. VAS ≈ 4%</span>
                 </label>
                 <div className="relative">
                   <input
+                    id="drp-yield"
                     type="number"
                     min={0}
                     max={20}
@@ -171,9 +174,10 @@ export default function DividendReinvestmentClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Share price growth (p.a.)</label>
+                <label htmlFor="drp-growth" className="block text-xs font-semibold text-slate-600 mb-1">Share price growth (p.a.)</label>
                 <div className="relative">
                   <input
+                    id="drp-growth"
                     type="number"
                     min={0}
                     max={30}
@@ -187,9 +191,10 @@ export default function DividendReinvestmentClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Investment period</label>
+                <label htmlFor="drp-years" className="block text-xs font-semibold text-slate-600 mb-1">Investment period</label>
                 <div className="relative">
                   <input
+                    id="drp-years"
                     type="number"
                     min={1}
                     max={50}
