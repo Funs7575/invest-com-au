@@ -36,6 +36,7 @@ export default async function AdminLeadBandsPage() {
   if (!guard.ok) redirect("/admin");
 
   const supabase = createAdminClient();
+  // eslint-disable-next-line react-hooks/purity -- async server component, not a React render
   const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
 
   const { data } = await supabase
@@ -151,7 +152,7 @@ export default async function AdminLeadBandsPage() {
             Status breakdown by band
           </h2>
           <div className="overflow-x-auto">
-            <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden">
+            <table className="w-full text-xs border border-slate-200 rounded-lg overflow-hidden" aria-label="Lead status breakdown by band">
               <thead className="bg-slate-50 text-slate-600">
                 <tr>
                   <th className="text-left px-3 py-2">Band</th>

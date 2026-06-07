@@ -641,5 +641,9 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-231]** Compare bar UX polish + loading skeletons for account/saved-searches and account/notifications — CompareSelectionBar: Save + Alert buttons enlarged to `min-h-11` (44px WCAG target), Save label always visible, `aria-expanded` on alert toggle, `aria-busy` on Save during save, `role="alert"` on fee-alert error, Full Compare text-xs → text-sm on mobile. CompareClient: `aria-expanded` on mobile column-expand toggle, `onClearAll` prop wired to "Clear" button in bar. Loading skeletons: shape-matched animate-pulse skeletons with `aria-busy="true"` created for `/account/saved-searches` and `/account/notifications`.
 
+**[ADV-232]** `aria-hidden` on renderStars Unicode + broker review disclosure co-location — All renderStars() spans marked `aria-hidden="true"` across 14 pages; adjacent numeric rating text labelled `aria-label="X out of 5 stars"`. Broker review hero: affiliate + PDS disclosure moved inside the card div so it is visually adjacent to the CTA button. Also: `aria-hidden` on decorative Icon in CPDTab error banner.
+
+**[ADV-233]** GlossarySearch live region + fee-alerts aria-busy + watchlist + brief + enroll + event buttons — GlossarySearch consolidated to single render path with `aria-live="polite" aria-atomic="true"` on results div; `type="text"` → `type="search"`; `aria-controls="glossary-results"`. CPDTab error container gets `role="alert"`. fee-alerts subscribe button gets `aria-busy`. WatchlistAlertsToggle gets `aria-busy={pending}`. MarkCompleteButton, WithdrawBriefButton (two each), SharesightConnectButton (sync + disconnect), EnrollButton, RsvpButton, broker-portal support Send all get `aria-busy`. Deals: sr-only `aria-live="polite"` region announces result count on tab change; empty state upgraded from plain text to illustrated card with "View all deals" button.
+
 ---
 

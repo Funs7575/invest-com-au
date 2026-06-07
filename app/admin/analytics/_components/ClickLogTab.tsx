@@ -62,7 +62,7 @@ export default function ClickLogTab({
         <div className="p-8 text-center text-slate-500">No clicks recorded yet.</div>
       ) : (
         <div className="overflow-auto">
-          <table className="w-full">
+          <table className="w-full" aria-label="Recent affiliate clicks">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Broker</th>

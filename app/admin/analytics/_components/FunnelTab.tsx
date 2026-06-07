@@ -286,7 +286,7 @@ export default function FunnelTab({ loading: parentLoading, funnelData }: Funnel
           <h2 className="text-lg font-semibold text-slate-900">Advisor Funnel Breakdown</h2>
         </div>
         {!loading && funnelCounts && (
-          <table className="w-full">
+          <table className="w-full" aria-label="Advisor funnel breakdown">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Stage</th>
@@ -332,7 +332,7 @@ export default function FunnelTab({ loading: parentLoading, funnelData }: Funnel
           <h2 className="text-lg font-semibold text-slate-900">Broker Funnel Breakdown</h2>
         </div>
         {!loading && funnelCounts && (
-          <table className="w-full">
+          <table className="w-full" aria-label="Broker funnel breakdown">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Stage</th>

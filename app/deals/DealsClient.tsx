@@ -255,6 +255,15 @@ export default function DealsClient({ deals, advisors = [] }: { deals: Broker[];
         </div>
       )}
 
+      {/* Screen-reader result count announcement on tab change */}
+      {activeTab !== "Advisor Offers" && (
+        <p className="sr-only" aria-live="polite" aria-atomic="true">
+          {filteredDeals.length > 0
+            ? `${filteredDeals.length} deal${filteredDeals.length !== 1 ? "s" : ""} in ${activeTab}`
+            : `No deals in ${activeTab}`}
+        </p>
+      )}
+
       {/* Deals Grid with subtle background and staggered entrance */}
       {activeTab === "Advisor Offers" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -319,11 +328,17 @@ export default function DealsClient({ deals, advisors = [] }: { deals: Broker[];
           </div>
         </div>
       ) : (
-        <div className="text-center py-8 md:py-12">
-          <Icon name="search" size={24} className="text-slate-300 mx-auto mb-2" />
-          <p className="text-xs md:text-sm text-slate-500">
-            No deals in this category. Try &quot;All Deals&quot; instead.
-          </p>
+        <div className="text-center py-10 md:py-14 border border-dashed border-slate-200 rounded-xl bg-slate-50">
+          <Icon name="tag" size={28} className="text-slate-300 mx-auto mb-3" aria-hidden="true" />
+          <p className="text-sm font-semibold text-slate-700 mb-1">No deals in this category right now</p>
+          <p className="text-xs text-slate-500 mb-4">New offers are added regularly — check back soon or browse all categories.</p>
+          <button
+            type="button"
+            onClick={() => setActiveTab("All Deals")}
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 text-white text-xs font-semibold rounded-lg hover:bg-slate-700 transition-colors"
+          >
+            View all deals
+          </button>
         </div>
       )}
 

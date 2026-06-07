@@ -99,7 +99,7 @@ export default function ReportDetailClient({ report, isPro, totals }: Props) {
               <h2 className="text-sm font-bold text-slate-700">Fee Changes This Quarter</h2>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Fee changes this quarter">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">Broker</th>

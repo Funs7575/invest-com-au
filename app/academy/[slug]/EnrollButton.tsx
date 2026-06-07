@@ -54,6 +54,7 @@ export default function EnrollButton({ courseId, courseSlug, isFree }: Props) {
         type="button"
         onClick={handleEnroll}
         disabled={loading}
+        aria-busy={loading}
         className="w-full py-3 px-6 rounded-xl bg-teal-600 hover:bg-teal-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
       >
         {loading ? "Please wait…" : isFree ? "Enroll for Free" : "Enroll Now"}

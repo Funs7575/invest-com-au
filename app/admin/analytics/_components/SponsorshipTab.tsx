@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { TIER_PRICING } from "@/lib/sponsorship";
 import { SkeletonRows } from "./AnalyticsSkeletons";
 import type { Broker } from "@/lib/types";
@@ -25,6 +26,8 @@ export default function SponsorshipTab({
   brokerStats,
   totalClicks,
 }: SponsorshipTabProps) {
+  // eslint-disable-next-line react-hooks/purity -- useRef initial value runs once on mount, idiomatic for stable timestamps
+  const nowMs = useRef(Date.now()).current;
   return (
     <div className="space-y-6">
       {(() => {
@@ -36,7 +39,7 @@ export default function SponsorshipTab({
         const expiringIn30 = sponsoredBrokers.filter((b) => {
           if (!b.sponsorship_end) return false;
           const end = new Date(b.sponsorship_end);
-          const daysLeft = Math.ceil((end.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+          const daysLeft = Math.ceil((end.getTime() - nowMs) / (1000 * 60 * 60 * 24));
           return daysLeft >= 0 && daysLeft <= 30;
         });
         return (
@@ -75,7 +78,7 @@ export default function SponsorshipTab({
             <p className="text-sm">Set a broker&apos;s <code className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">sponsorship_tier</code> in the broker editor to activate.</p>
           </div>
         ) : (
-          <table className="w-full">
+          <table className="w-full" aria-label="Active sponsorships">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Broker</th>
@@ -92,7 +95,7 @@ export default function SponsorshipTab({
                 const tier = b.sponsorship_tier;
                 const pricing = tier && TIER_PRICING[tier] ? TIER_PRICING[tier] : null;
                 const endDate = b.sponsorship_end ? new Date(b.sponsorship_end) : null;
-                const daysLeft = endDate ? Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
+                const daysLeft = endDate ? Math.ceil((endDate.getTime() - nowMs) / (1000 * 60 * 60 * 24)) : null;
                 const clicks = sponsorClickStats[b.slug] || 0;
                 const daysColor = daysLeft === null ? "text-slate-400" : daysLeft < 3 ? "text-red-600 font-bold" : daysLeft < 14 ? "text-amber-600 font-semibold" : "text-emerald-600";
                 return (
@@ -182,7 +185,7 @@ export default function SponsorshipTab({
           .filter((b) => b.sponsorship_end)
           .map((b) => {
             const end = new Date(b.sponsorship_end!);
-            const daysLeft = Math.ceil((end.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+            const daysLeft = Math.ceil((end.getTime() - nowMs) / (1000 * 60 * 60 * 24));
             return { ...b, daysLeft, endDate: end };
           })
           .filter((b) => b.daysLeft >= 0 && b.daysLeft <= 30)

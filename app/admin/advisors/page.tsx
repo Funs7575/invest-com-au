@@ -338,7 +338,7 @@ export default function AdminAdvisorsPage() {
             <div className="text-slate-400 text-sm">Loading...</div>
           ) : (
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Advisor list">
                 <thead className="bg-slate-50 text-left">
                   <tr>
                     <th className="px-4 py-3 font-semibold text-slate-600">Name</th>
@@ -460,7 +460,7 @@ export default function AdminAdvisorsPage() {
             </button>
           )}
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Advisor leads">
             <thead className="bg-slate-50 text-left">
               <tr>
                 <th className="px-4 py-3 font-semibold text-slate-600">Date</th>
@@ -523,7 +523,7 @@ export default function AdminAdvisorsPage() {
       {/* ─── REVIEWS TAB ─── */}
       {tab === "reviews" && (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Advisor reviews">
             <thead className="bg-slate-50 text-left">
               <tr>
                 <th className="px-4 py-3 font-semibold text-slate-600">Date</th>
@@ -680,7 +680,7 @@ export default function AdminAdvisorsPage() {
           <div className="mb-6 bg-white border border-slate-200 rounded-xl p-4">
             <h3 className="text-sm font-bold text-slate-900 mb-3">Supply Coverage by State</h3>
             <div className="overflow-x-auto">
-              <table className="w-full text-xs">
+              <table className="w-full text-xs" aria-label="Supply coverage by state">
                 <thead>
                   <tr className="border-b border-slate-100">
                     <th className="text-left py-2 pr-3 font-semibold text-slate-500">Vertical</th>

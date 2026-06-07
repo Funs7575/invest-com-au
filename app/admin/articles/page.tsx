@@ -374,7 +374,7 @@ export default function AdminArticlesPage() {
           </div>
 
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-            <table className="w-full">
+            <table className="w-full" aria-label="Articles">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Article</th>

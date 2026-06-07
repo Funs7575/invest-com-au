@@ -243,9 +243,9 @@ export default function SupportPage() {
                   }
                 }}
               />
-              <button onClick={sendReply} disabled={!reply.trim() || sending}
+              <button onClick={sendReply} disabled={!reply.trim() || sending} aria-busy={sending}
                 className="px-4 py-2 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed self-end">
-                {sending ? "..." : "Send"}
+                {sending ? "Sending…" : "Send"}
               </button>
             </div>
           )}

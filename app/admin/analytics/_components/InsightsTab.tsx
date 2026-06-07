@@ -43,7 +43,7 @@ export default function InsightsTab({ recentClicks }: InsightsTabProps) {
             const pairs = Object.entries(pairCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
             if (pairs.length === 0) return <p className="text-sm text-slate-400">Not enough data yet.</p>;
             return (
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Most-compared broker pairs">
                 <thead>
                   <tr className="border-b border-slate-100">
                     <th className="text-left py-2 font-medium text-slate-500">Broker A</th>
@@ -122,7 +122,7 @@ export default function InsightsTab({ recentClicks }: InsightsTabProps) {
             const brokerList = Array.from(allBrokerSlugs).sort();
             if (sources.length === 0 || brokerList.length === 0) return <p className="text-sm text-slate-400">Not enough data yet.</p>;
             return (
-              <table className="text-xs w-full">
+              <table className="text-xs w-full" aria-label="Clicks by source and broker">
                 <thead>
                   <tr className="border-b border-slate-200">
                     <th className="text-left py-2 pr-3 font-medium text-slate-500 sticky left-0 bg-white">Source</th>

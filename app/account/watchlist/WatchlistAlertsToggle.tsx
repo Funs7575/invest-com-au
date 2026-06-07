@@ -49,6 +49,7 @@ export default function WatchlistAlertsToggle({ initialOptedIn, hasItems }: Prop
           type="button"
           role="switch"
           aria-checked={optedIn}
+          aria-busy={pending}
           aria-label="Weekly watchlist email digest"
           onClick={toggle}
           disabled={pending || !hasItems}

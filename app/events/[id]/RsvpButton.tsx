@@ -87,6 +87,7 @@ export default function RsvpButton({
       <button
         onClick={handleRegister}
         disabled={loading}
+        aria-busy={loading}
         className="inline-flex items-center justify-center w-full px-6 py-3 bg-violet-600 text-white font-semibold rounded-xl hover:bg-violet-700 active:bg-violet-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-sm md:text-base"
       >
         {loading ? "Registering…" : "Register Now"}
