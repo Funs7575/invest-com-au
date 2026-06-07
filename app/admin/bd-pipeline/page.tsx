@@ -36,6 +36,7 @@ export default function BDPipelinePage() {
   const [editing, setEditing] = useState<Partial<Deal> | null>(null);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState<string>("all");
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   const fetchDeals = async () => {
     const res = await fetch("/api/admin/bd-pipeline");
@@ -60,7 +61,7 @@ export default function BDPipelinePage() {
   };
 
   const remove = async (id: number) => {
-    if (!confirm("Delete this deal?")) return;
+    setPendingDeleteId(null);
     await fetch("/api/admin/bd-pipeline", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -126,9 +127,19 @@ export default function BDPipelinePage() {
                     Added {new Date(deal.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
                   </div>
                 </div>
-                <div className="flex gap-1 shrink-0">
-                  <button onClick={() => setEditing(deal)} aria-label="Edit deal" className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="settings" size={14} /></button>
-                  <button onClick={() => remove(deal.id)} aria-label="Delete deal" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="x-circle" size={14} /></button>
+                <div className="flex items-center gap-1 shrink-0">
+                  {pendingDeleteId === deal.id ? (
+                    <>
+                      <span className="text-xs text-red-600 font-medium">Delete?</span>
+                      <button onClick={() => void remove(deal.id)} className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded">Yes</button>
+                      <button onClick={() => setPendingDeleteId(null)} className="text-xs text-slate-500 hover:text-slate-700 px-2 py-1 rounded border border-slate-200">No</button>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={() => setEditing(deal)} aria-label="Edit deal" className="p-1.5 text-slate-400 hover:text-slate-700"><Icon name="settings" size={14} /></button>
+                      <button onClick={() => setPendingDeleteId(deal.id)} aria-label="Delete deal" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="x-circle" size={14} /></button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
