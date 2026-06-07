@@ -58,6 +58,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "FIRB Specialists",
     description: PAGE_DESCRIPTION,
+    images: [{ url: `/api/og?title=${encodeURIComponent("FIRB Specialists Australia")}&sub=${encodeURIComponent("Foreign Investment Review Board · Property · Business · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: "/advisors/firb-specialists" },

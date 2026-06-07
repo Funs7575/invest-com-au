@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     description:
       "Book Featured Partner, Editor's Pick, or Deal-of-Month placement. Transparent pricing, self-serve checkout.",
     url: `${SITE_URL}/advertise/featured-placement`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Sponsored Placement — invest.com.au")}&sub=${encodeURIComponent("Featured Partner · Editor's Pick · Deal of Month")}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },

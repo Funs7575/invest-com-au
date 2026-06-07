@@ -41,7 +41,9 @@ export async function generateMetadata({
       title: scenario.title,
       description: scenario.metaDescription,
       url: absoluteUrl(`/costs/${slug}`),
+      images: [{ url: `/api/og?title=${encodeURIComponent(scenario.title)}&sub=${encodeURIComponent("Compare Broker Costs · Annual Fees · Brokerage")}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
     alternates: { canonical: `/costs/${slug}` },
   };
 }

@@ -566,7 +566,7 @@ export async function generateMetadata({ params }: { params: Promise<{ type: str
   return {
     title,
     description,
-    openGraph: { title: `${label}s`, description },
+    openGraph: { title: `${label}s`, description, images: [{ url: `/api/og?title=${encodeURIComponent("Find " + label + "s Australia")}&sub=${encodeURIComponent("Compare · Verified · Free Consultation · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
     twitter: { card: "summary_large_image" },
     alternates: { canonical: `/advisors/${typeSlug}` },
   };

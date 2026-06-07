@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "Join the team building Australia's independent investing platform.",
     url: absoluteUrl("/about/careers"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Careers at Invest.com.au")}&sub=${encodeURIComponent("Join Australia's Independent Investing Platform")}`, width: 1200, height: 630 }],
   },
 };
 

@@ -24,6 +24,7 @@ export const metadata: Metadata = {
       "How Invest.com.au computes the Advisor Trust Score from factual credential and " +
       "compliance signals. Four dimensions, named-constant weights, fully transparent.",
     url: "/advisor/trust-score-methodology",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Advisor Trust Score Methodology")}&sub=${encodeURIComponent("Verification · Track Record · Transparency · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

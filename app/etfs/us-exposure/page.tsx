@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     title: `Best US Market ETFs for Australians (${CURRENT_YEAR})`,
     description: "S&P 500, NASDAQ 100, and total US market ETFs compared for Australian investors.",
     url: `${SITE_URL}/etfs/us-exposure`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("US Market ETFs (ASX-listed)")}&sub=${encodeURIComponent("S&P 500 · NASDAQ · Hedged vs Unhedged · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/etfs/us-exposure` },

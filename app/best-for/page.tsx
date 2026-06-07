@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     description:
       "Ranked broker picks for every Australian investor profile — from day traders to SMSF long-term holders.",
     url: `${SITE_URL}/best-for`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Best Broker For Every Scenario")}&sub=${encodeURIComponent("Day Trading · SMSF · ETFs · Beginners · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };

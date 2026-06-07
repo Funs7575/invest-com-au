@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Interactive ETF screener for Australian investors. Filter by asset class, MER, AUM, and franking credits.",
     url: `${SITE_URL}/etfs/screener`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("ASX ETF Screener")}&sub=${encodeURIComponent("Filter by MER · Asset Class · Provider · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     title: `Best Sector ETFs Australia (${CURRENT_YEAR})`,
     description: "Complete guide to Australian sector ETFs. Target technology, healthcare, resources, financials and more with a single ETF.",
     url: `${SITE_URL}/etfs/sectors`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Sector ETFs Australia")}&sub=${encodeURIComponent("Technology · Healthcare · Resources · Property · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/etfs/sectors` },

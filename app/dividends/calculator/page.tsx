@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import FrankingCalculatorClient from "./FrankingCalculatorClient";
 
@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description: "Free calculator covering personal marginal rates and SMSF accumulation/pension.",
     url: `${SITE_URL}/dividends/calculator`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Dividend Calculator")}&sub=${encodeURIComponent("Franking Credits · After-Tax Returns · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

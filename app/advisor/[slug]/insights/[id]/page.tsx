@@ -60,7 +60,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: `/advisor/${slug}/insights/${postId}`,
       type: "article",
       publishedTime: post.created_at,
+      images: [{ url: `/api/og?title=${encodeURIComponent(title)}&sub=${encodeURIComponent("Advisor Insight · Invest.com.au")}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

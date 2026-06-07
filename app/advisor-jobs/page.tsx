@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     description:
       "Open roles at Australian financial advisory firms — financial planning, SMSF, mortgage, and wealth management.",
     url: absoluteUrl("/advisor-jobs"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Advisor Jobs Australia")}&sub=${encodeURIComponent("Financial Planning · SMSF · Wealth Management · Mortgage Broking")}`, width: 1200, height: 630 }],
   },
 };
 

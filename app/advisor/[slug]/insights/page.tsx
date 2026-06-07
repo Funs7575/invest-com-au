@@ -56,7 +56,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     alternates: { canonical: `/advisor/${slug}/insights` },
-    openGraph: { title, description, url: `/advisor/${slug}/insights` },
+    openGraph: { title, description, url: `/advisor/${slug}/insights`, images: [{ url: `/api/og?title=${encodeURIComponent(pro.name + " — Insights")}&sub=${encodeURIComponent("Verified " + typeLabel + " · Invest.com.au")}`, width: 1200, height: 630 }] },
+    twitter: { card: "summary_large_image" },
   };
 }
 

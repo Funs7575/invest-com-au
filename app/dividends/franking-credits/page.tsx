@@ -16,6 +16,7 @@ export const metadata: Metadata = {
       "Grossing-up formula, SMSF refunds, ETF franking pass-through, DRP treatment, and tax return reporting — plain-English guide for Australian investors.",
     url: `${SITE_URL}/dividends/franking-credits`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Franking Credits Australia")}&sub=${encodeURIComponent("Dividend Imputation · Cash Refunds · SMSF · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };

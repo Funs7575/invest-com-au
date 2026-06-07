@@ -33,7 +33,9 @@ export async function generateMetadata({
       title,
       description,
       url: `${SITE_URL}/etfs/${etf.ticker.toLowerCase()}`,
+      images: [{ url: `/api/og?title=${encodeURIComponent(etf.ticker + " ETF")}&sub=${encodeURIComponent(etf.name + " · MER " + etf.mer + "% · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

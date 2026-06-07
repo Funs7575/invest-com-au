@@ -89,8 +89,8 @@ export async function generateMetadata({ params }: { params: Promise<{ type: str
   return {
     title,
     description,
-    openGraph: { title: `${label}s in ${loc.name}`, description },
-    twitter: { card: "summary" },
+    openGraph: { title: `${label}s in ${loc.name}`, description, images: [{ url: `/api/og?title=${encodeURIComponent("Find " + label + "s in " + loc.name)}&sub=${encodeURIComponent("Compare · Verified · Free Consultation · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
+    twitter: { card: "summary_large_image" },
     alternates: { canonical: `/advisors/${typeSlug}/${locSlug}` },
   };
 }

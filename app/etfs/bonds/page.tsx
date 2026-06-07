@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     title: `Best Bond ETFs Australia (${CURRENT_YEAR}) — Fixed Income ETF Guide`,
     description: "Complete guide to bond and fixed income ETFs in Australia. Compare government bonds, corporate bonds, and inflation-linked ETFs.",
     url: `${SITE_URL}/etfs/bonds`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Bond ETFs Australia")}&sub=${encodeURIComponent("Government · Corporate · iShares · Vanguard · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/etfs/bonds` },

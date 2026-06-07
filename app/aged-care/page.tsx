@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     title: `Aged Care Financial Planning Hub (${CURRENT_YEAR})`,
     description: AGED_CARE_HUB_CONFIG.metaDescription,
     url: `${SITE_URL}/aged-care`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Aged Care Financial Planning")}&sub=${encodeURIComponent("RAD · DAP · Advisors · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

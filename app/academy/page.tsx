@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     description:
       "CPD-accredited courses for Australian financial professionals. Browse by advisor, provider, or CPD category.",
     url: "/academy",
+    images: [{ url: `/api/og?title=${encodeURIComponent("CPD & Professional Development")}&sub=${encodeURIComponent("Accredited Courses · Australian Financial Professionals")}`, width: 1200, height: 630 }],
   },
 };
 

@@ -57,6 +57,7 @@ export async function generateMetadata({
       url: absoluteUrl(`/broker/${slug}/safety`),
       siteName: SITE_NAME,
       type: "article",
+      images: [{ url: `/api/og?title=${encodeURIComponent(broker.name + " Safety Review")}&sub=${encodeURIComponent("AFSL · Financial Health · Safety Score · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image" as const,

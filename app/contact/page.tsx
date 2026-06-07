@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "Get in touch with the Invest.com.au team. Questions, feedback, or advertising enquiries.",
     url: "/contact",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Contact Invest.com.au")}&sub=${encodeURIComponent("Questions · Feedback · Advertising Enquiries")}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary" },
 };

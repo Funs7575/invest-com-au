@@ -34,8 +34,9 @@ export async function generateMetadata({
       title: `${broker.name} Changelog`,
       description: `Full history of fee and data changes for ${broker.name}.`,
       url: absoluteUrl(`/broker/${slug}/changelog`),
+      images: [{ url: `/api/og?title=${encodeURIComponent(broker.name + " Changelog")}&sub=${encodeURIComponent("Fee Changes · Rating Updates · Data History · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
-    twitter: { card: "summary" as const },
+    twitter: { card: "summary_large_image" as const },
   };
 }
 
