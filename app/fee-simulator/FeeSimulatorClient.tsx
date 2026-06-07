@@ -184,9 +184,16 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
           {/* Sliders Panel */}
           <div className="lg:col-span-4">
             <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 sticky top-4">
-              <h2 className="text-sm font-bold text-slate-900 mb-4">
-                Your Trading Profile
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-bold text-slate-900">Your Trading Profile</h2>
+                <button
+                  type="button"
+                  onClick={() => { setTradesPerYear(24); setAvgTradeSize(2000); setUsAllocation(30); }}
+                  className="text-xs text-slate-400 hover:text-slate-600 underline"
+                >
+                  Reset
+                </button>
+              </div>
 
               {/* Trades per year */}
               <div className="mb-5">

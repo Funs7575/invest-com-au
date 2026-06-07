@@ -111,7 +111,16 @@ export default function CompoundInterestClient() {
           {/* Inputs */}
           <div className="lg:col-span-2 space-y-5">
             <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-5">
-              <h2 className="font-bold text-slate-900">Your Investment</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="font-bold text-slate-900">Your Investment</h2>
+                <button
+                  type="button"
+                  onClick={() => { setPrincipal(10_000); setRate(7); setYears(20); setMonthly(200); setFreq(12); }}
+                  className="text-xs text-slate-400 hover:text-slate-600 underline"
+                >
+                  Reset to defaults
+                </button>
+              </div>
 
               <div>
                 <label htmlFor="ci-principal" className="block text-xs font-semibold text-slate-600 mb-1">Initial investment</label>

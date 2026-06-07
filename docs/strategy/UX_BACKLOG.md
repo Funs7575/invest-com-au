@@ -792,5 +792,77 @@ Sourced from a parallel code-review sweep across 7 feature areas (69 compiled fi
 
 **[ADV-176]** Advisors cards: 🌏 emoji replaced with `<Icon name="globe" size={9} />` in the Intl eligibility badge, making it consistent with the rest of the icon system. `app/advisors/AdvisorsClient.tsx`
 
+**[ADV-074]** XRay + TaxOptimizer: Edit icon re-populates add form with current holding values; Cancel button exits edit mode. `app/portfolio-xray/XRayClient.tsx`, `app/tax-optimizer/TaxOptimizerClient.tsx`
+
+**[ADV-078]** XRay + TaxOptimizer + DebtCalculator: Required fields marked `*`; optional fields labeled "(optional)". Form-level note added. `app/portfolio-xray/XRayClient.tsx`, `app/tax-optimizer/TaxOptimizerClient.tsx`, `app/debt-calculator/DebtCalculatorClient.tsx`
+
+**[ADV-079]** Broker portal new campaign: redirect to /broker-portal delayed 2s after success toast so user reads the confirmation. `app/broker-portal/campaigns/new/page.tsx`
+
+**[ADV-080]** Broker portal: "Save as Template" replaced native `prompt()` with a modal dialog containing a labelled name input, char count, and validation. `app/broker-portal/campaigns/new/page.tsx`
+
+**[ADV-082]** Broker portal creatives: Image URL validated before save (HTTPS, image extension or CDN pattern); error toast if image fails to load. `app/broker-portal/creatives/page.tsx`
+
+**[ADV-083]** Broker portal creatives: Delete confirmation modal with creative name + post-delete name toast instead of native `confirm()`. `app/broker-portal/creatives/page.tsx`
+
+**[ADV-089]** AccountClient: After subscription-processing banner resolves, replaced with "Your subscription is now active. Premium features are enabled." green flash. `app/account/AccountClient.tsx`
+
+**[ADV-090]** AccountClient: Refund success copy updated to "Expect the amount back within 5–10 business days." `app/account/AccountClient.tsx`
+
+**[ADV-097]** AnalyticsTab: "Article Performance" heading conditionally rendered — hidden when advisor has no articles. `app/advisor-portal/AnalyticsTab.tsx`
+
+**[ADV-098]** DashboardTab: Lead rows expand on click to show inline quick-actions (view profile, go to Leads tab). `app/advisor-portal/DashboardTab.tsx`
+
+**[ADV-099]** LeadsTab: "Your Lead Account" card — primary status line is colour-coded (green = credits, amber = free-leads, red = exhausted). `app/advisor-portal/LeadsTab.tsx`
+
+**[ADV-100]** ProfileDetailsTab: Adding a service or certification flashes a 2s green "Added ✓" highlight on the new row. `app/advisor-portal/ProfileDetailsTab.tsx`
+
+**[ADV-105]** ProfileDetailsTab: Specialisations and Languages fields unified as searchable combo-boxes (type to filter, click chip to add, × to remove). `app/advisor-portal/ProfileDetailsTab.tsx`
+
+**[ADV-107]** DashboardTab: Profile completeness fields stack vertically on mobile (`flex-col`) and wrap horizontally on sm+ (`sm:flex-row sm:flex-wrap`). `app/advisor-portal/DashboardTab.tsx`
+
+**[ADV-110]** AnalyticsTab: "Tips to Improve" section always rendered; shows next-level growth tips when advisor is fully optimised. `app/advisor-portal/AnalyticsTab.tsx`
+
+**[ADV-113]** ArticlesClient: No-results state shows trending articles and "Browse all articles" reset CTA. `app/articles/ArticlesClient.tsx`
+
+**[ADV-117]** Advisor Apply: Photo upload moved from the top of the form to just before the submit button; helper text updated to "Almost done — add a headshot photo". `app/advisor-apply/page.tsx`
+
+**[ADV-123]** Advertise page: Tier small-print added per placement — minimum spend, billing terms, rate/CPC note. `app/advertise/page.tsx`
+
+**[ADV-124]** Advertise page: Placement cards show "Best for: …" guidance and "Avg CTR: N%–M%" estimate. `app/advertise/page.tsx`
+
+**[ADV-125]** Advisors: GetMatched embed is correctly positioned between the hero stats and the filter/results UI. `app/advisors/AdvisorsClient.tsx`
+
+**[ADV-135]** Compound interest, FIRE, and fee simulator calculators: "Reset to defaults" button added to the inputs panel header. DebtCalculatorClient already had this (with confirmation). `app/compound-interest-calculator/CompoundInterestClient.tsx`, `app/fire-calculator/FireCalculatorClient.tsx`, `app/fee-simulator/FeeSimulatorClient.tsx`
+
+**[ADV-137]** DebtCalculatorClient: Removing a debt shows a 5s undo toast with the debt type name, allowing recovery without re-entry. `app/debt-calculator/DebtCalculatorClient.tsx`
+
+**[ADV-138]** CompoundInterestClient: Save button has `id="ci-save"` anchor so the results section link scrolls directly to it on mobile. `app/compound-interest-calculator/CompoundInterestClient.tsx`
+
+**[ADV-140]** XRayClient: Broker selector label updated to "Your current broker (optional — see fee-switching savings)". `app/portfolio-xray/XRayClient.tsx`
+
+**[ADV-141]** Edit campaign: Active hours selects disable earlier end-hour options — inline error "End hour must be after start hour" prevents invalid ranges. `app/broker-portal/campaigns/[id]/edit/page.tsx`
+
+**[ADV-146]** ROI Estimator: "Typical LTV: $500–$2,000 · Avg CPL: $25–$80" hint shown below the customer-value input. `app/broker-portal/campaigns/new/page.tsx`
+
+**[ADV-149]** Broker portal creatives: Active/inactive toggle has a per-creative loading state; button disabled while API call is in flight. `app/broker-portal/creatives/page.tsx`
+
+**[ADV-150]** Edit campaign: Changed-fields summary sentence shown above the save button listing which fields were modified. `app/broker-portal/campaigns/[id]/edit/page.tsx`
+
+**[ADV-159]** LeadsTab: Pipeline stage `<option>` elements carry `title={s.description}` so hovering reveals plain-English stage meanings. `app/advisor-portal/LeadsTab.tsx`
+
+**[ADV-163]** AnalyticsTab: "Not enough peers" benchmark section shows a "Notify me" button; on click, shows toast confirming notification will fire when cohort reaches 5+. `app/advisor-portal/AnalyticsTab.tsx`
+
+**[ADV-069]** Homepage: Three route cards (Compare / Advisors / Invest) added below the hero giving first-time visitors a clear guided path. `app/page.tsx`
+
+**[ADV-126]** Invest marketplace: GetMatched embed moved to immediately after the hero, before listings. `app/invest/page.tsx`
+
+**[ADV-127]** For-Advisors: 6 competing CTAs consolidated to 2 primaries ("Apply to join →" / "See how it works"). `app/for-advisors/page.tsx`
+
+**[ADV-174]** Quotes post: Pre-filled fields highlighted with `border-blue-200 bg-blue-50 ring-1 ring-blue-200` when seeded from the quiz. `app/quotes/post/JobPostForm.tsx`
+
+**[ADV-177]** For-Advisors: User-facing "How to Choose" guides replaced with advisor-perspective "What Investors Look for in an Advisor" section. `app/for-advisors/page.tsx`
+
+**[ADV-178]** Academy: "Read our CPD guides" sidebar section with 4 curated article links added. `app/academy/page.tsx`
+
 ---
 
