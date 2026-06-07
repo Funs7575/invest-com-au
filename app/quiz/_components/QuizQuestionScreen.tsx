@@ -75,7 +75,7 @@ export default function QuizQuestionScreen({
       <div className="container-custom max-w-2xl mx-auto">
         {/* Data fetch error notice */}
         {fetchError && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4 text-[0.62rem] md:text-xs text-amber-700">
+          <div role="alert" className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4 text-[0.62rem] md:text-xs text-amber-700">
             {fetchError}
           </div>
         )}

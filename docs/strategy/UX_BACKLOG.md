@@ -597,5 +597,19 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-139]** Dividend Reinvestment crossover chart: SVG line chart showing DRP portfolio value vs Cash total wealth (portfolio + cumulative dividends received) over time. Violet line for DRP, grey for Cash, shaded advantage area between. End-point value labels. `app/dividend-reinvestment-calculator/DividendReinvestmentClient.tsx`
 
+**[ADV-210]** Reset button extended to 9 more calculators — Mortgage, Retirement, Savings, Franking Credits, Lump Sum, Negative Gearing, Property Yield, SMSF, and Switching calculators. Completes ADV-135 across the full calculator suite. Button appears only when inputs differ from defaults.
+
+**[ADV-211]** VaultClient: silent delete failure now surfaces inline — `deleteError` state shows a dismissable `role="alert"` banner when a document delete API call fails. Previously the UI optimistically removed the row with no error feedback. `app/account/vault/VaultClient.tsx`
+
+**[ADV-212]** ListsClient: toggle-public error now surfaces inline — `toggleError` state shows a `role="alert"` message when the PATCH to toggle list visibility fails. Previously the toggle reverted silently. `app/account/lists/ListsClient.tsx`
+
+**[ADV-213]** Advisor directory filter button: replaced amber count badge + "All filters" label with dynamic "Filters (N)" text label when N > 0 — clearer on mobile and consistent with the filled-dark button state. `app/advisors/AdvisorsClient.tsx`
+
+**[ADV-214]** Reset button extended to 5 tool calculators — DASP, ETP, FHSS, State Grants, and Visa Investment calculators. Final completion of the reset-button sweep across all calculators.
+
+**[ADV-215]** Public list empty state — "This list is empty." replaced with structured empty state: "No items yet" heading + explanatory copy + Browse platforms / Find advisors / Explore ETFs discovery links. `app/lists/[slug]/page.tsx`
+
+**[ADV-216]** `role="alert"` on inline errors in quiz and get-matched — quiz `fetchError` notice and get-matched plan save error were missing `role="alert"` so screen readers wouldn't announce them. `app/quiz/_components/QuizQuestionScreen.tsx`, `app/get-matched/GetMatchedClient.tsx`
+
 ---
 

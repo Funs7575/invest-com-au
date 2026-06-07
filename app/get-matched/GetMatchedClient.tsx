@@ -842,7 +842,7 @@ function ActionPlanScreen({
             </div>
           )}
           {saveError && (
-            <p className="mt-2 text-xs text-red-700">{saveError}</p>
+            <p role="alert" className="mt-2 text-xs text-red-700">{saveError}</p>
           )}
           {shareToken && !savedUrl && (
             <p className="mt-3 text-[11px] text-slate-400">
