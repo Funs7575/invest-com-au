@@ -150,7 +150,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
                   id="sav-balance"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={balance}
                   onChange={e => setBalance(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
@@ -169,7 +169,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
               <div className="relative">
                 <input
                   id="sav-current-rate"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.1"
                   value={currentRate}
                   onChange={e => setCurrentRate(Math.max(0, Math.min(10, parseFloat(e.target.value) || 0)))}

@@ -162,7 +162,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
             </label>
             <input
               id="sc-holdings"
-              type="number"
+              type="number" inputMode="decimal"
               min={1}
               max={100}
               value={holdings}
@@ -178,7 +178,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
             </label>
             <input
               id="sc-trades-per-month"
-              type="number"
+              type="number" inputMode="decimal"
               min={0}
               max={100}
               value={tradesPerMonth}

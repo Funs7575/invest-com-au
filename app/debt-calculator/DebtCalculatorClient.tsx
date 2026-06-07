@@ -378,7 +378,7 @@ export default function DebtCalculatorClient() {
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
                       <input
                         id={`dc-balance-${debt.id}`}
-                        type="number"
+                        type="number" inputMode="decimal"
                         value={debt.balance || ""}
                         onChange={e => updateDebt(debt.id, "balance", Math.max(0, parseInt(e.target.value) || 0))}
                         className="w-full pl-7 pr-3 py-2.5 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
@@ -391,7 +391,7 @@ export default function DebtCalculatorClient() {
                     <div className="relative">
                       <input
                         id={`dc-rate-${debt.id}`}
-                        type="number"
+                        type="number" inputMode="decimal"
                         step="0.1"
                         value={debt.rate || ""}
                         onChange={e => updateDebt(debt.id, "rate", Math.max(0, Math.min(50, parseFloat(e.target.value) || 0)))}
@@ -407,7 +407,7 @@ export default function DebtCalculatorClient() {
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
                       <input
                         id={`dc-min-${debt.id}`}
-                        type="number"
+                        type="number" inputMode="decimal"
                         value={debt.minPayment || ""}
                         onChange={e => updateDebt(debt.id, "minPayment", Math.max(0, parseInt(e.target.value) || 0))}
                         className="w-full pl-7 pr-3 py-2.5 text-sm font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
@@ -436,7 +436,7 @@ export default function DebtCalculatorClient() {
                 <div className="relative">
                   <input
                     id="dc-consol-rate"
-                    type="number"
+                    type="number" inputMode="decimal"
                     step="0.1"
                     value={consolidationRate}
                     onChange={e => setConsolidationRate(Math.max(0, Math.min(30, parseFloat(e.target.value) || 0)))}

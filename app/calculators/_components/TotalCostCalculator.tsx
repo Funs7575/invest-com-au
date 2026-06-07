@@ -74,7 +74,7 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
           </label>
           <input
             id="tc-asx-trades"
-            type="number"
+            type="number" inputMode="decimal"
             value={asxTradesMonth}
             onChange={(e) => setAsxTradesMonth(e.target.value)}
             className="w-full px-3 py-2 md:py-3 border border-slate-200 rounded-lg text-sm md:text-lg font-semibold focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
@@ -89,7 +89,7 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
           </label>
           <input
             id="tc-us-trades"
-            type="number"
+            type="number" inputMode="decimal"
             value={usTradesMonth}
             onChange={(e) => setUsTradesMonth(e.target.value)}
             className="w-full px-3 py-2 md:py-3 border border-slate-200 rounded-lg text-sm md:text-lg font-semibold focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
@@ -106,7 +106,7 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
             <input
               id="tc-avg-trade"
-              type="number"
+              type="number" inputMode="decimal"
               value={tradeAmount}
               onChange={(e) => setTradeAmount(e.target.value)}
               className="w-full pl-7 pr-3 py-2 md:py-3 border border-slate-200 rounded-lg text-sm md:text-lg font-semibold focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"

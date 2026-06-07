@@ -195,15 +195,15 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
             </div>
             <div className="flex flex-col gap-0.5">
               <label htmlFor="tax-buy-price" className="text-xs font-semibold text-slate-600">Buy price <span className="text-slate-400 font-normal">(optional)</span></label>
-              <input id="tax-buy-price" value={buyPrice} onChange={e => setBuyPrice(e.target.value)} type="number" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <input id="tax-buy-price" value={buyPrice} onChange={e => setBuyPrice(e.target.value)} type="number" inputMode="decimal" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
               <label htmlFor="tax-current-price" className="text-xs font-semibold text-slate-600">Current price <span className="text-slate-400 font-normal">(optional)</span></label>
-              <input id="tax-current-price" value={currentPrice} onChange={e => setCurrentPrice(e.target.value)} type="number" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <input id="tax-current-price" value={currentPrice} onChange={e => setCurrentPrice(e.target.value)} type="number" inputMode="decimal" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
               <label htmlFor="tax-quantity" className="text-xs font-semibold text-slate-600">Quantity <span className="text-red-500">*</span></label>
-              <input id="tax-quantity" value={quantity} onChange={e => setQuantity(e.target.value)} type="number" placeholder="e.g. 100"
+              <input id="tax-quantity" value={quantity} onChange={e => setQuantity(e.target.value)} type="number" inputMode="decimal" placeholder="e.g. 100"
                 className={`px-3 py-2 text-sm border rounded-lg ${submitted && fieldErrors.quantity ? "border-red-400 bg-red-50" : "border-slate-200"}`} />
               {submitted && fieldErrors.quantity && <p role="alert" className="text-xs text-red-600">{fieldErrors.quantity}</p>}
             </div>

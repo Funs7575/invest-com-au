@@ -136,7 +136,7 @@ export default function FireCalculatorClient() {
                 <label htmlFor="fire-age" className="block text-xs font-semibold text-slate-600 mb-1">Current age</label>
                 <input
                   id="fire-age"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={18}
                   max={80}
                   step={1}
@@ -152,7 +152,7 @@ export default function FireCalculatorClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="fire-savings"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={5000}
                     value={currentSavings}
@@ -168,7 +168,7 @@ export default function FireCalculatorClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="fire-annual-savings"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={1000}
                     value={annualSavings}
@@ -187,7 +187,7 @@ export default function FireCalculatorClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="fire-expenses"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={1000}
                     value={annualExpenses}
@@ -202,7 +202,7 @@ export default function FireCalculatorClient() {
                 <div className="relative">
                   <input
                     id="fire-return"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={30}
                     step={0.5}
@@ -222,7 +222,7 @@ export default function FireCalculatorClient() {
                 <div className="relative">
                   <input
                     id="fire-withdrawal"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={1}
                     max={10}
                     step={0.5}

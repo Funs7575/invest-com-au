@@ -231,7 +231,7 @@ export default function SMSFCalculatorClient() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
                   id="smsf-balance"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={balance}
                   onChange={e => setBalance(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
@@ -253,7 +253,7 @@ export default function SMSFCalculatorClient() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
                   id="smsf-contribution"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={annualContribution}
                   onChange={e => setAnnualContribution(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
@@ -268,7 +268,7 @@ export default function SMSFCalculatorClient() {
               <div className="relative">
                 <input
                   id="smsf-fund-fee"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.1"
                   value={currentFeePercent}
                   onChange={e => setCurrentFeePercent(Math.max(0, Math.min(5, parseFloat(e.target.value) || 0)))}
@@ -291,7 +291,7 @@ export default function SMSFCalculatorClient() {
               <div className="relative">
                 <input
                   id="smsf-expected-return"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.5"
                   value={expectedReturn}
                   onChange={e => setExpectedReturn(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))}
@@ -314,7 +314,7 @@ export default function SMSFCalculatorClient() {
               <div className="relative">
                 <input
                   id="smsf-years"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={yearsToRetirement}
                   onChange={e => setYearsToRetirement(Math.max(1, Math.min(50, parseInt(e.target.value) || 0)))}
                   className="w-full pl-4 pr-12 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"

@@ -174,7 +174,7 @@ export default function PropertyVsSharesClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="pvs-deposit"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={1000}
                     step={5000}
                     value={deposit}
@@ -192,7 +192,7 @@ export default function PropertyVsSharesClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="pvs-property-value"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={25000}
                     value={propertyValue}
@@ -210,7 +210,7 @@ export default function PropertyVsSharesClient() {
                 <div className="relative">
                   <input
                     id="pvs-property-growth"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={20}
                     step={0.5}
@@ -227,7 +227,7 @@ export default function PropertyVsSharesClient() {
                 <div className="relative">
                   <input
                     id="pvs-rental-yield"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={15}
                     step={0.25}
@@ -246,7 +246,7 @@ export default function PropertyVsSharesClient() {
                 <div className="relative">
                   <input
                     id="pvs-holding-costs"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={10}
                     step={0.25}
@@ -268,7 +268,7 @@ export default function PropertyVsSharesClient() {
                 <div className="relative">
                   <input
                     id="pvs-shares-return"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={30}
                     step={0.5}
@@ -285,7 +285,7 @@ export default function PropertyVsSharesClient() {
                 <div className="relative">
                   <input
                     id="pvs-years"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={1}
                     max={40}
                     step={1}

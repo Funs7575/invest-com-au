@@ -171,11 +171,11 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
             </div>
             <div className="flex flex-col gap-0.5">
               <label htmlFor="xray-quantity" className="text-xs font-semibold text-slate-600">Quantity <span className="text-red-500">*</span></label>
-              <input id="xray-quantity" value={quantity} onChange={e => setQuantity(e.target.value)} type="number" placeholder="e.g. 100" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <input id="xray-quantity" value={quantity} onChange={e => setQuantity(e.target.value)} type="number" inputMode="decimal" placeholder="e.g. 100" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
               <label htmlFor="xray-price" className="text-xs font-semibold text-slate-600">Price ($) <span className="text-slate-400 font-normal">(optional)</span></label>
-              <input id="xray-price" value={price} onChange={e => setPrice(e.target.value)} type="number" placeholder="e.g. 45.20" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <input id="xray-price" value={price} onChange={e => setPrice(e.target.value)} type="number" inputMode="decimal" placeholder="e.g. 45.20" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
               <label className="text-xs font-semibold text-slate-600 invisible select-none">Action</label>

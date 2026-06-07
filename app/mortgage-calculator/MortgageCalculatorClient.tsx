@@ -233,7 +233,7 @@ export default function MortgageCalculatorClient() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
                   id="mc-loan-amount"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={loanAmount}
                   onChange={e => setLoanAmount(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500 focus:ring-offset-1 focus:border-rose-400 outline-none"
@@ -254,7 +254,7 @@ export default function MortgageCalculatorClient() {
               <div className="relative">
                 <input
                   id="mc-interest-rate"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.1"
                   value={interestRate}
                   onChange={e => setInterestRate(Math.max(0, Math.min(20, parseFloat(e.target.value) || 0)))}

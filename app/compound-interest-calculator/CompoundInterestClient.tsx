@@ -128,7 +128,7 @@ export default function CompoundInterestClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="ci-principal"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={1000}
                     value={principal}
@@ -144,7 +144,7 @@ export default function CompoundInterestClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="ci-monthly"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={50}
                     value={monthly}
@@ -159,7 +159,7 @@ export default function CompoundInterestClient() {
                 <div className="relative">
                   <input
                     id="ci-rate"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={50}
                     step={0.5}
@@ -176,7 +176,7 @@ export default function CompoundInterestClient() {
                 <div className="relative">
                   <input
                     id="ci-years"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={1}
                     max={60}
                     step={1}

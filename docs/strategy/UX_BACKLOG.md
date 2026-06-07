@@ -627,5 +627,9 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-224]** WCAG 1.3.1 label association — `htmlFor`/`id` pairs added to all label/input pairs in the portfolio x-ray holdings form (4 fields: xray-ticker, xray-holding-name, xray-quantity, xray-price) and the tax-optimizer holdings form (5 fields: tax-ticker, tax-buy-date, tax-buy-price, tax-current-price, tax-quantity). Eliminates Level A violations in both calculator tools. `app/portfolio-xray/XRayClient.tsx`, `app/tax-optimizer/TaxOptimizerClient.tsx`
 
+**[ADV-225]** `autoComplete="email"` added to 5 email inputs that were missing the browser-autofill hint — broker-portal login, sponsored-advisor inquiry, fee-alerts signup, savings-calculator unlock gate, portfolio-calculator unlock gate. Improves password-manager and browser autofill reliability.
+
+**[ADV-226]** `inputMode="decimal"` sweep across 25 calculator and financial-data-entry files — shows numeric keypad (with decimal point) on mobile instead of the full keyboard, removing friction on every calculator input. Covers compound-interest, dividend-reinvestment, switching, debt, savings, portfolio, fee-impact, fire, retirement, mortgage, property-yield, smsf, super, non-resident-dividend, property-vs-shares, firb-fee-estimator, switch, switch/[type], portfolio-xray, tax-optimizer, and shared calc components (CalcShared, TotalCostCalculator, TradeCostCalculator). Total: ~70 inputs improved.
+
 ---
 

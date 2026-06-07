@@ -204,7 +204,7 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
             </select>
           </Field>
           <Field label="Purchase price (AUD)" required>
-            <input type="number" name="price" required min={0} step={1}
+            <input type="number" inputMode="decimal" name="price" required min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Purchase date" required>
@@ -212,7 +212,7 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Current est. value (AUD)">
-            <input type="number" name="current_value" min={0} step={1}
+            <input type="number" inputMode="decimal" name="current_value" min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Investment property?" cols="sm:col-span-2">
@@ -222,15 +222,15 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
             </label>
           </Field>
           <Field label="Weekly rent (AUD)">
-            <input type="number" name="weekly_rent" min={0} step={1}
+            <input type="number" inputMode="decimal" name="weekly_rent" min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Loan balance (AUD)">
-            <input type="number" name="loan_balance" min={0} step={1}
+            <input type="number" inputMode="decimal" name="loan_balance" min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Loan rate %">
-            <input type="number" name="loan_rate" min={0} max={20} step={0.01}
+            <input type="number" inputMode="decimal" name="loan_rate" min={0} max={20} step={0.01}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Notes" cols="sm:col-span-6">

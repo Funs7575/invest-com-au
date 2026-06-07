@@ -214,7 +214,7 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                 <label htmlFor={`pc-trades-${h.id}`} className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Trades / Year</label>
                 <input
                   id={`pc-trades-${h.id}`}
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={h.trades_per_year}
                   onChange={(e) => updateHolding(h.id, "trades_per_year", parseInt(e.target.value) || 0)}
                   className="w-20 px-2 py-1.5 border border-slate-200 rounded-lg text-xs md:text-sm"
@@ -225,7 +225,7 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                 <label htmlFor={`pc-avg-trade-${h.id}`} className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Avg Trade ($)</label>
                 <input
                   id={`pc-avg-trade-${h.id}`}
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={h.avg_trade_size}
                   onChange={(e) => updateHolding(h.id, "avg_trade_size", parseInt(e.target.value) || 0)}
                   className="w-24 px-2 py-1.5 border border-slate-200 rounded-lg text-xs md:text-sm"

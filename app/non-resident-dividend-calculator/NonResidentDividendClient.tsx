@@ -171,7 +171,7 @@ export default function NonResidentDividendClient() {
                 <span className="text-slate-500">$</span>
                 <input
                   id="dividend"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={dividend}
                   onChange={(e) => setDividend(e.target.value)}
                   min={0}

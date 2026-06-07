@@ -190,7 +190,7 @@ export default function SuperContributionsClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="sc-income"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={1000}
                     value={income}
@@ -214,7 +214,7 @@ export default function SuperContributionsClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="sc-employer-sg"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={500}
                     value={currentConcessional}
@@ -233,7 +233,7 @@ export default function SuperContributionsClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="sc-extra-conc"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={500}
                     value={extraConcessional}
@@ -252,7 +252,7 @@ export default function SuperContributionsClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="sc-non-conc"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={1000}
                     value={nonConcessional}
@@ -270,7 +270,7 @@ export default function SuperContributionsClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="sc-super-balance"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     step={5000}
                     value={superBalance}
@@ -294,7 +294,7 @@ export default function SuperContributionsClient() {
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                     <input
                       id="sc-carry-forward"
-                      type="number"
+                      type="number" inputMode="decimal"
                       min={0}
                       step={1000}
                       value={unusedCarryForward}

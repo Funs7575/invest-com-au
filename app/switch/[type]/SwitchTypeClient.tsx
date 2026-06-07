@@ -97,7 +97,7 @@ function BrokerEstimateForm() {
           </label>
           <input
             id="st-broker-trades"
-            type="number"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={trades}
             onChange={(e) => { setTrades(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -110,7 +110,7 @@ function BrokerEstimateForm() {
           </label>
           <input
             id="st-broker-avg-size"
-            type="number"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={avgSize}
             onChange={(e) => { setAvgSize(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -123,7 +123,7 @@ function BrokerEstimateForm() {
           </label>
           <input
             id="st-broker-us-pct"
-            type="number"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={usPct}
             onChange={(e) => { setUsPct(Math.min(100, parseInt(e.target.value) || 0)); setShowResult(false); }}
@@ -183,7 +183,7 @@ function SuperEstimateForm() {
           </label>
           <input
             id="st-super-balance"
-            type="number"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={balance}
             onChange={(e) => { setBalance(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -196,7 +196,7 @@ function SuperEstimateForm() {
           </label>
           <input
             id="st-super-current-rate"
-            type="number"
+            type="number" inputMode="decimal"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentRate}
@@ -210,7 +210,7 @@ function SuperEstimateForm() {
           </label>
           <input
             id="st-super-target-rate"
-            type="number"
+            type="number" inputMode="decimal"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetRate}
@@ -224,7 +224,7 @@ function SuperEstimateForm() {
           </label>
           <input
             id="st-super-current-fixed"
-            type="number"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentFixed}
             onChange={(e) => { setCurrentFixed(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -237,7 +237,7 @@ function SuperEstimateForm() {
           </label>
           <input
             id="st-super-target-fixed"
-            type="number"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetFixed}
             onChange={(e) => { setTargetFixed(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -296,7 +296,7 @@ function SavingsEstimateForm() {
           </label>
           <input
             id="st-sav-balance"
-            type="number"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={balance}
             onChange={(e) => { setBalance(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -309,7 +309,7 @@ function SavingsEstimateForm() {
           </label>
           <input
             id="st-sav-current-rate"
-            type="number"
+            type="number" inputMode="decimal"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentRate}
@@ -323,7 +323,7 @@ function SavingsEstimateForm() {
           </label>
           <input
             id="st-sav-target-rate"
-            type="number"
+            type="number" inputMode="decimal"
             step="0.01"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetRate}
@@ -337,7 +337,7 @@ function SavingsEstimateForm() {
           </label>
           <input
             id="st-sav-current-fee"
-            type="number"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentFee}
             onChange={(e) => { setCurrentFee(parseInt(e.target.value) || 0); setShowResult(false); }}
@@ -350,7 +350,7 @@ function SavingsEstimateForm() {
           </label>
           <input
             id="st-sav-target-fee"
-            type="number"
+            type="number" inputMode="decimal"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetFee}
             onChange={(e) => { setTargetFee(parseInt(e.target.value) || 0); setShowResult(false); }}

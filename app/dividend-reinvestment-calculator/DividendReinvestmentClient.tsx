@@ -143,7 +143,7 @@ export default function DividendReinvestmentClient() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
                   <input
                     id="drp-price"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0.01}
                     step={0.5}
                     value={price}
@@ -157,7 +157,7 @@ export default function DividendReinvestmentClient() {
                 <label htmlFor="drp-shares" className="block text-xs font-semibold text-slate-600 mb-1">Number of shares</label>
                 <input
                   id="drp-shares"
-                  type="number"
+                  type="number" inputMode="decimal"
                   min={1}
                   step={100}
                   value={shares}
@@ -174,7 +174,7 @@ export default function DividendReinvestmentClient() {
                 <div className="relative">
                   <input
                     id="drp-yield"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={20}
                     step={0.5}
@@ -191,7 +191,7 @@ export default function DividendReinvestmentClient() {
                 <div className="relative">
                   <input
                     id="drp-growth"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={0}
                     max={30}
                     step={0.5}
@@ -208,7 +208,7 @@ export default function DividendReinvestmentClient() {
                 <div className="relative">
                   <input
                     id="drp-years"
-                    type="number"
+                    type="number" inputMode="decimal"
                     min={1}
                     max={50}
                     step={1}

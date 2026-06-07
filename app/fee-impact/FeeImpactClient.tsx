@@ -163,7 +163,7 @@ function InputField({
         )}
         <input
           id={id}
-          type="number"
+          type="number" inputMode="decimal"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}

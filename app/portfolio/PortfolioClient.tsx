@@ -209,7 +209,7 @@ export default function PortfolioClient() {
                       <label htmlFor={`po-value-${idx}`} className="block text-xs font-semibold text-slate-600 mb-1">Portfolio Value ($)</label>
                       <input
                         id={`po-value-${idx}`}
-                        type="number"
+                        type="number" inputMode="decimal"
                         value={h.balance}
                         onChange={e => updateHolding(idx, "balance", Number(e.target.value))}
                         className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm"
@@ -219,7 +219,7 @@ export default function PortfolioClient() {
                       <label htmlFor={`po-trades-${idx}`} className="block text-xs font-semibold text-slate-600 mb-1">Trades/Year</label>
                       <input
                         id={`po-trades-${idx}`}
-                        type="number"
+                        type="number" inputMode="decimal"
                         value={h.trades_per_year}
                         onChange={e => updateHolding(idx, "trades_per_year", Number(e.target.value))}
                         className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm"

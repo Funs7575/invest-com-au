@@ -225,7 +225,7 @@ export default function RetirementCalculatorClient() {
               <label htmlFor="rc-current-age" className="block text-sm font-bold text-slate-700 mb-1.5">Current age</label>
               <input
                 id="rc-current-age"
-                type="number"
+                type="number" inputMode="decimal"
                 value={currentAge}
                 onChange={e => setCurrentAge(Math.max(18, Math.min(75, parseInt(e.target.value) || 18)))}
                 className="w-full px-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -237,7 +237,7 @@ export default function RetirementCalculatorClient() {
               <label htmlFor="rc-retirement-age" className="block text-sm font-bold text-slate-700 mb-1.5">Retirement age</label>
               <input
                 id="rc-retirement-age"
-                type="number"
+                type="number" inputMode="decimal"
                 value={retirementAge}
                 onChange={e => setRetirementAge(Math.max(currentAge + 1, Math.min(80, parseInt(e.target.value) || 67)))}
                 className="w-full px-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -251,7 +251,7 @@ export default function RetirementCalculatorClient() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
                   id="rc-super-balance"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={currentSuper}
                   onChange={e => setCurrentSuper(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -266,7 +266,7 @@ export default function RetirementCalculatorClient() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
                   id="rc-annual-salary"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={annualSalary}
                   onChange={e => setAnnualSalary(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -287,7 +287,7 @@ export default function RetirementCalculatorClient() {
               <div className="relative">
                 <input
                   id="rc-employer-rate"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.5"
                   value={employerRate}
                   onChange={e => setEmployerRate(Math.max(0, Math.min(25, parseFloat(e.target.value) || 0)))}
@@ -304,7 +304,7 @@ export default function RetirementCalculatorClient() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
                   id="rc-add-contrib"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={additionalContributions}
                   onChange={e => setAdditionalContributions(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"
@@ -318,7 +318,7 @@ export default function RetirementCalculatorClient() {
               <div className="relative">
                 <input
                   id="rc-expected-return"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.5"
                   value={expectedReturn}
                   onChange={e => setExpectedReturn(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))}
@@ -334,7 +334,7 @@ export default function RetirementCalculatorClient() {
               <div className="relative">
                 <input
                   id="rc-inflation-rate"
-                  type="number"
+                  type="number" inputMode="decimal"
                   step="0.5"
                   value={inflationRate}
                   onChange={e => setInflationRate(Math.max(0, Math.min(10, parseFloat(e.target.value) || 0)))}
@@ -351,7 +351,7 @@ export default function RetirementCalculatorClient() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
                 <input
                   id="rc-desired-income"
-                  type="number"
+                  type="number" inputMode="decimal"
                   value={desiredIncome}
                   onChange={e => setDesiredIncome(Math.max(0, parseInt(e.target.value) || 0))}
                   className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:ring-offset-1 focus:border-violet-400 outline-none"

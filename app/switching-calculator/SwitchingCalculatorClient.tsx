@@ -166,15 +166,15 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
             <div className="grid grid-cols-3 gap-3">
               <div>
                 <label htmlFor="switch-trades-per-year" className="block text-xs font-bold text-slate-700 mb-1">Trades per year</label>
-                <input id="switch-trades-per-year" type="number" value={tradesPerYear} onChange={e => setTradesPerYear(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
+                <input id="switch-trades-per-year" type="number" inputMode="decimal" value={tradesPerYear} onChange={e => setTradesPerYear(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
               </div>
               <div>
                 <label htmlFor="switch-avg-trade-size" className="block text-xs font-bold text-slate-700 mb-1">Avg trade size ($)</label>
-                <input id="switch-avg-trade-size" type="number" value={avgTradeSize} onChange={e => setAvgTradeSize(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
+                <input id="switch-avg-trade-size" type="number" inputMode="decimal" value={avgTradeSize} onChange={e => setAvgTradeSize(parseInt(e.target.value) || 0)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" />
               </div>
               <div>
                 <label htmlFor="switch-us-allocation" className="block text-xs font-bold text-slate-700 mb-1">US shares (%)</label>
-                <input id="switch-us-allocation" type="number" value={usAllocation} onChange={e => setUsAllocation(Math.min(100, parseInt(e.target.value) || 0))} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" min={0} max={100} />
+                <input id="switch-us-allocation" type="number" inputMode="decimal" value={usAllocation} onChange={e => setUsAllocation(Math.min(100, parseInt(e.target.value) || 0))} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg" min={0} max={100} />
               </div>
             </div>
 
