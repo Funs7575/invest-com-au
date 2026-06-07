@@ -37,6 +37,8 @@ export default function CampaignsPage() {
   const [brokerSlug, setBrokerSlug] = useState("");
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [pendingCancelId, setPendingCancelId] = useState<number | null>(null);
+  const [confirmBulkCancel, setConfirmBulkCancel] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -99,7 +101,7 @@ export default function CampaignsPage() {
   };
 
   const handleCancel = async (id: number) => {
-    if (!confirm("Cancel this campaign? This cannot be undone.")) return;
+    setPendingCancelId(null);
     const supabase = createClient();
     const { error } = await supabase
       .from("campaigns")
@@ -166,7 +168,7 @@ export default function CampaignsPage() {
 
   const handleBulkAction = async (action: "pause" | "resume" | "cancel") => {
     if (selected.size === 0) return;
-    if (action === "cancel" && !confirm(`Cancel ${selected.size} campaign(s)? This cannot be undone.`)) return;
+    setConfirmBulkCancel(false);
     setBulkLoading(true);
     const supabase = createClient();
     const newStatus = action === "pause" ? "paused" : action === "resume" ? "approved" : "cancelled";
@@ -318,13 +320,28 @@ export default function CampaignsPage() {
               >
                 Resume Selected
               </button>
-              <button
-                onClick={() => handleBulkAction("cancel")}
-                disabled={bulkLoading}
-                className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Cancel Selected
-              </button>
+              {confirmBulkCancel ? (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-red-600 font-medium">Cancel {selected.size}?</span>
+                  <button
+                    onClick={() => { void handleBulkAction("cancel"); }}
+                    disabled={bulkLoading}
+                    className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+                  >Yes</button>
+                  <button
+                    onClick={() => setConfirmBulkCancel(false)}
+                    className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+                  >No</button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmBulkCancel(true)}
+                  disabled={bulkLoading}
+                  className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Cancel Selected
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -480,12 +497,26 @@ export default function CampaignsPage() {
                       >
                         Edit
                       </Link>
-                      <button
-                        onClick={() => handleCancel(c.id)}
-                        className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg"
-                      >
-                        Cancel
-                      </button>
+                      {pendingCancelId === c.id ? (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-red-600 font-medium">Cancel?</span>
+                          <button
+                            onClick={() => { void handleCancel(c.id); }}
+                            className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors"
+                          >Yes</button>
+                          <button
+                            onClick={() => setPendingCancelId(null)}
+                            className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+                          >No</button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setPendingCancelId(c.id)}
+                          className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg"
+                        >
+                          Cancel
+                        </button>
+                      )}
                     </>
                   )}
                   <button

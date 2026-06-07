@@ -76,6 +76,7 @@ export default function JobsClient() {
 
   // Applications drawer
   const [applicationsJobId, setApplicationsJobId] = useState<string | null>(null);
+  const [pendingArchiveId, setPendingArchiveId] = useState<string | null>(null);
 
   const loadJobs = useCallback(async () => {
     setLoading(true);
@@ -161,18 +162,18 @@ export default function JobsClient() {
     }
   }
 
-  async function handleArchive(id: string, title: string) {
-    if (!confirm(`Archive "${title}"? It will be removed from the public board.`)) return;
+  async function handleArchive(id: string) {
+    setPendingArchiveId(null);
     try {
       const res = await fetch(`/api/firm-portal/jobs/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const d = (await res.json()) as { error?: string };
-        alert(d.error ?? "Archive failed.");
+        setErr(d.error ?? "Archive failed.");
         return;
       }
       await loadJobs();
     } catch {
-      alert("Network error. Please try again.");
+      setErr("Network error. Please try again.");
     }
   }
 
@@ -421,13 +422,29 @@ export default function JobsClient() {
                     Edit
                   </button>
                   {job.status !== "archived" && (
-                    <button
-                      type="button"
-                      onClick={() => handleArchive(job.id, job.title)}
-                      className="text-xs font-medium text-red-600 border border-red-100 rounded-lg px-3 py-1.5 hover:bg-red-50 transition-colors"
-                    >
-                      Archive
-                    </button>
+                    pendingArchiveId === job.id ? (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs text-red-600 font-medium">Archive?</span>
+                        <button
+                          type="button"
+                          onClick={() => { void handleArchive(job.id); }}
+                          className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded-lg transition-colors"
+                        >Yes</button>
+                        <button
+                          type="button"
+                          onClick={() => setPendingArchiveId(null)}
+                          className="text-xs text-slate-500 hover:text-slate-700 px-2 py-1 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors"
+                        >No</button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setPendingArchiveId(job.id)}
+                        className="text-xs font-medium text-red-600 border border-red-100 rounded-lg px-3 py-1.5 hover:bg-red-50 transition-colors"
+                      >
+                        Archive
+                      </button>
+                    )
                   )}
                 </div>
               </div>

@@ -580,5 +580,19 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-198]** Saved lists — delete: replaced `confirm()` with inline "Delete? Yes / No" row. `app/account/lists/ListsClient.tsx`
 
+**[ADV-199]** Pros availability — remove slot: replaced `window.confirm()` with inline "Remove? Yes / No" row. `app/pros/availability/AvailabilityClient.tsx`
+
+**[ADV-200]** Advisor portal webhooks — disable endpoint: replaced `confirm()` with inline "Disable? Yes / No" row. `app/advisor-portal/webhooks/WebhooksClient.tsx`
+
+**[ADV-201]** Advisor portal TeamTab — remove member + revoke invite: replaced two `confirm()` calls with inline two-step confirmations; member errors surface as inline text instead of alert(). `app/advisor-portal/TeamTab.tsx`
+
+**[ADV-202]** Broker campaigns — cancel single + bulk cancel: replaced two `confirm()` calls with inline two-step confirmations. `app/broker-portal/campaigns/page.tsx`
+
+**[ADV-203]** Firm portal jobs — archive job: replaced `confirm()` with inline "Archive? Yes / No" row (pendingArchiveId state). `app/firm-portal/jobs/JobsClient.tsx`
+
+**[ADV-204]** Privacy data-rights form — deletion confirm: replaced `window.confirm()` with inline warning card ("Are you sure?") shown before submitting the irreversible delete request. `app/privacy/data-rights/DataRightsForm.tsx`
+
+**[ADV-205]** Pros intake questions editor — delete question: replaced `confirm()` with inline two-step "Delete? Yes / No" row (pendingDeleteIndex state); Discard for unsaved drafts remains immediate with no confirmation. `app/pros/settings/intake/IntakeQuestionsEditor.tsx`
+
 ---
 

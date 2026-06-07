@@ -67,6 +67,7 @@ export default function IntakeQuestionsEditor({
   const [submitting, setSubmitting] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [pendingDeleteIndex, setPendingDeleteIndex] = useState<number | null>(null);
 
   const canAdd = drafts.length < maxQuestions;
 
@@ -152,7 +153,7 @@ export default function IntakeQuestionsEditor({
       removeDraftLocal(index);
       return;
     }
-    if (!confirm("Delete this intake question?")) return;
+    setPendingDeleteIndex(null);
     setSubmitting(index);
     setError(null);
     try {
@@ -294,14 +295,31 @@ export default function IntakeQuestionsEditor({
                 >
                   {submitting === index ? "Saving…" : draft.id == null ? "Add" : "Save"}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => deleteRemote(index)}
-                  disabled={submitting === index}
-                  className="rounded-lg border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-700"
-                >
-                  {draft.id == null ? "Discard" : "Delete"}
-                </button>
+                {draft.id != null && pendingDeleteIndex === index ? (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-red-600 font-medium">Delete?</span>
+                    <button
+                      type="button"
+                      onClick={() => { void deleteRemote(index); }}
+                      disabled={submitting === index}
+                      className="rounded-lg bg-red-600 hover:bg-red-700 px-2 py-1 text-xs font-bold text-white transition-colors disabled:opacity-50"
+                    >Yes</button>
+                    <button
+                      type="button"
+                      onClick={() => setPendingDeleteIndex(null)}
+                      className="rounded-lg border border-slate-200 px-2 py-1 text-xs text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors"
+                    >No</button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => draft.id == null ? deleteRemote(index) : setPendingDeleteIndex(index)}
+                    disabled={submitting === index}
+                    className="rounded-lg border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-700"
+                  >
+                    {draft.id == null ? "Discard" : "Delete"}
+                  </button>
+                )}
               </div>
             </li>
           );

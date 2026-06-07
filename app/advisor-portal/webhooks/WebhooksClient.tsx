@@ -32,6 +32,7 @@ export default function WebhooksClient({
   const [endpoints, setEndpoints] = useState(initialEndpoints);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [pendingDisableId, setPendingDisableId] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
   const [url, setUrl] = useState("");
   const [subs, setSubs] = useState<string[]>([]);
@@ -87,7 +88,7 @@ export default function WebhooksClient({
   }
 
   async function remove(id: number) {
-    if (!confirm("Disable this endpoint? You can add a new one later.")) return;
+    setPendingDisableId(null);
     startTransition(async () => {
       try {
         const res = await fetch(`/api/advisor-portal/webhooks?id=${id}`, {
@@ -252,14 +253,31 @@ export default function WebhooksClient({
                   )}
                 </div>
                 {ep.enabled && (
-                  <button
-                    type="button"
-                    onClick={() => remove(ep.id)}
-                    disabled={pending}
-                    className="text-xs text-rose-600 hover:text-rose-800 font-semibold shrink-0 px-2 py-1.5"
-                  >
-                    Disable
-                  </button>
+                  pendingDisableId === ep.id ? (
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="text-xs text-rose-700 font-medium">Disable?</span>
+                      <button
+                        type="button"
+                        onClick={() => { void remove(ep.id); }}
+                        disabled={pending}
+                        className="text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+                      >Yes</button>
+                      <button
+                        type="button"
+                        onClick={() => setPendingDisableId(null)}
+                        className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+                      >No</button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setPendingDisableId(ep.id)}
+                      disabled={pending}
+                      className="text-xs text-rose-600 hover:text-rose-800 font-semibold shrink-0 px-2 py-1.5"
+                    >
+                      Disable
+                    </button>
+                  )
                 )}
               </li>
             ))}

@@ -32,6 +32,9 @@ export default function TeamTab({ advisor }: Props) {
   const [inviteName, setInviteName] = useState("");
   const [inviteStatus, setInviteStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [inviteActionStatus, setInviteActionStatus] = useState<Record<number, "idle" | "loading" | "done" | "error">>({});
+  const [pendingRemoveMemberId, setPendingRemoveMemberId] = useState<number | null>(null);
+  const [memberRemoveError, setMemberRemoveError] = useState<string | null>(null);
+  const [pendingRevokeInviteId, setPendingRevokeInviteId] = useState<number | null>(null);
 
   const loadFirmData = useCallback(async () => {
     try {
@@ -143,6 +146,7 @@ export default function TeamTab({ advisor }: Props) {
           {/* Current members */}
           <div className="bg-white border border-slate-200 rounded-xl p-5 mb-5">
             <h3 className="text-sm font-bold text-slate-900 mb-3">Team Members ({firmMembers.length})</h3>
+            {memberRemoveError && <p role="alert" className="text-xs text-red-600 mb-2">{memberRemoveError}</p>}
             {firmMembers.length === 0 ? (
               <p className="text-sm text-slate-400">No team members yet. Invite your first advisor above.</p>
             ) : (
@@ -191,22 +195,37 @@ export default function TeamTab({ advisor }: Props) {
                       </select>
                       <span className={`text-[0.56rem] px-1.5 py-0.5 rounded font-semibold ${m.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{m.status}</span>
                       {m.id !== advisor?.id && (
-                        <button
-                          onClick={async () => {
-                            if (!confirm(`Remove ${m.name} from the firm? Their individual profile will remain active.`)) return;
-                            const res = await fetch(`/api/advisor-auth/firm/member?memberId=${m.id}`, { method: "DELETE" });
-                            if (res.ok) {
-                              setFirmMembers(prev => prev.filter(fm => fm.id !== m.id));
-                              setFirmMemberCount(c => c - 1);
-                            } else {
-                              const d = await res.json();
-                              alert(d.error || "Failed to remove member");
-                            }
-                          }}
-                          className="text-[0.56rem] text-red-500 hover:text-red-700 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors"
-                        >
-                          Remove
-                        </button>
+                        pendingRemoveMemberId === m.id ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[0.56rem] text-red-600 font-medium">Remove?</span>
+                            <button
+                              onClick={async () => {
+                                setPendingRemoveMemberId(null);
+                                setMemberRemoveError(null);
+                                const res = await fetch(`/api/advisor-auth/firm/member?memberId=${m.id}`, { method: "DELETE" });
+                                if (res.ok) {
+                                  setFirmMembers(prev => prev.filter(fm => fm.id !== m.id));
+                                  setFirmMemberCount(c => c - 1);
+                                } else {
+                                  const d = await res.json();
+                                  setMemberRemoveError(d.error || "Failed to remove member");
+                                }
+                              }}
+                              className="text-[0.56rem] font-bold text-white bg-red-600 hover:bg-red-700 px-1.5 py-0.5 rounded transition-colors"
+                            >Yes</button>
+                            <button
+                              onClick={() => setPendingRemoveMemberId(null)}
+                              className="text-[0.56rem] text-slate-500 hover:text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 transition-colors"
+                            >No</button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => { setMemberRemoveError(null); setPendingRemoveMemberId(m.id); }}
+                            className="text-[0.56rem] text-red-500 hover:text-red-700 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors"
+                          >
+                            Remove
+                          </button>
+                        )
                       )}
                     </div>
                   </div>
@@ -263,28 +282,40 @@ export default function TeamTab({ advisor }: Props) {
                         </button>
                       )}
                       {inv.status === "pending" && (
+                        pendingRevokeInviteId === inv.id ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[0.56rem] text-red-600 font-medium">Revoke?</span>
+                            <button
+                              onClick={async () => {
+                                setPendingRevokeInviteId(null);
+                                setInviteActionStatus(prev => ({ ...prev, [inv.id]: "loading" }));
+                                const res = await fetch("/api/advisor-auth/firm/invite", {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ inviteId: inv.id, action: "revoke" }),
+                                });
+                                if (res.ok) {
+                                  loadFirmData();
+                                } else {
+                                  setInviteActionStatus(prev => ({ ...prev, [inv.id]: "error" }));
+                                }
+                              }}
+                              className="text-[0.56rem] font-bold text-white bg-red-600 hover:bg-red-700 px-1.5 py-0.5 rounded transition-colors"
+                            >Yes</button>
+                            <button
+                              onClick={() => setPendingRevokeInviteId(null)}
+                              className="text-[0.56rem] text-slate-500 hover:text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 transition-colors"
+                            >No</button>
+                          </div>
+                        ) : (
                         <button
                           disabled={inviteActionStatus[inv.id] === "loading"}
-                          onClick={async () => {
-                            if (!confirm("Revoke this invitation?")) return;
-                            setInviteActionStatus(prev => ({ ...prev, [inv.id]: "loading" }));
-                            const res = await fetch("/api/advisor-auth/firm/invite", {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ inviteId: inv.id, action: "revoke" }),
-                            });
-                            if (res.ok) {
-                              loadFirmData();
-                            } else {
-                              const d = await res.json();
-                              alert(d.error || "Failed to revoke");
-                              setInviteActionStatus(prev => ({ ...prev, [inv.id]: "error" }));
-                            }
-                          }}
+                          onClick={() => setPendingRevokeInviteId(inv.id)}
                           className="text-[0.56rem] text-red-500 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Revoke
                         </button>
+                        )
                       )}
                     </div>
                   </div>
