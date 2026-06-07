@@ -249,8 +249,8 @@ export default function ABTestsPage() {
           <h3 className="font-bold text-slate-900">Create A/B Test</h3>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Test Name *</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required
+            <label htmlFor="ab-name" className="block text-sm font-medium text-slate-700 mb-1">Test Name *</label>
+            <input id="ab-name" type="text" value={name} onChange={(e) => setName(e.target.value)} required
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
               placeholder="e.g. CTA Copy March 2024" />
           </div>
@@ -271,26 +271,26 @@ export default function ABTestsPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="ab-variant-a" className="block text-sm font-medium text-slate-700 mb-1">
                 Variant A <span className="text-xs text-slate-400">(Control)</span>
               </label>
-              <input type="text" value={variantA} onChange={(e) => setVariantA(e.target.value)} required
+              <input id="ab-variant-a" type="text" value={variantA} onChange={(e) => setVariantA(e.target.value)} required
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder={currentType?.placeholder_a} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="ab-variant-b" className="block text-sm font-medium text-slate-700 mb-1">
                 Variant B <span className="text-xs text-slate-400">(Challenger)</span>
               </label>
-              <input type="text" value={variantB} onChange={(e) => setVariantB(e.target.value)} required
+              <input id="ab-variant-b" type="text" value={variantB} onChange={(e) => setVariantB(e.target.value)} required
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder={currentType?.placeholder_b} />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Traffic Split: {split}% / {100 - split}% <InfoTip text="Percentage of traffic seeing each variant. Start with 50/50 for equal comparison, or use 80/20 to limit exposure to the new variant." /></label>
-            <input type="range" min={10} max={90} step={5} value={split} onChange={(e) => setSplit(Number(e.target.value))}
+            <label htmlFor="ab-split" className="block text-sm font-medium text-slate-700 mb-1">Traffic Split: {split}% / {100 - split}% <InfoTip text="Percentage of traffic seeing each variant. Start with 50/50 for equal comparison, or use 80/20 to limit exposure to the new variant." /></label>
+            <input id="ab-split" type="range" min={10} max={90} step={5} value={split} onChange={(e) => setSplit(Number(e.target.value))}
               className="w-full accent-slate-900" />
             <div className="flex justify-between text-xs text-slate-400">
               <span>Variant A: {split}%</span>

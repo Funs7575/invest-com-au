@@ -566,8 +566,9 @@ export default function AdvisorPortalPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Additional details <span className="text-slate-400 font-normal">(optional{disputeReason === "other" ? ", required" : ""})</span></label>
+                  <label htmlFor="dispute-details" className="block text-xs font-semibold text-slate-600 mb-1.5">Additional details <span className="text-slate-400 font-normal">(optional{disputeReason === "other" ? ", required" : ""})</span></label>
                   <textarea
+                    id="dispute-details"
                     value={disputeDetails}
                     onChange={(e) => setDisputeDetails(e.target.value)}
                     rows={3}
@@ -792,22 +793,22 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
         {/* ═══ ARTICLE FORM ═══ */}
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
-            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. 5 SMSF Mistakes I See Every Tax Season" className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+            <label htmlFor="art-title" className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
+            <input id="art-title" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. 5 SMSF Mistakes I See Every Tax Season" className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
             {title.length > 0 && title.length < 20 && <p className="text-[0.58rem] text-amber-600 mt-0.5">Title should be at least 20 characters for good SEO</p>}
             {title.length > 80 && <p className="text-[0.58rem] text-amber-600 mt-0.5">Title is over 80 characters — may be truncated in search results</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Category</label>
-              <select value={category} onChange={e => setCategory(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
+              <label htmlFor="art-category" className="block text-xs font-bold text-slate-700 mb-1">Category</label>
+              <select id="art-category" value={category} onChange={e => setCategory(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Publication Tier</label>
-              <select value={tier} onChange={e => setTier(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
+              <label htmlFor="art-tier" className="block text-xs font-bold text-slate-700 mb-1">Publication Tier</label>
+              <select id="art-tier" value={tier} onChange={e => setTier(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
                 {PRICING_TIERS.map(t => <option key={t.key} value={t.key}>{t.label}</option>)}
               </select>
             </div>
@@ -820,13 +821,13 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Excerpt <span className="font-normal text-slate-400">(1-2 sentences for preview cards)</span></label>
-            <textarea value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder="Brief summary of what the article covers..." rows={2} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical" />
+            <label htmlFor="art-excerpt" className="block text-xs font-bold text-slate-700 mb-1">Excerpt <span className="font-normal text-slate-400">(1-2 sentences for preview cards)</span></label>
+            <textarea id="art-excerpt" value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder="Brief summary of what the article covers..." rows={2} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical" />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Content * <span className="font-normal text-slate-400">(Markdown supported)</span></label>
-            <textarea value={content} onChange={e => setContent(e.target.value)} placeholder={"Write your article here. Use **bold**, *italic*, ## headings, and - bullet points.\n\nRemember to include a general advice disclaimer, e.g.:\n\"This is general information only and does not constitute personal financial advice. Consider your own circumstances before acting.\""} rows={16} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical font-mono" />
+            <label htmlFor="art-content" className="block text-xs font-bold text-slate-700 mb-1">Content * <span className="font-normal text-slate-400">(Markdown supported)</span></label>
+            <textarea id="art-content" value={content} onChange={e => setContent(e.target.value)} placeholder={"Write your article here. Use **bold**, *italic*, ## headings, and - bullet points.\n\nRemember to include a general advice disclaimer, e.g.:\n\"This is general information only and does not constitute personal financial advice. Consider your own circumstances before acting.\""} rows={16} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical font-mono" />
             <div className="flex items-center justify-between mt-1">
               <p className={`text-[0.58rem] ${wc < 600 ? "text-amber-600" : "text-emerald-600"}`}>{wc} words {wc < 600 ? `(${600 - wc} more needed)` : "✓"}</p>
               <p className="text-[0.58rem] text-slate-400">~{Math.max(1, Math.ceil(wc / 250))} min read</p>

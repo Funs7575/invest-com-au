@@ -302,8 +302,9 @@ export default function EventsTab({ advisor }: Props) {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 mb-1">Description <span className="font-normal text-slate-400">(optional)</span></label>
+                <label htmlFor="evt-description" className="block text-xs font-bold text-slate-700 mb-1">Description <span className="font-normal text-slate-400">(optional)</span></label>
                 <textarea
+                  id="evt-description"
                   maxLength={3000}
                   rows={4}
                   value={form.description}

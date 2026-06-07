@@ -501,8 +501,9 @@ export default function TeamTab({ advisor }: Props) {
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1">Requested Seats</label>
+                    <label htmlFor="seat-req-count" className="block text-xs font-semibold text-slate-600 mb-1">Requested Seats</label>
                     <input
+                      id="seat-req-count"
                       type="number"
                       value={seatRequestSeats}
                       onChange={(e) => setSeatRequestSeats(e.target.value)}
@@ -513,8 +514,9 @@ export default function TeamTab({ advisor }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1">Reason (optional)</label>
+                    <label htmlFor="seat-req-reason" className="block text-xs font-semibold text-slate-600 mb-1">Reason (optional)</label>
                     <input
+                      id="seat-req-reason"
                       value={seatRequestReason}
                       onChange={(e) => setSeatRequestReason(e.target.value)}
                       className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"

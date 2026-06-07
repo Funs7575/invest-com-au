@@ -306,11 +306,12 @@ export default function EditCampaignPage() {
 
         {/* Campaign name */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="camp-name" className="block text-sm font-medium text-slate-700 mb-1">
             Campaign Name *
             <InfoTip text="A name for your reference only -- not shown to users." />
           </label>
           <input
+            id="camp-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -321,7 +322,7 @@ export default function EditCampaignPage() {
 
         {/* Rate */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="camp-rate" className="block text-sm font-medium text-slate-700 mb-1">
             Rate (AUD) * &mdash;{" "}
             {campaign?.inventory_type === "cpc" ? "per click" : "per month"}
             {campaign?.inventory_type === "cpc" ? (
@@ -333,6 +334,7 @@ export default function EditCampaignPage() {
           <div className="relative">
             <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
             <input
+              id="camp-rate"
               type="number"
               step="0.01"
               min="0.01"
@@ -353,7 +355,7 @@ export default function EditCampaignPage() {
         {/* Budget */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="camp-daily-budget" className="block text-sm font-medium text-slate-700 mb-1">
               Daily Budget (AUD)
               <span className="text-xs text-slate-400 ml-1">optional</span>
               <InfoTip text="Maximum amount charged per day. Prevents unexpected high-spend days. Leave blank for unlimited." />
@@ -361,6 +363,7 @@ export default function EditCampaignPage() {
             <div className="relative">
               <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
               <input
+                id="camp-daily-budget"
                 type="number"
                 step="1"
                 min="1"
@@ -372,7 +375,7 @@ export default function EditCampaignPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="camp-total-budget" className="block text-sm font-medium text-slate-700 mb-1">
               Total Budget (AUD)
               <span className="text-xs text-slate-400 ml-1">optional</span>
               <InfoTip text="Maximum cumulative spend for the entire campaign. Campaign automatically pauses when reached." />
@@ -380,6 +383,7 @@ export default function EditCampaignPage() {
             <div className="relative">
               <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
               <input
+                id="camp-total-budget"
                 type="number"
                 step="1"
                 min="1"
@@ -401,11 +405,12 @@ export default function EditCampaignPage() {
 
         {/* End date */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="camp-end-date" className="block text-sm font-medium text-slate-700 mb-1">
             End Date
             <span className="text-xs text-slate-400 ml-1">optional</span>
           </label>
           <input
+            id="camp-end-date"
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
@@ -432,11 +437,12 @@ export default function EditCampaignPage() {
         {/* Active hours */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="camp-hours-start" className="block text-sm font-medium text-slate-700 mb-1">
               Active Hours Start
               <span className="text-xs text-slate-400 ml-1">optional</span>
             </label>
             <select
+              id="camp-hours-start"
               value={activeHoursStart}
               onChange={(e) =>
                 setActiveHoursStart(e.target.value === "" ? "" : Number(e.target.value))
@@ -459,11 +465,12 @@ export default function EditCampaignPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label htmlFor="camp-hours-end" className="block text-sm font-medium text-slate-700 mb-1">
               Active Hours End
               <span className="text-xs text-slate-400 ml-1">optional</span>
             </label>
             <select
+              id="camp-hours-end"
               value={activeHoursEnd}
               onChange={(e) =>
                 setActiveHoursEnd(e.target.value === "" ? "" : Number(e.target.value))
