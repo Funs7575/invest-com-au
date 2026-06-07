@@ -545,6 +545,28 @@ export default function ToolsClient() {
           </div>
         )}
 
+        {/* Advisor CTA */}
+        <section className="border-t border-slate-200 pt-8 mt-10 bg-slate-50 rounded-2xl p-8 text-center">
+          <h2 className="text-lg font-bold text-slate-900 mb-2">Want personalised advice?</h2>
+          <p className="text-sm text-slate-600 mb-5 max-w-lg mx-auto">
+            These tools give you a starting point — but a licensed financial planner can model your specific situation and build a plan tailored to your goals.
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link
+              href="/find-advisor"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-xl text-sm hover:bg-slate-800 transition-colors"
+            >
+              Find a Financial Planner
+            </Link>
+            <Link
+              href="/get-matched"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 border border-slate-300 text-slate-700 bg-white font-semibold rounded-xl text-sm hover:bg-slate-50 transition-colors"
+            >
+              Get matched in 60 seconds
+            </Link>
+          </div>
+        </section>
+
         {/* SEO Content */}
         <section className="border-t border-slate-200 pt-8 mt-10">
           <h2 className="text-lg md:text-2xl font-extrabold text-slate-900 mb-3">

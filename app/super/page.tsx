@@ -115,6 +115,30 @@ export default async function SuperPage() {
           </section>
         )}
 
+        {/* Advisor CTA */}
+        <section className="py-10 border-t border-slate-200 bg-violet-50">
+          <div className="container-custom max-w-3xl text-center">
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Get personalised super advice</h2>
+            <p className="text-sm text-slate-600 mb-5">
+              Super strategy is personal — the right fund, contributions, and withdrawal plan depends on your age, income, and goals. A licensed financial planner can model your specific situation.
+            </p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link
+                href="/find-advisor?specialty=super"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-violet-600 text-white font-semibold rounded-xl text-sm hover:bg-violet-700 transition-colors"
+              >
+                Find a Super Specialist
+              </Link>
+              <Link
+                href="/compare/super"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 border border-violet-300 text-violet-700 bg-white font-semibold rounded-xl text-sm hover:bg-violet-50 transition-colors"
+              >
+                Compare Super Funds
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Lead magnet */}
         {leadMagnet && (
           <section className="py-10 border-t border-slate-200 bg-emerald-50">

@@ -271,6 +271,7 @@ function CreateAlertForm({
         <button
           type="submit"
           disabled={saving}
+          aria-busy={saving}
           className="inline-flex items-center gap-1.5 rounded-lg bg-violet-700 px-4 py-1.5 text-xs font-semibold text-white hover:bg-violet-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? "Saving…" : "Create alert"}

@@ -276,6 +276,7 @@ export default function WholesaleCertClient({ existing }: Props) {
           <button
             type="submit"
             disabled={submitting || !file}
+            aria-busy={submitting}
             className="w-full bg-violet-600 hover:bg-violet-700 disabled:bg-violet-300 text-white font-semibold text-sm py-2.5 rounded-lg transition-colors"
           >
             {submitting ? "Submitting…" : "Submit for review"}

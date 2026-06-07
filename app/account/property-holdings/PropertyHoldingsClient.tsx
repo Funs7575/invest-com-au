@@ -167,7 +167,7 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
       </section>
 
       {/* Add form */}
-      <section className="bg-white border border-slate-200 rounded-xl p-4">
+      <section id="property-add-form" className="bg-white border border-slate-200 rounded-xl p-4">
         <h2 className="text-base font-semibold text-slate-900 mb-3">Add property</h2>
         <form
           className="grid grid-cols-1 sm:grid-cols-6 gap-3"
@@ -251,7 +251,16 @@ export default function PropertyHoldingsClient({ initialItems }: Props) {
       <section>
         <h2 className="text-base font-semibold text-slate-900 mb-3">Your properties</h2>
         {items.length === 0 ? (
-          <p className="text-sm text-slate-500 italic">No properties yet — add your first above.</p>
+          <div className="text-center py-4">
+            <p className="text-sm text-slate-500 mb-3">No properties added yet. Track your property equity and portfolio growth.</p>
+            <button
+              type="button"
+              onClick={() => document.getElementById("property-add-form")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+            >
+              Add your first property
+            </button>
+          </div>
         ) : (
           <ul className="divide-y divide-slate-200 border border-slate-200 rounded-xl">
             {items.map((p) => {
