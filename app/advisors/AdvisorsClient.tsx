@@ -782,8 +782,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             className={`inline-flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg border text-sm font-bold whitespace-nowrap transition-colors shrink-0 ${activeFilterCount > 0 ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-800 border-slate-300 hover:border-slate-400"}`}
           >
             <Icon name="sliders" size={14} />
-            <span>All filters</span>
-            {activeFilterCount > 0 && <span className="ml-0.5 text-[10px] font-mono bg-amber-500 text-slate-900 rounded-full px-1.5 py-0.5">{activeFilterCount}</span>}
+            <span>{activeFilterCount > 0 ? `Filters (${activeFilterCount})` : "All filters"}</span>
           </button>
           <SortDropdown
             options={SORT_OPTIONS.map((o) => ({ value: o.key, label: o.label }))}

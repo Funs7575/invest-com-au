@@ -29,18 +29,27 @@ function ListCard({
   onTogglePublic: (id: number, isPublic: boolean) => void;
 }) {
   const [toggling, setToggling] = useState(false);
+  const [toggleError, setToggleError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [pendingDelete, setPendingDelete] = useState(false);
 
   const handleToggle = async () => {
     setToggling(true);
+    setToggleError(null);
     try {
       const res = await fetch("/api/account/user-lists", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: list.id, is_public: !list.is_public }),
       });
-      if (res.ok) onTogglePublic(list.id, !list.is_public);
+      if (res.ok) {
+        onTogglePublic(list.id, !list.is_public);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        setToggleError((body as { error?: string }).error ?? "Update failed — please try again.");
+      }
+    } catch {
+      setToggleError("Update failed — please try again.");
     } finally {
       setToggling(false);
     }
@@ -98,6 +107,9 @@ function ListCard({
           >
             {toggling ? "…" : list.is_public ? "Make private" : "Make public"}
           </button>
+          {toggleError && (
+            <p role="alert" className="text-xs text-red-600">{toggleError}</p>
+          )}
           {pendingDelete ? (
             <div className="flex items-center gap-1.5">
               <span className="text-xs text-red-600 font-medium">Delete?</span>

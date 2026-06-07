@@ -56,6 +56,7 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const handleUpload = useCallback(async () => {
     if (!file) return;
@@ -92,8 +93,14 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
   const handleDelete = useCallback(async (id: string) => {
     setPendingDeleteId(null);
     setDeletingId(id);
-    await fetch(`/api/account/documents/${id}`, { method: "DELETE" });
-    setDocs((prev: Document[]) => prev.filter((d: Document) => d.id !== id));
+    setDeleteError(null);
+    const res = await fetch(`/api/account/documents/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setDocs((prev: Document[]) => prev.filter((d: Document) => d.id !== id));
+    } else {
+      const body = await res.json().catch(() => ({}));
+      setDeleteError((body as { error?: string }).error ?? "Delete failed — please try again.");
+    }
     setDeletingId(null);
   }, []);
 
@@ -113,6 +120,10 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
           + Upload document
         </button>
       </div>
+
+      {deleteError && (
+        <p role="alert" className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{deleteError}</p>
+      )}
 
       {/* Upload modal */}
       {showUpload && (
