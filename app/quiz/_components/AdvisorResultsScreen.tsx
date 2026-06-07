@@ -591,10 +591,11 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           </p>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="ars-name" className="block text-xs font-semibold text-slate-700 mb-1">
                 Full name <span className="text-red-400">*</span>
               </label>
               <input
+                id="ars-name"
                 type="text"
                 placeholder="Alex Smith"
                 autoComplete="name"
@@ -604,10 +605,11 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="ars-phone" className="block text-xs font-semibold text-slate-700 mb-1">
                 Phone number <span className="text-red-400">*</span>
               </label>
               <input
+                id="ars-phone"
                 type="tel"
                 placeholder="04xx xxx xxx"
                 autoComplete="tel"
@@ -617,10 +619,11 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="ars-email" className="block text-xs font-semibold text-slate-700 mb-1">
                 Email address <span className="text-red-400">*</span>
               </label>
               <input
+                id="ars-email"
                 type="email"
                 placeholder="you@email.com"
                 autoComplete="email"

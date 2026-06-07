@@ -104,9 +104,10 @@ function InputField({
   max?: number;
   type?: string;
 }) {
+  const fieldId = `sp-field-${label.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")}`;
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-600 mb-1">
+      <label htmlFor={fieldId} className="block text-xs font-semibold text-slate-600 mb-1">
         {label}
         {hint && (
           <span className="font-normal text-slate-400 ml-1">{hint}</span>
@@ -119,6 +120,7 @@ function InputField({
           </span>
         )}
         <input
+          id={fieldId}
           type={type}
           min={min}
           max={max}

@@ -151,10 +151,11 @@ export default function HealthScoresClient({
 
         {/* Broker selector */}
         <div className="mb-8">
-          <label className="block text-sm font-semibold text-slate-700 mb-1">
+          <label htmlFor="hs-platform" className="block text-sm font-semibold text-slate-700 mb-1">
             Select Platform
           </label>
           <select
+            id="hs-platform"
             value={selectedSlug}
             onChange={(e) => {
               setSelectedSlug(e.target.value);

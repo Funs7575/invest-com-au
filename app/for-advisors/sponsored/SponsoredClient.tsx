@@ -200,10 +200,11 @@ export default function SponsoredClient() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  <label htmlFor="sp-name" className="block text-sm font-semibold text-slate-700 mb-1">
                     Name *
                   </label>
                   <input
+                    id="sp-name"
                     type="text"
                     name="name"
                     autoComplete="name"
@@ -214,10 +215,11 @@ export default function SponsoredClient() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  <label htmlFor="sp-email" className="block text-sm font-semibold text-slate-700 mb-1">
                     Email *
                   </label>
                   <input
+                    id="sp-email"
                     type="email"
                     name="email"
                     required
@@ -229,10 +231,11 @@ export default function SponsoredClient() {
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  <label htmlFor="sp-company" className="block text-sm font-semibold text-slate-700 mb-1">
                     Company *
                   </label>
                   <input
+                    id="sp-company"
                     type="text"
                     name="company"
                     autoComplete="organization"
@@ -243,10 +246,11 @@ export default function SponsoredClient() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  <label htmlFor="sp-phone" className="block text-sm font-semibold text-slate-700 mb-1">
                     Phone
                   </label>
                   <input
+                    id="sp-phone"
                     type="tel"
                     name="phone"
                     autoComplete="tel"
@@ -267,10 +271,11 @@ export default function SponsoredClient() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">
+                <label htmlFor="sp-message" className="block text-sm font-semibold text-slate-700 mb-1">
                   Message / Notes
                 </label>
                 <textarea
+                  id="sp-message"
                   name="message"
                   rows={4}
                   value={formData.message}

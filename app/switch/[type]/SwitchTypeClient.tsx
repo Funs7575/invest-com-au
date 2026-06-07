@@ -68,10 +68,11 @@ function BrokerEstimateForm() {
       </h2>
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="switch-current-fee" className="block text-xs font-semibold text-slate-600 mb-1">
             Current ASX fee
           </label>
           <input
+            id="switch-current-fee"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={currentFee}
             onChange={(e) => { setCurrentFee(e.target.value); setShowResult(false); }}
@@ -79,10 +80,11 @@ function BrokerEstimateForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">
+          <label htmlFor="switch-target-fee" className="block text-xs font-semibold text-slate-600 mb-1">
             Target ASX fee
           </label>
           <input
+            id="switch-target-fee"
             className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg"
             value={targetFee}
             onChange={(e) => { setTargetFee(e.target.value); setShowResult(false); }}
