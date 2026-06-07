@@ -1,6 +1,28 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const SIV_FAQS = [
+  {
+    q: "What is the Australian Significant Investor Visa (SIV)?",
+    a: "The Significant Investor Visa (subclass 188C, then 888C for permanent residence) allows non-Australian citizens to live and work in Australia by investing $5 million in complying investments. The $5M must be held in a FIRB-approved mix: at least $500,000 in venture capital or private equity funds (investing in start-ups/small privates); at least $1.5M in eligible managed funds or direct investments into emerging companies listed on ASX; the remaining balance (up to $3M) in balancing investments (managed funds investing in ASX companies, or direct investments). Holders can apply for permanent residence (888C) after 4 years maintaining complying investments.",
+  },
+  {
+    q: "Was the SIV replaced — is it still available?",
+    a: "The original SIV (188C/888C) was closed to new applicants in July 2023 by the Albanese government following a review that found limited economic benefit relative to the public resources consumed. The Global Talent Independent (GTI) program still offers a pathway for high-calibre individuals. HNWI investors should now consider the Business Innovation and Investment Program (BIIP) visas (subclasses 188 and 888 streams) or the National Innovation visa (NIV) for founders/investors. Several states including Victoria and New South Wales have separate investor-focused state-nominated programs. Existing SIV holders are not affected — their conditions remain as granted.",
+  },
+  {
+    q: "What did the SIV complying investment framework require?",
+    a: "The SIV required A$5M in complying managed investments maintained for the period of the visa: (1) Venture capital/private equity tranche: minimum $500,000 in VCPE funds managed by AFSL-holders registered with Innovation Australia, investing in Australian start-ups and early-stage companies. (2) Emerging companies tranche: minimum $1.5M in eligible managed funds investing in ASX-listed companies with <$500M market cap, or direct investments in such companies. (3) Balancing investments: the remaining balance in ASIC-regulated managed funds investing in ASX companies, or direct ASX investments. Annual auditing by an approved auditor was required to confirm compliant holding.",
+  },
+  {
+    q: "Which countries sent the most SIV applications to Australia?",
+    a: "China was by far the largest source country, accounting for approximately 85% of all SIV applications from program commencement to 2023. Hong Kong, Singapore, Malaysia, and Vietnam were also notable source countries. The program was heavily skewed toward Greater China HNWI investors. UK, US, and European investors rarely used the SIV pathway due to domestic investment returns and lifestyle preferences. The geographic concentration (China dominance) was one factor cited in the Albanese government's closure decision, alongside concerns about the complying investment framework's economic multiplier effect.",
+  },
+];
+
+const sivFaqLd = faqJsonLd(SIV_FAQS);
 import { createClient } from "@/lib/supabase/server";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
@@ -29,7 +51,9 @@ export const metadata: Metadata = {
     description:
       "$5M Australian SIV pathway — complying investments, FIRB, country guides, immigration investment lawyers.",
     url: `${SITE_URL}/foreign-investment/siv`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Significant Investor Visa (SIV) Australia")}&sub=${encodeURIComponent("5M AUD · Visa 188C · Complying Investments · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 async function fetchSivFunds(): Promise<FundListing[]> {
@@ -116,6 +140,9 @@ export default async function SivPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {sivFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(sivFaqLd) }} />
+      )}
       <ForeignInvestmentNav current="/foreign-investment/siv" />
 
       {/* Hero */}
@@ -385,6 +412,22 @@ export default async function SivPage() {
                 investments requires an AFSL. Engage both before acting.
               </p>
             </article>
+          </div>
+
+          {/* FAQ */}
+          <div className="mt-8 space-y-3">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+            {SIV_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
 
           {/* Lead form */}

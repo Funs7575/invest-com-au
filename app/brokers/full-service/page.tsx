@@ -8,6 +8,28 @@ import {
   CURRENT_YEAR,
   SITE_URL,
 } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const FULL_SERVICE_FAQS = [
+  {
+    q: "What is the difference between a full-service and discount stockbroker?",
+    a: "A full-service stockbroker provides personalised investment advice — including 'should I buy this?' recommendations — under their AFSL. Discount (online) brokers execute trades but cannot provide personal advice. Full-service brokers also typically offer portfolio management, research reports, IPO allocations, and access to bonds/fixed income not available on retail platforms. The cost reflects this: full-service brokerage is typically 0.5–1% per trade (minimum $100–$200), versus $0–$30 for discount platforms. The right choice depends on whether you need advice.",
+  },
+  {
+    q: "Are Australian stockbrokers regulated?",
+    a: "Yes. All Australian stockbrokers must hold an Australian Financial Services Licence (AFSL) from ASIC, be a market participant of the ASX or Chi-X (licensed by ASIC), and comply with ASX operating rules. Advisers within broking firms must also be authorised representatives and hold RG 146 qualifications. Client money must be held in trust accounts separate from the firm's own funds. You can verify a broker's AFSL status on the ASIC MoneySmart AFSL register or our AFSL lookup tool.",
+  },
+  {
+    q: "How do full-service brokers charge?",
+    a: "Full-service brokers typically charge: (1) Transaction brokerage — 0.5–1% of trade value per buy/sell, minimum $100–$250. (2) Ongoing management fees — 0.5–1.5% p.a. of portfolio value for discretionary management. (3) Research subscription — some charge separately for research access. (4) Custody/administration fees — 0.1–0.3% p.a. for CHESS holding and statement services. (5) IPO/capital raising fees — sometimes charged for managed float participation. Most provide fee transparency via a Financial Services Guide (FSG) which they are required by law to give you before providing services.",
+  },
+  {
+    q: "Can a full-service broker manage my portfolio for me?",
+    a: "Yes. Many full-service brokers offer discretionary portfolio management — they buy and sell on your behalf without needing approval for each trade, within agreed mandates. This is subject to a formal agreement setting out the investment mandate, risk profile, and fee structure. You remain the beneficial owner and CHESS-holder of your shares. Alternatively, non-discretionary (advisory) management means the broker makes recommendations but you authorise each trade. Discretionary management suits investors who want professional management but retain ownership — unlike managed funds where you surrender individual share ownership.",
+  },
+];
+
+const fullServiceFaqLd = faqJsonLd(FULL_SERVICE_FAQS);
 import FullServiceBrokerCard from "@/components/full-service-brokers/FullServiceBrokerCard";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import Icon from "@/components/Icon";
@@ -91,6 +113,9 @@ export default async function FullServiceBrokersPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
       />
+      {fullServiceFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(fullServiceFaqLd) }} />
+      )}
 
       <div className="py-6 md:py-12">
         <div className="container-custom max-w-5xl">
@@ -190,6 +215,22 @@ export default async function FullServiceBrokersPage() {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* FAQ */}
+          <div className="mb-6 space-y-3">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+            {FULL_SERVICE_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
 
           {/* Cross-link to advisor vertical */}
