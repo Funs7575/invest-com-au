@@ -134,6 +134,7 @@ function TagComboBox({
     <div ref={containerRef} className="space-y-2">
       <div className="relative">
         <input
+          type="search"
           aria-label={label}
           value={inputValue}
           onChange={(e) => {
