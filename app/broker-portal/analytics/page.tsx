@@ -329,7 +329,7 @@ export default function AnalyticsPage() {
             <Icon name="download" size={11} />
             Export CSV
           </button>
-          {loading && <span className="text-xs text-slate-400 animate-pulse">Loading…</span>}
+          {loading && <span aria-live="polite" aria-atomic="true" className="text-xs text-slate-400 animate-pulse">Loading…</span>}
           {(["7d", "30d", "90d"] as DateRange[]).map(d => (
             <button key={d} onClick={() => setDays(d)} disabled={loading}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${

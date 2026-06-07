@@ -222,7 +222,7 @@ export default function BookConsultationPanel({
         Pick an open slot from {proName}&apos;s availability below.
       </p>
 
-      {loading && <p className="text-sm text-slate-500">Loading availability…</p>}
+      {loading && <p aria-live="polite" aria-atomic="true" className="text-sm text-slate-500">Loading availability…</p>}
 
       {!loading && slots.length === 0 && (
         <p className="text-sm text-slate-500">
