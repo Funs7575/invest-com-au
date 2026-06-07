@@ -39,6 +39,7 @@ export const STATIC_LISTING_SLUGS = [
   "pre-ipo",
   "private-equity",
   "royalties",
+  "listed-securities",
 ] as const;
 
 /**
