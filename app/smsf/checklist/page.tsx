@@ -24,7 +24,6 @@ const SMSF_CHECKLIST_FAQS = [
     a: "Yes — in fact it is required. Each member of an SMSF must be a trustee (or a director of the corporate trustee if the fund has a corporate trustee structure), and each trustee or director must be a member. The only exception is for single-member funds: a sole member can have a second individual as co-trustee who is not a member, or the fund can use a corporate trustee.",
   },
 ];
-const smsfChecklistFaqLd = faqJsonLd(SMSF_CHECKLIST_FAQS);
 
 export const metadata: Metadata = {
   title: "SMSF Compliance Checklist: 12 Items Trustees Must Track | Invest.com.au",
@@ -41,6 +40,7 @@ export const metadata: Metadata = {
 };
 
 export default function SmsfChecklistPage() {
+  const faqLd = faqJsonLd(SMSF_CHECKLIST_FAQS);
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "SMSF", url: absoluteUrl("/smsf") },
@@ -49,7 +49,9 @@ export default function SmsfChecklistPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      {smsfChecklistFaqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(smsfChecklistFaqLd) }} />}
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom max-w-3xl">

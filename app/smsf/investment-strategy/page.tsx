@@ -26,7 +26,6 @@ const SMSF_STRATEGY_FAQS = [
     a: "The SIS Act does not set a numerical diversification limit, but a single-asset strategy must be explicitly justified in the investment strategy document against the fund's risk profile and the sole purpose test. In practice, strategies that concentrate entirely in one asset — for example, a residential property — attract scrutiny from auditors and the ATO, particularly if the strategy contains no documented reasoning for the concentration.",
   },
 ];
-const smsfStrategyFaqLd = faqJsonLd(SMSF_STRATEGY_FAQS);
 
 export const revalidate = 3600;
 
@@ -45,6 +44,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SmsfInvestmentStrategyPage() {
+  const faqLd = faqJsonLd(SMSF_STRATEGY_FAQS);
   const supabase = await createClient();
   const { data: smsfBrokers } = await supabase
     .from("brokers")
@@ -62,7 +62,9 @@ export default async function SmsfInvestmentStrategyPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      {smsfStrategyFaqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(smsfStrategyFaqLd) }} />}
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
