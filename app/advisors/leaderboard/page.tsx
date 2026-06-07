@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
 
@@ -163,7 +164,7 @@ export default async function LeaderboardPage() {
       <div className="bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-400 py-14 px-4">
         <div className="max-w-3xl mx-auto text-center text-white">
           <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 text-sm font-semibold mb-4">
-            <span className="text-yellow-300">★</span>
+            <Icon name="star" size={14} className="text-yellow-300" />
             <span>{formatYearMonth(ym)} Leaderboard</span>
           </div>
           <h1 className="text-4xl sm:text-5xl font-extrabold mb-3 tracking-tight">
@@ -178,7 +179,11 @@ export default async function LeaderboardPage() {
       <div className="max-w-3xl mx-auto px-4 py-10">
         {entries.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-slate-200">
-            <div className="text-5xl mb-4">🏆</div>
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center">
+                <Icon name="award" size={32} className="text-amber-500" />
+              </div>
+            </div>
             <h2 className="text-xl font-bold text-slate-800 mb-2">Rankings update monthly</h2>
             <p className="text-slate-500">
               Check back in {nextMonthLabel(ym)} for the latest results.

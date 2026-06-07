@@ -758,5 +758,39 @@ Sourced from a parallel code-review sweep across 7 feature areas (69 compiled fi
 
 **[ADV-161]** EarnTab: Zero-referral onboarding card (amber-50) with 🚀 and explanation copy shown when `total_referred === 0`. `app/advisor-portal/EarnTab.tsx`
 
+**[ADV-102]** Team analytics: spinner replaced with layout-matching skeleton (4-col stat grid + bar placeholder, animate-pulse) while `firmAnalytics` loads. `app/advisor-portal/TeamTab.tsx`
+
+**[ADV-132]** Homepage: ResumeBanner and GetMatchedEmbed moved into separate `<section>` elements so returning users see the resume prompt without it visually merging with the quiz embed. `app/page.tsx`
+
+**[ADV-136]** Fee Simulator: middle tick labels (50/100, $10k/$25k, 50%) hidden on mobile (`hidden sm:inline`) so only min/max labels show on narrow viewports. `app/fee-simulator/FeeSimulatorClient.tsx`
+
+**[ADV-162]** Dashboard leaderboard ranked card: `bg-teal-50 border-teal-200` replaces generic `bg-slate-50 border-slate-200`, matching the teal award icon and making a ranked position visually distinctive. `app/advisor-portal/DashboardTab.tsx`
+
+**[ADV-164]** Billing outstanding card: conditional "Pending — see payment history" link shown when `pendingBilledCents > 0`, giving advisors a direct action path. `app/advisor-portal/BillingTab.tsx`
+
+**[ADV-173]** Broker register slug field: helper text now explains URL identifier format (lowercase, numbers, hyphens), gives a worked example (`commsec`), and notes the auto-generate fallback. `app/broker-portal/register/page.tsx`
+
+**[ADV-175]** Compare H1: "— Fees, Features & Safety" appended to align the heading with the meta description that already mentions safety. `app/compare/page.tsx`
+
+**[ADV-112]** Community: anticipated forum category cards (Shares/ETFs, Property, SMSF, Crypto, Super, Financial Planning) shown above the waitlist so visitors understand what they're signing up for. `app/community/page.tsx`
+
+**[ADV-116]** RelatedContentGrid: 4-item curated fallback (How to start investing, ETFs vs shares, Best platforms, Super guide) rendered when no DB matches, preventing content dead ends. `components/RelatedContentGrid.tsx`
+
+**[ADV-160]** SettingsTab Slack integration: restructured with numbered setup steps and a "Test connection" button that fires `POST /api/advisor-portal/slack-settings/test` and shows success/failure inline for 5s. New API route includes rate-limiting (5/advisor/20 min) and Zod validation. `app/advisor-portal/SettingsTab.tsx`
+
+**[ADV-165]** Academy: breadcrumb reflects active category depth — "Academy" alone when on root, "Academy / {Category}" when a category filter is active. `app/academy/page.tsx`
+
+**[ADV-166]** ArticleShareRow: 150ms scale press-effect on all share buttons (copy, LinkedIn, X, email, WhatsApp, Facebook, print) via `usePressEffect` hook. `components/ArticleShareRow.tsx`
+
+**[ADV-168]** Authors empty state: replaced "Team profiles coming soon" with "Are you a financial adviser or investing expert?" heading + 50,000-investor context copy + "Apply to write →" CTA linking to /contact. `app/authors/page.tsx`
+
+**[ADV-169]** Article print view: `@media print` CSS (via `<style>` child) hides nav, ads, comments, sidebar; URL printed as `::after` content on a hidden `#article-print-url` element. `components/ArticleShareRow.tsx`
+
+**[ADV-170]** Article: `ArticleReadingProgress` bar at top of viewport scrolls with the user, showing reading completion as a teal fill. `app/article/[slug]/page.tsx`
+
+**[ADV-172]** About page: "Explore our research" section with 3 category link cards (ETFs, Tax & Investing, Beginner's Corner) added above the team grid. `app/about/page.tsx`
+
+**[ADV-176]** Advisors cards: 🌏 emoji replaced with `<Icon name="globe" size={9} />` in the Intl eligibility badge, making it consistent with the rest of the icon system. `app/advisors/AdvisorsClient.tsx`
+
 ---
 
