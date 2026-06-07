@@ -40,6 +40,7 @@ export default function CompetitorWatchPage() {
   const [url, setUrl] = useState("");
   const [saving, setSaving] = useState(false);
 
+  // eslint-disable-next-line react-hooks/immutability
   useEffect(() => { fetchEntries(); }, []);
 
   async function fetchEntries() {
@@ -114,29 +115,29 @@ export default function CompetitorWatchPage() {
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 mb-1 block">Competitor</label>
-                  <select value={competitor} onChange={e => setCompetitor(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
+                  <label htmlFor="comp-competitor" className="text-xs font-semibold text-slate-700 mb-1 block">Competitor</label>
+                  <select id="comp-competitor" value={competitor} onChange={e => setCompetitor(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
                     {COMPETITORS.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 mb-1 block">Type</label>
-                  <select value={eventType} onChange={e => setEventType(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
+                  <label htmlFor="comp-type" className="text-xs font-semibold text-slate-700 mb-1 block">Type</label>
+                  <select id="comp-type" value={eventType} onChange={e => setEventType(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
                     {EVENT_TYPES.map(t => <option key={t.value} value={t.value}>{t.icon} {t.label}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-700 mb-1 block">What happened?</label>
-                <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Finder added Moomoo review" className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                <label htmlFor="comp-title" className="text-xs font-semibold text-slate-700 mb-1 block">What happened?</label>
+                <input id="comp-title" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Finder added Moomoo review" className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-700 mb-1 block">Detail (optional)</label>
-                <textarea value={detail} onChange={e => setDetail(e.target.value)} rows={2} placeholder="Extra context, screenshots, observations..." className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                <label htmlFor="comp-detail" className="text-xs font-semibold text-slate-700 mb-1 block">Detail (optional)</label>
+                <textarea id="comp-detail" value={detail} onChange={e => setDetail(e.target.value)} rows={2} placeholder="Extra context, screenshots, observations..." className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-700 mb-1 block">URL (optional)</label>
-                <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://..." className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                <label htmlFor="comp-url" className="text-xs font-semibold text-slate-700 mb-1 block">URL (optional)</label>
+                <input id="comp-url" value={url} onChange={e => setUrl(e.target.value)} placeholder="https://..." className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" />
               </div>
               <div className="flex gap-2">
                 <button onClick={handleAdd} disabled={saving || !title.trim()} className="px-4 py-2 text-sm font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">

@@ -35,6 +35,7 @@ export default function AdminScenariosPage() {
     if (data) setScenarios(data);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
 
   const handleSave = async (formData: FormData) => {
@@ -195,45 +196,45 @@ export default function AdminScenariosPage() {
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Title <span className="text-red-600">*</span></label>
-              <input name="title" defaultValue={formScenario.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="scn-title" className="block text-xs font-medium text-slate-500 mb-1">Title <span className="text-red-600">*</span></label>
+              <input id="scn-title" name="title" defaultValue={formScenario.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
-              <input name="slug" defaultValue={formScenario.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="scn-slug" className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
+              <input id="scn-slug" name="slug" defaultValue={formScenario.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               <p className="text-xs text-slate-400 mt-0.5">URL path — e.g. &quot;kids&quot; creates /scenario/kids</p>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Icon (emoji)</label>
-              <input name="icon" defaultValue={formScenario.icon} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <label htmlFor="scn-icon" className="block text-xs font-medium text-slate-500 mb-1">Icon (emoji)</label>
+              <input id="scn-icon" name="icon" defaultValue={formScenario.icon} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Hero Title</label>
-            <input name="hero_title" defaultValue={formScenario.hero_title} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <label htmlFor="scn-hero-title" className="block text-xs font-medium text-slate-500 mb-1">Hero Title</label>
+            <input id="scn-hero-title" name="hero_title" defaultValue={formScenario.hero_title} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             <p className="text-xs text-slate-400 mt-0.5">Large heading shown at the top of the scenario page.</p>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Problem</label>
-            <textarea name="problem" defaultValue={formScenario.problem} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <label htmlFor="scn-problem" className="block text-xs font-medium text-slate-500 mb-1">Problem</label>
+            <textarea id="scn-problem" name="problem" defaultValue={formScenario.problem} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Solution</label>
-            <textarea name="solution" defaultValue={formScenario.solution} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <label htmlFor="scn-solution" className="block text-xs font-medium text-slate-500 mb-1">Solution</label>
+            <textarea id="scn-solution" name="solution" defaultValue={formScenario.solution} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Brokers (slugs, comma-separated)</label>
-            <input name="brokers" defaultValue={formScenario.brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <label htmlFor="scn-brokers" className="block text-xs font-medium text-slate-500 mb-1">Brokers (slugs, comma-separated)</label>
+            <input id="scn-brokers" name="brokers" defaultValue={formScenario.brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             <p className="text-xs text-slate-400 mt-0.5">Comma-separated broker slugs to feature in this scenario.</p>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Considerations (one per line)</label>
-            <textarea name="considerations" defaultValue={formScenario.considerations?.join("\n")} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <label htmlFor="scn-considerations" className="block text-xs font-medium text-slate-500 mb-1">Considerations (one per line)</label>
+            <textarea id="scn-considerations" name="considerations" defaultValue={formScenario.considerations?.join("\n")} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             <p className="text-xs text-slate-400 mt-0.5">One bullet point per line — shown as key things to consider.</p>
           </div>
 
