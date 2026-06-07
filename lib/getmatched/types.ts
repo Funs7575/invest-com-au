@@ -117,6 +117,15 @@ export interface IntentDef {
   slug: IntentSlug;
   label: string;
   description: string | null;
+  /**
+   * Plural, directory-grade noun for the /marketplace/[intent]/[state] SEO
+   * pages (e.g. "opportunity assessment specialists"). The `label` is
+   * imperative chip copy ("Assess an opportunity") that reads as broken
+   * English in a "Best {x} in {state}" heading. Admin-editable in the DB;
+   * resolved via `providerNounForIntent`, which falls back to the code map
+   * when null. See `lib/getmatched/intent-presentation.ts`.
+   */
+  provider_noun?: string | null;
   default_route: RouteType;
   default_brief_template: string | null;
   risk_level: "low" | "medium" | "high";
@@ -206,7 +215,8 @@ export interface TopMatch {
   one_line_why: string;
   cta_label: string;
   /** Absolute or relative URL — affiliate-tracked link for brokers,
-   *  /advisors/<slug> for advisors. */
+   *  /advisor/<slug> (singular) for advisors. NB: /advisors/<x> is the
+   *  category directory route, not a profile. */
   cta_href: string;
   vertical: Vertical | null;
   /** 1 = best match (hero card), 2-N = runner-ups (slim comparison cards).
