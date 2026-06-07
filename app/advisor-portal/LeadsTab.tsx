@@ -477,13 +477,13 @@ export default function LeadsTab({
                   <span className="text-[0.56rem] text-emerald-600 font-semibold">Free trial lead</span>
                 )}
                 {lead.status === "new" && (
-                  <button onClick={() => onUpdateLeadStatus(lead.id, "contacted")} className="text-xs font-semibold text-blue-600 hover:text-blue-800 px-2 py-1 border border-blue-200 rounded-lg hover:bg-blue-50">Mark Contacted</button>
+                  <button onClick={() => onUpdateLeadStatus(lead.id, "contacted")} className="text-xs font-semibold text-blue-600 hover:text-blue-800 px-3 py-1.5 border border-blue-200 rounded-lg hover:bg-blue-50">Mark Contacted</button>
                 )}
                 {(lead.status === "new" || lead.status === "contacted") && (
-                  <button onClick={() => onUpdateLeadStatus(lead.id, "converted")} className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-2 py-1 border border-emerald-200 rounded-lg hover:bg-emerald-50">Mark Converted</button>
+                  <button onClick={() => onUpdateLeadStatus(lead.id, "converted")} className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-3 py-1.5 border border-emerald-200 rounded-lg hover:bg-emerald-50">Mark Converted</button>
                 )}
                 {lead.status !== "lost" && lead.status !== "converted" && (
-                  <button onClick={() => onUpdateLeadStatus(lead.id, "lost")} className="text-xs font-semibold text-red-500 hover:text-red-700 px-2 py-1 border border-red-200 rounded-lg hover:bg-red-50">Mark Lost</button>
+                  <button onClick={() => onUpdateLeadStatus(lead.id, "lost")} className="text-xs font-semibold text-red-500 hover:text-red-700 px-3 py-1.5 border border-red-200 rounded-lg hover:bg-red-50">Mark Lost</button>
                 )}
                 {lead.status === "converted" && (
                   lead.review_requested_at
