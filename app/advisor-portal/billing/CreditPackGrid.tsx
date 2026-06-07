@@ -14,9 +14,11 @@ const log = logger("advisor-portal-credit-pack-grid");
  */
 export default function CreditPackGrid() {
   const [busySlug, setBusySlug] = useState<string | null>(null);
+  const [buyError, setBuyError] = useState<string | null>(null);
 
   async function buy(slug: string, priceCents: number) {
     setBusySlug(slug);
+    setBuyError(null);
     try {
       const res = await fetch("/api/advisor-auth/topup", {
         method: "POST",
@@ -27,10 +29,10 @@ export default function CreditPackGrid() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || "Failed to create checkout session. Please try again.");
+        setBuyError(data.error || "Failed to create checkout session. Please try again.");
       }
     } catch (err) {
-      alert("Something went wrong. Please check you're logged in and try again.");
+      setBuyError("Something went wrong. Please check you're logged in and try again.");
       log.error("topup checkout failed", {
         err: err instanceof Error ? err.message : String(err),
       });
@@ -87,6 +89,9 @@ export default function CreditPackGrid() {
           </div>
         ))}
       </div>
+      {buyError && (
+        <p role="alert" className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-4">{buyError}</p>
+      )}
     </>
   );
 }

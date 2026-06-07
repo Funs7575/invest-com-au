@@ -47,6 +47,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
   const [showResults, setShowResults] = useState(false);
   const [email, setEmail] = useState("");
   const [emailCaptured, setEmailCaptured] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
 
   useEffect(() => { trackPageDuration("/switching-calculator"); }, []);
 
@@ -304,12 +305,18 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                 <button
                   onClick={() => {
                     const text = `I just found out I could save $${Math.round(savings)}/year by switching brokers. Check yours at invest.com.au/switching-calculator`;
-                    if (navigator.share) { navigator.share({ text, url: "https://invest.com.au/switching-calculator" }); }
-                    else { navigator.clipboard.writeText(text); alert("Copied to clipboard!"); }
+                    if (navigator.share) {
+                      void navigator.share({ text, url: "https://invest.com.au/switching-calculator" });
+                    } else {
+                      void navigator.clipboard.writeText(text).then(() => {
+                        setShareCopied(true);
+                        setTimeout(() => setShareCopied(false), 2000);
+                      });
+                    }
                   }}
                   className="text-xs font-semibold text-slate-500 hover:text-slate-700 flex items-center gap-1"
                 >
-                  <Icon name="share-2" size={14} /> Share your savings
+                  <Icon name="share-2" size={14} /> {shareCopied ? "Copied!" : "Share your savings"}
                 </button>
                 <a
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I could save $${Math.round(savings)}/year by switching brokers 🤯`)}&url=${encodeURIComponent("https://invest.com.au/switching-calculator")}`}
