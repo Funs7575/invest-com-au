@@ -285,10 +285,11 @@ export default function ReviewsTab({ advisor }: Props) {
           <form onSubmit={(e) => { void handleInvite(e); }} className="space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="rt-invite-name" className="block text-xs font-semibold text-slate-700 mb-1">
                   Client name *
                 </label>
                 <input
+                  id="rt-invite-name"
                   type="text"
                   value={inviteName}
                   onChange={(e) => setInviteName(e.target.value)}
@@ -299,10 +300,11 @@ export default function ReviewsTab({ advisor }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="rt-invite-email" className="block text-xs font-semibold text-slate-700 mb-1">
                   Client email *
                 </label>
                 <input
+                  id="rt-invite-email"
                   type="email"
                   autoComplete="email"
                   value={inviteEmail}

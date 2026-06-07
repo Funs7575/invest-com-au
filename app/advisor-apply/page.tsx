@@ -662,25 +662,25 @@ function AdvisorApplyInner() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Short Bio</label>
-              <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Tell investors about your experience and approach..." />
+              <label htmlFor="aa-bio" className="block text-xs font-semibold text-slate-600 mb-1">Short Bio</label>
+              <textarea id="aa-bio" value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Tell investors about your experience and approach..." />
             </div>
 
             {accountType !== "firm" || isInviteFlow ? (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
-                  <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                  <label htmlFor="aa-website-ind" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
+                  <input id="aa-website-ind" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>
-                  <input value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
+                  <label htmlFor="aa-fee" className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>
+                  <input id="aa-fee" value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
                 </div>
               </div>
             ) : (
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>
-                <input value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
+                <label htmlFor="aa-fee" className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>
+                <input id="aa-fee" value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
               </div>
             )}
 

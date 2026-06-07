@@ -196,8 +196,9 @@ export default function StartupThesisClient({ initial }: Props) {
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Min (AUD)</label>
+            <label htmlFor="thesis-min-ticket" className="block text-xs font-medium text-slate-500 mb-1">Min (AUD)</label>
             <input
+              id="thesis-min-ticket"
               type="number"
               value={minTicket ?? ""}
               onChange={(e) => setMinTicket(e.target.value ? Number(e.target.value) : null)}
@@ -206,8 +207,9 @@ export default function StartupThesisClient({ initial }: Props) {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Max (AUD)</label>
+            <label htmlFor="thesis-max-ticket" className="block text-xs font-medium text-slate-500 mb-1">Max (AUD)</label>
             <input
+              id="thesis-max-ticket"
               type="number"
               value={maxTicket ?? ""}
               onChange={(e) => setMaxTicket(e.target.value ? Number(e.target.value) : null)}

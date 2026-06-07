@@ -512,8 +512,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Level</label>
+                <label htmlFor="cb-level" className="block text-xs font-bold text-slate-700 mb-1">Level</label>
                 <select
+                  id="cb-level"
                   value={form.level}
                   onChange={(e) => setForm({ ...form, level: e.target.value as "beginner" | "intermediate" | "advanced" })}
                   className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30"
@@ -524,10 +525,11 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Price (AUD)</label>
+                <label htmlFor="cb-price" className="block text-xs font-bold text-slate-700 mb-1">Price (AUD)</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">$</span>
                   <input
+                    id="cb-price"
                     type="number"
                     step="0.01"
                     min="0"
@@ -542,8 +544,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Estimated Hours</label>
+                <label htmlFor="cb-hours" className="block text-xs font-bold text-slate-700 mb-1">Estimated Hours</label>
                 <input
+                  id="cb-hours"
                   type="number"
                   step="0.5"
                   min="0"
@@ -554,8 +557,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Cover Image URL</label>
+                <label htmlFor="cb-cover-url" className="block text-xs font-bold text-slate-700 mb-1">Cover Image URL</label>
                 <input
+                  id="cb-cover-url"
                   type="url"
                   value={form.cover_image_url}
                   onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })}
@@ -661,8 +665,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-1">Module Name</label>
+                    <label htmlFor="cb-module-name" className="block text-xs font-bold text-slate-600 mb-1">Module Name</label>
                     <input
+                      id="cb-module-name"
                       type="text"
                       value={lessonForm.module_title}
                       onChange={(e) => setLessonForm({ ...lessonForm, module_title: e.target.value })}
@@ -672,8 +677,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1">Module #</label>
+                      <label htmlFor="cb-module-index" className="block text-xs font-bold text-slate-600 mb-1">Module #</label>
                       <input
+                        id="cb-module-index"
                         type="number"
                         min="1"
                         value={lessonForm.module_index}
@@ -682,8 +688,9 @@ export default function CourseBuilderTab({ advisor }: Props) {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 mb-1">Lesson #</label>
+                      <label htmlFor="cb-lesson-index" className="block text-xs font-bold text-slate-600 mb-1">Lesson #</label>
                       <input
+                        id="cb-lesson-index"
                         type="number"
                         min="1"
                         value={lessonForm.lesson_index}

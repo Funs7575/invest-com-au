@@ -113,10 +113,11 @@ function AddForm({ onAdd }: AddFormProps) {
         onSubmit={(e) => { void handleSubmit(e); }}
       >
         <div className="sm:col-span-3">
-          <label className="block text-xs font-medium text-slate-600 mb-1">
+          <label htmlFor="td-institution" className="block text-xs font-medium text-slate-600 mb-1">
             Institution <span className="text-red-500">*</span>
           </label>
           <input
+            id="td-institution"
             name="institution_name"
             type="text"
             required
@@ -125,8 +126,9 @@ function AddForm({ onAdd }: AddFormProps) {
           />
         </div>
         <div className="sm:col-span-3">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Principal ($)</label>
+          <label htmlFor="td-principal" className="block text-xs font-medium text-slate-600 mb-1">Principal ($)</label>
           <input
+            id="td-principal"
             name="principal"
             type="number"
             min="1"
@@ -137,8 +139,9 @@ function AddForm({ onAdd }: AddFormProps) {
           />
         </div>
         <div className="sm:col-span-2">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Rate (% p.a.)</label>
+          <label htmlFor="td-rate" className="block text-xs font-medium text-slate-600 mb-1">Rate (% p.a.)</label>
           <input
+            id="td-rate"
             name="rate_pct"
             type="number"
             min="0"
@@ -150,8 +153,9 @@ function AddForm({ onAdd }: AddFormProps) {
           />
         </div>
         <div className="sm:col-span-2">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Term (months)</label>
+          <label htmlFor="td-term" className="block text-xs font-medium text-slate-600 mb-1">Term (months)</label>
           <select
+            id="td-term"
             name="term_months"
             value={termMonths}
             onChange={(e) => {
@@ -170,8 +174,9 @@ function AddForm({ onAdd }: AddFormProps) {
           </select>
         </div>
         <div className="sm:col-span-2">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Maturity date</label>
+          <label htmlFor="td-maturity" className="block text-xs font-medium text-slate-600 mb-1">Maturity date</label>
           <input
+            id="td-maturity"
             name="maturity_date"
             type="date"
             required
@@ -180,8 +185,9 @@ function AddForm({ onAdd }: AddFormProps) {
           />
         </div>
         <div className="sm:col-span-6">
-          <label className="block text-xs font-medium text-slate-600 mb-1">Notes (optional)</label>
+          <label htmlFor="td-notes" className="block text-xs font-medium text-slate-600 mb-1">Notes (optional)</label>
           <input
+            id="td-notes"
             name="notes"
             type="text"
             maxLength={500}

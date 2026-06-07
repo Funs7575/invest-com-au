@@ -110,8 +110,9 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Bio</label>
+          <label htmlFor="pt-bio" className="block text-xs font-semibold text-slate-600 mb-1">Bio</label>
           <textarea
+            id="pt-bio"
             value={advisor.bio || ""}
             onChange={(e) => onAdvisorChange({ ...advisor, bio: e.target.value })}
             rows={5}
@@ -121,8 +122,9 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Fee Structure</label>
+          <label htmlFor="pt-fee-structure" className="block text-xs font-semibold text-slate-600 mb-1">Fee Structure</label>
           <select
+            id="pt-fee-structure"
             value={advisor.fee_structure || "fee-for-service"}
             onChange={(e) => onAdvisorChange({ ...advisor, fee_structure: e.target.value })}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -135,8 +137,9 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Fee Description (shown to investors)</label>
+          <label htmlFor="pt-fee-description" className="block text-xs font-semibold text-slate-600 mb-1">Fee Description (shown to investors)</label>
           <input
+            id="pt-fee-description"
             value={advisor.fee_description || ""}
             onChange={(e) => onAdvisorChange({ ...advisor, fee_description: e.target.value })}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -146,8 +149,9 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
+            <label htmlFor="pt-website" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
             <input
+              id="pt-website"
               value={advisor.website || ""}
               onChange={(e) => onAdvisorChange({ ...advisor, website: e.target.value })}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -155,8 +159,9 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
+            <label htmlFor="pt-phone" className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
             <input
+              id="pt-phone"
               value={advisor.phone || ""}
               onChange={(e) => onAdvisorChange({ ...advisor, phone: e.target.value })}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -171,8 +176,9 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
         />
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Booking Link (Calendly / Cal.com)</label>
+          <label htmlFor="pt-booking-link" className="block text-xs font-semibold text-slate-600 mb-1">Booking Link (Calendly / Cal.com)</label>
           <input
+            id="pt-booking-link"
             value={advisor.booking_link || ""}
             onChange={(e) => onAdvisorChange({ ...advisor, booking_link: e.target.value })}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -182,8 +188,9 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Booking Intro (optional)</label>
+          <label htmlFor="pt-booking-intro" className="block text-xs font-semibold text-slate-600 mb-1">Booking Intro (optional)</label>
           <input
+            id="pt-booking-intro"
             value={advisor.booking_intro || ""}
             onChange={(e) => onAdvisorChange({ ...advisor, booking_intro: e.target.value })}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
@@ -210,8 +217,9 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
           {advisor.offer_active && (
             <div className="space-y-3 bg-violet-50 border border-violet-200/60 rounded-lg p-3.5">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Offer Headline</label>
+                <label htmlFor="pt-offer-headline" className="block text-xs font-semibold text-slate-600 mb-1">Offer Headline</label>
                 <input
+                  id="pt-offer-headline"
                   value={advisor.offer_text || ""}
                   onChange={(e) => onAdvisorChange({ ...advisor, offer_text: e.target.value })}
                   className="w-full px-3 py-2 border border-violet-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"
@@ -221,8 +229,9 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
                 <p className="text-[0.55rem] text-slate-400 mt-1">Keep it short and compelling. This is the main text investors see.</p>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Terms & Conditions (optional)</label>
+                <label htmlFor="pt-offer-terms" className="block text-xs font-semibold text-slate-600 mb-1">Terms & Conditions (optional)</label>
                 <input
+                  id="pt-offer-terms"
                   value={advisor.offer_terms || ""}
                   onChange={(e) => onAdvisorChange({ ...advisor, offer_terms: e.target.value })}
                   className="w-full px-3 py-2 border border-violet-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"

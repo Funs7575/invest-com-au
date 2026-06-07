@@ -146,10 +146,11 @@ function AddForm({ onAdd }: { onAdd: (list: ListRow) => void }) {
       <h2 className="text-base font-semibold text-slate-900 mb-3">Create a list</h2>
       <form className="space-y-3" onSubmit={(e) => { void handleSubmit(e); }}>
         <div>
-          <label className="block text-xs font-medium text-slate-600 mb-1">
+          <label htmlFor="list-title" className="block text-xs font-medium text-slate-600 mb-1">
             Title <span className="text-red-500">*</span>
           </label>
           <input
+            id="list-title"
             name="title"
             type="text"
             required
@@ -159,8 +160,9 @@ function AddForm({ onAdd }: { onAdd: (list: ListRow) => void }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-600 mb-1">Description</label>
+          <label htmlFor="list-description" className="block text-xs font-medium text-slate-600 mb-1">Description</label>
           <input
+            id="list-description"
             name="description"
             type="text"
             maxLength={500}

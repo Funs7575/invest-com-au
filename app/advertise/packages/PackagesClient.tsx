@@ -137,10 +137,11 @@ export default function PackagesClient() {
       {/* Category Picker (only for Category Sponsor) */}
       {selectedTier === "category_sponsor" && (
         <div className="mb-8">
-          <label className="block text-sm font-bold text-slate-900 mb-3">
+          <label htmlFor="pkg-category" className="block text-sm font-bold text-slate-900 mb-3">
             2. Select a category
           </label>
           <select
+            id="pkg-category"
             value={categorySlug}
             onChange={(e) => setCategorySlug(e.target.value)}
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
