@@ -290,11 +290,14 @@ export default function IntakeQuestionsEditor({
                 <button
                   type="button"
                   onClick={() => persist(index)}
-                  disabled={submitting === index || draft.prompt.trim().length < 3}
+                  disabled={submitting === index || draft.prompt.trim().length < 3 || (isSelect && draft.options.length < 2)}
                   className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submitting === index ? "Saving…" : draft.id == null ? "Add" : "Save"}
                 </button>
+                {isSelect && draft.options.length < 2 && (
+                  <span className="text-xs text-amber-600">Add at least 2 options to save</span>
+                )}
                 {draft.id != null && pendingDeleteIndex === index ? (
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs text-red-600 font-medium">Delete?</span>
