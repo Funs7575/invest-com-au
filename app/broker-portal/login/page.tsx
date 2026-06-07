@@ -91,6 +91,7 @@ export default function BrokerLoginPage() {
         <input
           id="bp-login-email"
           type="email"
+          autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

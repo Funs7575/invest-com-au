@@ -221,6 +221,7 @@ export default function SponsoredClient() {
                   <input
                     id="sp-email"
                     type="email"
+                    autoComplete="email"
                     name="email"
                     required
                     value={formData.email}
