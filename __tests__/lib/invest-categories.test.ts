@@ -21,7 +21,13 @@ describe("invest-categories data integrity", () => {
     for (const cat of cats) {
       expect(cat.slug).toBeTruthy();
       expect(cat.label).toBeTruthy();
-      expect(cat.dbVerticals.length).toBeGreaterThan(0);
+      // income-assets is a placeholder sector with no distinct DB vertical
+      // seeded yet — it intentionally carries an empty dbVerticals (the old
+      // ["business"] value collided with buy-business). Its listings page
+      // renders a graceful empty state until a vertical/sub_category exists.
+      if (cat.slug !== "income-assets") {
+        expect(cat.dbVerticals.length).toBeGreaterThan(0);
+      }
       expect(cat.color).toBeDefined();
       expect(cat.title).toBeTruthy();
       expect(cat.h1).toBeTruthy();
