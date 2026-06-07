@@ -1299,7 +1299,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                       {/* PR queue #12.5 — eligibility badge per visitor's intent country */}
                       <EligibilityBadge entity={pro} intentCountry={intentCountry} compact />
                       {pro.accepts_international_clients && (
-                        <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">🌏 Intl</span>
+                        <span className="shrink-0 inline-flex items-center gap-0.5 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                          <Icon name="globe" size={9} className="shrink-0" />Intl
+                        </span>
                       )}
                       {pro.firb_specialist && (
                         <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">FIRB</span>

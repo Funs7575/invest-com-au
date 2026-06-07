@@ -70,12 +70,15 @@ export default async function AuthorsIndexPage() {
 
         {members.length === 0 ? (
           <div className="rounded-xl border border-slate-200 bg-white p-10 text-center space-y-4">
-            <p className="text-sm text-slate-600">Team profiles coming soon.</p>
+            <p className="text-base font-semibold text-slate-900">Are you a financial adviser or investing expert?</p>
+            <p className="text-sm text-slate-600 max-w-md mx-auto">
+              Share your insights with 50,000+ investors. We publish independent guides, platform reviews, and strategy pieces from credentialled Australian professionals.
+            </p>
             <Link
-              href="/for-advisors"
+              href="/contact"
               className="inline-block px-5 py-2.5 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors"
             >
-              Are you a financial expert? Write for us →
+              Apply to write →
             </Link>
           </div>
         ) : (

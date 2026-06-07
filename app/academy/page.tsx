@@ -140,13 +140,32 @@ function CourseCard({ course }: { course: AcademyCourse }) {
   );
 }
 
-export default async function AcademyPage() {
+const CATEGORY_LABELS: Record<string, string> = {
+  advisors: "By Advisors",
+  providers: "By Providers",
+  free: "Free",
+  cpd: "CPD Accredited",
+};
+
+export default async function AcademyPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ category?: string }>;
+}) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const activeCategory = resolvedParams.category ?? null;
+
   const courses = await getAcademyCourses();
 
-  const breadcrumbs = breadcrumbJsonLd([
+  const breadcrumbItems: { name: string; url?: string }[] = [
     { name: "Home", url: absoluteUrl("/") },
-    { name: "Academy" },
-  ]);
+    { name: "Academy", url: activeCategory ? absoluteUrl("/academy") : undefined },
+  ];
+  if (activeCategory && CATEGORY_LABELS[activeCategory]) {
+    breadcrumbItems.push({ name: CATEGORY_LABELS[activeCategory] });
+  }
+
+  const breadcrumbs = breadcrumbJsonLd(breadcrumbItems);
 
   const catalogJsonLd = {
     "@context": "https://schema.org",
@@ -205,7 +224,17 @@ export default async function AcademyPage() {
               Home
             </Link>
             <span className="mx-2">/</span>
-            <span className="text-slate-700">Academy</span>
+            {activeCategory && CATEGORY_LABELS[activeCategory] ? (
+              <>
+                <Link href="/academy" className="hover:text-slate-900">
+                  Academy
+                </Link>
+                <span className="mx-2">/</span>
+                <span className="text-slate-700">{CATEGORY_LABELS[activeCategory]}</span>
+              </>
+            ) : (
+              <span className="text-slate-700">Academy</span>
+            )}
           </nav>
 
           <div className="rounded-2xl bg-gradient-to-r from-teal-600 to-teal-800 text-white px-6 py-10 md:px-12 md:py-14 mb-10 text-center">
@@ -220,44 +249,94 @@ export default async function AcademyPage() {
 
           <div className="flex flex-wrap gap-2 mb-8">
             {[
-              { label: "All Courses", count: courses.length },
-              { label: "By Advisors", count: byAdvisors.length },
-              { label: "By Providers", count: byProviders.length },
-              { label: "Free", count: free.length },
-              { label: "CPD Accredited", count: cpdAccredited.length },
-            ].map(({ label, count }) => (
-              <span
-                key={label}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-slate-200 text-sm text-slate-600 bg-white hover:border-teal-300 hover:text-teal-700 transition-colors cursor-default select-none"
-              >
-                {label}
-                <span className="text-xs text-slate-400 font-medium">
-                  {count}
-                </span>
-              </span>
-            ))}
+              { label: "All Courses", count: courses.length, value: null },
+              { label: "By Advisors", count: byAdvisors.length, value: "advisors" },
+              { label: "By Providers", count: byProviders.length, value: "providers" },
+              { label: "Free", count: free.length, value: "free" },
+              { label: "CPD Accredited", count: cpdAccredited.length, value: "cpd" },
+            ].map(({ label, count, value }) => {
+              const isActive = value === activeCategory || (value === null && !activeCategory);
+              return (
+                <Link
+                  key={label}
+                  href={value ? `/academy?category=${value}` : "/academy"}
+                  className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border text-sm transition-colors select-none ${
+                    isActive
+                      ? "border-teal-500 text-teal-700 bg-teal-50 font-semibold"
+                      : "border-slate-200 text-slate-600 bg-white hover:border-teal-300 hover:text-teal-700"
+                  }`}
+                >
+                  {label}
+                  <span className="text-xs font-medium opacity-60">{count}</span>
+                </Link>
+              );
+            })}
           </div>
 
-          {courses.length === 0 ? (
-            <div className="text-center py-20 border border-dashed border-slate-200 rounded-2xl">
-              <p className="text-slate-500 text-lg mb-2">No courses available yet.</p>
-              <p className="text-slate-400 text-sm mb-6">
-                Check back soon — new courses are added regularly.
-              </p>
-              <Link
-                href="/articles"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-700 transition-colors"
-              >
-                Browse guides →
-              </Link>
-            </div>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {courses.map((c) => (
-                <CourseCard key={c.id} course={c} />
-              ))}
-            </div>
-          )}
+          {(() => {
+            let visibleCourses = courses;
+            if (activeCategory === "advisors") visibleCourses = byAdvisors;
+            else if (activeCategory === "providers") visibleCourses = byProviders;
+            else if (activeCategory === "free") visibleCourses = free;
+            else if (activeCategory === "cpd") visibleCourses = cpdAccredited;
+
+            return visibleCourses.length === 0 ? (
+              <div className="text-center py-20 border border-dashed border-slate-200 rounded-2xl">
+                <p className="text-slate-500 text-lg mb-2">No courses available yet.</p>
+                <p className="text-slate-400 text-sm mb-6">
+                  Check back soon — new courses are added regularly.
+                </p>
+                <Link
+                  href="/articles"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-700 transition-colors"
+                >
+                  Browse guides →
+                </Link>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {visibleCourses.map((c) => (
+                  <CourseCard key={c.id} course={c} />
+                ))}
+              </div>
+            );
+          })()}
+
+          {/* ADV-178: Related guides section */}
+          <aside
+            aria-label="Related guides"
+            className="mt-12 border-l-4 border-blue-500 pl-5 py-1"
+          >
+            <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-3">
+              Related guides
+            </h2>
+            <ul className="flex flex-col gap-2">
+              <li>
+                <Link
+                  href="/articles?category=professional"
+                  className="text-sm text-blue-700 hover:text-blue-900 hover:underline font-medium"
+                >
+                  CPD &amp; Professional Development →
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/articles?category=beginners"
+                  className="text-sm text-blue-700 hover:text-blue-900 hover:underline font-medium"
+                >
+                  Financial Planning Basics →
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/articles?category=news"
+                  className="text-sm text-blue-700 hover:text-blue-900 hover:underline font-medium"
+                >
+                  Industry News →
+                </Link>
+              </li>
+            </ul>
+          </aside>
         </div>
       </div>
     </>

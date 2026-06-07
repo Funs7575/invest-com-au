@@ -205,6 +205,33 @@ export default function AboutPage() {
             </div>
           </section>
 
+          {/* Explore our guides */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-extrabold text-brand mb-3">Explore our research</h2>
+            <p className="text-slate-700 mb-5 leading-relaxed">
+              Our editorial team publishes in-depth guides and comparisons across every major investing category. Start here:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+              {[
+                { label: "ETF Guides", href: "/articles?category=etfs" },
+                { label: "Tax & Investing", href: "/articles?category=tax" },
+                { label: "Beginner's Corner", href: "/articles?category=beginners" },
+              ].map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="flex items-center justify-between gap-2 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 bg-white hover:bg-slate-50 hover:shadow-sm transition-all"
+                >
+                  <span>{link.label}</span>
+                  <span className="text-amber font-bold">→</span>
+                </Link>
+              ))}
+            </div>
+            <Link href="/articles" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
+              Browse all articles →
+            </Link>
+          </section>
+
           {/* Disclaimers */}
           <section>
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 space-y-4">

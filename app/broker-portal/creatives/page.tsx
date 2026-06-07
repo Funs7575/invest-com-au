@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
@@ -15,6 +15,66 @@ const CREATIVE_TYPES = [
   { value: "screenshot", label: "Screenshot", desc: "Platform screenshot or product image" },
 ] as const;
 
+// ADV-082: URL validation helper
+const IMAGE_EXTENSION_RE = /\.(png|jpg|jpeg|gif|svg|webp|avif|ico)(\?.*)?$/i;
+const CDN_PATTERN_RE = /\/(cdn|images?|assets?|media|static|uploads?)\//i;
+
+function validateImageUrl(url: string): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return "URL must start with http:// or https://";
+    }
+    if (!IMAGE_EXTENSION_RE.test(parsed.pathname) && !CDN_PATTERN_RE.test(parsed.pathname)) {
+      return "URL doesn't look like an image — check it ends with .png, .jpg, .svg, .webp etc., or points to an image CDN path.";
+    }
+    return null;
+  } catch {
+    return "Enter a valid URL (e.g. https://yourdomain.com/logo.png)";
+  }
+}
+
+// ADV-083: Delete confirmation modal
+interface DeleteModalProps {
+  creativeName: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+function DeleteModal({ creativeName, onConfirm, onCancel }: DeleteModalProps) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}
+    >
+      <div className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full mx-4 space-y-4">
+        <h3 className="text-base font-bold text-slate-900">Delete creative</h3>
+        <p className="text-sm text-slate-600">
+          Delete creative <span className="font-semibold">&lsquo;{creativeName}&rsquo;</span>?{" "}
+          This cannot be undone.
+        </p>
+        <div className="flex gap-3 justify-end">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CreativesPage() {
   const [creatives, setCreatives] = useState<BrokerCreative[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +88,19 @@ export default function CreativesPage() {
   const [uploadType, setUploadType] = useState<string>("logo");
   const [uploadLabel, setUploadLabel] = useState("");
   const [uploadUrl, setUploadUrl] = useState("");
+  // ADV-082: per-field URL validation error
+  const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
+  // ADV-082: image load error per creative id
+  const [imgErrorIds, setImgErrorIds] = useState<Set<number>>(new Set());
+
+  // ADV-083: delete confirmation state
+  const [deleteTarget, setDeleteTarget] = useState<BrokerCreative | null>(null);
+
+  // ADV-149: toggle loading state per creative id
+  const [togglingIds, setTogglingIds] = useState<Set<number>>(new Set());
+
+  // ADV-147: copy button per-id timeout refs
+  const copyTimerRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
   useEffect(() => {
     const load = async () => {
@@ -56,10 +129,23 @@ export default function CreativesPage() {
     load();
   }, []);
 
+  // ADV-082: validate on change
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setUploadUrl(val);
+    setUrlValidationError(val ? validateImageUrl(val) : null);
+  };
+
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!uploadUrl.trim()) {
       toast("URL is required", "error");
+      return;
+    }
+    // ADV-082: block submit if URL invalid
+    const urlErr = validateImageUrl(uploadUrl.trim());
+    if (urlErr) {
+      setUrlValidationError(urlErr);
       return;
     }
     setUploading(true);
@@ -88,11 +174,15 @@ export default function CreativesPage() {
       setShowForm(false);
       setUploadUrl("");
       setUploadLabel("");
+      setUrlValidationError(null);
     }
     setUploading(false);
   };
 
+  // ADV-149: toggle with loading guard
   const toggleActive = async (id: number, currentActive: boolean) => {
+    if (togglingIds.has(id)) return;
+    setTogglingIds(prev => new Set(prev).add(id));
     const supabase = createClient();
     await supabase
       .from("broker_creatives")
@@ -101,14 +191,38 @@ export default function CreativesPage() {
 
     setCreatives(prev => prev.map(c => c.id === id ? { ...c, is_active: !currentActive } : c));
     toast(currentActive ? "Creative disabled" : "Creative enabled", "success");
+    setTogglingIds(prev => { const s = new Set(prev); s.delete(id); return s; });
   };
 
-  const deleteCreative = async (id: number) => {
-    if (!confirm("Delete this creative? This cannot be undone.")) return;
+  // ADV-083: show modal then handle confirmed delete
+  const handleDeleteClick = (creative: BrokerCreative) => {
+    setDeleteTarget(creative);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    const { id, label, type } = deleteTarget;
+    const displayName = label || type;
+    setDeleteTarget(null);
     const supabase = createClient();
     await supabase.from("broker_creatives").delete().eq("id", id);
     setCreatives(prev => prev.filter(c => c.id !== id));
-    toast("Creative deleted", "success");
+    toast(`Creative '${displayName}' deleted.`, "success");
+  };
+
+  // ADV-147: copy with per-button "Copied ✓" state
+  const handleCopyUrl = (id: number, url: string) => {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedId(id);
+      // Clear any existing timer for this id
+      const existing = copyTimerRef.current.get(id);
+      if (existing) clearTimeout(existing);
+      const timer = setTimeout(() => {
+        setCopiedId(prev => prev === id ? null : prev);
+        copyTimerRef.current.delete(id);
+      }, 2000);
+      copyTimerRef.current.set(id, timer);
+    }).catch(() => toast("Couldn't copy URL", "error"));
   };
 
   if (loading) return <div className="h-8 bg-slate-100 rounded w-48 animate-pulse" />;
@@ -120,6 +234,15 @@ export default function CreativesPage() {
 
   return (
     <div className="space-y-6">
+      {/* ADV-083: delete confirmation modal */}
+      {deleteTarget && (
+        <DeleteModal
+          creativeName={deleteTarget.label || deleteTarget.type}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Creatives & Assets</h1>
@@ -195,10 +318,23 @@ export default function CreativesPage() {
 
           <div>
             <label htmlFor="cre-image-url" className="block text-sm font-medium text-slate-700 mb-1">Image URL *</label>
-            <input id="cre-image-url" type="url" value={uploadUrl} onChange={(e) => setUploadUrl(e.target.value)} required
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
-              placeholder="https://yourdomain.com/logo.png" />
-            <p className="text-xs text-slate-400 mt-1">Paste a publicly accessible image URL. Supports PNG, JPG, SVG, WebP.</p>
+            {/* ADV-082: validated URL input */}
+            <input
+              id="cre-image-url"
+              type="url"
+              value={uploadUrl}
+              onChange={handleUrlChange}
+              required
+              className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 ${
+                urlValidationError ? "border-red-400 focus:border-red-400 focus:ring-red-200/40" : "border-slate-200"
+              }`}
+              placeholder="https://yourdomain.com/logo.png"
+            />
+            {urlValidationError ? (
+              <p className="text-xs text-red-600 mt-1">{urlValidationError}</p>
+            ) : (
+              <p className="text-xs text-slate-400 mt-1">Paste a publicly accessible image URL. Supports PNG, JPG, SVG, WebP.</p>
+            )}
           </div>
 
           <div>
@@ -213,7 +349,7 @@ export default function CreativesPage() {
               className="px-4 py-2.5 bg-slate-100 text-slate-700 font-bold text-sm rounded-lg hover:bg-slate-200 transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={uploading}
+            <button type="submit" disabled={uploading || !!urlValidationError}
               className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               {uploading ? "Saving..." : "Save Creative"}
             </button>
@@ -243,16 +379,27 @@ export default function CreativesPage() {
                   c.is_active ? "border-slate-200" : "border-slate-100 opacity-60"
                 }`}>
                   <div className="aspect-video bg-slate-50 flex items-center justify-center p-3 relative">
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={c.url}
-                        alt={c.label || c.type}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        className="object-contain"
-                        unoptimized
-                      />
-                    </div>
+                    {/* ADV-082: image with onError handler */}
+                    {imgErrorIds.has(c.id) ? (
+                      <div className="flex flex-col items-center justify-center gap-1 text-center px-2">
+                        <Icon name="alert-circle" size={20} className="text-red-400" />
+                        <p className="text-xs text-red-500 font-medium">Image failed to load — check URL</p>
+                      </div>
+                    ) : (
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={c.url}
+                          alt={c.label || c.type}
+                          fill
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                          className="object-contain"
+                          unoptimized
+                          onError={() =>
+                            setImgErrorIds(prev => new Set(prev).add(c.id))
+                          }
+                        />
+                      </div>
+                    )}
                     {!c.is_active && (
                       <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
                         <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">Disabled</span>
@@ -263,25 +410,42 @@ export default function CreativesPage() {
                     <p className="text-sm font-semibold text-slate-900 truncate">{c.label || c.type}</p>
                     <p className="text-xs text-slate-400 mt-0.5 truncate">{c.url}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <button onClick={() => toggleActive(c.id, c.is_active)}
-                        className={`text-xs px-2 py-1 rounded font-medium transition-colors ${
-                          c.is_active
-                            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                            : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-                        }`}>
-                        {c.is_active ? "Active" : "Inactive"}
+                      {/* ADV-149: toggle with loading/disabled state */}
+                      <button
+                        onClick={() => toggleActive(c.id, c.is_active)}
+                        disabled={togglingIds.has(c.id)}
+                        className={`text-xs px-2 py-1 rounded font-medium transition-colors flex items-center gap-1 ${
+                          togglingIds.has(c.id)
+                            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                            : c.is_active
+                              ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                              : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                        }`}
+                      >
+                        {togglingIds.has(c.id) ? (
+                          <>
+                            <svg className="animate-spin w-3 h-3" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                            </svg>
+                            <span className="sr-only">Updating…</span>
+                          </>
+                        ) : (
+                          c.is_active ? "Active" : "Inactive"
+                        )}
                       </button>
-                      <button onClick={() => {
-                          navigator.clipboard.writeText(c.url).then(() => {
-                            setCopiedId(c.id);
-                            setTimeout(() => setCopiedId(null), 2000);
-                          }).catch(() => toast("Couldn't copy URL", "error"));
-                        }}
-                        className="text-xs px-2 py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium transition-colors">
-                        {copiedId === c.id ? "Copied!" : "Copy URL"}
+                      {/* ADV-147: Copy URL with per-button "Copied ✓" state */}
+                      <button
+                        onClick={() => handleCopyUrl(c.id, c.url)}
+                        className="text-xs px-2 py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium transition-colors"
+                      >
+                        {copiedId === c.id ? "Copied ✓" : "Copy URL"}
                       </button>
-                      <button onClick={() => deleteCreative(c.id)}
-                        className="text-xs px-2 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100 font-medium transition-colors ml-auto">
+                      {/* ADV-083: custom delete modal trigger */}
+                      <button
+                        onClick={() => handleDeleteClick(c)}
+                        className="text-xs px-2 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100 font-medium transition-colors ml-auto"
+                      >
                         Delete
                       </button>
                     </div>

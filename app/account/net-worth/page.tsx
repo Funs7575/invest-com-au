@@ -174,7 +174,7 @@ export default async function NetWorthPage() {
           </p>
           <p className="mt-1 text-2xl font-bold text-slate-900">{fmt(portfolioValueCents)}</p>
           <p className="mt-1 text-xs text-slate-500">
-            <span title="Holdings with a live or cached market price. Unlisted / unsupported tickers show as '—' and are excluded from the total.">
+            <span title="Shows how many of your holdings have current price data. Holdings without price data use the purchase price for valuation.">
               {pricedHoldings} of {holdings.length} holdings priced
             </span>
             {portfolioCostBasisCents > 0 && (

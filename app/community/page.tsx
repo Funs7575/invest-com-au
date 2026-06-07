@@ -150,13 +150,83 @@ export default async function CommunityPage() {
       {/* Category Grid */}
       <div className="container-custom max-w-4xl pb-16">
         {cats.length === 0 && (
-          <div className="text-center py-16">
-            <Icon name="message-circle" size={48} className="text-slate-300 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Community launching soon</h2>
-            <p className="text-sm text-slate-500 max-w-md mx-auto mb-1">
-              We&apos;re setting up discussion categories for Australian investors. Drop your email and we&apos;ll let you know the moment it goes live.
-            </p>
-            <CommunityNotifyForm />
+          <div className="py-10">
+            <div className="text-center mb-8">
+              <Icon name="message-circle" size={48} className="text-slate-300 mx-auto mb-4" />
+              <h2 className="text-xl font-bold text-slate-900 mb-2">Community launching soon</h2>
+              <p className="text-sm text-slate-500 max-w-md mx-auto">
+                We&apos;re setting up discussion categories for Australian investors. Here&apos;s a preview of what&apos;s coming.
+              </p>
+            </div>
+
+            {/* Anticipated category preview cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+              {[
+                {
+                  icon: "trending-up" as const,
+                  color: "#10b981",
+                  name: "Shares & ETFs",
+                  description: "Stock picks, index funds, DRPs, and portfolio strategy for ASX and international markets.",
+                },
+                {
+                  icon: "home" as const,
+                  color: "#3b82f6",
+                  name: "Property Investment",
+                  description: "Residential and commercial property, REITs, negative gearing, and market outlooks.",
+                },
+                {
+                  icon: "shield" as const,
+                  color: "#8b5cf6",
+                  name: "SMSF",
+                  description: "Self-managed super strategy, compliance, trustee obligations, and investment rules.",
+                },
+                {
+                  icon: "calculator" as const,
+                  color: "#f59e0b",
+                  name: "Tax & Accounting",
+                  description: "CGT, franking credits, deductions, end-of-year planning, and working with accountants.",
+                },
+                {
+                  icon: "user-check" as const,
+                  color: "#06b6d4",
+                  name: "Ask an Advisor",
+                  description: "Pose questions to qualified financial advisers and get perspectives from the community.",
+                },
+                {
+                  icon: "bar-chart-2" as const,
+                  color: "#ef4444",
+                  name: "Market News",
+                  description: "Macro trends, RBA decisions, earnings season, and what&apos;s moving Australian markets.",
+                },
+              ].map((cat) => (
+                <div
+                  key={cat.name}
+                  className="bg-white border border-slate-200 rounded-xl p-5 opacity-75"
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: cat.color + "18" }}
+                    >
+                      <span style={{ color: cat.color }}>
+                        <Icon name={cat.icon} size={18} className="shrink-0" />
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-slate-900 font-bold text-sm">{cat.name}</p>
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">{cat.description}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <p className="text-sm text-slate-500 mb-1">
+                Drop your email and we&apos;ll let you know the moment it goes live.
+              </p>
+              <CommunityNotifyForm />
+            </div>
           </div>
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

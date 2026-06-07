@@ -34,6 +34,7 @@ import ArticleShareRow from "@/components/ArticleShareRow";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { pillarPathForCategory, linkDensityForCategory } from "@/lib/keyword-linking";
 import NextActions from "@/components/NextActions";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -275,6 +276,9 @@ export default async function ArticlePage({
 
   return (
     <div>
+      {/* ADV-170: reading progress bar — fixed thin bar at very top of viewport */}
+      <ArticleReadingProgress articleId="article-body" />
+
       {/* Schema.org JSON-LD */}
       <script
         type="application/ld+json"
@@ -440,7 +444,7 @@ export default async function ArticlePage({
             className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8"
           >
             {/* Article Column */}
-            <div className="flex-1 min-w-0">
+            <div id="article-body" className="flex-1 min-w-0">
               {/* GEO answer-first: key takeaways block derived from the
                   article excerpt. Appears immediately above the body so AI
                   and voice systems extract the direct answer without scanning
@@ -462,9 +466,10 @@ export default async function ArticlePage({
                 />
               )}
 
-              {/* Inline Table of Contents — hidden on mobile where floating TOC serves the same purpose */}
+              {/* Inline Table of Contents — shown only on md tablets (mobile uses floating pill,
+                  lg+ uses the sticky sidebar TOC added for ADV-171, xl+ uses the floating OnThisPage) */}
               {a.sections && a.sections.length > 1 && (
-                <nav aria-label="On this page" className="hidden md:block border border-slate-200 rounded-xl p-6 mb-10 bg-slate-50">
+                <nav aria-label="On this page" className="hidden md:block lg:hidden border border-slate-200 rounded-xl p-6 mb-10 bg-slate-50">
                   <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">
                     Table of Contents
                   </h2>
@@ -879,16 +884,64 @@ export default async function ArticlePage({
               </div>
             </div>
 
-            {/* Desktop Sidebar — campaign-driven for all articles, editorial fallback */}
-            {isEnhanced && topPick ? (
-              <ArticleSidebar broker={topPick} pagePath={pagePath} />
-            ) : (
-              <SponsoredBrokerWidget
-                fallbackBroker={sidebarTopPick}
-                allBrokers={allBrokersForWidget}
-                pagePath={pagePath}
-              />
-            )}
+            {/* Desktop Sidebar — campaign-driven for all articles, editorial fallback.
+                ADV-171: sticky TOC added above the broker widget so the table of
+                contents remains visible while the reader scrolls down the article.
+                On xl+ the floating OnThisPage overlay takes over (right rail). */}
+            <div className="hidden lg:flex xl:hidden flex-col gap-4 shrink-0 w-64">
+              {/* ADV-171: sticky sidebar TOC (lg–xl only; xl uses floating OnThisPage) */}
+              {a.sections && a.sections.length > 1 && (
+                <nav
+                  aria-label="Table of Contents"
+                  className="sticky top-24 border border-slate-200 rounded-xl p-4 bg-slate-50 max-h-[calc(60vh)] overflow-y-auto"
+                >
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                    Contents
+                  </h2>
+                  <ol className="space-y-1.5">
+                    {a.sections.map(
+                      (section: { heading: string; body: string }, i: number) => (
+                        <li key={i}>
+                          <a
+                            href={`#section-${i}`}
+                            className="text-xs text-slate-700 hover:text-slate-900 transition-colors flex items-start gap-1.5"
+                          >
+                            <span className="text-slate-400 font-semibold shrink-0 tabular-nums">
+                              {i + 1}.
+                            </span>
+                            <span className="leading-snug">{section.heading}</span>
+                          </a>
+                        </li>
+                      )
+                    )}
+                  </ol>
+                </nav>
+              )}
+              {/* Broker widget — has its own sticky top-20 wrapper */}
+              {isEnhanced && topPick ? (
+                <ArticleSidebar broker={topPick} pagePath={pagePath} />
+              ) : (
+                <SponsoredBrokerWidget
+                  fallbackBroker={sidebarTopPick}
+                  allBrokers={allBrokersForWidget}
+                  pagePath={pagePath}
+                />
+              )}
+            </div>
+
+            {/* xl+ sidebar — the OnThisPage floating rail handles TOC;
+                broker widget only */}
+            <div className="hidden xl:block">
+              {isEnhanced && topPick ? (
+                <ArticleSidebar broker={topPick} pagePath={pagePath} />
+              ) : (
+                <SponsoredBrokerWidget
+                  fallbackBroker={sidebarTopPick}
+                  allBrokers={allBrokersForWidget}
+                  pagePath={pagePath}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

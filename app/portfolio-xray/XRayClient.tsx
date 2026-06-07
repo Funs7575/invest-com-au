@@ -38,6 +38,24 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
   const [currentBroker, setCurrentBroker] = useState("");
   const [analysed, setAnalysed] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const canAdd = ticker.trim().length > 0 && parseFloat(quantity) > 0;
+
+  const startEdit = (h: Holding) => {
+    setEditingId(h.id);
+    setTicker(h.ticker);
+    setName(h.name === h.ticker ? "" : h.name);
+    setQuantity(String(h.quantity));
+    setPrice(h.price > 0 ? String(h.price) : "");
+    setAddError(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setTicker(""); setName(""); setQuantity(""); setPrice("");
+    setAddError(null);
+  };
 
   const addHolding = () => {
     const t = ticker.trim().toUpperCase();
@@ -46,13 +64,20 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
     const p = parseFloat(price) || 0;
     if (!t) { setAddError("Ticker is required (e.g. BHP or AAPL)."); return; }
     if (q <= 0) { setAddError("Quantity must be greater than 0."); return; }
-    if (p <= 0) { setAddError("Price must be greater than 0."); return; }
     setAddError(null);
-    setHoldings([...holdings, { id: uid(), ticker: t, name: n, quantity: q, price: p, value: q * p }]);
+    if (editingId) {
+      setHoldings(holdings.map(h => h.id === editingId ? { id: editingId, ticker: t, name: n, quantity: q, price: p, value: q * p } : h));
+      setEditingId(null);
+    } else {
+      setHoldings([...holdings, { id: uid(), ticker: t, name: n, quantity: q, price: p, value: q * p }]);
+    }
     setTicker(""); setName(""); setQuantity(""); setPrice("");
   };
 
-  const removeHolding = (id: string) => setHoldings(holdings.filter(h => h.id !== id));
+  const removeHolding = (id: string) => {
+    if (editingId === id) cancelEdit();
+    setHoldings(holdings.filter(h => h.id !== id));
+  };
   const totalValue = holdings.reduce((s, h) => s + h.value, 0);
 
   const analysis = useMemo(() => {
@@ -135,15 +160,39 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
         {/* Add Holdings */}
         <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-4">
           <h2 className="text-sm font-bold text-slate-900 mb-3">Your Holdings</h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-3">
-            <input value={ticker} onChange={e => setTicker(e.target.value)} placeholder="Ticker (e.g. BHP)" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-            <input value={name} onChange={e => setName(e.target.value)} placeholder="Name (optional)" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-            <input value={quantity} onChange={e => setQuantity(e.target.value)} type="number" placeholder="Quantity" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-            <input value={price} onChange={e => setPrice(e.target.value)} type="number" placeholder="Price ($)" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-            <button onClick={addHolding} className="px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition-colors">Add</button>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-1">
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600">Ticker <span className="text-red-500">*</span></label>
+              <input value={ticker} onChange={e => setTicker(e.target.value)} placeholder="e.g. BHP" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600">Name <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. BHP Group" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600">Quantity <span className="text-red-500">*</span></label>
+              <input value={quantity} onChange={e => setQuantity(e.target.value)} type="number" placeholder="e.g. 100" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600">Price ($) <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input value={price} onChange={e => setPrice(e.target.value)} type="number" placeholder="e.g. 45.20" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600 invisible select-none">Action</label>
+              <div className="flex gap-1">
+                <button onClick={addHolding} disabled={!canAdd}
+                  className="flex-1 px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                  {editingId ? "Update" : "Add"}
+                </button>
+                {editingId && (
+                  <button onClick={cancelEdit} aria-label="Cancel edit" className="px-2 py-2 text-slate-500 hover:text-slate-800 border border-slate-200 rounded-lg text-sm">✕</button>
+                )}
+              </div>
+            </div>
           </div>
+          <p className="text-xs text-slate-400 mb-2"><span className="text-red-500">*</span> Required</p>
           {addError && (
-            <p role="alert" className="text-xs text-red-600 mt-1.5 mb-1">{addError}</p>
+            <p role="alert" className="text-xs text-red-600 mb-1">{addError}</p>
           )}
 
           {holdings.length > 0 && (
@@ -154,7 +203,10 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
                   <span className="text-slate-500">{h.name}</span>
                   <span className="text-slate-500">{h.quantity} x ${h.price.toFixed(2)}</span>
                   <span className="font-bold text-slate-900">${h.value.toLocaleString()}</span>
-                  <button onClick={() => removeHolding(h.id)} aria-label="Remove holding" className="text-slate-400 hover:text-red-500"><Icon name="x" size={14} /></button>
+                  <div className="flex items-center gap-1 ml-2">
+                    <button onClick={() => startEdit(h)} aria-label={`Edit ${h.ticker}`} className="text-slate-400 hover:text-indigo-500 transition-colors"><Icon name="edit" size={13} /></button>
+                    <button onClick={() => removeHolding(h.id)} aria-label={`Remove ${h.ticker}`} className="text-slate-400 hover:text-red-500 transition-colors"><Icon name="x" size={13} /></button>
+                  </div>
                 </div>
               ))}
               <div className="flex justify-between pt-2 border-t border-slate-200 text-sm font-bold text-slate-900">
@@ -165,7 +217,7 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
 
           {/* Broker selector */}
           <div className="flex items-center gap-3">
-            <label htmlFor="xray-broker" className="text-xs font-bold text-slate-700">Your current broker:</label>
+            <label htmlFor="xray-broker" className="text-xs font-bold text-slate-700">Your current broker <span className="font-normal text-slate-400">(optional — see fee-switching savings)</span>:</label>
             <select id="xray-broker" value={currentBroker} onChange={e => setCurrentBroker(e.target.value)} className="px-3 py-1.5 text-sm border border-slate-200 rounded-lg">
               <option value="">Select...</option>
               {brokers.map(b => <option key={b.slug} value={b.slug}>{b.name}</option>)}

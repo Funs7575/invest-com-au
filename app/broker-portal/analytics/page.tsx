@@ -322,7 +322,7 @@ export default function AnalyticsPage() {
                 (d.spend / 100).toFixed(2),
               ]);
               downloadCSV(`analytics-${days}-${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
-              toast("CSV export started", "success");
+              toast("Export started — your file will download shortly.", "success", 3000);
             }}
             className="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors flex items-center gap-1"
           >
@@ -352,6 +352,23 @@ export default function AnalyticsPage() {
           </button>
         ))}
       </div>
+
+      {/* Tab content wrapper — overlay shown while re-fetching after a range switch */}
+      <div className="relative">
+        {loading && stats.length > 0 && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 z-10 bg-white/70 backdrop-blur-[2px] flex items-start justify-center pt-20 rounded-xl pointer-events-none"
+          >
+            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full shadow text-xs font-semibold text-slate-500">
+              <svg className="w-3.5 h-3.5 animate-spin text-slate-400" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              </svg>
+              Loading…
+            </div>
+          </div>
+        )}
 
       {/* Overview Tab */}
       {tab === "overview" && (
@@ -999,6 +1016,7 @@ export default function AnalyticsPage() {
           </div>
         </>
       )}
+      </div>{/* end tab content wrapper */}
     </div>
   );
 }

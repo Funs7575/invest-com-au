@@ -421,6 +421,10 @@ function ROIEstimator({ rate, type, monthlyImpressions, avgCtrPct }: {
             onChange={e => setConvValue(Math.max(1, Number(e.target.value) || 50))}
             className="w-full px-2 py-1.5 border border-slate-200 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-300"
           />
+          {/* ADV-146: ROI estimator guidance hint */}
+          <p className="text-[0.55rem] text-slate-400 mt-0.5 leading-tight">
+            Typical LTV: $500–$2,000 · Avg CPL: $25–$80
+          </p>
         </div>
         <div>
           <label htmlFor="cn-conv-rate" className="text-[0.6rem] text-slate-500 font-medium block mb-0.5">Conv. Rate (%)</label>
@@ -528,6 +532,8 @@ export default function NewCampaignPage() {
   const [activeDays, setActiveDays] = useState<number[]>([0,1,2,3,4,5,6]);
   const [templates, setTemplates] = useState<{id: number; name: string; placement_id?: number; rate_cents?: number; daily_budget_cents?: number; total_budget_cents?: number; active_hours_start?: number | null; active_hours_end?: number | null; active_days?: number[] | null}[]>([]);
   const [savingTemplate, setSavingTemplate] = useState(false);
+  const [templateModalOpen, setTemplateModalOpen] = useState(false);
+  const [templateNameInput, setTemplateNameInput] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -603,7 +609,7 @@ export default function NewCampaignPage() {
     }
 
     if ((activeHoursStart !== null) !== (activeHoursEnd !== null)) {
-      setError("Dayparting requires both a start and end hour. Set both or clear both.");
+      setError("Both start and end hours are required. Set both or clear both.");
       return;
     }
 
@@ -639,6 +645,8 @@ export default function NewCampaignPage() {
       }
 
       toast("Campaign submitted for review", "success");
+      // ADV-079: delay redirect so user sees the confirmation toast
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       router.push("/broker-portal/campaigns");
     } catch {
       setError("Failed to create campaign.");
@@ -713,9 +721,21 @@ export default function NewCampaignPage() {
                       }}
                       className="mt-1 accent-slate-700"
                     />
+                    {/* ADV-145: placement thumbnail */}
+                    {vis ? (
+                      <div className={`shrink-0 w-12 h-12 rounded-lg flex flex-col items-center justify-center gap-0.5 bg-${vis.color}-50 border border-${vis.color}-100`}>
+                        <Icon name={vis.icon} size={18} className={`text-${vis.color}-500`} />
+                        <span className={`text-[0.45rem] font-bold uppercase tracking-wider text-${vis.color}-400`}>
+                          {vis.mockup}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="shrink-0 w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center">
+                        <Icon name="layout" size={18} className="text-slate-400" />
+                      </div>
+                    )}
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        {vis && <Icon name={vis.icon} size={14} className={`text-${vis.color}-500`} />}
                         <p className="text-sm font-semibold text-slate-900">{p.name}</p>
                       </div>
                       <div className="flex items-center gap-3 mt-1 flex-wrap">
@@ -785,7 +805,7 @@ export default function NewCampaignPage() {
             <div>
               <label htmlFor="cn-daily-budget" className="block text-sm font-medium text-slate-700 mb-1">
                 Daily Budget (AUD)
-                <span className="text-xs text-slate-400 ml-1">optional</span>
+                <span className="text-xs text-slate-400 italic ml-1">(optional)</span>
                 <InfoTip text="Maximum amount that can be charged per day. Prevents unexpected high-spend days. Leave blank for unlimited." />
               </label>
               <div className="relative">
@@ -805,7 +825,7 @@ export default function NewCampaignPage() {
             <div>
               <label htmlFor="cn-total-budget" className="block text-sm font-medium text-slate-700 mb-1">
                 Total Budget (AUD)
-                <span className="text-xs text-slate-400 ml-1">optional</span>
+                <span className="text-xs text-slate-400 italic ml-1">(optional)</span>
                 <InfoTip text="Maximum cumulative spend for the entire campaign. Campaign automatically pauses when reached." />
               </label>
               <div className="relative">
@@ -840,7 +860,7 @@ export default function NewCampaignPage() {
             <div>
               <label htmlFor="cn-end-date" className="block text-sm font-medium text-slate-700 mb-1">
                 End Date
-                <span className="text-xs text-slate-400 ml-1">optional</span>
+                <span className="text-xs text-slate-400 italic ml-1">(optional)</span>
               </label>
               <input
                 id="cn-end-date"
@@ -857,7 +877,7 @@ export default function NewCampaignPage() {
             <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
               <Icon name="clock" size={14} className="text-slate-400" />
               Scheduling &amp; Dayparting
-              <span className="text-xs text-slate-400 font-normal ml-1">optional</span>
+              <span className="text-xs text-slate-400 italic font-normal ml-1">(optional)</span>
               <InfoTip text="Control when your ads are shown. Only serve ads during specific hours or days of the week to optimize spend." />
             </h3>
             <div className="grid md:grid-cols-2 gap-4">
@@ -886,14 +906,34 @@ export default function NewCampaignPage() {
                     ))}
                   </select>
                 </div>
+                {/* ADV-087: dayparting inline validation + real-time preview */}
+                {(activeHoursStart !== null) !== (activeHoursEnd !== null) && (
+                  <p className="text-xs text-red-600 font-medium mt-1">Both start and end hours are required.</p>
+                )}
+                {activeHoursStart !== null && activeHoursEnd !== null && activeHoursStart === activeHoursEnd && (
+                  <p className="text-xs text-red-600 font-medium mt-1">Start and end hour must be different.</p>
+                )}
+                {activeHoursStart !== null && activeHoursEnd !== null && activeHoursStart !== activeHoursEnd && (() => {
+                  const fmt = (h: number) => {
+                    const ampm = h < 12 ? "AM" : "PM";
+                    const h12 = h % 12 === 0 ? 12 : h % 12;
+                    return `${h12}:00 ${ampm}`;
+                  };
+                  return (
+                    <p className="text-xs text-slate-500 mt-1">
+                      Preview: <span className="font-medium text-slate-700">{fmt(activeHoursStart)} – {fmt(activeHoursEnd)}</span> UTC
+                    </p>
+                  );
+                })()}
                 {activeHoursStart !== null && activeHoursEnd === null && (
-                  <p className="text-xs text-amber-600 mt-1">Set an end hour — start hour alone has no effect.</p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Preview: <span className="font-medium text-slate-500">{(() => { const h = activeHoursStart; const ampm = h < 12 ? "AM" : "PM"; const h12 = h % 12 === 0 ? 12 : h % 12; return `${h12}:00 ${ampm}`; })()} – <span className="text-red-400">[end required]</span></span>
+                  </p>
                 )}
                 {activeHoursEnd !== null && activeHoursStart === null && (
-                  <p className="text-xs text-amber-600 mt-1">Set a start hour — end hour alone has no effect.</p>
-                )}
-                {activeHoursStart !== null && activeHoursEnd !== null && activeHoursStart !== activeHoursEnd && (
-                  <p className="text-xs text-slate-500 mt-1">Ads will run {String(activeHoursStart).padStart(2, "0")}:00–{String(activeHoursEnd).padStart(2, "0")}:00 UTC</p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Preview: <span className="text-red-400">[start required]</span> – <span className="font-medium text-slate-500">{(() => { const h = activeHoursEnd; const ampm = h < 12 ? "AM" : "PM"; const h12 = h % 12 === 0 ? 12 : h % 12; return `${h12}:00 ${ampm}`; })()} UTC</span>
+                  </p>
                 )}
               </div>
               <div>
@@ -958,35 +998,13 @@ export default function NewCampaignPage() {
             >
               {submitting ? "Submitting..." : "Submit for Review"}
             </button>
+            {/* ADV-080: custom modal replaces native prompt() */}
             <button
               type="button"
               disabled={savingTemplate || !placementId}
-              onClick={async () => {
-                const tplName = prompt("Template name:");
-                if (!tplName) return;
-                setSavingTemplate(true);
-                const supabase = createClient();
-                await supabase.from("campaign_templates").insert({
-                  broker_slug: brokerSlug,
-                  name: tplName,
-                  placement_id: placementId,
-                  inventory_type: selectedPlacement?.inventory_type || "cpc",
-                  rate_cents: rateCents ? Math.round(parseFloat(rateCents) * 100) : null,
-                  daily_budget_cents: dailyBudget ? Math.round(parseFloat(dailyBudget) * 100) : null,
-                  total_budget_cents: totalBudget ? Math.round(parseFloat(totalBudget) * 100) : null,
-                  active_hours_start: activeHoursStart,
-                  active_hours_end: activeHoursEnd,
-                  active_days: activeDays.length < 7 ? activeDays : null,
-                });
-                setSavingTemplate(false);
-                toast(`Template "${tplName}" saved`, "success");
-                // Reload templates
-                const { data: tpl } = await supabase
-                  .from("campaign_templates")
-                  .select("*")
-                  .eq("broker_slug", brokerSlug)
-                  .order("created_at", { ascending: false });
-                setTemplates((tpl || []) as typeof templates);
+              onClick={() => {
+                setTemplateNameInput("");
+                setTemplateModalOpen(true);
               }}
               className="px-4 py-2.5 bg-blue-50 text-blue-700 font-bold text-sm rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
             >
@@ -1007,6 +1025,84 @@ export default function NewCampaignPage() {
           </p>
         </form>
       </div>
+
+      {/* ─────── ADV-080: Save as Template modal ─────── */}
+      {templateModalOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setTemplateModalOpen(false)} />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="tpl-modal-title"
+            className="relative bg-white border border-slate-200 rounded-xl shadow-2xl max-w-sm w-full p-6"
+          >
+            <h3 id="tpl-modal-title" className="text-base font-bold text-slate-900 mb-1">Save as Template</h3>
+            <p className="text-xs text-slate-500 mb-4">Give this template a name so you can quickly re-use these settings.</p>
+            <label htmlFor="tpl-name-input" className="block text-sm font-medium text-slate-700 mb-1">
+              Template name <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="tpl-name-input"
+              type="text"
+              maxLength={50}
+              autoFocus
+              value={templateNameInput}
+              onChange={(e) => setTemplateNameInput(e.target.value.slice(0, 50))}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") setTemplateModalOpen(false);
+              }}
+              placeholder="e.g. Compare Q1 — High Bid"
+              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-300/40 focus:border-blue-400 mb-1"
+            />
+            <p className="text-xs text-slate-400 text-right mb-5">
+              {templateNameInput.length} / 50
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setTemplateModalOpen(false)}
+                className="px-4 py-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={!templateNameInput.trim() || savingTemplate}
+                onClick={async () => {
+                  const tplName = templateNameInput.trim();
+                  if (!tplName) return;
+                  setTemplateModalOpen(false);
+                  setSavingTemplate(true);
+                  const supabase = createClient();
+                  await supabase.from("campaign_templates").insert({
+                    broker_slug: brokerSlug,
+                    name: tplName,
+                    placement_id: placementId,
+                    inventory_type: selectedPlacement?.inventory_type || "cpc",
+                    rate_cents: rateCents ? Math.round(parseFloat(rateCents) * 100) : null,
+                    daily_budget_cents: dailyBudget ? Math.round(parseFloat(dailyBudget) * 100) : null,
+                    total_budget_cents: totalBudget ? Math.round(parseFloat(totalBudget) * 100) : null,
+                    active_hours_start: activeHoursStart,
+                    active_hours_end: activeHoursEnd,
+                    active_days: activeDays.length < 7 ? activeDays : null,
+                  });
+                  setSavingTemplate(false);
+                  toast(`Template "${tplName}" saved`, "success");
+                  const { data: tpl } = await supabase
+                    .from("campaign_templates")
+                    .select("*")
+                    .eq("broker_slug", brokerSlug)
+                    .order("created_at", { ascending: false });
+                  setTemplates((tpl || []) as typeof templates);
+                }}
+                className="px-4 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {savingTemplate ? "Saving…" : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ─────── RIGHT: Live Preview ─────── */}
       <div className="w-full lg:w-[380px] xl:w-[420px] shrink-0">
