@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import EtfOverlapDetector from "@/components/EtfOverlapDetector";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { calculatorJsonLd } from "@/lib/schema-markup";
@@ -47,6 +48,13 @@ export default function EtfOverlapPage() {
       </div>
 
       <EtfOverlapDetector />
+
+      <CalculatorLeadCapture
+        calcSlug="etf-overlap"
+        calcTitle="ETF Overlap"
+        need="planning"
+        contextKeys={["etf_portfolio", "diversification"]}
+      />
 
       <p className="text-[11px] text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
       </div>

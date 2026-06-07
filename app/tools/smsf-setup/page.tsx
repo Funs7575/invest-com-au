@@ -12,6 +12,7 @@ import {
 } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 export const revalidate = 86400;
 
@@ -139,6 +140,12 @@ export default function SmsfSetupPage() {
         </div>
       </div>
       <div className="container-custom pb-8">
+        <CalculatorLeadCapture
+          calcSlug="smsf-setup"
+          calcTitle="SMSF Setup Decision"
+          need="smsf"
+          contextKeys={["smsf_setup", "self_managed_super"]}
+        />
         <ComplianceFooter variant="calculator" />
       </div>
     </>

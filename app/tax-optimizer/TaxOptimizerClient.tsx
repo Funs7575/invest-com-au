@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import type { Broker } from "@/lib/types";
 
 interface TaxHolding {
@@ -329,12 +330,12 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
               </div>
             )}
 
-            {/* Advisor CTA */}
-            <div className="bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-200 rounded-xl p-4">
-              <p className="text-sm font-bold text-violet-900">Want personalised tax advice?</p>
-              <p className="text-xs text-violet-600 mb-2">A tax agent specialising in investments can review your full position and identify savings specific to your situation.</p>
-              <Link href="/find-advisor?type=tax-agent" className="inline-block px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700">Find a Tax Agent →</Link>
-            </div>
+            <CalculatorLeadCapture
+              calcSlug="tax-optimizer"
+              calcTitle="tax optimization"
+              need="tax"
+              contextKeys={["cgt", "capital-gains", "investment", "tax"]}
+            />
           </div>
         )}
       </div>

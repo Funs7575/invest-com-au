@@ -12,6 +12,7 @@ import {
 } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 export const revalidate = 86400;
 
@@ -117,6 +118,13 @@ export default function SalarySacrificePage() {
             each financial year. Always seek professional financial or tax
             advice before making superannuation decisions.
           </div>
+
+          <CalculatorLeadCapture
+            calcSlug="salary-sacrifice"
+            calcTitle="Salary Sacrifice Decision"
+            need="planning"
+            contextKeys={["salary_sacrifice", "super_contributions"]}
+          />
 
           <div className="mt-10">
             <h2 className="text-xl font-extrabold text-slate-900 mb-5">

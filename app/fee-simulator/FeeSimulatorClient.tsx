@@ -13,6 +13,7 @@ import {
   trackPageDuration,
   AFFILIATE_REL,
 } from "@/lib/tracking";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import type { Broker } from "@/lib/types";
 
 /* ─── Fee calculation (same logic as switching calculator) ─── */
@@ -498,6 +499,13 @@ export default function FeeSimulatorClient({ brokers }: { brokers: Broker[] }) {
                 </div>
               </div>
             )}
+
+            <CalculatorLeadCapture
+              calcSlug="fee-simulator"
+              calcTitle="fee simulation"
+              need="planning"
+              contextKeys={["brokerage-fees", "investment", "broker-switch"]}
+            />
 
             {/* SEO content */}
             <div className="mt-8 space-y-5 text-sm text-slate-600 leading-relaxed">

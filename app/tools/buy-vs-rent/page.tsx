@@ -12,6 +12,7 @@ import {
 } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 export const revalidate = 86400;
 
@@ -113,6 +114,13 @@ export default function BuyVsRentPage() {
             personal financial situation, objectives, or needs. Always seek
             professional financial advice before making property decisions.
           </div>
+
+          <CalculatorLeadCapture
+            calcSlug="buy-vs-rent"
+            calcTitle="Buy vs Rent"
+            need="mortgage"
+            contextKeys={["property_purchase", "first_home"]}
+          />
 
           <div className="mt-10">
             <h2 className="text-xl font-extrabold text-slate-900 mb-5">

@@ -683,5 +683,11 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-252]** `aria-busy` sweep on 9 submit buttons + aria-live on 3 loading texts — ManualBalancesPanel, FeaturedPlacementBookingForm, WholesaleCertClient, ListsClient, AlertsClient, HoldingsClient, CompareSelectionBar, ComplaintsIntakeForm, DataRightsForm, SponsoredClient submit buttons all get `aria-busy`. BookConsultationPanel, broker analytics, JobsClient loading texts get `aria-live="polite" aria-atomic="true"`. Also `role="status"` on FeatureFlagsClient save confirmation span.
 
+**[ADV-253]** `inputMode` sweep on 28 public-facing number inputs — All public `type="number"` inputs missing `inputMode` across 28 files get `inputMode="decimal"` (financial amounts) or `inputMode="numeric"` (whole-number counts). Covers 11 tool calculators (CGT, ETP, DASP, visa, mortgage-stress, salary-sacrifice-optimiser, currency-converter, alternative-returns, should-i-switch, withholding-tax, subscription-audit), 4 content calculators (lump-sum, negative-gearing, FIRB DASP, franking), compare, advisor-signup, broker-review, business-finance enquiry, rate-alert, startup-signup, get-matched, lic-screener, quote-builder, sell-business. Also fixes ternary-with-side-effects lint warning in MortgageStressTestClient.
+
+**[ADV-254]** FAQ JSON-LD on /property/foreign-investment (FIRB guide) — GEO pivot: FAQPage structured data added to the FIRB foreign investment guide. 6 FAQ entries from FIRB_FAQS covering dwelling restrictions, approval timelines, fees, penalties, Victorian surcharges, and temporary-resident rules. Makes the page citable by AI for "can foreigners buy property in Australia" queries. `app/property/foreign-investment/page.tsx`
+
+**[ADV-255]** `CalculatorLeadCapture` on 4 remaining tool pages — buy-vs-rent (need=mortgage), portfolio-stress-test (need=planning), etf-overlap (need=planning), salary-sacrifice decision tree (need=planning), smsf-setup decision tree (need=smsf). Every high-intent tool page now has a post-result advisor lead capture converting calculation intent into free advisor reviews.
+
 ---
 

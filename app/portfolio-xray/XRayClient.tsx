@@ -7,6 +7,7 @@ import BrokerLogo from "@/components/BrokerLogo";
 import { getAffiliateLink, AFFILIATE_REL, trackClick } from "@/lib/tracking";
 import { TICKER_MAP } from "@/lib/ticker-sectors";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import type { Broker } from "@/lib/types";
 
 interface Holding {
@@ -323,14 +324,12 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
               </div>
             )}
 
-            {/* Advisor CTA */}
-            {totalValue > 100000 && (
-              <div className="bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-200 rounded-xl p-4">
-                <p className="text-sm font-bold text-violet-900">Portfolio over $100k? Consider professional advice</p>
-                <p className="text-xs text-violet-600 mb-2">A financial planner can optimise your structure, tax position, and asset allocation.</p>
-                <Link href="/find-advisor" className="inline-block px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700">Find an Advisor →</Link>
-              </div>
-            )}
+            <CalculatorLeadCapture
+              calcSlug="portfolio-xray"
+              calcTitle="Portfolio X-Ray"
+              need="planning"
+              contextKeys={["portfolio", "asset-allocation", "investment"]}
+            />
           </div>
         )}
       </div>

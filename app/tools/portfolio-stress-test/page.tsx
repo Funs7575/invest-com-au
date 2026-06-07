@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PortfolioStressTest from "@/components/PortfolioStressTest";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { calculatorJsonLd } from "@/lib/schema-markup";
@@ -47,6 +48,13 @@ export default function PortfolioStressTestPage() {
       </div>
 
       <PortfolioStressTest />
+
+      <CalculatorLeadCapture
+        calcSlug="portfolio-stress-test"
+        calcTitle="Portfolio Stress Test"
+        need="planning"
+        contextKeys={["portfolio_review", "diversification"]}
+      />
 
       <p className="text-[11px] text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
       </div>
