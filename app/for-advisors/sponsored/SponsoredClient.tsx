@@ -288,6 +288,7 @@ export default function SponsoredClient() {
               <button
                 type="submit"
                 disabled={!selectedPackage || submitting}
+                aria-busy={submitting}
                 className="w-full py-3 bg-violet-600 text-white font-bold rounded-xl text-sm hover:bg-violet-700 transition-all disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed"
               >
                 {submitting ? "Submitting..." : "Submit Booking Request"}

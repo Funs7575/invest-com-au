@@ -663,11 +663,25 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-242]** Touch target enlargements on portal/portfolio/push-notification buttons — LeadsTab lead-status buttons (px-2 py-1 → px-3 py-1.5), PortfolioClient remove-holding button (p-1 → p-2), PushNotificationPrompt dismiss/close buttons (p-1 → p-2). WCAG 2.5.5 minimum 44×44 px.
 
-**[ADV-243]** Financial planner CTAs on spouse-contributions + compare-guide super pages — both pages mentioned advisers in body copy but lacked a Link. Second CTA slot replaced with "Find a Financial Planner → /advisors/financial-planners" to provide a conversion path for complex super decisions.
+**[ADV-243]** `role="dialog"` + `aria-modal` + `aria-labelledby` on 7 modal overlays — bd-pipeline edit deal, content-calendar AI-draft, legal edit document, finance edit transaction, marketplace packages edit, broker-portal ab-tests confirm, broker-portal creatives delete confirmation. All inner dialog panels now properly identified for screen reader modal navigation. `app/admin/bd-pipeline/page.tsx`, `app/admin/content-calendar/page.tsx`, `app/admin/legal/page.tsx`, `app/admin/finance/page.tsx`, `app/admin/marketplace/packages/page.tsx`, `app/broker-portal/ab-tests/page.tsx`, `app/broker-portal/creatives/page.tsx`
 
-**[ADV-244]** FAQ JSON-LD on /for-advisors, /for-providers, /advertise/packages — GEO pivot: FAQPage structured data added to 3 commercial pages that had FAQ sections but no schema markup, making them citable by Google AI for queries like "cost of advisor directory listing" and "CPD provider AFSL Australia".
+**[ADV-244]** `inputMode="decimal"` on all admin number inputs — bulk sweep across 50+ `type="number"` inputs in `app/admin/` covering all admin form pages. The `Field` component in admin/brokers/page.tsx already spreads props, so inputMode passes through correctly. Mobile/tablet admin users now see numeric keyboard instead of full qwerty.
 
-**[ADV-245]** `aria-live` on loading status text in 3 components — BookConsultationPanel, broker analytics, and JobsClient loading paragraphs/spans now have `aria-live="polite" aria-atomic="true"` so screen readers announce when data is loading without interrupting user focus.
+**[ADV-245]** Empty state CTAs for FeedTab, ReviewsTab, OrgTeamTab, broker creatives — FeedTab: "Write your first post" button wired to `setComposing(true)`. ReviewsTab: "Send an invitation" button scrolls to invite form. OrgTeamTab: "Invite a team member" button scrolls to email input. Broker creatives: "Add your first asset" scrolls to URL input. All replace dead-end text messages.
+
+**[ADV-246]** Loading skeleton files for 16 portal/compare/portfolio routes — `loading.tsx` shape-matched animate-pulse skeletons with `aria-busy="true"` created for 9 broker portal tabs (ab-tests, campaigns, creative-insights, notifications, placements, reports, sponsored-slots, support, webhooks), 2 startup portal pages (esic-verification, profile), 4 compare pages (etfs, insurance, non-residents, super), and portfolio. Reduces perceived load time and prevents layout shift.
+
+**[ADV-247]** `aria-live="polite"` on 3 loading status texts — broker analytics inline "Loading…" span, briefs consultation panel "Loading availability…" paragraph, and firm-portal jobs "Loading…" paragraph now announce state changes to screen readers.
+
+**[ADV-248]** Conversion CTAs on super hub and tools page — `super/page.tsx`: added "Get personalised super advice" section with "Find a Super Specialist" + "Compare Super Funds" CTAs (page previously had zero advisor-discovery touchpoints). `tools/ToolsClient.tsx`: added "Want personalised advice?" closing section with "Find a Financial Planner" + "Get matched" CTAs.
+
+**[ADV-249]** Empty-state CTAs for goals and property-holdings + workspace router fix — GoalsClient and PropertyHoldingsClient empty states now show a styled button that smooth-scrolls to the add-form section instead of dead-end italic text. SelectWorkspaceClient replaced `window.location.href` with `router.push() + router.refresh()` for smooth client-side navigation consistent with the rest of the codebase.
+
+**[ADV-250]** Financial planner CTAs on spouse-contributions + compare-guide super pages — both pages mentioned advisers in body copy but lacked a Link. Second CTA slot replaced with "Find a Financial Planner → /advisors/financial-planners" to provide a conversion path for complex super decisions.
+
+**[ADV-251]** FAQ JSON-LD on /for-advisors, /for-providers, /advertise/packages — GEO pivot: FAQPage structured data added to 3 commercial pages that had FAQ sections but no schema markup, making them citable by Google AI for queries like "cost of advisor directory listing" and "CPD provider AFSL Australia".
+
+**[ADV-252]** `aria-busy` sweep on 9 submit buttons + aria-live on 3 loading texts — ManualBalancesPanel, FeaturedPlacementBookingForm, WholesaleCertClient, ListsClient, AlertsClient, HoldingsClient, CompareSelectionBar, ComplaintsIntakeForm, DataRightsForm, SponsoredClient submit buttons all get `aria-busy`. BookConsultationPanel, broker analytics, JobsClient loading texts get `aria-live="polite" aria-atomic="true"`. Also `role="status"` on FeatureFlagsClient save confirmation span.
 
 ---
 
