@@ -737,7 +737,7 @@ export default async function LoopStatusPage() {
               Yellow rows = code was committed but nothing actually merged (the &quot;stuck&quot; signature).
             </p>
             <div className="mt-3 overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Stream hit rates">
                 <thead className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">
                   <tr>
                     <th className="py-1.5 text-left">Stream</th>
@@ -818,7 +818,7 @@ export default async function LoopStatusPage() {
             Each stream is one alphabetical bucket of audit-remediation work (e.g. Stream A is auth-related, Stream W is hub pages). Status comes from the queue file.
           </p>
           <div className="mt-3 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Streams in flight">
               <thead className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">
                 <tr>
                   <th className="py-1.5 text-left">Stream</th>
@@ -889,7 +889,7 @@ export default async function LoopStatusPage() {
               One row per day. Loop commits = code changes from the robot, all commits = total to main, est tokens = rough cost.
             </p>
             <div className="mt-3 overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Spend history">
                 <thead className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">
                   <tr>
                     <th className="py-1.5 text-left">Date</th>

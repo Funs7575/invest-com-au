@@ -68,7 +68,9 @@ export default function AdminProSubscribersPage() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- load is stable; deps would cause infinite loop
+  useEffect(() => { void load(); }, []);
+   
   useEffect(() => { setPage(0); setSelected(new Set()); }, [search, statusFilter]);
 
   // Stats
@@ -211,7 +213,7 @@ export default function AdminProSubscribersPage() {
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-3 mb-4">
         <input
-          type="text"
+          type="search"
           placeholder="Search by email or Stripe ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -252,7 +254,7 @@ export default function AdminProSubscribersPage() {
       {/* Table */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Pro subscribers">
             <thead>
               <tr className="bg-slate-50 text-left">
                 <th className="px-4 py-3 w-10">

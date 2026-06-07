@@ -36,7 +36,7 @@ export default async function DunningDrillDown() {
           <h2 className="text-sm font-bold text-slate-900">Failed top-ups</h2>
           <p className="text-xs text-slate-500">Each row represents a failed Stripe charge currently in the dunning sequence.</p>
         </header>
-        <table className="w-full text-xs">
+        <table className="w-full text-xs" aria-label="Dunning records">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
               <th className="px-4 py-2 text-left font-semibold text-slate-600">ID</th>

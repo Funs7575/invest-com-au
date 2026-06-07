@@ -200,7 +200,7 @@ export default function CompareClient() {
       {/* Comparison Table */}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full" aria-label="Broker feature comparison">
             {/* Broker headers */}
             <thead>
               <tr className="border-b border-slate-200">

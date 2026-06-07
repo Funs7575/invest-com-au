@@ -38,7 +38,7 @@ function formatBrokerName(slug: string): string {
   return slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, " ");
 }
 
-export default function StoriesClient({ stories, brokers }: StoriesClientProps) {
+export default function StoriesClient({ stories, brokers: _brokers }: StoriesClientProps) {
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
 
@@ -78,7 +78,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
 
         {/* Search */}
         <input
-          type="text"
+          type="search"
           placeholder="Search by platform name, title, or author..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}

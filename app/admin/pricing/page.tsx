@@ -256,7 +256,7 @@ export default function AdminPricingPage() {
       {/* Pricing Table */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Pricing by vertical">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 font-semibold text-slate-700">Vertical</th>

@@ -198,7 +198,7 @@ export default function ETFScreenerClient() {
               suggestions={[{ label: "Reset filters", onClick: () => { setAssetClass("all"); setProvider("all"); setMaxMER(2.0); setFrankingOnly(false); setSearch(""); } }]}
             />
           ) : (
-            <table className="w-full text-sm border-collapse min-w-[700px]">
+            <table className="w-full text-sm border-collapse min-w-[700px]" aria-label="ETF screener results">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th

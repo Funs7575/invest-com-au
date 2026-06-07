@@ -266,7 +266,7 @@ export default function SuperCompareClient() {
 
         {/* ─── Desktop table ─── */}
         <div className="hidden md:block border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Super fund comparison">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-left">
                 <th

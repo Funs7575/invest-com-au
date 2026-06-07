@@ -318,7 +318,7 @@ export default function AffiliateLinksPage() {
             <TableSkeleton rows={5} cols={7} />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Affiliate links">
                 <thead className="bg-slate-50">
                   {activeTab === "links" ? (
                     <tr>

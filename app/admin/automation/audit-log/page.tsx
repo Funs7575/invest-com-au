@@ -87,7 +87,7 @@ export default async function AuditLogPage({
         </div>
 
         <section className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Automation audit log">
             <thead>
               <tr className="text-[0.6rem] uppercase tracking-wider text-slate-500 border-b border-slate-100 bg-slate-50">
                 <th className="px-3 py-2 text-left font-semibold">When</th>

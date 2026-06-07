@@ -559,7 +559,7 @@ export default function FunnelAnalyticsPage() {
             />
           </div>
           <div className="overflow-auto">
-            <table className="w-full">
+            <table className="w-full" aria-label="Marketplace funnel by placement">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Placement</th>
@@ -849,7 +849,7 @@ export default function FunnelAnalyticsPage() {
                     <div className="p-8 text-center text-sm text-slate-400">No weekly data available.</div>
                   ) : (
                     <div className="overflow-auto">
-                      <table className="w-full">
+                      <table className="w-full" aria-label="Weekly cohort performance">
                         <thead className="bg-slate-50">
                           <tr>
                             <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Week</th>
@@ -957,7 +957,7 @@ export default function FunnelAnalyticsPage() {
                     <h2 className="text-lg font-semibold text-slate-900">All Brokers by Conversion Rate</h2>
                   </div>
                   <div className="overflow-auto">
-                    <table className="w-full">
+                    <table className="w-full" aria-label="Brokers ranked by conversion rate">
                       <thead className="bg-slate-50">
                         <tr>
                           <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">

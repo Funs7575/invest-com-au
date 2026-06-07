@@ -104,7 +104,7 @@ export default function TeamAvailabilityGrid({ slots, memberCount }: Props) {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6">
       <div className="overflow-x-auto">
-        <table className="text-xs text-slate-700 min-w-full">
+        <table className="text-xs text-slate-700 min-w-full" aria-label="Team availability grid">
           <thead>
             <tr>
               <th scope="col" className="text-left font-semibold pr-2 pb-2 sticky left-0 bg-white">

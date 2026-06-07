@@ -214,7 +214,7 @@ export default function MethodologyPage() {
                 rates:
               </p>
               <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Sponsored placement rates by tier">
                   <thead className="bg-slate-50 text-slate-700">
                     <tr>
                       <th scope="col" className="text-left px-4 py-3 font-semibold">Tier</th>

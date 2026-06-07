@@ -186,7 +186,7 @@ export default function CalculatorConfigPage() {
             </p>
             {Array.isArray(config.tax_brackets) && config.tax_brackets.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
+                <table className="w-full text-sm text-left" aria-label="Tax brackets">
                   <thead>
                     <tr className="border-b border-slate-300">
                       {Object.keys(config.tax_brackets[0] || {}).map((key) => (

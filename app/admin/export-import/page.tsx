@@ -275,7 +275,7 @@ export default function ExportImportPage() {
                 Import Preview
               </h3>
               <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Import preview">
                   <thead>
                     <tr className="border-b border-slate-200">
                       <th className="px-4 py-2 text-left text-slate-500 font-medium">

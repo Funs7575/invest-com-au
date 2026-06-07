@@ -162,7 +162,7 @@ export default function AdminRiskFlagsPage() {
         {loading ? (
           <p className="text-sm text-slate-500">Loading…</p>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Risk flags">
             <thead className="text-xs uppercase tracking-wider text-slate-500">
               <tr>
                 <th className="text-left py-2 pr-3">Pattern</th>

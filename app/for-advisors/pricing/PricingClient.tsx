@@ -345,7 +345,7 @@ export default function PricingClient() {
           </h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-            <table className="w-full text-sm border-collapse bg-white">
+            <table className="w-full text-sm border-collapse bg-white" aria-label="Full feature comparison by plan tier">
               <thead>
                 <tr>
                   <th scope="col" className="text-left px-4 py-3 text-slate-500 font-semibold w-48 border-b border-slate-200 bg-slate-50">

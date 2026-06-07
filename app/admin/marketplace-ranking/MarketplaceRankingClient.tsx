@@ -138,7 +138,7 @@ function SurfaceSection({
             <code>lib/marketplace-ranking</code> apply until rows are seeded.
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Marketplace ranking">
             <thead className="bg-slate-50 text-xs text-slate-500 uppercase">
               <tr>
                 <th className="text-left px-4 py-2 font-medium">Signal</th>

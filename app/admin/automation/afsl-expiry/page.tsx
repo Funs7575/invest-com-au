@@ -26,7 +26,7 @@ export default async function AfslExpiryDrillDown() {
             Without it the cron is a safe no-op.
           </p>
         </header>
-        <table className="w-full text-xs">
+        <table className="w-full text-xs" aria-label="AFSL-flagged advisors">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
               <th className="px-4 py-2 text-left font-semibold text-slate-600">ID</th>

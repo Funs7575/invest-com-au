@@ -36,7 +36,7 @@ export default async function AdminDisputesPage() {
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Disputes">
           <thead className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wider">
             <tr>
               <th className="text-left p-3">Brief</th>

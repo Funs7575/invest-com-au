@@ -72,7 +72,7 @@ export default async function AttributionPage() {
               {rows.length === 0 ? "No touches recorded yet — wire /api/attribution/touch into client nav" : "Sorted by touch volume"}
             </p>
           </header>
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Automation attribution">
             <thead>
               <tr className="text-[0.6rem] uppercase tracking-wider text-slate-500 border-b border-slate-100">
                 <th className="px-4 py-2 text-left font-semibold">Channel</th>

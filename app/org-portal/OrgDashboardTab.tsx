@@ -290,7 +290,7 @@ export default function OrgDashboardTab({ org, onNavigate }: Props) {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
+            <table className="w-full text-left" aria-label="Organisation activity">
               <thead>
                 <tr className="bg-slate-50 text-[0.62rem] font-semibold text-slate-500 uppercase tracking-wider">
                   <th scope="col" className="px-4 py-2.5">Student</th>

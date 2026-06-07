@@ -421,7 +421,7 @@ export default function TeamMembersPage() {
           {/* Search */}
           <div className="mb-4">
             <input
-              type="text"
+              type="search"
               placeholder="Search by name, slug, or role..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -430,7 +430,7 @@ export default function TeamMembersPage() {
           </div>
 
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-            <table className="w-full">
+            <table className="w-full" aria-label="Team members">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">

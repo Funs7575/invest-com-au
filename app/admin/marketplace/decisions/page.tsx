@@ -274,7 +274,7 @@ export default function AllocationDecisionsPage() {
             </div>
           ) : (
             <div className="overflow-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Marketplace allocation decisions">
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">

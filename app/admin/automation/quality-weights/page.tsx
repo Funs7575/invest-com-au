@@ -36,7 +36,7 @@ export default async function QualityWeightsDrillDown() {
           </p>
         </header>
         {weights && weights.length > 0 ? (
-          <table className="w-full text-xs">
+          <table className="w-full text-xs" aria-label="Automation quality weights">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
                 <th className="px-4 py-2 text-left font-semibold text-slate-600">Signal</th>

@@ -352,7 +352,7 @@ export default function AdminArticlesPage() {
           {/* Search + Status Filter */}
           <div className="flex flex-col sm:flex-row gap-3 mb-4">
             <input
-              type="text"
+              type="search"
               placeholder="Search articles by title, slug, or category..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}

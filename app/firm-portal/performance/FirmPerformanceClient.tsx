@@ -193,7 +193,7 @@ export default function FirmPerformanceClient({ summary: initialSummary }: Props
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm" aria-label="Firm performance metrics">
               <thead>
                 <tr className="text-[11px] uppercase tracking-wide text-slate-400">
                   <th scope="col" className="px-4 py-2.5 font-medium">Advisor</th>

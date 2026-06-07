@@ -157,7 +157,7 @@ export default function LoanRatesEditor() {
       )}
 
       <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Loan rates">
           <thead className="bg-slate-50 text-xs font-semibold text-slate-600">
             <tr>
               <th className="text-left px-3 py-2">Lender</th>

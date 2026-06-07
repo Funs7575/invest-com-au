@@ -87,7 +87,7 @@ export default function ListingsBulkTable({ initialRows }: { initialRows: Listin
           </p>
         </header>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-xs" aria-label="Bulk listings">
             <thead className="bg-slate-50 border-b border-slate-100">
               <tr>
                 <th className="px-3 py-2 w-6">

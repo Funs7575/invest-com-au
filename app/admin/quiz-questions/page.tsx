@@ -245,7 +245,7 @@ export default function QuizQuestionsPage() {
         </div>
 
         <input
-          type="text"
+          type="search"
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -415,7 +415,7 @@ export default function QuizQuestionsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Quiz questions">
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 w-16 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("order_index")}>

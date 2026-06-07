@@ -649,7 +649,7 @@ export default function AdminConsultationsPage() {
         /* Consultations table */
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Consultations">
               <thead>
                 <tr className="bg-slate-50 text-left">
                   <th className="px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("title")}>
@@ -757,7 +757,7 @@ export default function AdminConsultationsPage() {
         /* Bookings table */
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Consultation bookings">
               <thead>
                 <tr className="bg-slate-50 text-left">
                   <th className="px-4 py-3 font-semibold text-slate-600">

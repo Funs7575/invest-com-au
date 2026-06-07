@@ -34,7 +34,7 @@ export default function DTASearchTable({ countries, defaultRates, dtaDisclaimer 
       {/* Search bar */}
       <div className="mb-4 relative">
         <input
-          type="text"
+          type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search your country (e.g. United States, Japan, UK…)"

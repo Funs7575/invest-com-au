@@ -515,7 +515,7 @@ export default function CreativeInsightsPage() {
         </div>
         <div className="relative">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[700px]">
+            <table className="w-full text-sm min-w-[700px]" aria-label="Creative performance insights">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                   <th scope="col" className="px-5 py-3 text-left">Creative</th>

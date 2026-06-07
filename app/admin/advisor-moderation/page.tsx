@@ -124,7 +124,7 @@ export default function AdvisorModerationPage() {
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Pending advisor signups">
             <thead className="bg-slate-50 text-left">
               <tr>
                 <th className="px-4 py-3 w-10">

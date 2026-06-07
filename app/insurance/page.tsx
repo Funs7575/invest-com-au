@@ -138,7 +138,7 @@ export default function InsuranceHubPage() {
               specific situation.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+              <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Insurance comparison">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700 w-1/3">

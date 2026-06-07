@@ -166,7 +166,7 @@ export default function ReconciliationPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Broker wallet reconciliation">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                   <th className="px-4 py-3 text-left">Broker</th>

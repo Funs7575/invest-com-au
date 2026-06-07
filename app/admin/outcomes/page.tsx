@@ -103,7 +103,7 @@ export default async function AdminOutcomesPage() {
       </div>
 
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Outcomes">
           <thead className="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-600">
             <tr>
               <th className="text-left p-3">Provider</th>

@@ -184,7 +184,7 @@ export default function MarketplaceOverviewPage() {
                 <div className="p-8 text-center text-sm text-slate-400">No transactions yet.</div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm" aria-label="Recent wallet transactions">
                     <thead>
                       <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                         <th className="px-5 py-3 text-left">Date</th>

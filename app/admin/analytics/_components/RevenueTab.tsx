@@ -133,7 +133,7 @@ export default function RevenueTab({
             <h2 className="text-lg font-semibold text-slate-900">Top Spending Brokers</h2>
             <p className="text-xs text-slate-500">Marketplace campaign spend with 6-month trends.</p>
           </div>
-          <table className="w-full">
+          <table className="w-full" aria-label="Top spending brokers">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Broker</th>
@@ -163,7 +163,7 @@ export default function RevenueTab({
             <h2 className="text-lg font-semibold text-slate-900">Revenue Projections</h2>
             <p className="text-xs text-slate-500 mt-0.5">Estimated based on click velocity and average EPC (${avgEpc.toFixed(2)})</p>
           </div>
-          <table className="w-full">
+          <table className="w-full" aria-label="Revenue projections">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Period</th>
@@ -236,7 +236,7 @@ export default function RevenueTab({
             </div>
           </div>
         ) : (
-          <table className="w-full">
+          <table className="w-full" aria-label="Estimated revenue by broker">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Broker</th>

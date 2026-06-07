@@ -267,7 +267,7 @@ export default function QuizWeightsPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full" aria-label="Quiz broker weights">
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 whitespace-nowrap">

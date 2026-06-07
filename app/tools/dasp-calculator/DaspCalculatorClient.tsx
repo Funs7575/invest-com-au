@@ -239,7 +239,7 @@ export default function DaspCalculatorClient() {
             <p className="text-[0.65rem] font-extrabold text-slate-500 uppercase tracking-wide mb-2">
               ATO DASP withholding rates (on or after 1 July 2017){/* // dated-ok — fixed legislative DASP rate-change date, never changes */}
             </p>
-            <table className="w-full text-xs">
+            <table className="w-full text-xs" aria-label="DASP tax calculation">
               <thead>
                 <tr className="border-b border-slate-200">
                   <th scope="col" className="text-left pb-1 font-semibold text-slate-500">Component</th>

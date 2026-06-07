@@ -61,7 +61,7 @@ export default async function FeeImpactExportPage({
       </div>
 
       {/* Results Table */}
-      <table className="w-full border-collapse text-xs">
+      <table className="w-full border-collapse text-xs" aria-label="Fee impact comparison">
         <thead>
           <tr className="bg-slate-50 border-b-2 border-slate-200">
             <th scope="col" className="text-left px-2.5 py-2 font-semibold text-slate-600">#</th>

@@ -580,7 +580,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
 
       {/* Lessons list */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm" aria-label="Course lessons">
           <thead className="bg-slate-50">
             <tr>
               <th className="text-left px-4 py-3 font-semibold text-slate-700">Module</th>

@@ -422,7 +422,7 @@ export default async function PropertyHubPage() {
 
               <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm" aria-label="Property listings">
                     <thead>
                       <tr className="bg-slate-50 border-b border-slate-200">
                         <th scope="col" className="text-left px-4 md:px-6 py-3 font-semibold text-slate-500 text-xs w-8">#</th>

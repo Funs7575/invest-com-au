@@ -196,7 +196,7 @@ export default function SponsorBillingPage() {
         {tab === "active" && (
           <div className="bg-white rounded-xl border border-slate-200">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Active sponsorships billing">
                 <thead>
                   <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                     <th className="px-4 py-3 text-left">Broker</th>
@@ -270,7 +270,7 @@ export default function SponsorBillingPage() {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Sponsorship invoices">
                   <thead>
                     <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                       <th className="px-4 py-3 text-left">#</th>

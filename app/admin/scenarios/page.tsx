@@ -249,7 +249,7 @@ export default function AdminScenariosPage() {
         <>
           <div className="mb-4">
             <input
-              type="text"
+              type="search"
               placeholder="Search scenarios by title or slug..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -257,7 +257,7 @@ export default function AdminScenariosPage() {
             />
           </div>
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-            <table className="w-full">
+            <table className="w-full" aria-label="Cost scenarios">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("title")}>

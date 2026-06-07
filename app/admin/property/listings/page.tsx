@@ -84,7 +84,7 @@ export default function AdminPropertyListings() {
         <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-14 bg-slate-50 rounded-lg animate-pulse" />)}</div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Property listings">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">Title</th>

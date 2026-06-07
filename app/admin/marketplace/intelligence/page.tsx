@@ -776,7 +776,7 @@ export default function AdvertiserIntelligencePage() {
             {/* ─── Tab 2: Broker Scorecard ─── */}
             {activeTab === "scorecard" && (
               <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Broker scorecard">
                   <thead>
                     <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                       {[
@@ -1115,7 +1115,7 @@ export default function AdvertiserIntelligencePage() {
 
                 {heatmapData.size > 0 ? (
                   <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
-                    <table className="w-full text-xs">
+                    <table className="w-full text-xs" aria-label="Broker intelligence heatmap">
                       <thead>
                         <tr className="bg-slate-50">
                           <th className="px-4 py-3 text-left text-slate-500 font-medium sticky left-0 bg-slate-50 z-10 whitespace-nowrap">

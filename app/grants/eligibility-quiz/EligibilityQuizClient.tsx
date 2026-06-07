@@ -202,7 +202,7 @@ export default function EligibilityQuizClient() {
           <p className="text-xs uppercase tracking-wider font-extrabold text-amber-600 mb-1">Your results</p>
           <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Personalised grant opportunities</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Government grants eligibility">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Grant</th>

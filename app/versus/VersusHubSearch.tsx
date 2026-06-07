@@ -77,7 +77,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
           ) : (
             <>
               <input
-                type="text"
+                type="search"
                 placeholder="Search platforms..."
                 aria-label="Search for first platform"
                 value={searchA}
@@ -139,7 +139,7 @@ export default function VersusHubSearch({ brokers }: VersusHubSearchProps) {
           ) : (
             <>
               <input
-                type="text"
+                type="search"
                 placeholder="Search platforms..."
                 aria-label="Search for second platform"
                 value={searchB}

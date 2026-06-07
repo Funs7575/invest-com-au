@@ -497,7 +497,7 @@ export default async function HealthScoreDetailPage({
             How the Overall Score is Calculated
           </h2>
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Health score calculation by dimension">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">
@@ -559,7 +559,7 @@ export default async function HealthScoreDetailPage({
               Score History
             </h2>
             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Health score history">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">

@@ -394,7 +394,7 @@ function HandoffBanner({ token }: { token: string }) {
         <p className="text-xs text-emerald-700">No holdings in snapshot.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-xs text-slate-700 border-collapse">
+          <table className="w-full text-xs text-slate-700 border-collapse" aria-label="Portfolio snapshot holdings">
             <thead>
               <tr className="border-b border-emerald-200 text-emerald-800">
                 <th scope="col" className="text-left pb-1 font-semibold">Ticker</th>

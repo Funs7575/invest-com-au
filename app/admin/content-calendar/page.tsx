@@ -541,7 +541,7 @@ export default function ContentCalendarPage() {
                 No content items{statusFilter !== "all" ? ` with status "${statusFilter}"` : ""}. Click &quot;+ New Content&quot; to start.
               </div>
             ) : (
-              <table className="w-full">
+              <table className="w-full" aria-label="Content calendar items">
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Content</th>
@@ -656,7 +656,7 @@ export default function ContentCalendarPage() {
             <div className="mt-8">
               <h2 className="text-lg font-bold text-slate-900 mb-3">Articles Needing Update</h2>
               <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-                <table className="w-full">
+                <table className="w-full" aria-label="Articles needing update">
                   <thead className="bg-slate-50">
                     <tr>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Article</th>

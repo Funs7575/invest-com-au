@@ -99,7 +99,7 @@ export default function AdminPackagesPage() {
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Marketplace packages">
               <thead>
                 <tr className="border-b border-slate-100 text-left">
                   <th className="px-4 py-3 text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">

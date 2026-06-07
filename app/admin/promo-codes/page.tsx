@@ -297,7 +297,7 @@ export default function PromoCodesAdminPage() {
               No codes yet. Mint one above.
             </p>
           ) : (
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Promo codes">
               <thead className="text-xs uppercase text-slate-500 bg-slate-50">
                 <tr>
                   <th className="text-left px-4 py-2 font-semibold">Code</th>

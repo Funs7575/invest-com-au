@@ -268,7 +268,7 @@ export default function HealthScoresClient({
             <p className="text-xs text-slate-500">All platforms ranked by overall health score</p>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Safety leaderboard — brokers ranked by health score">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-600">#</th>

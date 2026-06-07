@@ -176,7 +176,7 @@ export default function FirmBillingClient({ summary: initialSummary }: Props) {
           </p>
         </header>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
+          <table className="min-w-full divide-y divide-slate-200 text-sm" aria-label="Firm billing invoices">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th scope="col" className="px-5 md:px-7 py-3 text-left font-semibold">Member</th>

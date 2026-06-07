@@ -23,7 +23,7 @@ export default async function BrokerChangesDrillDown() {
           <h2 className="text-sm font-bold text-slate-900">Recent broker data changes</h2>
           <p className="text-xs text-slate-500">Classified by risk tier — cosmetic edits auto-apply, money/compliance fields require admin approval.</p>
         </header>
-        <table className="w-full text-xs">
+        <table className="w-full text-xs" aria-label="Broker changes">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
               <th className="px-4 py-2 text-left font-semibold text-slate-600">ID</th>

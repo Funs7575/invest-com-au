@@ -275,7 +275,7 @@ export default async function CronHealthPage() {
 
         {/* Per-cron table */}
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Cron job health">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr className="text-left text-[11px] uppercase tracking-wide text-slate-600">
                 <th className="px-4 py-2.5">Cron</th>

@@ -192,7 +192,7 @@ export default function InvoiceDetailPage() {
 
         {/* Line items */}
         <div className="border border-slate-200 rounded-lg overflow-hidden mb-6 print:border-slate-300">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Invoice line items">
             <thead>
               <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide print:bg-slate-100">
                 <th scope="col" className="px-5 py-3 text-left">Description</th>

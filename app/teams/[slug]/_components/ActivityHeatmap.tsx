@@ -42,7 +42,7 @@ export default function ActivityHeatmap({ buckets, total }: Props) {
         {Intl.DateTimeFormat().resolvedOptions().timeZone}).
       </p>
       <div className="overflow-x-auto">
-        <table className="text-[10px] text-slate-500 select-none">
+        <table className="text-[10px] text-slate-500 select-none" aria-label="Activity heatmap">
           <thead>
             <tr>
               <th scope="col" className="w-10" />

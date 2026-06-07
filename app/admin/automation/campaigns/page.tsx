@@ -23,7 +23,7 @@ export default async function CampaignsDrillDown() {
           <h2 className="text-sm font-bold text-slate-900">Recent campaigns</h2>
           <p className="text-xs text-slate-500">Submitted by brokers. Status reflects the classifier verdict for auto-decided rows.</p>
         </header>
-        <table className="w-full text-xs">
+        <table className="w-full text-xs" aria-label="Automation campaigns">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
               <th className="px-4 py-2 text-left font-semibold text-slate-600">ID</th>

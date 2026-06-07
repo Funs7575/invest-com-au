@@ -231,7 +231,7 @@ export default function AdminBrokersPage() {
       ) : (
         <>
           <div className="mb-4">
-            <input type="text" placeholder="Search brokers by name or slug..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <input type="search" placeholder="Search brokers by name or slug..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           {/* Bulk Action Bar */}
@@ -267,7 +267,7 @@ export default function AdminBrokersPage() {
           )}
 
           <div className="bg-white border border-slate-200 rounded-lg overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full" aria-label="Broker list">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-3 py-3 w-8">
