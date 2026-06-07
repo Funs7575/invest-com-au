@@ -164,9 +164,6 @@ export default function ComparePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
       />
       <Suspense fallback={<div className="h-12 bg-slate-100 animate-pulse rounded-lg mx-4" aria-hidden />}><CompareNav /></Suspense>
-      <div className="container-custom pt-5">
-        <GetMatchedEmbed context="platform_compare" />
-      </div>
       {/* Server-rendered H1 for crawlers that don't execute client JS — streams immediately */}
       <div className="container-custom pt-5 md:pt-10" data-speakable="compare-hero">
         <DirectoryBanners surface="compare" />
@@ -176,6 +173,9 @@ export default function ComparePage() {
         <p className="mt-2 text-sm md:text-base text-slate-600 max-w-2xl">
           Compare 100+ Australian investing platforms. See fees, features, and safety ratings side-by-side. Whether you trade shares, crypto, or super — find your best fit.
         </p>
+      </div>
+      <div className="container-custom pt-5">
+        <GetMatchedEmbed context="platform_compare" />
       </div>
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareData />
