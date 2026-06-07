@@ -512,6 +512,11 @@ export default function TeamTab({ advisor }: Props) {
                       className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
                       placeholder={`More than ${firmDetails?.max_seats || 10}`}
                     />
+                    {seatRequestSeats && parseInt(seatRequestSeats) <= (firmDetails?.max_seats || 10) && (
+                      <p className="text-[0.65rem] text-amber-600 mt-1">
+                        Must be more than your current limit ({firmDetails?.max_seats || 10} seats).
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label htmlFor="seat-req-reason" className="block text-xs font-semibold text-slate-600 mb-1">Reason (optional)</label>

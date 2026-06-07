@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
 import type { Advisor, Stats, Lead, CategoryPricing, DisputeModal, FirmMemberOption } from "./types";
 import { logger } from "@/lib/logger";
@@ -51,6 +52,7 @@ export default function LeadsTab({
   const [firmLeads, setFirmLeads] = useState<Lead[]>([]);
   const [firmMembers, setFirmMembers] = useState<FirmMemberOption[]>([]);
   const [firmLoading, setFirmLoading] = useState(false);
+  const [notesFeedback, setNotesFeedback] = useState<{id: number; status: "saving" | "saved"} | null>(null);
   const [firmError, setFirmError] = useState<string | null>(null);
   const [reassigning, setReassigning] = useState<number | null>(null);
 
@@ -323,6 +325,7 @@ export default function LeadsTab({
             }`}
           >
             {hotLeadsOnly ? "🔥" : ""} Hot leads only{stats ? ` (${stats.hotLeadsCount})` : ""}
+            <InfoTip text="Quality score 70+ — investors who provided more detail and showed higher intent." />
           </button>
         </div>
       </div>
@@ -465,13 +468,25 @@ export default function LeadsTab({
                     </button>
                   );
                 })()}
-                <input
-                  type="text"
-                  placeholder="Add a note..."
-                  defaultValue={lead.advisor_notes || ""}
-                  onBlur={(e) => onUpdateLeadNotes(lead.id, e.target.value)}
-                  className="flex-1 min-w-30 text-xs px-2 py-1 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400"
-                />
+                <div className="flex-1 min-w-30 flex items-center gap-1">
+                  <input
+                    type="text"
+                    placeholder="Add a note..."
+                    defaultValue={lead.advisor_notes || ""}
+                    onBlur={async (e) => {
+                      setNotesFeedback({ id: lead.id, status: "saving" });
+                      await onUpdateLeadNotes(lead.id, e.target.value);
+                      setNotesFeedback({ id: lead.id, status: "saved" });
+                      setTimeout(() => setNotesFeedback(null), 2000);
+                    }}
+                    className="flex-1 text-xs px-2 py-1 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400"
+                  />
+                  {notesFeedback?.id === lead.id && (
+                    <span className={`text-[0.6rem] font-semibold shrink-0 ${notesFeedback.status === "saved" ? "text-emerald-600" : "text-slate-400"}`}>
+                      {notesFeedback.status === "saving" ? "Saving…" : "Saved"}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}

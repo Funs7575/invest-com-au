@@ -96,13 +96,21 @@ export default function BrokerRegisterPage() {
         <p className="text-sm text-slate-600">
           Your broker advertising account is pending review. We&apos;ll email you at <strong>{email}</strong> once your account is approved.
         </p>
-        <p className="text-xs text-slate-400">This typically takes 1–2 business days.</p>
-        <Link
-          href="/broker-portal/login"
-          className="inline-block mt-2 px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors"
-        >
-          Back to Login
-        </Link>
+        <p className="text-xs text-slate-400">This typically takes 1–2 business days. Once approved, you can log in to set up your first campaign.</p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-2">
+          <Link
+            href="/broker-portal/login"
+            className="inline-block px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors"
+          >
+            Back to Login
+          </Link>
+          <Link
+            href="/advertise"
+            className="inline-block px-6 py-2.5 bg-white text-slate-700 font-bold text-sm rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+          >
+            Preview placements →
+          </Link>
+        </div>
       </div>
     );
   }
