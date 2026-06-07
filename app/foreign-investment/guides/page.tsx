@@ -2,6 +2,28 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const FI_GUIDES_FAQS = [
+  {
+    q: "Can foreigners invest in Australian shares?",
+    a: "Yes. Non-residents and foreign nationals can open an account with most Australian brokers (e.g. SelfWealth, CMC Markets, Interactive Brokers) subject to AML/KYC requirements. You'll need a foreign address, passport, and typically a foreign bank account for funding. Some brokers don't accept US persons due to FATCA. Capital gains on Australian shares owned by non-residents are generally exempt from Australian CGT (Div 855 of ITAA 1997) unless shares are in a 'land-rich' entity or you own ≥10% of a company with significant Australian real property. Dividends are subject to 30% withholding (or lower treaty rate — e.g. 15% US treaty, 0% NZ treaty for imputed amounts).",
+  },
+  {
+    q: "Do foreigners need FIRB approval to buy Australian property?",
+    a: "Generally yes. Foreign persons (non-citizens, non-permanent residents, and foreign corporations) must apply for FIRB (Foreign Investment Review Board) approval before acquiring Australian residential property. FIRB approval is generally granted for new dwellings (apartments, house and land packages from developers) and vacant land for development. Foreigners cannot generally buy established ('second-hand') residential property unless they hold a temporary visa and intend to live there. Commercial real estate thresholds are higher ($310M+ for most non-sensitive commercial). FIRB application fees start at $14,100 for residential properties under $1M.",
+  },
+  {
+    q: "What taxes apply to foreign investors in Australia?",
+    a: "Key taxes for non-residents: (1) Withholding tax on dividends — 30% (or lower treaty rate). Franked dividends may reduce the amount withheld. (2) Withholding tax on interest — 10% flat. (3) Capital gains tax — Australian CGT generally does NOT apply to non-residents selling shares or other non-real property assets (Div 855 exemption). It DOES apply to 'taxable Australian property' (direct/indirect interests in Australian real property). (4) Residential property stamp duty surcharges — states charge 7–8% surcharge on top of standard stamp duty for foreign purchasers. (5) Land tax surcharges — annual surcharge in most states for foreign-owned residential land.",
+  },
+  {
+    q: "Can I access Australian superannuation as a non-resident?",
+    a: "Non-residents can generally no longer contribute to Australian super and cannot access existing super balances unless they meet a condition of release. Former temporary residents (expired temporary visa, departed Australia) can claim their super balance as a Departing Australia Superannuation Payment (DASP). DASP is taxed at 65% for balances including untaxed element — a high withholding rate. Permanent residents and citizens retain access under normal super preservation rules (typically age 60 with retirement, or age 65 regardless). If you're moving to Australia from a country with a bilateral social security agreement, your contributions from that country may count toward Australian qualifying periods.",
+  },
+];
+
+const fiGuidesFaqLd = faqJsonLd(FI_GUIDES_FAQS);
 
 export const metadata: Metadata = {
   title: `Investing in Australia as an Expat — Complete Guide Hub (${CURRENT_YEAR})`,
@@ -12,6 +34,7 @@ export const metadata: Metadata = {
     description:
       "Step-by-step guides for international investors buying property, shares, and other assets in Australia. Guides for 15+ countries.",
     url: `${SITE_URL}/foreign-investment/guides`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Foreign Investment Guides Australia")}&sub=${encodeURIComponent("FIRB · Property · Business · Tax · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/foreign-investment/guides` },
@@ -122,6 +145,9 @@ export default function ForeignInvestmentGuidesPage() {
           ),
         }}
       />
+      {fiGuidesFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(fiGuidesFaqLd) }} />
+      )}
 
       {/* ── Hero ── */}
       <section className="relative bg-gradient-to-br from-amber-50 via-white to-emerald-50 border-b border-slate-100 overflow-hidden py-10 md:py-16">
@@ -271,6 +297,24 @@ export default function ForeignInvestmentGuidesPage() {
             </Link>
           </div>
         </section>
+
+        {/* ── FAQ ── */}
+        <div className="mb-10">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {FI_GUIDES_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
 
         {/* ── Also see ── */}
         <div>
