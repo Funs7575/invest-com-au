@@ -99,11 +99,31 @@ const INCOME_OPTIONS = [
   { label: "Over $190,000", value: 200_000, rate: "45%" },
 ];
 
+const FHSS_DEFAULTS = {
+  annualConc: 10_000,
+  annualNonConc: 0,
+  years: 3,
+  incomeIndex: 2,
+};
+
 export default function FHSSCalculatorClient() {
-  const [annualConc, setAnnualConc] = useState(10_000);
-  const [annualNonConc, setAnnualNonConc] = useState(0);
-  const [years, setYears] = useState(3);
-  const [incomeIndex, setIncomeIndex] = useState(2);
+  const [annualConc, setAnnualConc] = useState(FHSS_DEFAULTS.annualConc);
+  const [annualNonConc, setAnnualNonConc] = useState(FHSS_DEFAULTS.annualNonConc);
+  const [years, setYears] = useState(FHSS_DEFAULTS.years);
+  const [incomeIndex, setIncomeIndex] = useState(FHSS_DEFAULTS.incomeIndex);
+
+  const isModified =
+    annualConc !== FHSS_DEFAULTS.annualConc ||
+    annualNonConc !== FHSS_DEFAULTS.annualNonConc ||
+    years !== FHSS_DEFAULTS.years ||
+    incomeIndex !== FHSS_DEFAULTS.incomeIndex;
+
+  function handleReset() {
+    setAnnualConc(FHSS_DEFAULTS.annualConc);
+    setAnnualNonConc(FHSS_DEFAULTS.annualNonConc);
+    setYears(FHSS_DEFAULTS.years);
+    setIncomeIndex(FHSS_DEFAULTS.incomeIndex);
+  }
 
   const income = INCOME_OPTIONS[incomeIndex]?.value ?? 90_000;
   const result = useMemo(
@@ -226,6 +246,19 @@ export default function FHSSCalculatorClient() {
           </div>
         </div>
       </section>
+
+      {/* Reset button */}
+      {isModified && (
+        <div className="flex justify-end mb-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+          >
+            Reset to defaults
+          </button>
+        </div>
+      )}
 
       {/* Results */}
       <section className="bg-violet-50 border border-violet-200 rounded-xl p-6 mb-6">

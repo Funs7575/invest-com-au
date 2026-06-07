@@ -79,11 +79,31 @@ function pct(n: number) {
   return (n * 100).toFixed(1) + "%";
 }
 
+const ETP_DEFAULTS = {
+  totalPayout: 150_000,
+  yearsOfService: 8,
+  atOrAbove60: false,
+  annualIncome: 90_000,
+};
+
 export default function ETPCalculatorClient() {
-  const [totalPayout, setTotalPayout] = useState(150_000);
-  const [yearsOfService, setYearsOfService] = useState(8);
-  const [atOrAbove60, setAtOrAbove60] = useState(false);
-  const [annualIncome, setAnnualIncome] = useState(90_000);
+  const [totalPayout, setTotalPayout] = useState(ETP_DEFAULTS.totalPayout);
+  const [yearsOfService, setYearsOfService] = useState(ETP_DEFAULTS.yearsOfService);
+  const [atOrAbove60, setAtOrAbove60] = useState(ETP_DEFAULTS.atOrAbove60);
+  const [annualIncome, setAnnualIncome] = useState(ETP_DEFAULTS.annualIncome);
+
+  const isModified =
+    totalPayout !== ETP_DEFAULTS.totalPayout ||
+    yearsOfService !== ETP_DEFAULTS.yearsOfService ||
+    atOrAbove60 !== ETP_DEFAULTS.atOrAbove60 ||
+    annualIncome !== ETP_DEFAULTS.annualIncome;
+
+  function handleReset() {
+    setTotalPayout(ETP_DEFAULTS.totalPayout);
+    setYearsOfService(ETP_DEFAULTS.yearsOfService);
+    setAtOrAbove60(ETP_DEFAULTS.atOrAbove60);
+    setAnnualIncome(ETP_DEFAULTS.annualIncome);
+  }
 
   const result = useMemo(
     () => calcETP(totalPayout, yearsOfService, atOrAbove60),
@@ -198,6 +218,19 @@ export default function ETPCalculatorClient() {
           </p>
         </fieldset>
       </section>
+
+      {/* Reset button */}
+      {isModified && (
+        <div className="flex justify-end mb-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+          >
+            Reset to defaults
+          </button>
+        </div>
+      )}
 
       {/* Results */}
       <section className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mb-6">

@@ -86,12 +86,32 @@ function NumericInput({ label, id, value, onChange, hint }: NumericInputProps) {
   );
 }
 
+const DASP_DEFAULTS = {
+  taxed: "50000",
+  untaxed: "",
+  taxFree: "",
+  isWhm: false,
+};
+
 export default function DaspCalculatorClient() {
-  const [taxed, setTaxed] = useState("50000");
-  const [untaxed, setUntaxed] = useState("");
-  const [taxFree, setTaxFree] = useState("");
-  const [isWhm, setIsWhm] = useState(false);
+  const [taxed, setTaxed] = useState(DASP_DEFAULTS.taxed);
+  const [untaxed, setUntaxed] = useState(DASP_DEFAULTS.untaxed);
+  const [taxFree, setTaxFree] = useState(DASP_DEFAULTS.taxFree);
+  const [isWhm, setIsWhm] = useState(DASP_DEFAULTS.isWhm);
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const isModified =
+    taxed !== DASP_DEFAULTS.taxed ||
+    untaxed !== DASP_DEFAULTS.untaxed ||
+    taxFree !== DASP_DEFAULTS.taxFree ||
+    isWhm !== DASP_DEFAULTS.isWhm;
+
+  function handleReset() {
+    setTaxed(DASP_DEFAULTS.taxed);
+    setUntaxed(DASP_DEFAULTS.untaxed);
+    setTaxFree(DASP_DEFAULTS.taxFree);
+    setIsWhm(DASP_DEFAULTS.isWhm);
+  }
 
   const result = useMemo(() => {
     return computeDasp({
@@ -200,6 +220,19 @@ export default function DaspCalculatorClient() {
               </div>
             )}
           </div>
+
+          {/* Reset button */}
+          {isModified && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset to defaults
+              </button>
+            </div>
+          )}
 
           {/* Rate reference */}
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">

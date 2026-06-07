@@ -134,13 +134,26 @@ function formatAudAbbrev(value: number): string {
   return `A$${(value / 1_000).toFixed(0)}k`;
 }
 
+const VISA_DEFAULTS = {
+  selectedCodes: ["188A", "188C", "858"],
+  budget: "5000000",
+};
+
 export default function VisaCalculatorClient() {
-  const [selectedCodes, setSelectedCodes] = useState<string[]>([
-    "188A",
-    "188C",
-    "858",
-  ]);
-  const [budget, setBudget] = useState<string>("5000000");
+  const [selectedCodes, setSelectedCodes] = useState<string[]>(
+    VISA_DEFAULTS.selectedCodes,
+  );
+  const [budget, setBudget] = useState<string>(VISA_DEFAULTS.budget);
+
+  const isModified =
+    budget !== VISA_DEFAULTS.budget ||
+    selectedCodes.length !== VISA_DEFAULTS.selectedCodes.length ||
+    !VISA_DEFAULTS.selectedCodes.every((c) => selectedCodes.includes(c));
+
+  function handleReset() {
+    setSelectedCodes(VISA_DEFAULTS.selectedCodes);
+    setBudget(VISA_DEFAULTS.budget);
+  }
 
   const budgetNum = Math.max(0, parseFloat(budget) || 0);
 
@@ -243,6 +256,18 @@ export default function VisaCalculatorClient() {
               ))
             )}
           </div>
+
+          {isModified && (
+            <div className="flex justify-end mt-3">
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset to defaults
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
