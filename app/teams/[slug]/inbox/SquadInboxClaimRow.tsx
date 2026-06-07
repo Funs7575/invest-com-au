@@ -39,6 +39,8 @@ export default function SquadInboxClaimRow({
 }: Props) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [handoffOpen, setHandoffOpen] = useState(false);
+  const [handoffNote, setHandoffNote] = useState("");
   const [pending, startTransition] = useTransition();
 
   const isMine =
@@ -93,11 +95,9 @@ export default function SquadInboxClaimRow({
   }
 
   function onHandoff(): void {
-    const note = window.prompt(
-      "Optional handoff note for the squad (who's picking it up, context, etc.):",
-      "",
-    );
-    if (note === null) return; // user cancelled
+    const note = handoffNote;
+    setHandoffNote("");
+    setHandoffOpen(false);
     void postAction("handoff", { note });
   }
 
@@ -179,14 +179,40 @@ export default function SquadInboxClaimRow({
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={onHandoff}
-              disabled={pending}
-              className="bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-200 text-slate-700 text-xs font-semibold px-4 py-2.5 min-h-11 rounded-lg"
-            >
-              Hand off
-            </button>
+            {handoffOpen ? (
+              <div className="flex flex-col gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs w-full">
+                <p className="font-semibold text-slate-700">Handoff note (optional)</p>
+                <textarea
+                  value={handoffNote}
+                  onChange={(e) => setHandoffNote(e.target.value)}
+                  placeholder="Who's picking this up, any context…"
+                  rows={2}
+                  className="border border-slate-200 rounded px-2 py-1 text-xs text-slate-700 bg-white resize-none"
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={onHandoff}
+                    disabled={pending}
+                    className="bg-slate-700 hover:bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg disabled:opacity-50"
+                  >Confirm hand off</button>
+                  <button
+                    type="button"
+                    onClick={() => { setHandoffOpen(false); setHandoffNote(""); }}
+                    className="bg-white border border-slate-200 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-slate-50"
+                  >Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setHandoffOpen(true)}
+                disabled={pending}
+                className="bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-200 text-slate-700 text-xs font-semibold px-4 py-2.5 min-h-11 rounded-lg"
+              >
+                Hand off
+              </button>
+            )}
             <button
               type="button"
               onClick={onComplete}

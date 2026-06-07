@@ -61,9 +61,10 @@ export default function DividendReinvestmentClient() {
     let totalDividendsReceived = 0;
     let totalDividendsCash = 0;
 
-    const snapshots: { year: number; drpValue: number; cashValue: number; drpShares: number; cumDiv: number }[] = [];
-    snapshots.push({ year: 0, drpValue: shares * price, cashValue: shares * price, drpShares: shares, cumDiv: 0 });
+    const snapshots: { year: number; drpValue: number; cashValue: number; cashTotalWealth: number; drpShares: number; cumDiv: number }[] = [];
+    snapshots.push({ year: 0, drpValue: shares * price, cashValue: shares * price, cashTotalWealth: shares * price, drpShares: shares, cumDiv: 0 });
 
+    let cumulativeCashDiv = 0;
     for (let y = 1; y <= years; y++) {
       currentPrice = currentPrice * (1 + gr);
       const drpDividend = currentSharesDrp * currentPrice * dy;
@@ -71,6 +72,7 @@ export default function DividendReinvestmentClient() {
 
       totalDividendsReceived += drpDividend;
       totalDividendsCash += cashDividend;
+      cumulativeCashDiv += cashDividend;
 
       // DRP: reinvest dividends → more shares
       currentSharesDrp += drpDividend / currentPrice;
@@ -79,6 +81,7 @@ export default function DividendReinvestmentClient() {
         year: y,
         drpValue: currentSharesDrp * currentPrice,
         cashValue: currentSharesCash * currentPrice,
+        cashTotalWealth: currentSharesCash * currentPrice + cumulativeCashDiv,
         drpShares: currentSharesDrp,
         cumDiv: totalDividendsReceived,
       });
@@ -239,7 +242,88 @@ export default function DividendReinvestmentClient() {
               )}
             </div>
 
-            {/* Growth chart */}
+            {/* ADV-139: Crossover line chart — DRP vs Cash total wealth over time */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">DRP vs Cash — Total Wealth Over Time</p>
+              <div className="flex gap-4 mb-3">
+                <span className="flex items-center gap-1.5 text-xs text-violet-700 font-semibold">
+                  <span className="inline-block w-6 h-0.5 bg-violet-500 rounded" />DRP (reinvested)
+                </span>
+                <span className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold">
+                  <span className="inline-block w-6 h-0.5 bg-slate-400 rounded" />Cash (portfolio + dividends)
+                </span>
+              </div>
+              {(() => {
+                const CW = 400, CH = 180;
+                const PL = 52, PR = 12, PT = 8, PB = 24;
+                const W = CW - PL - PR, H = CH - PT - PB;
+                const maxV = Math.max(
+                  result.snapshots[result.snapshots.length - 1]?.drpValue ?? 1,
+                  result.snapshots[result.snapshots.length - 1]?.cashTotalWealth ?? 1,
+                );
+                const tx = (y: number) => PL + (y / years) * W;
+                const ty = (v: number) => PT + H - (v / maxV) * H;
+                const drpPts = result.snapshots.map(s => `${tx(s.year)},${ty(s.drpValue)}`).join(" ");
+                const cashPts = result.snapshots.map(s => `${tx(s.year)},${ty(s.cashTotalWealth)}`).join(" ");
+                const areaPath =
+                  result.snapshots.map((s, i) => `${i === 0 ? "M" : "L"}${tx(s.year)} ${ty(s.drpValue)}`).join(" ") + " " +
+                  result.snapshots.slice().reverse().map(s => `L${tx(s.year)} ${ty(s.cashTotalWealth)}`).join(" ") + " Z";
+                const yStep = maxV / 4;
+                const xStep = Math.max(1, Math.ceil(years / 5));
+                return (
+                  <svg
+                    viewBox={`0 0 ${CW} ${CH}`}
+                    className="w-full h-auto"
+                    role="img"
+                    aria-label="Line chart showing DRP versus cash portfolio value over time"
+                  >
+                    {/* Shaded advantage area */}
+                    <path d={areaPath} fill="rgb(139,92,246)" fillOpacity="0.08" />
+                    {/* Y-axis grid lines + labels */}
+                    {[0, 1, 2, 3, 4].map(i => {
+                      const v = yStep * i;
+                      const y = ty(v);
+                      return (
+                        <g key={i}>
+                          <line x1={PL} y1={y} x2={CW - PR} y2={y} stroke="#e2e8f0" strokeWidth={0.5} />
+                          <text x={PL - 4} y={y + 3.5} fontSize={8} textAnchor="end" fill="#94a3b8">
+                            {v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(v >= 10_000_000 ? 0 : 1)}m`
+                              : v >= 1000 ? `$${(v / 1000).toFixed(0)}k`
+                              : `$${v.toFixed(0)}`}
+                          </text>
+                        </g>
+                      );
+                    })}
+                    {/* X-axis ticks */}
+                    {Array.from({ length: Math.floor(years / xStep) + 1 }, (_, i) => {
+                      const yr = i * xStep;
+                      if (yr > years) return null;
+                      return (
+                        <text key={yr} x={tx(yr)} y={CH - 4} fontSize={8} textAnchor="middle" fill="#94a3b8">
+                          {yr === 0 ? "Now" : `Yr ${yr}`}
+                        </text>
+                      );
+                    })}
+                    {/* Cash line */}
+                    <polyline points={cashPts} fill="none" stroke="#94a3b8" strokeWidth={1.5} strokeLinejoin="round" />
+                    {/* DRP line */}
+                    <polyline points={drpPts} fill="none" stroke="#7c3aed" strokeWidth={2} strokeLinejoin="round" />
+                    {/* End-point labels */}
+                    {result.snapshots.length > 0 && (() => {
+                      const last = result.snapshots[result.snapshots.length - 1]!;
+                      return (
+                        <>
+                          <text x={tx(last.year) - 4} y={ty(last.drpValue) - 5} fontSize={8} textAnchor="end" fill="#7c3aed" fontWeight="700">{fmt(last.drpValue)}</text>
+                          <text x={tx(last.year) - 4} y={ty(last.cashTotalWealth) + 12} fontSize={8} textAnchor="end" fill="#64748b">{fmt(last.cashTotalWealth)}</text>
+                        </>
+                      );
+                    })()}
+                  </svg>
+                );
+              })()}
+            </div>
+
+            {/* Year-by-year breakdown */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-4">Portfolio Value Over Time</p>
               <div className="space-y-2.5">

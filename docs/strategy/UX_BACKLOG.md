@@ -311,24 +311,17 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 ---
 
-### P1 — Blocks revenue or user comprehension
+### P3 — Polish (deprioritised)
 
-**[ADV-069] Homepage: above-the-fold restructure — async teasers below fold**
-- **Status**: Partly done — route cards (Compare / Browse / Find an Advisor) added in `d80d99a1`. Remaining: move all async teasers below fold so hero is always fast-loading.
-- **File**: `app/page.tsx`
-- **Effort**: Large (design decision)
-
----
-
-### P3 — Polish
-
-**[ADV-139]** Dividend Reinvestment: No crossover chart showing DRP vs Cash over time — add line chart — `app/dividend-reinvestment-calculator/DividendReinvestmentClient.tsx` — **Effort**: Large
-
-**[ADV-167]** Article comments: Flat list with no threading — `components/ArticleComments.tsx` — **Effort**: Very large (deprioritised)
+**[ADV-167]** Article comments: Flat list with no threading — `components/ArticleComments.tsx` — **Effort**: Very large (deprioritised — out of scope until community launch)
 
 ---
 
 ## Resolved / Shipped — 2026-06-07 UX sweep
+
+**[ADV-069]** Homepage: above-the-fold restructure fully shipped — hero + 4 route cards always visible without scroll; all async teasers (HomeFeedSection, HomepagePersonalisedStrip, HomeListingsTeaser, HomeAdvisorsTeaser) sit below the fold. `app/page.tsx`
+
+**[ADV-139]** Dividend Reinvestment: Added SVG crossover line chart showing DRP vs Cash total wealth over time, with shaded advantage area; also added `cashTotalWealth` (portfolio + cumulative dividends) to snapshot data for accurate comparison. `app/dividend-reinvestment-calculator/DividendReinvestmentClient.tsx`
 
 **[ADV-179]** Articles hub missing filter categories (reviews, etfs, super, property, crypto) — added to CATEGORIES array + CATEGORY_COLORS. `app/articles/ArticlesClient.tsx`
 
@@ -593,6 +586,16 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 **[ADV-204]** Privacy data-rights form — deletion confirm: replaced `window.confirm()` with inline warning card ("Are you sure?") shown before submitting the irreversible delete request. `app/privacy/data-rights/DataRightsForm.tsx`
 
 **[ADV-205]** Pros intake questions editor — delete question: replaced `confirm()` with inline two-step "Delete? Yes / No" row (pendingDeleteIndex state); Discard for unsaved drafts remains immediate with no confirmation. `app/pros/settings/intake/IntakeQuestionsEditor.tsx`
+
+**[ADV-206]** Broker review share button: replaced `alert("Link copied!")` with 2s inline "Copied!" flash via useState. `app/broker/[slug]/BrokerReviewClient.tsx`
+
+**[ADV-207]** Compare page "Share this view": replaced `alert('Link copied!')` with 2s inline "Copied!" flash via useState. `app/compare/CompareClient.tsx`
+
+**[ADV-208]** Advisor auctions — retract bid: replaced `window.prompt()` for retraction reason with inline reason selector (schedule_conflict / already_booked / outside_expertise / other) + confirm/cancel buttons. `app/advisor-portal/auctions/page.tsx`
+
+**[ADV-209]** Squad inbox — hand off: replaced `window.prompt()` for handoff note with inline textarea + confirm/cancel buttons. `app/teams/[slug]/inbox/SquadInboxClaimRow.tsx`
+
+**[ADV-139]** Dividend Reinvestment crossover chart: SVG line chart showing DRP portfolio value vs Cash total wealth (portfolio + cumulative dividends received) over time. Violet line for DRP, grey for Cash, shaded advantage area between. End-point value labels. `app/dividend-reinvestment-calculator/DividendReinvestmentClient.tsx`
 
 ---
 
