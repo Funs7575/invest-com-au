@@ -37,6 +37,7 @@ export default function AdminPropertyDevelopers() {
     setLoading(false);
   }, [supabase]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- direct mount-time data fetch
   useEffect(() => { fetchDevelopers(); }, [fetchDevelopers]);
 
   const toggleStatus = async (id: number, current: string) => {

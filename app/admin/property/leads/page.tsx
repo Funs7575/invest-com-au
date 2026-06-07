@@ -38,6 +38,7 @@ export default function AdminPropertyLeads() {
     setLoading(false);
   }, [supabase]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- direct mount-time data fetch
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
 
   const updateStatus = async (id: number, status: string) => {

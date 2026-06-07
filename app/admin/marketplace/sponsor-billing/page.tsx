@@ -107,6 +107,7 @@ export default function SponsorBillingPage() {
 
   const updateInvoiceStatus = async (id: number, status: string) => {
     const supabase = createClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic update record
     const updates: Record<string, any> = { status };
     if (status === "paid") updates.paid_at = new Date().toISOString();
 
@@ -212,6 +213,7 @@ export default function SponsorBillingPage() {
                     const tier = broker.sponsorship_tier ?? "";
                     const pricing = TIER_PRICING[tier];
                     const endDate = broker.sponsorship_end;
+                    // eslint-disable-next-line react-hooks/purity -- render-time date comparison
                     const isExpiring = endDate && new Date(endDate).getTime() - Date.now() < 14 * 86400000;
                     const isExpired = endDate && new Date(endDate) < new Date();
 

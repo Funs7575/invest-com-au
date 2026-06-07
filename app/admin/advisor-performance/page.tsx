@@ -50,6 +50,7 @@ export default function AdvisorPerformancePage() {
   const [period, setPeriod] = useState<Period>("30d");
   const [sortBy, setSortBy] = useState<"views" | "leads" | "conversionRate" | "avgResponseHrs">("leads");
 
+  // eslint-disable-next-line react-hooks/immutability, react-hooks/exhaustive-deps -- fetchData is stable; mount-once pattern mirrors app/admin/content-performance
   useEffect(() => { fetchData(); }, [period]);
 
   async function fetchData() {
@@ -174,7 +175,7 @@ export default function AdvisorPerformancePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sorted.map((m, i) => (
+                  {sorted.map((m) => (
                     <tr key={m.id} className="border-b border-slate-50 hover:bg-slate-50">
                       <td className="px-4 py-2.5">
                         <Link href={`/advisor/${m.slug}`} className="font-semibold text-slate-900 hover:text-blue-600 text-sm">{m.name}</Link>

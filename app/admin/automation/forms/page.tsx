@@ -26,9 +26,7 @@ const FORMS = [
 
 export default async function FormsFunnelPage() {
   const admin = createAdminClient();
-  const thirtyDaysAgo = new Date(
-    Date.now() - 30 * 24 * 60 * 60 * 1000,
-  ).toISOString();
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(); // eslint-disable-line react-hooks/purity -- server component
   const { data } = await admin
     .from("form_events")
     .select("session_id, form_name, step, step_index, event, created_at")

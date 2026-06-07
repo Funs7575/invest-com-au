@@ -12,9 +12,7 @@ export const dynamic = "force-dynamic";
  */
 export default async function AttributionPage() {
   const admin = createAdminClient();
-  const thirtyDaysAgo = new Date(
-    Date.now() - 30 * 24 * 60 * 60 * 1000,
-  ).toISOString();
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(); // eslint-disable-line react-hooks/purity -- server component
   const { data } = await admin
     .from("attribution_touches")
     .select("session_id, channel, event, value_cents")

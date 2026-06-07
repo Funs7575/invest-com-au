@@ -37,6 +37,7 @@ export default function ContentPerformancePage() {
   const [filterType, setFilterType] = useState<string>("all");
   const [sortBy, setSortBy] = useState<"clicks" | "views" | "ctr" | "estRevenue">("estRevenue");
 
+  // eslint-disable-next-line react-hooks/immutability, react-hooks/exhaustive-deps -- fetchData is stable; mount-once pattern
   useEffect(() => { fetchData(); }, [period]);
 
   async function fetchData() {

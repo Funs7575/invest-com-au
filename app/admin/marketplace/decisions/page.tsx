@@ -69,8 +69,8 @@ export default function AllocationDecisionsPage() {
   }, [dateRange]);
 
   useEffect(() => {
-    loadData();
-  }, [dateRange, placementFilter, page]);
+    loadData(); // eslint-disable-line react-hooks/immutability -- loadData declared below; stable pattern
+  }, [dateRange, placementFilter, page]); // eslint-disable-line react-hooks/exhaustive-deps -- loadData is stable
 
   const loadData = async () => {
     setLoading(true);

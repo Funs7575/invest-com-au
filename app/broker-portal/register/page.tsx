@@ -316,6 +316,7 @@ export default function BrokerRegisterPage() {
             <div>
               <label htmlFor="bp-reg-company" className="block text-sm font-medium text-slate-700 mb-1">Company / Brokerage Name *</label>
               <input id="bp-reg-company" type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required
+                autoComplete="organization"
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="e.g. CommSec, Stake, eToro" />
             </div>

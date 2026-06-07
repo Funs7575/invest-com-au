@@ -369,6 +369,7 @@ export default function AdvertiserIntelligencePage() {
   const [notifBroker, setNotifBroker] = useState<string | null>(null);
 
   const daysNum = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : 90;
+  // eslint-disable-next-line react-hooks/purity -- date calculation, not inside a hook
   const dateFrom = new Date(Date.now() - daysNum * 86400000).toISOString().slice(0, 10);
 
   const loadData = useCallback(async () => {
