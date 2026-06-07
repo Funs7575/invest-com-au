@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { incomeTax } from "@/lib/tax/brackets";
@@ -29,16 +29,40 @@ function fmt(n: number): string {
   }).format(n);
 }
 
+// ─── Default values ───────────────────────────────────────────────────────────
+
+const DEFAULTS = {
+  purchasePrice: "50000",
+  salePrice: "80000",
+  purchaseCosts: "1000",
+  saleCosts: "500",
+  heldOver12Months: true,
+  annualIncome: 90_000,
+  assetType: "shares" as const,
+};
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function CGTCalculatorClient() {
-  const [purchasePrice, setPurchasePrice] = useState("50000");
-  const [salePrice, setSalePrice] = useState("80000");
-  const [purchaseCosts, setPurchaseCosts] = useState("1000");
-  const [saleCosts, setSaleCosts] = useState("500");
-  const [heldOver12Months, setHeldOver12Months] = useState(true);
-  const [annualIncome, setAnnualIncome] = useState(90_000);
-  const [assetType, setAssetType] = useState<"shares" | "property" | "crypto" | "other">("shares");
+  const [purchasePrice, setPurchasePrice] = useState(DEFAULTS.purchasePrice);
+  const [salePrice, setSalePrice] = useState(DEFAULTS.salePrice);
+  const [purchaseCosts, setPurchaseCosts] = useState(DEFAULTS.purchaseCosts);
+  const [saleCosts, setSaleCosts] = useState(DEFAULTS.saleCosts);
+  const [heldOver12Months, setHeldOver12Months] = useState(DEFAULTS.heldOver12Months);
+  const [annualIncome, setAnnualIncome] = useState(DEFAULTS.annualIncome);
+  const [assetType, setAssetType] = useState<"shares" | "property" | "crypto" | "other">(DEFAULTS.assetType);
+  const [updatedFlash, setUpdatedFlash] = useState(false);
+  const isFirstRender = useRef(true);
+
+  function resetToDefaults() {
+    setPurchasePrice(DEFAULTS.purchasePrice);
+    setSalePrice(DEFAULTS.salePrice);
+    setPurchaseCosts(DEFAULTS.purchaseCosts);
+    setSaleCosts(DEFAULTS.saleCosts);
+    setHeldOver12Months(DEFAULTS.heldOver12Months);
+    setAnnualIncome(DEFAULTS.annualIncome);
+    setAssetType(DEFAULTS.assetType);
+  }
 
   const r = useMemo(() => {
     const purchase = parseFloat(purchasePrice.replace(/,/g, "")) || 0;
@@ -71,11 +95,27 @@ export default function CGTCalculatorClient() {
 
   const showResults = r.proceeds > 0 && r.costBase > 0;
 
+  useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
+    const t1 = setTimeout(() => setUpdatedFlash(true), 0);
+    const t2 = setTimeout(() => setUpdatedFlash(false), 1500);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [purchasePrice, salePrice, purchaseCosts, saleCosts, heldOver12Months, annualIncome, assetType]);
+
   return (
     <div className="space-y-6">
       {/* Inputs */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-5">
-        <h2 className="text-base font-bold text-slate-900">Asset details</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold text-slate-900">Asset details</h2>
+          <button
+            type="button"
+            onClick={resetToDefaults}
+            className="text-xs font-semibold text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 rounded-lg px-3 py-1.5 transition-colors bg-white hover:bg-slate-50"
+          >
+            Reset
+          </button>
+        </div>
 
         {/* Asset type */}
         <div>
@@ -197,6 +237,15 @@ export default function CGTCalculatorClient() {
       {/* Results */}
       {showResults && (
         <div className="space-y-4">
+          <span
+            role="status"
+            aria-live="polite"
+            className={`inline-block text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5 transition-opacity duration-500 ${
+              updatedFlash ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            ● Updated
+          </span>
           {r.isLoss ? (
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-700">
               <strong>Capital loss:</strong> This asset returned a loss of {fmt(-r.grossGain)}. Capital losses can

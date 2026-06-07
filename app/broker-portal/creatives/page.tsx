@@ -21,6 +21,7 @@ export default function CreativesPage() {
   const [uploading, setUploading] = useState(false);
   const [brokerSlug, setBrokerSlug] = useState("");
   const { toast } = useToast();
+  const [copiedId, setCopiedId] = useState<number | null>(null);
 
   // Upload form
   const [showForm, setShowForm] = useState(false);
@@ -270,9 +271,14 @@ export default function CreativesPage() {
                         }`}>
                         {c.is_active ? "Active" : "Inactive"}
                       </button>
-                      <button onClick={() => { navigator.clipboard.writeText(c.url); toast("URL copied", "success"); }}
+                      <button onClick={() => {
+                          navigator.clipboard.writeText(c.url).then(() => {
+                            setCopiedId(c.id);
+                            setTimeout(() => setCopiedId(null), 2000);
+                          }).catch(() => toast("Couldn't copy URL", "error"));
+                        }}
                         className="text-xs px-2 py-1 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium transition-colors">
-                        Copy URL
+                        {copiedId === c.id ? "Copied!" : "Copy URL"}
                       </button>
                       <button onClick={() => deleteCreative(c.id)}
                         className="text-xs px-2 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100 font-medium transition-colors ml-auto">

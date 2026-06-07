@@ -37,13 +37,17 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
   const [price, setPrice] = useState("");
   const [currentBroker, setCurrentBroker] = useState("");
   const [analysed, setAnalysed] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
 
   const addHolding = () => {
     const t = ticker.trim().toUpperCase();
     const n = name.trim() || t;
     const q = parseFloat(quantity) || 0;
     const p = parseFloat(price) || 0;
-    if (!t || q <= 0 || p <= 0) return;
+    if (!t) { setAddError("Ticker is required (e.g. BHP or AAPL)."); return; }
+    if (q <= 0) { setAddError("Quantity must be greater than 0."); return; }
+    if (p <= 0) { setAddError("Price must be greater than 0."); return; }
+    setAddError(null);
     setHoldings([...holdings, { id: uid(), ticker: t, name: n, quantity: q, price: p, value: q * p }]);
     setTicker(""); setName(""); setQuantity(""); setPrice("");
   };
@@ -138,6 +142,9 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
             <input value={price} onChange={e => setPrice(e.target.value)} type="number" placeholder="Price ($)" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             <button onClick={addHolding} className="px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition-colors">Add</button>
           </div>
+          {addError && (
+            <p role="alert" className="text-xs text-red-600 mt-1.5 mb-1">{addError}</p>
+          )}
 
           {holdings.length > 0 && (
             <div className="space-y-1 mb-3">
@@ -166,9 +173,14 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
           </div>
 
           {holdings.length >= 1 && (
-            <button onClick={() => setAnalysed(true)} className="mt-4 w-full py-3 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-all">
-              Analyse My Portfolio →
-            </button>
+            <>
+              <p className="mt-3 text-xs text-slate-500">
+                {holdings.length} holding{holdings.length !== 1 ? "s" : ""} added. Ready to analyse?
+              </p>
+              <button onClick={() => setAnalysed(true)} className="mt-2 w-full py-3 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-all">
+                Analyse My Portfolio →
+              </button>
+            </>
           )}
         </div>
 

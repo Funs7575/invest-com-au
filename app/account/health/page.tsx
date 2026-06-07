@@ -187,9 +187,9 @@ export default async function AccountHealthPage() {
                       <span style={{ fontSize: 13, fontWeight: 600, color: "var(--color-ink-800)" }}>{info.label}</span>
                       <span style={{ fontSize: 11, color: "var(--color-ink-400)", marginLeft: 8 }}>{info.desc}</span>
                     </div>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: val >= 75 ? "#16a34a" : val >= 50 ? "#2563eb" : "#dc2626", flexShrink: 0, marginLeft: 8 }}>{val}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: val === 0 ? "#94a3b8" : val >= 75 ? "#16a34a" : val >= 50 ? "#2563eb" : "#dc2626", flexShrink: 0, marginLeft: 8 }} title={val === 0 ? "No data yet — add holdings, goals, or shortlist brokers to score this dimension" : undefined}>{val === 0 ? "—" : val}</span>
                   </div>
-                  <ScoreBar score={val} color={val >= 75 ? "#16a34a" : val >= 50 ? "#2563eb" : "#dc2626"} />
+                  <ScoreBar score={val} color={val === 0 ? "#e2e8f0" : val >= 75 ? "#16a34a" : val >= 50 ? "#2563eb" : "#dc2626"} />
                 </div>
               );
             })}

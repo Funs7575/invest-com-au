@@ -417,8 +417,9 @@ export default function EditCampaignPage() {
             className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
           {campaign?.start_date && (
-            <p className="text-xs text-slate-400 mt-1">
-              Started: {campaign.start_date.slice(0, 10)}
+            <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
+              <Icon name="lock" size={10} className={isLive ? "text-amber-500" : ""} />
+              {isLive ? "Start date locked (campaign is live):" : "Started:"} {campaign.start_date.slice(0, 10)}
             </p>
           )}
         </div>

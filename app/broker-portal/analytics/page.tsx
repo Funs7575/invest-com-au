@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
+import { useToast } from "@/components/Toast";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
@@ -35,6 +36,7 @@ interface PercentileData {
 }
 
 export default function AnalyticsPage() {
+  const { toast } = useToast();
   const [tab, setTab] = useState<TabKey>("overview");
   const [days, setDays] = useState<DateRange>("30d");
   const [stats, setStats] = useState<CampaignDailyStats[]>([]);
@@ -298,7 +300,7 @@ export default function AnalyticsPage() {
     { key: "benchmarks", label: "Benchmarks" },
   ];
 
-  if (loading) return <div className="h-8 bg-slate-100 rounded w-48 animate-pulse" />;
+  if (loading && stats.length === 0) return <div className="h-8 bg-slate-100 rounded w-48 animate-pulse" />;
 
   return (
     <div className="space-y-6">
@@ -320,15 +322,17 @@ export default function AnalyticsPage() {
                 (d.spend / 100).toFixed(2),
               ]);
               downloadCSV(`analytics-${days}-${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+              toast("CSV export started", "success");
             }}
             className="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors flex items-center gap-1"
           >
             <Icon name="download" size={11} />
             Export CSV
           </button>
+          {loading && <span className="text-xs text-slate-400 animate-pulse">Loading…</span>}
           {(["7d", "30d", "90d"] as DateRange[]).map(d => (
-            <button key={d} onClick={() => setDays(d)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+            <button key={d} onClick={() => setDays(d)} disabled={loading}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                 days === d ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}>
               {d.toUpperCase()}

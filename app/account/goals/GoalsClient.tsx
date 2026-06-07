@@ -180,7 +180,13 @@ export default function GoalsClient({ initialItems }: Props) {
               to upload bank or super statements as a reference for current balances.
             </p>
             <button type="submit" disabled={adding}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
+              {adding && (
+                <svg className="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" aria-hidden>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              )}
               {adding ? "Adding…" : "Add goal"}
             </button>
           </div>

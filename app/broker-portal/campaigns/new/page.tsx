@@ -602,6 +602,16 @@ export default function NewCampaignPage() {
       return;
     }
 
+    if ((activeHoursStart !== null) !== (activeHoursEnd !== null)) {
+      setError("Dayparting requires both a start and end hour. Set both or clear both.");
+      return;
+    }
+
+    if (activeHoursStart !== null && activeHoursEnd !== null && activeHoursStart === activeHoursEnd) {
+      setError("Start and end hour must be different.");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -660,7 +670,7 @@ export default function NewCampaignPage() {
           {/* Campaign name */}
           <div>
             <label htmlFor="cn-name" className="block text-sm font-medium text-slate-700 mb-1">
-              Campaign Name *
+              Campaign Name <span className="text-red-500">*</span>
               <InfoTip text="A name for your reference only -- not shown to users. Use something descriptive like 'Compare Page Q1 2026'." />
             </label>
             <input
@@ -676,7 +686,7 @@ export default function NewCampaignPage() {
 
           {/* Placement selection — card grid */}
           <div>
-            <p className="block text-sm font-medium text-slate-700 mb-2">Select Placement *</p>
+            <p className="block text-sm font-medium text-slate-700 mb-2">Select Placement <span className="text-red-500">*</span></p>
             <div className="grid gap-3">
               {placements.map((p) => {
                 const vis = PLACEMENT_VISUALS[p.slug];
@@ -748,7 +758,7 @@ export default function NewCampaignPage() {
           {selectedPlacement && (
             <div>
               <label htmlFor="cn-rate" className="block text-sm font-medium text-slate-700 mb-1">
-                Rate (AUD) * — {selectedPlacement.inventory_type === "cpc" ? "per click" : "per month"}
+                Rate (AUD) <span className="text-red-500">*</span> — {selectedPlacement.inventory_type === "cpc" ? "per click" : "per month"}
                 {selectedPlacement.inventory_type === "cpc"
                   ? <InfoTip text="The amount you pay each time a user clicks your ad. Higher rates may win more placement opportunities." />
                   : <InfoTip text="Fixed monthly fee for this featured placement. Charged to your wallet at the start of each billing period." />
@@ -817,7 +827,7 @@ export default function NewCampaignPage() {
           {/* Dates */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="cn-start-date" className="block text-sm font-medium text-slate-700 mb-1">Start Date *</label>
+              <label htmlFor="cn-start-date" className="block text-sm font-medium text-slate-700 mb-1">Start Date <span className="text-red-500">*</span></label>
               <input
                 id="cn-start-date"
                 type="date"
@@ -876,6 +886,15 @@ export default function NewCampaignPage() {
                     ))}
                   </select>
                 </div>
+                {activeHoursStart !== null && activeHoursEnd === null && (
+                  <p className="text-xs text-amber-600 mt-1">Set an end hour — start hour alone has no effect.</p>
+                )}
+                {activeHoursEnd !== null && activeHoursStart === null && (
+                  <p className="text-xs text-amber-600 mt-1">Set a start hour — end hour alone has no effect.</p>
+                )}
+                {activeHoursStart !== null && activeHoursEnd !== null && activeHoursStart !== activeHoursEnd && (
+                  <p className="text-xs text-slate-500 mt-1">Ads will run {String(activeHoursStart).padStart(2, "0")}:00–{String(activeHoursEnd).padStart(2, "0")}:00 UTC</p>
+                )}
               </div>
               <div>
                 <p className="block text-xs font-medium text-slate-600 mb-1">Active Days</p>
