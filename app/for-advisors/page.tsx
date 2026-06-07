@@ -23,8 +23,11 @@ const FOR_ADVISORS_FAQS = [
   { q: "What qualifies as a 'lead'?", a: "A lead is an enquiry submitted through your profile — the investor provides their name, email, and usually a phone number and message. Booking clicks (Calendly) are tracked separately." },
   { q: "How are leads allocated?", a: "Leads go directly to the advisor whose profile the investor enquires through. We don't share leads with multiple advisors — each lead is exclusive to you." },
   { q: "Can I set my own Calendly link?", a: "Yes. In your advisor portal, paste your Calendly or Cal.com link and it appears as a prominent 'Book Free Call' button on your profile. We handle the rest." },
-  { q: "How long before I get my first lead?", a: "Most advisors receive their first enquiry within 2–4 weeks of going live, depending on your category, location, and how complete your profile is. Advisors with a photo, detailed bio, and clear fee structure typically appear higher in our directory and convert better." },
+  { q: "How do I get paid for articles?", a: "You write the article in your advisor portal, select a pricing tier, and submit for review. We edit and publish it. Payment is collected before publication." },
+  { q: "What if I'm not happy with lead quality?", a: "You can dispute any lead through your dashboard. If the lead is clearly spam or outside your service area, we'll credit it back." },
   { q: "What if I get spam or low-quality leads?", a: "Every lead goes through our automated quality filters — we check for valid email, complete contact details, and a coherent message. Obvious spam is blocked before it reaches you. For borderline cases, our one-click dispute process means you're never paying for something that doesn't meet our quality standard." },
+  { q: "How long before I get my first lead?", a: "Most advisors receive their first enquiry within 2–4 weeks of going live, depending on your category, location, and how complete your profile is. Advisors with a photo, detailed bio, and clear fee structure typically appear higher in our directory and convert better." },
+  { q: "Do you help with follow-up?", a: "We don't call leads on your behalf, but your dashboard shows response-time tracking and nudges you when leads go uncontacted for 24 hours. Fast response time is a key ranking signal — advisors who respond within an hour are 3× more likely to convert a lead to a meeting." },
 ];
 
 export default async function ForAdvisorsPage() {
@@ -300,17 +303,7 @@ export default async function ForAdvisorsPage() {
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl font-extrabold text-center mb-8">Frequently Asked Questions</h2>
           <div className="space-y-4">
-            {[
-              { q: "How much does it cost to list?", a: "It's free to create your profile and receive your first 3 leads. After that, top up with a A$150 credit balance — each lead costs A$39 and deducts from your balance. No monthly fees, no setup costs, no lock-in contracts." },
-              { q: "What qualifies as a 'lead'?", a: "A lead is an enquiry submitted through your profile — the investor provides their name, email, and usually a phone number and message. Booking clicks (Calendly) are tracked separately." },
-              { q: "How are leads allocated?", a: "Leads go directly to the advisor whose profile the investor enquires through. We don't share leads with multiple advisors — each lead is exclusive to you." },
-              { q: "Can I set my own Calendly link?", a: "Yes. In your advisor portal, paste your Calendly or Cal.com link and it appears as a prominent 'Book Free Call' button on your profile. We handle the rest." },
-              { q: "How do I get paid for articles?", a: "You write the article in your advisor portal, select a pricing tier, and submit for review. We edit and publish it. Payment is collected before publication." },
-              { q: "What if I'm not happy with lead quality?", a: "You can dispute any lead through your dashboard. If the lead is clearly spam or outside your service area, we'll credit it back." },
-              { q: "What if I get spam or low-quality leads?", a: "Every lead goes through our automated quality filters — we check for valid email, complete contact details, and a coherent message. Obvious spam is blocked before it reaches you. For borderline cases, our one-click dispute process means you're never paying for something that doesn't meet our quality standard." },
-              { q: "How long before I get my first lead?", a: "Most advisors receive their first enquiry within 2–4 weeks of going live, depending on your category, location, and how complete your profile is. Advisors with a photo, detailed bio, and clear fee structure typically appear higher in our directory and convert better." },
-              { q: "Do you help with follow-up?", a: "We don't call leads on your behalf, but your dashboard shows response-time tracking and nudges you when leads go uncontacted for 24 hours. Fast response time is a key ranking signal — advisors who respond within an hour are 3× more likely to convert a lead to a meeting." },
-            ].map((faq, i) => (
+            {FOR_ADVISORS_FAQS.map((faq, i) => (
               <details key={i} className="bg-white border border-slate-200 rounded-xl overflow-hidden group">
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-50 flex items-center justify-between">
                   {faq.q}

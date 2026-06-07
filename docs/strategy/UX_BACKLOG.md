@@ -689,5 +689,15 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-255]** `CalculatorLeadCapture` on 4 remaining tool pages — buy-vs-rent (need=mortgage), portfolio-stress-test (need=planning), etf-overlap (need=planning), salary-sacrifice decision tree (need=planning), smsf-setup decision tree (need=smsf). Every high-intent tool page now has a post-result advisor lead capture converting calculation intent into free advisor reviews.
 
+**[ADV-256]** `CalculatorLeadCapture` on tax-optimizer, portfolio-xray, fee-simulator + replace static advisor CTAs — Adds dynamic lead-capture form to the 3 remaining calculator pages. In tax-optimizer and portfolio-xray, the existing static "Find an Advisor →" CTA blocks are replaced by `CalculatorLeadCapture` (better conversion UX). Fee-simulator gets it inserted before the SEO content section. Completes the full calculator lead-capture rollout across all 18+ tool pages. `app/tax-optimizer/TaxOptimizerClient.tsx`, `app/portfolio-xray/XRayClient.tsx`, `app/fee-simulator/FeeSimulatorClient.tsx`
+
+**[ADV-257]** FAQ JSON-LD on SMSF checker — GEO pivot: 5-question FAQPage structured data added to the SMSF eligibility checker covering collectables sole-purpose rule (Rolex), related-party property, cryptocurrency, the sole-purpose test itself, and non-compliance penalties. Answer-first format optimised for AI citation. `app/tools/smsf-checker/page.tsx`
+
+**[ADV-258]** `aria-busy` sweep on async buttons in account, portal, and course pages (2026-06-08) — Adds `aria-busy` to 20+ async buttons missing it: ProfileClient save, PropertyHoldingsClient add-property submit, MorningBriefToggle, DigestToggle (role="switch"), ListsClient delete, TermDepositsClient delete-confirm, StartupThesisClient save, CourseReviews submit, AvailabilityWidget status buttons, advisor marketplace template add, broker settings accept-terms, vault delete-confirm. Screen readers now announce in-progress state on every async user action.
+
+**[ADV-259]** `aria-busy/label` on loading skeletons in account pages and portals — Root `app/loading.tsx`, AccountClient, ProfileClient, ReferralsClient, SavedComparisonsClient, SavedSearchesClient, advisor-portal loading.tsx, broker-portal loading.tsx, EarnTab, and EventsTab inline skeleton states all get `aria-busy="true"` and descriptive `aria-label`. Screen readers announce the loading region so AT users know content is being fetched. `inputMode` sweep on 29 portal number inputs (advisor/broker/org/startup portals) also completed in same session.
+
+**[ADV-260]** `inputMode` on 29 portal number inputs (advisor/broker/org/startup portals) — Extends ADV-253's public inputMode sweep to authenticated portal pages. All `type="number"` inputs in advisor-portal (CourseBuilderTab, EventsTab, SettingsTab, ProfileDetailsTab, TeamTab, auctions), broker-portal (campaigns, settings, wallet), org-portal (OrgCoursesTab, OrgEventsTab), and startup-portal (round/new) now get `inputMode="decimal"` for mobile numeric keyboard.
+
 ---
 
