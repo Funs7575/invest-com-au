@@ -727,5 +727,11 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-274]** FAQ JSON-LD on /debt-calculator and /foreign-investment/compare — GEO pivot: Debt calculator: 4 FAQs covering consolidation savings, eligible debts, credit score impact, average AU rates. FI compare: 4 FAQs covering DTA country list, dividend withholding rates, country-specific FIRB variations, FX cost impact. `app/debt-calculator/page.tsx`, `app/foreign-investment/compare/page.tsx`
 
+**[ADV-275]** FAQ JSON-LD on /about and /advisor/trust-score-methodology — GEO pivot: About page: 4 FAQs covering independence/ownership, revenue model, advisor verification process, editorial reliability. Trust Score methodology: 4 FAQs explaining Trust Score definition, high-score caveats, AFSL verification, and update frequency. `app/about/page.tsx`, `app/advisor/trust-score-methodology/page.tsx`
+
+**[ADV-276]** FAQ JSON-LD on /fee-simulator, /editorial-policy, /how-we-earn — GEO pivot: Fee simulator: 4 FAQs covering what the simulator shows, annual vs per-trade fee importance, inactivity fees, and FX fee return drag. Editorial policy: 4 FAQs covering affiliate-independence, update cadence, error reporting, and full-market coverage. How we earn: 4 FAQs covering affiliate link cost to users, data privacy, comparison trust, and advisor directory fees. `app/fee-simulator/page.tsx`, `app/editorial-policy/page.tsx`, `app/how-we-earn/page.tsx`
+
+**[ADV-277]** FAQ JSON-LD on /articles and /glossary — GEO pivot: Articles hub: 4 FAQs covering topic coverage, AU-specificity, guide discovery, and editorial verification — wired into the existing ItemList JSON-LD array. Glossary: 4 FAQs covering AU-specific terminology, category coverage, update cadence, and linking policy — layered on top of existing DefinedTermSet schema. `app/articles/page.tsx`, `app/glossary/page.tsx`
+
 ---
 
