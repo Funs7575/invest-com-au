@@ -16,21 +16,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { BRIEF_TEMPLATES, BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
-import { TEAM_CATEGORIES } from "@/lib/api-schemas";
+import { TEAM_CATEGORIES, TEAM_CATEGORY_LABELS as CATEGORY_LABELS, type TeamCategory } from "@/lib/api-schemas";
 import { SQUAD_MEMBER_ROLES, type SquadMemberRole } from "@/lib/squad-creation";
-
-type TeamCategory = (typeof TEAM_CATEGORIES)[number];
-
-const CATEGORY_LABELS: Record<TeamCategory, string> = {
-  smsf_property: "SMSF Property",
-  foreign_investor: "Foreign Investor",
-  expat: "Expat Investor",
-  commercial_property: "Commercial Property",
-  business_acquisition: "Business Acquisition",
-  due_diligence: "Opportunity / Due Diligence",
-  retirement: "Retirement",
-  custom: "General / Custom",
-};
 
 interface InviteRow {
   email: string;

@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { listVerifiedTeams } from "@/lib/expert-teams";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { TEAM_CATEGORY_LABELS } from "@/lib/api-schemas";
 
 export const revalidate = 1800;
 
@@ -48,7 +49,7 @@ async function TeamsList() {
         >
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[0.62rem] font-bold text-violet-700 bg-violet-100 px-2 py-0.5 rounded-full uppercase tracking-wide">
-              {team.team_category}
+              {TEAM_CATEGORY_LABELS[team.team_category as keyof typeof TEAM_CATEGORY_LABELS] ?? team.team_category}
             </span>
             {team.accepts_briefs && (
               <span className="text-[0.62rem] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">

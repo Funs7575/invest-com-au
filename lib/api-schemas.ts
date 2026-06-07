@@ -340,6 +340,19 @@ export const TEAM_CATEGORIES = [
   "custom",
 ] as const;
 
+export type TeamCategory = (typeof TEAM_CATEGORIES)[number];
+
+export const TEAM_CATEGORY_LABELS: Record<TeamCategory, string> = {
+  smsf_property: "SMSF Property",
+  foreign_investor: "Foreign Investor",
+  expat: "Expat Investor",
+  commercial_property: "Commercial Property",
+  business_acquisition: "Business Acquisition",
+  due_diligence: "Opportunity / Due Diligence",
+  retirement: "Retirement",
+  custom: "General / Custom",
+};
+
 export const CreateExpertTeamRequest = z.object({
   name: z.string().min(3).max(120),
   team_category: z.enum(TEAM_CATEGORIES),
