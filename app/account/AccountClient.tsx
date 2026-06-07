@@ -106,13 +106,16 @@ export default function AccountClient() {
 
   // Fetch saved comparisons count
   const fetchSavedComparisonsCount = useCallback(async () => {
+    const timeout = setTimeout(() => setSavedComparisonsCount(0), 3000);
     try {
       const res = await fetch("/api/saved-comparisons");
-      if (!res.ok) return;
+      clearTimeout(timeout);
+      if (!res.ok) { setSavedComparisonsCount(0); return; }
       const data = await res.json();
       setSavedComparisonsCount(Array.isArray(data.comparisons) ? data.comparisons.length : 0);
     } catch {
-      // Silently fail - count is a nice-to-have
+      clearTimeout(timeout);
+      setSavedComparisonsCount(0);
     }
   }, []);
 

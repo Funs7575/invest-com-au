@@ -291,10 +291,10 @@ export default function DashboardTab({
       )}
 
       {/* Enquiries Per Week chart */}
-      {weeklyEnquiries.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
-          <h3 className="text-sm font-bold text-slate-900 mb-1">Enquiries Per Week</h3>
-          <p className="text-[0.62rem] text-slate-400 mb-4">Last 8 weeks</p>
+      <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
+        <h3 className="text-sm font-bold text-slate-900 mb-1">Enquiries Per Week</h3>
+        <p className="text-[0.62rem] text-slate-400 mb-4">Last 8 weeks</p>
+        {weeklyEnquiries.length > 0 ? (
           <div className="flex items-end gap-2 h-28">
             {weeklyEnquiries.map((w, i) => {
               const max = Math.max(...weeklyEnquiries.map(wk => wk.count), 1);
@@ -312,8 +312,12 @@ export default function DashboardTab({
               );
             })}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-xs text-slate-400 text-center py-6">
+            No enquiries yet — they&apos;ll appear here once investors reach out.
+          </p>
+        )}
+      </div>
 
       {/* Profile Views chart */}
       {viewsByDay.length > 0 && (

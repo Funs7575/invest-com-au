@@ -241,9 +241,15 @@ export default async function AcademyPage() {
           {courses.length === 0 ? (
             <div className="text-center py-20 border border-dashed border-slate-200 rounded-2xl">
               <p className="text-slate-500 text-lg mb-2">No courses available yet.</p>
-              <p className="text-slate-400 text-sm">
+              <p className="text-slate-400 text-sm mb-6">
                 Check back soon — new courses are added regularly.
               </p>
+              <Link
+                href="/articles"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-700 transition-colors"
+              >
+                Browse guides →
+              </Link>
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

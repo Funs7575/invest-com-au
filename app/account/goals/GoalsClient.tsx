@@ -45,6 +45,12 @@ export default function GoalsClient({ initialItems }: Props) {
   const handleAdd = async (form: FormData) => {
     setError(null);
     setAdding(true);
+    const targetDateVal = String(form.get("target_date") ?? "");
+    if (targetDateVal && targetDateVal < new Date().toISOString().slice(0, 10)) {
+      setError("Target date must be in the future.");
+      setAdding(false);
+      return;
+    }
     const goalType = String(form.get("goal_type") ?? "generic") as GoalRow["goalType"];
     const body = {
       label: String(form.get("label") ?? "").trim(),
