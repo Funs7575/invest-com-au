@@ -38,6 +38,7 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: absoluteUrl("/property/positive-gearing"),
     type: "article",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Positive Gearing Property Australia")}&sub=${encodeURIComponent("Cash Flow Positive · Yield vs Growth · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
 };

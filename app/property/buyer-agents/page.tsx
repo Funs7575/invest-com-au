@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import BuyerAgentsClient from "./BuyerAgentsClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import JsonLd from "@/components/JsonLd";
-import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 
 const BUYER_AGENT_FAQS = [
@@ -36,7 +36,9 @@ export const metadata: Metadata = {
     title: "Verified Buyer's Agents — invest.com.au",
     description: "Find a verified buyer's agent near you. Free consultation, no obligation.",
     url: "/property/buyer-agents",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Buyers Agents Australia")}&sub=${encodeURIComponent("Find a Buyers Agent · Fees · When to Use One · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
   alternates: { canonical: "/property/buyer-agents" },
 };
 

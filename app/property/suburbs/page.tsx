@@ -36,6 +36,7 @@ export const metadata: Metadata = {
     title: "Suburb Research — invest.com.au",
     description: "Research suburbs with median prices, rental yields, and capital growth data.",
     url: "/property/suburbs",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Suburb Research — Property Investment")}&sub=${encodeURIComponent("Median Price · Rental Yield · Capital Growth · Vacancy Rate")}`, width: 1200, height: 630 }],
   },
   alternates: { canonical: "/property/suburbs" },
 };

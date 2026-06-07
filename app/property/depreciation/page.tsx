@@ -54,7 +54,9 @@ export const metadata: Metadata = {
     description:
       "Complete guide to claiming tax depreciation on Australian investment properties — building allowance, plant and equipment, the 2017 second-hand property rule, and real-world examples.",
     url: absoluteUrl("/property/depreciation"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Property Depreciation Guide")}&sub=${encodeURIComponent("Division 43 · Division 40 · Tax Depreciation Schedule · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function PropertyDepreciationPage() {

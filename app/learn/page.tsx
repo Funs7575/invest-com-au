@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     description: "Structured paths with progress tracking. New investor, broker choice, super & retirement, tax, and foreign investor.",
     url: `${SITE_URL}/learn`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Learning Paths — Invest.com.au")}&sub=${encodeURIComponent("New Investor · Super · Tax · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Complete guide to value investing on the ASX — intrinsic value, P/E and P/B ratios, margin of safety, value traps, and how franking credits affect Australian value analysis.",
     url: `${SITE_URL}/invest/value-investing`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Value Investing Australia")}&sub=${encodeURIComponent("Undervalued Stocks · P/E Ratio · Graham · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

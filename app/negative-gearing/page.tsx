@@ -38,6 +38,7 @@ export const metadata: Metadata = {
     description: "Worked example, when it makes sense, and why SMSF rules differ.",
     url: `${SITE_URL}/negative-gearing`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Negative Gearing Guide Australia")}&sub=${encodeURIComponent("Tax Rules · Property · Shares · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

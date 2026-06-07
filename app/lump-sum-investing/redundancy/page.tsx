@@ -17,6 +17,7 @@ export const metadata: Metadata = {
       "Genuine vs non-genuine redundancy, the tax-free threshold, ETP caps, the super top-up and the cash buffer that comes first.",
     url: `${SITE_URL}/lump-sum-investing/redundancy`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investing Redundancy Pay Australia")}&sub=${encodeURIComponent("ETP Tax · Super · Where to Invest · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

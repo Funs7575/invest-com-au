@@ -37,6 +37,7 @@ export const metadata: Metadata = {
     description: "The right sequence — universal first steps, then the long-term plan.",
     url: `${SITE_URL}/lump-sum-investing`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("What to Do With a Lump Sum in Australia")}&sub=${encodeURIComponent("Investment Strategy · Emergency Buffer · Super · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

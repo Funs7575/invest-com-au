@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import NegativeGearingCalculatorClient from "./NegativeGearingCalculatorClient";
 
@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description: "Cash flow, tax benefit and 10-year projection.",
     url: `${SITE_URL}/negative-gearing/calculator`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Negative Gearing Calculator")}&sub=${encodeURIComponent("Annual Tax Saving · Cash Flow · Break-Even · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

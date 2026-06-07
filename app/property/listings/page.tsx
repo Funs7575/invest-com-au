@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import ListingsClient from "./ListingsClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import JsonLd from "@/components/JsonLd";
-import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -15,7 +15,9 @@ export const metadata: Metadata = {
     title: "New Developments & Property Listings — invest.com.au",
     description: "Browse new developments across Australia. Free enquiries, no obligation.",
     url: "/property/listings",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investment Property Listings")}&sub=${encodeURIComponent("Off-Market · New Builds · Buy Now · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
   alternates: { canonical: "/property/listings" },
 };
 

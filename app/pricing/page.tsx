@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "Typical fee ranges for financial planners, mortgage brokers, accountants and more. No hidden costs.",
     url: absoluteUrl("/pricing"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Advisor & Broker Fee Transparency")}&sub=${encodeURIComponent("Financial Planners · Mortgage Brokers · Accountants · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

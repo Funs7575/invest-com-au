@@ -993,7 +993,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: cfg.metaDescription,
       url: `${SITE_URL}/investing-for/${occupation}`,
       type: "website",
+      images: [{ url: `/api/og?title=${encodeURIComponent("Investing for " + cfg.label + " in Australia")}&sub=${encodeURIComponent("Tax · Super · Strategy · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

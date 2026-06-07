@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "Practical financial action plans for every major Australian life transition — in plain English.",
     url: `${SITE_URL}/just`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Life Event Financial Checklists")}&sub=${encodeURIComponent("Marriage · Home · Retirement · Kids · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

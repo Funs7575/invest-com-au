@@ -42,6 +42,7 @@ export const metadata: Metadata = {
     title: `Investing in Australia by City (${CURRENT_YEAR})`,
     description: `Explore investing resources for Australia's major cities. Compare platforms and find local financial advisors.`,
     url: absoluteUrl("/investing"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Invest in Australia")}&sub=${encodeURIComponent("Shares · ETFs · Property · Super · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };

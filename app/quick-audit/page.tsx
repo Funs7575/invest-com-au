@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Enter your broker and trading frequency. Get instant savings analysis across every major Australian platform.",
     url: "/quick-audit",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Broker Fee Audit")}&sub=${encodeURIComponent("Instant Savings Analysis · All Australian Platforms")}`, width: 1200, height: 630 }],
   },
   alternates: { canonical: "/quick-audit" },
 };

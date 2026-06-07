@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Browse accredited CPD providers and training companies for Australian financial professionals.",
     url: "/providers",
+    images: [{ url: `/api/og?title=${encodeURIComponent("CPD Providers & Training Australia")}&sub=${encodeURIComponent("Accredited · Advisors · Tax Agents · Mortgage Brokers")}`, width: 1200, height: 630 }],
   },
 };
 

@@ -27,7 +27,9 @@ export async function generateMetadata({
       title: magnet.title,
       description: magnet.description,
       url: `${SITE_URL}/lead-magnets/${slug}`,
+      images: [{ url: `/api/og?title=${encodeURIComponent(magnet.title)}&sub=${encodeURIComponent("Free Download · invest.com.au")}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

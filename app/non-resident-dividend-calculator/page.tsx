@@ -17,7 +17,9 @@ export const metadata: Metadata = {
     description:
       "Australian dividend withholding tax and DTA-reduced rates for non-resident investors in ASX shares.",
     url: absoluteUrl("/non-resident-dividend-calculator"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Non-Resident Dividend Tax Calculator")}&sub=${encodeURIComponent("Withholding Tax · DTA · Franking Credits · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 const softwareLd = calculatorJsonLd({

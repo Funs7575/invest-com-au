@@ -37,7 +37,9 @@ export async function generateMetadata({
       description: learningPath.description,
       url: `${SITE_URL}/learn/${learningPath.slug}`,
       type: "website",
+      images: [{ url: `/api/og?title=${encodeURIComponent(learningPath.title)}&sub=${encodeURIComponent("Learning Path · " + learningPath.steps.length + " Steps · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

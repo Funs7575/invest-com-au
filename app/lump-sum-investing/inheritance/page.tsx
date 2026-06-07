@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import HubLeadForm from "@/components/leads/HubLeadForm";
 
@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     description: "Three buckets, the 90-day rule and the CGT trap with inherited property.",
     url: `${SITE_URL}/lump-sum-investing/inheritance`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investing an Inheritance Australia")}&sub=${encodeURIComponent("Lump Sum Strategy · CGT · Super · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

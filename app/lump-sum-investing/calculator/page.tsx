@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import LumpSumCalculatorClient from "./LumpSumCalculatorClient";
 
@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description: "Project a lump sum's growth with monthly top-ups, return assumptions and tax outcomes.",
     url: `${SITE_URL}/lump-sum-investing/calculator`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Lump Sum vs DCA Calculator")}&sub=${encodeURIComponent("Compare Returns · Time in Market · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
