@@ -27,29 +27,48 @@ describe("getStateBySlug", () => {
 });
 
 describe("bestPageMeta", () => {
-  it("includes state in title when state is provided", () => {
+  const noun = "opportunity assessment specialists";
+
+  it("uses the provider noun (not the imperative label) in the title and H1", () => {
     const m = bestPageMeta({
-      intentLabel: "SMSF Property Advice",
+      intentSlug: "opportunity_assessment",
+      intentNoun: noun,
       state: AUSTRALIAN_STATES[0]!,
     });
-    expect(m.title).toContain("SMSF Property Advice");
-    expect(m.title).toContain("New South Wales");
-    expect(m.h1).toBe("Best SMSF Property Advice in New South Wales");
+    expect(m.h1).toBe("Best opportunity assessment specialists in New South Wales");
+    expect(m.title).toContain("Best opportunity assessment specialists in New South Wales");
+    // never the broken "Best Assess an opportunity in ..." copy
+    expect(m.h1).not.toContain("Assess an opportunity");
   });
 
-  it("uses 'Australia' when no state", () => {
-    const m = bestPageMeta({ intentLabel: "Financial Advice" });
-    expect(m.title).toContain("Australia");
-    expect(m.h1).toBe("Best Financial Advice in Australia");
+  it("uses 'Australia' and the all-AU canonical when no state is given", () => {
+    const m = bestPageMeta({ intentSlug: "financial_advice", intentNoun: "financial advisers" });
+    expect(m.h1).toBe("Best financial advisers in Australia");
+    expect(m.canonical).toContain("/marketplace/financial_advice");
+    expect(m.canonical).not.toContain("/nsw");
   });
 
-  it("emits an absolute canonical URL", () => {
+  it("builds the canonical from the SLUG, not the slugified noun (noindex-404 regression)", () => {
     const m = bestPageMeta({
-      intentLabel: "Financial Advice",
+      intentSlug: "opportunity_assessment",
+      intentNoun: noun,
       state: AUSTRALIAN_STATES[0]!,
     });
     expect(m.canonical).toMatch(/^https?:\/\//);
-    expect(m.canonical).toContain("/marketplace/financial-advice/nsw");
+    expect(m.canonical).toContain("/marketplace/opportunity_assessment/nsw");
+    // the old bug slugified the label/noun → "assess-an-opportunity" / "...-specialists"
+    expect(m.canonical).not.toContain("assess-an-opportunity");
+    expect(m.canonical).not.toContain("specialists");
+  });
+
+  it("does not double-brand the title (the layout title template adds the brand)", () => {
+    const m = bestPageMeta({
+      intentSlug: "financial_advice",
+      intentNoun: "financial advisers",
+      state: AUSTRALIAN_STATES[0]!,
+    });
+    expect(m.title).not.toContain("| Invest.com.au");
+    expect(m.title).not.toContain("Invest.com.au");
   });
 });
 
@@ -67,11 +86,17 @@ describe("generateBestCombos", () => {
 
 describe("defaultFaqs", () => {
   it("returns 3 Q&A items", () => {
-    expect(defaultFaqs("Financial Advice").length).toBe(3);
+    expect(defaultFaqs("financial advisers").length).toBe(3);
   });
 
   it("mentions the state name when provided", () => {
-    const faqs = defaultFaqs("SMSF help", "Queensland");
+    const faqs = defaultFaqs("SMSF property specialists", "Queensland");
     expect(faqs.some((f) => f.q.includes("Queensland"))).toBe(true);
+  });
+
+  it("reads grammatically with the provider noun", () => {
+    const faqs = defaultFaqs("opportunity assessment specialists", "New South Wales");
+    expect(faqs[0]!.q).toContain("opportunity assessment specialists");
+    expect(faqs[0]!.q).not.toContain("Assess an opportunity");
   });
 });

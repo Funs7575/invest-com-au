@@ -85,7 +85,7 @@ async function matchAdvisors(filters: Record<string, unknown>): Promise<MatchedP
     id: r.id as number,
     name: (r.name as string) || "Advisor",
     slug: (r.slug as string) || "",
-    href: `/advisors/${(r.slug as string) || ""}`,
+    href: `/advisor/${(r.slug as string) || ""}`,
   }));
 }
 
