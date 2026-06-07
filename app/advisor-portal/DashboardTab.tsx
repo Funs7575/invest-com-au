@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
@@ -34,31 +34,46 @@ function YourRankWidget() {
   if (!data.rank) {
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
-        <div className="flex items-center gap-2 mb-1">
-          <Icon name="award" size={16} className="text-slate-400" />
-          <h3 className="text-sm font-bold text-slate-700">Your Leaderboard Rank</h3>
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-8 h-8 bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center shrink-0">
+            <Icon name="award" size={15} className="text-slate-400" />
+          </div>
+          <h3 className="text-sm font-semibold text-slate-600">Your Leaderboard Rank</h3>
         </div>
-        <p className="text-xs text-slate-500">Complete your profile and earn leads to appear on the <Link href="/advisors/leaderboard" className="text-teal-600 hover:underline font-medium">monthly leaderboard</Link>.</p>
+        <p className="text-xs text-slate-500 leading-relaxed">
+          Complete your profile and earn leads to appear on the{" "}
+          <Link href="/advisors/leaderboard" className="text-teal-600 hover:underline font-medium">
+            monthly leaderboard
+          </Link>.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-4 mb-6 flex items-center justify-between gap-4">
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <Icon name="award" size={16} className="text-teal-600" />
-          <h3 className="text-sm font-bold text-teal-900">Your Leaderboard Rank</h3>
+    <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 flex items-center justify-between gap-4">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 bg-teal-100 border border-teal-200 rounded-full flex items-center justify-center shrink-0">
+          <Icon name="award" size={18} className="text-teal-600" />
         </div>
-        <p className="text-xs text-teal-700">
-          {data.percentile != null ? `Top ${100 - data.percentile}% of advisors this month` : `Score: ${data.score}`}
-        </p>
+        <div>
+          <h3 className="text-sm font-bold text-slate-800">Your Leaderboard Rank</h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            {data.percentile != null ? `Top ${100 - data.percentile}% of advisors this month` : `Score: ${data.score}`}
+          </p>
+        </div>
       </div>
       <div className="text-right shrink-0">
-        <div className="text-3xl font-extrabold text-teal-600">#{data.rank}</div>
-        <div className="text-[0.62rem] text-teal-500">of {data.total}</div>
+        <div className="flex items-baseline gap-0.5 justify-end">
+          <span className="text-[0.65rem] font-semibold text-slate-400">#</span>
+          <span className="text-3xl font-extrabold text-teal-600">{data.rank}</span>
+        </div>
+        <div className="text-[0.62rem] text-slate-400 font-medium">of {data.total}</div>
       </div>
-      <Link href="/advisors/leaderboard" className="shrink-0 text-xs font-bold text-teal-600 hover:text-teal-800 underline underline-offset-2">
+      <Link
+        href="/advisors/leaderboard"
+        className="shrink-0 text-xs font-bold text-teal-600 hover:text-teal-800 border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50 transition-colors"
+      >
         View →
       </Link>
     </div>
@@ -104,6 +119,27 @@ export default function DashboardTab({
   onNavigate, onDismissOnboarding, billingSummary, dataLoadedAt, onRefresh,
 }: Props) {
   const refreshLabel = useRelativeTime(dataLoadedAt);
+  const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
+  const [respondedLeads, setRespondedLeads] = useState<Set<string>>(new Set());
+  const [leadNotes, setLeadNotes] = useState<Record<string, string>>({});
+  const [noteInput, setNoteInput] = useState<Record<string, string>>({});
+
+  const toggleLead = useCallback((id: string) => {
+    setExpandedLeadId((prev) => (prev === id ? null : id));
+  }, []);
+
+  const markResponded = useCallback((id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setRespondedLeads((prev) => { const s = new Set(prev); s.add(id); return s; });
+  }, []);
+
+  const saveNote = useCallback((id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const text = noteInput[id]?.trim();
+    if (!text) return;
+    setLeadNotes((prev) => ({ ...prev, [id]: text }));
+    setNoteInput((prev) => ({ ...prev, [id]: "" }));
+  }, [noteInput]);
   return (
     <>
       <div className="flex items-center justify-between mb-1">
@@ -274,17 +310,19 @@ export default function DashboardTab({
             />
           </div>
           {profileCompleteness.missingFields.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              <span className="text-[0.62rem] text-slate-500 mr-1">Missing:</span>
-              {profileCompleteness.missingFields.map((f) => (
-                <button
-                  key={f}
-                  onClick={() => onNavigate("profile")}
-                  className="text-[0.58rem] font-medium text-violet-600 bg-violet-50 border border-violet-200 px-2 py-0.5 rounded-full hover:bg-violet-100 transition-colors"
-                >
-                  {f}
-                </button>
-              ))}
+            <div>
+              <span className="text-[0.62rem] text-slate-500 block mb-1.5">Missing:</span>
+              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-1.5">
+                {profileCompleteness.missingFields.map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => onNavigate("profile")}
+                    className="text-xs font-medium text-violet-600 bg-violet-50 border border-violet-200 rounded-lg sm:rounded-full hover:bg-violet-100 transition-colors flex items-center px-3 py-3 sm:py-1 sm:px-2.5 sm:text-[0.68rem] min-h-[44px] sm:min-h-0 w-full sm:w-auto"
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -360,39 +398,114 @@ export default function DashboardTab({
                   <th scope="col" className="px-4 py-2 text-center">Quality</th>
                   <th scope="col" className="px-4 py-2">Status</th>
                   <th scope="col" className="px-4 py-2">Message</th>
+                  <th scope="col" className="px-3 py-2 w-8"><span className="sr-only">Expand</span></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {leads.slice(0, 8).map((lead) => (
-                  <tr key={lead.id} className={`text-xs ${lead.status === "new" ? "bg-violet-50/40" : "hover:bg-slate-50"} transition-colors`}>
-                    <td className="px-4 py-2.5">
-                      <div className="font-semibold text-slate-900">{lead.user_name}</div>
-                      <div className="text-[0.58rem] text-slate-400">{lead.user_email}</div>
-                    </td>
-                    <td className="px-4 py-2.5 text-slate-500 whitespace-nowrap">
-                      {new Date(lead.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
-                    </td>
-                    <td className="px-4 py-2.5 text-center">
-                      {lead.quality_score != null ? (
-                        <LeadScoreBadge score={lead.quality_score} signals={lead.quality_signals} tier={lead.lead_tier} compact />
-                      ) : (
-                        <span className="text-slate-300">&mdash;</span>
+                {leads.slice(0, 8).map((lead) => {
+                  const isExpanded = expandedLeadId === lead.id;
+                  const isResponded = respondedLeads.has(lead.id);
+                  const savedNote = leadNotes[lead.id];
+                  return (
+                    <React.Fragment key={lead.id}>
+                      <tr
+                        onClick={() => toggleLead(lead.id)}
+                        className={`text-xs cursor-pointer select-none ${
+                          isExpanded
+                            ? "bg-violet-50 border-b-0"
+                            : lead.status === "new"
+                            ? "bg-violet-50/40 hover:bg-violet-50/80"
+                            : "hover:bg-slate-50"
+                        } transition-colors`}
+                      >
+                        <td className="px-4 py-2.5">
+                          <div className="font-semibold text-slate-900">{lead.user_name}</div>
+                          <div className="text-[0.58rem] text-slate-400">{lead.user_email}</div>
+                        </td>
+                        <td className="px-4 py-2.5 text-slate-500 whitespace-nowrap">
+                          {new Date(lead.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
+                        </td>
+                        <td className="px-4 py-2.5 text-center">
+                          {lead.quality_score != null ? (
+                            <LeadScoreBadge score={lead.quality_score} signals={lead.quality_signals} tier={lead.lead_tier} compact />
+                          ) : (
+                            <span className="text-slate-300">&mdash;</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-2.5">
+                          <span className={`text-[0.56rem] font-bold px-2 py-0.5 rounded-full ${
+                            isResponded || lead.status === "contacted" ? "bg-blue-100 text-blue-700" :
+                            lead.status === "new" ? "bg-violet-100 text-violet-700" :
+                            lead.status === "converted" ? "bg-emerald-100 text-emerald-700" :
+                            lead.status === "lost" ? "bg-red-100 text-red-600" :
+                            "bg-slate-100 text-slate-500"
+                          }`}>
+                            {isResponded && lead.status === "new" ? "contacted" : lead.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2.5 text-slate-500 max-w-[200px] truncate">
+                          {lead.message ? lead.message.slice(0, 80) + (lead.message.length > 80 ? "..." : "") : <span className="text-slate-300">&mdash;</span>}
+                        </td>
+                        <td className="px-3 py-2.5 text-slate-400 text-right">
+                          <Icon name={isExpanded ? "chevron-up" : "chevron-down"} size={13} />
+                        </td>
+                      </tr>
+                      {isExpanded && (
+                        <tr key={`${lead.id}-expanded`} className="bg-violet-50/60 border-b border-violet-100">
+                          <td colSpan={6} className="px-4 pt-2 pb-4">
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                              {/* Quick actions */}
+                              <div className="flex flex-wrap gap-2">
+                                <button
+                                  onClick={() => onNavigate("leads")}
+                                  className="flex items-center gap-1.5 text-xs font-semibold text-violet-700 bg-white border border-violet-200 rounded-lg px-3 py-2 hover:bg-violet-50 transition-colors"
+                                >
+                                  <Icon name="external-link" size={12} />
+                                  View Full Lead
+                                </button>
+                                <button
+                                  onClick={(e) => markResponded(lead.id, e)}
+                                  disabled={isResponded || lead.status !== "new"}
+                                  className={`flex items-center gap-1.5 text-xs font-semibold rounded-lg px-3 py-2 transition-colors ${
+                                    isResponded || lead.status !== "new"
+                                      ? "text-slate-400 bg-white border border-slate-200 cursor-default"
+                                      : "text-emerald-700 bg-white border border-emerald-200 hover:bg-emerald-50"
+                                  }`}
+                                >
+                                  <Icon name="check" size={12} />
+                                  {isResponded ? "Marked Responded" : "Mark Responded"}
+                                </button>
+                              </div>
+                              {/* Note input */}
+                              <div className="flex-1 flex items-center gap-2 min-w-0">
+                                <input
+                                  type="text"
+                                  placeholder="Add a note…"
+                                  value={noteInput[lead.id] ?? ""}
+                                  onClick={(e) => e.stopPropagation()}
+                                  onChange={(e) => setNoteInput((prev) => ({ ...prev, [lead.id]: e.target.value }))}
+                                  onKeyDown={(e) => { if (e.key === "Enter") saveNote(lead.id, e as unknown as React.MouseEvent); }}
+                                  className="flex-1 min-w-0 text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-violet-300 focus:border-violet-300 placeholder:text-slate-400"
+                                />
+                                <button
+                                  onClick={(e) => saveNote(lead.id, e)}
+                                  className="text-xs font-semibold text-white bg-violet-600 border border-violet-600 rounded-lg px-3 py-2 hover:bg-violet-700 transition-colors shrink-0"
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            </div>
+                            {savedNote && (
+                              <p className="mt-2 text-[0.68rem] text-slate-600 bg-white border border-slate-200 rounded-lg px-3 py-1.5">
+                                <span className="font-semibold text-slate-500">Note:</span> {savedNote}
+                              </p>
+                            )}
+                          </td>
+                        </tr>
                       )}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <span className={`text-[0.56rem] font-bold px-2 py-0.5 rounded-full ${
-                        lead.status === "new" ? "bg-violet-100 text-violet-700" :
-                        lead.status === "contacted" ? "bg-blue-100 text-blue-700" :
-                        lead.status === "converted" ? "bg-emerald-100 text-emerald-700" :
-                        lead.status === "lost" ? "bg-red-100 text-red-600" :
-                        "bg-slate-100 text-slate-500"
-                      }`}>{lead.status}</span>
-                    </td>
-                    <td className="px-4 py-2.5 text-slate-500 max-w-50 truncate">
-                      {lead.message ? lead.message.slice(0, 80) + (lead.message.length > 80 ? "..." : "") : <span className="text-slate-300">&mdash;</span>}
-                    </td>
-                  </tr>
-                ))}
+                    </React.Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>

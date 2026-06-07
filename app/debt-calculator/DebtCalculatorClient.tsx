@@ -103,6 +103,12 @@ const DEFAULT_DEBTS: Debt[] = [
   { id: 1, type: "credit_card", balance: 8000, rate: 20, minPayment: 200 },
 ];
 
+interface UndoToast {
+  debt: Debt;
+  index: number;
+  timerId: ReturnType<typeof setTimeout>;
+}
+
 export default function DebtCalculatorClient() {
   const [debts, setDebts] = useState<Debt[]>(DEFAULT_DEBTS);
   const [consolidationRate, setConsolidationRate] = useState(8);
@@ -114,6 +120,8 @@ export default function DebtCalculatorClient() {
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [emailSending, setEmailSending] = useState(false);
   const [emailSentMsg, setEmailSentMsg] = useState("");
+  const [undoToast, setUndoToast] = useState<UndoToast | null>(null);
+  const [resetConfirming, setResetConfirming] = useState(false);
 
   const {
     value: persistedInputs,
@@ -153,7 +161,48 @@ export default function DebtCalculatorClient() {
 
   const removeDebt = (id: number) => {
     if (debts.length <= 1) return;
+    // Cancel any existing undo toast before starting a new one
+    if (undoToast) {
+      clearTimeout(undoToast.timerId);
+      setUndoToast(null);
+    }
+    const index = debts.findIndex(d => d.id === id);
+    const debt = debts[index];
+    if (!debt) return;
     setDebts(prev => prev.filter(d => d.id !== id));
+    const timerId = setTimeout(() => {
+      setUndoToast(null);
+    }, 5000);
+    setUndoToast({ debt, index, timerId });
+  };
+
+  const undoRemove = () => {
+    if (!undoToast) return;
+    clearTimeout(undoToast.timerId);
+    const { debt, index } = undoToast;
+    setDebts(prev => {
+      const next = [...prev];
+      next.splice(index, 0, debt);
+      return next;
+    });
+    setUndoToast(null);
+  };
+
+  const handleReset = () => {
+    if (!resetConfirming) {
+      setResetConfirming(true);
+      return;
+    }
+    // Cancel any pending undo toast
+    if (undoToast) {
+      clearTimeout(undoToast.timerId);
+      setUndoToast(null);
+    }
+    nextDebtId = 2;
+    setDebts(DEFAULT_DEBTS);
+    setShowResults(false);
+    setResults(null);
+    setResetConfirming(false);
   };
 
   const updateDebt = (id: number, field: keyof Debt, value: number | DebtType) => {
@@ -267,7 +316,34 @@ export default function DebtCalculatorClient() {
       <div className="container-custom max-w-3xl py-6 md:py-10">
         {/* Debt inputs */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 shadow-sm mb-6">
-          <h2 className="text-sm font-bold text-slate-900 mb-4">Your Current Debts</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-bold text-slate-900">Your Current Debts</h2>
+            {resetConfirming ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-slate-600">Clear all debts?</span>
+                <button
+                  onClick={handleReset}
+                  className="text-xs px-2.5 py-1 bg-red-100 text-red-700 font-semibold rounded-lg hover:bg-red-200 transition-colors"
+                >
+                  Yes, clear
+                </button>
+                <button
+                  onClick={() => setResetConfirming(false)}
+                  className="text-xs px-2.5 py-1 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleReset}
+                className="text-xs px-2.5 py-1 bg-slate-100 text-slate-500 font-semibold rounded-lg hover:bg-slate-200 transition-colors"
+              >
+                Start over
+              </button>
+            )}
+          </div>
+          <p className="text-[0.65rem] text-slate-400 mb-3"><span className="text-red-500 font-bold">*</span> Required</p>
 
           <div className="space-y-4">
             {debts.map((debt, index) => (
@@ -284,7 +360,7 @@ export default function DebtCalculatorClient() {
                 <div className="text-xs font-bold text-slate-500 mb-3">Debt {index + 1}</div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div>
-                    <label htmlFor={`dc-type-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Type</label>
+                    <label htmlFor={`dc-type-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Name / Type <span className="text-red-500">*</span></label>
                     <select
                       id={`dc-type-${debt.id}`}
                       value={debt.type}
@@ -297,7 +373,7 @@ export default function DebtCalculatorClient() {
                     </select>
                   </div>
                   <div>
-                    <label htmlFor={`dc-balance-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Balance</label>
+                    <label htmlFor={`dc-balance-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Balance <span className="text-red-500">*</span></label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
                       <input
@@ -311,7 +387,7 @@ export default function DebtCalculatorClient() {
                     </div>
                   </div>
                   <div>
-                    <label htmlFor={`dc-rate-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Interest Rate</label>
+                    <label htmlFor={`dc-rate-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Interest Rate <span className="text-red-500">*</span></label>
                     <div className="relative">
                       <input
                         id={`dc-rate-${debt.id}`}
@@ -326,7 +402,7 @@ export default function DebtCalculatorClient() {
                     </div>
                   </div>
                   <div>
-                    <label htmlFor={`dc-min-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Min Payment</label>
+                    <label htmlFor={`dc-min-${debt.id}`} className="block text-xs font-bold text-slate-700 mb-1">Min Payment <span className="text-slate-400 font-normal">(optional)</span></label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">$</span>
                       <input
@@ -634,6 +710,21 @@ export default function DebtCalculatorClient() {
           </>
         )}
       </div>
+
+      {/* Undo toast (ADV-137) */}
+      {undoToast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-slate-900 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-xl">
+          <span>
+            Debt &ldquo;{DEBT_TYPE_LABELS[undoToast.debt.type]}&rdquo; removed.
+          </span>
+          <button
+            onClick={undoRemove}
+            className="text-amber-400 font-bold hover:text-amber-300 transition-colors underline underline-offset-2"
+          >
+            Undo
+          </button>
+        </div>
+      )}
     </div>
   );
 }

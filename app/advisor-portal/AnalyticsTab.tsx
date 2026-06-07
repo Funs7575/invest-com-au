@@ -80,6 +80,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
 
   const [exportPeriod, setExportPeriod] = useState<"30d" | "90d" | "all">("30d");
   const [exporting, setExporting] = useState(false);
+  const [benchmarkNotifyToast, setBenchmarkNotifyToast] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -305,13 +306,13 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
         </div>
       </div>
 
-      {/* Article performance */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
-        <h3 className="text-sm font-bold text-slate-900 mb-1">Article Performance</h3>
-        <p className="text-[0.6rem] text-slate-400 mb-3">How your published expert articles are performing</p>
-        {(stats?.articles || []).length > 0 ? (
+      {/* Article performance — only render the card when there are articles; otherwise show a standalone empty state CTA */}
+      {(stats?.articles || []).length > 0 ? (
+        <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
+          <h3 className="text-sm font-bold text-slate-900 mb-1">Article Performance</h3>
+          <p className="text-[0.6rem] text-slate-400 mb-3">How your published expert articles are performing</p>
           <div className="space-y-2">
-            {(stats?.articles as { title: string; views: number; clicks: number; slug: string }[] || []).map((art, i) => (
+            {(stats?.articles as { title: string; views: number; clicks: number; slug: string }[]).map((art, i) => (
               <div key={i} className="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg">
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-semibold text-slate-900 truncate">{art.title}</p>
@@ -323,13 +324,21 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
               </div>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-6 text-sm text-slate-400">
-            <Icon name="file-text" size={24} className="text-slate-300 mx-auto mb-2" />
-            No articles published yet. <button onClick={() => onNavigate("articles")} className="text-violet-600 hover:text-violet-800 font-medium">Write one →</button>
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="bg-white border border-dashed border-slate-200 rounded-xl p-6 text-center">
+          <Icon name="file-text" size={28} className="text-slate-300 mx-auto mb-2" />
+          <p className="text-sm font-semibold text-slate-700 mb-1">No articles yet</p>
+          <p className="text-xs text-slate-400 mb-3">Advisors with expert articles get 40% more profile views.</p>
+          <button
+            onClick={() => onNavigate("articles")}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors"
+          >
+            <Icon name="pencil" size={12} />
+            Write your first article
+          </button>
+        </div>
+      )}
 
       {/* Lead Source Breakdown */}
       {stats && stats.sourceBreakdown.length > 0 && (
@@ -393,9 +402,24 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
         )}
 
         {!benchmarkLoading && !benchmarkError && benchmarks && benchmarks.cohortSize < 3 && (
-          <p className="text-xs text-slate-400 py-2">
-            Not enough peers in your cohort yet — benchmarks appear once there are at least 3 advisors with your type and state.
-          </p>
+          <div className="py-2 space-y-2">
+            <p className="text-xs text-slate-500">
+              Benchmark unlocks once we have 5+ advisors in your specialty. We&rsquo;ll notify you when it&rsquo;s ready.
+            </p>
+            {benchmarkNotifyToast ? (
+              <p className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                <Icon name="check-circle" size={13} className="shrink-0" />
+                Got it — we&rsquo;ll let you know when your benchmark is ready.
+              </p>
+            ) : (
+              <button
+                onClick={() => setBenchmarkNotifyToast(true)}
+                className="text-xs font-semibold px-3 py-1 rounded-lg border border-violet-200 text-violet-600 hover:bg-violet-50 transition-colors"
+              >
+                Notify me
+              </button>
+            )}
+          </div>
         )}
 
         {!benchmarkLoading && !benchmarkError && benchmarks && benchmarks.cohortSize >= 3 && (
@@ -528,33 +552,54 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
         )}
       </div>
 
-      {/* Tips */}
-      <div className="bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-200 rounded-xl p-4 md:p-5">
-        <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-          <Icon name="lightbulb" size={16} className="text-amber-500" />
-          Tips to Improve Performance
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-slate-600">
-          {[
-            profileCompleteness && profileCompleteness.score < 100 ? `Complete your profile (${profileCompleteness.score}%) — complete profiles get 3x more enquiries` : null,
-            !advisor?.photo_url?.startsWith("http") || advisor?.photo_url?.includes("ui-avatars") ? "Add a real profile photo — advisors with photos get 2.5x more clicks" : null,
-            !advisor?.booking_link ? "Add a booking link — lets investors schedule directly from your profile" : null,
-            (stats?.articles || []).length === 0 ? "Publish an expert article — advisors with articles get 40% more profile views" : null,
-            advisor?.review_count === 0 ? "Ask a client to leave a review — ratings build trust with new enquiries" : null,
-          ].filter(Boolean).map((tip, i) => (
-            <div key={i} className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
-              <Icon name="arrow-right" size={12} className="text-violet-500 shrink-0 mt-0.5" />
-              <span>{tip}</span>
+      {/* Tips — always rendered; shows next-level growth tips for fully-optimised advisors */}
+      {(() => {
+        const isFullyOptimised = [
+          profileCompleteness?.score === 100,
+          advisor?.photo_url && !advisor.photo_url.includes("ui-avatars"),
+          advisor?.booking_link,
+          (stats?.articles || []).length > 0,
+          (advisor?.review_count || 0) > 0,
+        ].every(Boolean);
+
+        const improvementTips = [
+          profileCompleteness && profileCompleteness.score < 100 ? `Complete your profile (${profileCompleteness.score}%) — complete profiles get 3x more enquiries` : null,
+          !advisor?.photo_url?.startsWith("http") || advisor?.photo_url?.includes("ui-avatars") ? "Add a real profile photo — advisors with photos get 2.5x more clicks" : null,
+          !advisor?.booking_link ? "Add a booking link — lets investors schedule directly from your profile" : null,
+          (stats?.articles || []).length === 0 ? "Publish an expert article — advisors with articles get 40% more profile views" : null,
+          advisor?.review_count === 0 ? "Ask a client to leave a review — ratings build trust with new enquiries" : null,
+        ].filter(Boolean) as string[];
+
+        const nextLevelTips = [
+          "Respond to new leads within 1 hour — fast responders convert at 3× the rate",
+          "Request a review after every client engagement to keep your rating climbing",
+          "Publish one expert article per month to stay visible in search",
+          "Keep your booking link active so investors can schedule without back-and-forth",
+        ];
+
+        return (
+          <div className="bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-200 rounded-xl p-4 md:p-5">
+            <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-1.5">
+              <Icon name="lightbulb" size={16} className="text-amber-500" />
+              {isFullyOptimised ? "You're fully optimised — tips to grow further" : "Tips to Improve Performance"}
+            </h3>
+            {isFullyOptimised && (
+              <p className="text-xs text-emerald-700 font-medium mb-3 flex items-center gap-1.5">
+                <Icon name="check-circle" size={13} className="shrink-0" />
+                Your profile is fully optimised! Here&rsquo;s what moves the needle next:
+              </p>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-slate-600">
+              {(isFullyOptimised ? nextLevelTips : improvementTips).map((tip, i) => (
+                <div key={i} className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
+                  <Icon name="arrow-right" size={12} className="text-violet-500 shrink-0 mt-0.5" />
+                  <span>{tip}</span>
+                </div>
+              ))}
             </div>
-          ))}
-          {[profileCompleteness?.score === 100, advisor?.photo_url && !advisor.photo_url.includes("ui-avatars"), advisor?.booking_link, (stats?.articles || []).length > 0, (advisor?.review_count || 0) > 0].every(Boolean) && (
-            <div className="col-span-full text-center py-2 text-emerald-600 font-medium">
-              <Icon name="check-circle" size={16} className="inline mr-1" />
-              Your profile is fully optimised!
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

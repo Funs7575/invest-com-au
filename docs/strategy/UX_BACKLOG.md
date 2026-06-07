@@ -732,186 +732,31 @@ Sourced from a parallel code-review sweep across 7 feature areas (69 compiled fi
 
 **[ADV-158]** Net worth goal progress — Always shows a percentage label below the bar. 0% includes "add funds to start tracking progress". `app/account/net-worth/page.tsx`
 
+**[ADV-071]** Portfolio X-Ray: adding a holding with invalid input now shows inline per-field validation messages via `addError` state; `<p role="alert">` displays the error. `app/portfolio-xray/XRayClient.tsx`
+
+**[ADV-133]** X-Ray: Status line "`N` holdings added. Ready to analyse?" rendered between holdings list and Analyse button. `app/portfolio-xray/XRayClient.tsx`
+
+**[ADV-084]** Analytics: Skeleton guard now preserves existing stats during re-fetch; date-range buttons disabled and labeled "Loading…" while fetching. `app/broker-portal/analytics/page.tsx`
+
+**[ADV-143]** Analytics CSV export: Toast "CSV export started" fires after `downloadCSV()`. `app/broker-portal/analytics/page.tsx`
+
+**[ADV-085]** Edit campaign: Live-campaign lock icon (amber for live) + descriptive text added to read-only start-date display. `app/broker-portal/campaigns/[id]/edit/page.tsx`
+
+**[ADV-087]** Dayparting: Requires both start and end hours; real-time preview text shows e.g. "9:00 AM – 5:00 PM". `app/broker-portal/campaigns/new/page.tsx`
+
+**[ADV-144]** Campaign form: Required fields marked with red `*`; optional fields labeled "(optional)". `app/broker-portal/campaigns/new/page.tsx`
+
+**[ADV-147]** Creatives: Copy URL button shows per-button "Copied!" for 2s then resets. `app/broker-portal/creatives/page.tsx`
+
+**[ADV-156]** Health scores: Dimension scores of 0 render "—" (grey) with tooltip "No data yet"; score bar uses grey for zero. `app/account/health/page.tsx`
+
+**[ADV-154]** Net worth: "X of Y holdings priced" label wrapped in `<span title="...">` tooltip explaining live/cached market price. `app/account/net-worth/page.tsx`
+
+**[ADV-157]** Goals: Submit button shows spinner SVG inline while "Adding…". `app/account/goals/GoalsClient.tsx`
+
+**[ADV-134]** CGT Calculator: "✓ Updated" micro-badge flashes for 1.5s after any input change (deferred via `setTimeout` to satisfy `react-hooks/set-state-in-effect`). `app/tools/cgt-calculator/CGTCalculatorClient.tsx`
+
+**[ADV-161]** EarnTab: Zero-referral onboarding card (amber-50) with 🚀 and explanation copy shown when `total_referred === 0`. `app/advisor-portal/EarnTab.tsx`
+
 ---
 
-## UX / UI / Feature sweep — 2026-06-07
-
-Sourced from a parallel code-review sweep across 7 feature areas (69 compiled findings after dedup). ADV-069 onwards.
-
----
-
-### P1 — Blocks revenue or user comprehension
-
-**[ADV-069] Homepage: 15-section feed with no primary action — first-time visitors have no guided path**
-- **Problem**: Homepage chains 15+ async components with no visual hierarchy. A new visitor cannot determine in 3 seconds what to do or why they are here. Hero relies on async components, delaying the first value-prop message.
-- **Fix**: Restructure above-the-fold to: (1) fast-loading hero that answers "What is Invest.com.au?" with one primary CTA; (2) three route cards (Compare / Browse / Find an Advisor); (3) all teasers below an anchor. Reduce above-fold to 3 sections. Move async teasers below fold.
-- **File**: `app/page.tsx`
-- **Effort**: Large (design decision + 2-3 days build)
-
-**[ADV-070] Broker Register: No pricing transparency before commitment — brokers sign up blind**
-- **Problem**: The registration flow asks for full company + verification details but never surfaces advertising package pricing until after registration is complete. Brokers cannot evaluate ROI before investing time.
-- **Fix**: Add a "Pricing preview" sidebar or step before final submission showing tier options from /advertise. Frame as "See what you get".
-- **File**: `app/broker-portal/register/page.tsx`
-- **Effort**: Medium
-
----
-
-### P2 — Significant friction
-
-#### Calculators & tools
-
-**[ADV-071] Portfolio X-Ray and Tax Optimizer: Adding a holding silently fails on invalid input**
-- **Problem**: Clicking "Add" with missing/invalid fields produces no visual response — input resets or nothing happens. Users do not know why their holding was not added.
-- **Fix**: Inline validation messages below inputs; disable Add button until minimum required fields are valid.
-- **File**: `app/portfolio-xray/XRayClient.tsx`, `app/tax-optimizer/TaxOptimizerClient.tsx`
-- **Effort**: Small
-
-**[ADV-072] CompoundInterestClient: Save button has no loading or disabled state**
-- **Problem**: Save button and CalculatorShareButton have no visible loading/disabled state during submission, allowing multiple clicks.
-- **Fix**: Add disabled + "Saving…" text while in flight. Toast on success.
-- **File**: `app/compound-interest-calculator/CompoundInterestClient.tsx`
-- **Effort**: Small
-
-**[ADV-073] FIRE Calculator: Goal save error cannot be dismissed or retried**
-- **Problem**: Error message shown inline with no × dismiss or Retry button. Users stuck with persistent error.
-- **Fix**: Add × dismiss and Retry button. Auto-dismiss after 8s.
-- **File**: `app/fire-calculator/FireCalculatorClient.tsx`
-- **Effort**: Small
-
-**[ADV-074] X-Ray and Tax Optimizer: Holdings have no edit option — users must delete and re-add to fix a typo**
-- **Problem**: Only per-row action is remove (×). Mistyped quantity or price requires full delete + re-entry.
-- **Fix**: Add edit icon that re-populates the add form with current values.
-- **File**: `app/portfolio-xray/XRayClient.tsx`, `app/tax-optimizer/TaxOptimizerClient.tsx`
-- **Effort**: Medium
-
-**[ADV-075] Tax Optimizer: Marginal tax bracket selector has no context — users may not know these are ATO 2024–25 rates**
-- **Problem**: Bracket select shows values with no label identifying them as ATO Stage 3 rates for 2024–25.
-- **Fix**: Add ⓘ tooltip: "ATO Stage 3 rates 2024–25 including Medicare levy. Check ato.gov.au for your current rate."
-- **File**: `app/tax-optimizer/TaxOptimizerClient.tsx`
-- **Effort**: Small
-
-**[ADV-076] FIRE Calculator: Goal saved success message is small and inline — easily missed**
-- **Problem**: "Saved — view + edit on your account dashboard." is small inline text. Users may not notice it.
-- **Fix**: Prominent green toast: "✓ Goal saved · View dashboard →" for 4 seconds.
-- **File**: `app/fire-calculator/FireCalculatorClient.tsx`
-- **Effort**: Trivial
-
-**[ADV-077] Calculators: "Copy link" falls back to browser alert() — use toast instead**
-- **Problem**: FeeSimulatorClient uses alert("Link copied!") on desktop. Intrusive and inconsistent.
-- **Fix**: Replace alert() with inline toast: "Link copied to clipboard" with checkmark, auto-dismiss 2s.
-- **File**: `app/fee-simulator/FeeSimulatorClient.tsx`
-- **Effort**: Trivial
-
-**[ADV-078] Multi-input calculators: No distinction between required and optional fields**
-- **Problem**: XRayClient, TaxOptimizerClient, and DebtCalculatorClient do not mark required vs optional fields.
-- **Fix**: Add * to required labels, "(optional)" to optional ones. Form-level note "* Required fields".
-- **File**: `app/portfolio-xray/XRayClient.tsx`, `app/tax-optimizer/TaxOptimizerClient.tsx`, `app/debt-calculator/DebtCalculatorClient.tsx`
-- **Effort**: Small
-
-#### Broker portal
-
-**[ADV-079] Broker portal: Success toast may disappear before redirect is noticed**
-- **Problem**: After "Submit for Review", toast fires and page redirects. Short toast window means users may miss confirmation.
-- **Fix**: Delay redirect by 2s after toast, or show success banner at redirect destination.
-- **File**: `app/broker-portal/campaigns/new/page.tsx`
-- **Effort**: Small
-
-**[ADV-080] Broker portal: "Save as Template" uses native browser prompt() — inconsistent UI**
-- **Problem**: prompt() for template name is visually inconsistent with the rest of the interface.
-- **Fix**: Replace with a modal dialog containing a labelled text input, char count, and validation.
-- **File**: `app/broker-portal/campaigns/new/page.tsx`
-- **Effort**: Medium
-
-**[ADV-081] A/B test "End" action has no confirmation — permanently stops test without warning**
-- **Problem**: "End" is irreversible (locks to read-only) but uses same button pattern as reversible Pause.
-- **Fix**: Confirmation modal before End only: "This will end the test permanently. Continue?"
-- **File**: `app/broker-portal/ab-tests/page.tsx`
-- **Effort**: Small
-
-**[ADV-082] Creative image URL gives no error feedback if URL is invalid or image fails to load**
-- **Problem**: Invalid URL fails silently. No error state on the Image component.
-- **Fix**: URL validation before save; error toast if load fails.
-- **File**: `app/broker-portal/creatives/page.tsx`
-- **Effort**: Medium
-
-**[ADV-083] Creative deletion uses native confirm() — no undo path**
-- **Problem**: Native confirm() then permanent delete. No undo or post-deletion recovery.
-- **Fix**: Replace confirm() with modal; post-delete toast with creative name for verification.
-- **File**: `app/broker-portal/creatives/page.tsx`
-- **Effort**: Medium
-
-**[ADV-084] Analytics page shows no loading state when switching date ranges**
-- **Problem**: Switching 7d/30d/90d tabs updates data with no loading indicator. Users cannot tell if data is fetching.
-- **Fix**: Loading skeleton or spinner overlay during fetch. Disable range selector during fetch.
-- **File**: `app/broker-portal/analytics/page.tsx`
-- **Effort**: Small
-
-**[ADV-085] Edit campaign: Read-only fields for live campaigns not visually disabled**
-- **Problem**: Warning banner appears but fields like placement and start date are still editable-looking. Users may try to edit them and assume changes were saved.
-- **Fix**: Explicitly disable placement + start-date fields for live campaigns with disabled styling + tooltip.
-- **File**: `app/broker-portal/campaigns/[id]/edit/page.tsx`
-- **Effort**: Small
-
-**[ADV-086] Budget-exhausted campaigns show no inline recovery path**
-- **Problem**: Budget-exhausted campaigns visible in dashboard but no inline "Increase Budget" action.
-- **Fix**: Add "Increase Budget" button/link next to budget-exhausted campaigns.
-- **File**: `app/broker-portal/page.tsx`
-- **Effort**: Small
-
-**[ADV-087] Dayparting UI allows start hour without end hour — produces misleading "All day" summary**
-- **Problem**: Setting start=9 without end renders "All day" in campaign summary, miscommunicating actual targeting.
-- **Fix**: Require both when either is set. Real-time preview: "9:00 AM – [end required]". Validation on submit.
-- **File**: `app/broker-portal/campaigns/new/page.tsx`
-- **Effort**: Small
-
-**[ADV-088] Dashboard "This Week vs Last Week" uses ambiguous "prev" label**
-- **Problem**: "prev" without date labels means users cannot interpret the trend without knowing the reference window.
-- **Fix**: Show explicit date labels: "Previous 7 days (May 25–31)" vs "This week (Jun 1–7)".
-- **File**: `app/broker-portal/page.tsx`
-- **Effort**: Small
-
-#### Account / user dashboard
-
-**[ADV-089] Account page: Subscription processing banner disappears without explaining what changed**
-- **Problem**: Post-checkout polling resolves successfully but no success message explains what was activated.
-- **Fix**: After polling resolves, replace banner with: "Your subscription is now active. Premium features are enabled."
-- **File**: `app/account/AccountClient.tsx`
-- **Effort**: Small
-
-**[ADV-090] Account page: Refund success message does not state the timeline**
-- **Problem**: Confirmation message appears but 5–10 business day timeline is buried in modal text, not in the post-success state.
-- **Fix**: Prominent success banner: "Refund processed. Expect the amount within 5–10 business days."
-- **File**: `app/account/AccountClient.tsx`
-- **Effort**: Small
-
-**[ADV-091] Goals form: No validation for target date in the past**
-- **Problem**: Past target_date accepted with no client-side validation, creating goals that immediately show as overdue.
-- **Fix**: Validate on submit: if target_date < today, show "Target date must be in the future".
-- **File**: `app/account/goals/GoalsClient.tsx`
-- **Effort**: Small
-
-**[ADV-092] Holdings form: Ticker field accepts any text — malformed tickers show "—" with no explanation**
-- **Problem**: Arbitrary text accepted. Malformed tickers show "—" for current price with no reason given.
-- **Fix**: Client-side format validation: `/^[A-Z0-9]{1,6}(\.AX|\.NZX)?$/i`. Error: "Enter a valid ticker (e.g. BHP.AX)".
-- **File**: `app/account/holdings/HoldingsClient.tsx`
-- **Effort**: Small
-
-**[ADV-093] Holdings: Price shown as "—" with no explanation — users cannot distinguish bad ticker from data outage**
-- **Problem**: null currentPriceCents renders "—" with no context.
-- **Fix**: Tooltip on "—": "Price unavailable — may be an invalid ticker, unsupported exchange, or temporary data issue."
-- **File**: `app/account/holdings/HoldingsClient.tsx`
-- **Effort**: Small (trivial — title attr on the dash span)
-
-**[ADV-094] Holdings: Stale price indicator is too subtle — users may act on outdated prices**
-- **Problem**: Stale price signalled only by small amber label below the price block.
-- **Fix**: ⚠ icon adjacent to the price value itself with tooltip: "This price is cached and may be out of date."
-- **File**: `app/account/holdings/HoldingsClient.tsx`
-- **Effort**: Small
-
-**[ADV-095] Account page: Saved comparisons count shows "Loading…" indefinitely on API failure**
-- **Problem**: If fetchSavedComparisonsCount fails, savedComparisonsCount stays null and renders "Loading…" forever.
-- **Fix**: In catch block, set count to 0 (or "—"). Add 3s timeout fallback.
-- **File**: `app/account/AccountClient.tsx`
-- **Effort**: Small
-
-**[ADV-096] Goals form: No warning when current balance exceeds target — creates confusing >100

@@ -51,6 +51,8 @@ export default function AccountClient() {
   const [showRefundConfirm, setShowRefundConfirm] = useState(false);
   const [refundSuccess, setRefundSuccess] = useState(false);
 
+  const [showSubscriptionActiveBanner, setShowSubscriptionActiveBanner] = useState(false);
+
   const [savedComparisonsCount, setSavedComparisonsCount] = useState<number | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
   const [onboardingDone, setOnboardingDone] = useState<boolean>(true);
@@ -75,6 +77,15 @@ export default function AccountClient() {
 
     return () => clearInterval(interval);
   }, [checkoutSuccess, user, refresh]);
+
+  // When polling resolves and isPro flips true, swap the "Processing" banner
+  // for a 5-second green success banner (ADV-089)
+  useEffect(() => {
+    if (!checkoutSuccess || !isPro) return;
+    setShowSubscriptionActiveBanner(true);
+    const timer = setTimeout(() => setShowSubscriptionActiveBanner(false), 5000);
+    return () => clearTimeout(timer);
+  }, [checkoutSuccess, isPro]);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -268,8 +279,8 @@ export default function AccountClient() {
           </div>
         )}
 
-        {/* Processing banner */}
-        {showSuccessBanner && !isPro && (
+        {/* Processing banner — shown while polling, hidden once isPro resolves */}
+        {showSuccessBanner && !isPro && !showSubscriptionActiveBanner && (
           <div className="mb-6 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
             <div className="flex items-center gap-2">
               <svg aria-hidden="true" className="w-4 h-4 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -278,6 +289,28 @@ export default function AccountClient() {
               </svg>
               <p className="text-sm text-blue-700">Processing your subscription... This usually takes a few seconds.</p>
             </div>
+          </div>
+        )}
+
+        {/* Subscription activated banner — replaces Processing banner once polling confirms active (ADV-089) */}
+        {showSubscriptionActiveBanner && (
+          <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-start gap-3">
+            <svg className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-emerald-800">Your subscription is now active.</p>
+              <p className="text-xs text-emerald-700 mt-0.5">Premium features are enabled.</p>
+            </div>
+            <button
+              onClick={() => setShowSubscriptionActiveBanner(false)}
+              aria-label="Dismiss"
+              className="ml-auto text-emerald-400 hover:text-emerald-600"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         )}
 
@@ -447,10 +480,16 @@ export default function AccountClient() {
             )}
 
             {refundSuccess && (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-4">
-                <p className="text-xs text-emerald-700 font-semibold">
-                  Refund processed successfully. Check your email for confirmation. The refund will appear on your statement within 5–10 business days.
-                </p>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-4 flex items-start gap-3">
+                <svg className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <p className="text-sm font-semibold text-emerald-800">Refund processed.</p>
+                  <p className="text-xs text-emerald-700 mt-0.5">
+                    Expect the amount back within 5–10 business days. A confirmation has been sent to your email.
+                  </p>
+                </div>
               </div>
             )}
 

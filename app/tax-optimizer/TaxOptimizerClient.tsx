@@ -40,18 +40,50 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
   const [currentPrice, setCurrentPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [analysed, setAnalysed] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
-  const addHolding = () => {
-    const t = ticker.trim().toUpperCase();
-    const q = parseFloat(quantity) || 0;
-    const bp = parseFloat(buyPrice) || 0;
-    const cp = parseFloat(currentPrice) || 0;
-    if (!t || !buyDate || q <= 0 || bp <= 0 || cp <= 0) return;
-    setHoldings([...holdings, { id: uid(), ticker: t, buyDate, buyPrice: bp, currentPrice: cp, quantity: q }]);
+  const tickerVal = ticker.trim().toUpperCase();
+  const quantityVal = parseFloat(quantity);
+  const fieldErrors = {
+    ticker: !tickerVal ? "Ticker is required (e.g. CBA, BHP)" : "",
+    quantity: !quantity || isNaN(quantityVal) || quantityVal <= 0 ? "Quantity must be greater than 0" : "",
+  };
+  const isFormValid = !fieldErrors.ticker && !fieldErrors.quantity;
+
+  const resetForm = () => {
     setTicker(""); setBuyDate(""); setBuyPrice(""); setCurrentPrice(""); setQuantity("");
+    setEditingId(null); setSubmitted(false);
   };
 
-  const removeHolding = (id: string) => setHoldings(holdings.filter(h => h.id !== id));
+  const addHolding = () => {
+    setSubmitted(true);
+    if (!isFormValid) return;
+    const bp = parseFloat(buyPrice) || 0;
+    const cp = parseFloat(currentPrice) || 0;
+    const newH: TaxHolding = { id: uid(), ticker: tickerVal, buyDate, buyPrice: bp, currentPrice: cp, quantity: quantityVal };
+    if (editingId) {
+      setHoldings(holdings.map(h => h.id === editingId ? { ...newH, id: editingId } : h));
+    } else {
+      setHoldings([...holdings, newH]);
+    }
+    resetForm();
+  };
+
+  const startEdit = (h: TaxHolding) => {
+    setTicker(h.ticker);
+    setBuyDate(h.buyDate);
+    setBuyPrice(String(h.buyPrice));
+    setCurrentPrice(String(h.currentPrice));
+    setQuantity(String(h.quantity));
+    setEditingId(h.id);
+    setSubmitted(false);
+  };
+
+  const removeHolding = (id: string) => {
+    if (editingId === id) resetForm();
+    setHoldings(holdings.filter(h => h.id !== id));
+  };
   const taxRate = TAX_BRACKETS[bracket].rate;
   const now = new Date();
 
@@ -150,14 +182,45 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
             </select>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-2 mb-3">
-            <input value={ticker} onChange={e => setTicker(e.target.value)} placeholder="Ticker" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-            <input value={buyDate} onChange={e => setBuyDate(e.target.value)} type="date" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-            <input value={buyPrice} onChange={e => setBuyPrice(e.target.value)} type="number" placeholder="Buy price ($)" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-            <input value={currentPrice} onChange={e => setCurrentPrice(e.target.value)} type="number" placeholder="Current ($)" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-            <input value={quantity} onChange={e => setQuantity(e.target.value)} type="number" placeholder="Qty" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-            <button onClick={addHolding} className="px-4 py-2 bg-cyan-600 text-white text-sm font-bold rounded-lg hover:bg-cyan-700">Add</button>
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-2 mb-1">
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600">Ticker <span className="text-red-500">*</span></label>
+              <input value={ticker} onChange={e => setTicker(e.target.value)} placeholder="e.g. CBA"
+                className={`px-3 py-2 text-sm border rounded-lg ${submitted && fieldErrors.ticker ? "border-red-400 bg-red-50" : "border-slate-200"}`} />
+              {submitted && fieldErrors.ticker && <p role="alert" className="text-xs text-red-600">{fieldErrors.ticker}</p>}
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600">Buy date <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input value={buyDate} onChange={e => setBuyDate(e.target.value)} type="date" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600">Buy price <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input value={buyPrice} onChange={e => setBuyPrice(e.target.value)} type="number" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600">Current price <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input value={currentPrice} onChange={e => setCurrentPrice(e.target.value)} type="number" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600">Quantity <span className="text-red-500">*</span></label>
+              <input value={quantity} onChange={e => setQuantity(e.target.value)} type="number" placeholder="e.g. 100"
+                className={`px-3 py-2 text-sm border rounded-lg ${submitted && fieldErrors.quantity ? "border-red-400 bg-red-50" : "border-slate-200"}`} />
+              {submitted && fieldErrors.quantity && <p role="alert" className="text-xs text-red-600">{fieldErrors.quantity}</p>}
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <label className="text-xs font-semibold text-slate-600 invisible select-none">Action</label>
+              <div className="flex gap-1">
+                <button onClick={addHolding} disabled={submitted && !isFormValid}
+                  className="flex-1 px-3 py-2 bg-cyan-600 text-white text-sm font-bold rounded-lg hover:bg-cyan-700 disabled:opacity-40 disabled:cursor-not-allowed">
+                  {editingId ? "Update" : "Add"}
+                </button>
+                {editingId && (
+                  <button onClick={resetForm} aria-label="Cancel edit" className="px-2 py-2 text-slate-500 hover:text-slate-800 border border-slate-200 rounded-lg text-sm">✕</button>
+                )}
+              </div>
+            </div>
           </div>
+          <p className="text-xs text-slate-400 mb-2"><span className="text-red-500">*</span> Required</p>
 
           {holdings.length > 0 && (
             <div className="space-y-1 mb-3">
@@ -170,7 +233,10 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
                   <span className={`font-bold ${(h.currentPrice - h.buyPrice) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
                     {(h.currentPrice - h.buyPrice) >= 0 ? "+" : ""}${((h.currentPrice - h.buyPrice) * h.quantity).toFixed(0)}
                   </span>
-                  <button onClick={() => removeHolding(h.id)} aria-label="Remove holding" className="text-slate-400 hover:text-red-500"><Icon name="x" size={14} /></button>
+                  <div className="flex items-center gap-1 ml-2">
+                    <button onClick={() => startEdit(h)} aria-label={`Edit ${h.ticker}`} className="text-slate-400 hover:text-cyan-600 transition-colors"><Icon name="edit" size={13} /></button>
+                    <button onClick={() => removeHolding(h.id)} aria-label={`Remove ${h.ticker}`} className="text-slate-400 hover:text-red-500 transition-colors"><Icon name="x" size={13} /></button>
+                  </div>
                 </div>
               ))}
             </div>

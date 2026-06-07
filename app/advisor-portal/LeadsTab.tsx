@@ -10,12 +10,12 @@ import { logger } from "@/lib/logger";
 const log = logger("advisor-portal-leads");
 
 const PIPELINE_STAGES = [
-  { value: "new", label: "New", color: "text-amber-700 bg-amber-50 border-amber-200" },
-  { value: "contacted", label: "Contacted", color: "text-blue-700 bg-blue-50 border-blue-200" },
-  { value: "proposal_sent", label: "Proposal Sent", color: "text-violet-700 bg-violet-50 border-violet-200" },
-  { value: "negotiating", label: "Negotiating", color: "text-orange-700 bg-orange-50 border-orange-200" },
-  { value: "won", label: "Won", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
-  { value: "lost", label: "Lost", color: "text-red-600 bg-red-50 border-red-200" },
+  { value: "new", label: "New Lead", color: "text-amber-700 bg-amber-50 border-amber-200", description: "Just received, not yet reviewed" },
+  { value: "contacted", label: "Contacted", color: "text-blue-700 bg-blue-50 border-blue-200", description: "You've reached out, awaiting reply" },
+  { value: "proposal_sent", label: "Proposal Sent", color: "text-violet-700 bg-violet-50 border-violet-200", description: "SOA or quote sent" },
+  { value: "negotiating", label: "Negotiating", color: "text-orange-700 bg-orange-50 border-orange-200", description: "In active discussion on terms" },
+  { value: "won", label: "Won", color: "text-emerald-700 bg-emerald-50 border-emerald-200", description: "Client engaged" },
+  { value: "lost", label: "Lost", color: "text-red-600 bg-red-50 border-red-200", description: "Not proceeding" },
 ] as const;
 
 type LeadStatusFilter = "all" | "new" | "contacted" | "converted" | "lost";
@@ -215,21 +215,68 @@ export default function LeadsTab({
       <p className="text-sm text-slate-500 mb-4">{stats?.totalLeads || 0} total · {leads.filter(l => l.status === "new").length} new</p>
 
       {/* Lead pricing & credit balance */}
+      {(() => {
+        const freeLeadsTotal = categoryPricing?.free_trial_leads || 2;
+        const freeLeadsUsed = advisor?.free_leads_used ?? 0;
+        const freeLeadsLeft = freeLeadsTotal - freeLeadsUsed;
+        const onFreeTrial = advisor?.free_leads_used !== undefined && freeLeadsLeft > 0;
+        const balanceCents = advisor?.credit_balance_cents || 0;
+        const pricePerLead = ((advisor?.lead_price_cents || categoryPricing?.price_cents || 4900) / 100).toFixed(0);
+        const creditsRemaining = balanceCents > 0 ? Math.floor(balanceCents / (advisor?.lead_price_cents || categoryPricing?.price_cents || 4900)) : 0;
+
+        type AccountState = "free-trial" | "active" | "low" | "empty";
+        const accountState: AccountState = onFreeTrial
+          ? "free-trial"
+          : balanceCents === 0
+            ? "empty"
+            : creditsRemaining <= 2
+              ? "low"
+              : "active";
+
+        const statusConfig = {
+          "free-trial": {
+            dot: "bg-emerald-500",
+            text: "text-emerald-700",
+            label: `Free trial · ${freeLeadsLeft} free lead${freeLeadsLeft !== 1 ? "s" : ""} remaining`,
+            detail: `After your trial, leads are deducted from your credit balance at $${pricePerLead}/lead.`,
+          },
+          "active": {
+            dot: "bg-emerald-500",
+            text: "text-emerald-700",
+            label: `Active · ${creditsRemaining} credit${creditsRemaining !== 1 ? "s" : ""} remaining`,
+            detail: `Each enquiry costs $${pricePerLead} and is exclusive to you.`,
+          },
+          "low": {
+            dot: "bg-amber-400",
+            text: "text-amber-700",
+            label: `Low credits · ${creditsRemaining} remaining — top up soon`,
+            detail: `Each enquiry costs $${pricePerLead}. Top up below to avoid interruption.`,
+          },
+          "empty": {
+            dot: "bg-red-500",
+            text: "text-red-700",
+            label: "Account paused — credit balance empty",
+            detail: "Top up below to resume receiving leads.",
+          },
+        } as const;
+
+        const cfg = statusConfig[accountState];
+
+        return (
       <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5">
         <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-xs font-bold text-violet-800 mb-1">Your Lead Account</h3>
-            <p className="text-xs text-violet-600">
-              {advisor?.free_leads_used !== undefined && advisor.free_leads_used < (categoryPricing?.free_trial_leads || 2)
-                ? <>You have <strong>{(categoryPricing?.free_trial_leads || 2) - (advisor.free_leads_used || 0)} free leads</strong> remaining. After that, leads are deducted from your credit balance at ${((advisor?.lead_price_cents || categoryPricing?.price_cents || 4900) / 100).toFixed(0)}/lead.</>
-                : (advisor?.credit_balance_cents || 0) > 0
-                  ? <>Leads are deducted from your credit balance. Each enquiry is exclusive to you.</>
-                  : <>Your credit balance is empty. <strong>Top up to continue receiving leads.</strong></>
-              }
-            </p>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xs font-bold text-violet-800 mb-1.5">Your Lead Account</h3>
+            {/* Primary status line — colour-coded for at-a-glance reading */}
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className={`inline-block w-2 h-2 rounded-full shrink-0 ${cfg.dot}`} aria-hidden="true" />
+              <span className={`text-sm font-semibold ${cfg.text}`}>{cfg.label}</span>
+            </div>
+            {/* Supporting detail in muted text */}
+            <p className="text-xs text-violet-500 leading-relaxed">{cfg.detail}</p>
           </div>
-          <div className="text-right shrink-0 ml-3">
-            <span className="text-lg font-extrabold text-violet-900">${((advisor?.credit_balance_cents || 0) / 100).toFixed(0)}</span>
+          <div className="text-right shrink-0 ml-4">
+            <span className="text-lg font-extrabold text-violet-900">${(balanceCents / 100).toFixed(0)}</span>
             <span className="text-[0.6rem] text-violet-500 block">credit balance</span>
           </div>
         </div>
@@ -277,6 +324,8 @@ export default function LeadsTab({
           ))}
         </div>
       </div>
+        );
+      })()}
 
       {/* Search & Filter Bar */}
       <div className="flex gap-2 mb-4 flex-wrap">
@@ -379,7 +428,7 @@ export default function LeadsTab({
                   aria-label="Pipeline stage"
                 >
                   {PIPELINE_STAGES.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
+                    <option key={s.value} value={s.value} title={s.description}>{s.label}</option>
                   ))}
                 </select>
                 <div className="flex items-center gap-1">

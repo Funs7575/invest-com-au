@@ -67,6 +67,7 @@ export default function ABTestsPage() {
 
   // Create form
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [type, setType] = useState<string>("cta_text");
   const [variantA, setVariantA] = useState("");
   const [variantB, setVariantB] = useState("");
@@ -108,6 +109,7 @@ export default function ABTestsPage() {
     const { error } = await supabase.from("ab_tests").insert({
       broker_slug: brokerSlug,
       name,
+      description: description.trim() || null,
       type,
       status: "draft",
       variant_a: { value: variantA },
@@ -128,6 +130,7 @@ export default function ABTestsPage() {
       setTests((data || []) as ABTest[]);
       setShowCreate(false);
       setName("");
+      setDescription("");
       setVariantA("");
       setVariantB("");
     }
@@ -258,10 +261,23 @@ export default function ABTestsPage() {
           <h3 className="font-bold text-slate-900">Create A/B Test</h3>
 
           <div>
-            <label htmlFor="ab-name" className="block text-sm font-medium text-slate-700 mb-1">Test Name *</label>
-            <input id="ab-name" type="text" value={name} onChange={(e) => setName(e.target.value)} required
+            <label htmlFor="ab-name" className="block text-sm font-medium text-slate-700 mb-1">
+              Test Name <span className="text-red-500">*</span>
+            </label>
+            <input id="ab-name" type="text" value={name} onChange={(e) => setName(e.target.value)} required maxLength={80}
               className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
-              placeholder="e.g. CTA Copy March 2024" />
+              placeholder="e.g. Homepage CTA — July 2026" />
+            <p className="mt-1 text-xs text-slate-400">Required. Max 80 characters — be specific so you can find it later.</p>
+          </div>
+
+          <div>
+            <label htmlFor="ab-description" className="block text-sm font-medium text-slate-700 mb-1">
+              Description <span className="text-slate-400 font-normal">(optional)</span>
+            </label>
+            <textarea id="ab-description" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} maxLength={300}
+              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-none"
+              placeholder="What are you testing and why?" />
+            <p className="mt-1 text-xs text-slate-400">Max 300 characters. Helps your team understand the hypothesis behind this test.</p>
           </div>
 
           <div>
@@ -281,19 +297,21 @@ export default function ABTestsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="ab-variant-a" className="block text-sm font-medium text-slate-700 mb-1">
-                Variant A <span className="text-xs text-slate-400">(Control)</span>
+                Variant A <span className="text-xs text-slate-400">(Control)</span> <span className="text-red-500">*</span>
               </label>
-              <input id="ab-variant-a" type="text" value={variantA} onChange={(e) => setVariantA(e.target.value)} required
+              <input id="ab-variant-a" type="text" value={variantA} onChange={(e) => setVariantA(e.target.value)} required maxLength={200}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
-                placeholder={currentType?.placeholder_a} />
+                placeholder={currentType?.placeholder_a ?? "e.g. Start investing today"} />
+              <p className="mt-1 text-xs text-slate-400">Required. Your existing or baseline variant. Max 200 characters.</p>
             </div>
             <div>
               <label htmlFor="ab-variant-b" className="block text-sm font-medium text-slate-700 mb-1">
-                Variant B <span className="text-xs text-slate-400">(Challenger)</span>
+                Variant B <span className="text-xs text-slate-400">(Challenger)</span> <span className="text-red-500">*</span>
               </label>
-              <input id="ab-variant-b" type="text" value={variantB} onChange={(e) => setVariantB(e.target.value)} required
+              <input id="ab-variant-b" type="text" value={variantB} onChange={(e) => setVariantB(e.target.value)} required maxLength={200}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
-                placeholder={currentType?.placeholder_b} />
+                placeholder={currentType?.placeholder_b ?? "e.g. Open a free account"} />
+              <p className="mt-1 text-xs text-slate-400">Required. The new version you want to test. Max 200 characters.</p>
             </div>
           </div>
 
