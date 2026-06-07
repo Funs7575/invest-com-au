@@ -303,6 +303,12 @@ export default async function InvestMarketplacePage() {
         )}
       </div>
 
+      {/* ── GetMatched CTA — above listings so it's visible before users
+            scroll through options. Moved from below results (ADV-126). ── */}
+      <div className="container-custom max-w-5xl mt-4 mb-2">
+        <GetMatchedEmbed context="opportunity" />
+      </div>
+
       {/* ── Marketplace (primary — no two-step) ───────────────── */}
       {/* Suspense required: InvestListingsClient calls useSearchParams(), which
           causes Next.js to bail out of SSR for the whole page when unwrapped.
@@ -330,14 +336,6 @@ export default async function InvestMarketplacePage() {
           claimedSlugs={ctx.claimedSlugs}
         />
       </Suspense>
-
-      {/* ── "Not sure?" CTA — moved BELOW results per UX rebuild.
-            Wedging this between filters and results was an anti-pattern
-            (browse intent hitting a "decide" CTA before any listing).
-            Below-results it's a recovery prompt. ── */}
-      <div className="container-custom max-w-5xl mb-10">
-        <GetMatchedEmbed context="opportunity" />
-      </div>
 
       {/* ── Discovery: browse by category (single grid; sector hubs
             merged in as commodity entries rather than a separate row). ── */}

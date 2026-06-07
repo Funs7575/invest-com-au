@@ -251,13 +251,14 @@ export default async function HomePage() {
         }}
       />
 
-      {/* Personalised strip — visible to signed-in and returning visitors;
-          renders null for anonymous / first-time visitors. Wrapped in its
-          own Suspense so the async auth read never blocks the ISR-cached
-          static content below. See components/HomepagePersonalisedStrip.tsx. */}
-      <HomepagePersonalisedStrip />
-
-      <HomeActivitySection />
+      {/* ── ABOVE-THE-FOLD SECTION ─────────────────────────────────────────
+          ADV-069: first-time visitors must be able to answer "what is this?"
+          and take one clear action within 3 seconds. Structure:
+            1. HomeHero     — H1 + single primary CTA ("Take the quiz")
+            2. HomeRouteCards — 4 large clickable route cards directly below
+          Everything else (rates, feed, personalisation) is pushed below this
+          anchor so it never competes for attention on a fresh page load.
+          ─────────────────────────────────────────────────────────────────── */}
 
       <HomeHero
         topBrokers={topBrokersForHero}
@@ -267,6 +268,27 @@ export default async function HomePage() {
         listingCount={totalListingCount}
         advisorCount={totalProfessionalCount}
       />
+
+      {/* Route cards sit immediately after the hero — no widgets in between —
+          so the full above-fold offer is visible before any scroll. */}
+      <HomeRouteCards
+        listingCount={totalListingCount}
+        professionalCount={totalProfessionalCount}
+        brokerCount={brokerCount}
+        topBrokers={topBrokersForCards}
+        topListings={topListingsForCards}
+        topAdvisors={topAdvisorsForCards}
+      />
+
+      {/* ── BELOW-THE-FOLD: personalisation, rates, feed ───────────────── */}
+
+      {/* Personalised strip — visible to signed-in and returning visitors;
+          renders null for anonymous / first-time visitors. Wrapped in its
+          own Suspense so the async auth read never blocks the ISR-cached
+          static content below. See components/HomepagePersonalisedStrip.tsx. */}
+      <HomepagePersonalisedStrip />
+
+      <HomeActivitySection />
 
       {/* Temporarily hidden for the next few months. Keep the component intact
           so the homepage AI concierge entry can be restored without rebuilding it. */}
@@ -281,26 +303,40 @@ export default async function HomePage() {
         <HomeFeedSection />
       </Suspense>
 
-      <ScrollFadeIn>
-        <HomeRouteCards
-          listingCount={totalListingCount}
-          professionalCount={totalProfessionalCount}
-          brokerCount={brokerCount}
-          topBrokers={topBrokersForCards}
-          topListings={topListingsForCards}
-          topAdvisors={topAdvisorsForCards}
-        />
-      </ScrollFadeIn>
-
       <CountryPopularLinks />
 
+      {/* ── ADV-132: ResumeBanner + GetMatchedEmbed ─────────────────────────
+          These two components are visually separated and serve distinct
+          audiences:
+
+          ResumeBanner — drop-off rescue for returning visitors who have a
+          partial quiz/plan stored in sessionStorage. It is client-side only
+          (reads sessionStorage on mount) and self-hides when no partial plan
+          exists. Conditional rendering is handled inside the component itself;
+          the Suspense boundary here prevents any SSR hydration flash.
+
+          GetMatchedEmbed — entry point into the full Get Matched flow for ALL
+          visitors. Always rendered regardless of login state.
+
+          The <hr> divider and distinct background colour on GetMatchedEmbed
+          provide clear visual separation between the two sections.
+          ──────────────────────────────────────────────────────────────────── */}
       <ScrollFadeIn>
+        {/* ResumeBanner: only shown to returning users with an incomplete
+            session (partial plan in sessionStorage). Returns null otherwise. */}
         <section className="container-custom my-6">
           <ResumeBanner />
         </section>
       </ScrollFadeIn>
+
+      {/* Visual separator — ensures the two sections are never perceived as
+          a single unit even when ResumeBanner is visible. */}
+      <div className="container-custom">
+        <hr className="border-slate-200" />
+      </div>
+
       <ScrollFadeIn>
-        <section className="container-custom mb-10">
+        <section className="container-custom py-10">
           <GetMatchedEmbed context="homepage" />
         </section>
       </ScrollFadeIn>

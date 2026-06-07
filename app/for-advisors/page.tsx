@@ -44,11 +44,11 @@ export default async function ForAdvisorsPage() {
             <span className="text-violet-200 text-sm">to get started — no credit card, no setup fee</span>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/advisor-signup" className="px-8 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
-              Apply Now — Free to Start
+            <Link href="/advisor-signup" className="px-8 py-4 bg-teal-500 text-white font-bold rounded-xl text-lg hover:bg-teal-400 transition-all shadow-lg">
+              Apply to join →
             </Link>
-            <a href="#pricing" className="px-8 py-4 border-2 border-white/30 text-white font-bold rounded-xl text-lg hover:bg-white/10 transition-all">
-              See Pricing
+            <a href="#how-it-works" className="px-8 py-4 border-2 border-white/40 text-white font-bold rounded-xl text-lg hover:bg-white/10 transition-all">
+              See how it works
             </a>
           </div>
           <p className="text-violet-300 text-sm mt-4">After your 3 free leads: $39/lead, no monthly minimums, cancel anytime</p>
@@ -76,7 +76,7 @@ export default async function ForAdvisorsPage() {
       </section>
 
       {/* How it works */}
-      <section className="py-12 md:py-20 px-4">
+      <section id="how-it-works" className="py-12 md:py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-extrabold text-center mb-10">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -136,8 +136,8 @@ export default async function ForAdvisorsPage() {
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-emerald-500">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/advisor-signup" className="block w-full text-center py-3 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 text-sm">
-                Start Free Trial
+              <Link href="/advisor-signup" className="block w-full text-center py-2 text-sm text-violet-600 hover:underline font-semibold">
+                Apply to join →
               </Link>
             </div>
 
@@ -152,8 +152,8 @@ export default async function ForAdvisorsPage() {
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-violet-500 font-bold">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/advisor-signup" className="block w-full text-center py-3.5 bg-violet-600 text-white font-extrabold rounded-xl hover:bg-violet-700 text-sm shadow-md shadow-violet-200 transition-all hover:shadow-lg">
-                Get Started Free
+              <Link href="/advisor-signup" className="block w-full text-center py-2 text-sm text-violet-600 hover:underline font-semibold">
+                Apply to join →
               </Link>
             </div>
 
@@ -167,8 +167,8 @@ export default async function ForAdvisorsPage() {
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-emerald-500">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/advisor-signup" className="block w-full text-center py-3 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 text-sm">
-                Learn More
+              <Link href="/advisor-signup" className="block w-full text-center py-2 text-sm text-violet-600 hover:underline font-semibold">
+                Apply to join →
               </Link>
             </div>
           </div>
@@ -199,6 +199,32 @@ export default async function ForAdvisorsPage() {
           <p className="text-xs text-slate-400 text-center mt-4">
             All advisors must hold a current AFSL, be an authorised representative, or be registered with a relevant body (TPB, ASIC).
           </p>
+        </div>
+      </section>
+
+      {/* ADV-177: What investors look for — advisor-perspective reframe */}
+      <section className="py-12 md:py-16 px-4 bg-white border-t border-slate-100">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-extrabold text-center mb-2">What Investors Look for in an Advisor</h2>
+          <p className="text-center text-slate-500 text-sm mb-8 max-w-xl mx-auto">
+            Understanding what investors want helps you complete your profile in a way that converts.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {[
+              { title: "Clear fee structure", desc: "Investors are fee-sensitive. Profiles that list fee type (fixed, hourly, or % of AUM) receive 2× more enquiries than those that don't." },
+              { title: "Verified credentials", desc: "Displaying your AFSL number, AFP/CFP designation, or TPB registration builds immediate trust and filters out tyre-kickers." },
+              { title: "Defined specialties", desc: "Investors search by need — SMSF, retirement, property, tax. The more specific your listed specialties, the better your match quality." },
+              { title: "A professional photo & bio", desc: "Advisors with a headshot and a 100+ word bio convert at 3× the rate of text-only profiles. People hire people, not logos." },
+            ].map(item => (
+              <div key={item.title} className="flex gap-3 p-4 bg-slate-50 rounded-xl">
+                <span className="text-teal-500 mt-0.5 shrink-0">✓</span>
+                <div>
+                  <p className="text-sm font-bold text-slate-900 mb-0.5">{item.title}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -296,10 +322,13 @@ export default async function ForAdvisorsPage() {
               {joinedThisWeek} advisor{joinedThisWeek !== 1 ? "s" : ""} joined this week
             </div>
           )}
-          <div className="flex justify-center">
-            <Link href="/advisor-signup" className="inline-block px-10 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
-              Apply Now — Free to Start →
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/advisor-signup" className="inline-block px-10 py-4 bg-teal-500 text-white font-bold rounded-xl text-lg hover:bg-teal-400 transition-all shadow-lg">
+              Apply to join →
             </Link>
+            <a href="#how-it-works" className="inline-block px-10 py-4 border-2 border-white/40 text-white font-bold rounded-xl text-lg hover:bg-white/10 transition-all">
+              See how it works
+            </a>
           </div>
         </div>
       </section>
