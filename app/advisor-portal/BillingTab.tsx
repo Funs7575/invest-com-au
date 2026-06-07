@@ -114,6 +114,7 @@ export default function BillingTab({ advisor, stats, onNavigate, initialSummary 
 }
 
 function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
+  const [buyFeaturedError, setBuyFeaturedError] = useState<string | null>(null);
   return (
     <div className="bg-white border border-amber-200 rounded-xl p-5">
       <div className="flex items-center gap-2 mb-1">
@@ -163,10 +164,14 @@ function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
                 body: JSON.stringify({ amount_cents: 14900, pack_slug: "featured_monthly" }),
               });
               const data = await res.json();
-              if (data.url) window.location.href = data.url;
-              else alert(data.error || "Failed to create checkout session. Please try again.");
+              if (data.url) {
+                setBuyFeaturedError(null);
+                window.location.href = data.url;
+              } else {
+                setBuyFeaturedError((data as { error?: string }).error || "Failed to create checkout session. Please try again.");
+              }
             } catch (err) {
-              alert("Something went wrong. Please check you're logged in and try again.");
+              setBuyFeaturedError("Something went wrong. Please check you're logged in and try again.");
               log.error("featured topup checkout failed", {
                 err: err instanceof Error ? err.message : String(err),
               });
@@ -176,6 +181,9 @@ function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
         >
           Get Featured
         </button>
+      )}
+      {buyFeaturedError && (
+        <p role="alert" className="mt-2 text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{buyFeaturedError}</p>
       )}
     </div>
   );

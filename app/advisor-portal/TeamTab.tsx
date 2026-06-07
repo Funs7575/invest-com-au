@@ -35,6 +35,11 @@ export default function TeamTab({ advisor }: Props) {
   const [pendingRemoveMemberId, setPendingRemoveMemberId] = useState<number | null>(null);
   const [memberRemoveError, setMemberRemoveError] = useState<string | null>(null);
   const [pendingRevokeInviteId, setPendingRevokeInviteId] = useState<number | null>(null);
+  const [inviteError, setInviteError] = useState<string | null>(null);
+  const [roleErrors, setRoleErrors] = useState<Record<number, string>>({});
+  const [inviteActionErrors, setInviteActionErrors] = useState<Record<number, string>>({});
+  const [firmSaveError, setFirmSaveError] = useState<string | null>(null);
+  const [seatRequestError, setSeatRequestError] = useState<string | null>(null);
 
   const loadFirmData = useCallback(async () => {
     try {
@@ -76,6 +81,7 @@ export default function TeamTab({ advisor }: Props) {
         body: JSON.stringify({ email: inviteEmail.trim(), name: inviteName.trim() || undefined }),
       });
       if (res.ok) {
+        setInviteError(null);
         setInviteStatus("sent");
         setInviteEmail("");
         setInviteName("");
@@ -83,7 +89,7 @@ export default function TeamTab({ advisor }: Props) {
         setTimeout(() => setInviteStatus("idle"), 3000);
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to send invite");
+        setInviteError((data as { error?: string }).error || "Failed to send invite");
         setInviteStatus("error");
       }
     } catch {
@@ -140,7 +146,7 @@ export default function TeamTab({ advisor }: Props) {
                 </button>
               </div>
             )}
-            {inviteStatus === "error" && <p className="text-xs text-red-600 mt-2">Failed to send invite. Please try again.</p>}
+            {inviteError && <p role="alert" className="text-xs text-red-600 mt-2">{inviteError}</p>}
           </div>
 
           {/* Current members */}
@@ -181,10 +187,11 @@ export default function TeamTab({ advisor }: Props) {
                             body: JSON.stringify({ memberId: m.id, role: newRole }),
                           });
                           if (res.ok) {
+                            setRoleErrors(prev => { const n = { ...prev }; delete n[m.id]; return n; });
                             setFirmMembers(prev => prev.map(fm => fm.id === m.id ? { ...fm, role: newRole, is_firm_admin: newRole !== "member" } : fm));
                           } else {
                             const d = await res.json();
-                            alert(d.error || "Failed to update role");
+                            setRoleErrors(prev => ({ ...prev, [m.id]: (d as { error?: string }).error || "Failed to update role" }));
                           }
                         }}
                         className="text-[0.62rem] border border-slate-200 rounded px-1.5 py-1 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
@@ -193,6 +200,7 @@ export default function TeamTab({ advisor }: Props) {
                         <option value="manager">Manager</option>
                         <option value="member">Member</option>
                       </select>
+                      {roleErrors[m.id] && <span role="alert" className="text-[0.5rem] text-red-600" title={roleErrors[m.id]}>!</span>}
                       <span className={`text-[0.56rem] px-1.5 py-0.5 rounded font-semibold ${m.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{m.status}</span>
                       {m.id !== advisor?.id && (
                         pendingRemoveMemberId === m.id ? (
@@ -272,13 +280,13 @@ export default function TeamTab({ advisor }: Props) {
                               loadFirmData();
                             } else {
                               const d = await res.json();
-                              alert(d.error || "Failed to resend");
+                              setInviteActionErrors(prev => ({ ...prev, [inv.id]: (d as { error?: string }).error || "Failed to resend" }));
                               setInviteActionStatus(prev => ({ ...prev, [inv.id]: "error" }));
                             }
                           }}
                           className="text-[0.56rem] text-blue-600 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {inviteActionStatus[inv.id] === "loading" ? "…" : inviteActionStatus[inv.id] === "done" ? "Sent!" : "Resend"}
+                          {inviteActionStatus[inv.id] === "loading" ? "…" : inviteActionStatus[inv.id] === "done" ? "Sent!" : inviteActionStatus[inv.id] === "error" ? <span title={inviteActionErrors[inv.id]}>Failed</span> : "Resend"}
                         </button>
                       )}
                       {inv.status === "pending" && (
@@ -496,6 +504,7 @@ export default function TeamTab({ advisor }: Props) {
                         body: JSON.stringify(editingFirm),
                       });
                       if (res.ok) {
+                        setFirmSaveError(null);
                         const data = await res.json();
                         setFirmDetails(data.firm);
                         setEditingFirm(data.firm);
@@ -503,7 +512,7 @@ export default function TeamTab({ advisor }: Props) {
                         setTimeout(() => setFirmSaved(false), 3000);
                       } else {
                         const d = await res.json();
-                        alert(d.error || "Failed to save");
+                        setFirmSaveError((d as { error?: string }).error || "Failed to save changes. Please try again.");
                       }
                     } finally { setSavingFirm(false); }
                   }}
@@ -513,6 +522,7 @@ export default function TeamTab({ advisor }: Props) {
                   {savingFirm ? "Saving..." : "Save Changes"}
                 </button>
                 {firmSaved && <span role="status" className="text-sm text-emerald-600 font-medium">Saved!</span>}
+                {firmSaveError && <p role="alert" className="text-xs text-red-600">{firmSaveError}</p>}
               </div>
             </div>
           </div>
@@ -575,10 +585,11 @@ export default function TeamTab({ advisor }: Props) {
                       body: JSON.stringify({ requestedSeats: parseInt(seatRequestSeats), reason: seatRequestReason }),
                     });
                     if (res.ok) {
+                      setSeatRequestError(null);
                       setSeatRequestStatus("sent");
                     } else {
                       const d = await res.json();
-                      alert(d.error || "Failed to submit request");
+                      setSeatRequestError((d as { error?: string }).error || "Failed to submit request. Please try again.");
                       setSeatRequestStatus("error");
                     }
                   }}
@@ -586,6 +597,7 @@ export default function TeamTab({ advisor }: Props) {
                 >
                   {seatRequestStatus === "sending" ? "Sending..." : "Request More Seats"}
                 </button>
+                {seatRequestError && <p role="alert" className="text-xs text-red-600">{seatRequestError}</p>}
                 <p className="text-[0.6rem] text-slate-400">Our team will review your request and update your seat limit within 1 business day. There&apos;s no charge for seat upgrades.</p>
               </div>
             )}

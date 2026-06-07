@@ -55,6 +55,8 @@ export default function LeadsTab({
   const [notesFeedback, setNotesFeedback] = useState<{id: number; status: "saving" | "saved"} | null>(null);
   const [firmError, setFirmError] = useState<string | null>(null);
   const [reassigning, setReassigning] = useState<number | null>(null);
+  const [topupError, setTopupError] = useState<string | null>(null);
+  const [reviewRequestErrors, setReviewRequestErrors] = useState<Record<number, string>>({});
 
   useEffect(() => {
     if (!firmView || !isFirmAdmin) return;
@@ -292,6 +294,7 @@ export default function LeadsTab({
               type="button"
               tabIndex={0}
               onClick={async () => {
+                setTopupError(null);
                 try {
                   const res = await fetch("/api/advisor-auth/topup", {
                     method: "POST",
@@ -300,9 +303,9 @@ export default function LeadsTab({
                   });
                   const data = await res.json();
                   if (data.url) window.location.href = data.url;
-                  else alert(data.error || "Failed to create checkout session. Please try again.");
+                  else setTopupError(data.error || "Failed to create checkout session. Please try again.");
                 } catch (err) {
-                  alert("Something went wrong. Please check you&apos;re logged in and try again.");
+                  setTopupError("Something went wrong. Please check you're logged in and try again.");
                   log.error("topup checkout failed", { err: err instanceof Error ? err.message : String(err) });
                 }
               }}
@@ -323,6 +326,9 @@ export default function LeadsTab({
             </button>
           ))}
         </div>
+        {topupError && (
+          <p role="alert" className="mt-2 text-xs text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{topupError}</p>
+        )}
       </div>
         );
       })()}
@@ -482,22 +488,28 @@ export default function LeadsTab({
                 {lead.status === "converted" && (
                   lead.review_requested_at
                     ? <span className="text-[0.56rem] text-slate-400 px-1.5 py-0.5">Review requested {new Date(lead.review_requested_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>
-                    : <button
-                        onClick={async () => {
-                          const res = await fetch("/api/advisor-auth/request-review", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ leadId: lead.id }),
-                          });
-                          if (res.ok) {
-                            onLeadsUpdate((prev) => prev.map((l) => l.id === lead.id ? { ...l, review_requested_at: new Date().toISOString() } : l));
-                          } else {
-                            const d = await res.json();
-                            alert(d.error || "Failed to send review request.");
-                          }
-                        }}
-                        className="text-xs font-semibold text-violet-600 hover:text-violet-800 px-2 py-1 border border-violet-200 rounded-lg hover:bg-violet-50"
-                      >Request Review</button>
+                    : <>
+                        <button
+                          onClick={async () => {
+                            setReviewRequestErrors(prev => { const n = { ...prev }; delete n[lead.id]; return n; });
+                            const res = await fetch("/api/advisor-auth/request-review", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ leadId: lead.id }),
+                            });
+                            if (res.ok) {
+                              onLeadsUpdate((prev) => prev.map((l) => l.id === lead.id ? { ...l, review_requested_at: new Date().toISOString() } : l));
+                            } else {
+                              const d = await res.json();
+                              setReviewRequestErrors(prev => ({ ...prev, [lead.id]: d.error || "Failed to send review request." }));
+                            }
+                          }}
+                          className="text-xs font-semibold text-violet-600 hover:text-violet-800 px-2 py-1 border border-violet-200 rounded-lg hover:bg-violet-50"
+                        >Request Review</button>
+                        {reviewRequestErrors[lead.id] && (
+                          <span role="alert" className="text-[0.6rem] text-red-600">{reviewRequestErrors[lead.id]}</span>
+                        )}
+                      </>
                 )}
                 {(() => {
                   const daysSince = Math.floor((Date.now() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60 * 24));

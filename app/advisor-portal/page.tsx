@@ -56,6 +56,8 @@ export default function AdvisorPortalPage() {
   const [disputeError, setDisputeError] = useState("");
   const [disputeDone, setDisputeDone] = useState(false);
 
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+
   // Onboarding banner
   const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
   const [dataLoadError, setDataLoadError] = useState(false);
@@ -106,7 +108,7 @@ export default function AdvisorPortalPage() {
         loadData();
       } else {
         const err = await res.json();
-        alert(err.error || "Invalid or expired link. Please request a new one.");
+        setVerifyError(err.error || "Invalid or expired link. Please request a new one.");
         setView("login");
       }
     } catch {
@@ -202,7 +204,16 @@ export default function AdvisorPortalPage() {
   }
 
   if (view === "login") {
-    return <AdvisorPortalLogin />;
+    return (
+      <>
+        {verifyError && (
+          <div className="max-w-md mx-auto mt-6 px-4">
+            <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{verifyError}</p>
+          </div>
+        )}
+        <AdvisorPortalLogin />
+      </>
+    );
   }
 
   // ─── PORTAL SHELL ───
