@@ -279,7 +279,7 @@ export default async function IndexFundsPage() {
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Index managed funds vs ETF wrappers">
               <thead>
                 <tr className="bg-slate-100">
                   <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
@@ -451,7 +451,7 @@ export default async function IndexFundsPage() {
               </p>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Fee drag illustration: $100,000 at 7% gross over time">
                 <thead>
                   <tr className="bg-slate-50">
                     <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">
@@ -524,7 +524,7 @@ export default async function IndexFundsPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Key Australian index funds and ETFs">
               <thead>
                 <tr className="bg-slate-100">
                   <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">

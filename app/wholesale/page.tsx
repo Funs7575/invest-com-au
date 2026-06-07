@@ -245,7 +245,7 @@ export default function WholesalePage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Wholesale vs retail — what changes</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Wholesale vs retail investor — what changes under each classification">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">What changes</th>

@@ -159,7 +159,7 @@ export default function GrowthInvestingPage() {
           <p className="text-slate-500 text-sm mb-6">Five metrics growth investors use to screen and assess high-growth companies.</p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Key growth investing metrics">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">Metric</th>
@@ -251,7 +251,7 @@ export default function GrowthInvestingPage() {
           {/* ASX growth ETF quick reference */}
           <h3 className="text-lg font-bold text-slate-900 mb-3">ASX-Listed Growth ETFs — Quick Reference</h3>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="ASX-listed growth ETFs quick reference">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-2.5 px-4 font-semibold text-slate-700 border-b border-slate-200">ETF Code</th>
@@ -290,7 +290,7 @@ export default function GrowthInvestingPage() {
           <p className="text-slate-500 text-sm mb-6">Two distinct philosophies — how they compare across seven key dimensions.</p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Growth vs value investing comparison">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 w-1/3">Dimension</th>

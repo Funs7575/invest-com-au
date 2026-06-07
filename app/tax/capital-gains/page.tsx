@@ -400,7 +400,7 @@ export default async function CapitalGainsTaxPage() {
         <div className="container-custom">
           <SectionHeading eyebrow="CGT Rates" title="Effective CGT Rates by Tax Bracket" sub="How the 50% CGT discount affects your effective capital gains tax rate (FY2025–26, excluding 2% Medicare Levy)." />
           <div className="mt-6 overflow-x-auto max-w-3xl">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Effective CGT rates by income bracket">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable Income</th>

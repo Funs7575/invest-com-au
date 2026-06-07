@@ -277,7 +277,7 @@ export default async function FeeTrackerPage() {
               sub="Standard ASX brokerage fee as currently published by each broker. Verify directly with the broker before trading."
             />
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Current ASX brokerage fees by broker">
                 <thead>
                   <tr className="bg-slate-900 text-left">
                     <th scope="col" className="px-5 py-3 text-xs font-bold text-slate-300 uppercase tracking-wide">Broker</th>

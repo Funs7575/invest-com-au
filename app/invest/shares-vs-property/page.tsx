@@ -123,7 +123,7 @@ export default function SharesVsPropertyPage() {
               Long-run data comparing Australian shares and residential property — using like-for-like (ungeared) capital and total return figures.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Historical returns: Australian shares vs property">
                 <thead className="bg-slate-900 text-white">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold">Asset</th>
@@ -157,7 +157,7 @@ export default function SharesVsPropertyPage() {
           <div className="container-custom max-w-5xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Head-to-head: key differences</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Shares vs property: head-to-head key differences">
                 <thead className="bg-slate-900 text-white">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold">Factor</th>

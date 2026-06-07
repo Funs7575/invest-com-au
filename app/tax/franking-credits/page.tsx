@@ -331,7 +331,7 @@ export default async function FrankingCreditsPage() {
             sub="Based on $1,000 cash dividend, fully franked (corporate rate 30%). Figures approximate — does not include Medicare Levy."
           />
           <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Franking credit benefit by income tax bracket">
               <thead className="bg-slate-800 text-white">
                 <tr>
                   <th scope="col" className="text-left p-3 text-xs font-bold">Tax bracket</th>
@@ -385,7 +385,7 @@ export default async function FrankingCreditsPage() {
           </div>
 
           <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Typical franking percentages and credits per $1,000 dividend by company">
               <thead className="bg-slate-800 text-white">
                 <tr>
                   <th scope="col" className="text-left p-3 text-xs font-bold">Company</th>
@@ -501,7 +501,7 @@ export default async function FrankingCreditsPage() {
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Franking ratios by ETF">
               <thead className="bg-slate-800 text-white">
                 <tr>
                   <th scope="col" className="text-left p-3 text-xs font-bold">ETF</th>

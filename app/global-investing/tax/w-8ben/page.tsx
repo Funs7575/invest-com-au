@@ -261,7 +261,7 @@ export default function W8BENPage() {
             payment. They are deducted before the funds reach your brokerage account.
           </p>
           <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="US withholding tax rates for Australian investors by income type">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-700">Income type</th>
@@ -625,7 +625,7 @@ export default function W8BENPage() {
                 combined), valid W-8BEN lodged with broker.
               </p>
               <div className="overflow-x-auto">
-                <table className="w-full text-xs">
+                <table className="w-full text-xs" aria-label="FITO worked example — $1,000 gross US dividend tax calculation">
                   <tbody className="divide-y divide-amber-200">
                     {[
                       { label: "Gross US dividend declared", value: "$1,000", note: "Declare this in your AU return — not the net amount" },

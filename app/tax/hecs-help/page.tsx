@@ -165,7 +165,7 @@ export default function HecsHelpPage() {
               Rates apply to your total <strong>repayment income</strong> (not just your salary &#8212; see below). The rate applies to your entire repayment income once you cross a band &#8212; it is not marginal like income tax.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="HECS-HELP repayment rates by income band 2024–25">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Repayment income</th>

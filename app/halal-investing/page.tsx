@@ -124,7 +124,7 @@ export default function HalalInvestingPage() {
             </p>
 
             <div className="overflow-x-auto mb-6">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Core Islamic finance principles and their practical investing implications">
                 <thead>
                   <tr className="bg-emerald-50 text-left">
                     <th scope="col" className="px-4 py-3 font-semibold text-slate-800 border border-slate-200 w-1/4">Principle</th>

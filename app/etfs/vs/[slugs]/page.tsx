@@ -418,7 +418,7 @@ export default async function ETFVsPage({
         <div className="container-custom">
           <SectionHeading eyebrow="Side-by-Side" title={`${etfA.ticker} vs ${etfB.ticker} Comparison`} />
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full border-collapse text-sm" aria-label={`${etfA.ticker} vs ${etfB.ticker} side-by-side comparison`}>
               <thead>
                 <tr className="border-b-2 border-slate-200">
                   <th scope="col" className="text-left py-3 pr-4 text-xs font-bold text-slate-500 uppercase tracking-wide w-40">Metric</th>
@@ -493,7 +493,7 @@ export default async function ETFVsPage({
           <div className="mt-6 bg-slate-50 rounded-2xl border border-slate-200 p-6">
             <p className="text-sm text-slate-600 mb-4">The annual cost difference on selected portfolio sizes:</p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label={`Annual MER cost comparison ${etfA.ticker} vs ${etfB.ticker}`}>
                 <thead>
                   <tr className="border-b border-slate-200">
                     <th scope="col" className="text-left py-2 text-xs font-bold text-slate-500">Portfolio</th>

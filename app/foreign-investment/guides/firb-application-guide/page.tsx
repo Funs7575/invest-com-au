@@ -278,7 +278,7 @@ export default function FirbApplicationGuidePage() {
             sub="Fees are non-refundable regardless of outcome. Pay when you lodge."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="FIRB application fees by property value">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>

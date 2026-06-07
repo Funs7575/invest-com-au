@@ -464,7 +464,7 @@ export default function EthicalInvestingPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Australian ESG ETFs compared">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">

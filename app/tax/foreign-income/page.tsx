@@ -125,7 +125,7 @@ export default function ForeignIncomeTaxPage() {
               Australia taxes its residents on their worldwide income. It does not matter where the income was earned, where the assets are held, or whether the money was remitted to Australia. Any income sourced from outside Australia must be declared in your Australian tax return.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Types of foreign income and key tax considerations">
                 <thead className="bg-slate-50">
                   <tr>
                     <th scope="col" className="text-left p-4 font-bold text-slate-700">Foreign income type</th>
@@ -214,7 +214,7 @@ export default function ForeignIncomeTaxPage() {
               Australia has DTAs with over 40 countries. These treaties cap the WHT rate the other country can impose on dividends paid to Australian residents. The DTA rate only applies when you have lodged the correct declaration or form with your foreign broker or custodian (e.g. a W-8BEN for US accounts). If no form is lodged, the standard (higher) withholding rate applies.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Dividend withholding tax rates by country under Double Tax Agreements">
                 <thead className="bg-slate-50">
                   <tr>
                     <th scope="col" className="text-left p-4 font-bold text-slate-700">Country</th>
@@ -315,7 +315,7 @@ export default function ForeignIncomeTaxPage() {
               All foreign amounts must be converted to Australian dollars for Australian tax purposes. The ATO requires you to use the exchange rate at the time of each transaction — not a year-end spot rate, a 12-month average, or a rate of your choosing.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Exchange rates to use for foreign income tax transactions">
                 <thead className="bg-slate-50">
                   <tr>
                     <th scope="col" className="text-left p-4 font-bold text-slate-700">Transaction</th>

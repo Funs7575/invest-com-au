@@ -244,7 +244,7 @@ export default function RebalancingPage() {
 
             {/* Methods summary table */}
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Rebalancing methods compared">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Method</th>
@@ -356,7 +356,7 @@ export default function RebalancingPage() {
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
                 <h3 className="font-extrabold text-slate-900 mb-4">Worked example: $100,000 portfolio</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs">
+                  <table className="w-full text-xs" aria-label="Rebalancing worked example: $100,000 portfolio">
                     <thead>
                       <tr className="border-b border-slate-300">
                         <th scope="col" className="pb-2 text-left font-bold text-slate-700">Asset class</th>

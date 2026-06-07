@@ -219,7 +219,7 @@ export default function InvestmentLoanPage() {
             loan size.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Investor rate premiums vs owner-occupier rates" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Loan category</th>
@@ -254,7 +254,7 @@ export default function InvestmentLoanPage() {
 
           {/* IO vs P&I table */}
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-8">
-            <table className="w-full text-sm">
+            <table aria-label="Interest-only vs principal and interest for investors" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700 w-40">Feature</th>
@@ -442,7 +442,7 @@ export default function InvestmentLoanPage() {
             how each factor affects your assessed capacity.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table aria-label="Borrowing capacity factors for investors" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Factor</th>

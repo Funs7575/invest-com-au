@@ -251,7 +251,7 @@ export default function LMIPage() {
             Estimates only — actual premiums vary by lender and LMI provider. Notice how the cost rises steeply as LVR increases and as the loan grows.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Approximate LMI cost by LVR and loan size" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">LVR</th>
@@ -317,7 +317,7 @@ export default function LMIPage() {
             A larger deposit lowers your LVR, which can reduce the premium — or remove it entirely once you reach 80%. The premium is also <strong>tiered</strong>, so small differences in LVR can produce large differences in cost. Moving from 88% to 90% LVR, for example, can push you into a higher tier and a noticeably bigger premium, even though the deposit difference is modest.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="LMI premium by LVR tier" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">LVR band</th>

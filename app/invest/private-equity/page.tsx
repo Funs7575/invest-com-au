@@ -184,7 +184,7 @@ export default function PrivateEquityPage() {
                 Retail investors can access PE-style returns through listed investment companies (LICs) and ASX-listed funds. These provide liquidity and lower minimums:
               </p>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
+                <table className="w-full text-sm border-collapse" aria-label="ASX-listed private equity vehicles">
                   <thead>
                     <tr className="bg-slate-50">
                       <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASX Code</th>

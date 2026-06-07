@@ -247,7 +247,7 @@ export default function LumpSumVsDcaPage() {
           <div className="container-custom max-w-5xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Head-to-head comparison</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Lump sum vs DCA head-to-head comparison">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Dimension</th>

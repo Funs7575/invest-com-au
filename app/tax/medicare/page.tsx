@@ -245,7 +245,7 @@ export default function MedicarePage() {
               </p>
             </div>
             <div className="mt-5 overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Medicare Levy low-income thresholds 2024–25">
                 <thead>
                   <tr className="bg-slate-800 text-white">
                     <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Category</th>
@@ -304,7 +304,7 @@ export default function MedicarePage() {
             <div className="grid md:grid-cols-2 gap-5">
               <div className="overflow-x-auto">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Singles</p>
-                <table className="w-full text-sm border-collapse">
+                <table className="w-full text-sm border-collapse" aria-label="Medicare Levy Surcharge income tiers for singles 2024–25">
                   <thead>
                     <tr className="bg-slate-800 text-white">
                       <th scope="col" className="text-left py-2.5 px-3 text-xs font-bold">Tier</th>
@@ -325,7 +325,7 @@ export default function MedicarePage() {
               </div>
               <div className="overflow-x-auto">
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Families</p>
-                <table className="w-full text-sm border-collapse">
+                <table className="w-full text-sm border-collapse" aria-label="Medicare Levy Surcharge income tiers for families 2024–25">
                   <thead>
                     <tr className="bg-slate-800 text-white">
                       <th scope="col" className="text-left py-2.5 px-3 text-xs font-bold">Tier</th>
@@ -487,7 +487,7 @@ export default function MedicarePage() {
               </p>
             </div>
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Private Health Insurance Rebate percentages by income tier and age">
                 <thead>
                   <tr className="bg-slate-800 text-white">
                     <th scope="col" className="text-left py-2.5 px-3 text-xs font-bold">Income tier (singles)</th>

@@ -313,7 +313,7 @@ export default async function NonResidentBankAccountPage() {
             sub="Gather these before applying. Incomplete applications cause delays."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Documents required to open a non-resident bank account">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Document</th>

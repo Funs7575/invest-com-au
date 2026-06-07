@@ -304,7 +304,7 @@ export default function UsEstateTaxPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="US-situs assets — which assets Australians hold that are subject to US estate tax">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600">Asset</th>
@@ -401,7 +401,7 @@ export default function UsEstateTaxPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="US estate tax rate bands for non-resident aliens — marginal rates by asset value">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600">US-situs assets</th>

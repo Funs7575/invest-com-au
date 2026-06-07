@@ -3,6 +3,28 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const SELL_BUSINESS_FAQS = [
+  {
+    q: "How long does it take to sell a business in Australia?",
+    a: "Most SME business sales take 6–12 months from the time a broker is engaged to settlement. The timeline depends heavily on deal complexity, industry, and buyer pool depth. Simple retail or hospitality businesses with clean financials can settle in 3–4 months. Businesses with earnout structures, FIRB requirements, or complex IP arrangements often take 12–18 months. The 12-month preparation window before listing is separate — it's the clean-books, data-room, and management-system work that makes a sale possible at a premium price.",
+  },
+  {
+    q: "What are the small-business CGT concessions when selling?",
+    a: "Australian small-business owners may access four CGT concessions on sale: (1) the 15-year exemption — no CGT if you've owned the business for 15+ years and are 55+; (2) the 50% active asset reduction — halves the capital gain on an active asset; (3) the retirement exemption — up to $500,000 of gain is exempt if contributed to super; (4) the rollover — defer the gain for up to two years. A lifetime cap of $1.615M (indexed) applies across concessions 2–4 combined. To access any concession, the business must satisfy the basic conditions: aggregated turnover under $2M, or net assets under $6M.",
+  },
+  {
+    q: "How much does a business broker charge?",
+    a: "Business broker commissions in Australia typically range from 3–8% of the sale price, plus GST. Larger deals (above $5M) often settle at 3–4%; smaller deals (under $1M) can attract 8–10% or a minimum fee. Most brokers also charge a listing/preparation fee of $2,000–$10,000 upfront, which is applied against the success fee on settlement. Brokers in specialist verticals (healthcare, hospitality, professional services) may charge premiums. Always compare at least two broker proposals before signing.",
+  },
+  {
+    q: "Do I need a business broker or can I sell privately?",
+    a: "You can sell privately, but it's unusual for deals above $500K. The main advantages of a broker: access to a curated buyer database, NDAs and pre-qualification of inquiries before you disclose financial data, negotiation expertise, and deal structure experience (earn-outs, vendor finance, FIRB). Private sales work best for very small businesses with a known buyer — a competitor, supplier, or family member already in conversation. For competitive-process sales targeting multiple buyers, a broker almost always achieves a better outcome than the owner negotiating alone.",
+  },
+];
+
+const sellBusinessFaqLd = faqJsonLd(SELL_BUSINESS_FAQS);
 
 export const revalidate = 3600;
 
@@ -27,6 +49,9 @@ export default function SellBusinessHubPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {sellBusinessFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(sellBusinessFaqLd) }} />
+      )}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
@@ -114,6 +139,25 @@ export default function SellBusinessHubPage() {
           ]}
           className="py-12 bg-white"
         />
+
+        <section className="py-12 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-4xl">
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {SELL_BUSINESS_FAQS.map((faq) => (
+                <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                  <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                    {faq.q}
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                  </summary>
+                  <div className="px-5 pb-4">
+                    <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
 
         <section className="py-10 bg-slate-50 border-t border-slate-200">
           <div className="container-custom max-w-4xl">

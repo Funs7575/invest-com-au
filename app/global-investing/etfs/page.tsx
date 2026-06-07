@@ -281,7 +281,7 @@ export default function GlobalInvestingEtfsPage() {
                 ASX vs global sector breakdown (approximate)
               </h3>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="ASX vs global market sector breakdown by weight">
                   <thead>
                     <tr className="border-b border-white/20">
                       <th scope="col" className="text-left py-2 font-bold text-slate-300">
@@ -346,7 +346,7 @@ export default function GlobalInvestingEtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Global ETF comparison — ASX-listed ETFs, index, MER and currency hedging">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">
@@ -429,7 +429,7 @@ export default function GlobalInvestingEtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Hedged vs unhedged global ETFs — feature comparison">
                 <thead className="bg-slate-50">
                   <tr>
                     <th scope="col" className="text-left p-4 font-bold text-slate-700">
@@ -658,7 +658,7 @@ export default function GlobalInvestingEtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Tax treatment of global ETF distribution components">
                 <thead className="bg-slate-50">
                   <tr>
                     <th scope="col" className="text-left p-4 font-bold text-slate-700">
@@ -778,7 +778,7 @@ export default function GlobalInvestingEtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="MER impact on long-term returns — terminal value of $10,000 at 7% gross return">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="text-left p-4 font-bold text-slate-700">
@@ -1027,7 +1027,7 @@ export default function GlobalInvestingEtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Thematic and sector global ETFs on the ASX">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">

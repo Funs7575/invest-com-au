@@ -330,7 +330,7 @@ export default function ChessVsCustodialPage() {
             Eight factors that matter
           </p>
           <div className="overflow-x-auto -mx-4 md:mx-0">
-            <table className="w-full min-w-[640px] border-collapse text-sm">
+            <table className="w-full min-w-[640px] border-collapse text-sm" aria-label="Direct ownership vs custodial — international shares side-by-side comparison">
               <thead>
                 <tr className="bg-slate-100 text-left">
                   <th scope="col" className="px-4 py-3 font-bold text-slate-900 rounded-tl-xl">Aspect</th>

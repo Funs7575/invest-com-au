@@ -357,7 +357,7 @@ export default function TaxHubPage() {
         <div className="container-custom">
           <SectionHeading eyebrow="FY2025–26" title="Australian Income Tax Rates" sub="Individual resident tax rates including the 2% Medicare Levy." />
           <div className="mt-6 overflow-x-auto max-w-2xl">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Australian income tax rates FY2025–26">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable Income</th>

@@ -360,7 +360,7 @@ export default function FrankingCreditsPage() {
             Tax impact for a 32.5% marginal-rate investor — $1,000 dividend
           </h3>
           <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Tax impact of franking credits — $1,000 dividend at 32.5% marginal rate by franking level">
               <thead className="bg-slate-800 text-white">
                 <tr>
                   <th scope="col" className="px-4 py-3 text-left font-bold text-xs">Dividend type</th>

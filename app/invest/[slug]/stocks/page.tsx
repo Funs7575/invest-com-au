@@ -176,7 +176,7 @@ export default async function SectorStocksPage({
               </div>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-slate-200">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label={`${sector.display_name} stocks`}>
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
                       <th scope="col" className="text-left px-4 py-3 font-bold text-slate-700">

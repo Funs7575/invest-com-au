@@ -132,7 +132,7 @@ export default function DollarCostAveragingPage() {
             <p className="text-sm text-slate-500 mb-4">VAS is the Vanguard Australian Shares ETF. Prices below are illustrative only.</p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="DCA worked example: $500/month into VAS over 12 months">
                 <thead>
                   <tr className="bg-slate-50">
                     <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Month</th>
@@ -197,7 +197,7 @@ export default function DollarCostAveragingPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="DCA vs lump sum: three scenarios">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th scope="col" className="text-left py-3 px-4 font-semibold">Scenario</th>

@@ -206,7 +206,7 @@ export default async function OptionsDerivativesPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Best Platforms for Options &amp; Derivatives</h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Best platforms for options and derivatives">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Platform</th>

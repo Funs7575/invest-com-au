@@ -213,7 +213,7 @@ export default function EtfsPage() {
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Major ETF types on the ASX</h2>
             <p className="text-sm text-slate-500 mb-6">There are over 300 ETFs on the ASX spanning equities, bonds, property, commodities, and multi-asset strategies. Here are the ten core categories and the most popular examples in each.</p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Major ETF types on the ASX">
                 <thead className="bg-slate-50">
                   <tr>
                     <th scope="col" className="text-left p-4 font-bold text-slate-700">Type</th>
@@ -327,7 +327,7 @@ export default function EtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Hedged vs unhedged international ETFs">
                 <thead className="bg-slate-50">
                   <tr>
                     <th scope="col" className="text-left p-4 font-bold text-slate-700">Feature</th>
@@ -372,7 +372,7 @@ export default function EtfsPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Tax treatment of ETF distribution components">
                 <thead className="bg-slate-50">
                   <tr>
                     <th scope="col" className="text-left p-4 font-bold text-slate-700">Distribution component</th>
@@ -521,7 +521,7 @@ export default function EtfsPage() {
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">ETF vs LIC vs managed fund</h2>
             <p className="text-sm text-slate-500 mb-6">Three common ways to invest in a diversified portfolio — understanding the structural differences helps you choose the right vehicle.</p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="ETF vs LIC vs managed fund comparison">
                 <thead className="bg-slate-50">
                   <tr>
                     <th scope="col" className="text-left p-4 font-bold text-slate-700">Feature</th>

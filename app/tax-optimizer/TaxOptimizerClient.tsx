@@ -275,7 +275,7 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
             <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6">
               <h3 className="text-sm font-bold text-slate-900 mb-3">CGT Breakdown by Holding</h3>
               <div className="overflow-x-auto">
-                <table className="w-full text-xs">
+                <table className="w-full text-xs" aria-label="CGT breakdown by holding">
                   <thead>
                     <tr className="border-b border-slate-200 text-slate-500">
                       <th scope="col" className="text-left py-2">Ticker</th>

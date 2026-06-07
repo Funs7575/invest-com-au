@@ -289,7 +289,7 @@ export default function NegativeGearingPage() {
 
           {/* Example table */}
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Negative gearing worked example income and expenses">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Item</th>
@@ -446,7 +446,7 @@ export default function NegativeGearingPage() {
             title="Deductible expenses for investment property"
           />
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Deductible expenses for investment property">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/3">Expense</th>
@@ -470,7 +470,7 @@ export default function NegativeGearingPage() {
 
           <div className="mt-8">
             <h3 className="text-base font-bold text-slate-900 mb-4">Non-deductible expenses</h3>
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Non-deductible investment property expenses">
               <thead>
                 <tr className="bg-red-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/3">Expense</th>
@@ -649,7 +649,7 @@ export default function NegativeGearingPage() {
           </p>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Annual tax saving from negative gearing at different income levels">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable income</th>

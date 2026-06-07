@@ -341,7 +341,7 @@ export default function FhssGuidePage() {
             Based on a 32.5% marginal tax bracket (income approx. $45,001&ndash;$135,000 in 2025&ndash;26).
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="Tax comparison of FHSS scheme vs regular savings account" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">Savings method</th>
@@ -485,7 +485,7 @@ export default function FhssGuidePage() {
             as FHSS-eligible. Here is how the numbers stack up.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-hidden">
-            <table className="w-full text-sm">
+            <table aria-label="FHSS worked example: Sophie 3 years at $85,000 salary" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Item</th>

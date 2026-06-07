@@ -282,7 +282,7 @@ export default function StampDutyConcessionsPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-2">State-by-state concessions at a glance</h2>
           <p className="text-sm text-slate-500 mb-5">Quick-reference table. Full detail for each state is in the section below.</p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="Stamp duty concessions and exemptions by state" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">State</th>
@@ -506,7 +506,7 @@ export default function StampDutyConcessionsPage() {
             the stamp duty base is lower than the completed market value.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto mb-5">
-            <table className="w-full text-sm">
+            <table aria-label="Off-the-plan stamp duty concessions by state" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
@@ -543,7 +543,7 @@ export default function StampDutyConcessionsPage() {
             top of the standard rate. This applies even to permanent residents in some states.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto mb-5">
-            <table className="w-full text-sm">
+            <table aria-label="Foreign purchaser stamp duty surcharges by state" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>

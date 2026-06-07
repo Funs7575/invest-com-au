@@ -96,7 +96,7 @@ export default function MortgagePage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Home loan types at a glance</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Home loan types — pros, cons and best use for each">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Loan type</th>

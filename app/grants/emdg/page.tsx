@@ -3,6 +3,28 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const EMDG_FAQS = [
+  {
+    q: "Who is eligible for the EMDG grant?",
+    a: "Australian SMEs with annual turnover under $20 million are eligible. You must be actively promoting the export of Australian goods or services — not simply selling to overseas customers without deliberate marketing activity. The business must have been trading for at least two years and incur eligible marketing expenses of at least $5,000 in the grant year. New exporters can apply for Tier 1; established exporters with existing overseas revenue apply for Tier 2 or Tier 3 depending on market scope.",
+  },
+  {
+    q: "What is the EMDG reimbursement rate?",
+    a: "The EMDG reimburses up to 50% of eligible overseas marketing expenditure. The maximum reimbursement varies by tier: Tier 1 (new exporters) up to $30,000/year; Tier 2 (existing exporters) up to $50,000/year; Tier 3 (entering new strategic markets) up to $80,000/year. The grant is reimbursement-only — you must spend the money first and then claim. Businesses can access the program for up to eight years in total.",
+  },
+  {
+    q: "Can I claim EMDG and the R&D Tax Incentive in the same year?",
+    a: "Yes — but never on the same dollar of expenditure. The ATO is explicit that double-dipping is not permitted. A common structure: claim R&D on costs associated with developing a localised product variant (e.g., software adapted for a new market), then claim EMDG on the sales rep, trade show, and marketing-collateral costs of selling that variant overseas. Keep separate ledgers for R&D and EMDG-eligible expenses from day one — mixed records create problems at audit.",
+  },
+  {
+    q: "When is the EMDG application deadline?",
+    a: "Applications for each grant year open in July and close in late November — typically around 30 November, for expenses incurred in the financial year ended 30 June. The exact cut-off is set by Austrade annually. Missing the deadline means waiting 12 months for the next application window. Most advisors recommend beginning the application process in August to allow time for receipt collection, ledger reconciliation, and review before submission.",
+  },
+];
+
+const emdgFaqLd = faqJsonLd(EMDG_FAQS);
 
 export const revalidate = 3600;
 
@@ -29,6 +51,9 @@ export default function EmdgPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {emdgFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(emdgFaqLd) }} />
+      )}
 
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
@@ -129,6 +154,26 @@ export default function EmdgPage() {
           ctaLabel="Get matched with an EMDG specialist"
           extraFields={[{ name: "company", label: "Company name" }, { name: "target_markets", label: "Target export markets" }]}
         />
+
+        {/* FAQ */}
+        <section className="py-12 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-4xl">
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {EMDG_FAQS.map((faq) => (
+                <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                  <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                    {faq.q}
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                  </summary>
+                  <div className="px-5 pb-4">
+                    <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
 
         {/* Cross-links */}
         <section className="py-10 bg-white border-t border-slate-200">

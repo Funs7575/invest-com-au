@@ -283,7 +283,7 @@ export default async function ComparePairPage({
 
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label={`${comparison.rows.length} dimension comparison`}>
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wide w-1/3">

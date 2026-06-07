@@ -158,7 +158,7 @@ export default function DirectVsAsxCostPage() {
             <h2 className="text-2xl font-extrabold text-slate-900 mb-2">All cost factors compared</h2>
             <p className="text-sm text-slate-500 mb-5">AU-listed ETF (e.g. IVV) vs direct US shares via IBKR, Stake, CommSec International.</p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="AU ETF vs direct US shares cost factor comparison">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Cost factor</th>

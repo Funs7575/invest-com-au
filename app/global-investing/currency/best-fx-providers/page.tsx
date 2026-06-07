@@ -393,7 +393,7 @@ export default function BestFxProvidersPage() {
             though, is consistent: specialists beat banks by a wide margin.
           </p>
           <div className="overflow-x-auto -mx-4 px-4">
-            <table className="w-full border-collapse text-left min-w-[760px]">
+            <table className="w-full border-collapse text-left min-w-[760px]" aria-label="FX provider comparison — margin, transfer fee, best use and regulation">
               <thead>
                 <tr className="border-b border-slate-300">
                   <th scope="col" className="py-3 pr-4 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Provider</th>

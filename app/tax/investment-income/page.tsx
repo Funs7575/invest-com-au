@@ -302,7 +302,7 @@ export default function InvestmentIncomeTaxPage() {
             </p>
           </div>
           <div className="overflow-x-auto max-w-4xl">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="How each type of investment income is taxed">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Income type</th>
@@ -594,7 +594,7 @@ export default function InvestmentIncomeTaxPage() {
             </p>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-xs border-collapse">
+              <table className="w-full text-xs border-collapse" aria-label="ETF and managed fund distribution components and tax treatment">
                 <thead>
                   <tr className="bg-slate-700 text-white">
                     <th scope="col" className="text-left py-3 px-4 font-bold">Component</th>
@@ -714,7 +714,7 @@ export default function InvestmentIncomeTaxPage() {
             </p>
           </div>
           <div className="overflow-x-auto max-w-2xl">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Australian marginal income tax rates 2024–25">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Taxable income</th>

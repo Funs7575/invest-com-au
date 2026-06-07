@@ -242,7 +242,7 @@ export default function EstatePlanningTaxPage() {
               when the beneficiary eventually sells.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="CGT outcomes by asset type on death">
                 <thead>
                   <tr className="bg-slate-800 text-white">
                     <th scope="col" className="text-left py-3 px-4 text-xs font-bold w-1/2">Asset type</th>

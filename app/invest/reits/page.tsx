@@ -209,7 +209,7 @@ export default async function ReitsPage() {
                 <h3 className="text-lg font-bold text-slate-900 mb-2">{s.sector}</h3>
                 <p className="text-sm text-slate-600 mb-4">{s.desc}</p>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm border-collapse">
+                  <table className="w-full text-sm border-collapse" aria-label={`A-REITs by sector: ${s.sector}`}>
                     <thead>
                       <tr className="bg-slate-50">
                         <th scope="col" className="text-left py-2 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
@@ -255,7 +255,7 @@ export default async function ReitsPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="A-REIT ETFs for diversified exposure">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ETF</th>

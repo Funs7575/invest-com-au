@@ -316,7 +316,7 @@ export default function VariableRateHomeLoanPage() {
               need features like offset accounts.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table aria-label="Variable rate vs fixed rate home loan comparison" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left p-3 font-bold text-slate-700 w-1/3">Feature</th>
@@ -664,7 +664,7 @@ export default function VariableRateHomeLoanPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-              <table className="w-full text-sm">
+              <table aria-label="Refinancing costs: variable loan vs fixed loan mid-term" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left p-3 font-bold text-slate-700">Cost item</th>

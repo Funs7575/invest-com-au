@@ -261,7 +261,7 @@ export default function SharedEquityPage() {
           {/* Property price caps */}
           <h3 className="text-lg font-extrabold text-slate-900 mb-3">Help to Buy property price caps by state</h3>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="Help to Buy shared equity property price caps by state" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State / Territory</th>
@@ -302,7 +302,7 @@ export default function SharedEquityPage() {
             State programs change frequently — always verify current status with the relevant state housing authority.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="State shared equity programs comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>
@@ -404,7 +404,7 @@ export default function SharedEquityPage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Pros and cons of shared equity</h2>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="Pros and cons of shared equity schemes" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-emerald-300 uppercase tracking-wide w-1/2">Advantages</th>
@@ -438,7 +438,7 @@ export default function SharedEquityPage() {
             makes the government a guarantor only.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="Shared equity vs First Home Guarantee comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Feature</th>

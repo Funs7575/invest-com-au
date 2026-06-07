@@ -340,7 +340,7 @@ export default function GlobalInvestingHubPage() {
             </p>
 
             <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="ASX vs global markets — sector weight comparison">
                 <thead>
                   <tr className="bg-white border-b border-slate-200">
                     <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600">Sector</th>
@@ -391,7 +391,7 @@ export default function GlobalInvestingHubPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-xs md:text-sm">
+            <table className="w-full text-xs md:text-sm" aria-label="Five ways to invest globally from Australia — method, cost and ownership comparison">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Method</th>

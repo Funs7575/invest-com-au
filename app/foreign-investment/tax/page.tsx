@@ -172,7 +172,7 @@ export default async function ForeignTaxPage() {
             sub="How much Australian tax is deducted from different types of income paid to non-residents."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Australian withholding tax rates by income type for non-residents">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
                   <th scope="col" className="text-start px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Income type</th>
@@ -212,7 +212,7 @@ export default async function ForeignTaxPage() {
                 <h3 className="text-sm font-extrabold text-red-900">Non-resident rates</h3>
                 <p className="text-xs text-red-700 mt-0.5">No tax-free threshold · No Medicare levy</p>
               </div>
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Non-resident income tax rates 2025–26">
                 <tbody>
                   {nonResidentBrackets.map((b, i) => (
                     <tr key={i} className="border-b border-slate-100 last:border-0">
@@ -229,7 +229,7 @@ export default async function ForeignTaxPage() {
                 <h3 className="text-sm font-extrabold text-green-900">Resident rates</h3>
                 <p className="text-xs text-green-700 mt-0.5">Tax-free threshold: $18,200 · Medicare levy: +2%</p>
               </div>
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Resident income tax rates 2025–26">
                 <tbody>
                   {residentBrackets.map((b, i) => (
                     <tr key={i} className="border-b border-slate-100 last:border-0">

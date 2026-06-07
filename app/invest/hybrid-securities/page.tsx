@@ -176,7 +176,7 @@ export default async function HybridSecuritiesPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Major ASX-Listed Hybrids</h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Major ASX-listed hybrid securities">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
@@ -227,7 +227,7 @@ export default async function HybridSecuritiesPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Hybrids vs Term Deposits vs Bonds vs Shares</h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Hybrids vs term deposits vs bonds vs shares">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Feature</th>

@@ -196,7 +196,7 @@ export default function OffsetRedrawPage() {
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Offset vs Redraw: Key Differences</h2>
           <p className="text-sm text-slate-500 mb-6">Seven dimensions that matter when choosing between the two features.</p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Offset account vs redraw facility key differences" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700 w-1/4">Feature</th>
@@ -403,7 +403,7 @@ export default function OffsetRedrawPage() {
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-5">
             <h3 className="font-semibold text-slate-900 mb-4">Break-Even Calculation</h3>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table aria-label="Offset account break-even balance by monthly fee at 6.5% interest rate" className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
                     <th scope="col" className="text-left py-2 pr-4 text-slate-600 font-medium">Monthly fee</th>

@@ -131,7 +131,7 @@ export default function SuburbsClient() {
                 </div>
               ) : (
                 <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm" aria-label="Australian suburb property data">
                     <thead>
                       <tr className="bg-slate-50 border-b border-slate-200">
                         <th scope="col" aria-sort={sortKey === "suburb" ? (sortAsc ? "ascending" : "descending") : "none"} className="text-left px-4 py-3 cursor-pointer hover:bg-slate-100" onClick={() => handleSort("suburb")}>

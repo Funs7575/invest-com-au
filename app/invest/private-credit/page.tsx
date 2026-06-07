@@ -229,7 +229,7 @@ export default async function PrivateCreditPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="P2P lending platforms in Australia">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Platform</th>
@@ -275,7 +275,7 @@ export default async function PrivateCreditPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="ASX-listed private credit investment trusts">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">ASX Code</th>

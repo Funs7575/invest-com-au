@@ -99,7 +99,7 @@ export default function CompareHomeLoanPage() {
         <div className="container-custom">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">The 10-Point Home Loan Comparison Checklist</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="10-point home loan comparison checklist">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Factor</th>
@@ -126,7 +126,7 @@ export default function CompareHomeLoanPage() {
         <div className="container-custom">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">LVR Tiers & Their Impact on Rate</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="LVR tiers and impact on home loan rate">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-5 py-3 font-semibold text-slate-700">LVR</th>

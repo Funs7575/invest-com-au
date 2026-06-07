@@ -189,7 +189,7 @@ export default async function ForeignSuperPage() {
             sub="DASP withholding rates by super component type. Most employer contributions fall into the 'taxed element' category."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="DASP withholding tax rates by super component type">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
                   <th scope="col" className="text-left px-5 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Component type</th>

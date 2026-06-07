@@ -283,7 +283,7 @@ export default function DividendETFPage() {
             sub="Ticker, fee, indicative yield, and franking. Figures are approximate and change over time — always verify with the ETF provider."
           />
           <div className="mt-8 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <table className="w-full min-w-[680px] border-collapse text-sm">
+            <table className="w-full min-w-[680px] border-collapse text-sm" aria-label="Australian dividend ETFs comparison">
               <thead>
                 <tr className="border-b-2 border-slate-200 text-left">
                   <th scope="col" className="py-3 pr-4 font-bold text-slate-900">ETF</th>

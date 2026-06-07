@@ -186,7 +186,7 @@ export default function CurrencyConverterPage() {
               Key AUD amounts converted at the current indicative rate.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label={`Australian thresholds in ${toCurrency}`}>
                 <thead>
                   <tr className="border-b border-slate-200">
                     <th scope="col" className="text-left py-2 font-medium text-slate-600">Threshold</th>

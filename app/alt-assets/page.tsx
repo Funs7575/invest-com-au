@@ -130,7 +130,7 @@ export default function AltAssetsPage() {
         <div className="container-custom max-w-4xl">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-5">Asset classes at a glance</h2>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Alternative asset classes at a glance — minimum entry, liquidity and Australian tax treatment">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">Asset</th>

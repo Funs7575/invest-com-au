@@ -259,7 +259,7 @@ export default function FirstHomeOwnerGrantsPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-2">FHOG by state and territory (2025&ndash;26)</h2>
           <p className="text-sm text-slate-500 mb-5">Grant amounts, eligible property types, price caps, and key notes.</p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="First Home Owner Grant amounts and eligibility by state and territory" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap">State / Territory</th>
@@ -370,7 +370,7 @@ export default function FirstHomeOwnerGrantsPage() {
             and eligibility.
           </p>
           <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-sm">
+            <table aria-label="FHOG and stamp duty concession combinations by state" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-white uppercase tracking-wide">State</th>

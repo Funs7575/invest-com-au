@@ -304,7 +304,7 @@ export default function IbkrAustraliaSetupPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-xs md:text-sm">
+            <table className="w-full text-xs md:text-sm" aria-label="IBKR account types — who each is for">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Account type</th>
@@ -525,7 +525,7 @@ export default function IbkrAustraliaSetupPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-xs md:text-sm">
+            <table className="w-full text-xs md:text-sm" aria-label="IBKR account costs — brokerage, FX conversion and data fees">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Cost item</th>

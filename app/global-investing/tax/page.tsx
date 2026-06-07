@@ -386,7 +386,7 @@ export default function GlobalInvestingTaxPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-            <table className="w-full text-xs md:text-sm">
+            <table className="w-full text-xs md:text-sm" aria-label="Dividend withholding tax rates by country for Australian investors">
               <thead>
                 <tr className="bg-white border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 font-bold text-slate-600">Market</th>

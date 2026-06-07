@@ -154,7 +154,7 @@ export default async function SendMoneyAustraliaPage() {
         <section className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
           <h2 className="font-bold text-slate-800 mb-4">How much you save: ${(COST_EXAMPLE_AMOUNT / 1_000).toFixed(0)}K transfer example</h2>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="International money transfer provider cost comparison on a $500K transfer">
               <thead>
                 <tr className="border-b border-amber-200">
                   <th scope="col" className="text-start pb-2 font-semibold text-slate-600 text-xs">Provider</th>

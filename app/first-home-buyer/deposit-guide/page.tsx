@@ -245,7 +245,7 @@ export default function DepositGuidePage() {
               In practice, the right deposit depends on your situation. For a $750,000 property:
             </p>
             <div className="overflow-x-auto mb-4">
-              <table className="w-full text-sm border-collapse">
+              <table aria-label="Deposit size, LMI, and loan size for a $750,000 property" className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
                     <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Deposit size</th>
@@ -307,7 +307,7 @@ export default function DepositGuidePage() {
             </p>
             <h3 className="text-lg font-semibold text-slate-900 mb-3">Indicative LMI cost table</h3>
             <div className="overflow-x-auto mb-3">
-              <table className="w-full text-sm border-collapse">
+              <table aria-label="Indicative LMI cost by LVR and purchase price" className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
                     <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">LVR (deposit)</th>
@@ -522,7 +522,7 @@ export default function DepositGuidePage() {
               reaching an $80,000 target — not accounting for interest earned on the balance:
             </p>
             <div className="overflow-x-auto mb-4">
-              <table className="w-full text-sm border-collapse">
+              <table aria-label="Deposit savings timeline by weekly saving rate" className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
                     <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Savings rate</th>
@@ -623,7 +623,7 @@ export default function DepositGuidePage() {
               additional costs upfront — they can add 4–8% of the purchase price in total:
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table aria-label="Additional purchase costs beyond the deposit" className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
                     <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">Cost</th>
@@ -683,7 +683,7 @@ export default function DepositGuidePage() {
               verify current thresholds with your state revenue office.
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table aria-label="First home buyer stamp duty concessions and FHOG by state" className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-slate-100">
                     <th scope="col" className="text-left px-3 py-2 font-semibold text-slate-700 border border-slate-200">State</th>

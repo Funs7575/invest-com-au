@@ -122,7 +122,7 @@ export default function StampDutyForeignBuyersPage() {
             sub="Rates current as at March 2026. Check your state revenue office for most recent rates."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Foreign buyer stamp duty surcharges — all states and territories">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-start">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
@@ -171,7 +171,7 @@ export default function StampDutyForeignBuyersPage() {
             sub="Surcharge only — add standard state stamp duty on top for total stamp duty cost."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Foreign buyer surcharge cost examples by state and property price">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-start">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State</th>

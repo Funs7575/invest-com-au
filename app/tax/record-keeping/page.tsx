@@ -408,7 +408,7 @@ export default function RecordKeepingPage() {
             sub="Use this checklist when you sell any CGT asset to confirm you have every document needed."
           />
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="CGT cost base record keeping checklist by asset type">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 text-xs font-bold">Cost Base Element</th>

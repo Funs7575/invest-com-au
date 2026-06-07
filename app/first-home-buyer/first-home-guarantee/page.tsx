@@ -312,7 +312,7 @@ export default function FirstHomeGuaranteePage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table aria-label="First Home Guarantee property price caps by state" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700">State / Territory</th>
@@ -532,7 +532,7 @@ export default function FirstHomeGuaranteePage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table aria-label="FHBG vs FHSS vs shared equity vs standard 5% deposit comparison" className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left px-4 py-3 font-semibold text-slate-700 min-w-[160px]">Scheme</th>

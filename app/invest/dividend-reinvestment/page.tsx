@@ -208,7 +208,7 @@ export default function DividendReinvestmentPage() {
               The mechanics differ slightly depending on whether you hold individual ASX shares or an ETF. The key distinction is where you enrol.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="DRP on ASX shares vs ETFs">
                 <thead>
                   <tr className="bg-slate-100">
                     <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Feature</th>
@@ -300,7 +300,7 @@ export default function DividendReinvestmentPage() {
             </p>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="DRP compounding effect worked example">
                 <thead>
                   <tr className="bg-slate-100">
                     <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Year</th>
@@ -359,7 +359,7 @@ export default function DividendReinvestmentPage() {
               DRP is not always the right choice. The best option depends on your income needs, tax position, and investment goals.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="DRP vs taking cash comparison">
                 <thead>
                   <tr className="bg-slate-100">
                     <th scope="col" className="text-left py-3 px-4 font-extrabold text-slate-700 border-b border-slate-200">Situation</th>

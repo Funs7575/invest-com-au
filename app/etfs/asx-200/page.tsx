@@ -335,7 +335,7 @@ export default function ASX200ETFPage() {
             sub="The major ASX 200 and ASX 300 index ETFs, plus an income tilt and an equal-weight option. MERs are approximate &mdash; verify with the provider before investing."
           />
           <div className="mt-8 overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-sm" aria-label="Australian shares ETFs compared">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                   <th scope="col" className="px-4 py-3 font-semibold">Ticker</th>

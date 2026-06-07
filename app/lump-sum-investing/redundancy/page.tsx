@@ -241,7 +241,7 @@ export default function RedundancyPage() {
               less than the headline figure.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm" aria-label="Redundancy payment components and how each is taxed">
                 <thead className="bg-slate-100 text-slate-700">
                   <tr>
                     <th scope="col" className="px-4 py-3 font-bold">Component</th>
@@ -445,7 +445,7 @@ export default function RedundancyPage() {
               your debts, how long your job search might take, and your time horizon.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-sm" aria-label="Where a redundancy payout can go — investment options, best use and watch-outs">
                 <thead className="bg-slate-100 text-slate-700">
                   <tr>
                     <th scope="col" className="px-4 py-3 font-bold">Option</th>

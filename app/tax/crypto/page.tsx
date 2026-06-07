@@ -618,7 +618,7 @@ export default async function CryptoTaxPage() {
             circumstances vary and professional advice is recommended for active DeFi users.
           </p>
           <div className="overflow-x-auto">
-            <table className="w-full text-xs border-collapse">
+            <table className="w-full text-xs border-collapse" aria-label="DeFi activity tax treatment and taxable events">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-3 px-4 font-bold">Activity</th>

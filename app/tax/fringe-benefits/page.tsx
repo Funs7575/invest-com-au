@@ -195,7 +195,7 @@ export default function FringeBenefitsPage() {
               Whether a benefit is Type 1 or Type 2 determines the gross-up rate used to calculate FBT. The distinction depends on whether the employer can claim a GST input tax credit on the cost of providing the benefit.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="FBT Type 1 and Type 2 gross-up rates">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Type</th>

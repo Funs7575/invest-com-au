@@ -349,7 +349,7 @@ export default async function PropertyBan2025Page() {
             sub="The ban affects all states equally, but the practical impact varies by market conditions."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Foreign buyer property ban impact by state — stamp duty and land tax surcharges">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State</th>

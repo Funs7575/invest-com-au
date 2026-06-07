@@ -198,7 +198,7 @@ export default function LicScreenerClient() {
         {/* Table */}
         <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mb-6">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[640px]">
+            <table className="w-full text-sm min-w-[640px]" aria-label="Listed investment companies screener">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600 w-36">LIC</th>

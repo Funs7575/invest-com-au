@@ -185,7 +185,7 @@ function ParamsTable({ rows }: {
 }) {
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-12">
-      <table className="w-full text-sm">
+      <table className="w-full text-sm" aria-label="Widget embed parameters">
         <thead>
           <tr className="bg-slate-50 border-b border-slate-200 text-left">
             <th scope="col" className="px-5 py-3 font-bold text-slate-700">Parameter</th>

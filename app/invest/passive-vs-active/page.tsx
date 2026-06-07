@@ -199,7 +199,7 @@ export default function PassiveVsActivePage() {
               Assuming 8% gross annual return across all options. Performance fees are estimated averages for funds that charge them. Figures are illustrative — actual outcomes depend on specific funds, market returns, and tax.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Fee cost comparison: passive vs active over 20 years">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Investment vehicle</th>
@@ -542,7 +542,7 @@ export default function PassiveVsActivePage() {
           <div className="container-custom max-w-5xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">Head-to-head comparison</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Passive vs active investing head-to-head comparison">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Aspect</th>
@@ -572,7 +572,7 @@ export default function PassiveVsActivePage() {
               Six diagnostic questions that clarify whether passive or active investing is the better fit for your specific circumstances and investment goals.
             </p>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white mb-4">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Decision framework: passive vs active investing">
                 <thead className="bg-slate-100">
                   <tr>
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Question</th>

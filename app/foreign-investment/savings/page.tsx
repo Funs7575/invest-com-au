@@ -302,7 +302,7 @@ export default async function ForeignSavingsPage() {
             title="Temp visa holder vs. non-resident savings"
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Savings account comparison — temporary visa holder vs non-resident">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
                   <th scope="col" className="text-left px-5 py-3 text-xs font-bold text-slate-600">Feature</th>

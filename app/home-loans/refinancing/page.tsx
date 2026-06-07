@@ -317,7 +317,7 @@ export default function RefinancingPage() {
             Know what you are paying before you switch. Most standard refinances cost $800–$2,000 excluding LMI and fixed break costs.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Home loan refinancing switching costs checklist" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Cost item</th>
@@ -405,7 +405,7 @@ export default function RefinancingPage() {
             A refinance is an opportunity to choose a loan structure that better fits your current financial goals — not just a lower rate.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Loan structures to consider when refinancing" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Structure</th>
