@@ -174,7 +174,7 @@ export default function ComparePage() {
           Compare Australian Investment Platforms
         </h1>
         <p className="mt-2 text-sm md:text-base text-slate-600 max-w-2xl">
-          Side-by-side comparison of fees, features, and safety for 100+ Australian share trading, crypto, super and robo-advisor platforms.
+          Compare 100+ Australian investing platforms. See fees, features, and safety ratings side-by-side. Whether you trade shares, crypto, or super — find your best fit.
         </p>
       </div>
       <Suspense fallback={<ComparePageSkeleton />}>

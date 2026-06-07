@@ -81,7 +81,7 @@ export default function WatchlistClient({ initialItems }: Props) {
       <EmptyState
         icon="eye"
         title="Your watchlist is empty"
-        body="Add brokers, ETFs, stocks and savings accounts to your watchlist to track them in one place."
+        body="Add items by clicking the ♥ button on any broker, ETF, or stock page. Once you have items, you can enable price-change alerts below."
         ctas={[
           { label: "Browse brokers", href: "/brokers" },
           { label: "Explore ETFs", href: "/etfs", variant: "secondary" },

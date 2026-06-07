@@ -8,7 +8,7 @@ const Search = ({ className }: { className?: string }) => (
 import type { Article } from "@/lib/types";
 import LeadMagnet from "@/components/LeadMagnet";
 
-const CATEGORIES = ["tax", "beginners", "smsf", "strategy", "news"] as const;
+const CATEGORIES = ["tax", "beginners", "smsf", "strategy", "news", "reviews", "etfs", "super", "property", "crypto"] as const;
 
 const CATEGORY_COLORS: Record<string, string> = {
   tax: "bg-purple-100 text-purple-700",
@@ -16,6 +16,11 @@ const CATEGORY_COLORS: Record<string, string> = {
   smsf: "bg-emerald-100 text-emerald-700",
   strategy: "bg-amber-100 text-amber-700",
   news: "bg-red-100 text-red-700",
+  reviews: "bg-sky-100 text-sky-700",
+  etfs: "bg-teal-100 text-teal-700",
+  super: "bg-orange-100 text-orange-700",
+  property: "bg-lime-100 text-lime-700",
+  crypto: "bg-violet-100 text-violet-700",
 };
 
 type SortKey = "newest" | "views" | "trending";

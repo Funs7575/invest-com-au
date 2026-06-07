@@ -716,6 +716,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
         {/* Advisor matching + concierge — light band below the hero */}
         <div className="mb-4 md:mb-6">
+          <p className="text-sm font-medium text-slate-600 mb-2 text-center">Not sure which advisor you need? Get matched in 60 seconds.</p>
           <GetMatchedEmbed context="advisor_directory" />
           <p className="text-[0.65rem] md:text-xs text-slate-500 mt-3 text-center">
             Prefer to chat?{" "}
@@ -792,6 +793,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         </div>
 
         {/* Primary facet pills — mirrors /invest + /compare (shared FilterPill). */}
+        <p className="text-sm font-semibold text-slate-700 mb-2">Narrow by type, location, and fees — or search by name.</p>
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {/* Type */}
           <div className="relative">

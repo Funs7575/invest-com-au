@@ -112,6 +112,8 @@ export default function DebtCalculatorClient() {
   const [emailGated, setEmailGated] = useState(false);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSentMsg, setEmailSentMsg] = useState("");
 
   const {
     value: persistedInputs,
@@ -222,14 +224,20 @@ export default function DebtCalculatorClient() {
 
   const handleEmailSubmit = async () => {
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+    setEmailSending(true);
     await fetch("/api/email-capture", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: email.trim(), source: "debt-calculator", name: "", ...getStoredUtm() }),
     }).catch(() => {});
-    setEmailSubmitted(true);
-    setEmailGated(false);
+    setEmailSending(false);
+    setEmailSentMsg("Plan sent to your inbox!");
     trackEvent("debt_calc_email", { email: email.trim() }, "/debt-calculator");
+    setTimeout(() => {
+      setEmailSubmitted(true);
+      setEmailGated(false);
+      setEmailSentMsg("");
+    }, 2000);
   };
 
   // Determine color coding
@@ -558,7 +566,13 @@ export default function DebtCalculatorClient() {
                 </button>
               </div>
             )}
-            {emailGated && !emailSubmitted && (
+            {emailSentMsg && (
+              <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 mb-6 text-emerald-700 text-sm font-medium">
+                <Icon name="check-circle" size={16} />
+                {emailSentMsg}
+              </div>
+            )}
+            {emailGated && !emailSubmitted && !emailSentMsg && (
               <div className="bg-slate-900 rounded-2xl p-4 md:p-5 text-white mb-6">
                 <div className="flex items-start gap-3">
                   <Icon name="mail" size={20} className="text-amber-400 shrink-0 mt-0.5" />
@@ -567,7 +581,7 @@ export default function DebtCalculatorClient() {
                     <p className="text-xs text-slate-300 mb-3">Enter your email to receive a personalised breakdown with month-by-month repayment schedule.</p>
                     <div className="flex gap-2">
                       <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm rounded-lg text-slate-900 border-0" />
-                      <button onClick={handleEmailSubmit} className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 shrink-0">Send Plan</button>
+                      <button onClick={handleEmailSubmit} disabled={emailSending} className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed shrink-0">{emailSending ? "Sending…" : "Send Plan"}</button>
                     </div>
                   </div>
                 </div>

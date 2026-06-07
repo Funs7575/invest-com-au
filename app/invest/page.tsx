@@ -379,6 +379,9 @@ export default async function InvestMarketplacePage() {
                     <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed line-clamp-2">
                       {description}
                     </p>
+                    <span className={`text-[0.62rem] md:text-xs font-semibold mt-2 block ${accent.hover}`}>
+                      Browse {cat.label} →
+                    </span>
                   </Link>
                 );
               })}
@@ -439,7 +442,7 @@ export default async function InvestMarketplacePage() {
             listing). Mandatory copy preserved verbatim. ── */}
       <div className="border-t border-slate-200 bg-slate-50">
         <div className="container-custom max-w-6xl py-5 md:py-6 space-y-2">
-          <details className="text-xs text-slate-600">
+          <details open className="text-xs text-slate-600">
             <summary className="font-semibold text-slate-700 cursor-pointer flex items-center gap-1.5">
               <Icon name="shield-check" size={13} className="text-amber-500" />
               General Advice Warning &amp; Advertiser Disclosure

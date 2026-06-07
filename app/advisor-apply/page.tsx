@@ -363,9 +363,9 @@ function AdvisorApplyInner() {
             </p>
             <div className="grid grid-cols-3 gap-2 md:gap-3">
               {[
-                { icon: "gift", title: "Free Listing", desc: "No upfront cost" },
-                { icon: "users", title: "Qualified Leads", desc: "Investors seeking help" },
-                { icon: "shield", title: "Verified Badge", desc: "ASIC/TPB checked" },
+                { icon: "gift", title: "Free to Start", desc: "No upfront cost, ever" },
+                { icon: "users", title: "Qualified Leads", desc: "Pre-screened by goal & budget" },
+                { icon: "shield", title: "Verified Badge", desc: "Builds trust with investors" },
               ].map((v, i) => (
                 <div key={i} className="bg-white/10 backdrop-blur rounded-lg p-2.5 md:p-3 text-center">
                   <Icon name={v.icon} size={18} className="text-violet-200 mx-auto mb-1" />

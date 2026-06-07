@@ -451,6 +451,9 @@ export default function AccountClient() {
               </div>
             )}
 
+            {portalError && (
+              <p role="alert" className="mb-2 text-xs text-red-500">{portalError}</p>
+            )}
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={handleManageSubscription}
@@ -478,10 +481,6 @@ export default function AccountClient() {
                 </button>
               )}
             </div>
-
-            {portalError && (
-              <p role="alert" className="mt-2 text-xs text-red-500">{portalError}</p>
-            )}
 
             {showCancelConfirm && (
               <div className="mt-3 bg-red-50 border border-red-200 rounded-xl p-4">

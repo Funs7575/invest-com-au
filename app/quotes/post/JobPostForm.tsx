@@ -269,7 +269,7 @@ export default function JobPostForm() {
               placeholder="What's the situation? What outcome do you want? Any deadlines? The more context the better — advisors will give sharper, lower quotes."
               className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-y"
             />
-            <p className="text-xs text-slate-400 mt-1">Min 30 characters · {form.job_description.length} written</p>
+            <p className="text-xs text-slate-400 mt-1">Min 30 characters — specific descriptions attract better quotes from advisors. {form.job_description.length} written</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -300,6 +300,7 @@ export default function JobPostForm() {
                 <option value="">Select budget</option>
                 {BUDGETS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
               </select>
+              <p className="text-xs text-slate-400 mt-1">Total project budget. SOA from ~$1,500 · Hourly from ~$250/hr</p>
             </div>
           </div>
 
