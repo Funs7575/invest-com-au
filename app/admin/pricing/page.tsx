@@ -34,15 +34,6 @@ const TYPE_LABELS: Record<string, string> = {
   real_estate_agent: "Real Estate Agents",
 };
 
-const TIER_COLORS: Record<string, string> = {
-  mortgage_broker: "bg-rose-50 border-rose-200",
-  buyers_agent: "bg-teal-50 border-teal-200",
-  financial_planner: "bg-violet-50 border-violet-200",
-  smsf_accountant: "bg-blue-50 border-blue-200",
-  insurance_broker: "bg-sky-50 border-sky-200",
-  tax_agent: "bg-amber-50 border-amber-200",
-};
-
 function formatCents(cents: number): string {
   return `$${(cents / 100).toFixed(0)}`;
 }
