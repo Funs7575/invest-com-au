@@ -735,6 +735,7 @@ function AdvisorApplyInner() {
             <button
               onClick={submit}
               disabled={status === "submitting" || !isFormValid}
+              aria-busy={status === "submitting"}
               className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {status === "submitting" ? (photoUploading ? "Uploading photo..." : "Submitting...") : isInviteFlow ? "Accept Invitation & Apply" : "Submit Application"}

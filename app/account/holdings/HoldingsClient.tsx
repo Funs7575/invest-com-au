@@ -414,7 +414,11 @@ export default function HoldingsClient({
       <section>
         <h2 className="text-base font-semibold text-slate-900 mb-3">Your holdings</h2>
         {items.length === 0 ? (
-          <p className="text-sm text-slate-500 italic">No holdings yet — add your first above.</p>
+          <div className="text-center py-10 border border-dashed border-slate-200 rounded-xl bg-slate-50">
+            <p className="text-3xl mb-3" aria-hidden="true">📊</p>
+            <p className="font-semibold text-slate-700 text-sm">No holdings tracked yet</p>
+            <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">Add your first holding above to track performance and see fee comparisons across brokers.</p>
+          </div>
         ) : (
           <ul className="divide-y divide-slate-200 border border-slate-200 rounded-xl">
             {items.map((h) => (
