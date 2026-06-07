@@ -128,10 +128,14 @@ export default async function OfficeHoursPage() {
       )}
 
       {sessions.length === 0 && (
-        <div className="text-center py-16 text-slate-400">
+        <div className="text-center py-16 text-slate-500">
           <p className="text-4xl mb-3" aria-hidden>🎙️</p>
-          <p className="font-semibold text-slate-600">No sessions scheduled yet</p>
-          <p className="text-sm mt-1">Check back soon — advisors will be scheduling sessions regularly.</p>
+          <p className="font-semibold text-slate-700 mb-1">No sessions scheduled yet</p>
+          <p className="text-sm text-slate-500 mb-5">Advisors will be scheduling sessions regularly — check back soon.</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/advisors" className="text-sm font-semibold text-teal-700 hover:underline">Find an advisor →</Link>
+            <Link href="/get-matched" className="text-sm font-semibold text-teal-700 hover:underline">Get matched →</Link>
+          </div>
         </div>
       )}
 

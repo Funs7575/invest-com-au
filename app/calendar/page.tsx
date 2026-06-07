@@ -144,10 +144,15 @@ export default async function CalendarPage() {
       </header>
 
       {events.length === 0 ? (
-        <div className="text-center py-16 text-slate-400">
+        <div className="text-center py-16 text-slate-500">
           <p className="text-4xl mb-3" aria-hidden>📅</p>
-          <p className="font-semibold text-slate-600">No upcoming events</p>
-          <p className="text-sm mt-1">Check back soon — we update the calendar regularly.</p>
+          <p className="font-semibold text-slate-700 mb-1">No upcoming events</p>
+          <p className="text-sm text-slate-500 mb-5">Check back soon — we add new events regularly.</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/advisors" className="text-sm font-semibold text-teal-700 hover:underline">Find an advisor →</Link>
+            <Link href="/office-hours" className="text-sm font-semibold text-teal-700 hover:underline">Attend office hours →</Link>
+            <Link href="/community" className="text-sm font-semibold text-teal-700 hover:underline">Join the community →</Link>
+          </div>
         </div>
       ) : (
         <div className="space-y-8">

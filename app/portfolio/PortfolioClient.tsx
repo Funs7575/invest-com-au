@@ -40,6 +40,7 @@ export default function PortfolioClient() {
   const [results, setResults] = useState<{ annual_fees: number; optimal_fees: number; savings: number; optimal_broker: string; holdings: Holding[] } | null>(null);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [existingPortfolio, setExistingPortfolio] = useState(false);
 
   // Fetch broker list
@@ -101,6 +102,7 @@ export default function PortfolioClient() {
   const savePortfolio = async () => {
     if (holdings.some(h => !h.broker_slug)) return;
     setLoading(true);
+    setSubmitError("");
     try {
       const res = await fetch("/api/portfolio", {
         method: "POST",
@@ -111,8 +113,12 @@ export default function PortfolioClient() {
         const data = await res.json();
         setResults(data);
         setStep("results");
+      } else {
+        setSubmitError("Something went wrong. Please try again.");
       }
-    } catch {}
+    } catch {
+      setSubmitError("Network error — please check your connection and try again.");
+    }
     setLoading(false);
   };
 
@@ -248,6 +254,9 @@ export default function PortfolioClient() {
           >
             {loading ? "Calculating..." : "Calculate My Fees & Start Monitoring"}
           </button>
+          {submitError && (
+            <p role="alert" className="mt-2 text-xs text-red-600 text-center">{submitError}</p>
+          )}
         </div>
       )}
 
