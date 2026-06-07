@@ -99,6 +99,7 @@ export default function QuizInlineEmailCapture({ onSubmit, status }: Props) {
           autoComplete="email"
           aria-label="Email address for quiz results"
           aria-invalid={touched && !isValidEmail}
+          aria-describedby={touched && !isValidEmail && email.length > 0 ? "quiz-capture-email-error" : undefined}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           onBlur={() => setTouched(true)}
@@ -113,6 +114,7 @@ export default function QuizInlineEmailCapture({ onSubmit, status }: Props) {
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
+          aria-busy={isLoading}
           className="px-4 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
         >
           {isLoading ? "Sending…" : "Email me the PDF →"}
@@ -120,13 +122,13 @@ export default function QuizInlineEmailCapture({ onSubmit, status }: Props) {
       </div>
 
       {touched && !isValidEmail && email.length > 0 && (
-        <p className="text-[0.65rem] text-red-600 mt-1.5">
+        <p id="quiz-capture-email-error" role="alert" className="text-[0.65rem] text-red-600 mt-1.5">
           Please enter a valid email address.
         </p>
       )}
 
       {status === "error" && (
-        <p className="text-[0.65rem] text-red-600 mt-1.5">
+        <p role="alert" className="text-[0.65rem] text-red-600 mt-1.5">
           Something went wrong — please try again. Your results are still on this page.
         </p>
       )}

@@ -207,10 +207,12 @@ export default function SavedComparisonsClient() {
                         maxLength={100}
                         disabled={renameLoading}
                         aria-invalid={!!renameError}
+                        aria-describedby={renameError ? "saved-rename-error" : undefined}
                       />
                       <button
                         type="submit"
                         disabled={renameLoading || !editName.trim()}
+                        aria-busy={renameLoading}
                         className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {renameLoading ? "Saving..." : "Save"}
@@ -224,7 +226,7 @@ export default function SavedComparisonsClient() {
                       </button>
                     </div>
                     {renameError && (
-                      <p role="alert" className="text-xs text-red-600">{renameError}</p>
+                      <p id="saved-rename-error" role="alert" className="text-xs text-red-600">{renameError}</p>
                     )}
                   </form>
                 ) : (

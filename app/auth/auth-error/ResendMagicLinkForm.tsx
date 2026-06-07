@@ -89,12 +89,13 @@ export default function ResendMagicLinkForm({ next }: { next: string }) {
         disabled={status === "loading"}
         placeholder="you@email.com"
         aria-invalid={status === "error"}
+        aria-describedby={status === "error" ? "resend-email-error" : undefined}
         className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 disabled:opacity-60 disabled:cursor-not-allowed ${
           status === "error" ? "border-red-400" : "border-slate-200 focus:border-amber-500"
         }`}
       />
       {errorMsg && (
-        <p role="alert" className="text-xs text-red-600">
+        <p id="resend-email-error" role="alert" className="text-xs text-red-600">
           {errorMsg}
         </p>
       )}
