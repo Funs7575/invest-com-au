@@ -5,6 +5,17 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 
 ---
 
+## A11y — 2026-06-07 sweep
+
+### P1 — High impact, requires design decision
+
+**[ADV-057] WCAG AA color-contrast: 542 violations — `text-slate-400` on white**
+- **Problem**: `text-slate-400` (#94a3b8) on white = 3.07:1 ratio — fails WCAG AA (needs 4.5:1 for normal text). Bot sweep found 542 serious violations; all are this token. 2692 usages in app/.
+- **Fix**: Design decision: change the "muted secondary text" token from `slate-400` to `slate-500` (#64748b = 4.54:1 ratio). Pure icon uses (aria-hidden) don't need changing. Requires visual review of key pages to confirm hierarchy is preserved. Founder sign-off needed on the visual redesign impact.
+- **Effort**: Medium (half day of systematic find/replace + visual QA)
+
+---
+
 ## Advisor Features (2026-06-06 audit)
 
 ### P1 — High impact, high urgency
@@ -260,6 +271,10 @@ Each entry has a priority tier (P1 = blocks revenue / compliance, P2 = significa
 **[ADV-050]** `role="alert"` on error message containers in 6 account pages — ReferralsClient, SavedComparisonsClient, WatchlistClient, SavedSearchesClient, StartupThesisClient, AlertsClient error blocks now announce via `role="alert"` for screen readers.
 
 **[ADV-051]** `role="alert"` on error blocks in 10 advisor/broker portal pages — broker-portal campaigns, login, register; advisor-portal CaseStudiesTab, EventsTab, ProfileDetailsTab, BriefsInboxClient, TeamsManagerClient, WebhooksClient.
+
+**[ADV-056]** `autoComplete="name"` on advisor contact + buyer-agent contact forms; `autoComplete="email"` on broker-portal register and buyer-agent contact form. Auth, login, signup, and complaints already had it.
+
+**[ADV-055]** `aria-label` on 6 icon-only ✕/× close buttons — EventsTab (×2), advisor portal dispute modal, CaseStudiesTab, portfolio calculator remove holding, LIC screener close.
 
 **[ADV-054]** `role="dialog"` + `aria-modal="true"` on 6 modal overlays — VaultClient upload, advisor-portal dispute, EventsTab RSVP, DataRoomClient upload, broker-portal packages confirm, org-portal OrgEventsTab edit/delete now declare proper dialog semantics with `aria-labelledby` for screen-reader title announcements.
 
