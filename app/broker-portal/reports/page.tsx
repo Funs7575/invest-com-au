@@ -346,7 +346,7 @@ export default function ReportsPage() {
         ) : (
           <div className="relative">
             <div className="overflow-x-auto portal-table-stagger">
-              <table className="w-full text-sm min-w-[700px]">
+              <table className="w-full text-sm min-w-[700px]" aria-label="Campaign performance breakdown">
                 <thead>
                   <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                     <th scope="col" className="px-3 md:px-5 py-3 text-left">Campaign</th>
@@ -427,7 +427,7 @@ export default function ReportsPage() {
             </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Daily performance report">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                   <th scope="col" className="px-5 py-3 text-left">Date</th>

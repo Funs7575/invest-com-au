@@ -117,7 +117,7 @@ export default function AutopilotPage() {
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [runningJobs, setRunningJobs] = useState<Set<string>>(new Set());
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [toastCounter, setToastCounter] = useState(0);
+  const [_toastCounter, setToastCounter] = useState(0);
   const [togglingMaster, setTogglingMaster] = useState(false);
   const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
 
@@ -439,7 +439,7 @@ export default function AutopilotPage() {
               <div>
                 <p className="text-sm font-medium text-amber-800">Autopilot is paused</p>
                 <p className="text-xs text-amber-600 mt-0.5">
-                  No cron jobs will execute while paused. Deals may expire without notification, affiliate links won't be monitored, and drip campaigns are on hold.
+                  No cron jobs will execute while paused. Deals may expire without notification, affiliate links won&apos;t be monitored, and drip campaigns are on hold.
                 </p>
               </div>
             </div>
@@ -589,7 +589,7 @@ export default function AutopilotPage() {
                     >
                       {running ? (
                         <span className="flex items-center gap-1.5">
-                          <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <svg className="w-3 h-3 animate-spin" aria-hidden="true" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                           </svg>

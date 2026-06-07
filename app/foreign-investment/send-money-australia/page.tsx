@@ -224,7 +224,7 @@ export default async function SendMoneyAustraliaPage() {
                       </div>
                       {p.rating && (
                         <div className="text-right">
-                          <p className="font-extrabold text-2xl text-amber-600">{renderStars(p.rating)} {p.rating.toFixed(1)}</p>
+                          <p className="font-extrabold text-2xl text-amber-600"><span aria-hidden="true">{renderStars(p.rating)}</span> <span aria-label={`${p.rating.toFixed(1)} out of 5 stars`}>{p.rating.toFixed(1)}</span></p>
                           <p className="text-xs text-slate-400">rating</p>
                         </div>
                       )}

@@ -169,7 +169,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
               disabled={exporting}
               className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
             >
-              <Icon name={exporting ? "loader" : "download"} size={13} className={exporting ? "animate-spin" : ""} />
+              <Icon name={exporting ? "loader" : "download"} size={13} className={exporting ? "animate-spin" : ""} aria-hidden="true" />
               {exporting ? "Exporting…" : "Export CSV"}
             </button>
             {exportError && <p role="alert" className="text-xs text-red-600">{exportError}</p>}

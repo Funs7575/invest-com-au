@@ -880,7 +880,7 @@ export default function AnalyticsPage() {
               <div className="p-8 text-center text-sm text-slate-400">No campaign data for this period.</div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Campaign performance benchmark ranking">
                   <thead>
                     <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                       <th scope="col" className="px-5 py-3 text-left">Rank</th>

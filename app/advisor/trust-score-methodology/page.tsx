@@ -169,7 +169,7 @@ export default function TrustScoreMethodologyPage() {
             full transparency.
           </p>
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Trust score dimension weights">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">
@@ -228,7 +228,7 @@ export default function TrustScoreMethodologyPage() {
 
             {"signals" in d && d.signals && (
               <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-3">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label={`${d.label} signals and scoring`}>
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200">
                       <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">
@@ -258,7 +258,7 @@ export default function TrustScoreMethodologyPage() {
 
             {"bands" in d && d.bands && (
               <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-3">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label={`${d.label} experience tenure bands`}>
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-200">
                       <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">
@@ -295,7 +295,7 @@ export default function TrustScoreMethodologyPage() {
                       Sub-score A — Volume (50% of dimension)
                     </p>
                   </div>
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm" aria-label="Review volume scoring bands">
                     <tbody>
                       {VOLUME_BANDS.map((vb, i) => (
                         <tr
@@ -350,7 +350,7 @@ export default function TrustScoreMethodologyPage() {
             Score Bands &amp; Labels
           </h2>
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Trust score bands and labels">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-2.5 text-xs font-semibold text-slate-600">

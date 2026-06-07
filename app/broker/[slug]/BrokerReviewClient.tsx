@@ -322,17 +322,14 @@ export default function BrokerReviewClient({
           >
             {getBenefitCta(b, 'review')}
           </a>
+          <p className="text-[0.68rem] text-slate-400 mt-2 leading-relaxed">
+            {ADVERTISER_DISCLOSURE_SHORT}{" "}{PDS_CONSIDERATION}{" "}
+            <a href="#important-info" className="text-blue-600 underline hover:text-blue-800">
+              Important information →
+            </a>
+          </p>
           <BrokerReliabilityScore brokerId={b.id} brokerName={b.name} />
         </div>
-        <p className="text-xs text-slate-500 mb-1">
-          {ADVERTISER_DISCLOSURE_SHORT}
-        </p>
-        <p className="text-xs text-slate-500 mb-3">
-          {PDS_CONSIDERATION}{" "}
-          <a href="#important-info" className="text-blue-700 underline">
-            Important information, fees &amp; exit policy →
-          </a>
-        </p>
 
         {/* Author Byline & Dates — E-E-A-T visible signals */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">

@@ -315,7 +315,7 @@ export default async function NonResidentBrokersPage() {
                               </Link>
                             </div>
                             {provider.rating && (
-                              <span className="text-sm font-bold text-amber-700 ml-auto shrink-0">{renderStars(provider.rating)} {provider.rating.toFixed(1)}/5</span>
+                              <span className="text-sm font-bold text-amber-700 ml-auto shrink-0"><span aria-hidden="true">{renderStars(provider.rating)}</span> <span aria-label={`${provider.rating.toFixed(1)} out of 5 stars`}>{provider.rating.toFixed(1)}/5</span></span>
                             )}
                           </div>
 

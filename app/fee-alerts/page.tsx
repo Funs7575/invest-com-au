@@ -279,6 +279,7 @@ export default function FeeAlertsPage() {
                 <button
                   onClick={subscribe}
                   disabled={status === "sending" || !email}
+                  aria-busy={status === "sending"}
                   className="w-full px-5 py-2.5 bg-amber-500 text-slate-900 font-semibold rounded-lg text-sm hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {status === "sending" ? "Subscribing..." : "Subscribe to Alerts"}

@@ -208,7 +208,7 @@ export default function WalletPage() {
           </div>
         ) : (
           <div className="overflow-x-auto portal-table-stagger">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Wallet transaction history">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                   <th scope="col" className="px-5 py-3 text-left">Date</th>

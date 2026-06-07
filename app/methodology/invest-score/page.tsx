@@ -132,7 +132,7 @@ export default function InvestScoreMethodologyPage() {
         {/* Labels */}
         <h2 className="text-xl font-bold text-slate-900 mb-3">Score Labels</h2>
         <div className="overflow-x-auto mb-10">
-          <table className="w-full text-sm border-collapse">
+          <table className="w-full text-sm border-collapse" aria-label="Invest score labels by range">
             <thead>
               <tr className="border-b border-slate-200">
                 <th scope="col" className="text-left text-xs font-semibold text-slate-500 pb-2 pr-6">Range</th>

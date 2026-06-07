@@ -471,8 +471,8 @@ export default async function BestBrokerPage({
                     {topPick.tagline}
                   </p>
                   <div className="flex items-center gap-3 mt-2 text-sm">
-                    <span className="text-amber-600">{renderStars(topPick.rating || 0)}</span>
-                    <span className="text-slate-500">{topPick.rating}/5</span>
+                    <span className="text-amber-600" aria-hidden="true">{renderStars(topPick.rating || 0)}</span>
+                    <span className="text-slate-500" aria-label={`${topPick.rating} out of 5 stars`}>{topPick.rating}/5</span>
                     <span className="text-slate-400">·</span>
                     <span className="text-slate-600">{topPick.asx_fee || "N/A"} ASX</span>
                     {topPick.chess_sponsored && (
@@ -547,8 +547,8 @@ export default async function BestBrokerPage({
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="text-amber-600">{renderStars(broker.rating || 0)}</span>
-                      <span className="text-sm text-slate-500 ml-1">{broker.rating}</span>
+                      <span className="text-amber-600" aria-hidden="true">{renderStars(broker.rating || 0)}</span>
+                      <span className="text-sm text-slate-500 ml-1" aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}</span>
                     </td>
                     <td className="px-4 py-3 text-center">
                       <a

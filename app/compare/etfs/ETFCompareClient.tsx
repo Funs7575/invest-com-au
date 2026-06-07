@@ -125,7 +125,7 @@ export default function ETFCompareClient() {
 
         {/* ─── Desktop Table ─── */}
         <div className="hidden md:block border border-slate-200 rounded-xl overflow-hidden mb-8">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="ETF comparison table">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-left text-slate-500 text-xs uppercase tracking-wide">
                 <th scope="col" aria-sort={sortKey === "ticker" ? (sortAsc ? "ascending" : "descending") : "none"} className="px-4 py-3 cursor-pointer select-none hover:text-slate-900" onClick={() => handleSort("ticker")}>

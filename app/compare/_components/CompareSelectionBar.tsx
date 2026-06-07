@@ -212,7 +212,7 @@ export default function CompareSelectionBar({
                       <BrokerLogo broker={br} size="xs" />
                       <div className="min-w-0">
                         <div className="text-sm font-bold truncate">{br.name}</div>
-                        <div className="text-amber-700 text-xs">{renderStars(br.rating || 0)} {br.rating}</div>
+                        <div className="text-amber-700 text-xs"><span aria-hidden="true">{renderStars(br.rating || 0)}</span> <span aria-label={`${br.rating} out of 5 stars`}>{br.rating}</span></div>
                       </div>
                       <button onClick={() => onToggleSelected(br.slug)} aria-label={`Remove ${br.name} from comparison`} className="ml-auto text-slate-400 hover:text-red-500 shrink-0">
                         <Icon name="x" size={14} />

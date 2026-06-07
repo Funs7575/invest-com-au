@@ -114,8 +114,8 @@ export default function CPDTab() {
 
   if (error || !summary) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-        <Icon name="alert-triangle" size={24} className="text-red-400 mx-auto mb-2" />
+      <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+        <Icon name="alert-triangle" size={24} className="text-red-400 mx-auto mb-2" aria-hidden="true" />
         <p className="text-sm text-red-700">{error ?? "Failed to load CPD data."}</p>
       </div>
     );

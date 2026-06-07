@@ -154,7 +154,7 @@ export default function TradeCostCalculator({ brokers, searchParams }: Props) {
 
           {/* Desktop: table */}
           <div className="hidden md:block overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full" aria-label="Broker trade cost comparison">
               <thead>
                 <tr className="border-b border-slate-200">
                   <th scope="col" className="text-left text-xs font-semibold text-slate-500 pb-2 pr-4">Broker</th>

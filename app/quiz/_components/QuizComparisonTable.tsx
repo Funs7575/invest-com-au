@@ -27,7 +27,7 @@ export default function QuizComparisonTable({ allResults }: Props) {
         <h3 className="text-xs md:text-sm font-bold text-slate-700">Quick Comparison</h3>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-xs md:text-sm">
+        <table className="w-full text-xs md:text-sm" aria-label="Quick broker comparison">
           <thead>
             <tr className="border-b border-slate-100">
               <th scope="col" className="px-2.5 md:px-4 py-1.5 md:py-2 text-left text-[0.62rem] md:text-xs text-slate-500 font-medium">Platform</th>

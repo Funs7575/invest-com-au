@@ -262,7 +262,7 @@ export default async function BrokerVersusPage({
                 <h2 className="text-base font-extrabold text-slate-900 mb-4">
                   Fees
                 </h2>
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Fees comparison">
                   <thead>
                     <tr className="border-b border-slate-200">
                       <th scope="col" className="text-left py-2 pr-4 text-xs font-bold text-slate-500 w-36" />
@@ -316,7 +316,7 @@ export default async function BrokerVersusPage({
                 <h2 className="text-base font-extrabold text-slate-900 mb-4">
                   Features
                 </h2>
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label="Features comparison">
                   <thead>
                     <tr className="border-b border-slate-200">
                       <th scope="col" className="text-left py-2 pr-4 text-xs font-bold text-slate-500 w-36" />

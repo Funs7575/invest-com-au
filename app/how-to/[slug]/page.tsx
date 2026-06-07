@@ -275,9 +275,9 @@ export default async function HowToGuidePage({
                               {broker.asx_fee
                                 ? `ASX: ${broker.asx_fee}`
                                 : PLATFORM_TYPE_LABELS[broker.platform_type]}
-                              {broker.rating
-                                ? ` · ${renderStars(broker.rating)} ${broker.rating}/5`
-                                : ""}
+                              {broker.rating && (
+                                <>{" · "}<span aria-hidden="true">{renderStars(broker.rating)}</span>{" "}<span aria-label={`${broker.rating} out of 5 stars`}>{broker.rating}/5</span></>
+                              )}
                             </p>
                           </div>
                           <a

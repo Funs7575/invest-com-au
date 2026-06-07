@@ -372,7 +372,7 @@ export default function TeamTab({ advisor }: Props) {
                   <h3 className="text-sm font-bold text-slate-900">Performance by Member</h3>
                 </div>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
+                  <table className="w-full text-left text-xs" aria-label="Performance by member">
                     <thead>
                       <tr className="bg-slate-50 text-[0.62rem] font-semibold text-slate-500 uppercase tracking-wider">
                         <th scope="col" className="px-4 py-2">Advisor</th>

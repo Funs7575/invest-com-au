@@ -367,7 +367,7 @@ export default async function LeavingAustraliaPage() {
 
           <h3 className="text-base font-extrabold text-slate-900 mb-3">Eligible visa types</h3>
           <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="Eligible visa types for DASP">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Subclass</th>
@@ -408,7 +408,7 @@ export default async function LeavingAustraliaPage() {
           />
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-8">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="DASP withholding tax rates by visa type and super element">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Visa type</th>
@@ -544,7 +544,7 @@ export default async function LeavingAustraliaPage() {
           </p>
 
           <div className="overflow-x-auto rounded-2xl border border-slate-200 mb-6">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="DASP vs KiwiSaver transfer comparison">
               <thead>
                 <tr className="bg-slate-900 text-white">
                   <th scope="col" className="px-4 py-3 text-left font-bold text-xs uppercase tracking-wide">Feature</th>
@@ -858,7 +858,7 @@ export default async function LeavingAustraliaPage() {
                   <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
                     <div>
                       <p className="font-bold text-slate-900 text-sm">{b.name}</p>
-                      <p className="text-xs"><span className="text-amber-600">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600">{(Number(b.rating) || 0).toFixed(1)}</span></p>
+                      <p className="text-xs"><span className="text-amber-600" aria-hidden="true">{renderStars(Number(b.rating))}</span> <span className="font-semibold text-slate-600" aria-label={`${(Number(b.rating) || 0).toFixed(1)} out of 5 stars`}>{(Number(b.rating) || 0).toFixed(1)}</span></p>
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
                     </div>
                     <div className="mt-auto">

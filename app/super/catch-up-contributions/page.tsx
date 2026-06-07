@@ -188,7 +188,7 @@ export default function CatchUpContributionsPage() {
               non-concessional caps (a 3-year bring-forward rule applies instead).
             </p>
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="Super contribution caps by financial year">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th scope="col" className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide">Financial Year</th>

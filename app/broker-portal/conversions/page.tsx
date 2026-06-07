@@ -298,7 +298,7 @@ export default function ConversionsPage() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto portal-table-stagger">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Conversion history">
             <thead>
               <tr className="border-b border-slate-100 text-left">
                 <th scope="col" className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">

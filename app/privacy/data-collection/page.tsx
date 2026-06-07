@@ -75,7 +75,7 @@ export default function DataCollectionPage() {
                 Categories of data we collect
               </h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-xs border-collapse">
+                <table className="w-full text-xs border-collapse" aria-label="Categories of data we collect">
                   <thead>
                     <tr className="bg-slate-100 text-slate-700">
                       <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
@@ -229,7 +229,7 @@ export default function DataCollectionPage() {
             <section>
               <h2 className="text-lg font-bold mb-3">Retention windows</h2>
               <div className="overflow-x-auto">
-                <table className="w-full text-xs border-collapse">
+                <table className="w-full text-xs border-collapse" aria-label="Data retention windows">
                   <thead>
                     <tr className="bg-slate-100 text-slate-700">
                       <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">
@@ -378,7 +378,7 @@ export default function DataCollectionPage() {
               </h2>
               <p className="text-slate-600 mb-3">{DATA_PROCESSOR_NOTE}</p>
               <div className="overflow-x-auto">
-                <table className="w-full text-xs border-collapse">
+                <table className="w-full text-xs border-collapse" aria-label="Third-party data processors">
                   <thead>
                     <tr className="bg-slate-100 text-slate-700">
                       <th scope="col" className="text-left p-2 border border-slate-200 font-semibold">

@@ -170,7 +170,7 @@ export default async function CostScenarioPage({
 
         {/* Cost comparison table */}
         <div className="overflow-x-auto mb-10">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Broker cost comparison">
             <thead>
               <tr className="border-b border-slate-200 text-left">
                 <th scope="col" className="py-3 pr-4 font-semibold text-slate-900">#</th>
