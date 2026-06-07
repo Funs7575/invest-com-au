@@ -717,5 +717,15 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-269]** FAQ JSON-LD on /foreign-investment/siv — GEO pivot: FAQPage schema + visible accordion added to the Significant Investor Visa page. 4 FAQs covering what the SIV was, its 2023 closure, the complying investment framework, and country source breakdown. `app/foreign-investment/siv/page.tsx`
 
+**[ADV-270]** FAQ JSON-LD on 3 SMSF pages — GEO pivot: FAQPage schema + visible accordion added to /smsf/investment-strategy (5 mandatory elements, Division 296, diversification), /smsf/auditors (annual audit requirement, independence rules, SAN, audit cost), /smsf/checklist (compliance obligations, annual return lodgement, audit failure penalties, trustee-member rules). `app/smsf/investment-strategy/page.tsx`, `app/smsf/auditors/page.tsx`, `app/smsf/checklist/page.tsx`
+
+**[ADV-271]** FAQ JSON-LD on /pricing — GEO pivot: FAQPage schema + visible accordion on the advisor fee transparency page. 4 FAQs covering typical planner fees, upfront vs ongoing structure, tax-deductibility, and fee-for-service vs commission model post-FoFA reforms. `app/pricing/page.tsx`
+
+**[ADV-272]** FAQ JSON-LD on /foreign-investment/journey — GEO pivot: FAQPage schema + visible accordion on the cross-border investing journey hub. 4 FAQs covering FIRB-exempt investment types, non-resident dividend withholding, FIRB process timeline, and unrestricted investment categories. `app/foreign-investment/journey/page.tsx`
+
+**[ADV-273]** FAQ JSON-LD on /methodology — GEO pivot: FAQPage schema + visible accordion on the ranking methodology page. 4 FAQs covering commercial relationships, editorial rating calculation, sponsorship vs editorial independence, and data update frequency. `app/methodology/page.tsx`
+
+**[ADV-274]** FAQ JSON-LD on /debt-calculator and /foreign-investment/compare — GEO pivot: Debt calculator: 4 FAQs covering consolidation savings, eligible debts, credit score impact, average AU rates. FI compare: 4 FAQs covering DTA country list, dividend withholding rates, country-specific FIRB variations, FX cost impact. `app/debt-calculator/page.tsx`, `app/foreign-investment/compare/page.tsx`
+
 ---
 
