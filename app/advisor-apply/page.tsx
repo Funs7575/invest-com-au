@@ -324,6 +324,19 @@ function AdvisorApplyInner() {
 
   const isInviteFlow = !!inviteContext;
 
+  // ADV-118: compute current step (1-based) from form completion state
+  const applySteps = [
+    { label: "Account type" },
+    { label: "Contact details" },
+    { label: "Your profile" },
+    { label: "Photo & submit" },
+  ];
+  const applyCurrentStep =
+    !form.name.trim() || !form.email.trim() || !!fieldErrors.name || !!fieldErrors.email ? 2
+    : !form.type ? 3
+    : !photoFile ? 4
+    : 4;
+
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-2xl">
@@ -334,6 +347,39 @@ function AdvisorApplyInner() {
           <span className="mx-1.5 md:mx-2">/</span>
           <span className="text-slate-700">Apply</span>
         </nav>
+
+        {/* ADV-118: Step progress indicator */}
+        {!isInviteFlow && (
+          <div className="mb-5" aria-label="Application progress">
+            <div className="flex items-center gap-0">
+              {applySteps.map((s, i) => {
+                const stepNum = i + 1;
+                const isDone = stepNum < applyCurrentStep;
+                const isCurrent = stepNum === applyCurrentStep;
+                return (
+                  <div key={i} className="flex items-center flex-1">
+                    <div className="flex flex-col items-center">
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                        isDone ? "bg-violet-600 text-white" : isCurrent ? "bg-violet-100 text-violet-700 ring-2 ring-violet-400" : "bg-slate-100 text-slate-400"
+                      }`}>
+                        {isDone ? (
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : stepNum}
+                      </div>
+                      <span className={`text-[0.6rem] mt-1 font-medium hidden sm:block ${isCurrent ? "text-violet-700" : isDone ? "text-slate-500" : "text-slate-400"}`}>{s.label}</span>
+                    </div>
+                    {i < applySteps.length - 1 && (
+                      <div className={`flex-1 h-0.5 mx-1 transition-colors ${isDone ? "bg-violet-400" : "bg-slate-200"}`} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-xs text-slate-500 mt-2 sm:hidden">Step {applyCurrentStep} of {applySteps.length}: <span className="font-semibold text-slate-700">{applySteps[applyCurrentStep - 1]?.label}</span></p>
+          </div>
+        )}
 
         {/* Invite banner */}
         {isInviteFlow && (

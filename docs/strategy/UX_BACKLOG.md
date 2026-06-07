@@ -864,5 +864,9 @@ Sourced from a parallel code-review sweep across 7 feature areas (69 compiled fi
 
 **[ADV-178]** Academy: "Read our CPD guides" sidebar section with 4 curated article links added. `app/academy/page.tsx`
 
+**[ADV-115]** ArticleShareRow: "Save" bookmark button added alongside existing share buttons. Toggles via `POST/DELETE /api/account/bookmarks` with `type="article"`; persists state in localStorage for session continuity; filled bookmark icon + amber styling when saved. `components/ArticleShareRow.tsx`
+
+**[ADV-118]** Advisor Apply: 4-step progress indicator (Account type → Contact details → Your profile → Photo & submit) shown above the form for individual applications; fills as required fields are completed; mobile fallback shows "Step N of 4: Label". `app/advisor-apply/page.tsx`
+
 ---
 
