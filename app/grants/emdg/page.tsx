@@ -86,7 +86,7 @@ export default function EmdgPage() {
           <div className="container-custom max-w-5xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">The three EMDG tiers</h2>
             <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm" aria-label="EMDG grant tiers">
                 <thead>
                   <tr className="bg-slate-100">
                     <th scope="col" className="px-4 py-3 text-left font-extrabold text-slate-700">Tier</th>

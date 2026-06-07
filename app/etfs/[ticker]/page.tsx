@@ -214,7 +214,7 @@ export default async function ETFTickerPage({
         <div className="container-custom max-w-3xl">
           <h2 className="text-base font-extrabold text-slate-900 mb-4">Fee Impact: What {etf.mer}% MER Costs You</h2>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label={`MER fee impact for ${etf.ticker}`}>
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left py-2.5 px-4 text-xs font-bold">Investment</th>

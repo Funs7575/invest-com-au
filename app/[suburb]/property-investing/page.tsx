@@ -203,7 +203,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
         <section>
           <h2 className="text-lg font-bold text-slate-900 mb-3">{s.suburb} vs {s.state} State Average</h2>
           <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label={`${s.suburb} vs ${s.state} property market comparison`}>
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-semibold text-slate-600">Metric</th>

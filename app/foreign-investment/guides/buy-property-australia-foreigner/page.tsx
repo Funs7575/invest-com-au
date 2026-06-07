@@ -349,7 +349,7 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
             sub="On top of standard stamp duty, all states charge an additional surcharge for foreign buyers."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Foreign buyer stamp duty surcharges by state">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State/Territory</th>
@@ -388,7 +388,7 @@ function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: 
             sub="Fees are based on the purchase price and are non-refundable regardless of outcome."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="FIRB application fees by property value">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>

@@ -267,7 +267,7 @@ export default function ConstructionLoansPage() {
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Construction Loan vs Standard Home Loan</h2>
           <p className="text-sm text-slate-500 mb-6">The key structural differences between the two loan types.</p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Construction loan vs standard home loan comparison" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Feature</th>
@@ -297,7 +297,7 @@ export default function ConstructionLoansPage() {
             Funds are released in 5 stages as construction progresses. Before each drawdown, your lender sends an independent inspector to verify that the stage is genuinely complete.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Construction stages and drawdown percentages" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Stage</th>
@@ -357,7 +357,7 @@ export default function ConstructionLoansPage() {
             The construction loan covers the builder&apos;s contract price — but there are significant costs outside the contract that borrowers frequently underestimate.
           </p>
           <div className="overflow-x-auto rounded-xl border border-slate-200 max-w-3xl">
-            <table className="w-full text-sm">
+            <table aria-label="Construction costs beyond the loan" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Cost</th>

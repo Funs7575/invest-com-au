@@ -285,7 +285,7 @@ export default function CommercialPropertyPage() {
             broad contrasts — individual properties always vary.
           </p>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Commercial vs residential property comparison">
               <thead className="bg-slate-50">
                 <tr>
                   <th scope="col" className="text-left p-3 font-semibold text-slate-700">Factor</th>
@@ -353,7 +353,7 @@ export default function CommercialPropertyPage() {
             your appetite for management work, and how much liquidity you need.
           </p>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Ways to gain exposure to commercial property">
               <thead className="bg-slate-50">
                 <tr>
                   <th scope="col" className="text-left p-3 font-semibold text-slate-700">Method</th>

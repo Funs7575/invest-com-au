@@ -243,7 +243,7 @@ export default function BondsPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Types of bonds available in Australia">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
@@ -360,7 +360,7 @@ export default function BondsPage() {
           </p>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-4">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Bond ETFs on the ASX comparison">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
@@ -592,7 +592,7 @@ export default function BondsPage() {
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Credit ratings and yield spreads">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">
@@ -793,7 +793,7 @@ export default function BondsPage() {
           </h2>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200 mb-6">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-sm border-collapse" aria-label="Direct bonds vs bond ETFs comparison">
               <thead>
                 <tr className="bg-slate-50">
                   <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700 border-b border-slate-200">

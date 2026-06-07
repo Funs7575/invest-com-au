@@ -412,7 +412,7 @@ export default async function IpoCalendarPage() {
 
           {recent.length > 0 ? (
             <div className="overflow-x-auto bg-white border border-slate-200 rounded-xl">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Recent ASX IPO listings">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th scope="col" className="text-left py-3 px-4 font-semibold text-slate-700">Code</th>

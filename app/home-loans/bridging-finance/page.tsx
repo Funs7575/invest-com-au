@@ -285,7 +285,7 @@ export default function BridgingFinancePage() {
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Bridging Finance Cost Breakdown</h2>
           <p className="text-sm text-slate-500 mb-6">Typical ranges only — actual costs depend on your lender, loan size, and bridging term.</p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="Bridging finance cost breakdown" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3">Cost</th>
@@ -332,7 +332,7 @@ export default function BridgingFinancePage() {
           <h2 className="text-2xl font-bold text-slate-900 mb-2">When Bridging Finance Makes Sense vs When It Doesn&apos;t</h2>
           <p className="text-sm text-slate-500 mb-6">Bridging finance is a powerful tool in the right circumstances — and a costly mistake in the wrong ones.</p>
           <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="w-full text-sm">
+            <table aria-label="When bridging finance suits vs does not suit" className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-800 text-white">
                   <th scope="col" className="text-left px-5 py-3 text-green-300">Bridging suits</th>

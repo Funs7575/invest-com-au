@@ -181,7 +181,7 @@ export default function ForeignInvestmentPage() {
             sub="Your approval requirements depend on your residency status and visa type."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden" aria-label="FIRB approval requirements by buyer type">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Buyer type</th>
@@ -267,7 +267,7 @@ export default function ForeignInvestmentPage() {
             sub="Most Australian states add an extra surcharge on top of standard stamp duty. These are among the largest upfront costs for foreign investors."
           />
           <div className="overflow-x-auto mb-5">
-            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden" aria-label="State stamp duty surcharges for foreign buyers">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
@@ -352,7 +352,7 @@ export default function ForeignInvestmentPage() {
             sub="Fees are paid at time of application and are non-refundable, regardless of the outcome."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-2xl overflow-hidden" aria-label="FIRB application fee schedule">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Property value</th>

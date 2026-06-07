@@ -206,7 +206,7 @@ export default async function ForeignCFDPage() {
             sub="Applies to all retail clients of ASIC-regulated providers — including non-residents. Wholesale clients may access higher leverage with an accountant's certificate."
           />
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" aria-label="ASIC leverage limits for retail CFD clients by asset class">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
                   <th scope="col" className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Market / Asset Class</th>

@@ -186,7 +186,7 @@ export default function FirbApplicationGuidePage() {
             sub="FIRB approval is required for most foreign persons. Check your category below."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="FIRB approval requirement by buyer type">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Buyer type</th>
@@ -245,7 +245,7 @@ export default function FirbApplicationGuidePage() {
             sub="Gather these before lodging. Incomplete applications cause delays."
           />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden" aria-label="Documents required for FIRB application">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-left">
                   <th scope="col" className="px-4 py-3 font-semibold text-slate-600 text-xs">Document</th>

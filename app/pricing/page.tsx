@@ -239,7 +239,7 @@ export default function PricingPage() {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm" aria-label={`${table.category} pricing`}>
                   <thead>
                     <tr className="bg-slate-50 border-b border-slate-100">
                       <th scope="col" className="text-left py-2 px-5 font-medium text-slate-600 w-48">Service</th>
