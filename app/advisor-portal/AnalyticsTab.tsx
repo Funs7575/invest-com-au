@@ -80,6 +80,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
 
   const [exportPeriod, setExportPeriod] = useState<"30d" | "90d" | "all">("30d");
   const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const [benchmarkNotifyToast, setBenchmarkNotifyToast] = useState(false);
 
   useEffect(() => {
@@ -114,12 +115,13 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
 
   async function handleExportCsv() {
     if (exporting) return;
+    setExportError(null);
     setExporting(true);
     try {
       const r = await fetch(`/api/advisor-auth/analytics/export?period=${exportPeriod}`);
       if (!r.ok) {
         const body = await r.json() as { error?: string };
-        alert(body.error ?? "Export failed. Please try again.");
+        setExportError(body.error ?? "Export failed. Please try again.");
         return;
       }
       const blob = await r.blob();
@@ -135,7 +137,7 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
       a.remove();
       URL.revokeObjectURL(objectUrl);
     } catch {
-      alert("Export failed. Please try again.");
+      setExportError("Export failed. Please try again.");
     } finally {
       setExporting(false);
     }
@@ -161,14 +163,17 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
             <option value="90d">Last 90 days</option>
             <option value="all">All time</option>
           </select>
-          <button
-            onClick={() => void handleExportCsv()}
-            disabled={exporting}
-            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-          >
-            <Icon name={exporting ? "loader" : "download"} size={13} className={exporting ? "animate-spin" : ""} />
-            {exporting ? "Exporting…" : "Export CSV"}
-          </button>
+          <div className="flex flex-col items-end gap-1">
+            <button
+              onClick={() => void handleExportCsv()}
+              disabled={exporting}
+              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+            >
+              <Icon name={exporting ? "loader" : "download"} size={13} className={exporting ? "animate-spin" : ""} />
+              {exporting ? "Exporting…" : "Export CSV"}
+            </button>
+            {exportError && <p role="alert" className="text-xs text-red-600">{exportError}</p>}
+          </div>
         </div>
       </div>
 
