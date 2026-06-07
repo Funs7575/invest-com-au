@@ -63,6 +63,7 @@ export default function AdminPricingPage() {
   const [editValues, setEditValues] = useState<Partial<PricingRow>>({});
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [logs, setLogs] = useState<{ advisor_type: string; field_changed: string; old_value: string; new_value: string; changed_at: string }[]>([]);
+  const [pendingApplyAllType, setPendingApplyAllType] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -77,6 +78,7 @@ export default function AdminPricingPage() {
     setLoading(false);
   }, [supabase]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- pre-existing pattern, refactor is post-launch hub-data-fetch redesign
   useEffect(() => { loadData(); }, [loadData]);
 
   const handleEdit = (row: PricingRow) => {
@@ -191,7 +193,7 @@ export default function AdminPricingPage() {
   };
 
   const handleApplyAll = async (type: string, priceCents: number) => {
-    if (!confirm(`Apply ${formatCents(priceCents)}/lead to ALL ${TYPE_LABELS[type]}? This will override individual pricing and notify all advisors.`)) return;
+    setPendingApplyAllType(null);
     setSaving(type);
 
     // Get current category price for the notification
@@ -280,7 +282,6 @@ export default function AdminPricingPage() {
             <tbody className="divide-y divide-slate-100">
               {pricing.map((row) => {
                 const isEditing = editRow === row.advisor_type;
-                const tierColor = TIER_COLORS[row.advisor_type] || "bg-slate-50 border-slate-200";
 
                 return (
                   <tr key={row.advisor_type} className={`${isEditing ? "bg-blue-50/50" : "hover:bg-slate-50"} transition-colors`}>
@@ -408,9 +409,17 @@ export default function AdminPricingPage() {
                           <button onClick={() => handleEdit(row)} className="px-3 py-1 border border-slate-200 text-xs font-medium rounded hover:bg-slate-50">
                             Edit
                           </button>
-                          <button onClick={() => handleApplyAll(row.advisor_type, row.price_cents)} className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 font-medium">
-                            Apply All
-                          </button>
+                          {pendingApplyAllType === row.advisor_type ? (
+                            <>
+                              <span className="text-xs text-slate-600">Apply {formatCents(row.price_cents)} to all?</span>
+                              <button onClick={() => handleApplyAll(row.advisor_type, row.price_cents)} className="px-2 py-1 text-xs font-bold text-blue-600 hover:text-blue-800">Yes</button>
+                              <button onClick={() => setPendingApplyAllType(null)} className="px-2 py-1 text-xs text-slate-500 hover:text-slate-700">No</button>
+                            </>
+                          ) : (
+                            <button onClick={() => setPendingApplyAllType(row.advisor_type)} className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 font-medium">
+                              Apply All
+                            </button>
+                          )}
                         </div>
                       )}
                     </td>

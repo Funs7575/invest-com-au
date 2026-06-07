@@ -58,6 +58,7 @@ export default function FinanceDashboardPage() {
   const [tab, setTab] = useState<"overview" | "transactions" | "recurring">("overview");
   const [amountInput, setAmountInput] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -156,10 +157,13 @@ export default function FinanceDashboardPage() {
           </button>
         ))}
         <div className="flex-1" />
-        <button onClick={async () => { const n = await syncStripeRevenue(); alert(n ? `Synced ${n} new payments` : "Already up to date"); }}
-          className="px-3 py-1.5 text-xs font-semibold bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200">
-          Sync Stripe Revenue
-        </button>
+        <div className="flex items-center gap-2">
+          {syncMessage && <span className="text-xs text-emerald-700 font-medium">{syncMessage}</span>}
+          <button onClick={async () => { const n = await syncStripeRevenue(); setSyncMessage(n ? `Synced ${n} new payments` : "Already up to date"); setTimeout(() => setSyncMessage(null), 4000); }}
+            className="px-3 py-1.5 text-xs font-semibold bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200">
+            Sync Stripe Revenue
+          </button>
+        </div>
         <button onClick={() => { setEditing({ ...EMPTY_TX }); setAmountInput(""); }}
           className="px-3 py-1.5 text-xs font-bold bg-slate-900 text-white rounded-lg hover:bg-slate-800">
           + Add Transaction

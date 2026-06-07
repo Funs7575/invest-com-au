@@ -19,6 +19,7 @@ export default function AdminRoutingRulesPage() {
   const [error, setError] = useState<string | null>(null);
   const [edited, setEdited] = useState<Record<number, Partial<RoutingRule>>>({});
   const [saving, setSaving] = useState<number | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -74,7 +75,7 @@ export default function AdminRoutingRulesPage() {
   }
 
   async function deleteRule(id: number) {
-    if (!confirm("Delete this routing rule?")) return;
+    setPendingDeleteId(null);
     setSaving(id);
     try {
       await fetch(`/api/admin/routing-rules?id=${id}`, { method: "DELETE" });
@@ -193,14 +194,22 @@ export default function AdminRoutingRulesPage() {
                     >
                       {saving === r.id ? "Saving…" : "Save"}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteRule(r.id)}
-                      disabled={saving === r.id}
-                      className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-md"
-                    >
-                      Delete
-                    </button>
+                    {pendingDeleteId === r.id ? (
+                      <>
+                        <span className="text-xs text-slate-600">Delete?</span>
+                        <button type="button" onClick={() => deleteRule(r.id)} disabled={saving === r.id} className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-md">Yes</button>
+                        <button type="button" onClick={() => setPendingDeleteId(null)} className="text-xs bg-slate-200 text-slate-600 font-semibold px-3 py-1.5 rounded-md hover:bg-slate-300">No</button>
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setPendingDeleteId(r.id)}
+                        disabled={saving === r.id}
+                        className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-md"
+                      >
+                        Delete
+                      </button>
+                    )}
                     {r.notes && (
                       <span className="text-xs text-slate-500 italic self-center">{r.notes}</span>
                     )}

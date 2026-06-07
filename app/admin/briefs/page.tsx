@@ -37,6 +37,8 @@ export default function AdminBriefsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<number | null>(null);
+  const [rejectingBriefId, setRejectingBriefId] = useState<number | null>(null);
+  const [briefRejectNote, setBriefRejectNote] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -62,32 +64,19 @@ export default function AdminBriefsPage() {
     void load();
   }, [load]);
 
-  async function reviewAction(id: number, action: "approve" | "reject") {
-    // On reject, surface a prompt so the admin captures a reason that's
-    // emailed back to the consumer. Empty reasons are allowed but
-    // discouraged.
-    let note: string | null = null;
-    if (action === "reject") {
-      const r = typeof window !== "undefined"
-        ? window.prompt(
-            "Reject reason (sent to the consumer in the rejection email — keep it short and respectful):",
-            "",
-          )
-        : null;
-      if (r === null) return; // cancelled
-      note = r.trim() || null;
-    }
-
+  async function reviewAction(id: number, action: "approve" | "reject", note?: string) {
     setBusy(id);
     setError(null);
     try {
       const res = await fetch(`/api/admin/briefs/${id}/risk`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, ...(note ? { note } : {}) }),
+        body: JSON.stringify({ action, ...(note?.trim() ? { note: note.trim() } : {}) }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error ?? "Action failed");
+      setRejectingBriefId(null);
+      setBriefRejectNote("");
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Action failed");
@@ -149,12 +138,12 @@ export default function AdminBriefsPage() {
                       </p>
                     )}
                   </div>
-                  {tab === "pending_review" && (
+                  {tab === "pending_review" && rejectingBriefId !== b.id && (
                     <div className="flex gap-2">
                       <button
                         type="button"
                         disabled={busy === b.id}
-                        onClick={() => reviewAction(b.id, "approve")}
+                        onClick={() => void reviewAction(b.id, "approve")}
                         className="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-md"
                       >
                         Approve
@@ -162,7 +151,7 @@ export default function AdminBriefsPage() {
                       <button
                         type="button"
                         disabled={busy === b.id}
-                        onClick={() => reviewAction(b.id, "reject")}
+                        onClick={() => { setRejectingBriefId(b.id); setBriefRejectNote(""); }}
                         className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-md"
                       >
                         Reject
@@ -170,6 +159,24 @@ export default function AdminBriefsPage() {
                     </div>
                   )}
                 </div>
+                {rejectingBriefId === b.id && (
+                  <div className="mt-3 bg-red-50 border border-red-200 rounded-lg p-3 space-y-2">
+                    <label htmlFor={`brief-reject-${b.id}`} className="block text-xs font-semibold text-red-800">Reject reason <span className="font-normal text-red-600">(sent to consumer — keep it short and respectful)</span></label>
+                    <textarea
+                      id={`brief-reject-${b.id}`}
+                      value={briefRejectNote}
+                      onChange={e => setBriefRejectNote(e.target.value)}
+                      rows={2}
+                      className="w-full px-2.5 py-1.5 border border-red-200 rounded text-xs bg-white"
+                      placeholder="Optional — leave blank to reject without a reason."
+                      maxLength={500}
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <button type="button" onClick={() => setRejectingBriefId(null)} className="text-xs px-3 py-1.5 text-slate-600 hover:text-slate-900 font-semibold">Cancel</button>
+                      <button type="button" onClick={() => void reviewAction(b.id, "reject", briefRejectNote)} disabled={busy === b.id} className="text-xs px-3 py-1.5 bg-red-600 text-white font-bold rounded hover:bg-red-700 disabled:opacity-50">{busy === b.id ? "Rejecting…" : "Confirm reject"}</button>
+                    </div>
+                  </div>
+                )}
               </article>
             ))}
           </div>

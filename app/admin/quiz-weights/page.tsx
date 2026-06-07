@@ -42,6 +42,7 @@ export default function QuizWeightsPage() {
   const [modified, setModified] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showSimulator, setShowSimulator] = useState(false);
   const [simWeights, setSimWeights] = useState<Record<string, number>>({
@@ -101,8 +102,9 @@ export default function QuizWeightsPage() {
 
     if (error) {
       log.error("Error saving weight", { error: error.message });
-      alert("Error saving: " + error.message);
+      setSaveError("Error saving: " + error.message);
     } else {
+      setSaveError(null);
       setSavedId(id);
       setTimeout(() => setSavedId(null), 2000);
       setModified((prev) => {
@@ -194,6 +196,10 @@ export default function QuizWeightsPage() {
             </button>
           </div>
         </div>
+
+        {saveError && (
+          <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{saveError}</p>
+        )}
 
         {/* Quiz Simulator */}
         {showSimulator && (

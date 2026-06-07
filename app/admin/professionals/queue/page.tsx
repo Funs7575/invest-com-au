@@ -34,6 +34,7 @@ export default function ProfessionalsQueuePage() {
   const [items, setItems] = useState<PendingPro[]>([]);
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState<number | null>(null);
+  const [pendingApproveId, setPendingApproveId] = useState<number | null>(null);
   const [rejectingId, setRejectingId] = useState<number | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -62,9 +63,7 @@ export default function ProfessionalsQueuePage() {
   }, [load]);
 
   const handleApprove = async (id: number) => {
-    if (!confirm("Approve this provider? They will start accepting Match Requests immediately.")) {
-      return;
-    }
+    setPendingApproveId(null);
     setActing(id);
     try {
       const res = await fetch(`/api/admin/professionals/${id}/approve`, {
@@ -74,7 +73,7 @@ export default function ProfessionalsQueuePage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        alert(data.error || "Approve failed");
+        setError(data.error || "Approve failed");
         return;
       }
       await load();
@@ -84,10 +83,7 @@ export default function ProfessionalsQueuePage() {
   };
 
   const handleReject = async (id: number) => {
-    if (rejectReason.trim().length < 4) {
-      alert("Reason must be at least 4 characters.");
-      return;
-    }
+    if (rejectReason.trim().length < 4) return;
     setActing(id);
     try {
       const res = await fetch(`/api/admin/professionals/${id}/reject`, {
@@ -97,7 +93,7 @@ export default function ProfessionalsQueuePage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        alert(data.error || "Reject failed");
+        setError(data.error || "Reject failed");
         return;
       }
       setRejectingId(null);
@@ -110,10 +106,11 @@ export default function ProfessionalsQueuePage() {
 
   const handlePreview = async (id: number) => {
     setPreviewUrl(null);
+    setError("");
     const res = await fetch(`/api/admin/professionals/${id}/doc-url`);
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      alert(data.error || "Could not load preview");
+      setError(data.error || "Could not load preview");
       return;
     }
     setPreviewUrl(data.signed_url);
@@ -159,6 +156,9 @@ export default function ProfessionalsQueuePage() {
                 key={p.id}
                 pro={p}
                 onApprove={() => handleApprove(p.id)}
+                onRequestApprove={() => setPendingApproveId(p.id)}
+                onCancelApprove={() => setPendingApproveId(null)}
+                pendingApprove={pendingApproveId === p.id}
                 onPreview={() => handlePreview(p.id)}
                 onStartReject={() => {
                   setRejectingId(p.id);
@@ -191,6 +191,9 @@ export default function ProfessionalsQueuePage() {
 interface QueueCardProps {
   pro: PendingPro;
   onApprove: () => void;
+  onRequestApprove: () => void;
+  onCancelApprove: () => void;
+  pendingApprove: boolean;
   onPreview: () => void;
   onStartReject: () => void;
   acting: boolean;
@@ -204,6 +207,9 @@ interface QueueCardProps {
 function QueueCard({
   pro,
   onApprove,
+  onRequestApprove,
+  onCancelApprove,
+  pendingApprove,
   onPreview,
   onStartReject,
   acting,
@@ -311,14 +317,35 @@ function QueueCard({
           >
             {pro.verification_doc_url ? "Preview doc ↗" : "No doc uploaded"}
           </button>
-          <button
-            type="button"
-            onClick={onApprove}
-            disabled={acting}
-            className="text-xs font-bold text-white px-3.5 py-1.5 bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50"
-          >
-            {acting ? "Working…" : "Approve"}
-          </button>
+          {pendingApprove ? (
+            <>
+              <span className="text-xs text-slate-600 font-medium">Approve? They start accepting requests immediately.</span>
+              <button
+                type="button"
+                onClick={onApprove}
+                disabled={acting}
+                className="text-xs font-bold text-white px-3.5 py-1.5 bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50"
+              >
+                {acting ? "Working…" : "Yes, approve"}
+              </button>
+              <button
+                type="button"
+                onClick={onCancelApprove}
+                className="text-xs font-semibold text-slate-600 px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50"
+              >
+                No
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={onRequestApprove}
+              disabled={acting}
+              className="text-xs font-bold text-white px-3.5 py-1.5 bg-emerald-600 rounded-lg hover:bg-emerald-700 disabled:opacity-50"
+            >
+              Approve
+            </button>
+          )}
           <button
             type="button"
             onClick={onStartReject}

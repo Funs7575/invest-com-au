@@ -31,6 +31,16 @@ export default function AdminAdvisorsPage() {
   const [appTypeFilter, setAppTypeFilter] = useState<string>("all");
   const [appStateFilter, setAppStateFilter] = useState<string>("all");
   const [supplyData, setSupplyData] = useState<Record<string, Record<string, number>>>({});
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [pendingWelcomeId, setPendingWelcomeId] = useState<number | null>(null);
+  const [welcomeEmailMessage, setWelcomeEmailMessage] = useState<string | null>(null);
+  const [outreachMessage, setOutreachMessage] = useState<string | null>(null);
+  const [pendingApproveAppId, setPendingApproveAppId] = useState<number | null>(null);
+  const [rejectingAppId, setRejectingAppId] = useState<number | null>(null);
+  const [appRejectReason, setAppRejectReason] = useState("");
+  const [appActionMessage, setAppActionMessage] = useState<string | null>(null);
+  const [disputeMessage, setDisputeMessage] = useState<string | null>(null);
+  const [pendingRevokeId, setPendingRevokeId] = useState<number | null>(null);
 
   const supabase = createClient();
 
@@ -251,12 +261,14 @@ export default function AdminAdvisorsPage() {
                           if (!error) {
                             const { data: urlData } = supabaseUpload.storage.from("public").getPublicUrl(path);
                             setEditing({ ...editing, photo_url: urlData.publicUrl });
+                            setUploadError(null);
                           } else {
-                            alert("Upload failed: " + error.message);
+                            setUploadError("Upload failed: " + error.message);
                           }
                         }}
                         className="w-full text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-slate-100 file:text-slate-600 file:font-semibold file:cursor-pointer hover:file:bg-slate-200"
                       />
+                      {uploadError && <p role="alert" className="mt-1 text-xs text-red-700">{uploadError}</p>}
                       <input
                         value={editing.photo_url || ""}
                         onChange={(e) => setEditing({ ...editing, photo_url: e.target.value })}
@@ -367,20 +379,32 @@ export default function AdminAdvisorsPage() {
                           <button onClick={() => setEditing(a)} className="text-xs text-blue-600 hover:text-blue-800 font-semibold">Edit</button>
                           <a href={`/advisor/${a.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-slate-700 font-semibold">View</a>
                           {a.email && (
-                            <button
-                              onClick={async () => {
-                                if (!confirm(`Send welcome email to ${a.email}?`)) return;
-                                const res = await fetch("/api/advisor-welcome", {
-                                  method: "POST",
-                                  headers: { "Content-Type": "application/json" },
-                                  body: JSON.stringify({ name: a.name, email: a.email, firm_name: a.firm_name, slug: a.slug, type: a.type }),
-                                });
-                                alert(res.ok ? "Welcome email sent!" : "Failed to send email");
-                              }}
-                              className="text-xs text-purple-600 hover:text-purple-800 font-semibold"
-                            >
-                              Welcome Email
-                            </button>
+                            pendingWelcomeId === a.id ? (
+                              <span className="flex items-center gap-1">
+                                <span className="text-xs text-slate-600">Send to {a.email}?</span>
+                                <button
+                                  onClick={async () => {
+                                    setPendingWelcomeId(null);
+                                    const res = await fetch("/api/advisor-welcome", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ name: a.name, email: a.email, firm_name: a.firm_name, slug: a.slug, type: a.type }),
+                                    });
+                                    setWelcomeEmailMessage(res.ok ? "Sent!" : "Failed");
+                                    setTimeout(() => setWelcomeEmailMessage(null), 3000);
+                                  }}
+                                  className="text-xs text-emerald-600 hover:text-emerald-800 font-semibold"
+                                >Yes</button>
+                                <button onClick={() => setPendingWelcomeId(null)} className="text-xs text-slate-500 hover:text-slate-700 font-semibold">No</button>
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => { setPendingWelcomeId(a.id); setWelcomeEmailMessage(null); }}
+                                className="text-xs text-purple-600 hover:text-purple-800 font-semibold"
+                              >
+                                Welcome Email
+                              </button>
+                            )
                           )}
                           <button onClick={() => handleDelete(a.id)} className="text-xs text-red-500 hover:text-red-700 font-semibold">Delete</button>
                         </div>
@@ -389,6 +413,9 @@ export default function AdminAdvisorsPage() {
                   ))}
                 </tbody>
               </table>
+              {welcomeEmailMessage && (
+                <p role="alert" className="px-4 py-2 text-xs text-emerald-700 bg-emerald-50 border-t border-emerald-200">{welcomeEmailMessage}</p>
+              )}
               {advisors.length === 0 && (
                 <div className="text-center py-12 text-slate-400">
                   <p className="mb-2">No advisors yet.</p>
@@ -599,19 +626,22 @@ export default function AdminAdvisorsPage() {
                 {Object.entries(PROFESSIONAL_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
+            {outreachMessage && (
+              <p role="alert" className={`text-sm rounded-lg px-3 py-2 ${outreachMessage.startsWith("Failed") || outreachMessage.includes("required") ? "text-red-700 bg-red-50 border border-red-200" : "text-emerald-700 bg-emerald-50 border border-emerald-200"}`}>{outreachMessage}</p>
+            )}
             <button
               onClick={async () => {
                 const name = (document.getElementById("outreach-name") as HTMLInputElement).value;
                 const email = (document.getElementById("outreach-email") as HTMLInputElement).value;
                 const firm = (document.getElementById("outreach-firm") as HTMLInputElement).value;
                 const type = (document.getElementById("outreach-type") as HTMLSelectElement).value;
-                if (!name || !email) { alert("Name and email required"); return; }
+                if (!name || !email) { setOutreachMessage("Name and email required"); return; }
                 const res = await fetch("/api/advisor-outreach", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ to_email: email, to_name: name, firm_name: firm, advisor_type: type }),
                 });
-                alert(res.ok ? `Outreach email sent to ${email}!` : "Failed to send");
+                setOutreachMessage(res.ok ? `Outreach email sent to ${email}!` : "Failed to send");
               }}
               className="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800"
             >
@@ -837,36 +867,70 @@ export default function AdminAdvisorsPage() {
 
                         {/* Action buttons */}
                         {app.status === "pending" && (
-                          <div className="flex gap-3 pt-2 border-t border-slate-100">
-                            <button
-                              onClick={async () => {
-                                if (!confirm(`Approve ${String(app.name)}? This will create their listing, send a magic link, and email them.`)) return;
-                                try {
-                                  const res = await fetch("/api/admin/advisor-applications", {
-                                    method: "PATCH", headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ applicationId: app.id, action: "approve" }),
-                                  });
-                                  if (res.ok) { alert("Approved! Listing created."); setExpandedAppId(null); loadData(); }
-                                  else { const d = await res.json(); alert(d.error || "Failed."); }
-                                } catch { alert("Network error."); }
-                              }}
-                              className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-4 py-2 border border-emerald-200 rounded-lg hover:bg-emerald-50"
-                            >Approve & Create Listing</button>
-                            <button
-                              onClick={async () => {
-                                const reason = prompt("Rejection reason (emailed to applicant):");
-                                if (reason == null) return;
-                                try {
-                                  const res = await fetch("/api/admin/advisor-applications", {
-                                    method: "PATCH", headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ applicationId: app.id, action: "reject", rejectionReason: reason }),
-                                  });
-                                  if (res.ok) { alert("Rejected."); setExpandedAppId(null); loadData(); }
-                                  else { const d = await res.json(); alert(d.error || "Failed."); }
-                                } catch { alert("Network error."); }
-                              }}
-                              className="text-xs font-semibold text-red-500 hover:text-red-700 px-4 py-2 border border-red-200 rounded-lg hover:bg-red-50"
-                            >Reject</button>
+                          <div className="pt-2 border-t border-slate-100 space-y-2">
+                            {appActionMessage && (
+                              <p role="alert" className="text-xs text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">{appActionMessage}</p>
+                            )}
+                            {rejectingAppId === Number(app.id) ? (
+                              <div className="bg-red-50 border border-red-200 rounded-lg p-3 space-y-2">
+                                <label htmlFor={`reject-reason-${app.id}`} className="block text-xs font-semibold text-red-800">Rejection reason (emailed to applicant)</label>
+                                <textarea
+                                  id={`reject-reason-${app.id}`}
+                                  value={appRejectReason}
+                                  onChange={(e) => setAppRejectReason(e.target.value)}
+                                  rows={2}
+                                  className="w-full px-2.5 py-1.5 border border-red-200 rounded text-xs bg-white"
+                                  placeholder="e.g. Could not verify credentials."
+                                />
+                                <div className="flex gap-2 justify-end">
+                                  <button onClick={() => { setRejectingAppId(null); setAppRejectReason(""); }} className="text-xs text-slate-600 font-semibold px-3 py-1.5">Cancel</button>
+                                  <button
+                                    disabled={appRejectReason.trim().length < 4}
+                                    onClick={async () => {
+                                      try {
+                                        const res = await fetch("/api/admin/advisor-applications", {
+                                          method: "PATCH", headers: { "Content-Type": "application/json" },
+                                          body: JSON.stringify({ applicationId: app.id, action: "reject", rejectionReason: appRejectReason.trim() }),
+                                        });
+                                        if (res.ok) { setRejectingAppId(null); setAppRejectReason(""); setExpandedAppId(null); loadData(); }
+                                        else { const d = await res.json(); setAppActionMessage(d.error || "Failed."); }
+                                      } catch { setAppActionMessage("Network error."); }
+                                    }}
+                                    className="text-xs font-bold text-white px-3 py-1.5 bg-red-600 rounded hover:bg-red-700 disabled:opacity-50"
+                                  >Confirm Rejection</button>
+                                </div>
+                              </div>
+                            ) : pendingApproveAppId === Number(app.id) ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-slate-600">Approve {String(app.name)}? Creates listing and emails them.</span>
+                                <button
+                                  onClick={async () => {
+                                    setPendingApproveAppId(null);
+                                    try {
+                                      const res = await fetch("/api/admin/advisor-applications", {
+                                        method: "PATCH", headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ applicationId: app.id, action: "approve" }),
+                                      });
+                                      if (res.ok) { setExpandedAppId(null); loadData(); }
+                                      else { const d = await res.json(); setAppActionMessage(d.error || "Failed."); }
+                                    } catch { setAppActionMessage("Network error."); }
+                                  }}
+                                  className="text-xs font-bold text-emerald-600 px-3 py-1.5 border border-emerald-200 rounded-lg hover:bg-emerald-50"
+                                >Yes, approve</button>
+                                <button onClick={() => setPendingApproveAppId(null)} className="text-xs font-semibold text-slate-500 px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50">No</button>
+                              </div>
+                            ) : (
+                              <div className="flex gap-3">
+                                <button
+                                  onClick={() => { setPendingApproveAppId(Number(app.id)); setAppActionMessage(null); }}
+                                  className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-4 py-2 border border-emerald-200 rounded-lg hover:bg-emerald-50"
+                                >Approve & Create Listing</button>
+                                <button
+                                  onClick={() => { setRejectingAppId(Number(app.id)); setAppRejectReason(""); setAppActionMessage(null); }}
+                                  className="text-xs font-semibold text-red-500 hover:text-red-700 px-4 py-2 border border-red-200 rounded-lg hover:bg-red-50"
+                                >Reject</button>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
@@ -915,15 +979,19 @@ export default function AdminAdvisorsPage() {
                       <span className="text-xs text-slate-400">{new Date(String(d.created_at)).toLocaleDateString("en-AU")}</span>
                     </div>
                     {d.status === "pending" && (
-                      <div className="flex gap-2 mt-2">
+                      <div className="mt-2 space-y-2">
+                        {disputeMessage && (
+                          <p role="alert" className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded px-3 py-2">{disputeMessage}</p>
+                        )}
+                        <div className="flex gap-2">
                         <button
                           onClick={async () => {
-                            // Waive the billing charge
                             if (d.billing_id) {
                               await supabase.from("advisor_billing").update({ status: "waived" }).eq("id", d.billing_id);
                             }
                             await supabase.from("lead_disputes").update({ status: "approved", resolved_at: new Date().toISOString() }).eq("id", d.id);
-                            alert("Dispute approved — charge waived.");
+                            setDisputeMessage("Dispute approved — charge waived.");
+                            setTimeout(() => setDisputeMessage(null), 4000);
                             loadData();
                           }}
                           className="text-xs font-semibold text-emerald-600 px-3 py-1.5 border border-emerald-200 rounded-lg hover:bg-emerald-50"
@@ -935,6 +1003,7 @@ export default function AdminAdvisorsPage() {
                           }}
                           className="text-xs font-semibold text-red-500 px-3 py-1.5 border border-red-200 rounded-lg hover:bg-red-50"
                         >Reject (Uphold Charge)</button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1020,17 +1089,28 @@ export default function AdminAdvisorsPage() {
                       </button>
                     )}
                     {a.verified && (
-                      <button
-                        onClick={async () => {
-                          if (!confirm(`Revoke verification for ${a.name}?`)) return;
-                          await supabase.from("professionals").update({ verified: false, verification_notes: "Manually revoked by admin" }).eq("id", a.id);
-                          await supabase.from("advisor_verification_log").insert({ professional_id: a.id, action: "revoked", method: "manual", performed_by: "admin" });
-                          loadData();
-                        }}
-                        className="px-2.5 py-1 text-[0.6rem] font-semibold border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
-                      >
-                        Revoke
-                      </button>
+                      pendingRevokeId === a.id ? (
+                        <span className="flex items-center gap-1">
+                          <span className="text-[0.6rem] text-slate-600">Revoke?</span>
+                          <button
+                            onClick={async () => {
+                              setPendingRevokeId(null);
+                              await supabase.from("professionals").update({ verified: false, verification_notes: "Manually revoked by admin" }).eq("id", a.id);
+                              await supabase.from("advisor_verification_log").insert({ professional_id: a.id, action: "revoked", method: "manual", performed_by: "admin" });
+                              loadData();
+                            }}
+                            className="px-2 py-0.5 text-[0.6rem] font-bold text-red-600 border border-red-200 rounded hover:bg-red-50"
+                          >Yes</button>
+                          <button onClick={() => setPendingRevokeId(null)} className="px-2 py-0.5 text-[0.6rem] font-semibold text-slate-500 border border-slate-200 rounded hover:bg-slate-50">No</button>
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => setPendingRevokeId(a.id)}
+                          className="px-2.5 py-1 text-[0.6rem] font-semibold border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
+                        >
+                          Revoke
+                        </button>
+                      )
                     )}
                     {a.status === "paused" && (
                       <button

@@ -37,6 +37,8 @@ export default function AdminAdvisorArticlesPage() {
   const [busy, setBusy] = useState(false);
   const [modLog, setModLog] = useState<ModLog[]>([]);
   const [tab, setTab] = useState<"review" | "edit" | "log">("review");
+  const [rejecting, setRejecting] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   // Edit state
   const [editTitle, setEditTitle] = useState("");
@@ -59,6 +61,8 @@ export default function AdminAdvisorArticlesPage() {
 
   const selectArticle = useCallback(async (a: Article) => {
     setSelected(a);
+    setRejecting(false);
+    setRejectionReason("");
     setAdminNotes(a.admin_notes || "");
     setEditTitle(a.title); setEditContent(a.content); setEditExcerpt(a.excerpt || "");
     setEditMetaTitle(a.meta_title || ""); setEditMetaDesc(a.meta_description || "");
@@ -232,9 +236,21 @@ export default function AdminAdvisorArticlesPage() {
                         <>
                           <button onClick={() => doAction("approve", { admin_notes: adminNotes })} disabled={busy} className="px-3 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 disabled:opacity-50">✓ Approve</button>
                           <button onClick={() => doAction("request_revision", { admin_notes: adminNotes || "Please revise" })} disabled={busy} className="px-3 py-2 bg-orange-500 text-white text-xs font-bold rounded-lg hover:bg-orange-600 disabled:opacity-50">↻ Request Revision</button>
-                          <button onClick={() => { const r = prompt("Rejection reason:"); if (r) doAction("reject", { rejection_reason: r }); }} disabled={busy} className="px-3 py-2 bg-red-500 text-white text-xs font-bold rounded-lg hover:bg-red-600 disabled:opacity-50">✗ Reject</button>
+                          <button onClick={() => setRejecting(true)} disabled={busy || rejecting} className="px-3 py-2 bg-red-500 text-white text-xs font-bold rounded-lg hover:bg-red-600 disabled:opacity-50">✗ Reject</button>
                         </>
                       )}
+                    </div>
+                    {rejecting && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
+                        <label htmlFor="aa-rejection-reason" className="block text-xs font-semibold text-red-800 mb-1">Rejection reason <span className="font-normal text-red-600">(emailed to advisor)</span></label>
+                        <textarea id="aa-rejection-reason" value={rejectionReason} onChange={e => setRejectionReason(e.target.value)} rows={2} className="w-full px-2.5 py-1.5 border border-red-200 rounded text-xs bg-white" placeholder="e.g. Article contains promotional language and does not meet editorial standards." maxLength={500} />
+                        <div className="flex gap-2 mt-2 justify-end">
+                          <button type="button" onClick={() => { setRejecting(false); setRejectionReason(""); }} className="text-xs px-3 py-1.5 text-slate-600 hover:text-slate-900 font-semibold">Cancel</button>
+                          <button type="button" onClick={() => { void doAction("reject", { rejection_reason: rejectionReason }); setRejecting(false); setRejectionReason(""); }} disabled={busy || !rejectionReason.trim()} className="text-xs px-3 py-1.5 bg-red-600 text-white font-bold rounded hover:bg-red-700 disabled:opacity-50">Confirm rejection</button>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex flex-wrap gap-2">
                       {selected.status === "approved" && selected.payment_status === "unpaid" && (
                         <>
                           <div className="flex items-center gap-1.5">

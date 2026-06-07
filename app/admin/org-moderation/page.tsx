@@ -52,6 +52,7 @@ export default function OrgModerationPage() {
   const [rejectionReason, setRejectionReason] = useState<Record<number, string>>({});
   const [tab, setTab] = useState<"pending" | "approved" | "rejected" | "organisations">("pending");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -95,7 +96,7 @@ export default function OrgModerationPage() {
     if (data.success) {
       setRefreshKey(k => k + 1);
     } else {
-      alert("Error: " + (data.error ?? "Unknown error"));
+      setActionError("Error: " + (data.error ?? "Unknown error"));
     }
     setActing(null);
   };
@@ -111,7 +112,7 @@ export default function OrgModerationPage() {
     if (data.success) {
       setRefreshKey(k => k + 1);
     } else {
-      alert("Error: " + (data.error ?? "Unknown error"));
+      setActionError("Error: " + (data.error ?? "Unknown error"));
     }
     setVerifying(null);
   };
@@ -135,6 +136,10 @@ export default function OrgModerationPage() {
             </button>
           ))}
         </div>
+
+        {actionError && (
+          <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{actionError}</p>
+        )}
 
         {loading ? (
           <div className="space-y-3">

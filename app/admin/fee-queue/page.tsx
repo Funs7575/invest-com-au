@@ -47,6 +47,8 @@ export default function AdminFeeQueuePage() {
   const [tab, setTab] = useState<"queue" | "rules" | "staleness">("queue");
   const [busy, setBusy] = useState<number | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [pendingBulkAction, setPendingBulkAction] = useState<"approve" | "reject" | null>(null);
+  const [pendingDeleteRuleId, setPendingDeleteRuleId] = useState<number | null>(null);
 
   const supabase = createClient();
 
@@ -84,7 +86,8 @@ export default function AdminFeeQueuePage() {
 
   const handleBulkAction = async (action: "approve" | "reject") => {
     if (selectedIds.size === 0) return;
-    if (!confirm(`${action === "approve" ? "Apply" : "Skip"} ${selectedIds.size} fee changes?`)) return;
+    if (pendingBulkAction !== action) { setPendingBulkAction(action); return; }
+    setPendingBulkAction(null);
     setBusy(-1);
     for (const id of selectedIds) {
       await fetch("/api/admin/fee-queue", {
@@ -104,7 +107,8 @@ export default function AdminFeeQueuePage() {
   };
 
   const deleteRule = async (id: number) => {
-    if (!confirm("Delete this automation rule?")) return;
+    if (pendingDeleteRuleId !== id) { setPendingDeleteRuleId(id); return; }
+    setPendingDeleteRuleId(null);
     await supabase.from("fee_auto_rules").delete().eq("id", id);
     fetchAll();
   };
@@ -196,15 +200,29 @@ export default function AdminFeeQueuePage() {
               ))}
             </div>
             {selectedIds.size > 0 && (
-              <div className="flex gap-1.5">
-                <button onClick={() => handleBulkAction("approve")} disabled={busy === -1}
-                  className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 disabled:opacity-50">
-                  ✓ Apply {selectedIds.size} selected
-                </button>
-                <button onClick={() => handleBulkAction("reject")} disabled={busy === -1}
-                  className="px-3 py-1.5 border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-50">
-                  ✗ Skip {selectedIds.size}
-                </button>
+              <div className="flex gap-1.5 items-center flex-wrap">
+                {pendingBulkAction ? (
+                  <>
+                    <span className="text-xs text-slate-700 font-medium">
+                      {pendingBulkAction === "approve" ? `Apply ${selectedIds.size} changes?` : `Skip ${selectedIds.size} changes?`}
+                    </span>
+                    <button onClick={() => void handleBulkAction(pendingBulkAction)} disabled={busy === -1}
+                      className="px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50">Yes</button>
+                    <button onClick={() => setPendingBulkAction(null)}
+                      className="px-3 py-1.5 border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-50">No</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => void handleBulkAction("approve")} disabled={busy === -1}
+                      className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 disabled:opacity-50">
+                      ✓ Apply {selectedIds.size} selected
+                    </button>
+                    <button onClick={() => void handleBulkAction("reject")} disabled={busy === -1}
+                      className="px-3 py-1.5 border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-50">
+                      ✗ Skip {selectedIds.size}
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -311,7 +329,15 @@ export default function AdminFeeQueuePage() {
                     className={`px-3 py-1 text-xs font-semibold rounded-lg ${rule.enabled ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
                     {rule.enabled ? "Enabled" : "Disabled"}
                   </button>
-                  <button onClick={() => deleteRule(rule.id)} aria-label="Delete rule" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
+                  {pendingDeleteRuleId === rule.id ? (
+                    <>
+                      <span className="text-xs text-red-600 font-medium">Delete?</span>
+                      <button onClick={() => void deleteRule(rule.id)} className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-1 rounded">Yes</button>
+                      <button onClick={() => setPendingDeleteRuleId(null)} className="text-xs border border-slate-300 text-slate-600 hover:bg-slate-50 px-2 py-1 rounded">No</button>
+                    </>
+                  ) : (
+                    <button onClick={() => void deleteRule(rule.id)} aria-label="Delete rule" className="p-1.5 text-slate-400 hover:text-red-600"><Icon name="trash-2" size={14} /></button>
+                  )}
                 </div>
               </div>
             ))}

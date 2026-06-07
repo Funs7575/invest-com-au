@@ -76,6 +76,8 @@ export default function ContentCalendarPage() {
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<CalendarItem | null>(null);
   const [generating, setGenerating] = useState<number | null>(null);
+  const [cronSecret, setCronSecret] = useState("");
+  const [pendingDraftItem, setPendingDraftItem] = useState<CalendarItem | null>(null);
   const [staleArticles, setStaleArticles] = useState<{ id: number; title: string; slug: string; staleness_score: number }[]>([]);
 
   const supabase = createClient();
@@ -192,13 +194,18 @@ export default function ContentCalendarPage() {
       toast("Draft can only be generated for planned items", "error");
       return;
     }
+    if (!cronSecret.trim()) {
+      setPendingDraftItem(item);
+      return;
+    }
+    setPendingDraftItem(null);
     setGenerating(item.id);
     try {
       const res = await fetch("/api/admin/content/generate-draft", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${prompt("Enter CRON_SECRET to authorize:")}`,
+          Authorization: `Bearer ${cronSecret.trim()}`,
         },
         body: JSON.stringify({ calendarId: item.id }),
       });
@@ -710,6 +717,28 @@ export default function ContentCalendarPage() {
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
       />
+
+      {pendingDraftItem && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setPendingDraftItem(null)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-3" onClick={e => e.stopPropagation()}>
+            <h2 className="text-sm font-bold text-slate-900">AI Draft — Authorize</h2>
+            <p className="text-xs text-slate-500">Enter the CRON_SECRET to generate a draft for <strong>{pendingDraftItem.title}</strong>.</p>
+            <input
+              type="password"
+              value={cronSecret}
+              onChange={e => setCronSecret(e.target.value)}
+              placeholder="CRON_SECRET"
+              className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg font-mono"
+              autoFocus
+              onKeyDown={e => { if (e.key === "Enter" && cronSecret.trim()) void handleGenerateDraft(pendingDraftItem); }}
+            />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setPendingDraftItem(null)} className="px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 rounded-lg font-semibold border border-slate-200">Cancel</button>
+              <button onClick={() => void handleGenerateDraft(pendingDraftItem)} disabled={!cronSecret.trim()} className="px-3 py-2 text-xs bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 disabled:opacity-50">Generate</button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminShell>
   );
 }

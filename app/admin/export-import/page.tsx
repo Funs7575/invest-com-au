@@ -34,6 +34,7 @@ export default function ExportImportPage() {
   const [exportMessage, setExportMessage] = useState<string | null>(null);
 
   const [, setImportFile] = useState<File | null>(null);
+  const [importFileError, setImportFileError] = useState<string | null>(null);
   const [importData, setImportData] = useState<Record<string, unknown[]> | null>(null);
   const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
   const [importing, setImporting] = useState(false);
@@ -86,6 +87,7 @@ export default function ExportImportPage() {
     if (!file) return;
 
     setImportFile(file);
+    setImportFileError(null);
     setImportData(null);
     setImportPreview(null);
     setImportStatuses([]);
@@ -112,7 +114,7 @@ export default function ExportImportPage() {
       } catch (err: unknown) {
         setImportPreview(null);
         setImportData(null);
-        alert(`Invalid JSON file: ${err instanceof Error ? err.message : String(err)}`);
+        setImportFileError(`Invalid JSON file: ${err instanceof Error ? err.message : String(err)}`);
       }
     };
     reader.readAsText(file);
@@ -261,6 +263,9 @@ export default function ExportImportPage() {
                 hover:file:bg-slate-600
                 file:cursor-pointer cursor-pointer"
             />
+            {importFileError && (
+              <p role="alert" className="mt-2 text-xs text-red-700 bg-red-50 border border-red-100 rounded px-3 py-2">{importFileError}</p>
+            )}
           </div>
 
           {/* Preview */}
