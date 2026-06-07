@@ -71,7 +71,7 @@ export default function EarnTab({ advisor }: Props) {
 
   if (loading) {
     return (
-      <div className="space-y-4 animate-pulse">
+      <div className="space-y-4 animate-pulse" aria-busy="true" aria-label="Loading earnings…">
         <div className="h-28 bg-slate-100 rounded-xl" />
         <div className="h-24 bg-slate-100 rounded-xl" />
         <div className="grid grid-cols-3 gap-3">

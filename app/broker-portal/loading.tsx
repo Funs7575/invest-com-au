@@ -1,6 +1,6 @@
 export default function BrokerPortalLoading() {
   return (
-    <div className="space-y-6 animate-pulse">
+    <div className="space-y-6 animate-pulse" aria-busy="true" aria-label="Loading broker portal…">
       {/* Page title skeleton */}
       <div>
         <div className="h-7 w-40 bg-slate-200 rounded mb-1.5" />
