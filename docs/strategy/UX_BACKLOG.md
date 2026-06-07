@@ -699,5 +699,9 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-260]** `inputMode` on 29 portal number inputs (advisor/broker/org/startup portals) — Extends ADV-253's public inputMode sweep to authenticated portal pages. All `type="number"` inputs in advisor-portal (CourseBuilderTab, EventsTab, SettingsTab, ProfileDetailsTab, TeamTab, auctions), broker-portal (campaigns, settings, wallet), org-portal (OrgCoursesTab, OrgEventsTab), and startup-portal (round/new) now get `inputMode="decimal"` for mobile numeric keyboard.
 
+**[ADV-261]** `aria-label` sweep on super guide tables (2026-06-08) — WCAG 1.3.1 accessible names added to all unlabelled `<table>` elements in 7 super subpages: compare-guide (3 tables), division-296 (1), pension-phase (3), transition-to-retirement (2), co-contribution (2), death-benefit (5), insurance (1). Labels derived from nearest h2/h3 heading. `app/super/*/page.tsx`
+
+**[ADV-262]** `aria-label` sweep across 131 public content pages (2026-06-08) — Comprehensive WCAG 1.3.1 sweep: `aria-label` added to every unlabelled `<table>` element across all remaining public routes. ~220+ tables labelled across: invest/* (28 files, 56 tables), tax/* (16 files, 58 tables), retirement/* (11 files), smsf/* (5 files), home-loans/* (7 files), first-home-buyer/* (6 files), foreign-investment/* (10 files), global-investing/* (14 files), etfs/* (4 files), property/* (6 files), super/* (2 files), aged-care/* (3 files), insurance/* (2 files), grants/emdg, negative-gearing, mortgage, alt-assets, family-office, halal-investing, wholesale, lump-sum-investing/redundancy, and dynamic routes ([suburb]/property-investing, invest/[slug]/stocks, invest/[slug]/etfs, etfs/[ticker], etfs/vs/[slugs], property/suburbs/[slug]). Tables in admin pages, interactive screeners with `<caption>`, and rate boards with sr-only captions were left unchanged.
+
 ---
 
