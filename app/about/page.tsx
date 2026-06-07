@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import {
   GENERAL_ADVICE_WARNING,
   AFSL_STATUS_DISCLOSURE,
@@ -7,6 +8,25 @@ import {
   COMPANY_ACN,
   COMPANY_ABN,
 } from "@/lib/compliance";
+
+const ABOUT_FAQS = [
+  {
+    q: "Is Invest.com.au independent — do banks or brokers own it?",
+    a: "Yes, Invest.com.au is independently owned and operated. No bank, broker, or financial institution has an ownership stake. We earn revenue through transparent commercial sponsorships (disclosed on every page) and affiliate referral fees when users click through to a platform and open an account. Editorial ratings and rankings are assigned independently of commercial relationships — sponsors cannot purchase a higher rating.",
+  },
+  {
+    q: "How does Invest.com.au make money?",
+    a: "We earn revenue through two main channels: (1) sponsorship arrangements where platforms pay to appear in highlighted positions on our comparison tables — disclosed clearly with a 'Sponsored' or 'Featured' label, and (2) affiliate commissions when a user clicks through to a broker's sign-up page and opens an account. We do not charge users, sell personal data, or accept payment for editorial ratings. Full details are published on our 'How we earn money' page.",
+  },
+  {
+    q: "How does Invest.com.au verify the advisors it lists?",
+    a: "All financial advisors listed on Invest.com.au are cross-checked against the ASIC Financial Advisers Register (FAR) and ASIC Professional Registers to verify AFSL licence status and Authorised Representative (AR) registration. We check that the licence is current and active at the time of listing. Advisors who cannot be verified are not listed. Verification status is displayed on each advisor's profile and reviewed at least annually.",
+  },
+  {
+    q: "Can I trust the broker and platform reviews on Invest.com.au?",
+    a: "Our editorial team researches and updates broker data using primary sources (broker PDS documents, pricing pages, and direct contact with platforms). Ratings are assigned using a published methodology covering fees, platform quality, asset coverage, safety, and user experience. We cannot guarantee perfect accuracy — markets and products change quickly — so we recommend verifying key details (especially fees) directly with the broker before opening an account.",
+  },
+];
 
 export const revalidate = 86400;
 
@@ -40,6 +60,7 @@ const METHODOLOGY = [
 ];
 
 export default function AboutPage() {
+  const faqLd = faqJsonLd(ABOUT_FAQS);
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "About Us" },
@@ -51,6 +72,9 @@ export default function AboutPage() {
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
     />
+    {faqLd && (
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+    )}
     <div className="py-5 md:py-12">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
@@ -253,6 +277,22 @@ export default function AboutPage() {
                   <strong>AFSL Status:</strong> {AFSL_STATUS_DISCLOSURE}
                 </p>
               </div>
+            </div>
+          </section>
+
+          {/* FAQ */}
+          <section className="mb-10">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {ABOUT_FAQS.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
             </div>
           </section>
 
