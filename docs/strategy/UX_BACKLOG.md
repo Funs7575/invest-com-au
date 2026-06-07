@@ -660,6 +660,7 @@ Sourced from a parallel code-review sweep across 7 feature areas (69 compiled fi
 
 **[ADV-191]** Invest page sector cards: No CTA text — added "Browse {category} →" label to each card. `app/invest/page.tsx`
 
+**[ADV-192]** WCAG 1.3.1 label sweep batch 8 (admin — final) — 14 admin-area files: marketplace/support (status + priority filters), marketplace/funnel (broker A + B), professionals/queue (reject-reason textarea), afsl-register (CSV upload), quiz-weights (sim inputs + pre-existing exhaustive-deps), quiz-questions (orphan options span), country-rule-alerts (country filter), country-schemes (country filter), placement-experiments (status filter), advisor-signup (orphan specialties → `<p>`), admin/brokers (Field/TextArea labels), admin/finance (8 transaction modal fields), marketplace/placements (5 form fields), courses/[slug] (27 fields across 3 sections). Courses admin page (13 fields + immutability suppress) completed as final commit `93817590`. Zero sibling-label violations remain across `app/`.
 
 ---
 
