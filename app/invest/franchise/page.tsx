@@ -3,6 +3,28 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const FRANCHISE_FAQS = [
+  {
+    q: "How much does it cost to buy a franchise in Australia?",
+    a: "Franchise investment levels in Australia vary enormously by brand and sector. At the lower end, home services and cleaning franchises start from $20,000–$50,000. Mid-range food and fitness franchises typically require $150,000–$400,000 including fitout. Premium hospitality and retail concepts (McDonald's, Subway, national gym chains) can require $400,000–$1,000,000+ in total investment. These figures cover the franchise fee, equipment, fitout, working capital, and training costs. Most franchisors require 30–50% in unencumbered cash, with the balance financed.",
+  },
+  {
+    q: "What is included in a franchise agreement?",
+    a: "A franchise agreement is a legal document (typically 50–150 pages) that governs the relationship for the agreement term (usually 5–7 years with renewal options). Key terms include: the territory (exclusive or non-exclusive), the franchise fee structure (upfront + ongoing royalties of 5–12% of revenue + marketing levy of 2–4%), supply obligations (required suppliers), operational standards, renewal conditions, and transfer/exit rights. The Franchising Code of Conduct (administered by the ACCC) mandates specific disclosures and provides minimum protections — read the disclosure document before signing anything.",
+  },
+  {
+    q: "What due diligence should I do before buying a franchise?",
+    a: "Mandatory steps: (1) read the Disclosure Document thoroughly — the franchisor must provide it at least 14 days before signing; (2) speak to at least 5–10 current franchisees, not just the ones the franchisor suggests; (3) speak to former franchisees, especially those who exited — ask why they left; (4) review three years of audited financials for the franchisor entity; (5) have a franchise lawyer review the agreement (franchise law is specialist — a general commercial lawyer often misses sector-specific risks); (6) commission an independent financial model for your territory with realistic revenue assumptions, not the franchisor's projections.",
+  },
+  {
+    q: "How are franchise royalties taxed in Australia?",
+    a: "Franchise royalties are a tax-deductible business expense for the franchisee and assessable income for the franchisor. The initial franchise fee is treated differently: if it's a capital payment for the right to operate under the franchise system, it may be depreciated as an intangible asset over the agreement term, not immediately deductible. Running royalties (percentage of revenue paid monthly) are immediately deductible. The capital gain on selling a franchise territory is subject to CGT, with the 50% discount available for assets held 12+ months. Small-business CGT concessions may apply if you meet the turnover threshold.",
+  },
+];
+
+const franchiseFaqLd = faqJsonLd(FRANCHISE_FAQS);
 
 export const revalidate = 3600;
 
@@ -32,6 +54,9 @@ export default function FranchisePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {franchiseFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(franchiseFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -214,6 +239,25 @@ export default function FranchisePage() {
                 Browse Franchise Professionals
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {FRANCHISE_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

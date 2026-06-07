@@ -3,6 +3,28 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const FARMLAND_FAQS = [
+  {
+    q: "How do I invest in Australian farmland?",
+    a: "Australian investors can access farmland through: (1) direct property purchase — buying a farm outright or in partnership, typically $1M+ entry point; (2) unlisted agricultural managed funds — pooled vehicles investing in cropping, grazing, horticulture, or timber (e.g. Laguna Bay, Kilter Rural); (3) ASX-listed agribusiness companies — Rural Funds Group (RFF), Elders, GrainCorp; or (4) fractional ownership platforms for smaller ticket sizes. Foreign buyers require FIRB approval for agricultural land above the threshold (A$15M for most countries; A$0 for sensitive land from certain nations).",
+  },
+  {
+    q: "What returns can I expect from farmland investment in Australia?",
+    a: "Australian farmland has historically returned 8–11% per annum total return — comprising 3–5% cash yield (rent or operating income) and 4–6% land value appreciation. Returns vary significantly by property type: irrigated horticulture and permanent crops (almonds, avocados, wine grapes) tend to yield higher cash returns; broadacre cropping and grazing land tends toward lower yields but steadier appreciation. Water rights in the Murray-Darling Basin can be volatile, adding risk and upside to irrigated holdings.",
+  },
+  {
+    q: "Do foreign investors need FIRB approval to buy Australian farmland?",
+    a: "Yes. Foreign persons (non-Australian citizens and non-permanent residents) must apply to FIRB (Foreign Investment Review Board) before purchasing an interest in Australian agricultural land if the cumulative value of the foreign person's agricultural land interests will exceed A$15 million for most countries (lower thresholds apply to some FTA partner countries). There is no minimum threshold for land in sensitive areas. Approval is typically granted with conditions, but FIRB can reject acquisitions deemed contrary to the national interest.",
+  },
+  {
+    q: "What types of Australian farmland offer the best returns?",
+    a: "Permanent crops (almonds, macadamias, wine grapes) in irrigated regions offer the highest cash yields (5–8% p.a.) but require water security and specialist management. Irrigated dairy land offers stable income tied to milk prices. Broadacre cropping (wheat, canola, barley) in the grain belt delivers leverage to commodity cycles. Grazing properties (beef, sheep) have lower yields but broad geographic availability. Carbon farming — converting marginal land to soil carbon or vegetation sequestration projects — is an emerging income layer that can be stacked on existing pastoral use.",
+  },
+];
+
+const farmlandFaqLd = faqJsonLd(FARMLAND_FAQS);
 
 export const revalidate = 3600;
 
@@ -32,6 +54,9 @@ export default function FarmlandPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {farmlandFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(farmlandFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -219,6 +244,25 @@ export default function FarmlandPage() {
                 Browse Rural Professionals
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {FARMLAND_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>
