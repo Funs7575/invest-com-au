@@ -14,6 +14,7 @@ interface Props {
   showMobileCompare: boolean;
   onToggleMobileCompare: () => void;
   onToggleSelected: (slug: string) => void;
+  onClearAll?: () => void;
 }
 
 export default function CompareSelectionBar({
@@ -22,6 +23,7 @@ export default function CompareSelectionBar({
   showMobileCompare,
   onToggleMobileCompare,
   onToggleSelected,
+  onClearAll,
 }: Props) {
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [alertOpen, setAlertOpen] = useState(false);
@@ -117,7 +119,7 @@ export default function CompareSelectionBar({
                   {alertStatus === "sending" ? "Saving…" : "Alert me"}
                 </button>
                 {alertStatus === "error" && (
-                  <span className="text-xs text-red-400 w-full">Failed — please try again.</span>
+                  <span role="alert" className="text-xs text-red-400 w-full">Failed — please try again.</span>
                 )}
               </form>
             )}
@@ -140,28 +142,39 @@ export default function CompareSelectionBar({
           <span className="text-xs md:text-sm font-semibold truncate">
             {selected.size}/4 selected
           </span>
+          {onClearAll && (
+            <button
+              onClick={onClearAll}
+              className="text-[0.62rem] font-semibold text-slate-400 hover:text-slate-200 transition-colors shrink-0"
+              aria-label="Clear all selected platforms"
+            >
+              Clear
+            </button>
+          )}
         </div>
         <div className="flex items-center gap-1.5 md:gap-2">
           {/* Save shortlist */}
           <button
             onClick={handleSaveShortlist}
             disabled={saveStatus === "saving"}
+            aria-busy={saveStatus === "saving"}
             title={saveStatus === "saved" ? "Shortlist saved to bookmarks" : "Save all to bookmarks"}
-            className={`shrink-0 px-2 py-2 min-h-9 inline-flex items-center gap-1 rounded-lg text-xs font-semibold transition-colors ${
+            className={`shrink-0 px-3 py-2 min-h-11 inline-flex items-center gap-1.5 rounded-lg text-xs font-semibold transition-colors ${
               saveStatus === "saved"
                 ? "bg-emerald-600 text-white"
                 : "bg-slate-700 text-slate-200 hover:bg-slate-600"
             }`}
           >
             <Icon name={saveStatus === "saved" ? "check-circle" : "bookmark"} size={14} />
-            <span className="hidden sm:inline">{saveStatus === "saved" ? "Saved" : "Save"}</span>
+            <span>{saveStatus === "saved" ? "Saved" : "Save"}</span>
           </button>
 
           {/* Fee alert toggle */}
           <button
             onClick={() => setAlertOpen(o => !o)}
+            aria-expanded={alertOpen}
             title="Get fee-change alerts for these platforms"
-            className={`shrink-0 px-2 py-2 min-h-9 inline-flex items-center gap-1 rounded-lg text-xs font-semibold transition-colors ${
+            className={`shrink-0 px-3 py-2 min-h-11 inline-flex items-center gap-1.5 rounded-lg text-xs font-semibold transition-colors ${
               alertOpen ? "bg-amber-600 text-white" : "bg-slate-700 text-slate-200 hover:bg-slate-600"
             }`}
           >
@@ -178,7 +191,7 @@ export default function CompareSelectionBar({
           </button>
           <Link
             href={`/versus?vs=${Array.from(selected).join(",")}`}
-            className="shrink-0 px-4 py-2 min-h-11 inline-flex items-center md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
+            className="shrink-0 px-4 py-2 min-h-11 inline-flex items-center md:px-5 md:py-2 bg-white text-slate-700 font-bold text-sm rounded-lg hover:bg-slate-50 transition-colors"
           >
             Full Compare →
           </Link>

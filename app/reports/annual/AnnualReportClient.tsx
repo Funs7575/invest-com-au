@@ -85,7 +85,7 @@ export default function AnnualReportClient() {
               />
             </div>
             {status === "error" && errorMsg && (
-              <p className="text-xs text-red-400">{errorMsg}</p>
+              <p role="alert" className="text-xs text-red-400">{errorMsg}</p>
             )}
             <button
               type="submit"

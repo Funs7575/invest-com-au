@@ -195,7 +195,7 @@ export default function DataRoomClient({
                   />
                   <span className="text-sm text-gray-700">Requires wholesale investor certification (s708)</span>
                 </label>
-                {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
+                {uploadError && <p role="alert" className="text-sm text-red-600">{uploadError}</p>}
                 <div className="flex gap-2 justify-end pt-1">
                   <button
                     type="button"

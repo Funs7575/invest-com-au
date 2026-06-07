@@ -163,6 +163,7 @@ export default function SettingsTab({ advisor }: Props) {
           <button
             onClick={saveNotifPrefs}
             disabled={savingNotifs}
+            aria-busy={savingNotifs}
             className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {savingNotifs ? "Saving..." : "Save Preferences"}
@@ -201,6 +202,7 @@ export default function SettingsTab({ advisor }: Props) {
             <button
               onClick={saveSessionPrice}
               disabled={savingPrice}
+              aria-busy={savingPrice}
               className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {savingPrice ? "Saving..." : "Save"}
@@ -271,6 +273,7 @@ export default function SettingsTab({ advisor }: Props) {
           <button
             onClick={saveSlackUrl}
             disabled={savingSlack}
+            aria-busy={savingSlack}
             className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0"
           >
             {savingSlack ? "Saving…" : "Save"}

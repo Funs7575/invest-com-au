@@ -512,6 +512,7 @@ export default function ProfileDetailsTab({ advisor }: { advisor: Advisor | null
           type="button"
           onClick={handleSave}
           disabled={saving}
+          aria-busy={saving}
           className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {saving ? "Saving..." : "Save Changes"}

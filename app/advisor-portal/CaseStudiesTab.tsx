@@ -317,6 +317,7 @@ export default function CaseStudiesTab({ advisor }: Props) {
               <button
                 onClick={() => { void handleSave("draft"); }}
                 disabled={saving}
+                aria-busy={saving}
                 className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving..." : "Save Draft"}
@@ -324,6 +325,7 @@ export default function CaseStudiesTab({ advisor }: Props) {
               <button
                 onClick={() => { void handleSave("published"); }}
                 disabled={saving}
+                aria-busy={saving}
                 className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? "Saving..." : "Publish"}

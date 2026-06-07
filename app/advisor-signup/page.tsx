@@ -705,7 +705,7 @@ export default function AdvisorSignupPage() {
           {/* Error message */}
           {errorMsg && (
             <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-xs text-red-600">{errorMsg}</p>
+              <p role="alert" className="text-xs text-red-600">{errorMsg}</p>
             </div>
           )}
 

@@ -279,7 +279,7 @@ export default function SubscriptionAuditClient() {
                     </select>
                   </div>
                 </div>
-                {addError && <p className="text-xs text-red-600">{addError}</p>}
+                {addError && <p role="alert" className="text-xs text-red-600">{addError}</p>}
                 <button
                   onClick={addCustom}
                   className="px-4 py-2 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors"

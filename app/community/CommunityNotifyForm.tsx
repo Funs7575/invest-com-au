@@ -62,7 +62,7 @@ export default function CommunityNotifyForm() {
         </button>
       </div>
       {errorMsg && <p role="alert" className="text-xs text-red-600 mt-1">{errorMsg}</p>}
-      {status === "error" && <p className="text-xs text-red-600 mt-1">Something went wrong — please try again.</p>}
+      {status === "error" && <p role="alert" className="text-xs text-red-600 mt-1">Something went wrong — please try again.</p>}
     </div>
   );
 }

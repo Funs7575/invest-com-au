@@ -1070,7 +1070,7 @@ export default function BrokerReviewClient({
                     <BrokerLogo broker={s} size="md" />
                   </div>
                   <h3 className="font-bold text-xs md:text-sm">{s.name}</h3>
-                  <div className="text-[0.62rem] md:text-xs text-amber-600">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></div>
+                  <div className="text-[0.62rem] md:text-xs text-amber-600" aria-label={`Rated ${s.rating ?? 0} out of 5 stars`}><span aria-hidden="true">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></span></div>
                   <div className="text-[0.58rem] md:text-xs text-slate-500 mt-0.5 md:mt-1">{s.asx_fee} · {s.chess_sponsored ? 'CHESS' : 'Custodial'}</div>
                   <span className="inline-block mt-1.5 md:mt-2 text-[0.62rem] md:text-xs px-2 py-0.5 md:px-3 md:py-1 bg-slate-900 text-white rounded-md font-semibold">vs {b.name} →</span>
                 </Link>

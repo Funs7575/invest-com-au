@@ -621,7 +621,7 @@ export default function ProviderApplyClient() {
             </div>
 
             {errorMsg && (
-              <p className="text-xs text-red-600 font-medium">{errorMsg}</p>
+              <p role="alert" className="text-xs text-red-600 font-medium">{errorMsg}</p>
             )}
 
             <button

@@ -200,7 +200,7 @@ export default function WithholdingTaxClient() {
                 ))}
               </select>
               {countriesError && (
-                <p className="text-xs text-rose-700 mt-1">{countriesError}</p>
+                <p role="alert" className="text-xs text-rose-700 mt-1">{countriesError}</p>
               )}
             </div>
 
@@ -278,7 +278,7 @@ export default function WithholdingTaxClient() {
                 </>
               )}
               {ratesError && (
-                <p className="text-xs text-rose-700 mt-2">{ratesError}</p>
+                <p role="alert" className="text-xs text-rose-700 mt-2">{ratesError}</p>
               )}
             </div>
           </div>

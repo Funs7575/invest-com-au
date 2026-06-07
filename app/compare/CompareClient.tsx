@@ -823,6 +823,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           {schema.columns.length > 4 && (
             <button
               type="button"
+              aria-expanded={showAllMobileColumns}
               onClick={() => setColumnExpandedForFilter(prev => prev === activeFilter ? null : activeFilter)}
               className="text-[0.62rem] font-semibold text-blue-700 hover:text-blue-800"
             >
@@ -936,6 +937,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           showMobileCompare={showMobileCompare}
           onToggleMobileCompare={() => setShowMobileCompare(prev => !prev)}
           onToggleSelected={toggleSelected}
+          onClearAll={() => setSelected(new Set())}
         />
 
 
