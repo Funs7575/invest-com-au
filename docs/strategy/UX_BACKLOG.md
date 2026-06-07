@@ -617,5 +617,15 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-219]** BuyerAgentsClient fetch error state — DB query now destructures `{ data, error }` and sets `fetchError` boolean; renders accessible "Could not load buyer's agents / Please refresh" notice instead of silently showing an empty grid. `app/property/buyer-agents/BuyerAgentsClient.tsx`
 
+**[ADV-220]** Calendar + office-hours empty states — discovery CTA links added (Find an advisor, Attend office hours, Join community, Get matched) so users landing on an empty screen have a clear next action instead of a dead end. `app/calendar/page.tsx`, `app/office-hours/page.tsx`
+
+**[ADV-221]** `role="status"` on full-page loading spinners in advisor-portal and org-portal so screen readers announce the loading state. `app/advisor-portal/page.tsx`, `app/org-portal/page.tsx`
+
+**[ADV-222]** PortfolioClient error feedback — replaced silent `catch{}` with `submitError` state; non-ok API responses and network errors now surface a `role="alert"` inline message below the submit button. `app/portfolio/PortfolioClient.tsx`
+
+**[ADV-223]** `aria-busy` sweep across 27 async buttons — PushOptIn, CsvImportModal, TaxSummaryButton, BookmarkButton, ContextualLeadMagnet, EtfOverlapDetector, ExitIntentCapture, FollowAdvisorButton, ListsClient, SavedSearchesClient, CourseBuilderTab, EventsTab, DowngradeBanner, LedgerHistoryTable, CourseCompleteButton, ExitIntentPopup, NewsletterExitIntentModal, PillarExitIntent, PortfolioStressTest, RsvpButton, SwitchingTracker, and 6 more components. Also adds `role="alert"` on 3 error displays and converts `useRef(Date.now())` to `useState(() => Date.now())` in 3 exit-intent components.
+
+**[ADV-224]** WCAG 1.3.1 label association — `htmlFor`/`id` pairs added to all label/input pairs in the portfolio x-ray holdings form (4 fields: xray-ticker, xray-holding-name, xray-quantity, xray-price) and the tax-optimizer holdings form (5 fields: tax-ticker, tax-buy-date, tax-buy-price, tax-current-price, tax-quantity). Eliminates Level A violations in both calculator tools. `app/portfolio-xray/XRayClient.tsx`, `app/tax-optimizer/TaxOptimizerClient.tsx`
+
 ---
 

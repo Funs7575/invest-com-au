@@ -162,20 +162,20 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
           <h2 className="text-sm font-bold text-slate-900 mb-3">Your Holdings</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-1">
             <div className="flex flex-col gap-0.5">
-              <label className="text-xs font-semibold text-slate-600">Ticker <span className="text-red-500">*</span></label>
-              <input value={ticker} onChange={e => setTicker(e.target.value)} placeholder="e.g. BHP" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <label htmlFor="xray-ticker" className="text-xs font-semibold text-slate-600">Ticker <span className="text-red-500">*</span></label>
+              <input id="xray-ticker" value={ticker} onChange={e => setTicker(e.target.value)} placeholder="e.g. BHP" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <label className="text-xs font-semibold text-slate-600">Name <span className="text-slate-400 font-normal">(optional)</span></label>
-              <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. BHP Group" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <label htmlFor="xray-holding-name" className="text-xs font-semibold text-slate-600">Name <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input id="xray-holding-name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. BHP Group" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <label className="text-xs font-semibold text-slate-600">Quantity <span className="text-red-500">*</span></label>
-              <input value={quantity} onChange={e => setQuantity(e.target.value)} type="number" placeholder="e.g. 100" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <label htmlFor="xray-quantity" className="text-xs font-semibold text-slate-600">Quantity <span className="text-red-500">*</span></label>
+              <input id="xray-quantity" value={quantity} onChange={e => setQuantity(e.target.value)} type="number" placeholder="e.g. 100" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <label className="text-xs font-semibold text-slate-600">Price ($) <span className="text-slate-400 font-normal">(optional)</span></label>
-              <input value={price} onChange={e => setPrice(e.target.value)} type="number" placeholder="e.g. 45.20" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <label htmlFor="xray-price" className="text-xs font-semibold text-slate-600">Price ($) <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input id="xray-price" value={price} onChange={e => setPrice(e.target.value)} type="number" placeholder="e.g. 45.20" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
               <label className="text-xs font-semibold text-slate-600 invisible select-none">Action</label>

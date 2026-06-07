@@ -184,26 +184,26 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
 
           <div className="grid grid-cols-2 md:grid-cols-6 gap-2 mb-1">
             <div className="flex flex-col gap-0.5">
-              <label className="text-xs font-semibold text-slate-600">Ticker <span className="text-red-500">*</span></label>
-              <input value={ticker} onChange={e => setTicker(e.target.value)} placeholder="e.g. CBA"
+              <label htmlFor="tax-ticker" className="text-xs font-semibold text-slate-600">Ticker <span className="text-red-500">*</span></label>
+              <input id="tax-ticker" value={ticker} onChange={e => setTicker(e.target.value)} placeholder="e.g. CBA"
                 className={`px-3 py-2 text-sm border rounded-lg ${submitted && fieldErrors.ticker ? "border-red-400 bg-red-50" : "border-slate-200"}`} />
               {submitted && fieldErrors.ticker && <p role="alert" className="text-xs text-red-600">{fieldErrors.ticker}</p>}
             </div>
             <div className="flex flex-col gap-0.5">
-              <label className="text-xs font-semibold text-slate-600">Buy date <span className="text-slate-400 font-normal">(optional)</span></label>
-              <input value={buyDate} onChange={e => setBuyDate(e.target.value)} type="date" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <label htmlFor="tax-buy-date" className="text-xs font-semibold text-slate-600">Buy date <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input id="tax-buy-date" value={buyDate} onChange={e => setBuyDate(e.target.value)} type="date" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <label className="text-xs font-semibold text-slate-600">Buy price <span className="text-slate-400 font-normal">(optional)</span></label>
-              <input value={buyPrice} onChange={e => setBuyPrice(e.target.value)} type="number" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <label htmlFor="tax-buy-price" className="text-xs font-semibold text-slate-600">Buy price <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input id="tax-buy-price" value={buyPrice} onChange={e => setBuyPrice(e.target.value)} type="number" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <label className="text-xs font-semibold text-slate-600">Current price <span className="text-slate-400 font-normal">(optional)</span></label>
-              <input value={currentPrice} onChange={e => setCurrentPrice(e.target.value)} type="number" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+              <label htmlFor="tax-current-price" className="text-xs font-semibold text-slate-600">Current price <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input id="tax-current-price" value={currentPrice} onChange={e => setCurrentPrice(e.target.value)} type="number" placeholder="$" className="px-3 py-2 text-sm border border-slate-200 rounded-lg" />
             </div>
             <div className="flex flex-col gap-0.5">
-              <label className="text-xs font-semibold text-slate-600">Quantity <span className="text-red-500">*</span></label>
-              <input value={quantity} onChange={e => setQuantity(e.target.value)} type="number" placeholder="e.g. 100"
+              <label htmlFor="tax-quantity" className="text-xs font-semibold text-slate-600">Quantity <span className="text-red-500">*</span></label>
+              <input id="tax-quantity" value={quantity} onChange={e => setQuantity(e.target.value)} type="number" placeholder="e.g. 100"
                 className={`px-3 py-2 text-sm border rounded-lg ${submitted && fieldErrors.quantity ? "border-red-400 bg-red-50" : "border-slate-200"}`} />
               {submitted && fieldErrors.quantity && <p role="alert" className="text-xs text-red-600">{fieldErrors.quantity}</p>}
             </div>
