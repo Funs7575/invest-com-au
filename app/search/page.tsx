@@ -127,7 +127,7 @@ export default async function SearchPage({
           {query.length >= 2 && (
             <div className="mb-6">
               {error ? (
-                <p className="text-sm text-red-600">{error}</p>
+                <p role="alert" className="text-sm text-red-600">{error}</p>
               ) : results ? (
                 <p className="text-sm text-slate-500">
                   {totalHits === 0

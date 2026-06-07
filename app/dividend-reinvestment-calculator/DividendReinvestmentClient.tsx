@@ -19,6 +19,16 @@ export default function DividendReinvestmentClient() {
   const [growth, setGrowth] = useState(6);
   const [years, setYears] = useState(20);
 
+  const isModified = price !== 50 || shares !== 1000 || divYield !== 4 || growth !== 6 || years !== 20;
+
+  const handleReset = () => {
+    setPrice(50);
+    setShares(1000);
+    setDivYield(4);
+    setGrowth(6);
+    setYears(20);
+  };
+
   const {
     value: persistedInputs,
     setValue: setPersistedInputs,
@@ -210,6 +220,17 @@ export default function DividendReinvestmentClient() {
                 </div>
               </div>
             </div>
+            {isModified && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="text-xs font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  Reset to defaults
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Results */}
