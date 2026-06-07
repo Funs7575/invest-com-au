@@ -574,5 +574,11 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-195]** Term deposits remove: replaced native `confirm()` with inline "Remove? Yes / No" confirmation. `app/account/term-deposits/TermDepositsClient.tsx`
 
+**[ADV-196]** Account privacy — delete account: replaced `window.confirm()` with inline expandable confirmation card showing grace-period details and "Yes, schedule deletion" / "Cancel" buttons. `app/account/privacy/PrivacyClient.tsx`
+
+**[ADV-197]** Verified products — remove: replaced `confirm()` with inline "Remove? Yes / No" row. `app/account/verified/VerifiedClient.tsx`
+
+**[ADV-198]** Saved lists — delete: replaced `confirm()` with inline "Delete? Yes / No" row. `app/account/lists/ListsClient.tsx`
+
 ---
 

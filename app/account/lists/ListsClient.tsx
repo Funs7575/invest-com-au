@@ -30,6 +30,7 @@ function ListCard({
 }) {
   const [toggling, setToggling] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(false);
 
   const handleToggle = async () => {
     setToggling(true);
@@ -46,7 +47,7 @@ function ListCard({
   };
 
   const handleDelete = async () => {
-    if (!confirm(`Delete "${list.title}"? This cannot be undone.`)) return;
+    setPendingDelete(false);
     setDeleting(true);
     try {
       const res = await fetch("/api/account/user-lists", {
@@ -97,13 +98,28 @@ function ListCard({
           >
             {toggling ? "…" : list.is_public ? "Make private" : "Make public"}
           </button>
-          <button
-            onClick={() => { void handleDelete(); }}
-            disabled={deleting}
-            className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {deleting ? "Deleting…" : "Delete"}
-          </button>
+          {pendingDelete ? (
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-red-600 font-medium">Delete?</span>
+              <button
+                onClick={() => { void handleDelete(); }}
+                disabled={deleting}
+                className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
+              >{deleting ? "…" : "Yes"}</button>
+              <button
+                onClick={() => setPendingDelete(false)}
+                className="text-xs text-slate-500 hover:text-slate-700 px-2 py-0.5 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+              >No</button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setPendingDelete(true)}
+              disabled={deleting}
+              className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {deleting ? "Deleting…" : "Delete"}
+            </button>
+          )}
         </div>
       </div>
     </div>
