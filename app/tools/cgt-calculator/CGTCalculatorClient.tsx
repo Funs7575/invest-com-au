@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { incomeTax } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── ATO resident rates 2024-25 (Stage 3) ────────────────────────────────────
 
@@ -367,6 +368,13 @@ export default function CGTCalculatorClient() {
           </div>
         </div>
       )}
+
+      <CalculatorLeadCapture
+        calcSlug="cgt-calculator"
+        calcTitle="CGT"
+        need="tax"
+        contextKeys={["cgt", "capital-gains", "investment"]}
+      />
 
       <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </div>

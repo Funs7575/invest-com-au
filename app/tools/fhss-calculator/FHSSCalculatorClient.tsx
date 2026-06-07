@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { marginalRate } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── FHSS maths ──────────────────────────────────────────────────────────────
 
@@ -366,6 +367,13 @@ export default function FHSSCalculatorClient() {
       </section>
 
       {/* Compliance */}
+      <CalculatorLeadCapture
+        calcSlug="fhss-calculator"
+        calcTitle="FHSS scheme"
+        need="planning"
+        contextKeys={["fhss", "first-home-buyer", "super"]}
+      />
+
       <p className="text-xs text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </main>
   );

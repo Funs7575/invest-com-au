@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { marginalRate } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── ETP tax constants (FY2025-26) ───────────────────────────────────────────
 
@@ -313,6 +314,13 @@ export default function ETPCalculatorClient() {
           <span className="text-xs text-gray-500 mt-0.5">ETP, super strategy, rebuild plan</span>
         </Link>
       </div>
+
+      <CalculatorLeadCapture
+        calcSlug="etp-calculator"
+        calcTitle="ETP tax"
+        need="tax"
+        contextKeys={["etp", "redundancy", "termination"]}
+      />
 
       <p className="text-xs text-gray-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </main>

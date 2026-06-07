@@ -32,6 +32,7 @@ import {
   DASP_WARNING,
   GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 function fmt(n: number): string {
   return new Intl.NumberFormat("en-AU", {
@@ -386,6 +387,13 @@ export default function DaspCalculatorClient() {
           )}
         </div>
       </div>
+
+      <CalculatorLeadCapture
+        calcSlug="dasp-calculator"
+        calcTitle="DASP"
+        need="tax"
+        contextKeys={["dasp", "super", "departing-australia"]}
+      />
 
       {/* Disclaimer */}
       <div className="mt-8 pt-6 border-t border-slate-200">

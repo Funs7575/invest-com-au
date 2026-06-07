@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { formatAud } from "@/lib/first-home-buyer/state-grants";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 interface CountryOption {
   code: string;
@@ -346,6 +347,13 @@ export default function WithholdingTaxClient() {
               <Icon name="arrow-right" size={14} />
             </Link>
           </div>
+
+          <CalculatorLeadCapture
+            calcSlug="withholding-tax-calculator"
+            calcTitle="withholding tax"
+            need="tax"
+            contextKeys={["withholding-tax", "non-resident", "foreign-investment"]}
+          />
 
           <p className="text-[11px] text-slate-500 leading-relaxed mt-6">
             <strong>General information only.</strong> Rates shown apply to

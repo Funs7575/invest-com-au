@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useId } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { trackEvent } from "@/lib/tracking";
 import { computeInvestmentIncomeTax } from "@/lib/calculators/investment-income-tax";
 
@@ -416,6 +417,13 @@ export default function InvestmentIncomeTaxClient() {
               </Link>
             </div>
           </div>
+
+          <CalculatorLeadCapture
+            calcSlug="investment-income-tax-calculator"
+            calcTitle="investment income tax"
+            need="tax"
+            contextKeys={["investment-income", "dividends", "interest", "tax"]}
+          />
         </div>
       </div>
     </div>

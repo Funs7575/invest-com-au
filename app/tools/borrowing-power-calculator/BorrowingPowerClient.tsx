@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { incomeTax } from "@/lib/tax/brackets";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 // ─── Australian lending maths (FY2025-26) ────────────────────────────────────
 
@@ -284,6 +285,13 @@ export default function BorrowingPowerClient() {
           <span className="text-xs text-gray-500 mt-0.5">Everything in one place</span>
         </Link>
       </div>
+
+      <CalculatorLeadCapture
+        calcSlug="borrowing-power-calculator"
+        calcTitle="borrowing capacity"
+        need="mortgage"
+        contextKeys={["borrowing-power", "home-loan"]}
+      />
 
       <p className="text-xs text-gray-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
     </main>

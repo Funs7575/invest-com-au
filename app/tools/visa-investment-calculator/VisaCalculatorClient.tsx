@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 interface VisaPathway {
   code: string;
@@ -393,6 +394,16 @@ export default function VisaCalculatorClient() {
             </div>
           )}
         </div>
+      </section>
+
+      {/* Lead capture */}
+      <section className="container-custom max-w-3xl py-8">
+        <CalculatorLeadCapture
+          calcSlug="visa-investment-calculator"
+          calcTitle="visa investment pathway"
+          need="planning"
+          contextKeys={["visa", "migration", "foreign-investment"]}
+        />
       </section>
 
       {/* CTA section */}
