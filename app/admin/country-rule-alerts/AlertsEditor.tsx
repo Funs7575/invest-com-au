@@ -37,6 +37,9 @@ export default function AlertsEditor() {
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState<DraftAlert>(EMPTY_DRAFT);
   const [busy, setBusy] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
   async function load() {
     const url = filter
@@ -57,6 +60,7 @@ export default function AlertsEditor() {
   }, [filter]);
 
   async function save() {
+    setSaveError(null);
     setBusy(true);
     try {
       const isEdit = editing !== null;
@@ -67,7 +71,7 @@ export default function AlertsEditor() {
       });
       if (!res.ok) {
         const err = (await res.json().catch(() => ({}))) as { error?: string };
-        alert(err.error || "Save failed");
+        setSaveError(err.error || "Save failed");
         return;
       }
       setEditing(null);
@@ -80,12 +84,13 @@ export default function AlertsEditor() {
   }
 
   async function remove(id: number) {
-    if (!confirm("Delete this alert? This is destructive.")) return;
+    setPendingDeleteId(null);
+    setDeleteError(null);
     const res = await fetch(`/api/admin/country-rule-alerts?id=${id}`, {
       method: "DELETE",
     });
     if (!res.ok) {
-      alert("Delete failed");
+      setDeleteError("Delete failed");
       return;
     }
     await load();
@@ -152,10 +157,16 @@ export default function AlertsEditor() {
             setEditing(null);
             setCreating(false);
             setDraft(EMPTY_DRAFT);
+            setSaveError(null);
           }}
           busy={busy}
           isEdit={editing !== null}
+          saveError={saveError}
         />
+      )}
+
+      {deleteError && (
+        <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">{deleteError}</p>
       )}
 
       <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
@@ -206,13 +217,21 @@ export default function AlertsEditor() {
                     >
                       Edit
                     </button>
-                    <button
-                      type="button"
-                      className="text-red-600 hover:underline"
-                      onClick={() => remove(r.id)}
-                    >
-                      Delete
-                    </button>
+                    {pendingDeleteId === r.id ? (
+                      <span className="inline-flex items-center gap-1">
+                        <span className="text-red-700 font-semibold">Delete?</span>
+                        <button type="button" className="text-red-600 hover:underline font-bold" onClick={() => void remove(r.id)}>Yes</button>
+                        <button type="button" className="text-slate-500 hover:underline" onClick={() => setPendingDeleteId(null)}>No</button>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="text-red-600 hover:underline"
+                        onClick={() => { setDeleteError(null); setPendingDeleteId(r.id); }}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               );
@@ -231,9 +250,10 @@ interface AlertFormProps {
   onCancel: () => void;
   busy: boolean;
   isEdit: boolean;
+  saveError?: string | null;
 }
 
-function AlertForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: AlertFormProps) {
+function AlertForm({ draft, setDraft, onSave, onCancel, busy, isEdit, saveError }: AlertFormProps) {
   function set<K extends keyof DraftAlert>(key: K, value: DraftAlert[K]) {
     setDraft({ ...draft, [key]: value });
   }
@@ -375,6 +395,7 @@ function AlertForm({ draft, setDraft, onSave, onCancel, busy, isEdit }: AlertFor
         >
           Cancel
         </button>
+        {saveError && <p role="alert" className="text-xs text-red-700 ml-2">{saveError}</p>}
       </div>
     </div>
   );

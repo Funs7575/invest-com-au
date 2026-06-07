@@ -21,6 +21,7 @@ export default function ReviewModerationPage() {
   const [reviews, setReviews] = useState<PendingReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -42,9 +43,7 @@ export default function ReviewModerationPage() {
 
   const handleAction = async (ids: number[], action: "approve" | "reject" | "flag") => {
     if (ids.length === 0) return;
-    const labels: Record<string, string> = { approve: "Approve", reject: "Reject", flag: "Flag" };
-    if (!confirm(`${labels[action]} ${ids.length} review(s)?`)) return;
-
+    setActionError(null);
     setActing(true);
     try {
       const res = await fetch("/api/admin/review-moderation", {
@@ -55,11 +54,11 @@ export default function ReviewModerationPage() {
       if (res.ok) {
         loadData();
       } else {
-        const err = await res.json();
-        alert(err.error || "Action failed");
+        const err = await res.json() as { error?: string };
+        setActionError(err.error || "Action failed");
       }
     } catch {
-      alert("Network error");
+      setActionError("Network error");
     }
     setActing(false);
   };
@@ -81,6 +80,10 @@ export default function ReviewModerationPage() {
           Approve, reject, or flag pending advisor reviews before they go public.
         </p>
       </div>
+
+      {actionError && (
+        <p role="alert" className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{actionError}</p>
+      )}
 
       {loading ? (
         <div className="text-slate-400 text-sm py-12 text-center">Loading pending reviews...</div>
