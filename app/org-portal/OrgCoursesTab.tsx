@@ -200,7 +200,7 @@ export default function OrgCoursesTab({ org }: Props) {
             </div>
 
             {createError && (
-              <p className="text-xs text-red-600">{createError}</p>
+              <p role="alert" className="text-xs text-red-600">{createError}</p>
             )}
 
             <div className="flex gap-2 pt-1">

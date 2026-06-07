@@ -140,7 +140,7 @@ export default function OrgBillingTab({ org }: Props) {
               {connectingStripe ? "Redirecting..." : "Connect Stripe"}
             </button>
             {stripeError && (
-              <p className="text-xs text-red-600 mt-2">{stripeError}</p>
+              <p role="alert" className="text-xs text-red-600 mt-2">{stripeError}</p>
             )}
           </div>
         )}

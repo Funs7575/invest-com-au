@@ -296,7 +296,7 @@ export default function OrgEventsTab({ org: _org }: Props) {
         <div className="bg-white border border-teal-200 rounded-xl p-5 mb-5">
           <h2 className="text-sm font-bold text-slate-900 mb-4">New Event</h2>
           <EventFormFields form={form} setField={setFormField} />
-          {createError && <p className="text-xs text-red-600 mt-2">{createError}</p>}
+          {createError && <p role="alert" className="text-xs text-red-600 mt-2">{createError}</p>}
           <div className="flex gap-2 pt-3">
             <button
               onClick={handleCreate}
@@ -321,7 +321,7 @@ export default function OrgEventsTab({ org: _org }: Props) {
           <div role="dialog" aria-modal="true" aria-labelledby="org-edit-event-title" className="bg-white rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6">
             <h2 id="org-edit-event-title" className="text-sm font-bold text-slate-900 mb-4">Edit Event</h2>
             <EventFormFields form={editForm} setField={setEditFormField} />
-            {editError && <p className="text-xs text-red-600 mt-2">{editError}</p>}
+            {editError && <p role="alert" className="text-xs text-red-600 mt-2">{editError}</p>}
             <div className="flex gap-2 pt-3">
               <button
                 onClick={handleSaveEdit}

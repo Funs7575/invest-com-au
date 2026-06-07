@@ -654,7 +654,7 @@ export default function EditCampaignPage() {
             </select>
             {/* ADV-141: inline time-range error */}
             {timeRangeError && (
-              <p className="mt-1 text-xs text-red-600 flex items-center gap-1">
+              <p role="alert" className="mt-1 text-xs text-red-600 flex items-center gap-1">
                 <Icon name="alert-circle" size={11} />
                 {timeRangeError}
               </p>

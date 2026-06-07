@@ -611,5 +611,11 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-216]** `role="alert"` on inline errors in quiz and get-matched — quiz `fetchError` notice and get-matched plan save error were missing `role="alert"` so screen readers wouldn't announce them. `app/quiz/_components/QuizQuestionScreen.tsx`, `app/get-matched/GetMatchedClient.tsx`
 
+**[ADV-217]** `role="alert"` sweep — CommunityVote fetchError tally notice + IntakeQuestionsEditor select validation guard (disables Save when <2 options; shows inline hint). `app/versus/CommunityVote.tsx`, `app/pros/settings/intake/IntakeQuestionsEditor.tsx`
+
+**[ADV-218]** `role="alert"` sweep batch 2 — 14 additional files: term-deposits delete error, advisor-apply submit error, CourseBuilderTab (3 blocks), LeadsTab firm-leads error, advisor-portal dispute error, AdvisorsClient alert-save error, LessonClient mark-complete error, fee-alerts subscribe error, ProPageClient checkout error, AdvisorResultsScreen contact error, billing (subscription + settings errors), ProsJoinWizard (doc + submit errors), AdvisorProfileClient (name + email + form errors). All error displays now announce via `role="alert"` for AT users.
+
+**[ADV-219]** BuyerAgentsClient fetch error state — DB query now destructures `{ data, error }` and sets `fetchError` boolean; renders accessible "Could not load buyer's agents / Please refresh" notice instead of silently showing an empty grid. `app/property/buyer-agents/BuyerAgentsClient.tsx`
+
 ---
 

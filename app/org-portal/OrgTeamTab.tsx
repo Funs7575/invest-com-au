@@ -135,7 +135,7 @@ export default function OrgTeamTab({ org: _org }: Props) {
           </div>
 
           {inviteError && (
-            <p className="text-xs text-red-600">{inviteError}</p>
+            <p role="alert" className="text-xs text-red-600">{inviteError}</p>
           )}
 
           <div className="flex items-center gap-3">
