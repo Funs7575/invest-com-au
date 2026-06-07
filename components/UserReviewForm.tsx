@@ -177,6 +177,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="e.g. Sarah M."
             maxLength={50}
             required
+            autoComplete="nickname"
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
           />
         </div>
@@ -192,6 +193,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="you@email.com"
             maxLength={254}
             required
+            autoComplete="email"
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
           />
           <p className="text-xs text-slate-400 mt-1">For verification only — never displayed.</p>

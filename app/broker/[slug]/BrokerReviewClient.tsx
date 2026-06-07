@@ -301,8 +301,8 @@ export default function BrokerReviewClient({
               <h1 className="text-xl md:text-3xl font-extrabold leading-tight text-slate-900">{b.name} Review ({CURRENT_YEAR})</h1>
               <p className="text-slate-500 mt-0.5 md:mt-1 text-xs md:text-base">{b.tagline}</p>
               <div className="flex items-center gap-2 md:gap-3 flex-wrap mt-2">
-                <span className="text-amber-600 text-sm">{renderStars(b.rating || 0)}</span>
-                <span className="text-sm font-bold text-slate-700">{b.rating}/5</span>
+                <span className="text-amber-600 text-sm" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
+                <span className="text-sm font-bold text-slate-700" aria-hidden="true">{b.rating}/5</span>
                 {b.chess_sponsored && (
                   <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">CHESS</span>
                 )}
@@ -482,8 +482,8 @@ export default function BrokerReviewClient({
             </p>
             <div className="flex items-center gap-4 pt-3 border-t border-white/10">
               <div className="flex items-center gap-2">
-                <span className="text-amber-400 text-lg">{renderStars(b.rating || 0)}</span>
-                <span className="text-2xl font-extrabold">{b.rating}<span className="text-sm text-slate-400">/5</span></span>
+                <span className="text-amber-400 text-lg" aria-label={`${b.rating} out of 5 stars`}>{renderStars(b.rating || 0)}</span>
+                <span className="text-2xl font-extrabold" aria-hidden="true">{b.rating}<span className="text-sm text-slate-400">/5</span></span>
               </div>
               <a
                 href={getAffiliateLink(b)}

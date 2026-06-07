@@ -106,7 +106,14 @@ const SECONDARY_SPECIALTIES: ProfessionalType[] = (
 function StepHeader({ step }: { step: number }) {
   return (
     <div className="mb-6">
-      <div className="flex items-center gap-1.5 mb-3" aria-label={`Step ${step} of ${TOTAL_STEPS}`}>
+      <div
+        role="progressbar"
+        aria-valuenow={step}
+        aria-valuemin={1}
+        aria-valuemax={TOTAL_STEPS}
+        aria-label={`Step ${step} of ${TOTAL_STEPS}`}
+        className="flex items-center gap-1.5 mb-3"
+      >
         {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((n) => (
           <div
             key={n}
@@ -116,7 +123,7 @@ function StepHeader({ step }: { step: number }) {
           />
         ))}
       </div>
-      <p className="text-xs text-slate-500 font-medium">
+      <p className="text-xs text-slate-500 font-medium" aria-live="polite" aria-atomic="true">
         Step {step} of {TOTAL_STEPS}
       </p>
     </div>
@@ -525,6 +532,10 @@ export default function ProsJoinWizard() {
               }}
               disabled={docUploading}
             />
+            <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+              {docUploading && `Uploading ${docFile?.name ?? "document"}…`}
+              {docStoragePath && !docUploading && `${docFile?.name ?? "Document"} uploaded successfully.`}
+            </div>
             {docUploading ? (
               <div className="text-sm text-slate-600">
                 <div aria-hidden="true" className="mx-auto mb-2 w-6 h-6 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin" />
@@ -572,13 +583,18 @@ export default function ProsJoinWizard() {
           </p>
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2.5">
-              <Field
-                label="BSB *"
-                value={state.payout_bsb}
-                onChange={(v) => update("payout_bsb", v)}
-                placeholder="062-000"
-                small
-              />
+              <div>
+                <Field
+                  label="BSB *"
+                  value={state.payout_bsb}
+                  onChange={(v) => update("payout_bsb", v)}
+                  placeholder="062-000"
+                  small
+                />
+                {state.payout_bsb && !BSB_RE.test(state.payout_bsb.trim()) && (
+                  <p role="alert" className="mt-1 text-xs text-red-600">Format: 000-000</p>
+                )}
+              </div>
               <Field
                 label="Account number *"
                 value={state.payout_account_number}
@@ -685,6 +701,7 @@ export default function ProsJoinWizard() {
             type="button"
             onClick={handleSubmit}
             disabled={!stepValid || submitState === "submitting"}
+            aria-busy={submitState === "submitting"}
             className="ml-auto px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {submitState === "submitting"
@@ -765,6 +782,7 @@ function SpecialtyGroup({
               onClick={() => onToggle(opt)}
               disabled={disabled}
               aria-pressed={isSelected}
+              aria-label={disabled ? `${PROFESSIONAL_TYPE_LABELS[opt]} — maximum 8 specialties reached, deselect one to add another` : PROFESSIONAL_TYPE_LABELS[opt]}
               className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 isSelected
                   ? "bg-violet-600 text-white border-violet-600"

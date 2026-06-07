@@ -468,6 +468,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 }).catch(() => {});
               }
             }}
+            aria-live="polite"
+            aria-label={shareLinkCopied ? "Link copied to clipboard" : "Share this view — copy link"}
             className="underline hover:text-slate-700"
           >
             {shareLinkCopied ? "Copied!" : "Share this view"}
