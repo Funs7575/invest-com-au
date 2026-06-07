@@ -30,7 +30,8 @@ export async function generateMetadata({ params }: { params: Promise<{ term: str
     title,
     description,
     alternates: { canonical: `/glossary/${slug}` },
-    openGraph: { title: `${entry.term} — Investing Glossary`, description },
+    openGraph: { title: `${entry.term} — Investing Glossary`, description, images: [{ url: `/api/og?title=${encodeURIComponent(entry.term)}&sub=${encodeURIComponent("Investing Glossary · Definition · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
+    twitter: { card: "summary_large_image" },
   };
 }
 

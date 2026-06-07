@@ -38,6 +38,7 @@ export const metadata: Metadata = {
     description: "The Export Market Development Grant — three tiers, what's covered, and how to apply.",
     url: `${SITE_URL}/grants/emdg`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("EMDG Grant Australia")}&sub=${encodeURIComponent("Export Marketing · Up to $80,000 · 3 Tiers · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

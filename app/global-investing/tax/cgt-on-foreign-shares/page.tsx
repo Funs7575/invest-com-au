@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "AUD cost base rules, FX gain impact, 50% CGT discount, and FITO for Australian investors holding US and other foreign shares.",
     url: `${SITE_URL}/global-investing/tax/cgt-on-foreign-shares`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("CGT on Foreign Shares")}&sub=${encodeURIComponent("Australian Tax on Overseas Investments · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: {

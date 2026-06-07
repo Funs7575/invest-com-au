@@ -426,6 +426,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: cfg.description.slice(0, 200),
       url: `${SITE_URL}/grants/${state}/${program}`,
       type: "website",
+      images: [{ url: `/api/og?title=${encodeURIComponent(cfg.programLabel)}&sub=${encodeURIComponent(cfg.stateLabel + " Grant · " + cfg.fundingMax + " · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

@@ -27,7 +27,9 @@ export const metadata: Metadata = {
     description:
       "Side-by-side: DTA status, withholding tax, FIRB rules, FX, pension transfer, and migration pathways for UK, US, China, India, Singapore, and more.",
     url: absoluteUrl("/foreign-investment/compare"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Compare Foreign Investment Countries")}&sub=${encodeURIComponent("FIRB Rules · Tax · DTA · Returns · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function CompareIndexPage() {

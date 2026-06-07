@@ -18,7 +18,9 @@ export const metadata: Metadata = {
     description:
       "Indicative Australian FIRB application fee based on asset class, transaction value, and investor type.",
     url: absoluteUrl("/firb-fee-estimator"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("FIRB Fee Estimator")}&sub=${encodeURIComponent("Calculate Application Fee · Property · Business · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 const softwareLd = {

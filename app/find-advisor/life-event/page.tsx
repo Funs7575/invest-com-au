@@ -21,6 +21,7 @@ export const metadata: Metadata = {
       "Match with the right type of financial professional based on what's happening in your life right now.",
     url: `${SITE_URL}/find-advisor/life-event`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Find an Advisor for Your Life Event")}&sub=${encodeURIComponent("Marriage · Kids · Retirement · Inheritance · Matched Free")}`, width: 1200, height: 630 }],
   },
 };
 

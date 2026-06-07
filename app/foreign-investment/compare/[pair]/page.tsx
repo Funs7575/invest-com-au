@@ -66,6 +66,7 @@ export async function generateMetadata({
       title: `${cfgA.countryShort} vs ${cfgB.countryShort} — Investing in Australia (${CURRENT_YEAR})`,
       description,
       url: absoluteUrl(`/foreign-investment/compare/${cfgA.slug}-vs-${cfgB.slug}`),
+      images: [{ url: `/api/og?title=${encodeURIComponent(cfgA.countryShort + " vs " + cfgB.countryShort + " — Investing in Australia")}&sub=${encodeURIComponent("Tax · FIRB · Migration · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
     twitter: { card: "summary_large_image" },
   };

@@ -33,6 +33,7 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: `${SITE_URL}/halal-investing`,
     type: "article",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Halal Investing in Australia")}&sub=${encodeURIComponent("Sharia-Compliant Shares · ETFs · Screening · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
 };

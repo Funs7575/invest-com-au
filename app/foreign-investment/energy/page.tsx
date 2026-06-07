@@ -18,7 +18,9 @@ export const metadata: Metadata = {
     description:
       "FIRB, critical infrastructure, withholding tax and allied-nation frameworks for foreign investors in Australian energy.",
     url: `${SITE_URL}/foreign-investment/energy`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Foreign Investment in Australian Energy")}&sub=${encodeURIComponent("FIRB · Critical Infrastructure · Solar · LNG · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 const SECTIONS = [

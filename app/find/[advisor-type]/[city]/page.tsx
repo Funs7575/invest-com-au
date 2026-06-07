@@ -100,8 +100,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: absoluteUrl(canonical),
       siteName: SITE_NAME,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Find " + typeInfo.plural + " in " + city)}&sub=${encodeURIComponent("Compare · Verified · Free to Browse · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
-    twitter: { card: "summary" },
+    twitter: { card: "summary_large_image" },
   };
 }
 

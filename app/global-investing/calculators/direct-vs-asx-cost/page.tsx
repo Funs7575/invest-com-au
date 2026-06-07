@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Direct US Shares vs ASX-Listed ETFs: True Cost (${CURRENT_YEAR})`,
     description: "Total cost comparison across investment sizes. At what amount does direct US share investing beat AU-listed ETFs?",
     url: `${SITE_URL}/global-investing/calculators/direct-vs-asx-cost`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Direct vs ASX Broker Cost Calculator")}&sub=${encodeURIComponent("IBKR vs CMC · Currency · Brokerage · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   alternates: { canonical: `${SITE_URL}/global-investing/calculators/direct-vs-asx-cost` },
 };

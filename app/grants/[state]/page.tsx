@@ -286,6 +286,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: cfg.metaDescription,
       url: `${SITE_URL}/grants/${slug}`,
       type: "website",
+      images: [{ url: `/api/og?title=${encodeURIComponent(cfg.label + " Grants Australia")}&sub=${encodeURIComponent("Federal · State Funding · R&D · EMDG · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

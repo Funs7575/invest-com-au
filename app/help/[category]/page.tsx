@@ -24,6 +24,7 @@ export async function generateMetadata(
       title: `${cat.title} | Help Centre`,
       description: cat.description,
       url: absoluteUrl(`/help/${cat.slug}`),
+      images: [{ url: `/api/og?title=${encodeURIComponent(cat.title)}&sub=${encodeURIComponent("Help Centre · Invest.com.au")}`, width: 1200, height: 630 }],
     },
   };
 }

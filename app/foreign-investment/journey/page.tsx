@@ -26,6 +26,7 @@ export const metadata: Metadata = {
     description:
       "Country-specific step-by-step guide: FIRB eligibility, DTA tax rates, investment options, FX, pension transfer, and specialist advisor referral.",
     url: `${SITE_URL}/foreign-investment/journey`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Foreign Investment Journey Australia")}&sub=${encodeURIComponent("Step-by-Step · FIRB · Visas · Tax · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/foreign-investment/journey` },

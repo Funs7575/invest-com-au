@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "US-domiciled vs Australian-domiciled US-exposure ETFs — estate tax, tax reporting, currency and cost compared for Australian investors.",
     url: `${SITE_URL}/global-investing/etfs/us`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("US Share ETFs Australia")}&sub=${encodeURIComponent("S&P 500 · NASDAQ · Hedged · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/global-investing/etfs/us` },

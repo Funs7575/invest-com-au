@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: "Help Centre | Invest.com.au",
     description: "Find answers to common questions about broker comparisons, calculators, and investing basics.",
     url: absoluteUrl("/help"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Help Centre")}&sub=${encodeURIComponent("Broker Comparisons · Calculators · Investing Basics")}`, width: 1200, height: 630 }],
   },
 };
 

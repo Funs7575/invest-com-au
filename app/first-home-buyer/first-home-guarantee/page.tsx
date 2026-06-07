@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: `${SITE_URL}/first-home-buyer/first-home-guarantee`,
     type: "article",
+    images: [{ url: `/api/og?title=${encodeURIComponent("First Home Guarantee Australia")}&sub=${encodeURIComponent("5% Deposit · Eligibility · How to Apply · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
 };

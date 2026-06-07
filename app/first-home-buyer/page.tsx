@@ -20,6 +20,7 @@ export const metadata: Metadata = {
     title: `First Home Buyer Hub (${CURRENT_YEAR}) — FHSS, Grants & Mortgages`,
     description: firstHomeBuyerHubConfig.metaDescription,
     url: `${SITE_URL}/first-home-buyer`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("First Home Buyer Hub Australia")}&sub=${encodeURIComponent("Grants · Guarantee · Stamp Duty · FHSS · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

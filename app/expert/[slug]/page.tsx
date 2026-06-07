@@ -27,7 +27,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: a.meta_description || a.excerpt,
       url: `/expert/${slug}`,
       type: "article",
+      images: [{ url: `/api/og?title=${encodeURIComponent(a.title)}&sub=${encodeURIComponent("Expert Insights · " + (a.author_name || "Invest.com.au"))}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: `${SITE_URL}/first-home-buyer/deposit-guide`,
     type: "article",
+    images: [{ url: `/api/og?title=${encodeURIComponent("First Home Deposit Guide")}&sub=${encodeURIComponent("How Much · Save Faster · LMI vs LVR · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
 };

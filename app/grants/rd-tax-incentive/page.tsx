@@ -18,6 +18,7 @@ export const metadata: Metadata = {
       "Up to 43.5% refundable cash offset on eligible R&D. Calculator, deadline, eligibility checklist and lead capture.",
     url: `${SITE_URL}/grants/rd-tax-incentive`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("R&D Tax Incentive Australia")}&sub=${encodeURIComponent("43.5% Cash Offset · Eligibility · Calculator · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

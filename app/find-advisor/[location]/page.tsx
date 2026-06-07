@@ -136,7 +136,9 @@ export async function generateMetadata({ params }: { params: Promise<{ location:
       title: `Best ${type}s in ${loc.city}`,
       description: loc.description,
       url: `${SITE_URL}/find-advisor/${location}`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Find " + type + "s in " + loc.city)}&sub=${encodeURIComponent("Compare · Verified · Free Consultation · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

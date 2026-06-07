@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description: "Two streams. Advisory-first. ~90% of funding projected committed by June 2026.",
     url: `${SITE_URL}/grants/industry-growth-program`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Industry Growth Program Australia")}&sub=${encodeURIComponent("Up to $5M · SME Manufacturing · Advisory-First · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

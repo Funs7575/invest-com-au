@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: firm.name,
       description,
+      images: [{ url: `/api/og?title=${encodeURIComponent(firm.name)}&sub=${encodeURIComponent("Advisory Firm · " + (firm.location_display || "Australia") + " · Verified")}`, width: 1200, height: 630 }],
     },
     twitter: { card: "summary_large_image" },
     alternates: { canonical: `/firm/${slug}` },
