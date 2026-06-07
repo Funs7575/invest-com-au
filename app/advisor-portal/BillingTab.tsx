@@ -116,10 +116,12 @@ export default function BillingTab({ advisor, stats, onNavigate, initialSummary 
 function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
   return (
     <div className="bg-white border border-amber-200 rounded-xl p-5">
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-1">
         <Icon name="star" size={18} className="text-amber-500" />
         <h3 className="text-sm font-bold text-slate-900">Featured Advisor</h3>
       </div>
+      {/* ADV-104: one-line benefit statement */}
+      <p className="text-xs text-amber-700 font-medium mb-2">Avg. 3× more profile views &amp; priority in search</p>
       <div className="text-2xl font-extrabold text-slate-900 mb-1">
         $149<span className="text-sm font-normal text-slate-400">/month</span>
       </div>
@@ -182,10 +184,12 @@ function FeaturedAdvisorCard({ advisor }: { advisor: Advisor | null }) {
 function ExpertArticleCard({ onNavigate }: { onNavigate: (v: ViewType) => void }) {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-5">
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-1">
         <Icon name="file-text" size={18} className="text-violet-500" />
         <h3 className="text-sm font-bold text-slate-900">Expert Article</h3>
       </div>
+      {/* ADV-104: one-line benefit statement */}
+      <p className="text-xs text-violet-700 font-medium mb-2">Builds E-E-A-T authority &amp; ranks on Google</p>
       <div className="text-2xl font-extrabold text-slate-900 mb-1">
         $299<span className="text-sm font-normal text-slate-400">/article</span>
       </div>

@@ -198,8 +198,9 @@ export default function CompoundInterestClient() {
             </div>
           </div>
 
-          {/* Results */}
+          {/* Results — ADV-138: id anchor so the save button is directly linkable */}
           <div
+            id="ci-results"
             className="lg:col-span-3 space-y-4"
             role="region"
             aria-live="polite"
@@ -218,7 +219,9 @@ export default function CompoundInterestClient() {
                     {result.effectiveRate.toFixed(2)}% effective
                   </span>
                   <div className="flex items-center gap-2">
+                    {/* ADV-138: id anchor so mobile users can deep-link to save */}
                     <button
+                      id="ci-save"
                       onClick={() => {
                         addEntry(
                           { principal, rate, years, monthly, freq },

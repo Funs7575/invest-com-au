@@ -81,6 +81,9 @@ export default function JobPostForm() {
   // surface a "From your quiz" reassurance banner so users don't think the
   // form is auto-filling itself unexplainably.
   const [prefilledFromQuiz, setPrefilledFromQuiz] = useState(false);
+  // Tracks which specific fields were auto-populated from the quiz so we can
+  // apply a visual highlight only to those fields (not to user-typed values).
+  const [prefilledFields, setPrefilledFields] = useState<Set<keyof JobForm>>(new Set());
 
   function set<K extends keyof JobForm>(key: K, v: JobForm[K]) {
     setForm((p) => ({ ...p, [key]: v }));
@@ -99,12 +102,14 @@ export default function JobPostForm() {
     const type = searchParams.get("type");
 
     let didPrefill = false;
+    const newPrefilledFields = new Set<keyof JobForm>();
 
     if (goal && GOAL_TO_TITLE_HINT[goal]) {
       const titleHint = complexity === "complex"
         ? `${GOAL_TO_TITLE_HINT[goal]} (complex situation)`
         : GOAL_TO_TITLE_HINT[goal];
       setForm((p) => ({ ...p, job_title: titleHint }));
+      newPrefilledFields.add("job_title");
       didPrefill = true;
     }
 
@@ -114,7 +119,10 @@ export default function JobPostForm() {
       didPrefill = true;
     }
 
-    if (didPrefill) setPrefilledFromQuiz(true);
+    if (didPrefill) {
+      setPrefilledFromQuiz(true);
+      setPrefilledFields(newPrefilledFields);
+    }
   }, [searchParams]);
 
   const canDetails =
@@ -261,9 +269,13 @@ export default function JobPostForm() {
               type="text"
               maxLength={120}
               value={form.job_title}
-              onChange={(e) => set("job_title", e.target.value)}
+              onChange={(e) => {
+                set("job_title", e.target.value);
+                // Clear the prefill highlight once the user starts editing
+                setPrefilledFields((prev) => { const next = new Set(prev); next.delete("job_title"); return next; });
+              }}
               placeholder="e.g. Refinance our $750k investment loan"
-              className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className={`w-full border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 ${prefilledFields.has("job_title") ? "border-blue-200 bg-blue-50 ring-1 ring-blue-200" : "border-slate-300"}`}
             />
             <p className="text-xs text-slate-400 mt-1">A short summary advisors will see in the job board.</p>
           </div>

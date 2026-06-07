@@ -12,7 +12,7 @@ import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import NextActions from "@/components/NextActions";
 
 export const metadata = {
-  title: "Compare Investing Platforms — Fees & Features",
+  title: "Compare Investing Platforms — Fees, Features & Safety",
   description: `Compare fees, features & safety across Australian investing platforms — shares, crypto, super & more. ${UPDATED_LABEL}.`,
   openGraph: {
     title: "Compare Platforms Side-by-Side",

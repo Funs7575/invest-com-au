@@ -207,14 +207,38 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
       </div>
 
       {/* Empty state */}
+      {/* ADV-113: No-results escape hatch — reset + curated trending picks */}
       {filtered.length === 0 && (
-        <div className="text-center py-16 text-slate-500">
-          <p className="text-lg font-medium mb-2">No articles found</p>
-          <p className="text-sm">
-            {searchQuery
-              ? "Try a different search term or category."
-              : "Try selecting a different category."}
+        <div className="text-center py-12 col-span-full">
+          <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Search className="w-6 h-6 text-slate-400" />
+          </div>
+          <p className="text-lg font-bold text-slate-800 mb-1">No articles found</p>
+          <p className="text-sm text-slate-500 mb-5">
+            {searchQuery ? "Try a different search term." : "Nothing in this category yet."}
           </p>
+          <button
+            onClick={() => { setActiveCategory("all"); setSearchQuery(""); }}
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-blue-700 text-white text-sm font-semibold rounded-lg hover:bg-blue-800 transition-colors mb-8"
+          >
+            Browse all articles
+          </button>
+          <div className="text-left max-w-sm mx-auto">
+            <p className="text-[0.7rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Popular reads</p>
+            <div className="space-y-2">
+              {[
+                { href: "/articles/how-to-start-investing", label: "How to start investing in Australia" },
+                { href: "/articles/etfs-vs-shares", label: "ETFs vs shares: which is right for you?" },
+                { href: "/articles/best-investment-platforms", label: "Best investment platforms in Australia (2026)" },
+                { href: "/articles/superannuation-guide", label: "Superannuation explained: a plain-English guide" },
+              ].map(({ href, label }) => (
+                <Link key={href} href={href} className="flex items-center gap-2 text-sm text-slate-600 hover:text-blue-700 hover:underline">
+                  <span className="text-blue-400 text-xs">→</span>
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       )}
     </div>

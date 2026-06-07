@@ -5,6 +5,102 @@ import Link from "next/link";
 
 const STEPS = ["Account", "Company", "Verify"] as const;
 
+const PRICING_TIERS = [
+  {
+    name: "Starter",
+    price: 299,
+    highlight: false,
+    perks: ["Profile listing", "Basic badge", "Category placement"],
+  },
+  {
+    name: "Growth",
+    price: 699,
+    highlight: true,
+    perks: ["Featured placement", "Comparison table priority", "Performance dashboard"],
+  },
+  {
+    name: "Pro",
+    price: 1499,
+    highlight: false,
+    perks: ["Top-of-category placement", "Custom CTA", "Dedicated account manager"],
+  },
+] as const;
+
+function PricingPreview() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      {/* Mobile: collapsible */}
+      <div className="sm:hidden bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-slate-800"
+          aria-expanded={open}
+        >
+          <span>Pricing preview — from $299/month</span>
+          <svg
+            className={`w-4 h-4 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        {open && <PricingTiers />}
+      </div>
+
+      {/* Desktop: always-visible sidebar (rendered by parent layout) */}
+    </>
+  );
+}
+
+function PricingTiers() {
+  return (
+    <div className="px-5 pb-5 space-y-3">
+      {PRICING_TIERS.map((tier) => (
+        <div
+          key={tier.name}
+          className={`rounded-xl border p-4 space-y-2 ${
+            tier.highlight
+              ? "border-slate-800 bg-slate-50"
+              : "border-slate-200 bg-white"
+          }`}
+        >
+          <div className="flex items-baseline justify-between">
+            <span className={`text-sm font-bold ${tier.highlight ? "text-slate-900" : "text-slate-700"}`}>
+              {tier.name}
+              {tier.highlight && (
+                <span className="ml-2 text-xs font-medium bg-slate-900 text-white px-2 py-0.5 rounded-full">Popular</span>
+              )}
+            </span>
+            <span className="text-sm font-semibold text-slate-900">${tier.price}<span className="text-xs text-slate-400 font-normal">/mo</span></span>
+          </div>
+          <ul className="space-y-1">
+            {tier.perks.map((perk) => (
+              <li key={perk} className="flex items-start gap-1.5 text-xs text-slate-600">
+                <svg className="w-3.5 h-3.5 text-emerald-500 mt-px shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+                {perk}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <p className="text-xs text-slate-400 pt-1">
+        Pricing confirmed after approval.{" "}
+        <Link href="/advertise" className="text-slate-600 underline hover:text-slate-800">
+          See full details →
+        </Link>
+      </p>
+    </div>
+  );
+}
+
 export default function BrokerRegisterPage() {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -117,6 +213,14 @@ export default function BrokerRegisterPage() {
 
   return (
     <div className="space-y-5" style={{ animation: "resultCardIn 0.4s ease-out" }}>
+      {/* Mobile pricing preview — shown above form on small screens */}
+      {step < 2 && <PricingPreview />}
+
+      {/* Desktop two-column layout: form left, pricing sidebar right */}
+      <div className="sm:flex sm:gap-6 sm:items-start">
+      {/* Left column (form) — takes all space on mobile, constrained on desktop */}
+      <div className="flex-1 min-w-0 space-y-5">
+
       {/* Progress steps */}
       <div className="flex items-center justify-center gap-2">
         {STEPS.map((label, i) => (
@@ -221,8 +325,10 @@ export default function BrokerRegisterPage() {
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="e.g. commsec (leave blank to auto-generate)" />
               <p className="text-xs text-slate-400 mt-1">
-                Your URL identifier — lowercase letters, numbers, and hyphens only (e.g.{" "}
-                <span className="font-mono">commsec</span>). Must match your broker listing on Invest.com.au if you have one, or leave blank to auto-generate.
+                Your unique URL on the platform — e.g.{" "}
+                <span className="font-mono text-slate-500">invest.com.au/broker/your-slug</span>. Use lowercase letters, numbers, and hyphens only.{" "}
+                <strong className="text-slate-500 font-semibold">Cannot be changed later.</strong>{" "}
+                Leave blank to auto-generate from your company name.
               </p>
             </div>
             <div>
@@ -323,6 +429,23 @@ export default function BrokerRegisterPage() {
         Already have an account?{" "}
         <Link href="/broker-portal/login" className="text-slate-700 underline">Sign in</Link>
       </p>
+
+      </div>{/* end left column */}
+
+      {/* Desktop pricing sidebar — hidden on mobile (mobile uses collapsible above) */}
+      {step < 2 && (
+        <aside className="hidden sm:block w-72 shrink-0">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="px-5 pt-5 pb-3">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-0.5">Pricing preview</p>
+              <p className="text-sm font-bold text-slate-900">From $299/month</p>
+            </div>
+            <PricingTiers />
+          </div>
+        </aside>
+      )}
+
+      </div>{/* end desktop flex wrapper */}
     </div>
   );
 }
