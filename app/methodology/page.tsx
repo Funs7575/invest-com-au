@@ -1,6 +1,26 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { TIER_PRICING } from "@/lib/sponsorship";
+
+const METHODOLOGY_FAQS = [
+  {
+    q: "Does Invest.com.au receive commercial payments from brokers it lists?",
+    a: "Yes. Invest.com.au operates a transparent three-tier sponsorship programme (Featured Partner, Editor's Pick, Deal of the Month) with published monthly pricing. Sponsors appear above non-sponsors in directory listings. However, editorial ratings (the 0–5 star score) are assigned independently of commercial relationships and are not modified by sponsorship payments. The full sponsorship structure and pricing are published on this page.",
+  },
+  {
+    q: "How is the editorial rating calculated for Australian brokers and platforms?",
+    a: "Our editorial team assigns a 0–5 star score based on five weighted factors: fees and costs, platform quality and user experience, asset class and instrument coverage, safety and regulatory standing, and research and education tools. Ratings are updated when material changes occur — fee changes, regulatory actions, platform upgrades, or verified user-reported issues. The rating is the primary sort key within each sponsorship tier.",
+  },
+  {
+    q: "Can a sponsored broker outrank a higher-rated non-sponsored broker?",
+    a: "Within a tier, yes. Within the same sponsorship tier, brokers are sorted by editorial rating (higher rating first). Across tiers, a sponsored broker in a higher tier ranks above a non-sponsored broker regardless of rating — this is clearly disclosed on every comparison page. A goal-relevance gate prevents sponsored brokers from being boosted outside their applicable vertical (e.g. a share broker cannot be boosted above a super fund when your stated goal is superannuation).",
+  },
+  {
+    q: "How often does Invest.com.au update its platform data and ratings?",
+    a: "Fee data is reviewed and verified against primary sources (broker PDS documents and pricing pages) quarterly, and immediately upon receiving verified reports of changes. Editorial ratings are updated when material platform changes occur. All data field sources and last-verified dates are published on each broker profile page. The change log on this methodology page records all significant rating methodology changes with the reason for each change.",
+  },
+];
 
 export const revalidate = 86400;
 
@@ -122,6 +142,7 @@ const DATA_FIELDS = [
 ];
 
 export default function MethodologyPage() {
+  const faqLd = faqJsonLd(METHODOLOGY_FAQS);
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Methodology" },
@@ -137,6 +158,9 @@ export default function MethodologyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
       <div className="py-5 md:py-12">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
@@ -386,6 +410,22 @@ export default function MethodologyPage() {
                   each broker&apos;s published pricing page and PDS. When a provider notifies
                   us of a fee change, we update within 5 business days.
                 </p>
+              </div>
+            </section>
+
+            {/* FAQ */}
+            <section className="mb-10">
+              <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+              <div className="space-y-3">
+                {METHODOLOGY_FAQS.map((faq) => (
+                  <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                    <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                      {faq.q}
+                      <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                    </summary>
+                    <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                  </details>
+                ))}
               </div>
             </section>
 
