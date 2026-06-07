@@ -3,6 +3,28 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const BUY_BUSINESS_FAQS = [
+  {
+    q: "How do I find businesses for sale in Australia?",
+    a: "The main channels for finding businesses for sale: (1) business broker listings — REINSW, Businesses For Sale, BizSale Australia, and specialist brokers by industry (hospitality, healthcare, professional services); (2) direct approach — contacting owners of businesses you admire is common in smaller markets; (3) supplier and industry network referrals; (4) business marketplace platforms that aggregate listings from multiple brokers; (5) accountant and lawyer referrals — professionals who work with owner-operators often know of impending exits before they're listed. The best deals are often pre-market or quiet listings.",
+  },
+  {
+    q: "How do you value a small business in Australia?",
+    a: "Small businesses are most commonly valued using an EBITDA multiple. Typical multiples for Australian SMEs: 2–4x for trade businesses (plumbing, electrical, cleaning); 3–5x for professional services (accounting, legal, consulting); 4–8x for scalable product or software businesses. Asset-based valuation is used for capital-intensive businesses (manufacturing, hospitality). Revenue multiples apply to SaaS and recurring-revenue businesses. The actual price depends heavily on growth trajectory, customer concentration (>30% from one customer is a red flag), owner-dependency, and how clean the financials are.",
+  },
+  {
+    q: "What due diligence is required when buying a business?",
+    a: "Key due diligence areas: (1) financial — verify three years of accounts against tax returns and bank statements; normalise for owner's wage, personal expenses, and one-off items; (2) legal — check ownership of IP, assets, contracts, and licences; review all material supplier and customer contracts; (3) operational — understand the systems, staff, and key-person risks; shadow the owner for at least a few days; (4) tax — confirm there are no ATO liabilities, outstanding BAS obligations, or payroll-tax issues; (5) PPSR search — check the Personal Property Securities Register for any registered charges over business assets. Hire a specialist business lawyer and accountant — this is not a DIY exercise.",
+  },
+  {
+    q: "Do foreign investors need FIRB approval to buy a business in Australia?",
+    a: "Foreign investors require FIRB approval to acquire a business if the investment exceeds the applicable monetary threshold. For non-FTA countries, the threshold for 'business acquisitions' is A$330 million (lower for sensitive sectors like media, defence supply, critical infrastructure, and residential land). For countries with FTAs (USA, UK, Japan, South Korea, Singapore, NZ, etc.), higher thresholds apply. However, FIRB review is always required when acquiring an interest in an Australian national-security business, agricultural land, or a business with connections to critical infrastructure — regardless of value. Always seek legal advice before assuming an exemption applies.",
+  },
+];
+
+const buyBusinessFaqLd = faqJsonLd(BUY_BUSINESS_FAQS);
 
 export const revalidate = 3600;
 
@@ -32,6 +54,9 @@ export default function BuyBusinessPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {buyBusinessFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buyBusinessFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -323,6 +348,25 @@ export default function BuyBusinessPage() {
                 <Icon name="user-check" size={18} />
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {BUY_BUSINESS_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

@@ -1,6 +1,28 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const IPO_FAQS = [
+  {
+    q: "How do I apply for an ASX IPO in Australia?",
+    a: "To participate in an ASX IPO, you apply via a broker or directly through the company's share registry during the offer period. The process: (1) read the prospectus — legally required to be lodged with ASIC and available on the ASX website; (2) complete an application form with your HIN (Holder Identification Number, for CHESS-sponsored holders) or SRN; (3) submit payment (EFT or BPAY) before the offer close date. Some brokers (CommSec, nabtrade, Bell Direct) provide online IPO application facilities. Institutional allocations are handled separately — retail applicants often receive a smaller pro-rata allocation if the offer is oversubscribed.",
+  },
+  {
+    q: "What is the IPO process timeline on the ASX?",
+    a: "A typical ASX IPO follows this timeline: (1) pre-IPO preparation (3–6 months) — audited financials, prospectus drafting, underwriter appointment; (2) ASIC prospectus lodgement and exposure period (7 days — no applications accepted); (3) offer open (usually 2–4 weeks for retail); (4) close and allotment — shares issued, refunds processed; (5) listing day — shares commence trading on ASX, usually 2–3 business days after allotment. The total time from appointing advisers to listing is typically 4–9 months depending on complexity.",
+  },
+  {
+    q: "Are IPOs risky investments?",
+    a: "IPOs carry above-average risk compared to established listed companies. Academic research consistently shows that IPOs underperform the broader market on average over a 3–5 year horizon, despite often experiencing a 'pop' on listing day. Key risks: limited trading history (financials are backward-looking; growth projections are speculative); lock-up periods (insiders and pre-IPO investors can't sell immediately, but when restrictions expire, selling pressure can hurt the price); information asymmetry (insiders know far more than retail investors). That said, selective IPOs in high-growth sectors have produced exceptional returns — diversified, researched IPO participation can add value in a portfolio.",
+  },
+  {
+    q: "What tax applies to IPO shares in Australia?",
+    a: "IPO shares are taxed as capital assets. If you sell within 12 months of receiving the shares, any gain is taxed at your full marginal income tax rate. If you hold for 12+ months, the 50% CGT discount applies. The cost base for CGT is the issue price paid in the IPO (including any application fee). If the IPO is oversubscribed and you receive a pro-rata allotment with cash refunded, the refund is not income — it simply reduces the number of shares issued to you. If the company is an Early Stage Innovation Company (ESIC) at the time of listing, ESIC tax incentives may apply to the original investment.",
+  },
+];
+
+const ipoFaqLd = faqJsonLd(IPO_FAQS);
 
 export const revalidate = 3600;
 
@@ -42,6 +64,9 @@ export default function IposPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
       />
+      {ipoFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ipoFaqLd) }} />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -405,6 +430,25 @@ export default function IposPage() {
             >
               Find an Adviser &rarr;
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {IPO_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

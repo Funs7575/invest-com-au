@@ -2,6 +2,28 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const FUNDS_FAQS = [
+  {
+    q: "What is the difference between a managed fund and an ETF in Australia?",
+    a: "Both pool investor capital and provide diversified exposure, but they differ structurally. A managed fund (also called a managed investment scheme or MIS) is typically priced daily and accessed via the fund manager's website or a platform; units are bought and sold at the end-of-day Net Asset Value (NAV). An ETF (Exchange Traded Fund) trades intraday on the ASX like a share — you buy it through any broker at the live market price. Managed funds often have higher minimums ($5,000–$50,000) and may carry redemption queues; ETFs can be bought for the price of one unit. Tax efficiency also differs: ETFs tend to generate less capital gain distributions because creation/redemption is done in-kind.",
+  },
+  {
+    q: "What is a wholesale investor in Australia?",
+    a: "A wholesale investor (also called a sophisticated investor in some contexts) is a person who meets certain thresholds under the Corporations Act: net assets of $2.5M or gross income of $250,000 in the last two financial years (certified by an accountant), or is investing $500,000 or more in a single product. Wholesale classification unlocks access to investment products not available to retail investors — including many managed funds, unlisted property syndicates, and private credit offerings — because these products are exempt from certain disclosure requirements. The classification applies per investment and per year.",
+  },
+  {
+    q: "What fees should I watch for in Australian managed funds?",
+    a: "Key fees to scrutinise: (1) management fee (MER) — expressed as % p.a. of NAV, typically 0.1–2.5% depending on active vs passive; (2) performance fee — charged when the fund outperforms its benchmark, typically 10–20% of excess return; (3) buy/sell spread — built into the entry/exit price to cover transaction costs; (4) platform fee — if you access the fund via a super or investment platform (e.g. BT Panorama, Macquarie Wrap), an additional fee layer applies; (5) indirect cost ratio (ICR) — additional costs that reduce returns but aren't charged directly. Check the Product Disclosure Statement (PDS) — the total cost figure (TCR or 'cost of product') is the most comparable metric.",
+  },
+  {
+    q: "How are investment fund returns taxed in Australia?",
+    a: "Managed fund income and capital gain distributions are taxed in the year they're distributed to unitholders — even if you reinvest them. Your tax return will include a tax statement (sometimes called a 'tax distribution statement') showing the components: Australian income, foreign income, CGT discounted gains, and franking credits. You include each component in your return under the appropriate income category. Losses within the fund cannot be passed through to unitholders — they stay inside the fund. For ETFs, the same rules apply to distributions; capital gains on selling ETF units directly are subject to standard CGT rules.",
+  },
+];
+
+const fundsFaqLd = faqJsonLd(FUNDS_FAQS);
 import { createClient } from "@/lib/supabase/server";
 import FundsDirectoryClient, { type FundListing } from "./FundsDirectoryClient";
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
@@ -54,6 +76,9 @@ export default async function FundsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {fundsFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(fundsFaqLd) }} />
+      )}
       <div className="bg-white min-h-screen">
         {/* Hero */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
@@ -219,6 +244,25 @@ export default async function FundsPage() {
                   quote you. Free to post; no obligation.
                 </p>
               </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-10 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-3xl">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {FUNDS_FAQS.map((faq) => (
+                <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                  <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                    {faq.q}
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                  </summary>
+                  <div className="px-5 pb-4">
+                    <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                  </div>
+                </details>
+              ))}
             </div>
           </div>
         </section>
