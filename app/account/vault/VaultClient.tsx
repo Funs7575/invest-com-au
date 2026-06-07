@@ -170,7 +170,7 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
             />
 
             {uploadError && (
-              <p className="text-sm text-red-600 mb-3">{uploadError}</p>
+              <p role="alert" className="text-sm text-red-600 mb-3">{uploadError}</p>
             )}
 
             <div className="flex gap-3">

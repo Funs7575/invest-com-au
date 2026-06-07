@@ -633,7 +633,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               />
             </div>
           </div>
-          {contactError && <p className="text-xs text-red-500 mt-2">{contactError}</p>}
+          {contactError && <p role="alert" className="text-xs text-red-500 mt-2">{contactError}</p>}
           <button
             onClick={handleContactNext}
             disabled={!canSubmitContact}

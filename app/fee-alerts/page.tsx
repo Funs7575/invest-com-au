@@ -282,7 +282,7 @@ export default function FeeAlertsPage() {
                 >
                   {status === "sending" ? "Subscribing..." : "Subscribe to Alerts"}
                 </button>
-                {status === "error" && <p className="text-xs text-red-400 mt-2">Something went wrong. Please try again.</p>}
+                {status === "error" && <p role="alert" className="text-xs text-red-400 mt-2">Something went wrong. Please try again.</p>}
               </>
             )}
           </div>

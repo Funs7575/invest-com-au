@@ -175,7 +175,7 @@ export default function LeadsTab({
       {firmView && isFirmAdmin && (
         <div className="mb-6">
           {firmLoading && <p className="text-sm text-slate-500 py-8 text-center">Loading team leads…</p>}
-          {firmError && <p className="text-sm text-red-600 py-4">{firmError}</p>}
+          {firmError && <p role="alert" className="text-sm text-red-600 py-4">{firmError}</p>}
           {!firmLoading && !firmError && (
             <div className="space-y-2">
               <p className="text-sm text-slate-500 mb-3">{firmLeads.length} leads across {firmMembers.length} team member{firmMembers.length !== 1 ? "s" : ""}</p>

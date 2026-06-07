@@ -1540,7 +1540,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </button>
             </div>
           )}
-          {alertError && <p className="text-xs text-red-600 mt-1">{alertError}</p>}
+          {alertError && <p role="alert" className="text-xs text-red-600 mt-1">{alertError}</p>}
         </div>
 
         <div className="mt-6 md:mt-10 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 md:p-8 text-center shadow-xl shadow-slate-900/10">

@@ -248,7 +248,7 @@ export default function BillingClient(props: Props) {
           })}
         </div>
         {subscriptionError && (
-          <p className="text-xs text-red-700 mt-3">{subscriptionError}</p>
+          <p role="alert" className="text-xs text-red-700 mt-3">{subscriptionError}</p>
         )}
       </section>
 
@@ -363,7 +363,7 @@ export default function BillingClient(props: Props) {
                 <span role="status" className="text-xs text-emerald-700 font-semibold">Saved ✓</span>
               )}
               {settingsError && (
-                <span className="text-xs text-red-700">{settingsError}</span>
+                <span role="alert" className="text-xs text-red-700">{settingsError}</span>
               )}
             </div>
           </div>

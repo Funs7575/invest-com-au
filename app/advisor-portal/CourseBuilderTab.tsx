@@ -581,7 +581,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
             </div>
 
             {formError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{formError}</div>
+              <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{formError}</div>
             )}
 
             <div className="flex justify-end">
@@ -769,7 +769,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                 </label>
 
                 {lessonError && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{lessonError}</div>
+                  <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">{lessonError}</div>
                 )}
 
                 <div className="flex items-center gap-2">
@@ -915,7 +915,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
             </div>
 
             {submitError && (
-              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700 mb-4">{submitError}</div>
+              <div role="alert" className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700 mb-4">{submitError}</div>
             )}
 
             <div className="flex items-center justify-between">

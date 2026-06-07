@@ -551,7 +551,7 @@ export default function ProsJoinWizard() {
             )}
           </label>
           {docError && (
-            <p className="text-xs text-red-600 font-medium mt-2">{docError}</p>
+            <p role="alert" className="text-xs text-red-600 font-medium mt-2">{docError}</p>
           )}
           <p className="text-[0.62rem] text-slate-400 mt-3 leading-relaxed">
             Documents are stored privately and visible only to the
@@ -650,7 +650,7 @@ export default function ProsJoinWizard() {
             </label>
 
             {submitError && (
-              <p className="text-xs text-red-600 font-medium">{submitError}</p>
+              <p role="alert" className="text-xs text-red-600 font-medium">{submitError}</p>
             )}
           </div>
         </section>

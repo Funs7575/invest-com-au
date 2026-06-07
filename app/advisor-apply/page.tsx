@@ -730,7 +730,7 @@ function AdvisorApplyInner() {
               </div>
             </div>
 
-            {errorMsg && <p className="text-xs text-red-600">{errorMsg}</p>}
+            {errorMsg && <p role="alert" className="text-xs text-red-600">{errorMsg}</p>}
 
             <button
               onClick={submit}

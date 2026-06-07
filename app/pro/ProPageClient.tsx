@@ -357,7 +357,7 @@ export default function ProPageClient() {
                 : "Sign In & Subscribe"}
             </button>
             {checkoutError && (
-              <p className="mt-2 text-xs text-red-500 text-center">{checkoutError}</p>
+              <p role="alert" className="mt-2 text-xs text-red-500 text-center">{checkoutError}</p>
             )}
             <ul className="mt-4 md:mt-6 space-y-2 md:space-y-3">
               {features.map((f) => (

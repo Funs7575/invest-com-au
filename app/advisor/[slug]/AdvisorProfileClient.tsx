@@ -1329,7 +1329,7 @@ export default function AdvisorProfileClient({
                           nameError ? "border-red-300 bg-red-50" : "border-slate-200"
                         }`}
                       />
-                      {nameError && <p id="advisor-contact-name-error" className="text-xs text-red-500 mt-1">{nameError}</p>}
+                      {nameError && <p id="advisor-contact-name-error" role="alert" className="text-xs text-red-500 mt-1">{nameError}</p>}
                     </div>
                     <div>
                       <label htmlFor="advisor-contact-email" className="block text-xs font-bold text-slate-700 mb-1.5">Email *</label>
@@ -1347,7 +1347,7 @@ export default function AdvisorProfileClient({
                           emailError ? "border-red-300 bg-red-50" : "border-slate-200"
                         }`}
                       />
-                      {emailError && <p id="advisor-contact-email-error" className="text-xs text-red-500 mt-1">{emailError}</p>}
+                      {emailError && <p id="advisor-contact-email-error" role="alert" className="text-xs text-red-500 mt-1">{emailError}</p>}
                     </div>
                     <div>
                       <label htmlFor="advisor-contact-phone" className="block text-xs font-bold text-slate-700 mb-1.5">
@@ -1376,7 +1376,7 @@ export default function AdvisorProfileClient({
                         className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/25 focus:border-amber-400 focus:bg-white transition-all resize-none"
                       />
                     </div>
-                    {formError && <p className="text-xs text-red-500 font-semibold">{formError}</p>}
+                    {formError && <p role="alert" className="text-xs text-red-500 font-semibold">{formError}</p>}
                     <button
                       onClick={handleSubmit}
                       disabled={formState === "submitting"}
