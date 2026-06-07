@@ -51,13 +51,20 @@ export default function GoalsClient({ initialItems }: Props) {
       setAdding(false);
       return;
     }
+    const targetCents = Math.round(Number(form.get("target") ?? 0) * 100);
+    const currentBalanceCents = Math.round(Number(form.get("current_balance") ?? 0) * 100);
+    if (targetCents > 0 && currentBalanceCents > targetCents) {
+      setError("Current balance exceeds target — consider increasing the target amount.");
+      setAdding(false);
+      return;
+    }
     const goalType = String(form.get("goal_type") ?? "generic") as GoalRow["goalType"];
     const body = {
       label: String(form.get("label") ?? "").trim(),
       goal_type: goalType,
-      target_cents: Math.round(Number(form.get("target") ?? 0) * 100),
+      target_cents: targetCents,
       target_date: String(form.get("target_date") ?? ""),
-      current_balance_cents: Math.round(Number(form.get("current_balance") ?? 0) * 100),
+      current_balance_cents: currentBalanceCents,
       monthly_contribution_cents: Math.round(Number(form.get("monthly_contribution") ?? 0) * 100),
       expected_return_pct: Number(form.get("expected_return") ?? 6.5),
       notes: String(form.get("notes") ?? "").trim() || null,
@@ -236,8 +243,8 @@ function GoalCard({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm mb-3">
-        <Stat label="Current" value={fmt(goal.currentBalanceCents)} />
-        <Stat label="Monthly" value={fmt(goal.monthlyContributionCents)} />
+        <Stat label="Current" value={goal.currentBalanceCents === 0 ? "—" : fmt(goal.currentBalanceCents)} />
+        <Stat label="Monthly" value={goal.monthlyContributionCents === 0 ? "—" : fmt(goal.monthlyContributionCents)} />
         <Stat label="Projected" value={fmt(projection.projectedBalanceCents)} highlight={onTrack ? "good" : "warn"} />
         <Stat
           label={onTrack ? "Surplus" : "Shortfall"}

@@ -62,6 +62,7 @@ export default function ABTestsPage() {
   const [loading, setLoading] = useState(true);
   const [brokerSlug, setBrokerSlug] = useState("");
   const [showCreate, setShowCreate] = useState(false);
+  const [confirmModal, setConfirmModal] = useState<{ type: "winner" | "end"; id: number; winner?: "a" | "b" } | null>(null);
   const { toast } = useToast();
 
   // Create form
@@ -144,18 +145,26 @@ export default function ABTestsPage() {
     toast(`Test ${status}`, "success");
   };
 
-  const declareWinner = async (id: number, winner: "a" | "b") => {
-    if (!confirm(`Declare Variant ${winner.toUpperCase()} as the winner? This will end the test.`)) return;
-    const supabase = createClient();
-    await supabase.from("ab_tests").update({
-      winner,
-      status: "completed",
-      end_date: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }).eq("id", id);
+  const declareWinner = (id: number, winner: "a" | "b") => {
+    setConfirmModal({ type: "winner", id, winner });
+  };
 
-    setTests(prev => prev.map(t => t.id === id ? { ...t, winner, status: "completed" as const } : t));
-    toast(`Variant ${winner.toUpperCase()} declared winner`, "success");
+  const handleConfirm = async () => {
+    if (!confirmModal) return;
+    const supabase = createClient();
+    if (confirmModal.type === "winner" && confirmModal.winner) {
+      await supabase.from("ab_tests").update({
+        winner: confirmModal.winner,
+        status: "completed",
+        end_date: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }).eq("id", confirmModal.id);
+      setTests(prev => prev.map(t => t.id === confirmModal.id ? { ...t, winner: confirmModal.winner!, status: "completed" as const } : t));
+      toast(`Variant ${confirmModal.winner.toUpperCase()} declared winner`, "success");
+    } else if (confirmModal.type === "end") {
+      await updateStatus(confirmModal.id, "completed");
+    }
+    setConfirmModal(null);
   };
 
   const getWinnerStats = (test: ABTest) => {
@@ -364,7 +373,7 @@ export default function ABTestsPage() {
                           className="px-3 py-1.5 text-xs font-semibold bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 transition-colors">
                           Pause
                         </button>
-                        <button onClick={() => updateStatus(test.id, "completed")}
+                        <button onClick={() => setConfirmModal({ type: "end", id: test.id })}
                           className="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">
                           End
                         </button>
@@ -447,6 +456,40 @@ export default function ABTestsPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Confirmation modal for End / Declare Winner */}
+      {confirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setConfirmModal(null)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <h2 className="text-base font-extrabold text-slate-900 mb-2">
+              {confirmModal.type === "winner"
+                ? `Declare Variant ${confirmModal.winner?.toUpperCase()} as winner?`
+                : "End this test?"}
+            </h2>
+            <p className="text-sm text-slate-500 mb-5">
+              {confirmModal.type === "winner"
+                ? "This will mark the test as completed and lock in the winning variant. This cannot be undone."
+                : "Ending the test will mark it as completed. You can view results but cannot restart it."}
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmModal(null)}
+                className="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirm}
+                className={`px-4 py-2 text-sm font-semibold text-white rounded-lg transition-colors ${
+                  confirmModal.type === "winner" ? "bg-emerald-600 hover:bg-emerald-700" : "bg-slate-800 hover:bg-slate-900"
+                }`}
+              >
+                {confirmModal.type === "winner" ? `Declare Variant ${confirmModal.winner?.toUpperCase()} Winner` : "End Test"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

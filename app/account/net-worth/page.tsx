@@ -241,9 +241,10 @@ export default async function NetWorthPage() {
                     <div
                       className="h-full bg-violet-500"
                       style={{ width: `${pct}%` }}
-                      aria-label={`${pct.toFixed(0)}% of target`}
+                      aria-hidden
                     />
                   </div>
+                  <p className="mt-1 text-[11px] text-slate-400" aria-label={`${pct.toFixed(0)}% of target`}>{pct.toFixed(0)}%{pct === 0 ? " — add funds to start tracking progress" : " complete"}</p>
                   {g.target_date && (
                     <p className="mt-2 text-xs text-slate-400">
                       Target: {new Date(g.target_date).toLocaleDateString("en-AU")}

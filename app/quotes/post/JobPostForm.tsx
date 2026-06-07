@@ -166,10 +166,11 @@ export default function JobPostForm() {
           <Icon name="check-circle" size={28} className="text-emerald-600" />
         </div>
         <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Job posted!</h2>
-        <p className="text-slate-600 text-sm leading-relaxed mb-6 max-w-md mx-auto">
-          Verified advisors are being notified now. You&apos;ll see quotes appear on your job page over the next 72 hours.
+        <p className="text-slate-600 text-sm leading-relaxed mb-2 max-w-md mx-auto">
+          Verified advisors are being notified now. Expect quotes within 24–72 hours.
           We&apos;ve sent a link to <strong>{form.contact_email}</strong>.
         </p>
+        <p className="text-xs text-slate-400 mb-6">You can close this tab — your job is saved.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           {resultSlug && (
             <Link
@@ -180,12 +181,14 @@ export default function JobPostForm() {
               <Icon name="arrow-right" size={16} />
             </Link>
           )}
-          <Link
-            href="/quotes"
-            className="inline-flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-xl hover:border-slate-300 transition-colors"
-          >
-            Browse the marketplace
-          </Link>
+          {resultSlug && (
+            <a
+              href={`mailto:?subject=Get%20a%20free%20financial%20advice%20quote&body=I%20just%20posted%20a%20job%20on%20Invest.com.au%20%E2%80%94%20share%20with%20an%20advisor%20you%20know%3A%20https%3A%2F%2Finvest.com.au%2Fquotes%2F${resultSlug}`}
+              className="inline-flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-xl hover:border-slate-300 transition-colors"
+            >
+              Share with an advisor you know
+            </a>
+          )}
         </div>
       </div>
     );
@@ -193,6 +196,15 @@ export default function JobPostForm() {
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+      {/* Trust banner */}
+      {step === "details" && (
+        <div className="mb-5 -mt-1 flex flex-wrap items-center gap-4 text-xs text-slate-500 bg-slate-50 rounded-xl px-4 py-2.5">
+          <span className="flex items-center gap-1.5"><span className="text-emerald-600 font-bold">✓</span> Free, no obligation</span>
+          <span className="flex items-center gap-1.5"><span className="text-emerald-600 font-bold">✓</span> AFSL-licensed advisors only</span>
+          <span className="flex items-center gap-1.5"><span className="text-emerald-600 font-bold">✓</span> Compare up to 5 quotes</span>
+          <span className="flex items-center gap-1.5"><span className="text-emerald-600 font-bold">✓</span> Reply within 72 hours</span>
+        </div>
+      )}
       {/* Prefilled-from-quiz banner — soft reassurance that we're carrying
           their context, not auto-filling the form mysteriously. */}
       {prefilledFromQuiz && (

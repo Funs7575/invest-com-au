@@ -144,8 +144,14 @@ export default function HoldingsClient({
   const handleAdd = async (form: FormData) => {
     setError(null);
     setAdding(true);
+    const rawTicker = String(form.get("ticker") ?? "").trim().toUpperCase();
+    if (!/^[A-Z0-9]{1,10}(\.[A-Z]{1,5})?$/.test(rawTicker)) {
+      setError("Enter a valid ticker (e.g. BHP.AX or AAPL).");
+      setAdding(false);
+      return;
+    }
     const body = {
-      ticker: String(form.get("ticker") ?? "").trim().toUpperCase(),
+      ticker: rawTicker,
       exchange: String(form.get("exchange") ?? ""),
       shares: Number(form.get("shares") ?? 0),
       cost_basis_per_share_cents: Math.round(Number(form.get("costPerShare") ?? 0) * 100),
@@ -453,9 +459,13 @@ export default function HoldingsClient({
                   </div>
                   {h.currentPriceSource === "stale" && (
                     <div
-                      className="text-[10px] text-amber-700 mt-0.5"
+                      className="inline-flex items-center gap-1 text-[10px] text-amber-700 mt-0.5"
                       title="Latest live fetch failed; showing the most recent cached price."
                     >
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                        <path d="M5 1L9 9H1L5 1Z" fill="#d97706" />
+                        <path d="M5 4v2M5 7.5v.5" stroke="white" strokeWidth="0.8" strokeLinecap="round" />
+                      </svg>
                       stale price
                     </div>
                   )}

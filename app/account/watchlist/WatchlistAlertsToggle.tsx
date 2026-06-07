@@ -52,6 +52,7 @@ export default function WatchlistAlertsToggle({ initialOptedIn, hasItems }: Prop
           aria-label="Weekly watchlist email digest"
           onClick={toggle}
           disabled={pending || !hasItems}
+          title={!hasItems ? "Add watchlist items first to enable alerts" : undefined}
           className={`shrink-0 inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
             optedIn ? "bg-emerald-600" : "bg-slate-300"
           }`}

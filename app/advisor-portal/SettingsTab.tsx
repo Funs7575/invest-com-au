@@ -156,30 +156,36 @@ export default function SettingsTab({ advisor }: Props) {
           Set a fee for first-party booking slots. Clients pay via Stripe; invest.com.au retains a 15% platform fee.
           Leave blank to keep bookings free.
         </p>
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-medium">A$</span>
-            <input
-              type="number"
-              min={0}
-              max={10000}
-              step={1}
-              value={sessionPriceDollars}
-              onChange={(e) => setSessionPriceDollars(e.target.value)}
-              placeholder={sessionPriceLoaded ? "e.g. 250" : "Loading..."}
-              disabled={!sessionPriceLoaded}
-              className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm w-36 disabled:opacity-50 disabled:cursor-not-allowed"
-            />
+        {!sessionPriceLoaded ? (
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-36 bg-slate-100 rounded-lg animate-pulse" />
+            <div className="h-9 w-16 bg-slate-100 rounded-lg animate-pulse" />
           </div>
-          <button
-            onClick={saveSessionPrice}
-            disabled={savingPrice || !sessionPriceLoaded}
-            className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {savingPrice ? "Saving..." : "Save"}
-          </button>
-          {priceSaved && <span role="status" className="text-sm text-emerald-600 font-medium">Saved!</span>}
-        </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-medium">A$</span>
+              <input
+                type="number"
+                min={0}
+                max={10000}
+                step={1}
+                value={sessionPriceDollars}
+                onChange={(e) => setSessionPriceDollars(e.target.value)}
+                placeholder="e.g. 250"
+                className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm w-36"
+              />
+            </div>
+            <button
+              onClick={saveSessionPrice}
+              disabled={savingPrice}
+              className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {savingPrice ? "Saving..." : "Save"}
+            </button>
+            {priceSaved && <span role="status" className="text-sm text-emerald-600 font-medium">Saved!</span>}
+          </div>
+        )}
         {priceError && <p role="alert" className="text-xs text-red-600 mt-2">{priceError}</p>}
         {sessionPriceDollars && !priceError && (
           <p className="text-xs text-slate-400 mt-2">

@@ -29,6 +29,7 @@ export default function NotificationsList({ initialItems }: Props) {
   const [items, setItems] = useState(initialItems);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [allReadFlash, setAllReadFlash] = useState(false);
 
   const markOne = async (id: number) => {
     const snapshot = items;
@@ -66,6 +67,8 @@ export default function NotificationsList({ initialItems }: Props) {
           body: JSON.stringify({ all: true }),
         });
         if (!res.ok) throw new Error("mark all failed");
+        setAllReadFlash(true);
+        setTimeout(() => setAllReadFlash(false), 2500);
       } catch {
         setItems(snapshot);
         setError("Couldn't mark all as read. Try again?");
@@ -100,7 +103,10 @@ export default function NotificationsList({ initialItems }: Props) {
         </div>
       )}
 
-      <div className="flex items-center justify-end mb-3">
+      <div className="flex items-center justify-end gap-3 mb-3">
+        {allReadFlash && (
+          <span role="status" className="text-xs text-emerald-600 font-medium">All marked as read</span>
+        )}
         <button
           type="button"
           onClick={markAll}
