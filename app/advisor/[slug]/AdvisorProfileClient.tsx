@@ -1321,6 +1321,7 @@ export default function AdvisorProfileClient({
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         onBlur={() => setTouched((p) => ({ ...p, name: true }))}
+                        autoComplete="name"
                         placeholder="Full name"
                         aria-invalid={nameError ? true : undefined}
                         aria-describedby={nameError ? "advisor-contact-name-error" : undefined}
