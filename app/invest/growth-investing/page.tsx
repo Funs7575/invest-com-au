@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Complete guide to growth investing on the ASX — revenue growth metrics, PEG ratios, ASX tech stocks, growth vs value comparison, rate sensitivity, and how to build a growth portfolio in Australia.",
     url: `${SITE_URL}/invest/growth-investing`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Growth Investing Australia")}&sub=${encodeURIComponent("High-Growth Stocks · ETFs · Strategy · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

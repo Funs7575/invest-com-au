@@ -49,6 +49,7 @@ export const metadata: Metadata = {
     description:
       "Browse Australian investment opportunities — businesses, farmland, mining, commercial property, startups, alternatives, private credit & funds. All filterable in one place.",
     url: absoluteUrl("/invest"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Invest in Australia")}&sub=${encodeURIComponent("Shares · ETFs · Property · Super · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };

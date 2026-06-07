@@ -25,6 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Private Equity & Hedge Fund Investment Opportunities — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/private-equity/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Private Equity Opportunities")}&sub=${encodeURIComponent("PE Funds · Minimum · Returns · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

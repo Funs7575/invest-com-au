@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Reach qualified Australian and international investors. List businesses, property, mining, farmland, energy projects, franchises, funds, and startups.",
     url: `${SITE_URL}/invest/list`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("All Investment Types Australia")}&sub=${encodeURIComponent("Compare Options · Risk · Return · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

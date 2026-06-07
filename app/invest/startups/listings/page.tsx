@@ -22,6 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Startup Investment Opportunities Australia — ${countLabel}Listings`,
       url: `${SITE_URL}/invest/startups/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Startup Investment Opportunities")}&sub=${encodeURIComponent("Seed · Series A · ESIC-Eligible · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

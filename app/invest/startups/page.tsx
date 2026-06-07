@@ -38,6 +38,7 @@ export const metadata: Metadata = {
     description:
       "ESIC incentives, angel investing, VC funds, and crowdfunding. Sydney and Melbourne ecosystems.",
     url: `${SITE_URL}/invest/startups`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Australian Startups")}&sub=${encodeURIComponent("Angel Investing · ESIC · Equity Crowdfunding · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

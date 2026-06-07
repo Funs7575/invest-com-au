@@ -23,6 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Pre-IPO Investment Opportunities Australia — ${countLabel}Wholesale Deals`,
       url: `${SITE_URL}/invest/pre-ipo/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Pre-IPO Opportunities")}&sub=${encodeURIComponent("Current Pre-IPO Deals · Access · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     title: `Australian Public Social Infrastructure Investment (${CURRENT_YEAR})`,
     description: "SDA, social housing, social impact bonds and government-backed income assets.",
     url: `${SITE_URL}/invest/public-social-infrastructure`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Public Social Infrastructure Investment")}&sub=${encodeURIComponent("Hospitals · Schools · Government · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

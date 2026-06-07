@@ -37,6 +37,7 @@ export const metadata: Metadata = {
     description: PAGE_DESC,
     url: `${SITE_URL}/invest/fire`,
     type: "article",
+    images: [{ url: `/api/og?title=${encodeURIComponent("FIRE Investing Australia")}&sub=${encodeURIComponent("Financial Independence · 4% Rule · Early Retirement · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title: PAGE_TITLE, description: PAGE_DESC },
 };

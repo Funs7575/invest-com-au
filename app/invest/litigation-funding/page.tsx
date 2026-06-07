@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     title: `Litigation Funding Investment in Australia (${CURRENT_YEAR})`,
     description: "Class action co-investment, ASX-listed funders, and risk-return framework.",
     url: `${SITE_URL}/invest/litigation-funding`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Litigation Funding Investment Australia")}&sub=${encodeURIComponent("Legal Claims · Returns · Risk · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

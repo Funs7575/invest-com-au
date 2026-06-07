@@ -38,6 +38,7 @@ export const metadata: Metadata = {
     description:
       "Solar, wind, battery storage, and hydrogen projects seeking co-investment. ARENA, CEFC, and state incentives.",
     url: `${SITE_URL}/invest/renewable-energy`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Renewable Energy Investing Australia")}&sub=${encodeURIComponent("Solar · Wind · Battery Storage · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

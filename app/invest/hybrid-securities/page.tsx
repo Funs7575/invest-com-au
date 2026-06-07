@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Guide to ASX-listed hybrid securities — CBAPD, NABPF, bank hybrids explained. How hybrids work, yields vs term deposits, risks, and SMSF suitability.",
     url: `${SITE_URL}/invest/hybrid-securities`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Hybrid Securities Australia")}&sub=${encodeURIComponent("CBA Perls · ANZ Capital · ASX Hybrids · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

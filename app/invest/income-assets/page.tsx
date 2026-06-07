@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     description:
       "Cash-flow asset businesses — vending, ATM networks, car washes, laundromats, self-storage and billboards.",
     url: `${SITE_URL}/invest/income-assets`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Income-Producing Assets Australia")}&sub=${encodeURIComponent("Dividends · Rent · Interest · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

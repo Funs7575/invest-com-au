@@ -22,6 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Franchise Opportunities Australia — ${countLabel}Available Territories`,
       url: `${SITE_URL}/invest/franchise/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Franchise Investment Opportunities")}&sub=${encodeURIComponent("Active Listings · Australia · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

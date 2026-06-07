@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     description:
       "Late-stage private placements before IPO — sophisticated and wholesale investor only. Requirements, structures, platforms and risks.",
     url: `${SITE_URL}/invest/pre-ipo`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Pre-IPO Investing Australia")}&sub=${encodeURIComponent("Access Before Listing · Risks · Platforms · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -40,6 +40,7 @@ export const metadata: Metadata = {
     description:
       "Managed, syndicated, infrastructure, wholesale and SIV-relevant fund opportunities in Australia. Filter by fund type, minimum investment, foreign-investor eligibility.",
     url: `${SITE_URL}/invest/funds`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Managed Funds Australia")}&sub=${encodeURIComponent("Active vs Index · Platforms · Fees · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

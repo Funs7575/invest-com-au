@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "How to trade forex in Australia. Compare ASIC-regulated forex brokers, AUD/USD spreads, leverage limits, CFDs vs spot forex, and tax treatment for Australian traders.",
     url: `${SITE_URL}/invest/forex`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Forex Trading Australia")}&sub=${encodeURIComponent("Currency Pairs · Brokers · CFDs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

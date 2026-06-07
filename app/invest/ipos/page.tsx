@@ -36,6 +36,7 @@ export const metadata: Metadata = {
     description:
       `How to participate in Australian IPOs — the application process, broker access, allocation rules, recent notable ASX listings, and what to watch in ${CURRENT_YEAR}.`,
     url: `${SITE_URL}/invest/ipos`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("ASX IPO Investing Guide")}&sub=${encodeURIComponent("New Listings · How to Apply · Risks · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

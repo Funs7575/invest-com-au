@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     description:
       "Mining royalty streams, music catalogue royalties, IP royalties and oil & gas overriding royalties — Australian context.",
     url: `${SITE_URL}/invest/royalties`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Royalties Australia")}&sub=${encodeURIComponent("Music · Mining · IP Royalties · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
