@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Federal First Home Guarantee + state FHOG + stamp-duty concession in one calculator.",
     url: `${SITE_URL}/tools/state-grants-calculator`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("State Grants Calculator")}&sub=${encodeURIComponent("Stamp Duty · First Home Grants by State · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

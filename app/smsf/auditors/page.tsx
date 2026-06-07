@@ -25,7 +25,6 @@ const SMSF_AUDITOR_FAQS = [
     a: "Fees vary by auditor and fund complexity, but most straightforward SMSF audits cost between $300 and $900. Funds with property, collectables, limited-recourse borrowing arrangements (LRBAs), or a corporate trustee structure typically attract higher fees of $900–$1,500 or more. The audit fee is a deductible expense for the fund.",
   },
 ];
-const smsfAuditorFaqLd = faqJsonLd(SMSF_AUDITOR_FAQS);
 
 export const revalidate = 1800;
 
@@ -63,6 +62,7 @@ async function fetchAuditors(): Promise<AuditorRow[]> {
 
 export default async function SmsfAuditorsPage() {
   const auditors = await fetchAuditors();
+  const faqLd = faqJsonLd(SMSF_AUDITOR_FAQS);
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -76,7 +76,9 @@ export default async function SmsfAuditorsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      {smsfAuditorFaqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(smsfAuditorFaqLd) }} />}
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-12">
           <div className="container-custom">

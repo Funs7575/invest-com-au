@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     description:
       "DTA-reduced withholding rates on Australian dividends, interest, and royalties by country.",
     url: absoluteUrl("/tools/withholding-tax-calculator"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Withholding Tax Calculator")}&sub=${encodeURIComponent("Dividends · Interest · DTA Rates · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

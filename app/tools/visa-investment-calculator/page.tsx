@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Side-by-side Business Innovation, SIV, Premium Investor and Global Talent visa pathways.",
     url: absoluteUrl("/tools/visa-investment-calculator"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Visa Investment Calculator")}&sub=${encodeURIComponent("SIV · Business Visa · Complying Investments · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

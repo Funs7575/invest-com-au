@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description: "Current visa pathways for investors after the SIV closure.",
     url: `${SITE_URL}/visa-investment`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investor Visa Pathways Australia")}&sub=${encodeURIComponent("Migration · Business Visa · Investment Requirements · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
