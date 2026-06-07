@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const MIN_ENGAGEMENT_MS = 20_000; // 20 s on hub before popup can fire
 const SHOWN_KEY = "exitIntentShown"; // shared with ExitIntentPopup to avoid double-fire
@@ -31,9 +31,9 @@ export default function HubExitIntent({ segmentSlug, hubName }: HubExitIntentPro
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const pageLoadTime = useRef(Date.now());
+  const [pageLoadTime] = useState(() => Date.now());
 
-  const isEngaged = useCallback(() => Date.now() - pageLoadTime.current >= MIN_ENGAGEMENT_MS, []);
+  const isEngaged = useCallback(() => Date.now() - pageLoadTime >= MIN_ENGAGEMENT_MS, [pageLoadTime]);
 
   const maybeShow = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -147,6 +147,7 @@ export default function HubExitIntent({ segmentSlug, hubName }: HubExitIntentPro
               <button
                 type="submit"
                 disabled={status === "loading"}
+                aria-busy={status === "loading"}
                 className="w-full bg-emerald-600 text-white rounded-lg px-5 py-2.5 text-sm font-semibold hover:bg-emerald-700 disabled:opacity-60 transition-colors"
               >
                 {status === "loading" ? "Subscribing…" : `Get the ${hubName} Guide →`}

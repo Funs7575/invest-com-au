@@ -119,6 +119,7 @@ export default function HubNewsletterCapture({
           <button
             type="submit"
             disabled={status === "loading"}
+            aria-busy={status === "loading"}
             className="px-6 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 disabled:opacity-60 transition-colors whitespace-nowrap"
           >
             {status === "loading" ? "Subscribing…" : "Subscribe"}

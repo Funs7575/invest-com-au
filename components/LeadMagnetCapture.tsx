@@ -99,6 +99,7 @@ export default function LeadMagnetCapture({ magnet }: LeadMagnetCaptureProps) {
                   <button
                     type="submit"
                     disabled={status === "loading"}
+                    aria-busy={status === "loading"}
                     className="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-900 text-sm font-extrabold disabled:opacity-60 transition-colors whitespace-nowrap"
                   >
                     {status === "loading" ? "Sending…" : "Get Free PDF"}
