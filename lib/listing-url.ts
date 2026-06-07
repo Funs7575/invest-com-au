@@ -48,6 +48,7 @@ export const VERTICAL_ALIASES: Record<string, string> = {
   funds: "fund",
   startups: "startup",
   "renewable-energy": "energy",
+  "buy-business": "business",
 };
 
 /** Canonical vertical for a (possibly drifted) raw vertical string. */

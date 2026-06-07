@@ -212,7 +212,10 @@ export async function fetchListingBySlug(
     const { data, error } = await supabase
       .from("investment_listings")
       .select("*")
-      .eq("vertical", vertical)
+      // Alias-aware: match drifted vertical strings (e.g. "buy-business"
+      // for "business") so bespoke detail pages resolve them, consistent
+      // with fetchListingsByVertical.
+      .in("vertical", rawVerticalVariants(vertical))
       .eq("slug", slug)
       .maybeSingle();
 
