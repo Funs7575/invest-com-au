@@ -8,6 +8,28 @@ import ScrollFadeIn from "@/components/ScrollFadeIn";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
 import { getListingImages } from "@/lib/property-images";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const PROPERTY_HUB_FAQS = [
+  {
+    q: "Is Australian property a good investment in 2026?",
+    a: "Australian residential property has historically delivered long-run returns of around 7–8% p.a. nominal (combining capital growth and rental income). Key drivers remain: population growth (1.5–2% p.a.), chronic housing undersupply in major cities, and relatively tight rental vacancy rates. However, performance varies significantly by city, suburb, and property type — Sydney and Melbourne have far lower yields (3–4%) than regional centres (6–8%). Interest rates and serviceability are also key: higher rates compress borrowing capacity and can soften prices. Property suits investors with a long horizon (7–10+ years), the ability to service debt through vacancies, and a well-located asset.",
+  },
+  {
+    q: "How much deposit do I need to invest in Australian property?",
+    a: "Most lenders require a 20% deposit to avoid Lenders Mortgage Insurance (LMI). For an investment property, some lenders will accept 10–15% with LMI added to the loan. Additional upfront costs — stamp duty (3–5.5% in most states), legal fees ($1,000–2,500), building/pest inspection ($400–600), and loan application fees — add another 3–6% depending on the state and purchase price. In practice, plan for 25–30% of the purchase price in accessible savings to comfortably cover deposit + costs without exhausting your buffers.",
+  },
+  {
+    q: "What is negative gearing and how does it affect property investment?",
+    a: "A property is negatively geared when its rental income is less than the total costs of owning it (interest, rates, insurance, depreciation, management fees). The shortfall is a tax-deductible loss — it can be offset against your other income (salary, business income), reducing your tax bill. For example, if your investment property has a $15,000 annual shortfall and you're in the 37% tax bracket, you save ~$5,550 in tax. Negative gearing is a cash-flow strategy that bets on future capital growth to compensate for the ongoing loss. The tax benefit is real but partial — you still fund the gap from your own pocket.",
+  },
+  {
+    q: "Do I need a buyer's agent to invest in Australian property?",
+    a: "A buyer's agent (buyer's advocate) is not required but can add value in competitive markets. They access properties before public listing, bid at auction on your behalf, and conduct due diligence. Fees range from 1–3% of purchase price or a flat $10,000–$20,000. They make the most sense for interstate investors who can't be present locally, time-poor professionals, or buyers targeting a specific suburb or property type. For investors doing their own research in a market they know well, a buyer's agent may not be necessary.",
+  },
+];
+
+const propFaqLdStatic = faqJsonLd(PROPERTY_HUB_FAQS);
 
 export const metadata = {
   title: "Property Investment Australia — New Developments, Buyer's Agents & Suburb Data",
@@ -122,6 +144,9 @@ export default async function PropertyHubPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Home", url: SITE_URL }, { name: "Property Investment" }])) }}
       />
+      {propFaqLdStatic && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(propFaqLdStatic) }} />
+      )}
 
       {/* ── Hero ─────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
@@ -649,6 +674,26 @@ export default async function PropertyHubPage() {
             <Link href="/smsf" className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm px-5 py-2.5 rounded-lg shrink-0">
               Visit SMSF Hub &rarr;
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ──────────────────────────────────── */}
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="max-w-3xl mx-auto px-4 container-custom">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {PROPERTY_HUB_FAQS.map((faq) => (
+              <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                  {faq.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                </summary>
+                <div className="px-5 pb-4">
+                  <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </div>
+              </details>
+            ))}
           </div>
         </div>
       </section>
