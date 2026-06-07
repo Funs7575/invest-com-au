@@ -25,6 +25,7 @@ export const metadata: Metadata = {
     description:
       "ASX uranium producers, developers, and ETFs — plus FIRB double-approval rules for foreign investors.",
     url: `${SITE_URL}/invest/uranium`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Australian Uranium")}&sub=${encodeURIComponent("ASX Producers · ETFs · Nuclear · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

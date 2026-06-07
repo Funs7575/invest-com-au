@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "How salary sacrifice works: super at 15% vs your marginal rate, novated leases, FBT-exempt items, worked examples, and setup with your employer.",
     url: `${SITE_URL}/tax/salary-sacrifice`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Salary Sacrifice Australia")}&sub=${encodeURIComponent("Super · Novated Lease · Tax Savings · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/salary-sacrifice` },

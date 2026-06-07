@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "CGT at death, super death benefits tax, testamentary trusts for minors, and the estate vs non-estate asset distinction explained.",
     url: `${SITE_URL}/tax/estate-planning`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Estate Planning & Tax Australia")}&sub=${encodeURIComponent("CGT at Death · Super Death Benefits · Testamentary Trusts · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/estate-planning` },

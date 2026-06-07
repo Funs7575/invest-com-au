@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Compare Australia's best managed funds and index funds — Vanguard, Betashares, iShares, Magellan, Platinum. Fees, returns, minimum investment and platform comparison.",
     url: `${SITE_URL}/invest/managed-funds`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Managed Funds & Index Funds Australia")}&sub=${encodeURIComponent("Vanguard · ETFs · Active Funds · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

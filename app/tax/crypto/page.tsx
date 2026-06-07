@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     description:
       "Every crypto swap, sale, and spend is a CGT event. How the ATO taxes Bitcoin, Ethereum, DeFi, staking, NFTs, and exchange collapses — complete ATO-aligned guide.",
     url: `${SITE_URL}/tax/crypto`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Crypto Tax Australia — ATO Rules")}&sub=${encodeURIComponent("Bitcoin · DeFi · Staking · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/crypto` },

@@ -25,6 +25,7 @@ export const metadata: Metadata = {
     description:
       "ASX hydrogen pure-plays, indirect majors, ETFs, and policy drivers — the 2026 investor guide.",
     url: `${SITE_URL}/invest/hydrogen`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Australian Hydrogen")}&sub=${encodeURIComponent("ASX Stocks · ETFs · Green H2 · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

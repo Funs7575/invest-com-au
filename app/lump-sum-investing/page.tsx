@@ -2,6 +2,28 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import Icon from "@/components/Icon";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const LUMP_SUM_FAQS = [
+  {
+    q: "What should I do first with a large lump sum in Australia?",
+    a: "Before investing, address three things in sequence: (1) Emergency buffer — keep 3–6 months of living expenses in a high-interest savings account or offset account. (2) High-interest debt — pay off any personal loans, credit cards, or other debt above 7–8% p.a. before investing; a guaranteed 20% debt reduction beats a speculative 10% return. (3) Super — check whether a concessional contribution (up to $30,000/yr including employer SG) makes sense; the 15% tax on contributions is usually far lower than your marginal rate. Only after these steps should you consider investing the remaining amount.",
+  },
+  {
+    q: "Should I invest a lump sum all at once or spread it over time (DCA)?",
+    a: "Research consistently shows that lump-sum investing (LSI) outperforms dollar-cost averaging (DCA) about two-thirds of the time in rising markets, because money spent waiting earns nothing. However, DCA has a psychological benefit — it reduces the regret of investing at a short-term peak. A practical compromise: deploy the first 50% immediately, then spread the rest over 3–6 months. This avoids the paralysis of all-or-nothing thinking while capturing most of the time-in-market benefit. For windfalls during a market downturn, LSI is even more favourable.",
+  },
+  {
+    q: "What are the best investments for a lump sum in Australia?",
+    a: "The 'best' investment depends on your time horizon, risk tolerance, and tax position. For growth over 7+ years: a diversified ETF portfolio (e.g. ASX 200 + international index ETFs) is a low-cost, tax-effective core. For a 3–7 year horizon: a balanced allocation of shares and bonds, or a robo-advisor portfolio. For capital preservation with income: term deposits (government-guaranteed, currently 4.5–5% p.a.). For tax optimisation: additional super contributions (if under 75 and within caps). Most Australians benefit from speaking with a fee-for-service financial planner before deploying $100K+.",
+  },
+  {
+    q: "How much tax will I pay on investment income from a lump sum?",
+    a: "Investment income is taxed at your marginal rate (0–45% + 2% Medicare levy). Dividends from Australian shares carry franking credits that offset tax — a fully franked dividend on a 30% corporate tax rate grosses up the actual return. Capital gains on assets held 12+ months receive a 50% CGT discount for individuals (25% for super funds). Interest income (savings, term deposits) is taxed in full at your marginal rate. ETF distributions include a mix of income and capital gains components — you receive an annual tax statement for your tax return.",
+  },
+];
+
+const lumpSumFaqLd = faqJsonLd(LUMP_SUM_FAQS);
 
 export const revalidate = 3600;
 
@@ -26,6 +48,9 @@ export default function LumpSumHubPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      {lumpSumFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(lumpSumFaqLd) }} />
+      )}
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">
@@ -88,6 +113,25 @@ export default function LumpSumHubPage() {
         </section>
 
         {/* After advice */}
+        <section className="py-10 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-3xl">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {LUMP_SUM_FAQS.map((faq) => (
+                <details key={faq.q} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden group">
+                  <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-100 flex items-center justify-between">
+                    {faq.q}
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                  </summary>
+                  <div className="px-5 pb-4">
+                    <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="py-12 bg-white">
           <div className="container-custom max-w-5xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">Investment options (after advice)</h2>

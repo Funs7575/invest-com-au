@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "How Australians and foreign investors access private equity and hedge funds — wholesale investor routes, ASX-listed PE, SIV complying funds, returns, and tax treatment.",
     url: `${SITE_URL}/invest/private-equity`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Private Equity & Hedge Funds Australia")}&sub=${encodeURIComponent("PE · Hedge Funds · Wholesale · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

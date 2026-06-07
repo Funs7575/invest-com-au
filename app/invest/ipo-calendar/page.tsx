@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     description:
       "Upcoming ASX IPOs, recently listed companies and how to access broker IPO allocations as a retail investor.",
     url: `${SITE_URL}/invest/ipo-calendar`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("ASX IPO Calendar")}&sub=${encodeURIComponent("Upcoming IPOs · Listings · Allocations · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "The Medicare Levy vs the Medicare Levy Surcharge explained — 2024–25 thresholds, the negative gearing trap, and how high earners avoid the surcharge with basic hospital cover.",
     url: `${SITE_URL}/tax/medicare`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Medicare Levy & Surcharge Australia")}&sub=${encodeURIComponent("2% Levy · MLS Thresholds · Hospital Cover · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/medicare` },

@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Complete guide to Australian bonds: government bonds, bond ETFs, corporate bonds, interest rate risk, yield, duration, tax treatment, and portfolio allocation.",
     url: `${SITE_URL}/invest/bonds`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Invest in Bonds Australia")}&sub=${encodeURIComponent("Government · Corporate · Bond ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

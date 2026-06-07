@@ -22,6 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Renewable Energy Projects Australia — ${countLabel}Investment Opportunities`,
       url: `${SITE_URL}/invest/renewable-energy/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Renewable Energy Projects Australia")}&sub=${encodeURIComponent("Solar · Wind · Battery · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

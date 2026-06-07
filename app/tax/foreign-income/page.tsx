@@ -53,6 +53,7 @@ export const metadata: Metadata = {
     description:
       "Foreign dividends, withholding tax offsets, Double Tax Agreements, currency conversion, ETF AMMA statements, and CFC/FIF rules — all explained for Australian investors.",
     url: `${SITE_URL}/tax/foreign-income`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Foreign Income Tax Australia")}&sub=${encodeURIComponent("Dividends · Withholding Tax · DTAs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };

@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Invest in commodities from Australia — gold, silver, oil, natural gas, agricultural. ASX commodity ETFs, ETCs, Perth Mint, and commodity futures via ASIC-regulated brokers.",
     url: `${SITE_URL}/invest/commodities`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Commodities from Australia")}&sub=${encodeURIComponent("Gold · Oil · Agriculture · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

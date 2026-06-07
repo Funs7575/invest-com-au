@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "How investment income is taxed in Australia — dividends (with franking credits), bank interest, rent, and ETF distributions. Deductions, marginal rates, and strategies.",
     url: `${SITE_URL}/tax/investment-income`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investment Income Tax Australia")}&sub=${encodeURIComponent("Dividends · Interest · Rent · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/investment-income` },

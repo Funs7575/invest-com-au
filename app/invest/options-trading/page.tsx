@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "How to trade options, CFDs, warrants and futures in Australia. Best platforms (Interactive Brokers, CMC, IG), ASIC regulation, strategies, and tax treatment.",
     url: `${SITE_URL}/invest/options-trading`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Options & Derivatives Trading Australia")}&sub=${encodeURIComponent("ASX Options · CFDs · Warrants · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

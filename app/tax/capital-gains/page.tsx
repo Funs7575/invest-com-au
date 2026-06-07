@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     title: `Capital Gains Tax Australia (${CURRENT_YEAR}) — Complete CGT Guide`,
     description: "CGT explained for Australian investors: 50% discount, cost base, capital losses, shares, property, and crypto.",
     url: absoluteUrl("/tax/capital-gains"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Capital Gains Tax Australia")}&sub=${encodeURIComponent("50% Discount · Cost Base · Capital Losses · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: absoluteUrl("/tax/capital-gains") },

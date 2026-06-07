@@ -24,6 +24,7 @@ export const metadata: Metadata = {
     description:
       "ASX spodumene producers, downstream processing, battery-mineral ETFs and FIRB rules for international investors.",
     url: `${SITE_URL}/invest/lithium`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Australian Lithium")}&sub=${encodeURIComponent("ASX Miners · Battery Minerals · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -38,6 +38,7 @@ export const metadata: Metadata = {
     description:
       "Food, fitness, cleaning, automotive, education, and retail franchises in Australia.",
     url: `${SITE_URL}/invest/franchise`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Franchise Opportunities Australia")}&sub=${encodeURIComponent("Food · Fitness · Retail · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

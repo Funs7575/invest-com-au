@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
@@ -46,8 +46,15 @@ const faqItems = [
 const faq = faqJsonLd(faqItems);
 
 export default function DollarCostAveragingPage() {
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Invest", url: absoluteUrl("/invest") },
+    { name: "Dollar-Cost Averaging" },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       {faq && (
         <script
           type="application/ld+json"

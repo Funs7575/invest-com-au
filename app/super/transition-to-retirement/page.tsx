@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "How TTR pensions work: income boost and tax minimisation strategies, 4–10% drawdown, preservation age, 15% earnings tax, and converting to retirement phase.",
     url: `${SITE_URL}/super/transition-to-retirement`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Transition to Retirement Pension")}&sub=${encodeURIComponent("TTR Strategy · Tax Savings · Drawdown Rules · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };

@@ -18,6 +18,7 @@ export const metadata: Metadata = {
       "Residential vs commercial rules, sole purpose test, LRBA, tax rates, and the related-party traps — everything trustees need to know about property in super.",
     url: `${SITE_URL}/smsf/property`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Property Investment")}&sub=${encodeURIComponent("LRBA · Sole Purpose Test · Tax & Compliance · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

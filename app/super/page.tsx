@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import type { Article } from "@/lib/types";
@@ -43,6 +43,7 @@ export const metadata: Metadata = {
     title: `Super Fund Hub (${CURRENT_YEAR}) — Compare, Contribute & Retire Well`,
     description: superHubConfig.metaDescription,
     url: `${SITE_URL}/super`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Super Fund Hub Australia")}&sub=${encodeURIComponent("Compare Funds · Fees · Contribution Strategies · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
@@ -64,8 +65,14 @@ export default async function SuperPage() {
     "id" | "title" | "slug" | "category" | "read_time"
   >[];
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Super" },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       {superFaqLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(superFaqLd) }} />
       )}

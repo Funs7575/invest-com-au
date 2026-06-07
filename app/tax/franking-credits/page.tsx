@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     title: `Franking Credits Australia (${CURRENT_YEAR}) — Complete Guide`,
     description: "How franking credits work, who benefits most, and how to maximise them through shares, ETFs, and super.",
     url: `${SITE_URL}/tax/franking-credits`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Franking Credits Australia")}&sub=${encodeURIComponent("Dividend Imputation · Cash Refunds · Super · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/franking-credits` },

@@ -56,6 +56,7 @@ export const metadata: Metadata = {
     description:
       "Four ways to invest in gold in Australia: physical bullion via Perth Mint, gold ETFs (GOLD, PMGOLD, QAU), ASX gold miners (NST, EVN, NEM), and the Perth Mint Certificate Programme.",
     url: `${SITE_URL}/invest/gold`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Invest in Gold in Australia")}&sub=${encodeURIComponent("Physical · ETFs · ASX Miners · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

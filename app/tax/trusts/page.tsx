@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "How trust income flows through to beneficiaries, income splitting in family trusts, section 100A, testamentary trusts, and trust loss rules.",
     url: `${SITE_URL}/tax/trusts`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Trusts & Trust Taxation Australia")}&sub=${encodeURIComponent("Family Trusts · Income Splitting · Section 100A · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/trusts` },

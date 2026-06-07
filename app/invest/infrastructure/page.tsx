@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "How to invest in infrastructure from Australia — toll roads, airports, utilities, ports. Transurban, APA Group, Atlas Arteria, Magellan Infrastructure Fund and unlisted options.",
     url: `${SITE_URL}/invest/infrastructure`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Infrastructure Investment Australia")}&sub=${encodeURIComponent("Toll Roads · Airports · Utilities · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

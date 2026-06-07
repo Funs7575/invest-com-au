@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     description:
       "ASX-listed majors, refineries, LNG royalties, ETFs, and FIRB rules for international investors.",
     url: `${SITE_URL}/invest/oil-gas`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Australian Oil & Gas")}&sub=${encodeURIComponent("ASX Stocks · LNG · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

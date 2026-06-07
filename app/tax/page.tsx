@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     title: "Tax Strategy Hub",
     description: "Complete tax guide for Australian investors. CGT, franking credits, negative gearing, crypto tax, and tax strategies.",
     url: `${SITE_URL}/tax`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Australian Investor Tax Guide")}&sub=${encodeURIComponent("CGT · Franking Credits · Negative Gearing · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax` },

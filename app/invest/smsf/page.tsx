@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Comprehensive SMSF investment strategy guide — property through SMSF (LRBA), shares, crypto, collectibles, in-house asset rules, limited recourse borrowing, and platform comparison.",
     url: `${SITE_URL}/invest/smsf`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Investment Guide Australia")}&sub=${encodeURIComponent("Property · Shares · Crypto · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "How negative gearing works for Australian investors — tax savings by income level, deductible expenses, the CGT connection, and when it makes financial sense.",
     url: `${SITE_URL}/tax/negative-gearing`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Negative Gearing Australia")}&sub=${encodeURIComponent("Property · Shares · Tax Savings · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/negative-gearing` },

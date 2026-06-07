@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     title: `Investment Record Keeping Australia (${CURRENT_YEAR}) — ATO Requirements`,
     description: "What investment records to keep for Australian tax purposes: 5-year ATO rule, CGT records, shares, property, crypto, and SMSF obligations.",
     url: absoluteUrl("/tax/record-keeping"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investment Record Keeping Australia")}&sub=${encodeURIComponent("ATO Requirements · CGT Records · 5-Year Rule · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: absoluteUrl("/tax/record-keeping") },

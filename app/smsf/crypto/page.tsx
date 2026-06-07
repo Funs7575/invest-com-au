@@ -20,6 +20,7 @@ export const metadata: Metadata = {
       "ATO compliance rules, tax treatment, custody requirements, and record-keeping for cryptocurrency held inside an SMSF.",
     url: `${SITE_URL}/smsf/crypto`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Crypto in Your SMSF — ATO Rules")}&sub=${encodeURIComponent("Bitcoin · Tax · Custody · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

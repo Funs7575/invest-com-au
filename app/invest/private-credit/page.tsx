@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Compare Australian private credit funds and P2P lending platforms — La Trobe Financial, Qualitas, Metrics Credit Partners, Plenti. Yields, risks, SMSF eligibility and how to invest.",
     url: `${SITE_URL}/invest/private-credit`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Private Credit & P2P Lending Australia")}&sub=${encodeURIComponent("Private Credit · P2P · SMSF · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description:
       "How Australian small businesses are taxed: structure comparison, GST threshold, 25% company rate, small business CGT concessions, instant asset write-off, and common deductions.",
     url: `${SITE_URL}/tax/small-business`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Small Business Tax Australia")}&sub=${encodeURIComponent("Sole Trader · Company · CGT Concessions · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/tax/small-business` },

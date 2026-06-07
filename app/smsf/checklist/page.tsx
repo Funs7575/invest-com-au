@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
 import SmsfChecklistClient from "./SmsfChecklistClient";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     description: "Setup, ongoing and review obligations — interactive and printable.",
     url: `${SITE_URL}/smsf/checklist`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("SMSF Compliance Checklist")}&sub=${encodeURIComponent("Setup · Ongoing Obligations · Annual Review · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -38,6 +38,7 @@ export const metadata: Metadata = {
     description:
       "Guide to farmland investment in Australia. FIRB rules, returns, property types, and water rights.",
     url: `${SITE_URL}/invest/farmland`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Invest in Australian Farmland")}&sub=${encodeURIComponent("Cropping · Livestock · Water Rights · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

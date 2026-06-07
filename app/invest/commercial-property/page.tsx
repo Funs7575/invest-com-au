@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "Office, retail, industrial, and specialised property as an asset class — yields, lease structures, A-REITs, ETFs, risks, and tax treatment, explained factually.",
     url: `${SITE_URL}/invest/commercial-property`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Commercial Property Investment Australia")}&sub=${encodeURIComponent("A-REITs · Office · Industrial · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

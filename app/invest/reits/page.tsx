@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Compare ASX-listed A-REITs by sector, yield, NTA discount and fees. Goodman Group, Stockland, Dexus, Scentre, Charter Hall — plus REIT ETFs like VAP and MVA.",
     url: `${SITE_URL}/invest/reits`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("A-REITs — Australian Real Estate Trusts")}&sub=${encodeURIComponent("A-REITs · Yield · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

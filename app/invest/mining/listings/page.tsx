@@ -22,6 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Mining Investment Opportunities Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/mining/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Mining Investment Opportunities Australia")}&sub=${encodeURIComponent("Gold · Lithium · Copper · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

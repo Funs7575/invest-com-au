@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
@@ -108,9 +108,15 @@ const COMMON_MISTAKES = [
 
 export default function CgtOnForeignSharesPage() {
   const faqSchema = faqJsonLd(FAQS);
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Global Investing", url: absoluteUrl("/global-investing") },
+    { name: "CGT on Foreign Shares" },
+  ]);
 
   return (
     <div className="bg-white min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       {faqSchema && (
         <script
           type="application/ld+json"

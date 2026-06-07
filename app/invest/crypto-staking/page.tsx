@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Crypto staking yields, DeFi for Australians, crypto ETFs on ASX (Monochrome EBTC, Global X 21Shares), regulated platforms (Swyftx, CoinSpot) and ATO tax treatment.",
     url: `${SITE_URL}/invest/crypto-staking`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Crypto Staking & DeFi Australia")}&sub=${encodeURIComponent("Staking Yields · DeFi · ASX ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 
