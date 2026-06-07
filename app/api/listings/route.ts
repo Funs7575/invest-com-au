@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
+import { rawVerticalVariants } from "@/lib/listing-url";
 
 const log = logger("listings");
 
@@ -50,7 +51,12 @@ export async function GET(request: NextRequest) {
       .eq("status", "active");
 
     if (vertical) {
-      query = query.eq("vertical", vertical);
+      // Match the site's alias-aware bucketing (lib/listing-url): several
+      // seed waves stored drifted vertical strings (e.g. "renewable-energy"
+      // for "energy", "funds" for "fund"). `.eq` undercounted vs the pages,
+      // which use rawVerticalVariants. Use the same expansion here so the
+      // public API agrees with /invest/<slug>/listings.
+      query = query.in("vertical", rawVerticalVariants(vertical));
     }
 
     if (state) {

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { InvestmentListing, ListingKind } from "@/lib/types";
 import { categoryForListing } from "@/lib/listing-url";
+import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import {
   TICKET_BUCKETS,
   ticketBucketByKey,
@@ -180,6 +181,19 @@ export default function InvestListingsClient({
   const submitSearch = useCallback((q: string) => {
     setParams({ q: q.trim() });
   }, [setParams]);
+
+  // Marketplace sector selection → navigate to the sector's canonical
+  // `/invest/<slug>/listings` page (the single sector destination) rather
+  // than filtering in place. Active filters are carried across so a user
+  // who set State/Budget/etc. before picking a sector keeps them. Only
+  // wired on the unlocked marketplace (locked vertical pages hide Sector).
+  const selectCategory = useCallback((slug: string) => {
+    const carry: Record<string, string> = {};
+    searchParams.forEach((v, k) => {
+      if (k !== "category" && k !== "sub" && v) carry[k] = v;
+    });
+    router.push(categoryListingsHref(slug, carry));
+  }, [router, searchParams]);
 
   // ── Derived sub-categories for the active category ──
   const subCategories = useMemo(() => {
@@ -556,6 +570,7 @@ export default function InvestListingsClient({
               activeChips={activeChips}
               onClearAll={clearAllFilters}
               showSector={!lockedCategory}
+              onSelectCategory={lockedCategory ? undefined : selectCategory}
             />
           </div>
 

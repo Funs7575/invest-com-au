@@ -63,6 +63,7 @@ npm run test:watch                 # watch mode
 | Affiliate links + benefit CTAs + star rendering | `lib/tracking.ts`                                      |
 | Sponsorship ranking helpers                  | `lib/sponsorship.ts`                                      |
 | Vertical config (pillar pages, categories)   | `lib/verticals.ts`                                        |
+| Canonical sector-listings href + which sectors have a `/listings` page | `lib/invest-listing-routes.ts` (`categoryListingsHref`, `LISTING_PAGE_SLUGS`) — each /invest sector has ONE home: `/invest/<slug>/listings`; the legacy `/invest?category=<slug>` filter 307-redirects there in `proxy.ts`. Link sectors via this helper, never hand-write `?category=`. |
 | Country Mode (priority chain, filters, supply thresholds) | `lib/country-mode/` + `lib/intent-context.ts` + `lib/foreign-investment-country-data.ts` (see `docs/architecture/country-mode.md`) |
 | Locale registry + path helpers               | `lib/i18n/locales.ts`, `lib/i18n/dictionaries.ts`         |
 | Schema.org JSON-LD builders                  | `lib/schema-markup.ts`                                    |
