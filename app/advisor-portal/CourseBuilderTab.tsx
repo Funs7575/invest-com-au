@@ -936,6 +936,7 @@ export default function CourseBuilderTab({ advisor }: Props) {
                   <button
                     onClick={submitForReview}
                     disabled={submitting}
+                    aria-busy={submitting}
                     className="px-5 py-2.5 bg-violet-600 text-white font-bold text-sm rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {submitting ? "Submitting..." : "Submit for Review"}

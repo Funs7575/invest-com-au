@@ -209,6 +209,7 @@ export default function SavedSearchesClient() {
                       <button
                         onClick={() => remove(row.id)}
                         disabled={busy}
+                        aria-busy={busy}
                         className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
                       >Yes</button>
                       <button
@@ -220,6 +221,7 @@ export default function SavedSearchesClient() {
                     <button
                       onClick={() => setPendingDeleteId(row.id)}
                       disabled={busy}
+                      aria-busy={busy}
                       className="p-1.5 text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       aria-label="Delete saved search"
                       title="Delete"

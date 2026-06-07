@@ -56,6 +56,7 @@ export default function ArticleBookmarkButton({ slug, title }: Props) {
     <button
       onClick={toggle}
       disabled={loading}
+      aria-busy={loading}
       title={bookmarked ? "Remove bookmark" : "Save article for later"}
       aria-label={bookmarked ? "Remove from saved articles" : "Save article for later"}
       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all disabled:opacity-50 ${

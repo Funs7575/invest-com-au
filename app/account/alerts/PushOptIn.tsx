@@ -173,6 +173,7 @@ export default function PushOptIn({ initialEnabled }: Props) {
             <button
               type="button"
               disabled={busy}
+              aria-busy={busy}
               onClick={handleDisable}
               className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-red-200 hover:text-red-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
@@ -182,6 +183,7 @@ export default function PushOptIn({ initialEnabled }: Props) {
             <button
               type="button"
               disabled={busy || permission === "denied"}
+              aria-busy={busy}
               onClick={handleEnable}
               className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >

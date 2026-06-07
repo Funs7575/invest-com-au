@@ -177,6 +177,7 @@ export default function PortfolioStressTest() {
         <button
           onClick={runTest}
           disabled={loading}
+          aria-busy={loading}
           className="w-full py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
         >
           {loading ? "Running scenarios…" : "Run stress test"}

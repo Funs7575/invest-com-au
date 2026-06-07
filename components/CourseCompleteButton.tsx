@@ -99,6 +99,7 @@ export default function CourseCompleteButton({
         type="button"
         onClick={handleComplete}
         disabled={loading}
+        aria-busy={loading}
         className="w-full py-2.5 px-6 rounded-xl bg-teal-600 hover:bg-teal-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
       >
         {loading ? "Marking complete…" : "Mark as Complete"}

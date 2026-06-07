@@ -91,10 +91,10 @@ export default function ExitIntentCapture() {
     }
   };
 
-  const dismiss = () => {
+  const dismiss = useCallback(() => {
     setDismissed(true);
     setShow(false);
-  };
+  }, []);
 
   // Close on Escape key
   useEffect(() => {
@@ -114,8 +114,8 @@ export default function ExitIntentCapture() {
             <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
               <Icon name="check-circle" size={28} className="text-emerald-600" />
             </div>
-            <h2 className="text-lg font-bold text-slate-900 mb-2">You're in!</h2>
-            <p className="text-sm text-slate-500">We'll send you the fee comparison and keep you posted when rates change.</p>
+            <h2 className="text-lg font-bold text-slate-900 mb-2">You&apos;re in!</h2>
+            <p className="text-sm text-slate-500">We&apos;ll send you the fee comparison and keep you posted when rates change.</p>
             <button onClick={dismiss} className="mt-4 px-4 py-2 text-sm text-slate-600 hover:text-slate-900">No thanks, take me back</button>
           </div>
         ) : (
@@ -142,6 +142,7 @@ export default function ExitIntentCapture() {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting}
+                  aria-busy={submitting}
                   className="px-5 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700 transition-all shrink-0 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {submitting ? "Sending..." : "Send It"}
@@ -153,7 +154,7 @@ export default function ExitIntentCapture() {
                 </p>
               )}
               <p className="text-[0.56rem] text-slate-400 mt-2 text-center">Free. No spam. Unsubscribe anytime.</p>
-              <button onClick={dismiss} className="w-full mt-3 text-xs text-slate-400 hover:text-slate-600 text-center">No thanks, I'll pay more in fees</button>
+              <button onClick={dismiss} className="w-full mt-3 text-xs text-slate-400 hover:text-slate-600 text-center">No thanks, I&apos;ll pay more in fees</button>
             </div>
           </>
         )}

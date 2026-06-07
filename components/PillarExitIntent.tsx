@@ -62,7 +62,7 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
   const [visible, setVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const pageLoadTime = useRef(Date.now());
+  const [pageLoadTime] = useState(() => Date.now());
   const lastScrollY = useRef(0);
   const lastScrollTime = useRef(0);
 
@@ -80,8 +80,8 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
   }, []);
 
   const isEngagedEnough = useCallback(() => {
-    return Date.now() - pageLoadTime.current >= MIN_ENGAGEMENT_MS;
-  }, []);
+    return Date.now() - pageLoadTime >= MIN_ENGAGEMENT_MS;
+  }, [pageLoadTime]);
 
   const showPopup = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -243,6 +243,7 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
                 <button
                   type="submit"
                   disabled={status === "loading"}
+                  aria-busy={status === "loading"}
                   className="w-full px-4 py-3 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60"
                 >
                   {status === "loading" ? "Sending..." : cta.ctaLabel}

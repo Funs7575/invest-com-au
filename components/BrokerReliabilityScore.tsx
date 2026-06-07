@@ -208,7 +208,7 @@ export default function BrokerReliabilityScore({ brokerId, brokerName }: Props) 
                 maxLength={500}
                 className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500"
               />
-              {error && <p className="text-red-600 text-[11px]">{error}</p>}
+              {error && <p role="alert" className="text-red-600 text-[11px]">{error}</p>}
               <button
                 type="submit"
                 disabled={submitting}

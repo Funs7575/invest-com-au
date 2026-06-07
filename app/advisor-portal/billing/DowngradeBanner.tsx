@@ -71,6 +71,7 @@ export default function DowngradeBanner({ summary, onCancelled }: Props) {
           type="button"
           onClick={cancelDowngrade}
           disabled={busy}
+          aria-busy={busy}
           className="shrink-0 bg-amber-600 hover:bg-amber-700 disabled:bg-slate-300 text-slate-900 text-sm font-bold px-4 py-2 rounded-lg whitespace-nowrap"
         >
           {busy ? "Cancelling…" : "Cancel downgrade"}

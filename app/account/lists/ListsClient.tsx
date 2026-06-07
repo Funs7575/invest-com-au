@@ -103,6 +103,7 @@ function ListCard({
           <button
             onClick={() => { void handleToggle(); }}
             disabled={toggling}
+            aria-busy={toggling}
             className="text-xs text-slate-500 hover:text-violet-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {toggling ? "…" : list.is_public ? "Make private" : "Make public"}
@@ -116,6 +117,7 @@ function ListCard({
               <button
                 onClick={() => { void handleDelete(); }}
                 disabled={deleting}
+                aria-busy={deleting}
                 className="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-2 py-0.5 rounded-md transition-colors disabled:opacity-50"
               >{deleting ? "…" : "Yes"}</button>
               <button

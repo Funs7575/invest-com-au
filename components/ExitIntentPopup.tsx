@@ -16,14 +16,14 @@ export default function ExitIntentPopup() {
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [emailSent, setEmailSent] = useState(false);
-  const pageLoadTime = useRef(Date.now());
+  const [pageLoadTime] = useState(() => Date.now());
   const maxScrollDepth = useRef(0);
   const { isPro } = useSubscription();
 
   const isEngagedEnough = useCallback(() => {
-    const timeOnPage = Date.now() - pageLoadTime.current;
+    const timeOnPage = Date.now() - pageLoadTime;
     return timeOnPage >= MIN_ENGAGEMENT_MS;
-  }, []);
+  }, [pageLoadTime]);
 
   const showPopup = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -235,6 +235,7 @@ export default function ExitIntentPopup() {
                 <button
                   type="submit"
                   disabled={status === "loading" || !consent}
+                  aria-busy={status === "loading"}
                   className="w-full px-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
                 >
                   {status === "loading" ? "Sending..." : "Get Free Fee Comparison PDF →"}
