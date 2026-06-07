@@ -23,7 +23,7 @@ import InvestListingCard from "@/components/InvestListingCard";
 import ListingsEmptyState from "@/components/ListingsEmptyState";
 import ListingDetailView from "@/components/invest/ListingDetailView";
 import { fetchRelatedListings } from "@/lib/investment-listings-query";
-import { listingUrl, rawVerticalVariants } from "@/lib/listing-url";
+import { listingUrl, rawVerticalVariants, categoryForListing } from "@/lib/listing-url";
 import ScrollReveal from "@/components/ScrollReveal";
 import SubCategoryNav from "@/components/SubCategoryNav";
 
@@ -52,32 +52,32 @@ export async function generateMetadata({
   if (!cat) return { robots: { index: false } };
   const sub = getSubcategoryBySlug(category, subcategory);
   if (!sub) {
-    // Not a subcategory — may be a single listing slug. Give it real
-    // metadata so the detail page is indexable; otherwise noindex.
-    const filter = getCategoryDbFilter(cat);
-    if (filter.verticals.length > 0) {
-      const supabase = await createClient();
-      const { data: listing } = await supabase
-        .from("investment_listings")
-        .select("title, description")
-        .in("vertical", filter.verticals.flatMap(rawVerticalVariants))
-        .eq("slug", subcategory)
-        .eq("status", "active")
-        .maybeSingle();
-      if (listing) {
-        const l = listing as { title: string; description: string | null };
-        return {
-          title: `${l.title} — ${cat.label} (${CURRENT_YEAR})`,
+    // Not a subcategory — may be a single listing slug. Look it up by slug
+    // (not vertical-scoped, see the page body) and verify it belongs to this
+    // URL category; give it real metadata so the detail page is indexable,
+    // otherwise noindex.
+    const supabase = await createClient();
+    const { data: rows } = await supabase
+      .from("investment_listings")
+      .select("*")
+      .eq("slug", subcategory)
+      .eq("status", "active")
+      .limit(5);
+    const l = ((rows ?? []) as InvestmentListing[]).find(
+      (r) => categoryForListing(r) === category,
+    );
+    if (l) {
+      return {
+        title: `${l.title} — ${cat.label} (${CURRENT_YEAR})`,
+        description: (l.description ?? "").slice(0, 160) || cat.metaDescription,
+        alternates: { canonical: `/invest/${category}/listings/${subcategory}` },
+        openGraph: {
+          title: `${l.title} — ${cat.label}`,
           description: (l.description ?? "").slice(0, 160) || cat.metaDescription,
-          alternates: { canonical: `/invest/${category}/listings/${subcategory}` },
-          openGraph: {
-            title: `${l.title} — ${cat.label}`,
-            description: (l.description ?? "").slice(0, 160) || cat.metaDescription,
-            url: absoluteUrl(`/invest/${category}/listings/${subcategory}`),
-          },
-          twitter: { card: "summary_large_image" as const },
-        };
-      }
+          url: absoluteUrl(`/invest/${category}/listings/${subcategory}`),
+        },
+        twitter: { card: "summary_large_image" as const },
+      };
     }
     return { robots: { index: false } };
   }
@@ -113,33 +113,37 @@ export default async function InvestSubcategoryListingsPage({
     // listing detail pages work for categories with no bespoke [slug]
     // route (funds, private-equity, royalties, venture-capital, …), which
     // previously 500'd in production.
-    const detailFilter = getCategoryDbFilter(cat);
-    if (detailFilter.verticals.length > 0) {
-      const supabaseForDetail = await createClient();
-      const { data: listingRaw } = await supabaseForDetail
-        .from("investment_listings")
-        .select("*")
-        .in("vertical", detailFilter.verticals.flatMap(rawVerticalVariants))
-        .eq("slug", subcategory)
-        .eq("status", "active")
-        .maybeSingle();
-      if (listingRaw) {
-        const listing = listingRaw as InvestmentListing;
-        const related = await fetchRelatedListings(
-          detailFilter.verticals[0] as InvestListingVertical,
-          subcategory,
-          listing.sub_category,
-          3,
-        );
-        return (
-          <ListingDetailView
-            listing={listing as unknown as CardListing}
-            relatedListings={related as unknown as CardListing[]}
-            categorySlug={category}
-            categoryLabel={cat.label}
-          />
-        );
-      }
+    // Resolve a single listing by slug — NOT vertical-scoped. listingUrl's
+    // category comes from categoryForListing, whose `?? "funds"` fallback
+    // buckets unmapped verticals (e.g. listed securities) into /invest/funds,
+    // so a vertical filter misses them. Look up by slug, then verify the
+    // listing actually belongs to this URL category; else a friendly empty
+    // state. (limit(5) guards the unlikely duplicate-slug case.)
+    const supabaseForDetail = await createClient();
+    const { data: rows } = await supabaseForDetail
+      .from("investment_listings")
+      .select("*")
+      .eq("slug", subcategory)
+      .eq("status", "active")
+      .limit(5);
+    const listing = ((rows ?? []) as InvestmentListing[]).find(
+      (r) => categoryForListing(r) === category,
+    );
+    if (listing) {
+      const related = await fetchRelatedListings(
+        listing.vertical as InvestListingVertical,
+        subcategory,
+        listing.sub_category,
+        3,
+      );
+      return (
+        <ListingDetailView
+          listing={listing as unknown as CardListing}
+          relatedListings={related as unknown as CardListing[]}
+          categorySlug={category}
+          categoryLabel={cat.label}
+        />
+      );
     }
     return <ListingsEmptyState categoryLabel={cat.label} categorySlug={category} />;
   }
