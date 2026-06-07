@@ -346,7 +346,7 @@ export default function HoldingsClient({
           <label>
             <span className="block text-xs font-medium text-slate-700 mb-1">Shares</span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               name="shares"
               required
               min="0"
@@ -357,7 +357,7 @@ export default function HoldingsClient({
           <label>
             <span className="block text-xs font-medium text-slate-700 mb-1">Cost / share (AUD)</span>
             <input
-              type="number"
+              type="number" inputMode="decimal"
               name="costPerShare"
               required
               min="0"

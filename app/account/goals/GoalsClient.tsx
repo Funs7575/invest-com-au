@@ -147,7 +147,7 @@ export default function GoalsClient({ initialItems }: Props) {
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Target $ (AUD)" required cols="sm:col-span-2">
-            <input type="number" name="target" required min={0} step={1}
+            <input type="number" inputMode="decimal" name="target" required min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Target date" required cols="sm:col-span-2">
@@ -155,16 +155,16 @@ export default function GoalsClient({ initialItems }: Props) {
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Expected return %/yr" cols="sm:col-span-2">
-            <input type="number" name="expected_return" min={-10} max={30} step={0.1}
+            <input type="number" inputMode="decimal" name="expected_return" min={-10} max={30} step={0.1}
               defaultValue={GOAL_TYPES.find((g) => g.value === defaultGoalType)?.defaultReturn ?? 6.5}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Current balance" cols="sm:col-span-2">
-            <input type="number" name="current_balance" min={0} step={1}
+            <input type="number" inputMode="decimal" name="current_balance" min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Monthly contribution" cols="sm:col-span-2">
-            <input type="number" name="monthly_contribution" min={0} step={1}
+            <input type="number" inputMode="decimal" name="monthly_contribution" min={0} step={1}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
           <Field label="Notes" cols="sm:col-span-2">

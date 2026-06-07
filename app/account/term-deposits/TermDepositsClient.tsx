@@ -130,7 +130,7 @@ function AddForm({ onAdd }: AddFormProps) {
           <input
             id="td-principal"
             name="principal"
-            type="number"
+            type="number" inputMode="decimal"
             min="1"
             step="0.01"
             required
@@ -143,7 +143,7 @@ function AddForm({ onAdd }: AddFormProps) {
           <input
             id="td-rate"
             name="rate_pct"
-            type="number"
+            type="number" inputMode="decimal"
             min="0"
             max="50"
             step="0.01"

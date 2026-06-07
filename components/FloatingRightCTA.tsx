@@ -65,6 +65,7 @@ export default function FloatingRightCTA({
   return (
     <div
       aria-hidden={!visible}
+      inert={!visible}
       className={`fixed z-40 right-3 sm:right-5 transition-all duration-300 ease-out ${
         mobileOnly ? "lg:hidden" : ""
       } ${

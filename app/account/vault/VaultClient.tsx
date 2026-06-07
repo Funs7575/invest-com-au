@@ -198,7 +198,13 @@ export default function VaultClient({ initialDocs }: { initialDocs: Document[] }
         <div className="text-center py-16 text-gray-400">
           <p className="text-4xl mb-3">🗂️</p>
           <p className="font-medium text-gray-600">Your vault is empty</p>
-          <p className="text-sm mt-1">Upload super statements, tax returns, and other key documents.</p>
+          <p className="text-sm mt-1 mb-4">Upload super statements, tax returns, and other key documents.</p>
+          <button
+            onClick={() => setShowUpload(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            + Upload your first document
+          </button>
         </div>
       ) : (
         <ul className="space-y-3">

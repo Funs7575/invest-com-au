@@ -239,7 +239,7 @@ export default function SMSFCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[100_000, 200_000, 300_000, 500_000, 1_000_000].map(v => (
-                  <button key={v} onClick={() => setBalance(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${balance === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setBalance(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${balance === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v >= 1_000_000 ? `$${v / 1_000_000}M` : `$${v / 1000}k`}
                   </button>
                 ))}
@@ -278,7 +278,7 @@ export default function SMSFCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[0.5, 0.8, 1.0, 1.2, 1.5, 2.0].map(v => (
-                  <button key={v} onClick={() => setCurrentFeePercent(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${currentFeePercent === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setCurrentFeePercent(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${currentFeePercent === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}
@@ -301,7 +301,7 @@ export default function SMSFCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5, 6, 7, 8, 9, 10].map(v => (
-                  <button key={v} onClick={() => setExpectedReturn(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${expectedReturn === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setExpectedReturn(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${expectedReturn === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}
@@ -323,7 +323,7 @@ export default function SMSFCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5, 10, 15, 20, 25, 30].map(v => (
-                  <button key={v} onClick={() => setYearsToRetirement(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${yearsToRetirement === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setYearsToRetirement(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${yearsToRetirement === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}yr
                   </button>
                 ))}

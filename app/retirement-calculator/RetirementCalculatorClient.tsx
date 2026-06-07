@@ -274,7 +274,7 @@ export default function RetirementCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[60000, 80000, 100000, 150000, 200000].map(v => (
-                  <button key={v} onClick={() => setAnnualSalary(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${annualSalary === v ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setAnnualSalary(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${annualSalary === v ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     ${v / 1000}k
                   </button>
                 ))}

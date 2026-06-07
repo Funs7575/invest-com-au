@@ -304,7 +304,14 @@ export default function ReferralsClient() {
               <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Icon name="users" size={20} className="text-slate-400" />
               </div>
-              <p className="text-sm text-slate-500">No referrals yet. Share your link to get started!</p>
+              <p className="text-sm text-slate-500 mb-3">No referrals yet. Share your link to get started!</p>
+              <button
+                onClick={() => { if (referralUrl) void navigator.clipboard.writeText(referralUrl).then(() => setCopied(true)); }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-lg hover:bg-emerald-700 transition-colors"
+              >
+                <Icon name="copy" size={14} aria-hidden />
+                Copy referral link
+              </button>
             </div>
           ) : (
             <div className="overflow-x-auto">

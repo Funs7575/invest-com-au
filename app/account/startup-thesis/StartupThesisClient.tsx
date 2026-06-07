@@ -199,7 +199,7 @@ export default function StartupThesisClient({ initial }: Props) {
             <label htmlFor="thesis-min-ticket" className="block text-xs font-medium text-slate-500 mb-1">Min (AUD)</label>
             <input
               id="thesis-min-ticket"
-              type="number"
+              type="number" inputMode="decimal"
               value={minTicket ?? ""}
               onChange={(e) => setMinTicket(e.target.value ? Number(e.target.value) : null)}
               placeholder="e.g. 10000"
@@ -210,7 +210,7 @@ export default function StartupThesisClient({ initial }: Props) {
             <label htmlFor="thesis-max-ticket" className="block text-xs font-medium text-slate-500 mb-1">Max (AUD)</label>
             <input
               id="thesis-max-ticket"
-              type="number"
+              type="number" inputMode="decimal"
               value={maxTicket ?? ""}
               onChange={(e) => setMaxTicket(e.target.value ? Number(e.target.value) : null)}
               placeholder="e.g. 100000"

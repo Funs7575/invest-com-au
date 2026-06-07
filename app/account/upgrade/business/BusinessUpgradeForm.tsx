@@ -131,7 +131,7 @@ export default function BusinessUpgradeForm({ existing, prefillName, isEdit }: P
           </select>
         </Field>
         <Field label="Year established">
-          <input type="number" name="year_established" min={1850} max={2100}
+          <input type="number" inputMode="numeric" name="year_established" min={1850} max={2100}
             defaultValue={existing?.year_established ?? ""}
             className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
         </Field>
