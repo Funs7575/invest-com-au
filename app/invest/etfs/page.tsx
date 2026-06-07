@@ -43,6 +43,7 @@ export const metadata: Metadata = {
     description:
       "How ETFs work, the major types on the ASX, key metrics to compare (MER, tracking error, bid-ask spread), hedged vs unhedged, tax treatment, and portfolio frameworks for Australian investors.",
     url: `${SITE_URL}/invest/etfs`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("ETF Investing Australia")}&sub=${encodeURIComponent("ASX ETFs · Compare · MER · Asset Class · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

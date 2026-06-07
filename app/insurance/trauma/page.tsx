@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Trauma Insurance Australia (${CURRENT_YEAR}) — Critical Illness Cover`,
     description: "Everything about trauma insurance in Australia — covered conditions, costs, and whether you need it alongside life insurance and income protection.",
     url: `${SITE_URL}/insurance/trauma`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Trauma Insurance Australia")}&sub=${encodeURIComponent("Critical Illness · 40+ Conditions · Lump Sum · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/trauma` },

@@ -51,7 +51,7 @@ export async function generateMetadata({
     title: `${title} | ${SITE_NAME}`,
     description,
     alternates: { canonical: absoluteUrl(`/how-to-invest-in/${vertical}`) },
-    openGraph: { title, description, url: absoluteUrl(`/how-to-invest-in/${vertical}`), type: "article" },
+    openGraph: { title, description, url: absoluteUrl(`/how-to-invest-in/${vertical}`), type: "article", images: [{ url: `/api/og?title=${encodeURIComponent("How to Invest in " + cat.label)}&sub=${encodeURIComponent("Step-by-Step · Tax · Risks · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
     twitter: { card: "summary_large_image" },
   };
 }

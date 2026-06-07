@@ -38,7 +38,9 @@ export const metadata: Metadata = {
     description:
       "Comprehensive guide to buying a business in Australia. Types of businesses, valuation methods, due diligence, visa pathways, and FIRB rules for foreign buyers.",
     url: `${SITE_URL}/invest/buy-business`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("How to Buy a Business in Australia")}&sub=${encodeURIComponent("Business Brokers · Due Diligence · Finance · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function BuyBusinessPage() {

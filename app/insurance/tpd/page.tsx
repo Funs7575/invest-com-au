@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `TPD Insurance Australia (${CURRENT_YEAR}) — Total & Permanent Disability Guide`,
     description: "Everything you need to know about TPD insurance in Australia — definitions, super vs outside, costs, and who needs it.",
     url: `${SITE_URL}/insurance/tpd`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("TPD Insurance Australia")}&sub=${encodeURIComponent("Total Permanent Disability · Own vs Any Occupation · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/tpd` },

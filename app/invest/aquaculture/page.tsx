@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     title: `Australian Aquaculture Investment (${CURRENT_YEAR})`,
     description: "Marine farming, lease structures, biosecurity risks and investment access.",
     url: `${SITE_URL}/invest/aquaculture`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Aquaculture Investment Australia")}&sub=${encodeURIComponent("Seafood · Fish Farming · Returns · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     title: `Australian Carbon & Environmental Markets (${CURRENT_YEAR})`,
     description: "ACCUs, Safeguard Mechanism, voluntary markets and ASX-listed carbon plays.",
     url: `${SITE_URL}/invest/carbon-environmental-markets`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Carbon & Environmental Markets")}&sub=${encodeURIComponent("ACCUs · ETFs · ESG · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

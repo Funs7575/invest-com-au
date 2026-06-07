@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Life Insurance Australia (${CURRENT_YEAR}) — Guide & Comparison`,
     description: "Complete life insurance guide for Australians: how much cover you need, inside vs outside super, and premium types explained.",
     url: `${SITE_URL}/insurance/life`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Life Insurance Australia")}&sub=${encodeURIComponent("Cover Amount · Premiums · Super vs Retail · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/life` },

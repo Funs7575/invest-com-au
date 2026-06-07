@@ -91,7 +91,9 @@ export async function generateMetadata({
     openGraph: {
       title: `ASX ${sector.display_name} Stocks (${CURRENT_YEAR})`,
       url: `${SITE_URL}/invest/${slug}/stocks`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("ASX " + sector.display_name + " Stocks")}&sub=${encodeURIComponent("Market Cap · Dividend Yield · P/E · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

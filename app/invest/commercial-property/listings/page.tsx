@@ -22,6 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Commercial Property for Sale Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/commercial-property/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Commercial Property Investment Opportunities")}&sub=${encodeURIComponent("Active Listings · Australia · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

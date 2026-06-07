@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     description:
       "Guide to dividend investing in Australia — high-yield ASX stocks, franking credits explained, DRPs, dividend ETFs (VHY, SYI, DVDY) and SMSF dividend strategies.",
     url: `${SITE_URL}/invest/dividend-investing`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Dividend Investing Australia")}&sub=${encodeURIComponent("High-Yield Stocks · Franking · ETFs · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Home & Contents Insurance Australia (${CURRENT_YEAR})`,
     description: "Building vs contents insurance, underinsurance, and what's covered — complete guide for Australian homeowners and renters.",
     url: `${SITE_URL}/insurance/home-contents`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Home & Contents Insurance")}&sub=${encodeURIComponent("Compare Policies · Underinsurance · Claims · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/home-contents` },

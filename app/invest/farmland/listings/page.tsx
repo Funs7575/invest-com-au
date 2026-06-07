@@ -22,6 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Farmland for Sale Australia — ${countLabel}Agricultural Properties`,
       url: `${SITE_URL}/invest/farmland/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Farmland Investment Opportunities")}&sub=${encodeURIComponent("Active Listings · Australia · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

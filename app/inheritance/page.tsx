@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     title: `Inheritance Hub (${CURRENT_YEAR}) — CGT, Super & Financial Roadmap`,
     description: inheritanceHubConfig.metaDescription,
     url: `${SITE_URL}/inheritance`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Investing an Inheritance in Australia")}&sub=${encodeURIComponent("What to Do First · CGT · Super · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

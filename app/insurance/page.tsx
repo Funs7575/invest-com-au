@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description:
       "Independent insurance comparison and guides for Australians. Life, income protection, health, and home.",
     url: `${SITE_URL}/insurance`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Insurance Guide Australia")}&sub=${encodeURIComponent("Life · Income Protection · Health · TPD · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };

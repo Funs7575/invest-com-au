@@ -17,6 +17,7 @@ export const metadata: Metadata = {
       "Invest a fixed amount at regular intervals regardless of price. Here is how DCA works, when it beats a lump sum, and how to set it up in Australia.",
     url: `${SITE_URL}/invest/dollar-cost-averaging`,
     type: "website",
+    images: [{ url: `/api/og?title=${encodeURIComponent("Dollar-Cost Averaging Australia")}&sub=${encodeURIComponent("DCA Strategy · ETFs · Automation · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
 };
 

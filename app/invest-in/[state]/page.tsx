@@ -53,7 +53,7 @@ export async function generateMetadata({
     title: `${title} | ${SITE_NAME}`,
     description,
     alternates: { canonical: absoluteUrl(`/invest-in/${st.code.toLowerCase()}`) },
-    openGraph: { title, description, url: absoluteUrl(`/invest-in/${st.code.toLowerCase()}`), type: "website" },
+    openGraph: { title, description, url: absoluteUrl(`/invest-in/${st.code.toLowerCase()}`), type: "website", images: [{ url: `/api/og?title=${encodeURIComponent("Invest in " + st.name + " Australia")}&sub=${encodeURIComponent("FIRB · Foreign Buyer Surcharge · Properties · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
     twitter: { card: "summary_large_image" },
   };
 }

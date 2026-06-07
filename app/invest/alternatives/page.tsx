@@ -33,6 +33,7 @@ export const metadata: Metadata = {
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
     url: absoluteUrl(CANONICAL),
+    images: [{ url: `/api/og?title=${encodeURIComponent("Alternative Investments Australia")}&sub=${encodeURIComponent("Private Equity · Private Credit · Hedge Funds · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" as const },
 };

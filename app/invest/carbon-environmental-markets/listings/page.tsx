@@ -28,6 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `Carbon & Environmental Markets Investment Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/carbon-environmental-markets/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Carbon & Environmental Market Opportunities")}&sub=${encodeURIComponent("Active Listings · Australia · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

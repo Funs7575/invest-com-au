@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Health Insurance Australia (${CURRENT_YEAR}) — Do You Need It?`,
     description: "Medicare vs private health insurance in Australia: MLS, LHC loading, tiers, and the rebate explained.",
     url: `${SITE_URL}/insurance/health`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Health Insurance Australia")}&sub=${encodeURIComponent("Compare Policies · Private vs Public · Rebate · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/health` },

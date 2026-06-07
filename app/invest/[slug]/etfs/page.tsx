@@ -84,7 +84,9 @@ export async function generateMetadata({
     openGraph: {
       title: `Best ${sector.display_name} ETFs in Australia (${CURRENT_YEAR})`,
       url: `${SITE_URL}/invest/${slug}/etfs`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Best " + sector.display_name + " ETFs Australia")}&sub=${encodeURIComponent("Compare MER · Exposure · ASX-Listed · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

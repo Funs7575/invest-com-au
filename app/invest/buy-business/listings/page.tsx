@@ -24,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         "Search Australian businesses for sale. Filter by state, industry, and price range.",
       url: `${SITE_URL}/invest/buy-business/listings`,
+      images: [{ url: `/api/og?title=${encodeURIComponent("Businesses for Sale Australia")}&sub=${encodeURIComponent("Active Listings · SME · Acquisitions · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
     },
   };
 }

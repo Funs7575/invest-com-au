@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     title: `Income Protection Insurance Australia (${CURRENT_YEAR})`,
     description: "How income protection works, what to look for, and why it matters for working Australians.",
     url: `${SITE_URL}/insurance/income-protection`,
+    images: [{ url: `/api/og?title=${encodeURIComponent("Income Protection Insurance")}&sub=${encodeURIComponent("75% Income · Benefit Period · Waiting Period · " + CURRENT_YEAR)}`, width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: `${SITE_URL}/insurance/income-protection` },
