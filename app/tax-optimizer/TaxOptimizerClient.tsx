@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import type { Broker } from "@/lib/types";
 
 interface TaxHolding {
@@ -140,7 +141,10 @@ export default function TaxOptimizerClient({ brokers: _brokers }: { brokers: Bro
           <h2 className="text-sm font-bold text-slate-900 mb-3">Tax Bracket & Holdings</h2>
 
           <div className="mb-4">
-            <label htmlFor="tax-bracket" className="text-xs font-bold text-slate-700 block mb-1">Your marginal tax rate</label>
+            <label htmlFor="tax-bracket" className="text-xs font-bold text-slate-700 block mb-1">
+              Your marginal tax rate
+              <InfoTip text="ATO Stage 3 rates 2024–25 including Medicare levy." />
+            </label>
             <select id="tax-bracket" value={bracket} onChange={e => setBracket(Number(e.target.value))} className="px-3 py-2 text-sm border border-slate-200 rounded-lg w-full max-w-sm">
               {TAX_BRACKETS.map((b, i) => <option key={i} value={i}>{b.label}</option>)}
             </select>
