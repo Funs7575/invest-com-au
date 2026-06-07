@@ -510,6 +510,34 @@ export default function SuperCoContributionPage() {
           </div>
         </section>
 
+        {/* CTA */}
+        <section className="py-10 bg-gradient-to-br from-slate-900 to-slate-800">
+          <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
+            <div>
+              <h2 className="text-lg font-extrabold text-white mb-1">
+                Make your co-contribution work harder
+              </h2>
+              <p className="text-slate-400 text-sm">
+                Low fees compound your government bonus faster. Compare Australia&apos;s top super funds.
+              </p>
+            </div>
+            <div className="flex gap-3 shrink-0 flex-wrap">
+              <Link
+                href="/compare/super"
+                className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
+              >
+                Compare Super Funds
+              </Link>
+              <Link
+                href="/advisors/financial-planners"
+                className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap"
+              >
+                Find a Financial Planner
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Related links + compliance */}
         <section className="py-10 bg-slate-50 border-t border-slate-200">
           <div className="container-custom max-w-4xl">

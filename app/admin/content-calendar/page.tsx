@@ -729,6 +729,8 @@ export default function ContentCalendarPage() {
               onChange={e => setCronSecret(e.target.value)}
               placeholder="CRON_SECRET"
               className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg font-mono"
+              autoComplete="current-password"
+              aria-label="CRON_SECRET authorization key"
               autoFocus
               onKeyDown={e => { if (e.key === "Enter" && cronSecret.trim()) void handleGenerateDraft(pendingDraftItem); }}
             />

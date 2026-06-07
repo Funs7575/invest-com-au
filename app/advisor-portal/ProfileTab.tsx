@@ -152,10 +152,12 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
             <label htmlFor="pt-website" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
             <input
               id="pt-website"
+              type="url"
               value={advisor.website || ""}
               onChange={(e) => onAdvisorChange({ ...advisor, website: e.target.value })}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
               placeholder="https://..."
+              autoComplete="url"
             />
           </div>
           <div>

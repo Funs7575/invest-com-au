@@ -232,6 +232,7 @@ export default function SignupClient() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   autoComplete="email"
+                  autoFocus
                   aria-required="true"
                   aria-describedby={error ? errorId : undefined}
                   className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"

@@ -262,6 +262,7 @@ export default function BrokerRegisterPage() {
             <div>
               <label htmlFor="bp-reg-name" className="block text-sm font-medium text-slate-700 mb-1">Full Name *</label>
               <input id="bp-reg-name" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required
+                autoComplete="name"
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="John Smith" />
             </div>

@@ -125,7 +125,7 @@ export default async function SearchPage({
 
           {/* Header */}
           {query.length >= 2 && (
-            <div className="mb-6">
+            <div className="mb-6" aria-live="polite" aria-atomic="true">
               {error ? (
                 <p role="alert" className="text-sm text-red-600">{error}</p>
               ) : results ? (

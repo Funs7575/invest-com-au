@@ -529,7 +529,7 @@ function AdvisorApplyInner() {
                 </div>
                 <div>
                   <label htmlFor="aa-website" className="block text-xs font-semibold text-slate-600 mb-1">Firm Website</label>
-                  <input id="aa-website" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                  <input id="aa-website" type="url" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} autoComplete="url" className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
                 </div>
               </div>
             )}
@@ -650,7 +650,7 @@ function AdvisorApplyInner() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="aa-website-ind" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
-                  <input id="aa-website-ind" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                  <input id="aa-website-ind" type="url" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} autoComplete="url" className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
                 </div>
                 <div>
                   <label htmlFor="aa-fee" className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>

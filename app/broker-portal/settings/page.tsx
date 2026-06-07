@@ -159,6 +159,7 @@ export default function SettingsPage() {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
+            autoComplete="name"
             className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>
@@ -170,6 +171,7 @@ export default function SettingsPage() {
             type="text"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
+            autoComplete="organization"
             className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>

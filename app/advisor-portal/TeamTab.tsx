@@ -459,7 +459,7 @@ export default function TeamTab({ advisor }: Props) {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="firm-website" className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
-                  <input id="firm-website" value={editingFirm.website || ""} onChange={(e) => setEditingFirm(f => ({ ...f, website: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                  <input id="firm-website" type="url" autoComplete="url" value={editingFirm.website || ""} onChange={(e) => setEditingFirm(f => ({ ...f, website: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
                 </div>
                 <div>
                   <label htmlFor="firm-phone" className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
