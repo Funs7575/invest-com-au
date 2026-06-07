@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import type { InvestmentListing } from "@/lib/types";
+import type { InvestmentListing, InvestListingVertical } from "@/lib/types";
+import type { InvestmentListing as CardListing } from "@/components/ListingCard";
 import {
   getInvestCategoryBySlug,
   getSubcategoryBySlug,
@@ -12,12 +13,16 @@ import {
 import {
   absoluteUrl,
   breadcrumbJsonLd,
+  CURRENT_YEAR,
 } from "@/lib/seo";
 import {
   ADVERTISER_DISCLOSURE_SHORT,
   GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
 import InvestListingCard from "@/components/InvestListingCard";
+import ListingsEmptyState from "@/components/ListingsEmptyState";
+import ListingDetailView from "@/components/invest/ListingDetailView";
+import { fetchRelatedListings } from "@/lib/investment-listings-query";
 import { listingUrl } from "@/lib/listing-url";
 import ScrollReveal from "@/components/ScrollReveal";
 import SubCategoryNav from "@/components/SubCategoryNav";
@@ -26,7 +31,14 @@ export const revalidate = 3600;
 
 // ── Static params for ISR ──
 export function generateStaticParams() {
-  return getAllSubcategorySlugs();
+  // getAllSubcategorySlugs() returns { category, subcategory }, but the
+  // route segments are [slug]/[subcategory] — so the `slug` key was never
+  // provided (a latent bug that contributed to a prod-only 500 on this
+  // route). Map category → slug.
+  return getAllSubcategorySlugs().map(({ category, subcategory }) => ({
+    slug: category,
+    subcategory,
+  }));
 }
 
 // ── Dynamic metadata ──
@@ -39,7 +51,36 @@ export async function generateMetadata({
   const cat = getInvestCategoryBySlug(category);
   if (!cat) return { robots: { index: false } };
   const sub = getSubcategoryBySlug(category, subcategory);
-  if (!sub) return { robots: { index: false } };
+  if (!sub) {
+    // Not a subcategory — may be a single listing slug. Give it real
+    // metadata so the detail page is indexable; otherwise noindex.
+    const filter = getCategoryDbFilter(cat);
+    if (filter.verticals.length > 0) {
+      const supabase = await createClient();
+      const { data: listing } = await supabase
+        .from("investment_listings")
+        .select("title, description")
+        .in("vertical", filter.verticals)
+        .eq("slug", subcategory)
+        .eq("status", "active")
+        .maybeSingle();
+      if (listing) {
+        const l = listing as { title: string; description: string | null };
+        return {
+          title: `${l.title} — ${cat.label} (${CURRENT_YEAR})`,
+          description: (l.description ?? "").slice(0, 160) || cat.metaDescription,
+          alternates: { canonical: `/invest/${category}/listings/${subcategory}` },
+          openGraph: {
+            title: `${l.title} — ${cat.label}`,
+            description: (l.description ?? "").slice(0, 160) || cat.metaDescription,
+            url: absoluteUrl(`/invest/${category}/listings/${subcategory}`),
+          },
+          twitter: { card: "summary_large_image" as const },
+        };
+      }
+    }
+    return { robots: { index: false } };
+  }
 
   const ogImageUrl = `/api/og?title=${encodeURIComponent(sub.h1)}&subtitle=${encodeURIComponent(sub.metaDescription.slice(0, 80))}&type=invest`;
 
@@ -66,7 +107,42 @@ export default async function InvestSubcategoryListingsPage({
   const cat = getInvestCategoryBySlug(category);
   if (!cat) notFound();
   const sub = getSubcategoryBySlug(category, subcategory);
-  if (!sub) notFound();
+  if (!sub) {
+    // Not a subcategory — resolve a single listing by slug, else show a
+    // friendly empty state. Never notFound()/crash: this is what makes
+    // listing detail pages work for categories with no bespoke [slug]
+    // route (funds, private-equity, royalties, venture-capital, …), which
+    // previously 500'd in production.
+    const detailFilter = getCategoryDbFilter(cat);
+    if (detailFilter.verticals.length > 0) {
+      const supabaseForDetail = await createClient();
+      const { data: listingRaw } = await supabaseForDetail
+        .from("investment_listings")
+        .select("*")
+        .in("vertical", detailFilter.verticals)
+        .eq("slug", subcategory)
+        .eq("status", "active")
+        .maybeSingle();
+      if (listingRaw) {
+        const listing = listingRaw as InvestmentListing;
+        const related = await fetchRelatedListings(
+          detailFilter.verticals[0] as InvestListingVertical,
+          subcategory,
+          listing.sub_category,
+          3,
+        );
+        return (
+          <ListingDetailView
+            listing={listing as unknown as CardListing}
+            relatedListings={related as unknown as CardListing[]}
+            categorySlug={category}
+            categoryLabel={cat.label}
+          />
+        );
+      }
+    }
+    return <ListingsEmptyState categoryLabel={cat.label} categorySlug={category} />;
+  }
 
   const supabase = await createClient();
   const filter = getCategoryDbFilter(cat);

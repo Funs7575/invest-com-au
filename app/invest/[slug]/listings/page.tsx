@@ -12,24 +12,19 @@ import {
   countListingsByVertical,
 } from "@/lib/investment-listings-query";
 import type { InvestListingVertical } from "@/lib/types";
-import { GENERIC_LISTING_SLUGS } from "@/lib/invest-listing-routes";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import SubCategoryNav from "@/components/SubCategoryNav";
 
 export const revalidate = 300;
 
-// Only the opportunity categories that have NO bespoke static
-// `app/invest/<slug>/listings/page.tsx` are served here. The 14 static
-// pages take routing precedence; this generic route fills the gaps so
-// EVERY opportunity sector has one canonical `/listings` destination
-// (the target of the `?category=` → `/listings` redirect in proxy.ts).
-export function generateStaticParams() {
-  return GENERIC_LISTING_SLUGS.map((slug) => ({ slug }));
-}
-
-// Anything not pre-listed is either a static page (handled elsewhere) or
-// not a real listings sector — 404 rather than render an empty mystery page.
-export const dynamicParams = false;
+// Fully dynamic (no generateStaticParams / dynamicParams). The 14 bespoke
+// static `app/invest/<slug>/listings/page.tsx` pages take routing
+// precedence; this generic route fills the gaps for opportunity sectors
+// without one (income-assets, bullion, water-rights, carbon-credits,
+// sda-housing). It previously set `dynamicParams = false`, but constraining
+// the shared `[slug]` segment that way interacted badly with the nested
+// `[subcategory]` route in production — removed. `notFound()` guards
+// invalid slugs instead; `revalidate` caches the rendered pages.
 
 /** Shared resolver: the category for this slug, or 404. */
 function resolveCategory(slug: string) {
