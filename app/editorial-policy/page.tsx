@@ -1,6 +1,26 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
+
+const EDITORIAL_FAQS = [
+  {
+    q: "Do affiliate relationships affect your broker ratings?",
+    a: "No. Broker ratings are calculated using our 6-factor methodology (fees, platform quality, safety, product range, user experience, and extras) using data sourced from primary sources like PDS documents and pricing pages. A broker's affiliate status — or the absence of one — does not change its score. We also review brokers that have no affiliate arrangement with us if they are relevant to Australian investors.",
+  },
+  {
+    q: "How often do you update broker fees?",
+    a: "Fee data is hash-checked weekly — we monitor broker pricing pages for changes. When a change is detected, the updated data is verified against the broker's product disclosure statement and updated on the site within 48 hours. Time-sensitive pages (e.g. 'best broker' lists) are reviewed when major broker offerings change. Evergreen guides are reviewed at least quarterly.",
+  },
+  {
+    q: "How do I report an error in your content?",
+    a: "Email editorial@invest.com.au with the page URL and a description of the error. Our target is to investigate and fix factual errors within 48 hours of receiving the report. Significant corrections are noted in the article changelog (visible in the author byline area). Minor typographical corrections are fixed silently. We take accuracy seriously and welcome reports — they help us keep the data reliable for all users.",
+  },
+  {
+    q: "Do you cover all Australian brokers, or only ones that pay you?",
+    a: "We aim to cover all major Australian investment platforms regardless of commercial relationship. Our comparison tables include brokers with and without affiliate deals. A broker being listed does not require any commercial arrangement — we include platforms if they are relevant to Australian investors. Affiliate links are clearly labelled on every page so readers can distinguish them from neutral coverage.",
+  },
+];
 
 export const revalidate = 86400;
 
@@ -31,12 +51,16 @@ const breadcrumbLd = breadcrumbJsonLd([
 ]);
 
 export default function EditorialPolicyPage() {
+  const faqLd = faqJsonLd(EDITORIAL_FAQS);
   return (
     <div className="py-5 md:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
 
       <div className="container-custom max-w-3xl">
         {/* Breadcrumb */}
@@ -309,6 +333,22 @@ export default function EditorialPolicyPage() {
               </a>
               .
             </p>
+          </section>
+
+          {/* FAQ */}
+          <section className="mt-10">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {EDITORIAL_FAQS.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
           </section>
         </div>
       </div>
