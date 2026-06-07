@@ -81,6 +81,16 @@ export default function LumpSumCalculatorClient() {
 
   const maxFinal = Math.max(main.final, conservative.final, optimistic.final);
 
+  const isModified = lumpSum !== 100000 || monthly !== 0 || returnRate !== 7 || years !== 15 || taxId !== "30";
+
+  const handleReset = () => {
+    setLumpSum(100000);
+    setMonthly(0);
+    setReturnRate(7);
+    setYears(15);
+    setTaxId("30");
+  };
+
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm space-y-6">
@@ -114,6 +124,17 @@ export default function LumpSumCalculatorClient() {
             </select>
           </label>
         </div>
+
+        {isModified && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleReset}
+              className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+            >
+              Reset to defaults
+            </button>
+          </div>
+        )}
 
         <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6">
           <p className="text-[10px] uppercase tracking-wider font-extrabold text-amber-400">Final balance after {years} years</p>

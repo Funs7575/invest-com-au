@@ -64,6 +64,23 @@ export default function NegativeGearingCalculatorClient() {
     });
   }, [propertyValue, rentalIncome, interest, otherCosts, marginalRate, growthRate, setPersistedInputs]);
 
+  const isModified =
+    propertyValue !== 850000 ||
+    rentalIncome !== 28000 ||
+    interest !== 35000 ||
+    otherCosts !== 7000 ||
+    marginalRate !== 0.37 ||
+    growthRate !== 4;
+
+  const handleReset = () => {
+    setPropertyValue(850000);
+    setRentalIncome(28000);
+    setInterest(35000);
+    setOtherCosts(7000);
+    setMarginalRate(0.37);
+    setGrowthRate(4);
+  };
+
   const calc = useMemo(() => {
     const totalCosts = interest + otherCosts;
     const annualLoss = totalCosts - rentalIncome;
@@ -113,6 +130,17 @@ export default function NegativeGearingCalculatorClient() {
             </label>
           </div>
         </div>
+
+        {isModified && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleReset}
+              className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+            >
+              Reset to defaults
+            </button>
+          </div>
+        )}
 
         <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6">
           <h3 className="text-lg font-extrabold mb-4">Annual outcome</h3>

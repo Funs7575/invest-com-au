@@ -140,6 +140,25 @@ export default function SMSFCalculatorClient() {
 
   const smsfAnnualCostEstimate = smsfFixedCosts() + balance * smsfInvestmentMgmtRate();
 
+  const isModified =
+    balance !== 300000 ||
+    annualContribution !== 27500 ||
+    currentFeePercent !== 1.2 ||
+    expectedReturn !== 7 ||
+    yearsToRetirement !== 20;
+
+  const handleReset = () => {
+    setBalance(300000);
+    setAnnualContribution(27500);
+    setCurrentFeePercent(1.2);
+    setExpectedReturn(7);
+    setYearsToRetirement(20);
+    setShowResults(false);
+    setEmailGated(false);
+    setEmail("");
+    setEmailSubmitted(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     setEmailGated(true);
@@ -312,12 +331,22 @@ export default function SMSFCalculatorClient() {
             </div>
           </div>
 
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-amber-500 text-slate-900 text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
-          >
-            Compare SMSF vs Current Fund →
-          </button>
+          <div className="flex items-center gap-2 mt-5">
+            <button
+              onClick={handleCalculate}
+              className="flex-1 px-6 py-3.5 bg-amber-500 text-slate-900 text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
+            >
+              Compare SMSF vs Current Fund →
+            </button>
+            {isModified && (
+              <button
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Results */}

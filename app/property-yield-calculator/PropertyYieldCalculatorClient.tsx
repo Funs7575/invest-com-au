@@ -157,6 +157,37 @@ export default function PropertyYieldCalculatorClient() {
 
   const yieldStyle = yieldColor(grossYield);
 
+  const isModified =
+    purchasePrice !== 750000 ||
+    weeklyRent !== 550 ||
+    councilRates !== 2000 ||
+    insurance !== 1500 ||
+    maintenance !== 2000 ||
+    managementPct !== 7 ||
+    strata !== 0 ||
+    otherExpenses !== 0 ||
+    showMortgage !== false ||
+    loanAmount !== 600000 ||
+    interestRate !== 6.2;
+
+  const handleReset = () => {
+    setPurchasePrice(750000);
+    setWeeklyRent(550);
+    setCouncilRates(2000);
+    setInsurance(1500);
+    setMaintenance(2000);
+    setManagementPct(7);
+    setStrata(0);
+    setOtherExpenses(0);
+    setShowMortgage(false);
+    setLoanAmount(600000);
+    setInterestRate(6.2);
+    setShowResults(false);
+    setEmailGated(false);
+    setEmail("");
+    setEmailSubmitted(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     setEmailGated(false);
@@ -330,12 +361,22 @@ export default function PropertyYieldCalculatorClient() {
             )}
           </div>
 
-          <button
-            onClick={handleCalculate}
-            className="w-full mt-2 px-6 py-3.5 bg-emerald-600 text-white text-base font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-lg hover:shadow-xl"
-          >
-            Calculate Rental Yield &rarr;
-          </button>
+          <div className="flex items-center gap-2 mt-2">
+            <button
+              onClick={handleCalculate}
+              className="flex-1 px-6 py-3.5 bg-emerald-600 text-white text-base font-bold rounded-xl hover:bg-emerald-700 transition-all shadow-lg hover:shadow-xl"
+            >
+              Calculate Rental Yield &rarr;
+            </button>
+            {isModified && (
+              <button
+                onClick={handleReset}
+                className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Results */}

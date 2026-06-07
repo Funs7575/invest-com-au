@@ -61,6 +61,22 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
   const cheapest = results[0];
   const savings = currentBroker ? currentCost - (cheapest?.cost || 0) : 0;
 
+  const isModified =
+    currentBroker !== "" ||
+    tradesPerYear !== 24 ||
+    avgTradeSize !== 2000 ||
+    usAllocation !== 30;
+
+  const handleReset = () => {
+    setCurrentBroker("");
+    setTradesPerYear(24);
+    setAvgTradeSize(2000);
+    setUsAllocation(30);
+    setShowResults(false);
+    setEmail("");
+    setEmailCaptured(false);
+  };
+
   const handleCalculate = () => {
     setShowResults(true);
     storeQualificationData("switching_calculator", {
@@ -162,9 +178,19 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
               </div>
             </div>
 
-            <button onClick={handleCalculate} className="w-full py-3 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 active:scale-[0.99] transition-all">
-              Calculate My Savings →
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={handleCalculate} className="flex-1 py-3 bg-emerald-600 text-white font-bold text-sm rounded-xl hover:bg-emerald-700 active:scale-[0.99] transition-all">
+                Calculate My Savings →
+              </button>
+              {isModified && (
+                <button
+                  onClick={handleReset}
+                  className="px-4 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
