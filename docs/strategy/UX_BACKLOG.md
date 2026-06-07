@@ -662,6 +662,24 @@ Sourced from a parallel code-review sweep across 7 feature areas (69 compiled fi
 
 **[ADV-192]** WCAG 1.3.1 label sweep batch 8 (admin — final) — 14 admin-area files: marketplace/support (status + priority filters), marketplace/funnel (broker A + B), professionals/queue (reject-reason textarea), afsl-register (CSV upload), quiz-weights (sim inputs + pre-existing exhaustive-deps), quiz-questions (orphan options span), country-rule-alerts (country filter), country-schemes (country filter), placement-experiments (status filter), advisor-signup (orphan specialties → `<p>`), admin/brokers (Field/TextArea labels), admin/finance (8 transaction modal fields), marketplace/placements (5 form fields), courses/[slug] (27 fields across 3 sections). Courses admin page (13 fields + immutability suppress) completed as final commit `93817590`. Zero sibling-label violations remain across `app/`.
 
+**[ADV-076]** FIRE Calculator — Goal saved state upgraded to prominent green toast (rounded card, "✓ Goal saved" + "View dashboard" link) that auto-dismisses after 4s. `app/fire-calculator/FireCalculatorClient.tsx`
+
+**[ADV-073]** FIRE Calculator — Error state gains Retry + dismiss (✕) buttons; auto-dismisses after 8s. `app/fire-calculator/FireCalculatorClient.tsx`
+
+**[ADV-077]** FeeSimulatorClient — Replaced `alert("Link copied!")` with a `<p role="status">` inline toast that auto-dismisses after 2s. `app/fee-simulator/FeeSimulatorClient.tsx`
+
+**[ADV-093]** HoldingsClient — Price "—" cell now carries `title` attr explaining unavailability (invalid ticker / unsupported exchange / data issue). `app/account/holdings/HoldingsClient.tsx`
+
+**[ADV-072]** CompoundInterestClient — Save button shows "Saved ✓" for 2s (disabled during flash) after localStorage write. `app/compound-interest-calculator/CompoundInterestClient.tsx`
+
+**[ADV-088]** Broker dashboard — "This Week vs Last Week" renamed to "Last 7 days vs previous 7 days" with explicit date range subtitle computed client-side. Metric-card labels updated to "vs prev 7 days". `app/broker-portal/page.tsx`
+
+**[ADV-131]** Advisors page — Removed duplicate alert signup widget from inside EmptyState; the standalone widget below results already handles this. `app/advisors/AdvisorsClient.tsx`
+
+**[ADV-114]** ArticleShareRow — Added WhatsApp and Facebook share links alongside existing LinkedIn/X/Email/copy-link buttons. `components/ArticleShareRow.tsx`
+
+**[ADV-075]** TaxOptimizerClient — Marginal tax rate label gets InfoTip: "ATO Stage 3 rates 2024–25 including Medicare levy." `app/tax-optimizer/TaxOptimizerClient.tsx`
+
 ---
 
 ## UX / UI / Feature sweep — 2026-06-07
