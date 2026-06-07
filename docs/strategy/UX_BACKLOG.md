@@ -702,6 +702,36 @@ Sourced from a parallel code-review sweep across 7 feature areas (69 compiled fi
 
 **[ADV-129]** For-Advisors pricing — "Most Popular" Pay Per Lead card upgraded: gradient bg (violet-50 → indigo-50), md:scale-[1.03], stronger badge with ★ and shadow, heavier button shadow. `app/for-advisors/page.tsx`
 
+**[ADV-081]** A/B Tests — End and Declare Winner now open a confirmation modal (cancel + confirm) instead of native `confirm()`. Modal copy explains what will be locked in. `app/broker-portal/ab-tests/page.tsx`
+
+**[ADV-086]** Broker portal — Budget-exhausted campaigns show "Increase Budget →" link (to /broker-portal/packages) beneath the budget bar. `app/broker-portal/page.tsx`
+
+**[ADV-092]** HoldingsClient — Ticker input validates format (e.g. BHP.AX / AAPL) client-side before API call; invalid formats surface "Enter a valid ticker (e.g. BHP.AX or AAPL)." `app/account/holdings/HoldingsClient.tsx`
+
+**[ADV-094]** HoldingsClient — Stale price indicator gains a warning triangle SVG icon alongside the "stale price" text. `app/account/holdings/HoldingsClient.tsx`
+
+**[ADV-096]** GoalsClient — If current balance > target, submit is blocked with "Current balance exceeds target — consider increasing the target amount." `app/account/goals/GoalsClient.tsx`
+
+**[ADV-101]** SettingsTab — Session pricing input replaced with a skeleton loader (animated placeholder divs) while the price data loads. `app/advisor-portal/SettingsTab.tsx`
+
+**[ADV-120]** Quotes job-post form — Trust banner added at the top of step 1: "Free, no obligation · AFSL-licensed advisors only · Compare up to 5 quotes · Reply within 72 hours." `app/quotes/post/JobPostForm.tsx`
+
+**[ADV-121]** Quotes success screen — Secondary CTA changed from "Browse the marketplace" to "Share with an advisor you know" (mailto link). Timeline added: "Expect quotes within 24–72 hours." `app/quotes/post/JobPostForm.tsx`
+
+**[ADV-122]** Get Matched quiz — Progress strip shows "~N min remaining" alongside step count on both mobile and desktop (computed at 20s/step). `app/get-matched/GetMatchedClient.tsx`
+
+**[ADV-148]** Broker portal campaign list — Status dots and badges now carry `title` tooltips explaining each status. `budget_exhausted` gets a distinct red badge. `app/broker-portal/page.tsx`
+
+**[ADV-151]** GoalsClient — "Current" and "Monthly" stat cells show "—" when the value is zero, avoiding the misleading "$0" display. `app/account/goals/GoalsClient.tsx`
+
+**[ADV-152]** NotificationsList — "Mark all as read" shows a 2.5s "All marked as read" flash confirmation after success. `app/account/notifications/NotificationsList.tsx`
+
+**[ADV-153]** ManualBalancesPanel — Amount label updated to "Amount (AUD, e.g. 25000)" with placeholder simplified to "25000". `app/account/net-worth/ManualBalancesPanel.tsx`
+
+**[ADV-155]** WatchlistAlertsToggle — Toggle button carries `title="Add watchlist items first to enable alerts"` when disabled due to empty watchlist. `app/account/watchlist/WatchlistAlertsToggle.tsx`
+
+**[ADV-158]** Net worth goal progress — Always shows a percentage label below the bar. 0% includes "add funds to start tracking progress". `app/account/net-worth/page.tsx`
+
 ---
 
 ## UX / UI / Feature sweep — 2026-06-07
