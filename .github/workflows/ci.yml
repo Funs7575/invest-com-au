@@ -519,6 +519,28 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: node scripts/check-rls-migrations.mjs
 
+  migration-filename-gate:
+    name: Migration filename gate (unique 14-digit version)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    # Why this exists: the Supabase CLI keys migrations on the leading digits of
+    # the filename. The legacy tree mixed 3-/8-/14-digit versions and produced
+    # 50 colliding date-only prefixes, which is a load-bearing reason the tree
+    # can no longer be `db push`ed against prod (see
+    # docs/runbooks/MIGRATION_LEDGER_RECONCILIATION.md). This gate stops the rot
+    # from growing: every NEW migration must carry a unique 14-digit timestamp.
+    # PR-scoped (added files only), so it never red-fails on the legacy files —
+    # those are retired by the baseline-squash, not by this gate.
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Check new migration filenames use a unique 14-digit timestamp
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: node scripts/check-migration-filenames.mjs
+
   database-types-drift-gate:
     name: Database types drift gate (lib/database.types.ts vs migrations)
     runs-on: ubuntu-latest

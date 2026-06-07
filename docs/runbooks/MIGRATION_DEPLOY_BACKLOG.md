@@ -1,6 +1,28 @@
 # Runbook: Deploy the migration backlog + clear "Supabase types drift"
 
-**Status:** prep only — no changes have been applied to the production database by this runbook.
+> ## 🛑 SUPERSEDED — DO NOT FOLLOW (2026-06-07)
+>
+> This runbook's core action — `supabase db push` to apply "118 pending
+> migrations" — is **dangerous and based on a model that is no longer true**.
+> Measured 2026-06-07: only **5 of 250** local migration versions are tracked in
+> the prod ledger, so `db push` would attempt **~245** migrations — re-creating
+> existing tables and **re-running ~35 non-idempotent data backfills**, plus the
+> CSF/Tier-E startup-portal migration. The schema content is already ~98% in
+> prod; the real problem is a **forked migration ledger** caused by the
+> `supabase-migrate.yml` workflow silently no-op'ing for months (its secrets were
+> unset — see PR #1463).
+>
+> **Use instead:**
+> - **State:** `docs/audits/DB-STATE-2026-06-07.md`
+> - **Fix:** `docs/runbooks/MIGRATION_LEDGER_RECONCILIATION.md` (baseline-squash)
+>
+> The historical content below is retained for the per-migration notes and the
+> compliance-hold record only.
+
+---
+
+**Status:** ⚠️ SUPERSEDED — historical reference only. The original "prep only"
+status and the `db push` procedure below must not be executed.
 **Prepared:** 2026-05-26. **Project ref:** `guggzyqceattncjwvgyc` (invest-com-au, eu-west-1).
 
 ## Why this exists
