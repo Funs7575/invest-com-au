@@ -132,7 +132,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"

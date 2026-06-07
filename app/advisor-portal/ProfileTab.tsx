@@ -179,10 +179,12 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
           <label htmlFor="pt-booking-link" className="block text-xs font-semibold text-slate-600 mb-1">Booking Link (Calendly / Cal.com)</label>
           <input
             id="pt-booking-link"
+            type="url"
             value={advisor.booking_link || ""}
             onChange={(e) => onAdvisorChange({ ...advisor, booking_link: e.target.value })}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
             placeholder="https://calendly.com/your-name/30min"
+            autoComplete="url"
           />
           <p className="text-[0.55rem] text-slate-400 mt-1">Paste your Calendly or Cal.com link. A &quot;Book Free Call&quot; button will appear on your profile.</p>
         </div>

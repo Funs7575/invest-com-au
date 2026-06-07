@@ -56,7 +56,7 @@ export default function DataRightsForm() {
         </label>
         <input
           id="email"
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"

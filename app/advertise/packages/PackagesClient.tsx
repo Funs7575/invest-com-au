@@ -252,7 +252,7 @@ export default function PackagesClient() {
           </label>
           <input
             id="contact-email"
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             autoComplete="email"
             value={contactEmail}
             onChange={(e) => setContactEmail(e.target.value)}
@@ -326,7 +326,7 @@ export default function PackagesClient() {
               </label>
               <input
                 id="contact-email-2"
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 autoComplete="email"
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}

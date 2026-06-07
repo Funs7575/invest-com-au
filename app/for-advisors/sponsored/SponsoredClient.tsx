@@ -220,7 +220,7 @@ export default function SponsoredClient() {
                   </label>
                   <input
                     id="sp-email"
-                    type="email"
+                    type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                     autoComplete="email"
                     name="email"
                     required

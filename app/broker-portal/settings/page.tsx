@@ -143,7 +143,7 @@ export default function SettingsPage() {
           <label htmlFor="broker-email" className="block text-sm font-medium text-slate-700 mb-1">Email</label>
           <input
             id="broker-email"
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             value={account.email}
             disabled
             className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 text-slate-500"

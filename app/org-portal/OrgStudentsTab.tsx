@@ -70,7 +70,7 @@ export default function OrgStudentsTab({ org: _org }: Props) {
       <div className="relative mb-4">
         <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
         <input
-          type="search"
+          type="search" enterKeyHint="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name or email..."

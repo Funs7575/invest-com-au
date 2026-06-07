@@ -140,7 +140,7 @@ export default function TeamTab({ advisor }: Props) {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <input value={inviteName} onChange={(e) => setInviteName(e.target.value)} placeholder="Name (optional)" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
-                <input type="email" autoComplete="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="Email address *" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
+                <input type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoComplete="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="Email address *" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
                 <button onClick={sendInvite} disabled={inviteStatus === "sending" || !inviteEmail.trim()} aria-busy={inviteStatus === "sending"} className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                   {inviteStatus === "sending" ? "Sending..." : inviteStatus === "sent" ? "Sent!" : "Send Invite"}
                 </button>
@@ -469,7 +469,7 @@ export default function TeamTab({ advisor }: Props) {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="firm-email" className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
-                  <input id="firm-email" type="email" autoComplete="email" value={editingFirm.email || ""} onChange={(e) => setEditingFirm(f => ({ ...f, email: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="info@firm.com.au" />
+                  <input id="firm-email" type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoComplete="email" value={editingFirm.email || ""} onChange={(e) => setEditingFirm(f => ({ ...f, email: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="info@firm.com.au" />
                 </div>
                 <div>
                   <label htmlFor="firm-abn" className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>

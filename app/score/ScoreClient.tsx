@@ -416,7 +416,7 @@ export default function ScoreClient() {
               </p>
               <div className="flex gap-2 max-w-md mx-auto">
                 <input
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   placeholder="you@example.com"
                   aria-label="Email address"
                   value={email}

@@ -540,7 +540,7 @@ function AdvisorApplyInner() {
                 <div className="relative">
                   <input
                     id="aa-email"
-                    type="email"
+                    type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                     autoComplete="email"
                     value={form.email}
                     onChange={(e) => {

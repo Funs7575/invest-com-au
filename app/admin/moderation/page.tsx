@@ -424,7 +424,7 @@ export default function ModerationQueuePage() {
       {/* Search + Sort row */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <input
-          type="search"
+          type="search" enterKeyHint="search"
           placeholder="Search by name, email, broker, or content..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}

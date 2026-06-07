@@ -85,7 +85,7 @@ export default function UnsubscribeClient() {
         <label htmlFor="unsub-email" className="sr-only">Email address</label>
         <input
           id="unsub-email"
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"

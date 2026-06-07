@@ -1402,7 +1402,7 @@ function Step4({
           value={firstName} onChange={(e) => onChange("firstName", e.target.value)}
           error={errors.firstName} autoComplete="given-name" disabled={otpActive} />
 
-        <Input id="email" label="Email address" type="email" required placeholder="john@example.com"
+        <Input id="email" label="Email address" type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} required placeholder="john@example.com"
           value={email} onChange={(e) => onChange("email", e.target.value)}
           hint={otpActive ? `Code sent to ${email}` : "We'll send a verification code here"}
           error={errors.email} autoComplete="email" disabled={otpActive} />

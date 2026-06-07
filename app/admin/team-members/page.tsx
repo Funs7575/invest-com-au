@@ -421,7 +421,7 @@ export default function TeamMembersPage() {
           {/* Search */}
           <div className="mb-4">
             <input
-              type="search"
+              type="search" enterKeyHint="search"
               placeholder="Search by name, slug, or role..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}

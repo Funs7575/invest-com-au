@@ -624,7 +624,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               </label>
               <input
                 id="ars-email"
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 placeholder="you@email.com"
                 autoComplete="email"
                 value={email}

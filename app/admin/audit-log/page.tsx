@@ -254,7 +254,7 @@ export default function AuditLogPage() {
       {/* Search + Date range */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <input
-          type="search"
+          type="search" enterKeyHint="search"
           placeholder="Search entity name, admin email, or action..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(0); }}

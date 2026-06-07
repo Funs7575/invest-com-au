@@ -72,7 +72,7 @@ export default function IntakeAnswerForm({ slug, questions }: FormProps) {
           Confirm the email you used on the brief
         </span>
         <input
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}

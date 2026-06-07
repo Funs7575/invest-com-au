@@ -818,7 +818,7 @@ function ActionPlanScreen({
           ) : (
             <div className="flex flex-col sm:flex-row gap-2">
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 placeholder="you@example.com"
                 aria-label="Email address"
                 value={email}

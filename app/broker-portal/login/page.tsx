@@ -90,7 +90,7 @@ export default function BrokerLoginPage() {
         <label htmlFor="bp-login-email" className="block text-sm font-medium text-slate-700 mb-1">Email</label>
         <input
           id="bp-login-email"
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

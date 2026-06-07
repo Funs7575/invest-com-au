@@ -192,7 +192,7 @@ export default function StartupSignupPage() {
               <label htmlFor={emailId} className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
               <input
                 id={emailId}
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 autoComplete="email"
                 value={form.email}
                 onChange={(e) => set("email", e.target.value)}

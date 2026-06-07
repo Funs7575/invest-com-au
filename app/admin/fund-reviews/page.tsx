@@ -209,7 +209,7 @@ export default function AdminFundReviewsPage() {
       </div>
 
       <input
-        type="search"
+        type="search" enterKeyHint="search"
         placeholder="Search by name, email, fund, or title..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}

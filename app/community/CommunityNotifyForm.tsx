@@ -42,7 +42,7 @@ export default function CommunityNotifyForm() {
       <p className="text-xs text-slate-500 mb-2 text-center">Be the first to know when we launch</p>
       <div className="flex gap-2">
         <input
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           value={email}
           onChange={(e) => { setEmail(e.target.value); setErrorMsg(""); }}
           onKeyDown={(e) => e.key === "Enter" && submit()}

@@ -338,7 +338,7 @@ export default function LeadsTab({
         <div className="relative flex-1 min-w-45">
           <Icon name="search" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
-            type="search"
+            type="search" enterKeyHint="search"
             value={leadSearch}
             onChange={(e) => onLeadSearchChange(e.target.value)}
             placeholder="Search by name, email or phone..."

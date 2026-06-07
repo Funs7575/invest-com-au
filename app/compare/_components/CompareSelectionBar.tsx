@@ -102,7 +102,7 @@ export default function CompareSelectionBar({
                   🔔 Fee alerts:
                 </span>
                 <input
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   value={alertEmail}
                   onChange={e => setAlertEmail(e.target.value)}
                   placeholder="your@email.com"

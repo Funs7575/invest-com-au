@@ -155,7 +155,7 @@ export default function PortfolioClient() {
           </div>
           <div className="space-y-3 max-w-sm mx-auto">
             <input
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               value={email}
               onChange={e => setEmail(e.target.value)}
               onKeyDown={e => e.key === "Enter" && checkExisting()}

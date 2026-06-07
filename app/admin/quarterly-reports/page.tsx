@@ -279,7 +279,7 @@ export default function QuarterlyReportsPage() {
         </div>
 
         <input
-          type="search"
+          type="search" enterKeyHint="search"
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}

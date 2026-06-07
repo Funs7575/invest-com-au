@@ -305,7 +305,7 @@ export default function ReviewsTab({ advisor }: Props) {
                 </label>
                 <input
                   id="rt-invite-email"
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   autoComplete="email"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}

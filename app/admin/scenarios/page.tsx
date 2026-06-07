@@ -249,7 +249,7 @@ export default function AdminScenariosPage() {
         <>
           <div className="mb-4">
             <input
-              type="search"
+              type="search" enterKeyHint="search"
               placeholder="Search scenarios by title or slug..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}

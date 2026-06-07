@@ -76,7 +76,7 @@ export default function AnnualReportClient() {
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"

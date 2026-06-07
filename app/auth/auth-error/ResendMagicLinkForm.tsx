@@ -76,7 +76,7 @@ export default function ResendMagicLinkForm({ next }: { next: string }) {
       </label>
       <input
         id="resend-email"
-        type="email"
+        type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
         value={email}
         onChange={(e) => {
           setEmail(e.target.value);

@@ -298,7 +298,7 @@ export default function ReviewPage() {
                 <label htmlFor="rv-email" className="block text-xs font-semibold text-slate-600 mb-1">Email <span className="text-slate-400 font-normal">(not published, helps prevent duplicates)</span></label>
                 <input
                   id="rv-email"
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   value={reviewerEmail}
                   onChange={(e) => setReviewerEmail(e.target.value)}
                   placeholder="you@example.com"

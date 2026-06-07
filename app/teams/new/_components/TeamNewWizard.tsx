@@ -273,7 +273,7 @@ export default function TeamNewWizard() {
           {invites.map((inv, idx) => (
             <div key={idx} className="flex flex-wrap items-center gap-2">
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 value={inv.email}
                 onChange={(e) => updateInvite(idx, { email: e.target.value })}
                 placeholder="colleague@firm.com.au"

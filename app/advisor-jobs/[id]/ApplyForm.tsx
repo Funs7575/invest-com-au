@@ -108,7 +108,7 @@ export default function ApplyForm({ jobId, jobTitle }: Props) {
         <input
           id="applicant_email"
           name="applicant_email"
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           autoComplete="email"
           required
           value={form.applicant_email}

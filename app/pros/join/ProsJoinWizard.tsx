@@ -428,7 +428,7 @@ export default function ProsJoinWizard() {
               placeholder="Chen Advisory"
             />
             <Field
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               label="Work email *"
               value={state.email}
               onChange={(v) => update("email", v)}

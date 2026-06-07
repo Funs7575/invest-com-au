@@ -85,7 +85,7 @@ export default function AdvisorPortalLogin(_props: Props) {
               </p>
 
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

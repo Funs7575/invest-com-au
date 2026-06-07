@@ -127,7 +127,7 @@ export default function QuoteQAClient({ slug, initial, ownerEmailFromUrl }: Prop
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <input
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email (only the owner needs to enter this)"

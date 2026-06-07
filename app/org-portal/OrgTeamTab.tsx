@@ -111,7 +111,7 @@ export default function OrgTeamTab({ org: _org }: Props) {
             <label htmlFor="ot-email" className="block text-xs font-semibold text-slate-600 mb-1">Email address</label>
             <input
               id="ot-email"
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               placeholder="colleague@organisation.com"

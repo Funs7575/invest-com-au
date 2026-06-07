@@ -70,7 +70,7 @@ export default function OrgPortalLogin() {
               </p>
 
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@organisation.com"

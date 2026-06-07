@@ -170,7 +170,7 @@ export default function BrokerOutreachPage() {
             </label>
             <input
               id="bo-contact-email"
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               value={contactEmail}
               onChange={(e) => setContactEmail(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"

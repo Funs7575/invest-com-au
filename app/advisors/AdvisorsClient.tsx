@@ -1523,7 +1523,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           ) : (
             <div className="flex gap-2">
               <input
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 autoComplete="email"
                 value={alertEmail}
                 onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}

@@ -403,7 +403,7 @@ export default function JobPostForm() {
               </label>
               <input
                 id="contact-email"
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 value={form.contact_email}
                 onChange={(e) => set("contact_email", e.target.value)}
                 placeholder="you@example.com"

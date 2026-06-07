@@ -48,7 +48,7 @@ export default function NewsletterCta() {
       <p className="text-sm text-slate-600 mb-4">One email a week. Tax windows, deal alerts and the most-read guides — no fluff.</p>
       <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2">
         <input
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           name="email"
           required
           placeholder="you@example.com"

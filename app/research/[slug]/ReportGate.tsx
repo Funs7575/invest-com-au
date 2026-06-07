@@ -148,7 +148,7 @@ export default function ReportGate({ slug, gated, directUrl }: Props) {
           </label>
           <input
             id="rg-email"
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}

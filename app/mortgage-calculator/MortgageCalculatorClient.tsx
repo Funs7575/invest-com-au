@@ -457,7 +457,7 @@ export default function MortgageCalculatorClient() {
                     <p className="text-xs text-slate-500 mb-3">Enter your email to unlock the complete amortization breakdown</p>
                     <div className="flex gap-2 max-w-xs mx-auto">
                       <input
-                        type="email"
+                        type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         placeholder="your@email.com"

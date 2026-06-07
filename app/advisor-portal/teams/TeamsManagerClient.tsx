@@ -430,7 +430,7 @@ export default function TeamsManagerClient() {
               </h3>
               <div className="flex items-center gap-2 mb-2">
                 <input
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   autoComplete="email"
                   placeholder="email@example.com"
                   value={inviteEmail}

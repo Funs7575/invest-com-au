@@ -255,7 +255,7 @@ export default function BrokerTransferGuidesPage() {
         </div>
 
         <input
-          type="search"
+          type="search" enterKeyHint="search"
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}

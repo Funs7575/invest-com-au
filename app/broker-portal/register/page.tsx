@@ -267,7 +267,7 @@ export default function BrokerRegisterPage() {
             </div>
             <div>
               <label htmlFor="bp-reg-email" className="block text-sm font-medium text-slate-700 mb-1">Work Email *</label>
-              <input id="bp-reg-email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+              <input id="bp-reg-email" type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="you@broker.com" />
             </div>

@@ -78,7 +78,7 @@ export default function StoriesClient({ stories, brokers: _brokers }: StoriesCli
 
         {/* Search */}
         <input
-          type="search"
+          type="search" enterKeyHint="search"
           placeholder="Search by platform name, title, or author..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}

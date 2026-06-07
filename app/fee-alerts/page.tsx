@@ -181,7 +181,7 @@ export default function FeeAlertsPage() {
                 {/* Email input */}
                 <div className="flex gap-2 mb-4">
                   <input
-                    type="email"
+                    type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}

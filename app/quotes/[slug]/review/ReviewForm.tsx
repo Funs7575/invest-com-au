@@ -97,7 +97,7 @@ export default function ReviewForm({ slug, token, advisorName, defaultDisplayNam
         </label>
         <input
           id="email"
-          type="email"
+          type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}

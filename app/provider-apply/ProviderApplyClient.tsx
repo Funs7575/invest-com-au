@@ -478,7 +478,7 @@ export default function ProviderApplyClient() {
                 <div className="relative">
                   <input
                     id="pa-contact-email"
-                    type="email"
+                    type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                     value={form.contact_email}
                     onChange={(e) => {
                       const v = e.target.value;

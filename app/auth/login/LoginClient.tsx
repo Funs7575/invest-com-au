@@ -274,7 +274,7 @@ export default function LoginClient() {
                 </label>
                 <input
                   id="login-email"
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
@@ -310,7 +310,7 @@ export default function LoginClient() {
                 </label>
                 <input
                   id="login-pw-email"
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"

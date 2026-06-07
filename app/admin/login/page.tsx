@@ -167,7 +167,7 @@ function AdminLoginForm() {
             </label>
             <input
               id="admin-email"
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@invest.com.au"

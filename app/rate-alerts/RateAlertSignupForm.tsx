@@ -237,7 +237,7 @@ export default function RateAlertSignupForm() {
           </span>
           <input
             data-testid="rate-alert-email"
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"

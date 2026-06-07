@@ -931,7 +931,7 @@ export default function BriefForm({
               </label>
               <input
                 id="brief-contact-email"
-                type="email"
+                type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                 value={form.contact_email}
                 onChange={(e) => setField("contact_email", e.target.value)}
                 placeholder="you@example.com"

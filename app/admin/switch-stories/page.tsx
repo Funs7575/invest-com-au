@@ -218,7 +218,7 @@ export default function AdminSwitchStoriesPage() {
 
       {/* Search */}
       <input
-        type="search"
+        type="search" enterKeyHint="search"
         placeholder="Search by name, email, broker, or title..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}

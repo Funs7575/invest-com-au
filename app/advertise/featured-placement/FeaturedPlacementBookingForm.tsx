@@ -234,7 +234,7 @@ export default function FeaturedPlacementBookingForm({
           </label>
           <input
             id="book-email"
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

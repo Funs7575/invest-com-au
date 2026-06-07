@@ -156,7 +156,7 @@ function OrgProfileForm({ org, onOrgChange }: { org: Organisation; onOrgChange: 
             <label htmlFor="op-email" className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
             <input
               id="op-email"
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"

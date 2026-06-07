@@ -112,7 +112,7 @@ export default async function SearchPage({
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
               />
               <input
-                type="search"
+                type="search" enterKeyHint="search"
                 name="q"
                 defaultValue={query}
                 placeholder="Search brokers, advisors, articles, glossary…"

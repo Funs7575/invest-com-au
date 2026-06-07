@@ -211,7 +211,7 @@ export default function AdminAdvisorsPage() {
                 </div>
                 <div>
                   <label htmlFor="adv-email" className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
-                  <input id="adv-email" type="email" value={editing.email || ""} onChange={(e) => setEditing({ ...editing, email: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
+                  <input id="adv-email" type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} value={editing.email || ""} onChange={(e) => setEditing({ ...editing, email: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
                 </div>
                 <div>
                   <label htmlFor="adv-phone" className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
@@ -614,7 +614,7 @@ export default function AdminAdvisorsPage() {
             </div>
             <div>
               <label htmlFor="outreach-email" className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
-              <input id="outreach-email" type="email" className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
+              <input id="outreach-email" type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
             </div>
             <div>
               <label htmlFor="outreach-firm" className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>

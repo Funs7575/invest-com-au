@@ -124,7 +124,7 @@ export default function SmsfChecklistClient() {
           <p className="text-sm text-slate-600 mb-4">We&rsquo;ll send a copy you can refer back to and add quarterly reminders.</p>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
-              type="email"
+              type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
               name="email"
               required
               placeholder="you@example.com"

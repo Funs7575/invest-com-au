@@ -1336,7 +1336,7 @@ export default function AdvisorProfileClient({
                       <label htmlFor="advisor-contact-email" className="block text-xs font-bold text-slate-700 mb-1.5">Email *</label>
                       <input
                         id="advisor-contact-email"
-                        type="email"
+                        type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                         autoComplete="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}

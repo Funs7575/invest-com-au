@@ -232,7 +232,7 @@ export default function AdminQuestionsPage() {
 
       {/* Search */}
       <input
-        type="search"
+        type="search" enterKeyHint="search"
         placeholder="Search by name, email, broker, or question..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}

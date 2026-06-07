@@ -131,7 +131,7 @@ export default function BusinessFinanceEnquiryForm() {
           </label>
           <input
             id={emailId}
-            type="email"
+            type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
             name="email"
             required
             maxLength={254}

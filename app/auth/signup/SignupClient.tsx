@@ -227,7 +227,7 @@ export default function SignupClient() {
                 </label>
                 <input
                   id="signup-email"
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
@@ -328,7 +328,7 @@ export default function SignupClient() {
                 </label>
                 <input
                   id="signup-magic-email"
-                  type="email"
+                  type="email" autoCapitalize="off" autoCorrect="off" spellCheck={false}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
