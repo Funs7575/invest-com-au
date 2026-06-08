@@ -362,6 +362,21 @@ export default function AlertsClient({ alerts: initial, userEmail }: Props) {
             Set up an alert and we&apos;ll notify you when a savings rate, term
             deposit, loan rate, or brokerage fee crosses your threshold.
           </p>
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-2">
+            <Link
+              href="/fee-alerts"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-slate-700 transition-colors"
+            >
+              <Icon name="bell" size={12} />
+              Set up a fee alert
+            </Link>
+            <Link
+              href="/rates/today"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-slate-200 text-slate-700 text-xs font-semibold hover:border-slate-400 transition-colors"
+            >
+              Browse current rates
+            </Link>
+          </div>
         </div>
       ) : (
         <>
