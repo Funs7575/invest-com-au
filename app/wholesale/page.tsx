@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Wholesale & Sophisticated Investors Australia — s708 Tests, Certificate & What It Unlocks (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How the Australian wholesale (sophisticated) investor tests work under s708 of the Corporations Act — the $2.5M net-asset / $250k income certificate, the $500k offer test, professional-investor status — what wholesale access unlocks, and the retail protections you give up. ${UPDATED_LABEL}.`,
+  description: `Australian wholesale investor test: $2.5M net assets or $250k income under s708. What it unlocks and the retail protections you waive. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Wholesale & Sophisticated Investors in Australia (${CURRENT_YEAR})`,
     description:

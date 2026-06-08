@@ -14,7 +14,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Leaving Australia? Super Guide — DASP, Tax & NZ KiwiSaver Portability (${CURRENT_YEAR})`,
   description:
-    `How to claim your Australian super when leaving Australia. DASP (Departing Australia Superannuation Payment) guide: 35% withholding tax, 65% for Working Holiday Makers, step-by-step claim process, NZ KiwiSaver portability, lost super, and SMSF rules. ${UPDATED_LABEL}.`,
+    `DASP guide: claim Australian super on departure. Withholding rates (35% / 65% WHM), step-by-step process, NZ KiwiSaver portability and SMSF rules. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Leaving Australia Super Guide — DASP & NZ Portability (${CURRENT_YEAR})`,
     description:

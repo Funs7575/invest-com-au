@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Age Pension Assets Test — Thresholds, Exempt Assets & Taper Rate (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Complete guide to the Age Pension assets test: 2024–25 thresholds for singles and couples (homeowner and non-homeowner), exempt assets including the family home, $3/fortnight taper rate, gifting rules, super treatment, and 3 worked examples. ${UPDATED_LABEL}.`,
+  description: `Age Pension assets test — thresholds, the $3/fortnight taper, exempt assets, gifting rules, and worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Age Pension Assets Test (${CURRENT_YEAR}) — Thresholds, Exempt Assets & Taper`,
     description:

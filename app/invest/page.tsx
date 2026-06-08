@@ -63,7 +63,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Australian Investment Opportunities — Marketplace (${CURRENT_YEAR}) | ${SITE_NAME}`,
   description:
-    "Browse Australian investment opportunities — businesses for sale, mining tenements, farmland, commercial property, franchises, renewable energy projects, startups, alternatives, private credit and managed funds. To compare super funds, share-trading platforms or savings accounts, visit Compare.",
+    "Australian investment marketplace: businesses for sale, mining tenements, farmland, franchises, startups, private credit and alternatives.",
   alternates: { canonical: "/invest" },
   openGraph: {
     title: `Australian Investment Opportunities — Marketplace (${CURRENT_YEAR})`,

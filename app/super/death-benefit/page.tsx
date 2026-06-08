@@ -9,9 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Superannuation Death Benefits — Who Gets Your Super & How It's Taxed (${CURRENT_YEAR})`,
   description:
-    "How super death benefits work in Australia: who can receive them, the tax-free vs taxed distinction between dependants and non-dependants, binding death benefit nominations, reversionary pensions, the re-contribution strategy, and SMSF estate planning. " +
-    UPDATED_LABEL +
-    ".",
+    "Super death benefits: who receives them, dependant vs non-dependant tax, binding nominations, reversionary pensions, and the re-contribution strategy.",
   openGraph: {
     title: `Superannuation Death Benefits — Who Gets Your Super & How It's Taxed (${CURRENT_YEAR})`,
     description:

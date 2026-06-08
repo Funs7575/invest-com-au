@@ -10,7 +10,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Tax on International Investing for Australians (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How Australian residents are taxed on foreign shares, ETFs and income: worldwide income, withholding tax, the Foreign Income Tax Offset (FITO), CGT in AUD, the W-8BEN form, and US estate tax. Worked examples and record-keeping tips. ${UPDATED_LABEL}.`,
+  description: `Tax on foreign shares and ETFs for Australian residents: worldwide income, withholding tax, FITO, AUD CGT, W-8BEN, and US estate tax. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Tax on International Investing for Australians (${CURRENT_YEAR})`,
     description:

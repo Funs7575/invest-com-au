@@ -24,7 +24,7 @@ import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 export const metadata: Metadata = {
   title: "Investing in Australia from Overseas — Complete Guide 2026",
   description:
-    "The complete guide to investing in Australia for non-residents, visa holders, expats and new migrants. Covers shares, crypto, savings, super (DASP), property (FIRB), and tax. Withholding tax rates, DTA treaty table, and per-vertical rules. Updated March 2026.",
+    "Non-resident and expat investing in Australia: shares, crypto, DASP super, property (FIRB), and tax. Withholding rates and DTA treaty table. Updated 2026.",
   openGraph: {
     title: "Investing in Australia from Overseas — Complete Guide 2026",
     description:

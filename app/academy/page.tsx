@@ -16,7 +16,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "CPD & Professional Development Courses | Invest.com.au Academy",
   description:
-    "Browse CPD-accredited and professional development courses for Australian financial advisors and planners. Meet your 40-hour annual CPD requirement with courses from verified providers.",
+    "CPD-accredited courses for Australian financial advisors. Meet your 40-hour annual CPD requirement with verified providers.",
   alternates: { canonical: "/academy" },
   openGraph: {
     title: "CPD & Professional Development Courses",
