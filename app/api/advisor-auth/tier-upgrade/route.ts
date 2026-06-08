@@ -128,13 +128,24 @@ export async function POST(request: NextRequest) {
     const creditCents = proration < 0 ? -proration : 0;
 
     if (creditCents > 0) {
+      // Deterministic idempotency key: a single downgrade event credits the
+      // unused days of ONE billing period, so key on (advisor, subscription,
+      // billing-period-end) rather than a wall-clock timestamp. Using
+      // Date.now() here made every invocation a distinct (kind, reference_type,
+      // reference_id) triple, defeating the ledger's unique-index dedup — two
+      // concurrent/retried POSTs that both passed the pending_tier TOCTOU guard
+      // would each write a positive tier_proration_credit and double-credit the
+      // advisor's spendable balance. A stable key collapses the second insert
+      // to an idempotent no-op via the 23505 race-recovery in recordLedgerEntry.
+      const periodKey = cycleEnd.toISOString().slice(0, 10); // YYYY-MM-DD
+      const referenceId = `pro_${advisor.id}_downgrade_${stripeSubscriptionId ?? "nosub"}_${periodKey}`;
       await recordLedgerEntry({
         professionalId: advisor.id as number,
         amountCents: creditCents,
         kind: "tier_proration_credit",
         description: `Downgrade proration credit (${currentTier} → ${targetTier}, ${daysRemaining} days remaining)`,
         referenceType: "tier_downgrade",
-        referenceId: `pro_${advisor.id}_${Date.now()}`,
+        referenceId,
         expiresAt: null, // proration credits are owed money, never expire
         createdBy: "advisor",
         metadata: { from: currentTier, to: targetTier, billing, days_remaining: daysRemaining },
