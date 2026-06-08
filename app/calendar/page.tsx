@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, absoluteUrl, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600; // 1 h ISR
 
@@ -27,6 +28,27 @@ interface MarketEvent {
   start_time: string | null;
   timezone: string;
 }
+
+const CALENDAR_FAQS = [
+  {
+    q: "What events does the Australian Market Events Calendar track?",
+    a: "The calendar tracks five categories of events relevant to Australian investors: (1) RBA cash rate decisions — all scheduled Reserve Bank of Australia board meetings with decision dates and times; (2) ASX events — S&P/ASX index rebalances, quarterly futures expiry dates, and ASX trading halts for major corporates; (3) Economic releases — ABS data releases (CPI, employment, GDP, retail sales), federal budget dates, and major government policy announcements; (4) Dividend events — ex-dividend and payment dates for major ASX-listed companies; and (5) IPOs — scheduled ASX listing dates for upcoming IPOs.",
+  },
+  {
+    q: "How can I add the calendar to my own calendar app?",
+    a: "Click the 'Download .ics' link at the bottom of the page to download a standard iCalendar file. This can be imported into Apple Calendar, Google Calendar, Microsoft Outlook, or any other calendar app that supports the .ics format. The calendar is also available as a subscribable URL — in Google Calendar, choose 'From URL' and paste the /api/market-events/ical link to get automatic updates as new events are added.",
+  },
+  {
+    q: "How accurate are the event dates shown?",
+    a: "Dates for scheduled events (RBA meetings, ABS release schedule, ASX rebalances) are sourced directly from the relevant authority's published annual schedule and are accurate at the time of publication. However, dates can change — the ABS occasionally adjusts release times, the RBA can hold unscheduled meetings, and ASX trading halts are announced with short notice. Always verify timing directly with the RBA, ABS, or ASX before making time-sensitive trading decisions. The footer of this page links to each authority's website.",
+  },
+  {
+    q: "How often is the calendar updated?",
+    a: "The calendar page refreshes via ISR every hour. New events are added as they are announced — typically within 24 hours of an official release date confirmation. If you notice a missing or incorrect event, email hello@invest.com.au and we will verify and add it within one business day.",
+  },
+];
+
+const calendarFaqLd = faqJsonLd(CALENDAR_FAQS);
 
 const TYPE_LABEL: Record<string, string> = {
   rba: "RBA",
@@ -106,6 +128,12 @@ export default async function CalendarPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {calendarFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(calendarFaqLd) }}
+        />
+      )}
 
       <header className="mb-8">
         <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -213,6 +241,21 @@ export default async function CalendarPage() {
           ))}
         </div>
       )}
+
+      <section className="mt-10">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <div className="space-y-3">
+          {CALENDAR_FAQS.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
 
       <footer className="mt-8 pt-4 border-t border-slate-200">
         <p className="text-xs text-slate-400">

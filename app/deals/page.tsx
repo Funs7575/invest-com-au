@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { absoluteUrl, breadcrumbJsonLd, dealsHubJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { sortWithSponsorship } from "@/lib/sponsorship";
 import DealsClient from "./DealsClient";
@@ -33,7 +34,28 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
-export const revalidate = 1800; // ISR: revalidate every 30 minutes (deals change frequently)
+export const revalidate = 1800;
+
+const DEALS_FAQS = [
+  {
+    q: "What types of deals and promotions are listed?",
+    a: "The deals hub lists current verified promotions from active Australian investing platforms: share brokers, crypto exchanges, robo-advisors, and financial planning services. Deal types include: zero-brokerage introductory periods (e.g. 10 free trades for new accounts), cash bonuses for opening and funding a new account, referral rewards, fee credits for transferring an existing portfolio, and reduced FX rates for a limited period. All deals are sourced directly from platform websites and verified before listing.",
+  },
+  {
+    q: "Are the deals on this page current and verified?",
+    a: "Yes. Deals are checked against each platform's current promotional pages when they are added and reviewed on an ongoing basis. The deals hub refreshes every 30 minutes via ISR. When a deal expires or changes, we update or remove it within 24 hours of becoming aware of the change. If you click through to a deal and find it has expired, please report it to hello@invest.com.au and we'll verify and update within one business day.",
+  },
+  {
+    q: "Does Invest.com.au earn money from deals?",
+    a: "Yes. When you click through to a platform using a deal link on this page, Invest.com.au may earn an affiliate referral fee from the platform. This has no effect on the deals we list — we show deals from all platforms, including platforms that do not pay us a referral fee. The existence or size of an affiliate relationship does not influence our editorial ratings. Our commercial relationships are described in full at /how-we-earn.",
+  },
+  {
+    q: "How do I claim a deal?",
+    a: "Click 'Claim deal' or 'Get offer' on the deal card — this takes you to the platform's own promotional page or sign-up flow. The deal terms and eligibility requirements are set by the platform, not by Invest.com.au. Read the full terms on the platform's page before signing up. Invest.com.au cannot resolve disputes about deal fulfilment — contact the platform directly if a promotion is not applied to your account.",
+  },
+];
+
+const dealsFaqLd = faqJsonLd(DEALS_FAQS);
 
 export default async function DealsPage() {
   // Defensive fetch — both queries are independent. A broken advisors
@@ -103,6 +125,12 @@ export default async function DealsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
       />
+      {dealsFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(dealsFaqLd) }}
+        />
+      )}
 
       <div className="pt-5 pb-8 md:py-12">
         <div className="container-custom max-w-5xl">
@@ -221,6 +249,23 @@ export default async function DealsPage() {
                 How we earn
               </Link>
             </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200 bg-white">
+        <div className="container-custom max-w-4xl py-8 md:py-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {DEALS_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </div>
