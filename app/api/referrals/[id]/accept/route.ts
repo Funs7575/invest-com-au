@@ -69,6 +69,8 @@ function mapStatus(code: string): number {
     case "referral_not_pending":
     case "brief_already_accepted":
       return 409;
+    case "insufficient_credits":
+      return 402;
     case "not_team_member":
       return 403;
     case "referral_not_found":

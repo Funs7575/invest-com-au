@@ -82,6 +82,62 @@ export async function getAcceptCost({
   return 2;
 }
 
+/**
+ * Pre-charge affordability gate, shared by `acceptBrief` (direct accept) and
+ * `acceptReferral` (accept via a team referral) so the two paths can never
+ * diverge on the money rules. Resolves the pro's pricing tier and, for the
+ * `standard` tier, checks the cached `credit_balance_cents` against the
+ * accept-time charge.
+ *
+ * Returns the data the caller needs to either (a) abort BEFORE claiming the
+ * brief when funds are short, or (b) decide whether to record the accept-time
+ * charge at all (success_only pros pay nothing at accept).
+ *
+ * NB: like `acceptBrief`, this gates on the cached balance — the authoritative
+ * floor is `recordLedgerEntry`, which rejects spend entries that would drive
+ * `credit_balance_cents` below zero.
+ */
+export interface ProChargeGate {
+  /** The pro's pricing tier at the moment of the check. */
+  tier: import("./pricing-tier").PricingTier;
+  /** Accept-time charge in cents (0 for success_only). */
+  chargeCents: number;
+  /** Whether the pro can afford `chargeCents`. Always true for success_only. */
+  sufficient: boolean;
+  /** Cached balance read for the check (cents). */
+  currentBalanceCents: number;
+}
+
+export async function resolveProChargeGate(
+  professionalId: number,
+  credits: number,
+): Promise<ProChargeGate> {
+  const admin = createAdminClient();
+  const cents = credits * CENTS_PER_CREDIT;
+
+  // success_only pros pay nothing at accept (they settle at outcome-submit).
+  const tier = await getProPricingTier(professionalId);
+
+  const { data: pro } = await admin
+    .from("professionals")
+    .select("credit_balance_cents")
+    .eq("id", professionalId)
+    .maybeSingle();
+  const currentBalanceCents = pro?.credit_balance_cents ?? 0;
+
+  if (tier !== "standard") {
+    // No accept-time charge — nothing to gate on.
+    return { tier, chargeCents: 0, sufficient: true, currentBalanceCents };
+  }
+
+  return {
+    tier,
+    chargeCents: cents,
+    sufficient: currentBalanceCents >= cents,
+    currentBalanceCents,
+  };
+}
+
 export interface AcceptBriefInput {
   briefId: number;
   professionalId: number;
@@ -142,17 +198,13 @@ export async function acceptBrief({
   const credits = row.accept_credits_cost ?? 2;
   const cents = credits * CENTS_PER_CREDIT;
 
-  // ── 2a. Resolve pricing tier (success_only pros skip the accept-time charge) ─
-  const tier = await getProPricingTier(professionalId);
-
-  // ── 2b. Standard tier: check sufficient balance up front ────────────
-  const { data: pro } = await admin
-    .from("professionals")
-    .select("credit_balance_cents")
-    .eq("id", professionalId)
-    .maybeSingle();
-  const currentBalance = pro?.credit_balance_cents ?? 0;
-  if (tier === "standard" && currentBalance < cents) {
+  // ── 2. Pre-charge gate: resolve pricing tier (success_only pros skip the
+  //      accept-time charge) and, for standard tier, check sufficient balance
+  //      up front. Shared with the referral-accept path via resolveProChargeGate.
+  const gate = await resolveProChargeGate(professionalId, credits);
+  const tier = gate.tier;
+  const currentBalance = gate.currentBalanceCents;
+  if (!gate.sufficient) {
     return {
       accepted: false,
       reason: "insufficient_credits",

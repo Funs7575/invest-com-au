@@ -310,6 +310,90 @@ describe("recordLedgerEntry", () => {
     expect(pros[0]?.lifetime_lead_spend_cents).toBe(3900);
   });
 
+  it("rejects a lead_spend that would drive the balance below zero (NegativeBalanceError)", async () => {
+    const { recordLedgerEntry, NegativeBalanceError } = await import(
+      "@/lib/advisor-credit-ledger"
+    );
+    pros[0]!.credit_balance_cents = 100;
+    await expect(
+      recordLedgerEntry({
+        professionalId: 1,
+        amountCents: -2500, // > balance
+        kind: "lead_spend",
+        description: "overspend",
+        referenceType: "brief_accept",
+        referenceId: "500",
+      }),
+    ).rejects.toBeInstanceOf(NegativeBalanceError);
+    // No ledger row, no cache mutation.
+    expect(ledger).toHaveLength(0);
+    expect(pros[0]!.credit_balance_cents).toBe(100);
+  });
+
+  it("rejects a success_bonus_award spend that would go negative", async () => {
+    const { recordLedgerEntry, NegativeBalanceError } = await import(
+      "@/lib/advisor-credit-ledger"
+    );
+    pros[0]!.credit_balance_cents = 50;
+    await expect(
+      recordLedgerEntry({
+        professionalId: 1,
+        amountCents: -300,
+        kind: "success_bonus_award",
+        description: "success overspend",
+        referenceType: "success_charge",
+        referenceId: "9",
+      }),
+    ).rejects.toBeInstanceOf(NegativeBalanceError);
+    expect(ledger).toHaveLength(0);
+  });
+
+  it("allows a spend that lands exactly at zero", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 2500;
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: -2500,
+      kind: "lead_spend",
+      description: "exact",
+      referenceType: "brief_accept",
+      referenceId: "501",
+    });
+    expect(result.balanceAfterCents).toBe(0);
+    expect(pros[0]!.credit_balance_cents).toBe(0);
+  });
+
+  it("respects allowNegativeBalance opt-out for floored spend kinds", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 100;
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: -2500,
+      kind: "lead_spend",
+      description: "forced negative",
+      referenceType: "brief_accept",
+      referenceId: "502",
+      allowNegativeBalance: true,
+    });
+    expect(result.balanceAfterCents).toBe(-2400);
+    expect(pros[0]!.credit_balance_cents).toBe(-2400);
+  });
+
+  it("does NOT floor non-prepaid-spend kinds (chargeback_clawback may go negative)", async () => {
+    const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+    pros[0]!.credit_balance_cents = 100;
+    const result = await recordLedgerEntry({
+      professionalId: 1,
+      amountCents: -500,
+      kind: "chargeback_clawback",
+      description: "clawback of already-spent credit",
+      referenceType: "stripe_charge",
+      referenceId: "ch_neg",
+    });
+    expect(result.balanceAfterCents).toBe(-400);
+    expect(pros[0]!.credit_balance_cents).toBe(-400);
+  });
+
   it("increments lifetime_credit_cents only for credit kinds", async () => {
     const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
     await recordLedgerEntry({
