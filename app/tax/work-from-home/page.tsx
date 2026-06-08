@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 
 export const revalidate = 86400;
 
@@ -133,6 +134,7 @@ export default function WorkFromHomePage() {
       )}
 
       <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
 
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <section className="bg-slate-900 text-white py-10 md:py-14">

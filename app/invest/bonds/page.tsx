@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SITE_URL, SITE_NAME, CURRENT_YEAR, UPDATED_LABEL, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 
 export const revalidate = 86400;
 
@@ -76,6 +77,8 @@ export default function BondsPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       )}
+
+      <ArticleReadingProgress />
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">

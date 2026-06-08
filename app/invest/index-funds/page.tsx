@@ -6,6 +6,7 @@ import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { createClient } from "@/lib/supabase/server";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import {
   SHOW_RATINGS,
   SHOW_EDITORIAL_BADGES,
@@ -114,6 +115,8 @@ export default async function IndexFundsPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       )}
+
+      <ArticleReadingProgress />
 
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">

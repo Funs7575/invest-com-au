@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl, buildTitle } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
@@ -1034,6 +1035,8 @@ export default async function InvestingForOccupationPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
+
+      <ArticleReadingProgress />
 
       <div className="container-custom py-8">
         {/* Breadcrumb */}

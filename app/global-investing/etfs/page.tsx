@@ -3,6 +3,7 @@ import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 
 export const revalidate = 86400;
 
@@ -163,6 +164,7 @@ export default function GlobalInvestingEtfsPage() {
       )}
 
       <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
 
         {/* ── Hero ── */}
         <section className="bg-gradient-to-br from-slate-900 to-blue-950 text-white py-12 md:py-18">

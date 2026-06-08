@@ -428,7 +428,7 @@ export default function ScoreClient() {
                   onClick={handleEmailCapture}
                   disabled={emailSubmitting || !email.includes("@")}
                   aria-busy={emailSubmitting}
-                  className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                  className="rounded-lg bg-blue-600 px-5 py-2.5 min-h-11 text-sm font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                 >
                   {emailSubmitting ? "Sending..." : "Send Report"}
                 </button>
