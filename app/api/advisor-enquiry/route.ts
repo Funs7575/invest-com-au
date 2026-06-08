@@ -7,6 +7,7 @@ import { notificationFooter } from "@/lib/email-templates";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { isValidAuPhone } from "@/lib/validate-phone";
+import { FREE_LEAD_LIMIT } from "@/lib/advisor-billing";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-enquiry");
@@ -253,20 +254,28 @@ export async function POST(request: NextRequest) {
     const leadTier = isInternationalLead ? "international" : hasQualificationData ? "qualified" : "standard";
 
     // ── Auto-Billing (prepaid credit model) ──
-    // First 2 leads are free (trial), then deduct from credit balance
+    // First FREE_LEAD_LIMIT leads are free (trial), then deduct from credit
+    // balance. The default is sourced from the shared advisor-billing constant
+    // so the server, the portal Dashboard/Billing tabs, and billing-summary
+    // all agree (founder decision: 3 free leads). A per-category override in
+    // lead_pricing.free_trial_leads takes precedence when a row exists.
     const { data: advisor } = await supabase
       .from("professionals")
       .select("free_leads_used, lead_price_cents, credit_balance_cents, lifetime_lead_spend_cents, total_leads, low_credit_alert_sent_at, specialties, avg_response_minutes")
       .eq("id", professional_id)
       .single();
 
-    const freeTrialCount = 2; // Default, overridden below if category pricing exists
+    const freeTrialCount = FREE_LEAD_LIMIT; // Canonical default (founder decision: 3)
     const freeUsed = advisor?.free_leads_used || 0;
 
     // Get category default price if advisor has no custom price
     let categoryPrice = 4900; // ultimate fallback
     let categoryQualifiedPrice = 9800; // fallback: 2x standard
-    let categoryFreeLeads = 2;
+    // null = "no category row" (fall back to freeTrialCount). A configured 0
+    // (free trial deliberately disabled) must be honoured, so we use `??`
+    // below, not `||` — `||` would treat a legitimate 0 as falsy and silently
+    // re-enable the default free leads.
+    let categoryFreeLeads: number | null = null;
     if (!advisor?.lead_price_cents) {
       const { data: catPricing } = await supabase
         .from("lead_pricing")
@@ -280,7 +289,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const isFree = freeUsed < (categoryFreeLeads || freeTrialCount);
+    const effectiveFreeLeads = categoryFreeLeads ?? freeTrialCount;
+    const isFree = freeUsed < effectiveFreeLeads;
     // Pricing tiers: international = 3x, qualified = 2x, standard = 1x
     const basePriceCents = advisor?.lead_price_cents || categoryPrice;
     const tieredCents = isFree ? 0 : (

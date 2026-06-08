@@ -27,6 +27,10 @@ vi.mock("@/lib/email-templates", () => ({
 
 vi.mock("@/lib/advisor-billing", () => ({
   createLeadInvoice: vi.fn(() => Promise.resolve()),
+  // Canonical free-lead allowance (founder decision: 3). The route imports
+  // this constant; mock it so tests don't pull in the real module's
+  // Stripe/admin-client deps.
+  FREE_LEAD_LIMIT: 3,
 }));
 
 // ── Import route AFTER mocks ──────────────────────────────────────────────────
@@ -60,6 +64,12 @@ function setupFromMock(options: {
   leadPriceCents?: number;
   creditBalanceCents?: number;
   billingRecord?: { id: string } | null;
+  // When set, models a lead_pricing row for the advisor's category with this
+  // free_trial_leads value. Only consulted by the route when the advisor has
+  // no custom lead_price_cents. `undefined` means "no category row" (route
+  // falls back to FREE_LEAD_LIMIT); a number (incl. 0) is the configured
+  // override.
+  categoryFreeTrialLeads?: number;
 } = {}) {
   const {
     pro = PRO,
@@ -69,10 +79,27 @@ function setupFromMock(options: {
     leadPriceCents = 4900,
     creditBalanceCents = 0,
     billingRecord = { id: "bill-001" },
+    categoryFreeTrialLeads,
   } = options;
 
   mockFrom.mockImplementation((table: string) => {
     const builder = createChainableBuilder(table);
+
+    if (table === "lead_pricing") {
+      builder.single = vi.fn(() =>
+        Promise.resolve({
+          data:
+            categoryFreeTrialLeads === undefined
+              ? null
+              : {
+                  price_cents: 4900,
+                  qualified_price_cents: 9800,
+                  free_trial_leads: categoryFreeTrialLeads,
+                },
+          error: categoryFreeTrialLeads === undefined ? { code: "PGRST116" } : null,
+        })
+      );
+    }
 
     if (table === "professionals") {
       builder.single = vi.fn(() => {
@@ -261,8 +288,79 @@ describe("POST /api/advisor-enquiry", () => {
     expect(billingCalls).toHaveLength(0);
   });
 
-  it("creates billing record for paid leads (free_leads_used >= 2, has credit)", async () => {
-    setupFromMock({ freeLeadsUsed: 2, leadPriceCents: 4900, creditBalanceCents: 20000 });
+  // ── Free-lead allowance (founder decision: canonical 3) ─────────────────────
+  // The server's free-trial allowance is sourced from the shared
+  // FREE_LEAD_LIMIT constant (lib/advisor-billing) so the portal Dashboard /
+  // Billing tabs and billing-summary route — which advertise 3 — match what
+  // the server actually grants. These tests pin the granted allowance to 3 and
+  // guard the falsy-zero regression (a configured 0 must disable the trial,
+  // not silently re-enable the default).
+  function billingCallsFor() {
+    return mockFrom.mock.calls.filter(
+      (call: unknown[]) => call[0] === "advisor_billing"
+    );
+  }
+
+  describe("free-lead allowance", () => {
+    it("grants exactly 3 free leads by default — the 3rd lead (index 2) is free", async () => {
+      // No category lead_pricing row → falls back to FREE_LEAD_LIMIT (3).
+      // free_leads_used = 2 means this is the 3rd lead; 2 < 3 ⇒ free.
+      setupFromMock({ freeLeadsUsed: 2, leadPriceCents: 4900, creditBalanceCents: 20000 });
+
+      const res = await POST(enquiryRequest(VALID_BODY));
+      expect(res.status).toBe(200);
+
+      // Free lead ⇒ no advisor_billing record is written.
+      expect(billingCallsFor()).toHaveLength(0);
+    });
+
+    it("bills the 4th lead (free_leads_used = 3) once the 3-lead allowance is exhausted", async () => {
+      setupFromMock({ freeLeadsUsed: 3, leadPriceCents: 4900, creditBalanceCents: 20000 });
+
+      const res = await POST(enquiryRequest(VALID_BODY));
+      expect(res.status).toBe(200);
+
+      // Allowance exhausted ⇒ a billing record is created.
+      expect(billingCallsFor().length).toBeGreaterThanOrEqual(1);
+    });
+
+    it("honours a configured 0 free leads (falsy-zero must NOT re-enable the default)", async () => {
+      // Admin set the category's free_trial_leads to 0 to disable the trial.
+      // With `??` (not `||`) the configured 0 wins, so the very first lead
+      // (free_leads_used = 0) is billed. leadPriceCents must be falsy so the
+      // route consults lead_pricing.
+      setupFromMock({
+        freeLeadsUsed: 0,
+        leadPriceCents: 0,
+        creditBalanceCents: 20000,
+        categoryFreeTrialLeads: 0,
+      });
+
+      const res = await POST(enquiryRequest(VALID_BODY));
+      expect(res.status).toBe(200);
+
+      // 0 < 0 is false ⇒ not free ⇒ billing record created on lead #1.
+      expect(billingCallsFor().length).toBeGreaterThanOrEqual(1);
+    });
+
+    it("respects a category override above/below the default (free_trial_leads = 5)", async () => {
+      // Category configured for 5 free leads; the 5th lead (index 4) is free.
+      setupFromMock({
+        freeLeadsUsed: 4,
+        leadPriceCents: 0,
+        creditBalanceCents: 20000,
+        categoryFreeTrialLeads: 5,
+      });
+
+      const res = await POST(enquiryRequest(VALID_BODY));
+      expect(res.status).toBe(200);
+
+      expect(billingCallsFor()).toHaveLength(0);
+    });
+  });
+
+  it("creates billing record for paid leads (free_leads_used >= 3, has credit)", async () => {
+    setupFromMock({ freeLeadsUsed: 3, leadPriceCents: 4900, creditBalanceCents: 20000 });
 
     const req = enquiryRequest(VALID_BODY);
     const res = await POST(req);
@@ -343,7 +441,7 @@ describe("POST /api/advisor-enquiry", () => {
 
     for (const sourcePath of CROSS_BORDER_PATHS) {
       it(`charges 3× when source_page is ${sourcePath}`, async () => {
-        setupFromMock({ freeLeadsUsed: 2, leadPriceCents: 4900, creditBalanceCents: 20000 });
+        setupFromMock({ freeLeadsUsed: 3, leadPriceCents: 4900, creditBalanceCents: 20000 });
 
         const req = enquiryRequest({ ...VALID_BODY, source_page: sourcePath });
         const res = await POST(req);
@@ -358,7 +456,7 @@ describe("POST /api/advisor-enquiry", () => {
     }
 
     it("does NOT trigger international pricing for a domestic source_page", async () => {
-      setupFromMock({ freeLeadsUsed: 2, leadPriceCents: 4900, creditBalanceCents: 20000 });
+      setupFromMock({ freeLeadsUsed: 3, leadPriceCents: 4900, creditBalanceCents: 20000 });
 
       const req = enquiryRequest({ ...VALID_BODY, source_page: "/best/share-trading" });
       const res = await POST(req);
