@@ -62,14 +62,31 @@ severity (see `docs/audits/MERGE_AUTHORIZATION.md`).
 
 ## Database changes
 
-- All schema changes go through `supabase/migrations/<date>_<name>.sql`.
-- Migration naming: `YYYYMMDD_short_name.sql` (e.g. `20260427_add_health_pings.sql`).
+- All schema changes go through `supabase/migrations/<version>_<name>.sql`.
+- **Migration naming: a unique full 14-digit timestamp**
+  `YYYYMMDDHHMMSS_short_name.sql` (e.g. `20260427093500_add_health_pings.sql`).
+  Generate the prefix with `date -u +%Y%m%d%H%M%S`. The old 8-digit date-only
+  convention (`YYYYMMDD_…`) is **retired** — the Supabase CLI keys migrations on
+  the leading digits, and date-only prefixes collide when two migrations land
+  the same day, which is a load-bearing cause of the ledger fork
+  (`docs/audits/DB-STATE-2026-06-07.md`). The `audit:migration-filenames` gate
+  enforces this on new files.
 - Every migration must be **idempotent** — wrap in `IF NOT EXISTS` /
   `IF EXISTS` so it can be re-run safely.
 - Every migration must include a top-of-file comment documenting the
   rollback strategy. See [docs/runbooks/database-rollback.md](docs/runbooks/database-rollback.md).
 - New tables holding user data **must** have RLS enabled with explicit
-  policies. CI does not catch this — please be careful.
+  policies (the `rls-migrations-gate` checks new tables).
+- **Apply path:** migrations land in prod via the `supabase-migrate.yml`
+  pipeline on merge to `main` — **not** via ad-hoc Supabase MCP `apply_migration`
+  or dashboard SQL. Out-of-band applies are what forked the ledger from the
+  tree; if you must hotfix prod directly, immediately back it with a tracked
+  migration file. Until the ledger is reconciled
+  (`docs/runbooks/MIGRATION_LEDGER_RECONCILIATION.md`), **never run
+  `supabase db push`** against this project.
+- After a schema change reaches prod, regenerate types: `npm run db:types`, and
+  commit `lib/database.types.ts`. New code that calls `.from("x")` must reference
+  a relation that exists live (the `audit:schema-refs` sentinel catches phantoms).
 
 ## Tests
 

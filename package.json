@@ -55,6 +55,8 @@
     "audit:stale-dated-stats": "node scripts/check-stale-dated-stats.mjs",
     "audit:dated-stats": "node scripts/check-stale-dated-stats.mjs",
     "audit:rls-migrations": "node scripts/check-rls-migrations.mjs",
+    "audit:migration-filenames": "node scripts/check-migration-filenames.mjs",
+    "audit:ledger-drift": "node scripts/audit/ledger-drift.mjs",
     "audit:drift-types": "node scripts/check-database-types-drift.mjs",
     "audit:schema-refs": "node scripts/check-schema-references.mjs",
     "audit:financial-invariants": "node scripts/check-financial-invariants.mjs",

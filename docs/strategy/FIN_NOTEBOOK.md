@@ -14,6 +14,49 @@
 
 ## Active strategic decisions log
 
+### 2026-06-07 — Database migration ledger: forked, not "behind"; decision = baseline-squash
+
+Deep-dive of the standing "database backlog" (was framed as "118 migrations
+behind main; run `db push`"). That framing is **wrong and dangerous**. Measured
+against live prod:
+
+- The local migration tree and the prod `schema_migrations` **ledger have
+  forked**: only **5 of 250** local versions are tracked in prod; **245** local
+  versions are untracked; **434** prod ledger rows have no local file. A
+  `supabase db push` would attempt ~245 migrations (re-creating existing tables,
+  re-running ~35 non-idempotent backfills, sweeping in the CSF migration).
+- **Root cause:** `supabase-migrate.yml` silently no-op'd for **months** (its
+  `PROJECT_REF`/`DB_PASSWORD` secrets were unset → green-but-applied-nothing; see
+  PR #1463). Every prod migration was applied **out-of-band via MCP**, each with
+  a fresh timestamp, so the ledger never matched the files.
+- **Good news:** schema *content* is ~98% converged (397/412 local tables live)
+  and RLS is comprehensive (414/415). So this is **history reconciliation +
+  pipeline repair**, not a schema rebuild.
+
+**Decision — Path A: baseline-squash.** Treat live prod as source of truth; dump
+it to one baseline migration; archive the 404 legacy files; `migration repair`
+the ledger so the tree == ledger == types; then resume a normal pipeline.
+Rejected Path B (per-file `migration repair`) — infeasible against 50 colliding
+date-only versions + 3 version formats. Full procedure:
+`docs/runbooks/MIGRATION_LEDGER_RECONCILIATION.md`; state of record:
+`docs/audits/DB-STATE-2026-06-07.md`.
+
+**Shipped this session (safe, repo-only):** corrected runbook + DB-state doc;
+deprecated the dangerous `MIGRATION_DEPLOY_BACKLOG.md`; `audit:migration-filenames`
+gate (blocks new non-14-digit / colliding versions) + `audit:ledger-drift` audit;
+CONTRIBUTING migration discipline (14-digit timestamps; apply via pipeline, not
+MCP; never `db push` pre-reconciliation).
+
+**Founder-gated (Tier E — not done autonomously):** the prod baseline-squash +
+ledger repair, the zombie-table drops, and **enabling auto-apply** (adding the
+two secrets) — all must wait until *after* the baseline, else `db push
+--include-all` replays the backlog. **⚖️ Legal-gated:** the startup-portal (CSF)
+and wholesale-cert (s708) tables stay held per `REGULATORY-AVOID-LIST.md`.
+
+**Revisit:** 2026-06-21 — has the baseline-squash been scheduled? Until it is,
+every new feature needing a table keeps hitting the same wall (PR #1459, in-app
+charts). This is now the #1 infrastructure blocker.
+
 ### 2026-06-07 — Sign-off: factual "Listed Securities (ASX)" category
 
 Founder signed off on adding a **Listed Securities (ASX)** browse category to
