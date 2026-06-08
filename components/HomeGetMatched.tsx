@@ -248,6 +248,17 @@ export default async function HomeGetMatched() {
             gap: 22px !important;
           }
         }
+        @media (max-width: 640px) {
+          .home-getmatched-goals {
+            flex-wrap: nowrap !important;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-bottom: 4px;
+          }
+          .home-getmatched-goals::-webkit-scrollbar { display: none; }
+          .home-getmatched-goals > * { flex-shrink: 0; }
+        }
       `}</style>
     </section>
   );

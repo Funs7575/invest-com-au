@@ -674,7 +674,13 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" d="M4 6h16M7 12h10M10 18h4" />
             </svg>
-            {activeFilter !== 'all' ? platformTypes.find(f => f.key === activeFilter)?.label : activeFeatures.size > 0 ? `${activeFeatures.size} filter${activeFeatures.size > 1 ? 's' : ''}` : 'Filter & Sort'}
+            {activeFilter !== 'all'
+              ? platformTypes.find(f => f.key === activeFilter)?.label
+              : activeFeatures.size > 0
+                ? `${activeFeatures.size} filter${activeFeatures.size > 1 ? 's' : ''}`
+                : (sortCol !== 'rating' || sortDir !== -1)
+                  ? `Sort: ${schema.sortOptions.find(s => s.col === sortCol)?.label ?? sortCol} ${sortDir === 1 ? '↑' : '↓'}`
+                  : 'Filter & Sort'}
           </button>
           <SearchInput
             id="compare-search-mobile"
