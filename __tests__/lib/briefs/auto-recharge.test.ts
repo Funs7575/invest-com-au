@@ -45,7 +45,19 @@ const PRO_ID = 42;
 
 /** A professionals row that passes every eligibility gate (auto-recharge
  *  enabled, saved card, balance below threshold, no cooldown active). */
-function eligibleProRow() {
+function eligibleProRow(): {
+  id: number;
+  email: string;
+  name: string;
+  auth_user_id: string | null;
+  credit_balance_cents: number;
+  auto_recharge_enabled: boolean;
+  auto_recharge_threshold_credits: number;
+  auto_recharge_pack_slug: string;
+  stripe_customer_id: string;
+  stripe_default_payment_method: string | null;
+  auto_recharge_last_attempted_at: string | null;
+} {
   return {
     id: PRO_ID,
     email: "pro@example.com",
@@ -271,7 +283,7 @@ describe("maybeAutoRecharge — eligibility gates short-circuit before charging"
 
   it("missing saved payment method → no charge", async () => {
     const row = eligibleProRow();
-    row.stripe_default_payment_method = null as unknown as string;
+    row.stripe_default_payment_method = null;
     mockCreateAdminClient.mockReturnValue(makeAdminClient(row));
 
     await maybeAutoRecharge(PRO_ID);
