@@ -733,5 +733,7 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-277]** FAQ JSON-LD on /articles and /glossary — GEO pivot: Articles hub: 4 FAQs covering topic coverage, AU-specificity, guide discovery, and editorial verification — wired into the existing ItemList JSON-LD array. Glossary: 4 FAQs covering AU-specific terminology, category coverage, update cadence, and linking policy — layered on top of existing DefinedTermSet schema. `app/articles/page.tsx`, `app/glossary/page.tsx`
 
+**[ADV-278]** FAQ JSON-LD on /advisors/[type]/[state] location pages — GEO pivot: Type-specific FAQ arrays added to all 156+ advisor-by-type-and-location pages (13 professional types × 9 states + 21 cities). Financial planners, SMSF accountants, mortgage brokers, tax agents, and property advisors each get 4 tailored FAQs covering cost, credentials, licensing verification, and Australian-specific regulatory context. Generic fallback for remaining types. Makes every location+type combination citable for "find [advisor] in [city]" queries. `app/advisors/[type]/[state]/page.tsx`
+
 ---
 
