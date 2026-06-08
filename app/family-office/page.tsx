@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -184,6 +185,15 @@ export default function FamilyOfficePage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Find a private wealth adviser for your family"
+        subheading="Family office structures require coordinated advice across investments, tax, estate planning, and legal. A private wealth specialist can help you decide whether an SFO, MFO, or premium advisory model suits your assets."
+        intent={{ need: "planning", context: ["family_office", "private_wealth", "high_net_worth"] }}
+        source="family_office"
+        ctaLabel="Find a private wealth adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related / CTA */}
       <section className="py-8 border-b border-slate-100">

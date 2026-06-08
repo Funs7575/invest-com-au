@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd, howToJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -726,6 +727,15 @@ export default function SmsfWindUpPage() {
             </div>
           </div>
         </section>
+
+        <HubAdvisorCTA
+          heading="Get help winding up your SMSF correctly"
+          subheading="Winding up an SMSF incorrectly can trigger penalties and tax liabilities. An SMSF specialist accredited by the SMSF Association can manage the rollover, final audit, and ATO deregistration."
+          intent={{ need: "smsf", context: ["smsf_wind_up", "smsf_compliance"] }}
+          source="smsf_wind_up"
+          ctaLabel="Find an SMSF specialist"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* ── Cross-links ── */}
         <section className="py-10 bg-white border-t border-slate-200">

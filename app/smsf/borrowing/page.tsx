@@ -9,6 +9,7 @@ import {
 } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -901,6 +902,15 @@ export default function SmsfBorrowingPage() {
             <p className="text-xs text-slate-400 mt-2">{UPDATED_LABEL}</p>
           </div>
         </section>
+
+        <HubAdvisorCTA
+          heading="Get advice on SMSF borrowing (LRBA)"
+          subheading="Limited recourse borrowing arrangements have strict ATO rules on asset types, trust structures, and refinancing. An SMSF specialist can review your bare trust deed and loan terms before settlement."
+          intent={{ need: "smsf", context: ["smsf_borrowing", "lrba", "smsf_property"] }}
+          source="smsf_borrowing"
+          ctaLabel="Find an SMSF borrowing specialist"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* ── Related links ────────────────────────────────────────────── */}
         <section className="py-8 bg-slate-50 border-t border-slate-200">

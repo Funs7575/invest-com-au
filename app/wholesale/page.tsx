@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -326,6 +327,15 @@ export default function WholesalePage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Get advice before accessing wholesale markets"
+        subheading="Qualifying as wholesale removes consumer protections. Before you sign a certificate or invest in wholesale-only products, get independent advice from a licensed financial adviser who can assess the suitability for your circumstances."
+        intent={{ need: "planning", context: ["wholesale_investor", "sophisticated_investor"] }}
+        source="wholesale_investor"
+        ctaLabel="Find a financial adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

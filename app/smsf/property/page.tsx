@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import InvestOpportunitiesCallout from "@/components/invest/InvestOpportunitiesCallout";
 
 export const revalidate = 86400;
@@ -792,6 +793,15 @@ export default function SmsfPropertyPage() {
             </div>
           </div>
         </section>
+
+        <HubAdvisorCTA
+          heading="Get specialist advice before buying property in your SMSF"
+          subheading="SMSF property rules — including the sole-purpose test, related-party restrictions, and LRBA structures — are complex. An SMSF specialist can review your investment strategy and ensure your fund stays compliant."
+          intent={{ need: "smsf", context: ["smsf_property", "lrba", "smsf_compliance"] }}
+          source="smsf_property"
+          ctaLabel="Find an SMSF property specialist"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* ── Related links ─────────────────────────────────────────────────── */}
         <section className="py-10 bg-slate-50 border-t border-slate-200">
