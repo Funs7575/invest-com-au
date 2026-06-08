@@ -73,6 +73,10 @@ const mockFrom = vi.fn((table: string) => createChainableBuilder(table));
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => ({
     from: mockFrom,
+    // recordLedgerEntry now calls supabase.rpc("apply_credit_ledger_balance").
+    // Return { data: null, error: null } so the typeof-number guard skips all
+    // branches — finalBalance stays as newBalance, no extra from() calls needed.
+    rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
   }),
 }));
 

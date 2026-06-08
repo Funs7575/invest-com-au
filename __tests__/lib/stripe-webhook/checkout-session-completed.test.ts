@@ -799,10 +799,9 @@ describe("handleCheckoutSessionCompleted", () => {
         if (profCalls === 1) {
           return thenable({ credit_balance_cents: 500, lifetime_credit_cents: 2000 });
         }
-        if (profCalls === 2) {
-          return thenable(); // update — succeeds via then()
-        }
-        // Third call: select email/name inside try block — throws
+        // Second call: select email/name inside try block — throws.
+        // (The optimistic-lock UPDATE is now replaced by the atomic RPC, so
+        // professionals is only called once by recordLedgerEntry before this.)
         return {
           ...thenable(),
           maybeSingle: vi.fn().mockRejectedValue(new Error("Connection lost")),

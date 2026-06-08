@@ -266,7 +266,16 @@ const mockFrom = vi.fn((table: string) => ({
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockFrom })),
+  createAdminClient: vi.fn(() => ({
+    from: mockFrom,
+    // recordLedgerEntry calls supabase.rpc("apply_credit_ledger_balance").
+    // Return PGRST202 "missing" so the optimistic-lock fallback path runs —
+    // the existing mockFrom chain already satisfies that fallback.
+    rpc: vi.fn().mockResolvedValue({
+      data: null,
+      error: { code: "PGRST202", message: "function not found" },
+    }),
+  })),
 }));
 
 // ─── Subject under test (imported AFTER mocks register) ──────────────

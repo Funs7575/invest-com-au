@@ -136,25 +136,6 @@ export interface RecordLedgerEntryInput {
 }
 
 /**
- * Thrown when a prepaid-credit spend would drive the cached balance below
- * zero. Mirrors `lib/marketplace/wallet.ts`'s "Adjustment would result in
- * negative balance" guard so no caller can silently over-spend.
- */
-export class NegativeBalanceError extends Error {
-  constructor(
-    public readonly professionalId: number,
-    public readonly currentBalanceCents: number,
-    public readonly amountCents: number,
-  ) {
-    super(
-      `recordLedgerEntry: spend would drive advisor ${professionalId} below zero ` +
-        `(balance ${currentBalanceCents}c, amount ${amountCents}c)`,
-    );
-    this.name = "NegativeBalanceError";
-  }
-}
-
-/**
  * Spend kinds whose balance must not be driven below zero unless the caller
  * explicitly opts out via `allowNegativeBalance`. These are the prepaid-credit
  * accept-time charges; clawbacks / expiry of already-spent credits are
@@ -250,13 +231,10 @@ export async function recordLedgerEntry(
     input.amountCents < 0 &&
     newBalance < 0 &&
     !input.allowNegativeBalance &&
+    !input.allowNegative &&
     FLOORED_SPEND_KINDS.has(input.kind)
   ) {
-    throw new NegativeBalanceError(
-      input.professionalId,
-      currentBalance,
-      input.amountCents,
-    );
+    throw new NegativeBalanceError(input.professionalId, input.amountCents);
   }
 
   // ── 3. Insert the ledger row ───────────────────────────────────────
@@ -322,7 +300,11 @@ export async function recordLedgerEntry(
     lifetimeSpendDelta = Math.abs(input.amountCents);
   }
 
-  const allowNegative = input.allowNegative ?? defaultAllowNegative(input.kind);
+  // `allowNegative` is the canonical field for the RPC / fallback paths.
+  // `allowNegativeBalance` is the legacy name kept for callers that passed it
+  // before the rename. Either one opting in should disable the guard.
+  const allowNegative =
+    input.allowNegative ?? input.allowNegativeBalance ?? defaultAllowNegative(input.kind);
 
   // Preferred path: a single atomic SQL statement under a row lock. This
   // eliminates the read-modify-write race entirely — concurrent writers to
