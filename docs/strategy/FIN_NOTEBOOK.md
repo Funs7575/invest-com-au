@@ -14,6 +14,28 @@
 
 ## Active strategic decisions log
 
+### 2026-05-29 — Startup-investor / wholesale vertical: prod-missing tables → persistent types-drift + regulatory gate
+
+**Finding** (surfaced while attempting to clear the persistent "Supabase types drift" CI red). The committed `lib/database.types.ts` was generated from a DB snapshot that does **not** match production:
+
+- **8 tables are in the committed types but absent from prod:** `esic_verifications`, `startup_profiles`, `startup_rounds`, `startup_investor_inquiries`, `startup_data_room_access`, `startup_data_room_files`, `startup_sessions`, `wholesale_investor_certifications`. Created by `supabase/migrations/2026{0520,0729}_sp02_startup_portal_schema.sql` — **neither migration is applied to prod** (prod's latest applied is `20260525231409`; the `20260729` file is future-dated). These tables are referenced by **35+ source files** (`startup_profiles` alone in 14).
+- **4 prod tables are missing from the committed types:** `rate_change_log`, `user_daily_checkins`, `user_health_score_log`, `user_rate_memory` (late-May migrations, applied).
+
+**Why it matters:**
+1. **Regulatory (REGULATORY-AVOID-LIST).** `wholesale_investor_certifications` + `startup_rounds` + `startup_investor_inquiries` is a capital-raising / wholesale-investor vertical — CSF/securities territory that needs MORE than the planned AFSL and is **never-autonomous (founder + legal sign-off)**. Those tables being absent from prod may be deliberate gating — do not "fix" by applying the migrations.
+2. **Build coupling.** Regenerating types from prod (the nominal fix for the CI red) would delete those 8 tables from the types and break `tsc` across the 35+ referencing files. The types-drift red is effectively shielding the build from the prod/migration gap.
+3. **Tooling.** Byte-exact `npm run db:types` needs `SUPABASE_ACCESS_TOKEN` (absent in the agent env — CLI errors `Access token not provided`). The MCP can generate, but a ~19K-line file can't be hand-reproduced byte-exact.
+
+**Decision needed (founder + legal):**
+- **Keep the startup/wholesale vertical?** → legal sign-off → apply the `sp02` migrations to prod → `db:types` regen → CI green + code works against prod.
+- **Drop it?** → remove the vertical's code + migrations + types → regen.
+- Either path also picks up the 4 prod tables for free.
+- **To run the regen at all:** set `SUPABASE_ACCESS_TOKEN` + `SUPABASE_PROJECT_ID` (the CI `supabase-types-drift` job already diffs with them; clearing drift needs a regen + commit).
+
+**Status:** types file deliberately **not** changed by the agent — the fix is gated on the above regulatory/migration decision, above agent autonomy. The CI red is excluded from auto-merge; it's the symptom, not the problem.
+
+**Revisit:** before any startup-vertical launch, and whenever AFSL/licensing scope is reviewed.
+
 ### 2026-05-21 — Platform Expansion (PX stream) shipped
 
 Seven features that turn the platform from comparison directory into practice management tool for advisors and financial dashboard for investors.
