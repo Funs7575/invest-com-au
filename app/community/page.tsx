@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 // Each category now has ≥3 seeded threads (migration
 // 20260802000000_seed_forum_threads.sql) — safe to index.
@@ -152,9 +153,23 @@ export default async function CommunityPage() {
           <div className="text-center py-16">
             <Icon name="message-circle" size={48} className="text-slate-300 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-slate-900 mb-2">Community launching soon</h2>
-            <p className="text-sm text-slate-500 max-w-md mx-auto">
-              We&apos;re setting up discussion categories for Australian investors. Check back soon to join the conversation.
+            <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
+              We&apos;re setting up discussion categories for Australian investors.
+              Be the first to know when the community goes live.
             </p>
+            {/* ADV-012: capture intent instead of a dead "check back soon".
+                Reuses the shared newsletter capture (attributed to the
+                community-launch source). */}
+            <div className="max-w-md mx-auto text-left">
+              <NewsletterSignup
+                variant="compact"
+                source="community-launch"
+                className="justify-center"
+              />
+              <p className="text-[0.65rem] text-slate-400 mt-2 text-center">
+                We&apos;ll only email you about the community launch. Unsubscribe any time.
+              </p>
+            </div>
           </div>
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
