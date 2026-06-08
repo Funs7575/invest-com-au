@@ -211,7 +211,6 @@ export default async function InvestMarketplacePage() {
     // Kind-based categories (no dbVerticals — e.g. listed-securities) are
     // bucketed purely by categoryForListing; vertical-based ones additionally
     // require the listing's vertical to be one the sector page fetches.
-    const kindBased = cat.dbVerticals.length === 0;
     categoryCounts[cat.slug] = listings.filter(
       (l) => categoryForListing(l) === cat.slug && (kindBased || verts.has(l.vertical as string)),
     ).length;

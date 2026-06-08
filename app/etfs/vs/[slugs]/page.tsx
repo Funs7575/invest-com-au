@@ -308,6 +308,7 @@ export async function generateMetadata({
     description,
     openGraph: { title, description, url: `${SITE_URL}/etfs/vs/${slugs}`, images: [{ url: `/api/og?title=${encodeURIComponent(a.ticker + " vs " + b.ticker)}&sub=${encodeURIComponent("ETF Comparison · MER · Yield · " + CURRENT_YEAR)}`, width: 1200, height: 630 }] },
     twitter: { card: "summary_large_image" },
+    twitter: { card: "summary_large_image" },
     alternates: { canonical: `${SITE_URL}/etfs/vs/${slugs}` },
   };
 }
