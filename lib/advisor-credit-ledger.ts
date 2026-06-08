@@ -46,6 +46,7 @@ export type LedgerKind =
   | "admin_adjustment"
   | "expiry"
   | "chargeback_clawback"
+  | "refund_to_cash_clawback"
   | "referral_payout"
   | "success_bonus_award";
 
