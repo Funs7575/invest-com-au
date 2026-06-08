@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { itemListJsonLd, faqJsonLd } from "@/lib/schema-markup";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -141,6 +142,15 @@ export default function JustPage() {
           </Link>
         ))}
       </div>
+
+      <HubAdvisorCTA
+        heading="Get financial advice for your life change"
+        subheading="Major life events — inheriting, retiring, selling a business — often require coordinated action across super, tax, estate planning, and investment accounts. A financial adviser can prioritise what to do first and model the outcomes before you act."
+        intent={{ need: "planning", context: ["life_event", "financial_transition"] }}
+        source="just_hub"
+        ctaLabel="Find a financial adviser"
+        className="mt-10 py-12 bg-amber-50 border border-amber-200 rounded-xl"
+      />
 
       <p className="mt-10 text-xs text-slate-400">
         These guides provide general financial information only and do not constitute personal financial advice.
