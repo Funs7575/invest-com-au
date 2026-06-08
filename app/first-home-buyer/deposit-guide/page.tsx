@@ -801,7 +801,7 @@ export default function DepositGuidePage() {
                 >
                   <summary className="flex items-center justify-between cursor-pointer px-5 py-4 text-slate-900 font-semibold text-sm hover:bg-slate-50 transition-colors list-none">
                     <span>{item.q}</span>
-                    <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform">
+                    <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                       &#x25BE;
                     </span>
                   </summary>
