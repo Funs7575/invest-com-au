@@ -431,13 +431,13 @@ export default function ConciergeClient() {
                 <p className="text-sm text-slate-600 mb-4">
                   Start with one of these, or ask anything:
                 </p>
-                <div className="flex flex-wrap justify-center gap-2">
+                <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:justify-center [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                   {STARTERS.map((s) => (
                     <button
                       key={s}
                       type="button"
                       onClick={() => void send(s)}
-                      className="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 hover:bg-amber-50 hover:text-amber-700 border border-slate-200 hover:border-amber-200 transition-colors"
+                      className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 hover:bg-amber-50 hover:text-amber-700 border border-slate-200 hover:border-amber-200 transition-colors"
                     >
                       {s}
                     </button>
@@ -479,19 +479,19 @@ export default function ConciergeClient() {
                             {renderContent(m.content)}
                           </p>
                           {m.role === "assistant" && m.citations && m.citations.length > 0 && (
-                            <div className="mt-2 pt-2 border-t border-slate-200 text-[0.65rem] text-slate-500">
-                              <span className="font-semibold">Sources:</span>{" "}
-                              {m.citations.map((c, idx) => (
-                                <span key={`${c.type}-${c.id}`}>
-                                  {idx > 0 && " · "}
+                            <div className="mt-3 pt-2 border-t border-slate-100">
+                              <p className="text-[0.6rem] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Sources</p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {m.citations.map((c) => (
                                   <Link
+                                    key={`${c.type}-${c.id}`}
                                     href={citationHref(c)}
-                                    className="underline hover:text-slate-700"
+                                    className="inline-flex items-center gap-1 text-[0.65rem] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-transparent hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 transition-colors"
                                   >
-                                    {c.title.slice(0, 40) || c.id}
+                                    {c.title.slice(0, 38) || c.id}
                                   </Link>
-                                </span>
-                              ))}
+                                ))}
+                              </div>
                             </div>
                           )}
                         </>
