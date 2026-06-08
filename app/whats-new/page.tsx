@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import AuthorByline from "@/components/AuthorByline";
 import { breadcrumbJsonLd, absoluteUrl, REVIEW_AUTHOR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 
@@ -91,6 +92,29 @@ interface GroupedMonth {
   changes: DataChange[];
 }
 
+/* ─── FAQ Data ─── */
+
+const WHATS_NEW_FAQS = [
+  {
+    q: "What does the 'What Changed' feed track?",
+    a: "The feed tracks real-time changes to platform fees, features, and data across every active Australian investing platform on Invest.com.au. This includes: brokerage fee changes (ASX and US stock rates), FX conversion rate changes, platform rating updates, feature additions or removals (e.g. CHESS sponsorship, fractional shares, SMSF account support), and detected changes on platforms' own pricing pages. Changes are detected automatically via fee page monitoring and verified by our editorial team before being published.",
+  },
+  {
+    q: "How quickly are fee changes published after a platform announces them?",
+    a: "Most fee changes are detected and published within 24 hours of a platform announcing or implementing them. Our automated monitoring checks platform pricing pages daily; significant changes (e.g. a brokerage fee increase) are also picked up from platform announcements, ASX filings, and reader reports. If you notice a change that isn't yet on the feed, you can contact us and we will verify and update within one business day.",
+  },
+  {
+    q: "Can I get notified when a specific platform changes its fees?",
+    a: "Yes. Sign up for a free Invest.com.au account and set up fee alerts for your platform at /alerts — you will receive an email notification the next time that platform's fees or features change. You can set alerts for any combination of platforms and change types (fee increases, fee decreases, feature additions, or any change).",
+  },
+  {
+    q: "Why do some changes say 'Fee Page' instead of showing the old and new values?",
+    a: "When our monitoring detects a change on a platform's pricing page but the specific fee data is displayed in a format we cannot extract automatically (e.g., embedded in a PDF, an image, or a dynamically-generated table), we flag it as a detected pricing page change. Our editorial team then manually verifies the specific change and updates the platform's fee data within 24 hours. The 'Fee Page' label means a change was detected but the specific values are pending manual verification.",
+  },
+];
+
+const whatsNewFaqLd = faqJsonLd(WHATS_NEW_FAQS);
+
 /* ─── Page Component ─── */
 
 export default async function WhatsNewPage() {
@@ -166,6 +190,12 @@ export default async function WhatsNewPage() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
+        />
+      )}
+      {whatsNewFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(whatsNewFaqLd) }}
         />
       )}
       {/* legacy <Header/> removed: the root layout already renders Navigation */}
@@ -298,6 +328,20 @@ export default async function WhatsNewPage() {
             </Link>
           </div>
         </div>
+        <section className="mt-10 border-t border-slate-200 pt-8">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {WHATS_NEW_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
       </main>
       {/* legacy <Footer/> removed: the root layout already renders SiteFooter */}
     </>

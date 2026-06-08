@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { Scenario } from "@/lib/types";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -40,6 +41,27 @@ const SCENARIO_IMAGES: Record<string, string> = {
   "smsf": "/images/scenarios/smsf.svg",
 };
 
+const SCENARIOS_FAQS = [
+  {
+    q: "What are investing scenarios?",
+    a: "Investing scenarios are curated guides that show the best Australian investing platform for a specific life situation — not just the cheapest platform overall. For example, an expat living overseas needs a platform that accepts non-resident accounts and handles withholding tax correctly; a first home buyer might prioritise low brokerage and CHESS sponsorship over advanced charting tools; an SMSF trustee needs a platform with explicit SMSF account support and annual tax reporting. Each scenario guides you to the platform that fits your specific circumstances.",
+  },
+  {
+    q: "How do the scenario recommendations stay up to date?",
+    a: "Each scenario is reviewed quarterly and updated within 24 hours when a platform changes a policy that affects it — such as a platform stopping non-resident accounts (impacts the Expats scenario) or a new platform launching SMSF support (impacts the SMSF scenario). Scenario recommendations are editorial — they are not sponsored or paid placements. The recommended platform is whichever best meets the scenario's requirements based on our full broker review rubric.",
+  },
+  {
+    q: "Can I trust scenario recommendations if I have a complex situation?",
+    a: "Scenario guides are a useful starting point, but they use a simplified set of criteria relevant to that investor type. If your situation is complex — for example, you are an expat SMSF trustee who trades US stocks actively — you may need to cross-reference multiple scenario guides or use the comparison tool to build a custom head-to-head. For complex situations, we also recommend consulting a licensed financial adviser who can assess your specific needs.",
+  },
+  {
+    q: "Are the scenario guides personal financial advice?",
+    a: "No. Scenario guides are general information only and do not constitute personal financial advice. They do not take into account your individual objectives, financial situation, tax position, or specific needs. The platform recommendations are editorial assessments. Before choosing an investment platform or making investment decisions, consult a licensed financial adviser who holds an Australian Financial Services Licence appropriate to your needs.",
+  },
+];
+
+const scenariosFaqLd = faqJsonLd(SCENARIOS_FAQS);
+
 export default async function ScenariosPage() {
   const supabase = await createClient();
 
@@ -53,6 +75,9 @@ export default async function ScenariosPage() {
   return (
     <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bcLd) }} />
+    {scenariosFaqLd && (
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(scenariosFaqLd) }} />
+    )}
     <div className="py-5 md:py-12">
       <div className="container-custom">
         <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">Investing Scenarios</h1>
@@ -114,6 +139,23 @@ export default async function ScenariosPage() {
             })}
           </div>
         </ScrollFadeIn>
+      </div>
+    </div>
+
+    <div className="border-t border-slate-200 bg-white">
+      <div className="container-custom max-w-4xl py-8 md:py-10">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <div className="space-y-3">
+          {SCENARIOS_FAQS.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
       </div>
     </div>
     </>
