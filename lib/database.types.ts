@@ -14390,6 +14390,56 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_change_log: {
+        Row: {
+          broker_id: number
+          broker_name: string
+          broker_slug: string
+          delta_bps: number
+          direction: string
+          id: string
+          logged_at: string
+          new_rate_bps: number
+          old_rate_bps: number | null
+          product_kind: string
+          snapshot_captured_at: string
+        }
+        Insert: {
+          broker_id: number
+          broker_name: string
+          broker_slug: string
+          delta_bps: number
+          direction: string
+          id?: string
+          logged_at?: string
+          new_rate_bps: number
+          old_rate_bps?: number | null
+          product_kind: string
+          snapshot_captured_at: string
+        }
+        Update: {
+          broker_id?: number
+          broker_name?: string
+          broker_slug?: string
+          delta_bps?: number
+          direction?: string
+          id?: string
+          logged_at?: string
+          new_rate_bps?: number
+          old_rate_bps?: number | null
+          product_kind?: string
+          snapshot_captured_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rate_change_log_broker_id_fkey"
+            columns: ["broker_id"]
+            isOneToOne: false
+            referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rate_limit_buckets: {
         Row: {
           created_at: string
@@ -17000,6 +17050,72 @@ export type Database = {
         }
         Relationships: []
       }
+      user_daily_checkins: {
+        Row: {
+          check_in_date: string
+          created_at: string
+          id: string
+          points: number
+          source: string
+          streak_count: number
+          user_id: string
+        }
+        Insert: {
+          check_in_date: string
+          created_at?: string
+          id?: string
+          points?: number
+          source?: string
+          streak_count?: number
+          user_id: string
+        }
+        Update: {
+          check_in_date?: string
+          created_at?: string
+          id?: string
+          points?: number
+          source?: string
+          streak_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_health_score_log: {
+        Row: {
+          cost: number
+          diversification: number
+          engagement: number
+          id: string
+          overall: number
+          risk_alignment: number
+          scored_at: string
+          scored_month: string
+          user_id: string
+        }
+        Insert: {
+          cost: number
+          diversification: number
+          engagement: number
+          id?: string
+          overall: number
+          risk_alignment: number
+          scored_at?: string
+          scored_month: string
+          user_id: string
+        }
+        Update: {
+          cost?: number
+          diversification?: number
+          engagement?: number
+          id?: string
+          overall?: number
+          risk_alignment?: number
+          scored_at?: string
+          scored_month?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_notifications: {
         Row: {
           body: string | null
@@ -17131,6 +17247,47 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      user_rate_memory: {
+        Row: {
+          broker_id: number
+          id: string
+          last_seen_at: string
+          last_seen_rate_bps: number
+          notified_at: string | null
+          notified_rate_bps: number | null
+          product_kind: string
+          user_id: string
+        }
+        Insert: {
+          broker_id: number
+          id?: string
+          last_seen_at?: string
+          last_seen_rate_bps: number
+          notified_at?: string | null
+          notified_rate_bps?: number | null
+          product_kind: string
+          user_id: string
+        }
+        Update: {
+          broker_id?: number
+          id?: string
+          last_seen_at?: string
+          last_seen_rate_bps?: number
+          notified_at?: string | null
+          notified_rate_bps?: number | null
+          product_kind?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_rate_memory_broker_id_fkey"
+            columns: ["broker_id"]
+            isOneToOne: false
+            referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_reviews: {
         Row: {
