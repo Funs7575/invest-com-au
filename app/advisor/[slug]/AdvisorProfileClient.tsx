@@ -20,6 +20,7 @@ import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 import { isValidEmail } from "@/lib/validate-email";
 import AdvisorFeeOpinionButton from "@/components/AdvisorFeeOpinionButton";
 import SocialShareButtons from "@/components/SocialShareButtons";
+import { formatLastUpdated } from "@/lib/format-last-updated";
 
 const TYPE_TO_PLATFORMS: Record<string, { label: string; href: string }[]> = {
   smsf_accountant: [
@@ -119,15 +120,21 @@ export default function AdvisorProfileClient({
   professional: pro,
   similar,
   reviews = [],
+  reviewTotalCount,
   teamMembers = [],
   firm,
+  expertTeams = [],
   expertArticles = [],
 }: {
   professional: Professional;
   similar: Professional[];
   reviews?: ProfessionalReview[];
+  /** Total approved reviews (>= reviews.length when the list was capped). */
+  reviewTotalCount?: number;
   teamMembers?: Professional[];
   firm?: AdvisorFirm | null;
+  /** Verified, public Expert Teams this advisor belongs to (ADV-013). */
+  expertTeams?: { slug: string; name: string; public_title: string | null }[];
   expertArticles?: ExpertArticle[];
 }) {
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error" | "unavailable">("idle");
@@ -243,6 +250,14 @@ export default function AdvisorProfileClient({
   const credentialNumber = pro.afsl_number || pro.registration_number;
   const firstName = pro.name.split(" ")[0];
   const initials = pro.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+
+  // ADV-011: the reviews list is capped server-side. When more approved reviews
+  // exist than we embedded, tell the visitor and link to the full set.
+  const totalReviews = Math.max(reviewTotalCount ?? reviews.length, reviews.length);
+  const hasMoreReviews = totalReviews > reviews.length;
+
+  // ADV-019: "Profile last updated" — uses updated_at, falling back to created_at.
+  const lastUpdatedLabel = formatLastUpdated(pro.updated_at ?? pro.created_at);
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 lg:pb-20">
@@ -394,6 +409,12 @@ export default function AdvisorProfileClient({
                       Speaks: {pro.languages.join(", ")}
                     </span>
                   )}
+                  {lastUpdatedLabel && (
+                    <span className="flex items-center gap-1.5 text-slate-400" title="When this advisor last updated their profile">
+                      <Icon name="clock" size={14} className="text-slate-300" />
+                      Profile updated {lastUpdatedLabel}
+                    </span>
+                  )}
                 </div>
 
                 {/* Meeting types */}
@@ -408,18 +429,36 @@ export default function AdvisorProfileClient({
                   </div>
                 ) : null}
 
-                {/* Desktop CTAs */}
+                {/* Desktop CTAs — when the advisor exposes a booking link
+                    (ADV-002), make "Book a call" the primary action and demote
+                    the enquiry form to secondary; otherwise the enquiry form is
+                    the primary CTA as before. */}
                 <div className="hidden md:flex items-center gap-3 flex-wrap">
-                  <a
-                    href="#contact"
-                    className="px-7 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-400 transition-all shadow-md shadow-amber-200/50 active:scale-[0.98]"
-                  >
-                    Request Free Consultation
-                  </a>
-                  {pro.booking_link && (
-                    <a href={pro.booking_link} target="_blank" rel="noopener noreferrer"
-                      className="px-5 py-3 bg-white border border-slate-200 text-slate-700 font-semibold text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all">
-                      Book a Call
+                  {pro.booking_link ? (
+                    <>
+                      <a
+                        href={pro.booking_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => trackEvent("advisor_book_call_click", { professional_id: pro.id, advisor_slug: pro.slug, placement: "hero" }, `/advisor/${pro.slug}`)}
+                        className="inline-flex items-center gap-2 px-7 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-400 transition-all shadow-md shadow-amber-200/50 active:scale-[0.98]"
+                      >
+                        <Icon name="calendar" size={15} />
+                        Book a Call
+                      </a>
+                      <a
+                        href="#contact"
+                        className="px-5 py-3 bg-white border border-slate-200 text-slate-700 font-semibold text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all"
+                      >
+                        Request Free Consultation
+                      </a>
+                    </>
+                  ) : (
+                    <a
+                      href="#contact"
+                      className="px-7 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-400 transition-all shadow-md shadow-amber-200/50 active:scale-[0.98]"
+                    >
+                      Request Free Consultation
                     </a>
                   )}
                   <button
@@ -569,6 +608,35 @@ export default function AdvisorProfileClient({
                 <span className="text-xs text-slate-400 hidden md:block">— Not aligned to any product provider or dealer group</span>
               </div>
             ) : null}
+
+            {/* Expert team memberships (ADV-013) — verified, public squads this
+                advisor collaborates in. Distinct from the firm "Practice" card. */}
+            {expertTeams.length > 0 && (
+              <div className="space-y-2">
+                {expertTeams.map((team) => (
+                  <Link
+                    key={team.slug}
+                    href={`/teams/${team.slug}`}
+                    className="flex items-center gap-3 bg-violet-50 border border-violet-200 rounded-xl px-4 py-3 hover:border-violet-300 hover:bg-violet-100/70 transition-all group"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0">
+                      <Icon name="users" size={15} className="text-violet-600" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-bold text-violet-900 truncate">
+                        Part of {team.name}
+                      </p>
+                      {team.public_title && (
+                        <p className="text-xs text-violet-600 truncate">{team.public_title}</p>
+                      )}
+                    </div>
+                    <span className="text-violet-500 group-hover:translate-x-0.5 transition-transform shrink-0">
+                      <Icon name="arrow-right" size={15} />
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            )}
 
             {/* About */}
             {pro.bio && (
@@ -909,7 +977,7 @@ export default function AdvisorProfileClient({
                   <h2 className="text-base font-bold text-slate-900">
                     Reviews
                     {reviews.length > 0 && (
-                      <span className="ml-2 text-sm font-normal text-slate-400">({reviews.length})</span>
+                      <span className="ml-2 text-sm font-normal text-slate-400">({totalReviews})</span>
                     )}
                   </h2>
                 </div>
@@ -943,6 +1011,7 @@ export default function AdvisorProfileClient({
 
                 {/* Reviews list */}
                 {reviews.length > 0 ? (
+                  <>
                   <div className="space-y-6 mb-4">
                     {reviews.map((r) => (
                       <div key={r.id} className="border-b border-slate-100 last:border-0 pb-6 last:pb-0">
@@ -1007,6 +1076,14 @@ export default function AdvisorProfileClient({
                       </div>
                     ))}
                   </div>
+                  {/* ADV-011: reviews are capped server-side; be transparent
+                      about it rather than silently hiding the rest. */}
+                  {hasMoreReviews && (
+                    <p className="text-xs text-slate-400 text-center mb-2" data-testid="reviews-cap-note">
+                      Showing the {reviews.length} most recent reviews of {totalReviews} total.
+                    </p>
+                  )}
+                  </>
                 ) : !reviewFormOpen && reviewState !== "success" ? (
                   <div className="text-center py-10">
                     <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
@@ -1415,11 +1492,28 @@ export default function AdvisorProfileClient({
               {pro.initial_consultation_free ? "Free consultation" : pro.fee_description || typeLabel}
             </p>
           </div>
+          {pro.booking_link && (
+            <a
+              href={pro.booking_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackEvent("advisor_book_call_click", { professional_id: pro.id, advisor_slug: pro.slug, placement: "mobile_sticky" }, `/advisor/${pro.slug}`)}
+              aria-label={`Book a call with ${firstName}`}
+              className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 bg-amber-600 text-slate-900 text-sm font-black rounded-xl hover:bg-amber-500 transition-colors active:scale-[0.98]"
+            >
+              <Icon name="calendar" size={15} />
+              Book
+            </a>
+          )}
           <a
             href="#contact"
-            className="shrink-0 px-5 py-2.5 bg-amber-600 text-slate-900 text-sm font-black rounded-xl hover:bg-amber-500 transition-colors active:scale-[0.98]"
+            className={`shrink-0 px-5 py-2.5 text-sm font-black rounded-xl transition-colors active:scale-[0.98] ${
+              pro.booking_link
+                ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                : "bg-amber-600 text-slate-900 hover:bg-amber-500"
+            }`}
           >
-            Enquire Free
+            Enquire{pro.booking_link ? "" : " Free"}
           </a>
         </div>
       </div>

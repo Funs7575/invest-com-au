@@ -29,6 +29,10 @@ import { ADVISOR_PUBLIC_COLUMNS } from "./public-columns";
 
 export const revalidate = 1800;
 
+// ADV-011: max reviews embedded in the initial page payload. The total approved
+// count is fetched separately so the UI can offer a "view all" affordance.
+const REVIEWS_LIMIT = 20;
+
 export async function generateStaticParams() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
@@ -86,6 +90,9 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   // Get similar advisors, reviews, and firm team in parallel
   let similar: Professional[] = [];
   let reviews: import("@/lib/types").ProfessionalReview[] = [];
+  // ADV-011: reviews are capped at REVIEWS_LIMIT for the page payload; track the
+  // approved total separately so the UI can say "Showing N of M".
+  let reviewTotalCount = 0;
   let teamMembers: Professional[] = [];
   let firm: import("@/lib/types").AdvisorFirm | null = null;
   let expertArticles: { id: number; title: string; slug: string; excerpt: string; category: string; published_at: string; reading_time_mins: number | null; view_count: number }[] = [];
@@ -102,11 +109,11 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         .limit(3),
       supabase
         .from("professional_reviews")
-        .select("*, advisor_response:professional_review_responses(id, body, created_at, updated_at)")
+        .select("*, advisor_response:professional_review_responses(id, body, created_at, updated_at)", { count: "exact" })
         .eq("professional_id", pro.id)
         .eq("status", "approved")
         .order("created_at", { ascending: false })
-        .limit(20),
+        .limit(REVIEWS_LIMIT),
       supabase
         .from("advisor_articles")
         .select("id, title, slug, excerpt, category, published_at, reading_time_mins, view_count")
@@ -137,6 +144,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     const results = await Promise.all(queries);
     similar = ((results[0] as { data: Professional[] | null }).data as Professional[]) || [];
     reviews = ((results[1] as { data: import("@/lib/types").ProfessionalReview[] | null }).data as import("@/lib/types").ProfessionalReview[]) || [];
+    reviewTotalCount = (results[1] as { count: number | null }).count ?? reviews.length;
     expertArticles = ((results[2] as { data: typeof expertArticles | null }).data) || [];
     if (pro.firm_id && results.length > 3) {
       teamMembers = ((results[3] as { data: Professional[] | null }).data as Professional[]) || [];
@@ -144,6 +152,35 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     }
   } catch {
     // Secondary queries failed — continue with defaults
+  }
+
+  // ADV-013: surface verified, public Expert Team memberships so an advisor's
+  // squad is discoverable from their profile (distinct from the firm "Practice"
+  // card above — Expert Teams are cross-firm collaborations). Reads only public
+  // rows (anon RLS exposes public members + verified public teams), so the
+  // user-cookie client is sufficient.
+  let expertTeams: { slug: string; name: string; public_title: string | null }[] = [];
+  try {
+    const { data: teamRows } = await supabase
+      .from("expert_team_members")
+      .select("public_title, team:expert_teams!inner(slug, name, public, verification_status)")
+      .eq("professional_id", pro.id)
+      .eq("status", "active")
+      .eq("can_appear_publicly", true)
+      .eq("team.public", true)
+      .eq("team.verification_status", "verified");
+    expertTeams = ((teamRows ?? []) as unknown as {
+      public_title: string | null;
+      team: { slug: string; name: string } | null;
+    }[])
+      .filter((r) => r.team)
+      .map((r) => ({
+        slug: r.team!.slug,
+        name: r.team!.name,
+        public_title: r.public_title,
+      }));
+  } catch {
+    // Expert-team lookup failed — continue without the team link.
   }
 
   // Increment daily profile view counter (fire-and-forget)
@@ -399,7 +436,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
           })),
         }) }} />
       )}
-      <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} teamMembers={teamMembers} firm={firm} expertArticles={expertArticles} />
+      <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} reviewTotalCount={reviewTotalCount} teamMembers={teamMembers} firm={firm} expertTeams={expertTeams} expertArticles={expertArticles} />
 
       {/* Good-fit hint — shown when logged-in user's profile matches ideal-client criteria */}
       {isGoodFit && (
