@@ -5,6 +5,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { SITE_URL, absoluteUrl } from "@/lib/seo";
 import { SPONSORED_ARTICLE_DISCLOSURE } from "@/lib/compliance";
+import SocialShareButtons from "@/components/SocialShareButtons";
 
 export const revalidate = 3600;
 
@@ -139,6 +140,15 @@ export default async function ExpertArticlePage({ params }: Props) {
                   {article.author_firm && <span>{article.author_firm} · </span>}
                   {publishDate}
                 </div>
+              </div>
+              {/* ADV-014: share row (native Web Share API + copy-link fallback). */}
+              <div className="ml-auto">
+                <SocialShareButtons
+                  url={absoluteUrl(`/expert/${slug}`)}
+                  title={article.title}
+                  description={article.excerpt ?? undefined}
+                  compact
+                />
               </div>
             </div>
           </header>

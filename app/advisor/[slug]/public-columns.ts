@@ -72,6 +72,7 @@ export const ADVISOR_PUBLIC_COLUMN_LIST = [
   "meta_title",
   "meta_description",
   "created_at",
+  "updated_at",
 ] as const;
 
 /** Comma-joined column projection passed to Supabase `.select(...)`. */
