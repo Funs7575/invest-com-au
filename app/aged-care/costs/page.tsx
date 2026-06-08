@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -179,6 +180,16 @@ export default function AgedCareCostsPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get a personalised aged care cost estimate"
+        subheading="Your actual costs depend on means testing, RAD vs DAP choice, and care level. An aged care specialist can model your specific situation and help minimise the means-tested care fee."
+        intent={{ need: "aged_care", context: ["aged_care_costs", "means_test", "aged_care_planning"] }}
+        source="aged_care_costs"
+        ctaLabel="Find an aged care financial specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

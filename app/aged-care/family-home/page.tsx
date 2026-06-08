@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -165,6 +166,16 @@ export default function AgedCareFamilyHomePage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get specialist aged care financial advice"
+        subheading="The family home decision affects CGT, Centrelink, estate planning, and the means-tested care fee. A Certified Aged Care Financial Adviser can map out the full financial picture."
+        intent={{ need: "aged_care", context: ["family_home", "centrelink", "aged_care_planning"] }}
+        source="aged_care_family_home"
+        ctaLabel="Find an aged care financial specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

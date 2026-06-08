@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -147,6 +148,16 @@ export default function AgedCareMeansTestPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get your aged care means test modelled"
+        subheading="The means test interaction with Centrelink, accommodation payments, and estate planning is complex. A Certified Aged Care Financial Adviser can model your specific situation."
+        intent={{ need: "aged_care", context: ["means_test", "centrelink", "aged_care_planning"] }}
+        source="aged_care_means_test"
+        ctaLabel="Find a Certified Aged Care Adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

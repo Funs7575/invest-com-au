@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -160,6 +161,16 @@ export default function RadVsDapPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get matched with an aged care financial specialist"
+        subheading="RAD vs DAP affects your Centrelink entitlements, estate, and cash flow. An aged care specialist can model the numbers for your situation."
+        intent={{ need: "aged_care", context: ["rad_dap", "aged_care_planning"] }}
+        source="aged_care_rad_dap"
+        ctaLabel="Find an aged care financial specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">
