@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Annuities in Australia — Lifetime, Term & How They Work (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How Australian annuities work: guaranteed income for life or a fixed term, Age Pension interaction, Challenger pricing example, ABP vs annuity comparison, and when partial annuitisation makes sense. ${UPDATED_LABEL}.`,
+  description: `Australian annuities: guaranteed income, Age Pension interaction, ABP vs annuity comparison, and when partial annuitisation makes sense. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Annuities in Australia (${CURRENT_YEAR}) — Guaranteed Income Explained`,
     description: "Lifetime vs term annuities: how they work, Age Pension assets test treatment, Challenger pricing, ABP comparison, taxation, and partial annuitisation.",

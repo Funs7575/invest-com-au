@@ -10,7 +10,7 @@ const PAGE_PATH = "/global-investing/guides/ibkr-australia-setup";
 
 export const metadata: Metadata = {
   title: `Interactive Brokers (IBKR) Australia Setup Guide (${CURRENT_YEAR})`,
-  description: `A how-to guide to setting up Interactive Brokers from Australia: entity and account types, the document and W-8BEN steps, AUD funding, low-cost FX conversion, key settings, costs, and tax reporting. ${UPDATED_LABEL}.`,
+  description: `Setting up Interactive Brokers from Australia: account types, W-8BEN, AUD funding, FX conversion, costs, and tax reporting. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Interactive Brokers (IBKR) Australia Setup Guide (${CURRENT_YEAR})`,
     description:

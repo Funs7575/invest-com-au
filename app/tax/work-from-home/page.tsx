@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Work From Home Tax Deductions Australia (${CURRENT_YEAR}) — 67c Fixed Rate & Actual Cost`,
-  description: `How to claim working from home deductions in Australia. 67 cents per hour fixed rate method, actual cost method, equipment depreciation, sole trader rules, and ATO record-keeping requirements. ${UPDATED_LABEL}.`,
+  description: `Working from home deductions: 67c/hr fixed rate, actual cost method, equipment depreciation, and ATO record-keeping. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Work From Home Tax Deductions Australia (${CURRENT_YEAR})`,
     description:

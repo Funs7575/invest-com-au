@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Retirement Income Strategy — Super Drawdown, Age Pension & More (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How to structure retirement income in Australia: account-based pension drawdown rules, Age Pension integration, sequencing risk, the bucket strategy, tax strategies, and Centrelink optimisation. ${UPDATED_LABEL}.`,
+  description: `Retirement income in Australia: account-based pension drawdown, Age Pension integration, sequencing risk, and the bucket strategy. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Retirement Income Strategy (${CURRENT_YEAR})`,
     description: "Super drawdown, Age Pension, annuities, sequencing risk, bucket strategy, and tax tips for Australian retirees.",

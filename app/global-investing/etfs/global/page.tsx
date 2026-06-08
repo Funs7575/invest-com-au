@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Best International ETFs Australia (${CURRENT_YEAR}) — VGS, IWLD, VEU, FEMX Compared`,
-  description: `Compare the best international ETFs available in Australia: VGS, IWLD, VEU, FEMX, VDHG and more. Developed markets, emerging markets, and all-world ETFs analysed by MER, coverage, and performance. ${UPDATED_LABEL}.`,
+  description: `Best international ETFs in Australia: VGS, IWLD, VEU, FEMX, and VDHG — compared by MER, coverage, and performance. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best International ETFs Australia (${CURRENT_YEAR})`,
     description: "Complete guide to international ETFs in Australia. Compare global developed markets, emerging markets, and all-world ETFs.",

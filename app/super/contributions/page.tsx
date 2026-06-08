@@ -10,7 +10,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Super Contributions Guide — Concessional, Non-Concessional & Catch-Up (${CURRENT_YEAR})`,
   description:
-    "Complete guide to super contributions in Australia. Concessional cap $30,000, non-concessional cap $120,000, carry-forward rules, salary sacrifice, government co-contribution, and Division 296. Updated 2024-25 figures.",
+    "Super contributions: $30k concessional, $120k non-concessional, carry-forward rules, salary sacrifice, and government co-contribution. Updated 2025–26.",
   openGraph: {
     title: `Super Contributions Guide — Concessional, Non-Concessional & Catch-Up (${CURRENT_YEAR})`,
     description:
