@@ -17,17 +17,99 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing stripe-signature" }, { status: 400 });
   }
 
+  // ── Fail-closed signature secret ──────────────────────────────────
+  // The marketplace endpoint has its OWN Stripe webhook endpoint and its
+  // OWN signing secret (STRIPE_MARKETPLACE_WEBHOOK_SECRET), distinct from
+  // the subscription endpoint's STRIPE_WEBHOOK_SECRET. Previously this
+  // handler fell back to STRIPE_WEBHOOK_SECRET when the marketplace secret
+  // was unset, which silently conflated two endpoints' trust boundaries
+  // and masked a deployment misconfiguration on a money-movement path
+  // (broker wallet credits + invoice settlement). Mirror the subscription
+  // handler: read only the marketplace secret and fail closed (500) if it
+  // is missing, rather than borrowing the platform secret.
+  const webhookSecret = process.env.STRIPE_MARKETPLACE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    log.error("STRIPE_MARKETPLACE_WEBHOOK_SECRET not configured");
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
+  }
+
   let event: Stripe.Event;
 
   try {
-    event = getStripe().webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_MARKETPLACE_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET!
-    );
+    event = getStripe().webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
     log.error("Marketplace webhook signature failed", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+  }
+
+  // ── Event-level idempotency (crash-robust) ────────────────────────
+  // Stripe retries events after transient failures (any 500 below — e.g.
+  // a creditWallet optimistic-lock failure — triggers re-delivery), so the
+  // same event.id can arrive multiple times. creditWallet is already
+  // idempotent on stripe_payment_intent_id (the actual money movement is
+  // safe), but the admin_audit_log INSERT and the marketplace_invoices
+  // paid_at update are NOT — duplicate deliveries pollute the financial
+  // audit trail and drift the recorded settlement time. Claim each event
+  // in stripe_webhook_events with a processing → done state machine so a
+  // retried event.id is short-circuited, and a crashed handler's event can
+  // be re-taken after a 5-minute timeout. Mirrors app/api/stripe/webhook.
+  const idempotencyClient = createAdminClient();
+  const FIVE_MINS_AGO = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+  {
+    const { error: dedupeError } = await idempotencyClient
+      .from("stripe_webhook_events")
+      .insert({
+        event_id: event.id,
+        event_type: event.type,
+        status: "processing",
+        started_at: new Date().toISOString(),
+      });
+
+    if (dedupeError) {
+      if (dedupeError.code === "23505") {
+        // Row already exists. If it's 'done', we're finished. If it's
+        // 'processing' and younger than 5 min, another worker owns it.
+        // If 'processing' and older, we re-take it (previous worker crashed).
+        const { data: existing } = await idempotencyClient
+          .from("stripe_webhook_events")
+          .select("status, started_at")
+          .eq("event_id", event.id)
+          .maybeSingle();
+
+        if (existing?.status === "done") {
+          log.info("Duplicate marketplace webhook event ignored (already done)", {
+            eventId: event.id,
+            type: event.type,
+          });
+          return NextResponse.json({ received: true, duplicate: true });
+        }
+        if (
+          existing?.status === "processing" &&
+          existing.started_at &&
+          existing.started_at > FIVE_MINS_AGO
+        ) {
+          log.info("Duplicate marketplace webhook event ignored (in-flight)", {
+            eventId: event.id,
+            type: event.type,
+          });
+          return NextResponse.json({ received: true, inflight: true });
+        }
+        // Stale processing row — re-take it.
+        await idempotencyClient
+          .from("stripe_webhook_events")
+          .update({ status: "processing", started_at: new Date().toISOString() })
+          .eq("event_id", event.id);
+        log.warn("Retaking stale marketplace webhook event", {
+          eventId: event.id,
+          type: event.type,
+        });
+      } else {
+        log.warn("Idempotency claim failed, processing anyway", {
+          eventId: event.id,
+          error: dedupeError.message,
+        });
+      }
+    }
   }
 
   const supabase = createAdminClient();
@@ -44,6 +126,10 @@ export async function POST(request: NextRequest) {
 
           if (!brokerSlug || !amountCents) {
             log.error("Missing metadata on wallet_topup checkout", { metadata: session.metadata });
+            // Mark the event 'error' so it is not stuck in 'processing'; a
+            // re-delivery of the same (still-invalid) event will be re-taken
+            // and short-circuited the same way.
+            await markEvent(idempotencyClient, event.id, "error");
             return NextResponse.json({ error: "Missing metadata" }, { status: 400 });
           }
 
@@ -184,8 +270,35 @@ export async function POST(request: NextRequest) {
     }
   } catch (err) {
     log.error("Marketplace webhook error", { error: err instanceof Error ? err.message : String(err) });
+    // Mark the event row 'error' so a Stripe retry can re-take it via the
+    // stale-processing fallback above (the handler did NOT complete its
+    // non-idempotent side effects, so re-running is correct).
+    await markEvent(idempotencyClient, event.id, "error");
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 
+  // Mark done so this event will never be re-processed by a Stripe retry.
+  await markEvent(idempotencyClient, event.id, "done");
+
   return NextResponse.json({ received: true });
+}
+
+/**
+ * Best-effort terminal status stamp for the idempotency row. Swallows
+ * errors — the event was already processed (or already failed); the stamp
+ * is only an optimisation/observability aid, not a correctness guarantee.
+ */
+async function markEvent(
+  client: ReturnType<typeof createAdminClient>,
+  eventId: string,
+  status: "done" | "error"
+): Promise<void> {
+  try {
+    await client
+      .from("stripe_webhook_events")
+      .update({ status, completed_at: new Date().toISOString() })
+      .eq("event_id", eventId);
+  } catch {
+    // swallow — terminal stamp is best-effort
+  }
 }
