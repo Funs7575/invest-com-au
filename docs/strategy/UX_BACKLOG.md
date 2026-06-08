@@ -769,3 +769,5 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 ---
 
+
+**[ADV-295]** FAQ JSON-LD on /best-for/[slug], /afsl/[number], /brokers/full-service/[slug], /academy/[slug] — GEO pivot: dynamic FAQPage schema + visible accordions on 4 more high-value dynamic route pages. Best-for: 4 FAQs from scoring_weights + scenario intro/target_user — "what makes the best broker for X", ranking methodology, personal-fit caveat, update cadence — applied to 50+ scenario pages. AFSL lookup: 4 FAQs from afsl_number + status + licensee_name — what the AFSL is, whether currently licensed, ASIC Connect verification, cancelled licence consequences — applied to ~6,000 licensee pages. Full-service broker profile: 4 FAQs from fee_model + minimum_investment_cents + afsl_number — what the firm offers, minimum portfolio, ASIC regulation, full-service vs DIY comparison. Academy course: 4 FAQs from course description + price_cents + cpd_hours — what the course covers, cost (free or paid), completion time, advice disclaimer. `app/best-for/[slug]/page.tsx`, `app/afsl/[number]/page.tsx`, `app/brokers/full-service/[slug]/page.tsx`, `app/academy/[slug]/page.tsx`
