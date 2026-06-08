@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { absoluteUrl, breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import type { Broker, BrokerHealthScore, BrokerHealthScoreHistory } from "@/lib/types";
 import {
   summariseTrend,
@@ -348,6 +349,33 @@ export default async function HealthScoreDetailPage({
       })
     : null;
 
+  const overallLabel = ratingLabel(typedScore.overall_score);
+  const chessText = typedBroker.chess_sponsored
+    ? "CHESS-sponsored, meaning your shares are held directly in your name on the ASX Clearing House Electronic Subregister System"
+    : "custodial (your shares are held by the broker on your behalf, not directly in your name on the CHESS register)";
+
+  const healthFaqs = [
+    {
+      q: `Is ${typedBroker.name} safe to use?`,
+      a: `${typedBroker.name} receives an overall platform health score of ${typedScore.overall_score}/100 (${overallLabel}) based on 5 safety dimensions: regulatory compliance, client money protection, financial stability, platform reliability, and insurance coverage. The platform is ${chessText}. Always review a broker's Product Disclosure Statement (PDS) and Financial Services Guide (FSG) before investing. This score is general information only and is not financial advice.`,
+    },
+    {
+      q: `What does the ${typedBroker.name} health score measure?`,
+      a: `The ${typedBroker.name} health score is a 5-dimension weighted safety assessment: Regulatory (${typedScore.regulatory_score}/100 — AFSL status, breach history), Client Money (${typedScore.client_money_score}/100 — CHESS vs custodial, segregation), Financial Stability (${typedScore.financial_stability_score}/100 — capital adequacy, audit history), Platform Reliability (${typedScore.platform_reliability_score}/100 — uptime, outages, data security), and Insurance (${typedScore.insurance_score}/100 — professional indemnity and fidelity cover). Scores are updated by the Invest.com.au editorial team when new data is available.`,
+    },
+    {
+      q: `What is CHESS sponsorship and does ${typedBroker.name} offer it?`,
+      a: typedBroker.chess_sponsored
+        ? `Yes, ${typedBroker.name} is CHESS-sponsored. This means your shares are registered directly in your name (via your Holder Identification Number, or HIN) on the ASX Clearing House Electronic Subregister System. If ${typedBroker.name} were to become insolvent, your shares remain yours — they are not assets of the broker. CHESS sponsorship is generally considered the safest way to hold Australian shares.`
+        : `${typedBroker.name} uses a custodial model, not CHESS sponsorship. Your shares are held by ${typedBroker.name} in an omnibus account on your behalf. In the event of broker insolvency, you are an unsecured creditor for the value of your holdings, though client money rules require segregation of client assets. CHESS-sponsored accounts provide stronger legal ownership clarity.`,
+    },
+    {
+      q: `How often is the ${typedBroker.name} health score updated?`,
+      a: `The ${typedBroker.name} platform health score is updated by the Invest.com.au editorial team as new regulatory, financial, and operational data becomes available — typically quarterly or when a material event occurs (such as a regulatory action, financial report, or platform outage). ${lastReviewed ? `The score was last reviewed on ${lastReviewed}.` : "The last review date is shown on this page."} Score changes are logged in the trend chart above.`,
+    },
+  ];
+  const healthFaqLd = faqJsonLd(healthFaqs);
+
   return (
     <div className="bg-white min-h-screen">
       {/* JSON-LD */}
@@ -359,6 +387,12 @@ export default async function HealthScoreDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewLd) }}
       />
+      {healthFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(healthFaqLd) }}
+        />
+      )}
 
       {/* ── Hero ── */}
       <section className="bg-white border-b border-slate-100">
@@ -638,8 +672,24 @@ export default async function HealthScoreDetailPage({
           </div>
         </section>
 
+        {/* FAQ */}
+        <section className="mt-10 border-t border-slate-100 pt-8">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {healthFaqs.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
         {/* Back link */}
-        <div className="text-sm">
+        <div className="text-sm mt-6">
           <Link
             href="/health-scores"
             className="text-slate-500 hover:text-slate-700 hover:underline"

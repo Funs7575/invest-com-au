@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { SITE_URL, CURRENT_YEAR, breadcrumbJsonLd } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { getBrokerBySlug } from "@/lib/request-cache";
 import type { Broker } from "@/lib/types";
 import Icon from "@/components/Icon";
@@ -174,12 +175,50 @@ export default async function BrokerVersusPage({
     { name: `${brokerA.name} vs ${brokerB.name}` },
   ]);
 
+  const asxWinner = asxHl === "a" ? brokerA.name : asxHl === "b" ? brokerB.name : null;
+  const chessA = brokerA.chess_sponsored;
+  const chessB = brokerB.chess_sponsored;
+
+  const versusFaqs = [
+    {
+      q: `What is the difference between ${brokerA.name} and ${brokerB.name}?`,
+      a: `${brokerA.name} and ${brokerB.name} are both ASIC-regulated Australian share brokers.${asxWinner ? ` ${asxWinner} has the lower ASX brokerage fee in this comparison.` : ""} ${chessA && !chessB ? `${brokerA.name} offers CHESS sponsorship (shares held in your name on the ASX register), while ${brokerB.name} uses a custodial model.` : !chessA && chessB ? `${brokerB.name} offers CHESS sponsorship (shares held in your name on the ASX register), while ${brokerA.name} uses a custodial model.` : chessA && chessB ? `Both ${brokerA.name} and ${brokerB.name} offer CHESS sponsorship.` : `Neither ${brokerA.name} nor ${brokerB.name} offers CHESS sponsorship — both use a custodial model.`} Use this page to compare their full fee structures, features, and platform type.`,
+    },
+    {
+      q: `Which is cheaper for ASX share trading — ${brokerA.name} or ${brokerB.name}?`,
+      a: brokerA.asx_fee && brokerB.asx_fee
+        ? `${brokerA.name} charges ${brokerA.asx_fee} per ASX trade, and ${brokerB.name} charges ${brokerB.asx_fee} per trade.${asxWinner ? ` On a per-trade basis, ${asxWinner} is cheaper — but the right choice depends on your trading frequency, portfolio size, and which platform suits your style.` : " They are similarly priced on a per-trade basis — look at total cost including account fees and FX rates for the full picture."} This comparison uses current published fees; always verify on the broker's website before opening an account.`
+        : `Both brokers publish their ASX brokerage rates on this page. Fee structures vary by order size and account type — compare the full table above and check each broker's PDS for the latest rates.`,
+    },
+    {
+      q: `Is ${brokerA.name} or ${brokerB.name} better for SMSF accounts?`,
+      a: brokerA.smsf_support && brokerB.smsf_support
+        ? `Both ${brokerA.name} and ${brokerB.name} support SMSF accounts. When choosing a broker for your SMSF, consider CHESS sponsorship (important for SMSF auditing), corporate action handling, statement formats for your auditor, and whether they offer tax-year reports. Consult your SMSF auditor or a financial adviser before making a decision.`
+        : brokerA.smsf_support
+          ? `${brokerA.name} supports SMSF accounts. ${brokerB.name} does not currently offer dedicated SMSF account types — check their website as this may have changed. For SMSF investing, CHESS sponsorship and auditor-compatible statements are essential. Seek advice from your SMSF auditor before choosing a broker.`
+          : brokerB.smsf_support
+            ? `${brokerB.name} supports SMSF accounts. ${brokerA.name} does not currently offer dedicated SMSF account types — check their website as this may have changed. For SMSF investing, CHESS sponsorship and auditor-compatible statements are essential. Seek advice from your SMSF auditor before choosing a broker.`
+            : `Neither ${brokerA.name} nor ${brokerB.name} currently offers a dedicated SMSF account type — verify with each broker directly. For SMSF accounts, consider a broker with CHESS sponsorship and auditor-ready annual statements.`,
+    },
+    {
+      q: `Is this ${brokerA.name} vs ${brokerB.name} comparison independent?`,
+      a: `Yes. Invest.com.au is an independently owned Australian platform — we are not owned by any broker or financial institution. ${brokerA.name} and ${brokerB.name} may or may not have a commercial relationship with Invest.com.au (sponsorship or affiliate links), but all editorial ratings, fee data, and comparison content are maintained independently. Our methodology is published at invest.com.au/methodology. This comparison is general information only and does not constitute financial advice.`,
+    },
+  ];
+  const versusFaqLd = faqJsonLd(versusFaqs);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {versusFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(versusFaqLd) }}
+        />
+      )}
       <div className="bg-slate-50 min-h-screen">
         {/* Header */}
         <section className="bg-white border-b border-slate-200 py-8 md:py-10">
@@ -464,6 +503,23 @@ export default async function BrokerVersusPage({
                 </ul>
               </div>
             </aside>
+          </div>
+        </section>
+
+        <section className="py-10 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-4xl">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {versusFaqs.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </section>
 
