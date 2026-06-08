@@ -34,7 +34,7 @@ if [ ! -d "node_modules" ]; then
 fi
 
 echo "[pre-push] Running type-check…"
-if ! npx tsc --noEmit; then
+if ! NODE_OPTIONS="--max-old-space-size=5120" npx tsc --noEmit; then
   echo ""
   echo "[pre-push] ❌ TypeScript errors. Fix before pushing, or bypass with:"
   echo "           git push --no-verify"
