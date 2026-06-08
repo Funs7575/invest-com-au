@@ -10,6 +10,13 @@ vi.mock("@/lib/supabase/server", () => ({
     Promise.resolve({
       from: mockFrom,
       rpc: vi.fn(() => Promise.resolve({ data: null, error: null })),
+      auth: {
+        getUser: () =>
+          Promise.resolve({
+            data: { user: { id: "u1", email: "owner@example.com" } },
+            error: null,
+          }),
+      },
     })
   ),
 }));

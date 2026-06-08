@@ -38,6 +38,6 @@
 
 ## Pre-licence live exposures to triage now (don't wait for the meeting)
 - **#859** consumer→adviser payment clip — live, env-gated → flag off until licensed.
-- **Startup equity-raise listings** — retail-browsable + enquirable, no s708 gate → gate or unpublish.
+- **Startup equity-raise listings** — retail-browsable + enquirable, no s708 gate → gate or unpublish. **Now also the `/invest/list` submission form** (verticals startup/fund/pre_ipo). **Founder decision 2026-06-07:** pursue **wholesale-only (s708)** for these (not disable) — see Q2. ⚠️ **Needs legal sign-off before build**; the s708 attestation gate is unbuilt pending this. Phase-1 interim (shipped, PR #1459): posting now requires an account, removing the anonymous path.
 - **Disclosure gaps** — quiz CPC winner unlabelled; advisor "Featured" ordering undisclosed → cheap label fixes (misleading-conduct risk regardless of AFSL).
 - **Security (separate from AFSL)** — over-open RLS on `site_ab_tests` and `affiliate_monthly_reports` (anon read/write of revenue data).
