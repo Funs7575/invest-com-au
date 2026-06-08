@@ -38,6 +38,7 @@ import {
 } from "@/lib/market-intelligence";
 import Sparkline from "@/components/Sparkline";
 import type { FeeTrendPoint } from "@/lib/market-intelligence";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 // ─── Page config ─────────────────────────────────────────────────────────────
 
@@ -164,6 +165,27 @@ function MiniSpark({
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+const STATE_OF_INVESTING_FAQS = [
+  {
+    q: "What does the State of Australian Investing report cover?",
+    a: "The State of Australian Investing report is a data-driven narrative published by Invest.com.au using aggregated platform data: current savings and term deposit rates across all tracked Australian banks and fintechs, fee trends for ASX and US share brokerage across 30+ platforms, the distribution of Investor Health Scores from the platform's quiz data, and advisor demand by state. The report is updated every hour using the same fee index data that powers the /benchmark and /market-pulse pages. It is designed to give media, researchers, and investors a factual, current view of the Australian investment environment.",
+  },
+  {
+    q: "How frequently is the data in this report updated?",
+    a: "Savings and term deposit rate data is refreshed daily from provider pricing pages. Brokerage fee data is refreshed daily from verified fee schedules. Health score distributions and advisor demand figures are calculated from the platform's aggregate user data on a rolling 30-day basis. The report page itself is regenerated every hour via incremental static regeneration (ISR), so figures shown are typically no more than 1 hour old at any given time. The 'data as of' timestamp at the bottom of the page shows the exact snapshot date.",
+  },
+  {
+    q: "How is the average Australian brokerage fee calculated?",
+    a: "The average brokerage cost shown in this report is a market-weighted average of the per-trade fee for a $5,000 ASX trade across all active share brokers in Invest.com.au's database. This is a standardised snapshot designed for comparison — it does not represent the fee you would pay, which depends on your specific trade size, frequency, and broker. Fee data is sourced from each broker's published fee schedules and verified by our editorial team. If a broker offers tiered pricing (e.g. different fees under and over $5,000), the applicable tier for a $5,000 trade is used.",
+  },
+  {
+    q: "Can I cite this report in media or research?",
+    a: "Yes. Invest.com.au's aggregated data is available for media citation with attribution to 'Invest.com.au' and the report URL. Factual data points (average fee levels, rate counts, trend directions) may be cited without a media enquiry. For commentary, analysis, or extended quotes, contact press@invest.com.au. Invest.com.au holds rights to its compiled fee and rate data — individual provider data is published by the providers themselves. This report is general information only; it should not be used as a basis for specific investment decisions.",
+  },
+];
+
+const stateOfInvestingFaqLd = faqJsonLd(STATE_OF_INVESTING_FAQS);
+
 export default async function StateOfAustralianInvestingPage() {
   // ── Fetch ───────────────────────────────────────────────────────────────────
   const supabase = await createClient();
@@ -231,6 +253,12 @@ export default async function StateOfAustralianInvestingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetJsonLd(snapshot.period)) }}
       />
+      {stateOfInvestingFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(stateOfInvestingFaqLd) }}
+        />
+      )}
 
       <article className="pt-5 pb-14 md:py-14">
         <div className="container-custom max-w-3xl">
@@ -677,6 +705,21 @@ export default async function StateOfAustralianInvestingPage() {
               .
             </p>
           </div>
+
+          <section className="mt-10 border-t border-slate-200 pt-8">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {STATE_OF_INVESTING_FAQS.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
 
         </div>
       </article>

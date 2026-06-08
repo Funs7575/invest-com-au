@@ -4,7 +4,7 @@ import EtfOverlapDetector from "@/components/EtfOverlapDetector";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { breadcrumbJsonLd, CURRENT_YEAR, SITE_URL } from "@/lib/seo";
-import { calculatorJsonLd } from "@/lib/schema-markup";
+import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
@@ -26,6 +26,27 @@ const toolLd = calculatorJsonLd({
     "See how much your ETFs overlap. Holding VGS and NDQ? You may have more US tech concentration than you realise.",
   path: "/tools/etf-overlap",
 });
+
+const ETF_OVERLAP_FAQS = [
+  {
+    q: "What is ETF overlap and why does it matter?",
+    a: "ETF overlap occurs when two or more ETFs you hold contain many of the same underlying securities. For example, VGS (Vanguard MSCI World ex-Australia) and NDQ (BetaShares NASDAQ 100) both hold large positions in Apple, Microsoft, Amazon, and Nvidia — if you hold both, your effective exposure to these companies is much higher than either ETF's weight suggests individually. Overlap matters because it means you are less diversified than you think: a selloff in US mega-cap technology would hit both ETFs simultaneously. This tool quantifies the overlap by number of shared holdings and weighted exposure.",
+  },
+  {
+    q: "How is the overlap percentage calculated?",
+    a: "The overlap percentage is calculated using the weighted holdings overlap method: for each security held in both ETFs, the tool takes the lower of the two weights (by index weight or market cap weight as reported by the ETF issuer), then sums those minimum weights to get the total overlap score. A 40% overlap score means approximately 40 cents in every dollar invested in both ETFs is exposed to the same securities. This is a conservative measure — the actual correlation of returns may be higher or lower depending on how concentrated the shared holdings are.",
+  },
+  {
+    q: "How current is the ETF holdings data?",
+    a: "ETF holdings data is sourced from each fund manager's published portfolio disclosure, typically updated monthly (ASX ETF issuers are required to disclose full portfolio holdings monthly). The tool uses the most recent disclosure available. Holdings data for large index ETFs changes slowly between reporting dates — the composition of a broad market index fund is relatively stable month to month. For thematic ETFs with higher turnover, holdings may change more significantly between disclosures. Invest.com.au is not affiliated with any ETF issuer.",
+  },
+  {
+    q: "Should I avoid any ETF overlap in my portfolio?",
+    a: "Not necessarily. Some overlap is unavoidable and even desirable — all broad Australian share market ETFs will overlap significantly because they track the same ASX index. The question is whether the overlap is intentional and aligns with your portfolio objectives. Unintentional overlap in a 'diversification' strategy undermines the goal. If you specifically want concentrated exposure to US technology through both an international index ETF and a NASDAQ ETF, that's a deliberate positioning choice. Use this tool to understand your actual exposure rather than assumed exposure.",
+  },
+];
+
+const etfOverlapFaqLd = faqJsonLd(ETF_OVERLAP_FAQS);
 
 export default function EtfOverlapPage() {
   return (
@@ -57,6 +78,28 @@ export default function EtfOverlapPage() {
       />
 
       <p className="text-[11px] text-slate-500 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+
+      {etfOverlapFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(etfOverlapFaqLd) }}
+        />
+      )}
+
+      <section className="mt-8 border-t border-slate-200 pt-8">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <div className="space-y-3">
+          {ETF_OVERLAP_FAQS.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
       </div>
     </>
   );

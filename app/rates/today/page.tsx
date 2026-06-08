@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -57,6 +58,27 @@ function groupByDate(changes: ChangeRow[]): Map<string, ChangeRow[]> {
   return map;
 }
 
+const RATES_TODAY_FAQS = [
+  {
+    q: "How often do Australian savings and term deposit rates change?",
+    a: "Australian savings account and term deposit rates can change at any time — there is no regulatory minimum notice period for most rate changes. In practice, most institutions move rates within 1–3 business days of an RBA cash rate decision, though some move proactively ahead of expected decisions. Smaller fintechs and challenger banks tend to move faster than the major banks. This page tracks every rate change detected across all providers in Invest.com.au's database, typically updated within 24 hours of a change going live on the provider's website.",
+  },
+  {
+    q: "Why did my bank's rate go down even though the RBA didn't cut?",
+    a: "Banks and fintechs change their deposit rates independently of RBA decisions. A bank may cut a promotional savings rate when a promotional period ends, reduce a bonus rate that was only available for new customers, or adjust a term deposit rate in response to changes in wholesale funding costs. Conversely, some providers increase rates to attract deposits regardless of the RBA. The table on this page shows the actual direction and magnitude of each change — not just whether it followed an RBA move.",
+  },
+  {
+    q: "What is the highest savings rate in Australia today?",
+    a: "The highest available savings rates in Australia are listed on the /savings page, which shows current rates across all tracked savings accounts sorted by rate. As of today, the highest rates are typically offered by online-only challenger banks and fintechs rather than the major banks. High rates are often conditional on bonus conditions — minimum monthly deposits, no withdrawals, or new-customer-only periods. Always check the full product disclosure statement for the conditions that apply before selecting a savings account.",
+  },
+  {
+    q: "Are rate changes shown on this page final?",
+    a: "Rate changes shown on this page are detected by comparing daily snapshots of each provider's published rates. Changes are verified against the provider's fee schedule page before being recorded. Rates should be treated as highly likely to be accurate but always verify the current rate on the provider's own website or via their app before making decisions. Invest.com.au is not responsible for rate changes that occur between daily snapshot cycles.",
+  },
+];
+
+const ratesTodayFaqLd = faqJsonLd(RATES_TODAY_FAQS);
+
 export default async function RatesTodayPage() {
   const supabase = await createClient();
 
@@ -79,6 +101,12 @@ export default async function RatesTodayPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      {ratesTodayFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ratesTodayFaqLd) }}
+        />
+      )}
 
       <div style={{ background: "var(--color-ink-50)", minHeight: "100vh", paddingTop: 40, paddingBottom: 64 }}>
         <div className="container-custom" style={{ maxWidth: 840 }}>
@@ -170,6 +198,21 @@ export default async function RatesTodayPage() {
             <Link href="/savings" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-ink-600)", textDecoration: "none" }}>Browse savings accounts</Link>
             <Link href="/term-deposits" style={{ fontSize: 13, fontWeight: 600, color: "var(--color-ink-600)", textDecoration: "none" }}>Browse term deposits</Link>
           </div>
+
+          <section className="mt-10 border-t border-slate-200 pt-8">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {RATES_TODAY_FAQS.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
         </div>
       </div>
     </>
