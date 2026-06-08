@@ -23,7 +23,7 @@ import {
 } from "@/lib/seo";
 import { scoreBrokerSimilarity } from "@/lib/internal-links";
 import { getRelatedForBroker } from "@/lib/related-content";
-import { itemListJsonLd } from "@/lib/schema-markup";
+import { itemListJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import RelatedRail from "@/components/RelatedRail";
 import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
@@ -303,6 +303,34 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     ? new Date(b.updated_at).toLocaleDateString("en-AU", { year: "numeric", month: "long", day: "numeric" })
     : null;
 
+  const isSavings = b.platform_type === "savings_account" || b.platform_type === "term_deposit";
+  const isCrypto = b.platform_type === "crypto_exchange";
+  const reviewFaqs = [
+    {
+      q: `Is ${b.name} safe?`,
+      a: `${b.name} is an ASIC-regulated financial services provider operating under an Australian Financial Services Licence (AFSL).${b.chess_sponsored && !isSavings && !isCrypto ? ` It is CHESS-sponsored, meaning your shares are held directly in your name on the ASX register (via a HIN) — not as a creditor of the broker.` : !b.chess_sponsored && !isSavings && !isCrypto ? ` It uses a custodial account model — your shares are held by the broker on your behalf. In the event of insolvency, client assets must be segregated under ASIC rules, but you do not hold a HIN.` : ""} Always review the Product Disclosure Statement (PDS) and Financial Services Guide (FSG) before investing. This review is general information only.`,
+    },
+    {
+      q: isSavings ? `What interest rate does ${b.name} offer?` : `What are ${b.name}'s brokerage fees?`,
+      a: isSavings
+        ? `${b.name} publishes its current savings or term deposit rates on its website. Rates change regularly — check the live rate display above for the most current figure. This page tracks historical rate changes so you can see how ${b.name}'s rates have moved over time.`
+        : b.asx_fee
+          ? `${b.name} charges ${b.asx_fee} per ASX trade${b.us_fee ? `, ${b.us_fee} for US markets` : ""}${b.fx_rate != null ? `, and a ${(b.fx_rate * 100).toFixed(2)}% FX markup on foreign trades` : ""}. Fees may vary by order size or account type — always check the current PDS and product page. The fee history chart above shows how ${b.name}'s fees have changed over time.`
+          : `${b.name}'s current fee schedule is shown on this page. Fee structures can vary by account type, order size, and market — always verify the latest rates on ${b.name}'s website and in the PDS before trading.`,
+    },
+    {
+      q: `Is ${b.name} good for ${b.smsf_support ? "SMSF investing?" : "beginners?"}`,
+      a: b.smsf_support
+        ? `Yes, ${b.name} supports SMSF accounts.${b.chess_sponsored ? " CHESS sponsorship is particularly important for SMSF auditing, as it provides a clear HIN-based record of share ownership." : ""} When using any broker for an SMSF, consider tax-year reporting formats, corporate actions handling, and whether the platform generates statements your auditor can work with. Consult your SMSF auditor before choosing a broker.`
+        : `${b.name}${b.rating != null && b.rating >= 4 ? " is well-rated overall" : "'s suitability for beginners depends on your needs"}. Beginners should look for a platform with low fees, a clear interface, good educational resources, and strong customer support. Compare ${b.name} with other platforms on the Compare page to find the best fit for your experience level and trading goals.`,
+    },
+    {
+      q: `Who regulates ${b.name}?`,
+      a: `${b.name} operates under the oversight of ASIC (Australian Securities and Investments Commission)${b.regulated_by && b.regulated_by !== "ASIC" ? ` and ${b.regulated_by}` : ""}. All Australian financial services providers must hold a valid AFSL to offer financial products. You can verify ${b.name}'s licence status on the ASIC Connect Professional Registers at connect.asic.gov.au. This review is general information only and is not financial advice.`,
+    },
+  ];
+  const reviewFaqLd = faqJsonLd(reviewFaqs);
+
   return (
     <>
       <script
@@ -325,6 +353,12 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateRatingLd) }}
+        />
+      )}
+      {reviewFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewFaqLd) }}
         />
       )}
       <Suspense fallback={null}>
@@ -468,6 +502,22 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           </div>
         );
       })()}
+
+      {/* FAQ accordion — editorial FAQs for GEO citation */}
+      <section className="container-custom max-w-4xl mt-8 border-t border-slate-100 pt-8">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <div className="space-y-3">
+          {reviewFaqs.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
 
       {/* DDO compliance — render the current TMD link prominently
           next to the product footer. DDO (Corporations Act s994A–C)
