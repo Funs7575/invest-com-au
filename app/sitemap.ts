@@ -190,6 +190,8 @@ async function buildShard0(): Promise<MetadataRoute.Sitemap> {
     "/halal-investing", "/halal-investing/quiz",
     "/first-home-buyer/quiz",
     "/learn",
+    "/learn/new-investor", "/learn/choosing-a-broker", "/learn/retirement-and-super",
+    "/learn/tax-smart-investing", "/learn/foreign-investor",
     // Global investing hub (outbound — AU residents → world)
     "/global-investing",
     // Foreign investment hub — hreflang-aware entries generated in shard 1.
