@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -466,6 +467,16 @@ export default function DownsizerContributionPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Maximise your downsizer contribution strategy"
+        subheading="Downsizer contributions interact with transfer balance cap, total super balance, and Age Pension eligibility. A super specialist can model the full impact for your situation."
+        intent={{ need: "retirement", context: ["downsizer_contribution", "super_strategy"] }}
+        source="retirement_downsizer_contribution"
+        ctaLabel="Find a super specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

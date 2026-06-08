@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -657,6 +658,16 @@ export default function RetirementAnnuitiesPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Compare annuities with a licensed financial planner"
+        subheading="Annuity rates, guarantees, and income options are complex. A licensed financial planner can model whether a fixed, variable, or lifetime annuity suits your retirement income strategy."
+        intent={{ need: "retirement", context: ["annuities", "retirement_income"] }}
+        source="retirement_annuities"
+        ctaLabel="Find a retirement income specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

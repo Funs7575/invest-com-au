@@ -3,6 +3,7 @@ import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl, breadcrumbJsonLd } 
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import Link from "next/link";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -669,6 +670,16 @@ export default function RedundancyPage() {
             </div>
           </div>
         </section>
+
+        {/* ─── Advisor CTA ───────────────────────────────────── */}
+        <HubAdvisorCTA
+          heading="Get financial advice on your redundancy payout"
+          subheading="ETP tax calculations, super concessional contributions, income test impacts, and investment strategy for a lump sum all benefit from professional advice. A financial planner can model your net position."
+          intent={{ need: "planning", context: ["redundancy", "lump_sum", "tax"] }}
+          source="lump_sum_redundancy"
+          ctaLabel="Find a financial planner"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* ─── General advice warning ───────────────────────── */}
         <section className="py-10 bg-slate-50 border-t border-slate-200">
