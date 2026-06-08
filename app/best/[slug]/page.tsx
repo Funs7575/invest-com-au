@@ -56,6 +56,7 @@ import type { Article } from "@/lib/types";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import StickyCTABar from "@/components/StickyCTABar";
 import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 
 const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
   beginners: "beginner-guide",
@@ -275,6 +276,8 @@ export default async function BestBrokerPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      <ArticleReadingProgress />
+
       <div className="py-5 md:py-12">
         <OnThisPage items={[
           ...(topPick ? [{ id: "top-pick", label: "Top Pick" }] : []),
