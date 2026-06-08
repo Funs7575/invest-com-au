@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Super Insurance Australia (${CURRENT_YEAR}) — Life, TPD & Income Protection`,
   description:
-    "Complete guide to insurance through superannuation in Australia. Default cover, life insurance, TPD definitions, income protection waiting periods, MySuper reforms, premium costs, consolidation warnings, and death benefit nominations. Updated 2026.",
+    "Super insurance guide: default cover, life insurance, TPD definitions, income protection, MySuper reforms, and death benefit nominations. Updated 2026.",
   alternates: { canonical: `${SITE_URL}/super/insurance` },
   openGraph: {
     title: `Super Insurance Guide Australia (${CURRENT_YEAR})`,

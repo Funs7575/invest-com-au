@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Family Office Australia — Setup, Structure & Services Guide (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Everything Australian families need to know about family office structures — single vs multi-family, trust and SMSF integration, tax consolidation, estate planning, and when net-worth makes a family office worthwhile. ${UPDATED_LABEL}.`,
+  description: `Australian family office structures: single vs multi-family, trust and SMSF integration, estate planning, and minimum net-worth thresholds. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Family Office Australia — Setup, Structure & Services Guide (${CURRENT_YEAR})`,
     description: "Single vs multi-family office, trust structures, SMSF integration, estate planning — for Australian families with investable assets $5M+.",

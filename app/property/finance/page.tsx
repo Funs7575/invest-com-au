@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Financing an Investment Property in Australia (${CURRENT_YEAR}) | invest.com.au`,
-  description: `How to finance an investment property in Australia — investor loan rates vs owner-occupier, deposit and equity, interest-only vs P&I, offset accounts, borrowing capacity, debt recycling, and using equity to build a portfolio. ${UPDATED_LABEL}.`,
+  description: `How to finance an investment property: investor rates, interest-only vs P&I, offset accounts, borrowing capacity, and debt recycling. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Financing an Investment Property in Australia (${CURRENT_YEAR})`,
     description:

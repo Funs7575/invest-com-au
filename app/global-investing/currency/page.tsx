@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `FX & Currency Accounts for Australian Investors (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Compare Wise, OFX, WorldFirst, Revolut, Airwallex for AUD conversions and multi-currency accounts. FX spreads, fees, and best options for funding foreign brokers, international transfers, and multi-currency portfolios. ${UPDATED_LABEL}.`,
+  description: `Compare Wise, OFX, WorldFirst, Revolut, and Airwallex for AUD conversions, international transfers, and multi-currency portfolios. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `FX & Currency Accounts for Australian Investors (${CURRENT_YEAR})`,
     description: "Wise vs OFX vs WorldFirst vs Revolut — FX spreads, transfer fees, and multi-currency accounts compared for Australian investors.",

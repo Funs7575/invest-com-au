@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Division 296 Super Tax Explained (${CURRENT_YEAR}) — The $3 Million Threshold`,
   description:
-    "Division 296 is a proposed extra 15% tax on superannuation earnings for balances above $3 million — taking the effective rate to 30% on that portion. Understand the proportional calculation, the unrealised gains controversy, who is affected, and its legislative status.",
+    "Division 296 tax: 15% extra on super earnings above $3M. Proportional calculation, unrealised gains controversy, who is affected, and legislative status.",
   openGraph: {
     title: `Division 296 Super Tax Explained (${CURRENT_YEAR}) — The $3M Threshold`,
     description:

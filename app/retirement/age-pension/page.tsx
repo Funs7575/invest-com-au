@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Age Pension Australia — Eligibility, Rates & Assets Test (${CURRENT_YEAR}) | invest.com.au`,
-  description: `Australian Age Pension guide: eligibility age (67), 2024–25 payment rates (single $1,144.40/fortnight, couple $862.60 each), assets test thresholds, income test, deeming, Work Bonus, super interaction and worked examples. ${UPDATED_LABEL}.`,
+  description: `Australian Age Pension: eligibility (age 67), current payment rates, assets test, income test, Work Bonus, and worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Age Pension Australia — Eligibility, Rates & Assets Test (${CURRENT_YEAR})`,
     description:

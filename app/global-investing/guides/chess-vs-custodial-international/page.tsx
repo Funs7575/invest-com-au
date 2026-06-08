@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `CHESS vs Custodial for International Shares (${CURRENT_YEAR}) — Australian Investor Guide`,
-  description: `Understand the difference between direct ownership (CHESS-equivalent) and custodial models when buying international shares from Australia. Covers broker failure risk, CGT implications, SIPC, ASIC RG 212, and which Australian brokers use each model. ${UPDATED_LABEL}.`,
+  description: `CHESS vs custodial for international shares: broker failure risk, CGT implications, and which Australian brokers use each model. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `CHESS vs Custodial for International Shares (${CURRENT_YEAR})`,
     description:

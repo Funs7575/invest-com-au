@@ -24,7 +24,7 @@ export const revalidate = 3600;
 
 const PAGE_TITLE = `Best Alternative Investment Platforms in Australia (${CURRENT_YEAR})`;
 const PAGE_DESCRIPTION =
-  "Compare the best alternative investment platforms available to Australians. Side-by-side comparison of fees, minimums, asset classes, and Australian access for wine, art, watches, and collectibles platforms.";
+  "Compare alternative investment platforms in Australia: wine, art, watches and collectibles. Side-by-side fees, minimums, and asset class comparison.";
 const CANONICAL = "/invest/alternatives/platforms";
 
 export const metadata: Metadata = {

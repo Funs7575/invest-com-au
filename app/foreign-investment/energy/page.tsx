@@ -11,7 +11,7 @@ export const revalidate = 43200;
 export const metadata: Metadata = {
   title: `Foreign Investment in Australian Energy (${CURRENT_YEAR}) — FIRB, Critical Infrastructure & Tax`,
   description:
-    "A practical guide for non-Australian investors in Australian oil, gas, LNG, refining and fuel-storage assets. FIRB thresholds, the 2025 national security amendments, dividend and royalty withholding, CGT for non-residents, and allied-nation frameworks.",
+    "Non-resident investing in Australian energy: FIRB thresholds, national security amendments, dividend/royalty withholding, and CGT for non-residents.",
   alternates: { canonical: `${SITE_URL}/foreign-investment/energy` },
   openGraph: {
     title: `Foreign Investment in Australian Energy (${CURRENT_YEAR})`,

@@ -36,7 +36,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Significant Investor Visa (SIV) Australia ${CURRENT_YEAR} — FIRB, Complying Funds & Country Guides`,
   description:
-    "Complete guide to the Australian Significant Investor Visa (SIV, subclass 188C). $5M complying investment breakdown, FIRB rules, country-specific guidance for Singapore, Hong Kong, China, UK. Connect with immigration investment lawyers.",
+    "Australian SIV (subclass 188C): $5M complying investment, FIRB rules, and country-specific guidance for Singapore, Hong Kong, China and UK investors.",
   alternates: {
     canonical: `${SITE_URL}/foreign-investment/siv`,
     languages: {

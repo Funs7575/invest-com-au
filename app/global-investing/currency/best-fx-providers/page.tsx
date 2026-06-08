@@ -10,7 +10,7 @@ const PAGE_PATH = "/global-investing/currency/best-fx-providers";
 
 export const metadata: Metadata = {
   title: `Best FX & Money Transfer Providers for Australians (${CURRENT_YEAR}) — Wise vs OFX vs WorldFirst`,
-  description: `How to send money overseas from Australia for the lowest cost. Compare Wise, OFX, WorldFirst, Revolut and CurrencyFair against the banks — exchange-rate margins, transfer fees, the mid-market rate, IBKR FX, large transfers and multi-currency accounts. ${UPDATED_LABEL}.`,
+  description: `Best FX providers for Australians: compare Wise, OFX, WorldFirst, Revolut on exchange-rate margins, fees, and large-transfer rates. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Best FX & Money Transfer Providers for Australians (${CURRENT_YEAR})`,
     description:

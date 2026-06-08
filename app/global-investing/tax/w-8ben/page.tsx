@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `W-8BEN Form for Australians (${CURRENT_YEAR}) — Reduce US Withholding Tax to 15%`,
-  description: `Complete guide to the W-8BEN form for Australian investors. Certify your non-US status, claim the Australia-US tax treaty rate of 15% on dividends (vs 30% default), and correctly apply your Foreign Income Tax Offset (FITO). ${UPDATED_LABEL}.`,
+  description: `W-8BEN for Australian investors: certify non-US status, claim the 15% AU-US treaty dividend rate, and apply your FITO correctly. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `W-8BEN Form for Australians (${CURRENT_YEAR})`,
     description:

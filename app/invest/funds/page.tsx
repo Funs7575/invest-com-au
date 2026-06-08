@@ -33,7 +33,7 @@ export const revalidate = 600;
 export const metadata: Metadata = {
   title: `Australian Investment Fund Opportunities (${CURRENT_YEAR}) — Managed, Syndicated, Wholesale & SIV-Relevant`,
   description:
-    "Browse Australian managed, syndicated, infrastructure, wholesale and SIV-relevant fund opportunities. Filter by minimum investment, retail-accessible or wholesale. General information only — no fund is the 'best fund for you' without personal advice.",
+    "Browse Australian managed, syndicated, infrastructure, and wholesale fund opportunities. Filter by minimum investment or retail/wholesale eligibility.",
   alternates: { canonical: `${SITE_URL}/invest/funds` },
   openGraph: {
     title: `Australian Investment Fund Opportunities (${CURRENT_YEAR})`,
