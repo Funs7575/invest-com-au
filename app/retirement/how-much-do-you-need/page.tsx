@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -797,6 +798,16 @@ export default function HowMuchRetirementPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get a personalised retirement savings plan"
+        subheading="How much you need depends on your lifestyle, super balance, Age Pension eligibility, and drawdown strategy. A financial planner can build a retirement projection specific to your situation."
+        intent={{ need: "retirement", context: ["retirement_savings", "retirement_planning"] }}
+        source="retirement_how_much_do_you_need"
+        ctaLabel="Find a retirement planner"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* ── Related guides ── */}
       <section className="py-8 border-b border-slate-100">

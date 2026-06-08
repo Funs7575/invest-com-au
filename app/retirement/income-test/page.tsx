@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -806,6 +807,16 @@ export default function IncomTestPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Model your Age Pension income test with an expert"
+        subheading="Super drawdown, part-time work, and investment income all affect your pension entitlement differently. A licensed financial planner can model your optimal income strategy."
+        intent={{ need: "retirement", context: ["income_test", "age_pension", "centrelink"] }}
+        source="retirement_income_test"
+        ctaLabel="Find a retirement planner"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

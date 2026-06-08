@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -387,6 +388,16 @@ export default function DeemingRatesPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Model how deeming affects your Age Pension entitlement"
+        subheading="Deeming rates affect your pension by treating financial assets as earning a notional income. A licensed financial planner can model whether restructuring your assets improves your entitlement."
+        intent={{ need: "retirement", context: ["deeming_rates", "centrelink", "age_pension"] }}
+        source="retirement_deeming_rates"
+        ctaLabel="Find a retirement planner"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

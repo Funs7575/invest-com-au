@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -142,6 +143,16 @@ export default function AnnuitiesVsAbpPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Compare annuities vs account-based pension with expert advice"
+        subheading="Longevity risk, sequencing risk, and Centrelink treatment differ significantly between annuities and ABPs. A financial planner can model the right mix for your income needs."
+        intent={{ need: "retirement", context: ["annuities", "account_based_pension", "retirement_income"] }}
+        source="retirement_annuities_vs_abp"
+        ctaLabel="Find a retirement income specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">
