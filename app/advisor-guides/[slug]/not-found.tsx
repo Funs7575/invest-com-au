@@ -29,13 +29,13 @@ export default function AdvisorGuideNotFound() {
         <div className="border-t border-slate-100 pt-5">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">You might like</p>
           <div className="flex flex-wrap justify-center gap-2">
-            <Link href="/advisor-guides" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/advisor-guides" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               All guides
             </Link>
-            <Link href="/advisors" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/advisors" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Find an advisor
             </Link>
-            <Link href="/articles" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/articles" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Articles
             </Link>
           </div>

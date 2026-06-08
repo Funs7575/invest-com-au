@@ -35,13 +35,13 @@ export default function InvestListingNotFound() {
         <div className="border-t border-slate-100 pt-5">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Popular verticals</p>
           <div className="flex flex-wrap justify-center gap-2">
-            <Link href="/invest/funds/listings" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/invest/funds/listings" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Funds
             </Link>
-            <Link href="/invest/commercial-property/listings" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/invest/commercial-property/listings" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Commercial property
             </Link>
-            <Link href="/invest/farmland/listings" className="px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
+            <Link href="/invest/farmland/listings" className="px-3 py-1.5 rounded-full min-h-9 bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors">
               Farmland
             </Link>
           </div>
