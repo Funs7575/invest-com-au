@@ -22,6 +22,7 @@ import {
 } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -816,6 +817,15 @@ export default function PositiveGearingPage() {
               ))}
             </div>
           </section>
+
+          <HubAdvisorCTA
+            heading="Find a mortgage broker for your positive-gearing strategy"
+            subheading="Identifying positively geared markets and structuring your loan for tax deductibility requires both property research and lending expertise. A specialist mortgage broker can compare investment loan rates and help maximise your cash-flow from day one."
+            intent={{ need: "mortgage", context: ["positive_gearing", "property_investment", "investment_loan"] }}
+            source="property_positive_gearing"
+            ctaLabel="Find a mortgage broker"
+            className="py-12 bg-amber-50 border-t border-amber-200 rounded-xl mb-10"
+          />
 
           {/* Related links */}
           <section className="mb-10">

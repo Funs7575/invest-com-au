@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -153,6 +154,15 @@ export default function GlobalLicsPage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Get advice on LICs vs ETFs for your portfolio"
+        subheading="LICs trade at premiums and discounts to NTA, can smooth dividends, and have different tax treatment to ETFs. A financial adviser can help you decide whether a LIC or ETF is the better wrapper for your investment goals."
+        intent={{ need: "planning", context: ["lic", "investment_company", "portfolio_strategy"] }}
+        source="global_investing_lics"
+        ctaLabel="Find a financial adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related */}
       <section className="py-8 border-b border-slate-100">

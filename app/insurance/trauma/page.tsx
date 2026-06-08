@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -333,6 +334,15 @@ export default function TraumaInsurancePage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Get personalised advice on trauma insurance cover"
+        subheading="Trauma insurance definitions, waiting periods, and premium structures vary widely between insurers. A licensed insurance adviser can compare policies across the market for your health history and budget."
+        intent={{ need: "insurance", context: ["trauma_insurance", "critical_illness"] }}
+        source="insurance_trauma"
+        ctaLabel="Find an insurance adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related Insurance */}
       <section className="py-10 border-t border-slate-200">

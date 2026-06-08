@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -368,6 +369,15 @@ export default function TPDInsurancePage() {
           </div>
         </div>
       </section>
+
+      <HubAdvisorCTA
+        heading="Get advice on the right TPD cover for your occupation"
+        subheading="Own occupation vs any occupation TPD definitions can mean the difference between a claim being paid or rejected. An insurance specialist can review your super fund's default TPD and recommend the right standalone cover for your role."
+        intent={{ need: "insurance", context: ["tpd_insurance", "disability_insurance"] }}
+        source="insurance_tpd"
+        ctaLabel="Find an insurance adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related Insurance */}
       <section className="py-10 border-t border-slate-200">
