@@ -558,7 +558,7 @@ export default async function BriefTrackerPage({
             <p className="text-xs uppercase tracking-widest text-slate-500 mb-2">
               Brief summary
             </p>
-            <p className="text-sm text-slate-700 whitespace-pre-line">
+            <p className="text-sm text-slate-700 whitespace-pre-line break-words">
               {brief.job_description}
             </p>
             <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-slate-600">

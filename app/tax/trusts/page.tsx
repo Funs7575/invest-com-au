@@ -528,7 +528,7 @@ export default function TrustsTaxPage() {
                 <h3 className="text-lg font-extrabold text-slate-900 mb-3">{sec.heading}</h3>
                 <div className="text-sm text-slate-600 leading-relaxed space-y-3">
                   {sec.body.split("\n\n").map((para, i) => (
-                    <p key={i} className="whitespace-pre-line">
+                    <p key={i} className="whitespace-pre-line break-words">
                       {para}
                     </p>
                   ))}

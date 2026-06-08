@@ -349,7 +349,7 @@ export default async function EventDetailPage({
               {event.description && (
                 <div>
                   <h2 className="text-base font-bold text-slate-900 mb-2">About this event</h2>
-                  <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                  <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-line break-words">
                     {event.description}
                   </div>
                 </div>

@@ -257,7 +257,7 @@ export default function PropertyYieldCalculatorClient() {
                 { label: "$1M", value: 1000000 },
                 { label: "$1.5M", value: 1500000 },
               ].map(v => (
-                <button key={v.value} onClick={() => setPurchasePrice(v.value)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${purchasePrice === v.value ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                <button key={v.value} onClick={() => setPurchasePrice(v.value)} className={`text-xs px-2.5 py-1.5 rounded-full min-h-9 font-semibold transition-all ${purchasePrice === v.value ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                   {v.label}
                 </button>
               ))}
@@ -279,7 +279,7 @@ export default function PropertyYieldCalculatorClient() {
             </div>
             <div className="flex gap-1.5 mt-2">
               {[350, 450, 550, 700, 900].map(v => (
-                <button key={v} onClick={() => setWeeklyRent(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${weeklyRent === v ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                <button key={v} onClick={() => setWeeklyRent(v)} className={`text-xs px-2.5 py-1.5 rounded-full min-h-9 font-semibold transition-all ${weeklyRent === v ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                   ${v}/wk
                 </button>
               ))}

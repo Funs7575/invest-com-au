@@ -539,7 +539,7 @@ function ApplicationsPanel({ jobId, jobTitle }: { jobId: string; jobTitle: strin
                   })}
                 </p>
               </div>
-              <p className="text-xs text-slate-600 whitespace-pre-line">
+              <p className="text-xs text-slate-600 whitespace-pre-line break-words">
                 {app.message}
               </p>
             </li>

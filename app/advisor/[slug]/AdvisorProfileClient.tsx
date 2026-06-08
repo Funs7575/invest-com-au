@@ -557,11 +557,11 @@ export default function AdvisorProfileClient({
 
         {/* ── On-this-page anchor nav ────────────────── */}
         <nav aria-label="On this page" className="flex gap-2 overflow-x-auto pb-1 mb-2 scrollbar-hide">
-          {pro.bio && <a href="#about" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">About</a>}
-          <a href="#credentials" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">Credentials</a>
-          {reviews.length > 0 && <a href="#reviews" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">Reviews ({reviews.length})</a>}
-          {expertArticles.length > 0 && <a href="#articles" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">Articles ({expertArticles.length})</a>}
-          <a href="#contact" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-500 text-slate-900 hover:bg-amber-400 transition-colors">Contact</a>
+          {pro.bio && <a href="#about" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full min-h-9 bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">About</a>}
+          <a href="#credentials" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full min-h-9 bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">Credentials</a>
+          {reviews.length > 0 && <a href="#reviews" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full min-h-9 bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">Reviews ({reviews.length})</a>}
+          {expertArticles.length > 0 && <a href="#articles" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full min-h-9 bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-800 transition-colors">Articles ({expertArticles.length})</a>}
+          <a href="#contact" className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full min-h-9 bg-amber-500 text-slate-900 hover:bg-amber-400 transition-colors">Contact</a>
         </nav>
 
         {/* ── TWO-COLUMN LAYOUT ──────────────────────── */}

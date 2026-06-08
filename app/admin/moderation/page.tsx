@@ -587,7 +587,7 @@ export default function ModerationQueuePage() {
                       </div>
 
                       {/* Full content */}
-                      <p className="text-sm text-slate-700 whitespace-pre-line mb-4">{item.fullContent}</p>
+                      <p className="text-sm text-slate-700 whitespace-pre-line mb-4 break-words">{item.fullContent}</p>
 
                       {/* Type-specific meta */}
                       {item.type === "review" && (

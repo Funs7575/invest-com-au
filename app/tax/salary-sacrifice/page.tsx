@@ -393,7 +393,7 @@ export default function SalarySacrificePage() {
               {(SECTIONS.find((s) => s.id === "super-deep-dive")?.body ?? "")
                 .split("\n\n")
                 .map((para, i) => (
-                  <p key={i} className="whitespace-pre-line">{para}</p>
+                  <p key={i} className="whitespace-pre-line break-words">{para}</p>
                 ))}
             </div>
           </div>
@@ -472,7 +472,7 @@ export default function SalarySacrificePage() {
               {(SECTIONS.find((s) => s.id === "concessional-cap")?.body ?? "")
                 .split("\n\n")
                 .map((para, i) => (
-                  <p key={i} className="whitespace-pre-line">{para}</p>
+                  <p key={i} className="whitespace-pre-line break-words">{para}</p>
                 ))}
             </div>
           </div>
@@ -497,7 +497,7 @@ export default function SalarySacrificePage() {
               {(SECTIONS.find((s) => s.id === "novated-leases")?.body ?? "")
                 .split("\n\n")
                 .map((para, i) => (
-                  <p key={i} className="whitespace-pre-line">{para}</p>
+                  <p key={i} className="whitespace-pre-line break-words">{para}</p>
                 ))}
             </div>
           </div>
@@ -515,7 +515,7 @@ export default function SalarySacrificePage() {
               {(SECTIONS.find((s) => s.id === "fbt-exempt")?.body ?? "")
                 .split("\n\n")
                 .map((para, i) => (
-                  <p key={i} className="whitespace-pre-line">{para}</p>
+                  <p key={i} className="whitespace-pre-line break-words">{para}</p>
                 ))}
             </div>
           </div>
@@ -533,7 +533,7 @@ export default function SalarySacrificePage() {
               {(SECTIONS.find((s) => s.id === "nfp-packaging")?.body ?? "")
                 .split("\n\n")
                 .map((para, i) => (
-                  <p key={i} className="whitespace-pre-line">{para}</p>
+                  <p key={i} className="whitespace-pre-line break-words">{para}</p>
                 ))}
             </div>
           </div>

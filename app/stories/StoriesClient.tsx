@@ -121,7 +121,7 @@ export default function StoriesClient({ stories, brokers: _brokers }: StoriesCli
                 <h3 className="text-base font-bold text-slate-900 mb-2">{story.title}</h3>
 
                 {/* Body excerpt */}
-                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line mb-3 line-clamp-4">
+                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line break-words mb-3 line-clamp-4">
                   {story.body}
                 </p>
 

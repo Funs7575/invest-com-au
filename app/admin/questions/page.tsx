@@ -365,7 +365,7 @@ export default function AdminQuestionsPage() {
                     Close
                   </button>
                 </div>
-                <p className="text-sm text-slate-700 whitespace-pre-line mb-3">{q.question}</p>
+                <p className="text-sm text-slate-700 whitespace-pre-line mb-3 break-words">{q.question}</p>
                 <div className="text-xs text-slate-400 space-y-1 mb-4">
                   <p>Broker: {q.broker_slug} / Page: {q.page_slug} ({q.page_type})</p>
                   <p>Asked by: {q.display_name}{q.email ? ` (${q.email})` : ""}</p>

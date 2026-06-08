@@ -102,7 +102,7 @@ export default async function AlertDetailPage({ params }: { params: Promise<{ sl
 
           {alert.body && (
             <div className="prose prose-sm max-w-none mb-6">
-              <p className="text-slate-700 leading-relaxed whitespace-pre-line">{alert.body}</p>
+              <p className="text-slate-700 leading-relaxed whitespace-pre-line break-words">{alert.body}</p>
             </div>
           )}
 

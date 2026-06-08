@@ -495,7 +495,7 @@ export default function MyListingsPage() {
                                   </span>
                                 </div>
                                 {enquiry.message && (
-                                  <p className="text-sm text-slate-600 mt-2 whitespace-pre-line">
+                                  <p className="text-sm text-slate-600 mt-2 whitespace-pre-line break-words">
                                     {enquiry.message}
                                   </p>
                                 )}

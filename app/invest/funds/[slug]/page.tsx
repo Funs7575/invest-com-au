@@ -278,7 +278,7 @@ export default async function FundDetailPage({
                 <h2 className="text-lg font-extrabold text-slate-900 mb-3">
                   Overview
                 </h2>
-                <p className="text-sm md:text-base text-slate-700 leading-relaxed whitespace-pre-line">
+                <p className="text-sm md:text-base text-slate-700 leading-relaxed whitespace-pre-line break-words">
                   {fund.description ??
                     "No description available for this fund."}
                 </p>

@@ -235,7 +235,7 @@ export default function SquadInboxClaimRow({
 
       {/* Optional notes — visible to whole squad */}
       {activeAssignment?.notes && (
-        <p className="mt-2 text-xs text-slate-600 bg-slate-50 rounded-lg p-2 whitespace-pre-line">
+        <p className="mt-2 text-xs text-slate-600 bg-slate-50 rounded-lg p-2 whitespace-pre-line break-words">
           <span className="font-semibold">Notes:</span> {activeAssignment.notes}
         </p>
       )}

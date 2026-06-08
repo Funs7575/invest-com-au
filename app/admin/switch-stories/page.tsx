@@ -361,7 +361,7 @@ export default function AdminSwitchStoriesPage() {
                   <strong>{s.source_broker_slug}</strong> → <strong>{s.dest_broker_slug}</strong>
                   {" "}({s.source_rating}★ → {s.dest_rating}★)
                 </div>
-                <p className="text-sm text-slate-700 whitespace-pre-line mb-3">{s.body}</p>
+                <p className="text-sm text-slate-700 whitespace-pre-line mb-3 break-words">{s.body}</p>
                 {s.reason && (
                   <div className="bg-blue-50 rounded-lg p-3 mb-2">
                     <p className="text-xs font-bold text-blue-700 mb-1">Reason for switching</p>

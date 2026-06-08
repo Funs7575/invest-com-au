@@ -449,7 +449,7 @@ export default function DividendETFPage() {
                 <h2 className="text-lg font-extrabold text-slate-900 mb-3">{sec.heading}</h2>
                 <div className="text-sm text-slate-600 leading-relaxed space-y-3">
                   {sec.body.split("\n\n").map((para, i) => (
-                    <p key={i} className="whitespace-pre-line">{para}</p>
+                    <p key={i} className="whitespace-pre-line break-words">{para}</p>
                   ))}
                 </div>
               </div>

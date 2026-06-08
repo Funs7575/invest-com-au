@@ -158,7 +158,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5000, 10000, 25000, 50000, 100000].map(v => (
-                  <button key={v} onClick={() => setBalance(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${balance === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setBalance(v)} className={`text-xs px-2.5 py-1.5 rounded-full min-h-9 font-semibold transition-all ${balance === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v >= 1000 ? `$${v / 1000}k` : `$${v}`}
                   </button>
                 ))}
@@ -179,7 +179,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[0, 0.5, 1.0, 2.0, 3.0, 4.0].map(v => (
-                  <button key={v} onClick={() => setCurrentRate(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${currentRate === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setCurrentRate(v)} className={`text-xs px-2.5 py-1.5 rounded-full min-h-9 font-semibold transition-all ${currentRate === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}

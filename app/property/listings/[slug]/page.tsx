@@ -296,7 +296,7 @@ export default async function PropertyListingPage({ params }: { params: Promise<
             {listing.description && (
               <div>
                 <h2 className="text-lg font-bold text-slate-900 mb-2">About This Development</h2>
-                <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{listing.description}</p>
+                <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line break-words">{listing.description}</p>
               </div>
             )}
 

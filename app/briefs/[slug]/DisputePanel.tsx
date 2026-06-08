@@ -199,7 +199,7 @@ export default function DisputePanel({
         <summary className="cursor-pointer font-semibold">
           Original reason
         </summary>
-        <p className="whitespace-pre-line mt-2">{dispute.reason}</p>
+        <p className="whitespace-pre-line mt-2 break-words">{dispute.reason}</p>
       </details>
 
       <div
@@ -224,7 +224,7 @@ export default function DisputePanel({
                 {new Date(m.created_at).toLocaleString()}
               </span>
             </p>
-            <p className="whitespace-pre-line text-slate-800">{m.body}</p>
+            <p className="whitespace-pre-line text-slate-800 break-words">{m.body}</p>
           </div>
         ))}
       </div>
@@ -262,7 +262,7 @@ export default function DisputePanel({
       {isTerminal && dispute.resolution_notes && (
         <div className="text-xs text-slate-700 bg-white rounded-xl border border-rose-100 p-3">
           <p className="font-semibold mb-1">Admin notes</p>
-          <p className="whitespace-pre-line">{dispute.resolution_notes}</p>
+          <p className="whitespace-pre-line break-words">{dispute.resolution_notes}</p>
         </div>
       )}
     </div>

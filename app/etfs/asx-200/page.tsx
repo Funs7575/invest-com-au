@@ -303,7 +303,7 @@ export default function ASX200ETFPage() {
           />
           <div className="mt-6 text-sm text-slate-600 leading-relaxed space-y-3">
             {EDITORIAL[0]!.body.split("\n\n").map((para, i) => (
-              <p key={i} className="whitespace-pre-line">{para}</p>
+              <p key={i} className="whitespace-pre-line break-words">{para}</p>
             ))}
           </div>
           {/* Sector skew callout */}
@@ -389,7 +389,7 @@ export default function ASX200ETFPage() {
           />
           <div className="mt-6 text-sm text-slate-600 leading-relaxed space-y-3">
             {EDITORIAL[1]!.body.split("\n\n").map((para, i) => (
-              <p key={i} className="whitespace-pre-line">{renderInline(para)}</p>
+              <p key={i} className="whitespace-pre-line break-words">{renderInline(para)}</p>
             ))}
           </div>
           <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
@@ -414,7 +414,7 @@ export default function ASX200ETFPage() {
           />
           <div className="mt-6 text-sm text-slate-600 leading-relaxed space-y-3">
             {EDITORIAL[2]!.body.split("\n\n").map((para, i) => (
-              <p key={i} className="whitespace-pre-line">{renderInline(para)}</p>
+              <p key={i} className="whitespace-pre-line break-words">{renderInline(para)}</p>
             ))}
           </div>
         </div>
@@ -430,7 +430,7 @@ export default function ASX200ETFPage() {
           />
           <div className="mt-6 text-sm text-slate-600 leading-relaxed space-y-3">
             {EDITORIAL[3]!.body.split("\n\n").map((para, i) => (
-              <p key={i} className="whitespace-pre-line">{renderInline(para)}</p>
+              <p key={i} className="whitespace-pre-line break-words">{renderInline(para)}</p>
             ))}
           </div>
 
@@ -476,7 +476,7 @@ export default function ASX200ETFPage() {
           />
           <div className="mt-6 text-sm text-slate-600 leading-relaxed space-y-3">
             {EDITORIAL[4]!.body.split("\n\n").map((para, i) => (
-              <p key={i} className="whitespace-pre-line">{renderInline(para)}</p>
+              <p key={i} className="whitespace-pre-line break-words">{renderInline(para)}</p>
             ))}
           </div>
         </div>
@@ -492,7 +492,7 @@ export default function ASX200ETFPage() {
           />
           <div className="mt-6 text-sm text-slate-600 leading-relaxed space-y-3">
             {EDITORIAL[5]!.body.split("\n\n").map((para, i) => (
-              <p key={i} className="whitespace-pre-line">{renderInline(para)}</p>
+              <p key={i} className="whitespace-pre-line break-words">{renderInline(para)}</p>
             ))}
           </div>
         </div>
@@ -508,7 +508,7 @@ export default function ASX200ETFPage() {
           />
           <div className="mt-6 text-sm text-slate-600 leading-relaxed space-y-3">
             {EDITORIAL[6]!.body.split("\n\n").map((para, i) => (
-              <p key={i} className="whitespace-pre-line">{renderInline(para)}</p>
+              <p key={i} className="whitespace-pre-line break-words">{renderInline(para)}</p>
             ))}
           </div>
           <div className="mt-6 grid sm:grid-cols-2 gap-4">
@@ -538,7 +538,7 @@ export default function ASX200ETFPage() {
               />
               <div className="mt-6 text-sm text-slate-600 leading-relaxed space-y-3">
                 {EDITORIAL[7]!.body.split("\n\n").map((para, i) => (
-                  <p key={i} className="whitespace-pre-line">{renderInline(para)}</p>
+                  <p key={i} className="whitespace-pre-line break-words">{renderInline(para)}</p>
                 ))}
               </div>
             </div>
@@ -550,7 +550,7 @@ export default function ASX200ETFPage() {
               />
               <div className="mt-6 text-sm text-slate-600 leading-relaxed space-y-3">
                 {EDITORIAL[8]!.body.split("\n\n").map((para, i) => (
-                  <p key={i} className="whitespace-pre-line">{renderInline(para)}</p>
+                  <p key={i} className="whitespace-pre-line break-words">{renderInline(para)}</p>
                 ))}
               </div>
               <div className="mt-5 flex flex-wrap gap-2">

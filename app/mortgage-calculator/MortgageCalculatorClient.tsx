@@ -241,7 +241,7 @@ export default function MortgageCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[300000, 500000, 600000, 800000, 1000000].map(v => (
-                  <button key={v} onClick={() => setLoanAmount(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${loanAmount === v ? "bg-rose-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setLoanAmount(v)} className={`text-xs px-2.5 py-1.5 rounded-full min-h-9 font-semibold transition-all ${loanAmount === v ? "bg-rose-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v >= 1000000 ? `$${v / 1000000}M` : `$${v / 1000}k`}
                   </button>
                 ))}
@@ -264,7 +264,7 @@ export default function MortgageCalculatorClient() {
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5.5, 6.0, 6.5, 7.0, 7.5].map(v => (
-                  <button key={v} onClick={() => setInterestRate(v)} className={`text-xs px-2.5 py-1.5 rounded-full font-semibold transition-all ${interestRate === v ? "bg-rose-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setInterestRate(v)} className={`text-xs px-2.5 py-1.5 rounded-full min-h-9 font-semibold transition-all ${interestRate === v ? "bg-rose-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}

@@ -417,7 +417,7 @@ export default function SectorETFsPage() {
                 <h2 className="text-lg font-extrabold text-slate-900 mb-3">{sec.heading}</h2>
                 <div className="prose prose-sm max-w-none text-slate-600 leading-relaxed">
                   {sec.body.split("\n\n").map((para, i) => (
-                    <p key={i} className="mb-3 last:mb-0 whitespace-pre-line">{para}</p>
+                    <p key={i} className="mb-3 last:mb-0 whitespace-pre-line break-words">{para}</p>
                   ))}
                 </div>
               </div>

@@ -102,7 +102,7 @@ export default async function BuyerAgentProfilePage({ params }: { params: Promis
             {agent.bio && (
               <div>
                 <h2 className="text-lg font-bold text-slate-900 mb-2">About</h2>
-                <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{agent.bio}</p>
+                <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line break-words">{agent.bio}</p>
               </div>
             )}
 

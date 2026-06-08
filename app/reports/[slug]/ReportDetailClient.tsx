@@ -64,7 +64,7 @@ export default function ReportDetailClient({ report, isPro, totals }: Props) {
                 {report.sections.map((section, i) => (
                   <div key={i} className="bg-white border border-slate-200 rounded-xl p-5">
                     <h3 className="text-sm font-bold text-slate-900 mb-2">{section.heading}</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{section.body}</p>
+                    <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line break-words">{section.body}</p>
                   </div>
                 ))}
               </div>

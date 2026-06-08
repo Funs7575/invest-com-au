@@ -318,7 +318,7 @@ export default async function TransferFromPage({
                               {s.title}
                             </p>
                           )}
-                          <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                          <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line break-words">
                             {s.body ?? s.text ?? ""}
                           </p>
                         </div>
@@ -333,7 +333,7 @@ export default async function TransferFromPage({
                   <h2 className="text-lg font-extrabold text-slate-900 mb-2">
                     In-specie transfer notes
                   </h2>
-                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                  <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line break-words">
                     {guide.in_specie_notes}
                   </p>
                 </div>

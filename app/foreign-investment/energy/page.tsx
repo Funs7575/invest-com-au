@@ -204,7 +204,7 @@ export default function ForeignInvestmentEnergyPage() {
                 <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-3">
                   {s.heading}
                 </h2>
-                <div className="prose prose-slate max-w-none text-sm md:text-base leading-relaxed whitespace-pre-line">
+                <div className="prose prose-slate max-w-none text-sm md:text-base leading-relaxed whitespace-pre-line break-words">
                   {s.body}
                 </div>
               </article>
@@ -235,7 +235,7 @@ export default function ForeignInvestmentEnergyPage() {
                     className="text-slate-400 shrink-0 transition-transform group-open:rotate-180"
                   />
                 </summary>
-                <p className="text-sm text-slate-600 mt-3 leading-relaxed whitespace-pre-line">
+                <p className="text-sm text-slate-600 mt-3 leading-relaxed whitespace-pre-line break-words">
                   {f.a}
                 </p>
               </details>

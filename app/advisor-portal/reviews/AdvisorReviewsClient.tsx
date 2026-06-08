@@ -101,7 +101,7 @@ function ReviewCard({
               <p className="text-xs font-semibold text-emerald-700 mb-1">
                 Your response
               </p>
-              <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-line">
+              <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-line break-words">
                 {savedResponse.body}
               </p>
               <p className="text-[10px] text-slate-400 mt-1">

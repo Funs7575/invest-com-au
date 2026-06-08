@@ -339,7 +339,7 @@ export default function AdminFundReviewsPage() {
                     Close
                   </button>
                 </div>
-                <p className="text-sm text-slate-700 whitespace-pre-line mb-3">{r.body}</p>
+                <p className="text-sm text-slate-700 whitespace-pre-line mb-3 break-words">{r.body}</p>
                 {r.pros && (
                   <div className="bg-emerald-50 rounded-lg p-3 mb-2">
                     <p className="text-xs font-bold text-emerald-700 mb-1">Pros</p>
