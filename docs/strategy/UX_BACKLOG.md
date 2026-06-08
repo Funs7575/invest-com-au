@@ -735,5 +735,9 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 
 **[ADV-278]** FAQ JSON-LD on /advisors/[type]/[state] location pages — GEO pivot: Type-specific FAQ arrays added to all 156+ advisor-by-type-and-location pages (13 professional types × 9 states + 21 cities). Financial planners, SMSF accountants, mortgage brokers, tax agents, and property advisors each get 4 tailored FAQs covering cost, credentials, licensing verification, and Australian-specific regulatory context. Generic fallback for remaining types. Makes every location+type combination citable for "find [advisor] in [city]" queries. `app/advisors/[type]/[state]/page.tsx`
 
+**[ADV-279]** FAQ JSON-LD on /how-we-verify, /help, /invest, /compare — GEO pivot: FAQPage structured data + visible accordions added to 4 high-traffic pages. /how-we-verify: 4 FAQs on fee-verification cadence, data sources, fee types, and impact on broker scores. /help: 4 FAQs on platform comparison, editorial independence, tools available, and contact methods. /invest: 4 FAQs on marketplace listing types, FIRB-eligible meaning, listing process, and SIV-complying definition. /compare: visible FAQ accordion added to match the existing FAQPage JSON-LD (3 FAQs) for AI extraction from human-readable content. `app/how-we-verify/page.tsx`, `app/help/page.tsx`, `app/invest/page.tsx`, `app/compare/page.tsx`
+
+**[ADV-280]** FAQ JSON-LD on /insights — GEO pivot: FAQPage structured data + visible accordion added to the Australian Investing Index page. 4 FAQs covering what the index is, how often fee data updates, which platforms are included, and what the Investor Health Score measures. `app/insights/page.tsx`
+
 ---
 
