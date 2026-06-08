@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -654,6 +655,16 @@ export default function SmsfPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Get matched with an SMSF specialist"
+        subheading="SMSF setup, compliance, auditing, and investment strategy — find a licensed specialist near you."
+        intent={{ need: "smsf", context: ["smsf_setup", "smsf_compliance"] }}
+        source="smsf_hub"
+        ctaLabel="Find my SMSF specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* FAQ */}
       <section className="py-12 bg-white border-t border-slate-200">
