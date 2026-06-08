@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import { breadcrumbJsonLd, absoluteUrl, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 86400;
 
@@ -63,6 +64,55 @@ const breadcrumb = breadcrumbJsonLd([
   { name: "Careers", url: absoluteUrl("/about/careers") },
 ]);
 
+const jobPostingsLd = OPEN_ROLES.map((role) => ({
+  "@context": "https://schema.org",
+  "@type": "JobPosting",
+  title: role.title,
+  description: role.description,
+  datePosted: "2026-06-01",
+  employmentType: role.type === "Full-time" ? "FULL_TIME" : role.type === "Part-time" ? "PART_TIME" : "CONTRACTOR",
+  jobLocation: {
+    "@type": "Place",
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "AU",
+      addressLocality: "Remote",
+    },
+  },
+  hiringOrganization: {
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon-512.png`,
+  },
+  directApply: false,
+  url: `${SITE_URL}/about/careers`,
+  applicantLocationRequirements: {
+    "@type": "Country",
+    name: "Australia",
+  },
+}));
+
+const careersFaqs = [
+  {
+    q: "What is it like to work at Invest.com.au?",
+    a: "Invest.com.au is a fully remote, Australia-based team building the country's leading independent investing platform. We operate as a small, high-ownership crew — everyone ships product, works directly with the founders, and sees their contributions reflected in the platform daily. We're editorially independent: no broker or fund manager owns us, so every decision is made in the investor's interest.",
+  },
+  {
+    q: "Are Invest.com.au roles fully remote?",
+    a: "Yes. All roles at Invest.com.au are fully remote and open to candidates anywhere in Australia. We are a distributed-first team — there is no Sydney or Melbourne HQ requirement, and we trust people to do great work from wherever they are.",
+  },
+  {
+    q: "How do I apply for a role at Invest.com.au?",
+    a: "For listed open roles, click the 'Apply via email' link on the relevant role card. Send your application to careers@invest.com.au with the role title in the subject line. If you don't see a suitable role, we welcome speculative applications — email careers@invest.com.au with a note on what you'd bring to the team.",
+  },
+  {
+    q: "What skills does Invest.com.au look for?",
+    a: "It depends on the role. Engineering roles require strong Next.js / TypeScript experience and comfort across the full stack. Editorial roles require deep knowledge of Australian investing, ASIC-awareness, and the ability to write authoritative content that is both accurate and accessible. Growth roles require proven SEO and content-strategy experience. Across all roles, we value intellectual curiosity and a genuine interest in helping Australians make better financial decisions.",
+  },
+];
+const careersFaqLd = faqJsonLd(careersFaqs);
+
 export default function CareersPage() {
   return (
     <>
@@ -70,6 +120,19 @@ export default function CareersPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {jobPostingsLd.map((ld, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+        />
+      ))}
+      {careersFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(careersFaqLd) }}
+        />
+      )}
 
       <div className="bg-white min-h-screen">
         {/* Hero */}
@@ -174,6 +237,21 @@ export default function CareersPage() {
             >
               careers@invest.com.au
             </a>
+          </section>
+
+          <section className="mt-10 border-t border-slate-100 pt-8">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {careersFaqs.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
           </section>
 
           <div className="mt-8 pt-6 border-t border-slate-100">

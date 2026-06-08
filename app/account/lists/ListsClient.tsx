@@ -252,7 +252,18 @@ export default function ListsClient({ initialLists }: Props) {
         <div className="text-center py-10 text-slate-400">
           <p className="text-3xl mb-2" aria-hidden>📋</p>
           <p className="font-medium text-slate-600">No lists yet</p>
-          <p className="text-sm mt-1">Create your first list above and start curating.</p>
+          <p className="text-sm mt-1 mb-4">Create your first list above, then browse the platform to add items.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-xs">
+            <Link href="/best" className="inline-flex items-center gap-1 px-4 py-2 rounded-lg bg-slate-900 text-white font-semibold hover:bg-slate-700 transition-colors">
+              Browse brokers →
+            </Link>
+            <Link href="/advisors" className="inline-flex items-center gap-1 px-4 py-2 rounded-lg border border-slate-200 text-slate-700 font-semibold hover:border-slate-400 transition-colors">
+              Find advisors →
+            </Link>
+            <Link href="/etfs" className="inline-flex items-center gap-1 px-4 py-2 rounded-lg border border-slate-200 text-slate-700 font-semibold hover:border-slate-400 transition-colors">
+              Explore ETFs →
+            </Link>
+          </div>
         </div>
       )}
 
