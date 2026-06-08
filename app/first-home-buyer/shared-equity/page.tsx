@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -518,6 +519,16 @@ export default function SharedEquityPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA */}
+      <HubAdvisorCTA
+        heading="Find a mortgage broker who knows shared equity schemes"
+        subheading="Help to Buy and state shared equity programs have income caps, property price limits, and lender eligibility rules. A licensed mortgage broker can help you check eligibility and find a participating lender."
+        intent={{ need: "mortgage", context: ["shared_equity", "first_home_buyer"] }}
+        source="first_home_buyer_shared_equity"
+        ctaLabel="Find a mortgage broker"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* Related guides */}
       <section className="py-8 border-b border-slate-100">

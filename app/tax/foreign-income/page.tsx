@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -426,6 +427,16 @@ export default function ForeignIncomeTaxPage() {
             </div>
           </div>
         </section>
+
+        {/* Advisor CTA */}
+        <HubAdvisorCTA
+          heading="Get expert advice on Australian foreign income tax"
+          subheading="DTAs, FIF rules, foreign tax credits, and Part IVA anti-avoidance are complex. A registered tax agent with international tax experience can ensure you're paying the correct amount."
+          intent={{ need: "tax", context: ["foreign_income", "international_tax"] }}
+          source="tax_foreign_income"
+          ctaLabel="Find an international tax specialist"
+          className="py-12 bg-amber-50 border-t border-amber-200"
+        />
 
         {/* Navigation links */}
         <section className="py-10 bg-slate-50 border-t border-slate-200">

@@ -4,6 +4,7 @@ import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/s
 import { faqJsonLd } from "@/lib/schema-markup";
 import type { FaqItem } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
 
@@ -714,6 +715,16 @@ export default function GlobalInvestingTaxPage() {
           </div>
         </div>
       </section>
+
+      {/* ── Advisor CTA ─────────────────────────────────────────────────── */}
+      <HubAdvisorCTA
+        heading="Get international tax advice from a specialist"
+        subheading="FIF rules, CGT on foreign shares, DTA credits, and controlled foreign company rules are complex. A registered tax agent with international experience can review your situation."
+        intent={{ need: "tax", context: ["international_tax", "foreign_investment_tax"] }}
+        source="global_investing_tax"
+        ctaLabel="Find an international tax specialist"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* ── Compliance footer ───────────────────────────────────────────── */}
       <section className="bg-slate-50 border-t border-slate-200 py-6">
