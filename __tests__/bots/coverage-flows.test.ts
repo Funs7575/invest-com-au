@@ -14,8 +14,10 @@ import { LOCALES, BCP47_TAG } from "../../lib/i18n/locales";
 import type { Flow } from "../../bots/flows/types";
 
 describe("COVERAGE_FLOW_PERSONAS registry", () => {
-  it("registers all ten coverage flows", () => {
-    expect(COVERAGE_FLOW_PERSONAS.length).toBe(10);
+  it("registers all coverage flows", () => {
+    // 10 original + 8 advisor-suite flows added in this PR. The uniqueness
+    // check below guards against accidental dupes inflating this count.
+    expect(COVERAGE_FLOW_PERSONAS.length).toBe(18);
   });
 
   it("every persona has a unique name, a description, and a flow", () => {
