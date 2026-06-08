@@ -21,6 +21,7 @@ import {
 } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 
 export const revalidate = 86400;
 
@@ -107,6 +108,8 @@ export default function FireGuidePage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
         />
       )}
+
+      <ArticleReadingProgress />
 
       <div>
         {/* Hero */}

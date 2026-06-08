@@ -18,6 +18,7 @@ import {
 } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 
 export const revalidate = 86400;
 
@@ -177,6 +178,8 @@ export default function DepositGuidePage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
         />
       )}
+
+      <ArticleReadingProgress />
 
       <main className="bg-white text-slate-900">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">

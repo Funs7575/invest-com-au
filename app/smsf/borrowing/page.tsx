@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import {
   SITE_URL,
   CURRENT_YEAR,
@@ -73,6 +74,7 @@ export default function SmsfBorrowingPage() {
       )}
 
       <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <section className="bg-slate-900 text-white py-10 md:py-14">
           <div className="container-custom">

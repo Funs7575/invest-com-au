@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import type { FaqItem } from "@/lib/schema-markup";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const revalidate = 86400;
@@ -233,6 +234,7 @@ export default function GlobalInvestingHubPage() {
 
   return (
     <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}

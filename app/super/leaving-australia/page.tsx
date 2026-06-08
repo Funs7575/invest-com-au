@@ -7,6 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { createClient } from "@/lib/supabase/server";
 import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import type { Broker } from "@/lib/types";
 
 export const revalidate = 86400;
@@ -240,6 +241,7 @@ export default async function LeavingAustraliaPage() {
 
   return (
     <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       {faqSchema && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />

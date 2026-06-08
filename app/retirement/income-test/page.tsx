@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL, absoluteUrl } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 86400;
@@ -133,6 +134,7 @@ export default function IncomTestPage() {
 
   return (
     <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       {faqLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />

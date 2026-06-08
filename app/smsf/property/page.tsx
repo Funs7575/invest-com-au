@@ -5,6 +5,7 @@ import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import InvestOpportunitiesCallout from "@/components/invest/InvestOpportunitiesCallout";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import { categoryListingsHref } from "@/lib/invest-listing-routes";
 
 export const revalidate = 86400;
@@ -70,6 +71,7 @@ export default function SmsfPropertyPage() {
       )}
 
       <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
 
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <section className="bg-slate-900 text-white py-10 md:py-14">

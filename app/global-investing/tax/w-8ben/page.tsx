@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SITE_URL, CURRENT_YEAR, UPDATED_LABEL, breadcrumbJsonLd } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
 import type { FaqItem } from "@/lib/schema-markup";
+import ArticleReadingProgress from "@/components/ArticleReadingProgress";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const revalidate = 86400;
@@ -128,6 +129,7 @@ export default function W8BENPage() {
 
   return (
     <div className="bg-white min-h-screen">
+      <ArticleReadingProgress />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
