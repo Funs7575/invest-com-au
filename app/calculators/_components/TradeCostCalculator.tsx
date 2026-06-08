@@ -95,7 +95,7 @@ export default function TradeCostCalculator({ brokers, searchParams }: Props) {
           <button
             key={v}
             onClick={() => setTradeAmount(v)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors shrink-0 ${
+            className={`px-3 py-2 min-h-9 rounded-full text-xs font-medium transition-colors shrink-0 ${
               tradeAmount === v ? "bg-slate-100 text-slate-700 border border-slate-300" : "bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100"
             }`}
           >

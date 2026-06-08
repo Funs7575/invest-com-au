@@ -422,7 +422,7 @@ export default function ScoreClient() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleEmailCapture()}
-                  className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                  className="flex-1 rounded-lg border border-slate-300 px-4 py-3 min-h-11 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
                 />
                 <button
                   onClick={handleEmailCapture}

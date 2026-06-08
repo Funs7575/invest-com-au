@@ -884,7 +884,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {mobileColumns.map((column) => (
                   <div key={column.key} className="rounded-xl bg-slate-50 p-2">
-                    <p className="text-[0.62rem] font-bold uppercase tracking-wide text-slate-400">{column.label}</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{column.label}</p>
                     <p className="text-sm font-semibold text-slate-800">{column.value(broker, row)}</p>
                   </div>
                 ))}

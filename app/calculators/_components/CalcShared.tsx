@@ -140,7 +140,7 @@ export function InputField({ label, value, onChange, placeholder, prefix, suffix
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`w-full bg-white border border-slate-200 rounded-lg py-2 md:py-2.5 text-sm shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium ${prefix ? "pl-7" : "pl-3 md:pl-4"} ${suffix ? "pr-10" : "pr-3 md:pr-4"}`}
+          className={`w-full bg-white border border-slate-200 rounded-lg py-2.5 md:py-2.5 min-h-11 text-sm shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium ${prefix ? "pl-7" : "pl-3 md:pl-4"} ${suffix ? "pr-10" : "pr-3 md:pr-4"}`}
         />
         {suffix && <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">{suffix}</div>}
       </div>
@@ -159,7 +159,7 @@ export function SelectField({ label, value, onChange, placeholder, children }: {
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium"
+        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 min-h-11 shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium"
       >
         <option value="">{placeholder}</option>
         {children}
