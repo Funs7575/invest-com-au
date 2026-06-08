@@ -25,6 +25,7 @@ import { loadInvestPageContext } from "@/lib/listing-page-context";
 import { computeMatchScore } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 
@@ -458,6 +459,15 @@ export default async function InvestMarketplacePage() {
       </div>
 
       <HomeToolsStrip />
+
+      <HubAdvisorCTA
+        heading="Not sure which investment is right for you?"
+        subheading="Alternative assets, unlisted funds, syndicates, and business investments carry different risks and tax treatments. A licensed financial adviser can assess which opportunities suit your portfolio size, time horizon, and tax position."
+        intent={{ need: "planning", context: ["alternative_investments", "portfolio_strategy"] }}
+        source="invest_hub"
+        ctaLabel="Find a financial adviser"
+        className="py-12 bg-amber-50 border-t border-amber-200"
+      />
 
       {/* FAQ accordion — GEO pivot: answer-first FAQ for AI citation */}
       <div className="border-t border-slate-200 bg-white">
