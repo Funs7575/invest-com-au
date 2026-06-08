@@ -631,7 +631,7 @@ export default function InvestmentLoanPage() {
               <details key={i} className="group border border-slate-200 rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-medium text-slate-800 hover:bg-slate-100 bg-white">
                   {faq.q}
-                  <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                  <span className="ml-3 flex-shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">▼</span>
                 </summary>
                 <div className="px-5 pb-4 pt-1 text-sm text-slate-600 leading-relaxed bg-white">{faq.a}</div>
               </details>
