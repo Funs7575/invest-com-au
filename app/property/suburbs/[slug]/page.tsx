@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { SUBURB_DATA_DISCLAIMER } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
@@ -124,6 +125,28 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
     { name: `${suburb.suburb}, ${suburb.state}` },
   ]);
 
+  const suburbFaqs = [
+    {
+      q: `Is ${suburb.suburb} a good suburb to invest in?`,
+      a: `${suburb.suburb}, ${stateFullName}${suburb.median_price_house ? ` has a median house price of ${formatPrice(suburb.median_price_house)}` : ""}${suburb.rental_yield_house ? ` and a rental yield of approximately ${suburb.rental_yield_house}%` : ""}${suburb.capital_growth_10yr ? `, with ${suburb.capital_growth_10yr}% capital growth over the past decade` : ""}. Whether ${suburb.suburb} is right for your investment strategy depends on your budget, yield targets, time horizon, and risk tolerance. Past market performance is not a reliable indicator of future results. Consult a buyer's agent or financial adviser before committing to any property investment.`,
+    },
+    {
+      q: `What is the median property price in ${suburb.suburb}?`,
+      a: suburb.median_price_house || suburb.median_price_unit
+        ? `Based on available data, ${suburb.suburb} has a median house price of ${suburb.median_price_house ? formatPrice(suburb.median_price_house) : "not available"} and a median unit price of ${suburb.median_price_unit ? formatPrice(suburb.median_price_unit) : "not available"}. Property prices are updated periodically from available sales data — refer to the data disclaimer on this page for currency and source details. Always verify current prices with a licensed real estate professional before making investment decisions.`
+        : `Median price data for ${suburb.suburb} is not currently available in our database. We recommend checking with a local real estate agent or the ${stateFullName} valuer-general's office for the most current pricing information.`,
+    },
+    {
+      q: `Do foreigners need FIRB approval to buy property in ${suburb.suburb}?`,
+      a: `Yes. Foreign investors (non-residents and temporary visa holders) generally require approval from the Foreign Investment Review Board (FIRB) before purchasing residential property in ${suburb.suburb}. Non-residents are typically restricted to purchasing new dwellings or vacant land for construction, not established homes. FIRB application fees apply and vary by property value. We strongly recommend consulting a property lawyer familiar with foreign investment rules before proceeding. Visit firb.gov.au for official guidance.`,
+    },
+    {
+      q: `How do I find a buyer's agent for ${suburb.suburb}?`,
+      a: `A licensed buyer's agent can research the ${suburb.suburb} market, attend inspections on your behalf, and negotiate the purchase price — often saving buyers more than their fee. In ${stateFullName}, buyer's agents must hold a real estate licence. Use invest.com.au/advisors/buyers-agents to find verified buyer's agents who operate in ${stateFullName}.`,
+    },
+  ];
+  const suburbFaqLd = faqJsonLd(suburbFaqs);
+
   const placeLd = {
     "@context": "https://schema.org",
     "@type": "Place",
@@ -156,6 +179,10 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(placeLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(suburbFaqLd) }}
       />
 
       {/* ── Hero ── */}
@@ -376,6 +403,32 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
             >
               View Listings in {suburb.suburb}
             </Link>
+          </div>
+        </section>
+
+        {/* ── FAQ accordion ── */}
+        <section>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">
+            Frequently asked questions — {suburb.suburb} property investment
+          </h2>
+          <div className="divide-y divide-slate-100">
+            {suburbFaqs.map(({ q, a }) => (
+              <details key={q} className="group py-4">
+                <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                  {q}
+                  <svg
+                    className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="mt-3 text-sm text-slate-600 leading-relaxed">{a}</p>
+              </details>
+            ))}
           </div>
         </section>
 
