@@ -808,7 +808,7 @@ export default function W8BENPage() {
               >
                 <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none hover:bg-slate-50 transition-colors">
                   <span className="text-sm font-semibold text-slate-900">{faq.q}</span>
-                  <span className="flex-shrink-0 w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold flex items-center justify-center group-open:rotate-180 transition-transform">
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold flex items-center justify-center group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#x2303;
                   </span>
                 </summary>

@@ -656,7 +656,7 @@ export default function IbkrAustraliaSetupPage() {
               >
                 <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none font-semibold text-sm text-slate-900 hover:bg-slate-50 transition-colors">
                   <span>{faq.q}</span>
-                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#8964;
                   </span>
                 </summary>

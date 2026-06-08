@@ -455,7 +455,7 @@ export default function ForProvidersPage() {
               >
                 <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer hover:bg-slate-50 flex items-center justify-between">
                   {faq.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform">
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform" aria-hidden="true">
                     &#9660;
                   </span>
                 </summary>
