@@ -3,9 +3,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
 const mockFrom = vi.fn();
+const mockRpc = vi.fn();
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockFrom })),
+  createAdminClient: vi.fn(() => ({ from: mockFrom, rpc: mockRpc })),
 }));
 
 const mockClassifyDispute = vi.fn();
@@ -295,6 +296,12 @@ describe("autoResolveDispute", () => {
     mockFrom.mockReset();
     mockRecordFinancialAudit.mockResolvedValue(undefined);
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true }));
+    // Default: RPC not yet deployed — fall back to the optimistic-lock path
+    // so pushLedgerEntrySlots' CAS update slot is consumed as expected.
+    mockRpc.mockResolvedValue({
+      data: null,
+      error: { code: "PGRST202", message: "function does not exist" },
+    });
   });
 
   it("returns applied:false when context build fails", async () => {
