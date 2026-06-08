@@ -81,4 +81,59 @@ describe("computeFilenameViolations", () => {
     const v = computeFilenameViolations(["baseline.sql"], new Set());
     expect(v[0]).toMatchObject({ kind: "format", version: "(none)" });
   });
+
+  it("flags a 15-digit (over-length) version as a format violation", () => {
+    const v = computeFilenameViolations(["202606031200000_x.sql"], new Set());
+    expect(v[0]).toMatchObject({ kind: "format", version: "202606031200000" });
+  });
+
+  it("flags a zero-padded 16-digit version as a format violation", () => {
+    const v = computeFilenameViolations(["0020260603120000_x.sql"], new Set());
+    expect(v[0]).toMatchObject({ kind: "format", version: "0020260603120000" });
+  });
+
+  it("among three added files, flags only the later of two colliding (A/C share, B distinct)", () => {
+    const v = computeFilenameViolations(
+      ["20260607120000_a.sql", "20260607130000_b.sql", "20260607120000_c.sql"],
+      new Set(),
+    );
+    expect(v).toEqual([
+      { file: "20260607120000_c.sql", version: "20260607120000", kind: "collision-added" },
+    ]);
+  });
+
+  it("when an added file collides with BOTH an existing and another added, existing wins (precedence)", () => {
+    const v = computeFilenameViolations(
+      ["20260607120000_a.sql", "20260607120000_b.sql"],
+      new Set(["20260607120000"]),
+    );
+    // Both added files collide with the existing version → both collision-existing;
+    // neither is downgraded to collision-added.
+    expect(v).toEqual([
+      { file: "20260607120000_a.sql", version: "20260607120000", kind: "collision-existing" },
+      { file: "20260607120000_b.sql", version: "20260607120000", kind: "collision-existing" },
+    ]);
+  });
+});
+
+describe("parseMigrationVersion — suffix & length edge cases", () => {
+  it("strips a split .up.sql / .down.sql suffix when extracting version + base", () => {
+    expect(parseMigrationVersion("supabase/migrations/20260101000000_x.up.sql")).toMatchObject({
+      version: "20260101000000",
+      base: "20260101000000_x",
+      is14: true,
+    });
+    expect(parseMigrationVersion("20260101000000_x.down.sql")).toMatchObject({
+      version: "20260101000000",
+      base: "20260101000000_x",
+    });
+  });
+
+  it("tolerates an uppercase .SQL extension", () => {
+    expect(parseMigrationVersion("20260101000000_x.SQL")).toMatchObject({ version: "20260101000000", is14: true });
+  });
+
+  it("treats a 15-digit leading run as not-14 (over-length)", () => {
+    expect(parseMigrationVersion("202606031200000_x.sql")).toMatchObject({ is14: false, hasDigits: true });
+  });
 });

@@ -35,33 +35,17 @@ import { execSync } from "node:child_process";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
+import { parseMigrationVersion } from "./lib/migration-version.mjs";
+
 const MIGRATIONS_DIR = "supabase/migrations";
-// Only the top-level migrations dir is the active set. Archived legacy files
-// (post-baseline) live under supabase/migrations/archive/** and are NOT checked.
-const MIGRATIONS_GLOB = `${MIGRATIONS_DIR}/*.sql`;
+
+// Re-export so existing unit tests importing from this module keep working,
+// while the parsing logic lives in one shared place (scripts/lib).
+export { parseMigrationVersion };
 
 // ---------------------------------------------------------------------------
 // Core logic — exported so unit tests can call directly (pure, no I/O)
 // ---------------------------------------------------------------------------
-
-/**
- * Parse the CLI-visible version (leading run of digits before the first `_`)
- * from a migration filename or path.
- *
- * @param {string} filename  e.g. "supabase/migrations/20260603120000_x.sql"
- * @returns {{ base: string, version: string, is14: boolean, hasDigits: boolean }}
- */
-export function parseMigrationVersion(filename) {
-  const base = filename.replace(/^.*\//, "").replace(/\.sql$/i, "");
-  const m = /^(\d+)/.exec(base);
-  const version = m ? m[1] : "";
-  return {
-    base,
-    version,
-    is14: /^\d{14}$/.test(version),
-    hasDigits: version.length > 0,
-  };
-}
 
 /**
  * Given the basenames of newly-added migration files and the set of versions
@@ -102,16 +86,58 @@ export function computeFilenameViolations(addedBasenames, existingVersions) {
 // ---------------------------------------------------------------------------
 
 /**
+ * Resolve the base ref to diff against: prefer `origin/<ref>` (CI), fall back to
+ * a local `<ref>` (developer machines without the remote). Returns null when
+ * neither resolves, so the caller can warn loudly instead of false-passing.
+ *
+ * @param {string} baseRef
+ * @returns {string | null}
+ */
+function resolveBaseRef(baseRef) {
+  for (const cand of [`origin/${baseRef}`, baseRef]) {
+    try {
+      execSync(`git rev-parse --verify --quiet ${cand}^{commit}`, {
+        stdio: ["pipe", "pipe", "pipe"],
+      });
+      return cand;
+    } catch {
+      /* try next candidate */
+    }
+  }
+  return null;
+}
+
+/**
  * Basenames of migration files added in the current PR vs the base branch.
- * Falls back to [] (no new files) outside a git/CI context.
+ *
+ * Note on scoping: we pass the *directory* pathspec `supabase/migrations` (git
+ * pathspecs match recursively, unlike a shell glob), then filter to direct
+ * children with the `path.dirname` check below — that filter is **load-bearing**:
+ * it is the only thing excluding archived legacy files under
+ * `supabase/migrations/archive/**`. `diff.renames=false` is forced so a
+ * rename-to-a-bad-name is reported as an Add (and thus caught) regardless of the
+ * caller's git config.
+ *
+ * Returns [] when there genuinely are no new files; warns and returns [] when
+ * the base ref can't be resolved (so a misconfigured local run is visible rather
+ * than a silent green).
  *
  * @param {string} baseRef
  * @returns {string[]}
  */
 export function getAddedMigrationBasenames(baseRef) {
+  const ref = resolveBaseRef(baseRef);
+  if (!ref) {
+    console.warn(
+      `[migration-filenames] base ref "${baseRef}" is not resolvable ` +
+        `(no origin/${baseRef} and no local ${baseRef}); skipping the PR-scoped ` +
+        `check. Use --all to audit the whole tree.`,
+    );
+    return [];
+  }
   try {
     const raw = execSync(
-      `git diff --name-only --diff-filter=A origin/${baseRef}...HEAD -- ${MIGRATIONS_GLOB}`,
+      `git -c diff.renames=false diff --name-only --diff-filter=A ${ref}...HEAD -- ${MIGRATIONS_DIR}`,
       { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] },
     ).trim();
     if (!raw) return [];
@@ -119,11 +145,15 @@ export function getAddedMigrationBasenames(baseRef) {
       .split("\n")
       .map((f) => f.trim())
       .filter(Boolean)
-      // Defensive: the glob keeps subdirs out, but double-check we only take the
-      // active top-level dir, never archived files.
+      // Load-bearing: the directory pathspec matches archive/** too, so this is
+      // what keeps archived legacy files out of the active set.
       .filter((f) => path.dirname(f) === MIGRATIONS_DIR)
       .map((f) => path.basename(f));
-  } catch {
+  } catch (err) {
+    console.warn(
+      `[migration-filenames] git diff failed (${/** @type {Error} */ (err).message}); ` +
+        `skipping the PR-scoped check.`,
+    );
     return [];
   }
 }
@@ -175,12 +205,11 @@ async function main() {
     // so the reconciliation can see how much it is collapsing.
     const fmt = { d3: 0, d8: 0, d14: 0, other: 0 };
     for (const name of allBasenames) {
-      const { version, is14, hasDigits } = parseMigrationVersion(name);
+      const { version, is14 } = parseMigrationVersion(name);
       if (is14) fmt.d14++;
       else if (/^\d{8}$/.test(version)) fmt.d8++;
       else if (/^\d{3}$/.test(version)) fmt.d3++;
-      else if (!hasDigits) fmt.other++;
-      else fmt.other++;
+      else fmt.other++; // no digits, or any other non-conforming length
     }
     console.log(
       `Migration filename audit — ${allBasenames.length} files: ` +

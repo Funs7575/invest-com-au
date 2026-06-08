@@ -26,31 +26,28 @@ import { fileURLToPath } from "node:url";
  *   SUPABASE_MIGRATIONS_JSON=path/to/ledger.json npm run audit:ledger-drift
  *   node scripts/audit/ledger-drift.mjs --ledger path/to/ledger.json --json
  *
- * Exit code is always 0 — this is an audit/observability tool, not a CI gate.
+ * Exit code is 0 on success/divergence — this is an audit/observability tool,
+ * not a CI gate (a CLI usage error, e.g. `--ledger` with no path, exits non-zero).
  * Its purpose during reconciliation is to prove the job is done: after the
  * baseline-squash + `migration repair`, `local_only` and `ledger_only` should
- * both collapse to ~0.
+ * both collapse to ~0 AND `ledger_empty` must be false (an empty dump is treated
+ * as "not reconciled", never as done).
  */
 
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
+import { versionOf } from "../lib/migration-version.mjs";
+
 const MIGRATIONS_DIR = "supabase/migrations";
+
+// Re-export so existing unit tests importing from this module keep working,
+// while the parsing logic lives in one shared place (scripts/lib).
+export { versionOf };
 
 // ---------------------------------------------------------------------------
 // Core logic — exported for unit tests (pure, no I/O)
 // ---------------------------------------------------------------------------
-
-/**
- * CLI-parsed version (leading digits before first `_`) from a filename.
- * @param {string} filename
- * @returns {string}
- */
-export function versionOf(filename) {
-  const base = filename.replace(/^.*\//, "").replace(/\.sql$/i, "");
-  const m = /^(\d+)/.exec(base);
-  return m ? m[1] : "";
-}
 
 /**
  * Parse a ledger dump into the set of versions. Accepts either the raw
@@ -69,7 +66,9 @@ export function parseLedger(doc) {
   const versions = new Set();
   for (const row of arr) {
     if (typeof row === "string") versions.add(row);
-    else if (row && typeof row === "object" && typeof row.version === "string") versions.add(row.version);
+    // Accept numeric `version` too (some dump tooling emits it unquoted) by
+    // coercing to string, so the ledger is never silently undercounted.
+    else if (row && typeof row === "object" && row.version != null) versions.add(String(row.version));
   }
   return versions;
 }
@@ -125,7 +124,16 @@ export function versionToFiles(basenames) {
 
 async function readLedger() {
   const argIdx = process.argv.indexOf("--ledger");
-  const fromArg = argIdx >= 0 ? process.argv[argIdx + 1] : undefined;
+  let fromArg;
+  if (argIdx >= 0) {
+    const next = process.argv[argIdx + 1];
+    // Don't silently swallow the next flag as a filename (e.g. `--ledger --json`).
+    if (!next || next.startsWith("--")) {
+      console.error(`[ledger-drift] --ledger requires a file path argument (got ${next ?? "nothing"}).`);
+      process.exit(2);
+    }
+    fromArg = next;
+  }
   const file = fromArg || process.env.SUPABASE_MIGRATIONS_JSON;
   if (!file) return null;
   const doc = JSON.parse(await fs.readFile(file, "utf8"));
@@ -145,7 +153,10 @@ async function main() {
   }
 
   const v2f = versionToFiles(basenames);
-  const collisions = [...v2f.entries()].filter(([, files]) => files.length > 1);
+  // A real collision is two files sharing a *non-empty* version; non-versioned
+  // helpers (e.g. seed.sql, *_baseline_schema.sql) all map to "" and must not be
+  // reported as colliding with each other.
+  const collisions = [...v2f.entries()].filter(([v, files]) => v && files.length > 1);
   const localVersions = [...v2f.keys()].filter(Boolean);
 
   const ledger = await readLedger();
@@ -167,6 +178,7 @@ async function main() {
       JSON.stringify(
         {
           files: basenames.length,
+          ledgerEmpty: ledger.size === 0,
           collisions: collisions.map(([v, files]) => ({ version: v, files })),
           ...drift,
         },
@@ -186,7 +198,16 @@ async function main() {
   console.log(`- Local only (a \`db push\` would attempt these): **${drift.localOnly.length}**`);
   console.log(`- Ledger only (applied out-of-band, no local file): **${drift.ledgerOnly.length}**`);
   console.log("");
-  if (drift.localOnly.length === 0 && drift.ledgerOnly.length === 0) {
+  if (ledger.size === 0) {
+    // An empty/failed dump must never read as "done" — that would falsely
+    // certify the destructive baseline-squash complete (the runbook's exit gate
+    // is exactly "ledger_only == 0").
+    console.log(
+      "⚠️  Ledger dump parsed to 0 rows — it is empty or the dump failed. " +
+        "Refusing to certify reconciliation; re-run the dump SQL from this " +
+        "script's header and confirm it returns the full schema_migrations set.",
+    );
+  } else if (drift.localOnly.length === 0 && drift.ledgerOnly.length === 0) {
     console.log("✅ Tree and ledger are fully reconciled.");
   } else {
     console.log(

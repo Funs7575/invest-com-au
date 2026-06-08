@@ -87,22 +87,40 @@ cp /tmp/prod_public.sql "supabase/migrations/${TS}_baseline_schema.sql"
 Mark every currently-applied prod version as applied for the new file set, then
 make the baseline the floor. With the CLI:
 ```bash
+# Re-derive TS from the baseline filename — Step 2's shell variable does NOT
+# survive into a new session, and an empty "${TS}" here would mis-target the
+# prod ledger write below:
+TS=$(ls supabase/migrations/*_baseline_schema.sql | sed -E 's#.*/([0-9]{14})_.*#\1#')
+test -n "$TS" || { echo "could not derive baseline TS — abort"; exit 1; }
+
 # Pull the remote ledger and reconcile. `migration repair` writes
 # supabase_migrations.schema_migrations WITHOUT running SQL.
 supabase migration list --linked            # inspect remote vs local
 supabase migration repair --status applied "${TS}"   # baseline = applied
-# Then mark the archived legacy versions as reverted/untracked so the CLI does
-# not consider them pending (they are superseded by the baseline):
-#   supabase migration repair --status reverted <legacy_version> ...
 ```
-**Goal state:** `supabase migration list` shows the baseline as the single
-applied floor and **no pending migrations**. Re-run the pre-flight diff — both
-`local-only` and `ledger-only` should collapse to ~0.
+**Default (recommended): stop here.** Keep the existing prod ledger rows as they
+are — the baseline is idempotent `CREATE … IF NOT EXISTS`, and the only invariant
+that matters is that **`supabase db push --dry-run` reports nothing pending**.
+Verify that, then continue to step 4.
 
-> If you prefer to keep the full prod ledger rows intact and only add the
-> baseline, that also works (the baseline is idempotent `CREATE … IF NOT
-> EXISTS`); the essential invariant is **`supabase db push` reports nothing
-> pending** afterwards.
+<details><summary>Optional (advanced, riskier): collapse to a single-floor ledger</summary>
+
+Only do this if you specifically want `migration list` to show exactly one
+applied floor. With 400+ prod-only rows, **do not hand-wave it** — enumerate the
+superseded versions explicitly and review the list before writing:
+```bash
+# every prod ledger version except the baseline, one per line:
+supabase migration list --linked | awk 'NR>2 {print $1}' | grep -v "^${TS}$"
+# review that output, then for EACH version you intend to retire:
+#   supabase migration repair --status reverted <version>
+```
+This only rewrites `schema_migrations` rows (no table SQL runs); the step-0
+snapshot is your restore point if the ledger ends up wrong.
+</details>
+
+**Goal state:** `supabase migration list` shows the baseline applied and **no
+pending migrations**. Re-run the pre-flight diff — both `local-only` and
+`ledger-only` should collapse to ~0 (and `ledger_empty` must be false).
 
 ### 4. Regenerate types from prod (clears the standing warning)
 ```bash
@@ -161,3 +179,7 @@ supabase branches delete reconcile-verify
   from the step-0 snapshot if needed. No table data is touched by repair.
 - Step 6 (drops) is the only data-destructive step — the step-0 snapshot is the
   floor; do drops in a separate, clearly-labelled PR after the rest is verified.
+- If `scripts/db/baseline-squash.sh` aborts mid-archive, the `git mv`s are
+  **staged but not committed** (and the script now refuses to start with an
+  untracked `.sql` present, which is the usual cause). Inspect with `git status`;
+  `git reset --hard` undoes the partial move cleanly.

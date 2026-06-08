@@ -87,4 +87,46 @@ describe("versionToFiles", () => {
     expect(m.get("20260413")).toEqual(["20260413_a.sql", "20260413_b.sql"]);
     expect(m.get("20260414120000")).toEqual(["20260414120000_c.sql"]);
   });
+
+  it("buckets non-versioned files under '' so callers can exclude them from collisions", () => {
+    const m = versionToFiles(["baseline_schema.sql", "seed.sql", "20260101000000_a.sql"]);
+    expect(m.get("")).toEqual(["baseline_schema.sql", "seed.sql"]);
+    // Mirrors the predicate in main(): version "" is never a real collision.
+    const collisions = [...m.entries()].filter(([v, files]) => v && files.length > 1);
+    expect(collisions).toEqual([]);
+  });
+});
+
+describe("parseLedger — robustness", () => {
+  it("coerces a numeric version to string instead of silently dropping it", () => {
+    const s = parseLedger([{ version: 20260101000000, name: "a" }]);
+    expect(s.has("20260101000000")).toBe(true);
+    expect(s.size).toBe(1);
+  });
+
+  it("dedups repeated versions (Set semantics)", () => {
+    expect(parseLedger(["v1", "v1", "v2"]).size).toBe(2);
+  });
+});
+
+describe("computeLedgerDrift — edge cases", () => {
+  it("empty local + non-empty ledger → everything is ledgerOnly, not reconciled", () => {
+    const d = computeLedgerDrift([], new Set(["v1", "v2"]));
+    expect(d.localOnly).toEqual([]);
+    expect(d.both).toEqual([]);
+    expect(d.ledgerOnly).toEqual(["v1", "v2"]);
+  });
+
+  it("emits versions in lexicographic (string) order, not numeric", () => {
+    const versions = ["20260102000000", "001", "20260102"];
+    const d = computeLedgerDrift(versions, new Set(versions));
+    expect(d.both).toEqual(["001", "20260102", "20260102000000"]);
+  });
+});
+
+describe("versionOf — directory prefix", () => {
+  it("ignores any directory prefix, including archive/", () => {
+    expect(versionOf("archive/20260101000000_x.sql")).toBe("20260101000000");
+    expect(versionOf("supabase/migrations/archive/20260101000000_x.sql")).toBe("20260101000000");
+  });
 });
