@@ -14,6 +14,48 @@
 
 ## Active strategic decisions log
 
+### 2026-06-08 — Listings: anonymous-submission hole closed (carve-out of #1459, no DB)
+
+A bot sprawl + review of `/invest/list` (2026-06-07) surfaced that we ran **two
+parallel post-a-listing products** plus a real regulatory hole: `/invest/list →
+investment_listings` accepted **anonymous, unverified-email** submissions across
+10 verticals **including capital-markets** (`startup`/`fund`/`pre_ipo`). The full
+consolidation plan + founder decisions live in
+`docs/plans/LISTINGS_MARKETPLACE_CONSOLIDATION.md` (D1–D7) and the wholesale
+sign-off brief in `docs/strategy/LISTINGS_S708_LEGAL_BRIEF.md`.
+
+PR #1459 bundled the safe build increments **with** a Tier-E prod migration
+(`20260907040000_investment_listings_ownership.sql`, adds `owner_user_id` + RLS),
+which can't land until the migration-ledger baseline-squash is done
+(`docs/runbooks/MIGRATION_LEDGER_RECONCILIATION.md`). That coupling blocked the
+whole PR.
+
+**This session — shipped the schema-free carve-out (new PR, no DB):**
+- **Phase 0 (Tier-A):** `/invest/[slug]` unknown slug now **404s** (was a soft-500
+  via the segment error boundary — bad for users + SEO); `/invest/my-listings`
+  dead link `/invest/submit` → `/invest/list`; hero "8"→"10" categories.
+- **Phase 1 increment 1 (the compliance win):** `/api/listings/submit` now
+  **requires an authenticated session (401 for anon)** and best-effort provisions
+  the `listing_owner_accounts` workspace (a table that **already exists in prod**,
+  so no migration needed). `ListingSubmitForm` gates client-side (no part-filled
+  form lost to a 401) via the shared `useUser()` hook. **D5 honesty:** Standard
+  shown as **Free** (it's never actually charged today).
+- This **removes the anonymous capital-markets submission path** — a real de-risk
+  even before the s708 gate.
+
+**Deliberately EXCLUDED from the carve-out (stay blocked):**
+- The `owner_user_id` migration + everything that writes that column. It does
+  **not** exist in prod; writing it pre-apply would 500 the live submit. Stays
+  fenced per `MIGRATION_LEDGER_RECONCILIATION.md`.
+- **Increment 2** (owner-scoped RLS portal, `listings`→`investment_listings`
+  data-migration, `/listings/new` 308, authed my-listings rewrite) — depends on
+  that migration. Not started.
+- **D4 / s708 capital-markets gate** — ⚠️ founder direction set (wholesale-only),
+  but **unbuilt pending legal sign-off** recorded in repo (§5 of the s708 brief).
+
+**Revisit:** 2026-07-07 — has the migration-ledger baseline-squash been scheduled
+(it's the blocker for increment 2) and has legal ruled on D4?
+
 ### 2026-06-07 — Database migration ledger: forked, not "behind"; decision = baseline-squash
 
 Deep-dive of the standing "database backlog" (was framed as "118 migrations

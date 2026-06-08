@@ -81,7 +81,7 @@ export default function ListInvestmentPage() {
               </p>
               <div className="flex flex-wrap gap-3">
                 <span className="bg-slate-50 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200">
-                  ✅ From $99 / listing
+                  ✅ Free to list (Standard)
                 </span>
                 <span className="bg-slate-50 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200">
                   ✅ Live within 1–2 days
@@ -95,10 +95,10 @@ export default function ListInvestmentPage() {
             {/* Mini stats */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { value: "8", label: "Investment categories" },
+                { value: "10", label: "Investment categories" },
                 { value: "12", label: "Countries reached" },
                 { value: "1–2 days", label: "Avg. time to publish" },
-                { value: "$99+", label: "Starting price" },
+                { value: "Free", label: "Standard listing" },
               ].map((s) => (
                 <div key={s.label} className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-center">
                   <p className="text-2xl font-extrabold text-amber-600 mb-1">{s.value}</p>

@@ -9,8 +9,12 @@ vi.mock("@/lib/rate-limit", () => ({
 }));
 
 const mockServerFrom = vi.fn();
+const mockGetUser = vi.fn();
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({ from: mockServerFrom })),
+  createClient: vi.fn(async () => ({
+    from: mockServerFrom,
+    auth: { getUser: (...args: unknown[]) => mockGetUser(...args) },
+  })),
 }));
 
 // The submit route inserts via the admin (service-role) client so the
@@ -69,6 +73,11 @@ describe("POST /api/listings/submit", () => {
     vi.clearAllMocks();
     mockIsRateLimited.mockResolvedValue(false);
     mockProcessAdvisorOptIns.mockResolvedValue({ inserted: 0 });
+    // Phase 1: submit requires an authenticated user. Default to signed-in.
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u1", email: "owner@example.com" } },
+      error: null,
+    });
   });
 
   it("returns 429 when rate limit exceeded", async () => {
@@ -77,6 +86,14 @@ describe("POST /api/listings/submit", () => {
     expect(res.status).toBe(429);
     const json = await res.json();
     expect(json.error).toMatch(/Too many/i);
+  });
+
+  it("returns 401 when the user is not signed in", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+    const res = await POST(makePost(VALID_BODY));
+    expect(res.status).toBe(401);
+    const json = await res.json();
+    expect(json.error).toMatch(/signed in/i);
   });
 
   it("returns 400 for invalid JSON body", async () => {
