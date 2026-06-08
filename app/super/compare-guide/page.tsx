@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `How to Compare Super Funds in Australia (${CURRENT_YEAR} Guide) | invest.com.au`,
-  description: `How to compare Australian super funds beyond the headline return: long-term net returns, total fees, insurance, investment options, the APRA performance test, and the ATO YourSuper tool. ${UPDATED_LABEL}.`,
+  description: `Comparing super funds: long-term net returns, total fees, insurance, the APRA performance test, and the ATO YourSuper tool. ${UPDATED_LABEL}.`,
   alternates: { canonical: `${SITE_URL}/super/compare-guide` },
   openGraph: {
     title: `How to Compare Super Funds (${CURRENT_YEAR} Guide)`,

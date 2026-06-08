@@ -31,7 +31,7 @@ const researchFaqLd = faqJsonLd(RESEARCH_FAQS);
 export const metadata: Metadata = {
   title: `Investment Research & Sector Reports (${CURRENT_YEAR}) — Invest.com.au`,
   description:
-    "Download editorial investment research reports covering Australian energy, SMSF property, foreign investment, and critical minerals. Gated reports require a free email registration; ungated reports are direct-download.",
+    "Editorial investment research: Australian energy, SMSF property, foreign investment, and critical minerals. Free registration for gated reports.",
   alternates: { canonical: `${SITE_URL}/research` },
   openGraph: {
     title: `Investment Research & Sector Reports (${CURRENT_YEAR})`,

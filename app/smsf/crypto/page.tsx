@@ -13,7 +13,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: `Crypto in Your SMSF: ATO Rules, Tax & Compliance ${CURRENT_YEAR} | Invest.com.au`,
   description:
-    "Can your SMSF legally hold Bitcoin and other crypto? ATO says yes — if you pass the sole purpose test, document your investment strategy, and keep proper records. 15% tax in accumulation, 0% in pension phase.",
+    "SMSF crypto: hold Bitcoin legally if you pass the sole purpose test. 15% tax in accumulation, 0% in pension phase. Compliance requirements.",
   alternates: { canonical: `${SITE_URL}/smsf/crypto` },
   openGraph: {
     title: `Crypto in Your SMSF: ATO Rules, Tax & Compliance ${CURRENT_YEAR}`,

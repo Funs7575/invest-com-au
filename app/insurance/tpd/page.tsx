@@ -9,7 +9,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `TPD Insurance Australia (${CURRENT_YEAR}) — Total & Permanent Disability Guide`,
-  description: `Complete guide to TPD (Total and Permanent Disability) insurance in Australia: own occupation vs any occupation definitions, inside super vs outside, typical payouts, and how to choose cover. ${UPDATED_LABEL}.`,
+  description: `TPD insurance in Australia: own occupation vs any occupation, inside vs outside super, typical payouts, and how to choose cover. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `TPD Insurance Australia (${CURRENT_YEAR}) — Total & Permanent Disability Guide`,
     description: "Everything you need to know about TPD insurance in Australia — definitions, super vs outside, costs, and who needs it.",

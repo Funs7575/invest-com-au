@@ -42,7 +42,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `Full-Service Stockbrokers Australia (${CURRENT_YEAR}) — Compare Morgans, Ord Minnett, Shaw & More`,
   description:
-    "Compare Australia's full-service stockbrokers and private wealth firms by minimum portfolio, fee model, specialties and research offering. The other side of the DIY platform comparison — for investors who want help.",
+    "Compare Australian full-service stockbrokers and private wealth firms: minimum portfolio, fees, specialties, and research offerings.",
   alternates: { canonical: "/brokers/full-service" },
   openGraph: {
     title: "Full-Service Stockbrokers Australia",

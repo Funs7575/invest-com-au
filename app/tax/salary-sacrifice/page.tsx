@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: `Salary Sacrifice Australia (${CURRENT_YEAR}) — How It Works, Tax Savings & Examples`,
-  description: `Salary sacrifice (salary packaging) explained for Australia: super, novated car leases, FBT-exempt devices, worked examples by income, the $30,000 concessional cap, and how to set it up. ${UPDATED_LABEL}.`,
+  description: `Salary sacrifice in Australia: super, novated leases, FBT-exempt devices, and the $30k concessional cap. Worked examples. ${UPDATED_LABEL}.`,
   openGraph: {
     title: `Salary Sacrifice Australia (${CURRENT_YEAR}) — Complete Guide`,
     description:
