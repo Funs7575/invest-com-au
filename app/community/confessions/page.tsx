@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 60;
 
@@ -10,6 +11,27 @@ export const metadata: Metadata = {
   description:
     "Anonymous investing confessions from real investors. Share your own mistakes, wins, and honest thoughts — no judgement.",
 };
+
+const CONFESSIONS_FAQS = [
+  {
+    q: "What is the Investment Confessions section?",
+    a: "Investment Confessions is an anonymous forum section on the Invest.com.au community where real investors share honest stories about their investing journey — including mistakes, unexpected wins, and candid thoughts they might not share publicly with their name attached. Posts are written pseudonymously: you choose an anonymous handle when posting and your real identity is never displayed to other community members.",
+  },
+  {
+    q: "Is it really anonymous — can anyone see who posted?",
+    a: "Community members see only your chosen anonymous handle and the content you write — your name, email, and account details are never displayed publicly. Invest.com.au moderation staff can access posting metadata (account ID and timestamp) in the event of a Terms of Service violation, for example if content contains illegal material. We do not sell, share, or publish this metadata. See our Privacy Policy for the full data handling terms.",
+  },
+  {
+    q: "What kinds of confessions are appropriate to post?",
+    a: "Appropriate confessions include: investing mistakes and what you learned from them, honest thoughts about your strategy in hindsight, experiences with specific products or platforms (without naming advisers disparagingly), and candid observations about your own psychology as an investor. The community guidelines prohibit: personal attacks on other users, promotion of specific products or services, specific buy/sell recommendations ('you should buy X'), legally actionable claims about named individuals, or content that constitutes personal financial advice.",
+  },
+  {
+    q: "Does reading confessions constitute financial advice?",
+    a: "No. Content posted in Investment Confessions is user-generated community discussion — it is not reviewed by licensed advisers before publication and does not constitute financial advice. Individual experiences shared by community members reflect their personal circumstances, which are different from yours. Do not rely on confessions as a basis for making investment decisions. If you are facing a financial decision, consult a licensed financial adviser (AFSL-authorised). Invest.com.au's quote marketplace can connect you with a licensed adviser for free.",
+  },
+];
+
+const confessionsFaqLd = faqJsonLd(CONFESSIONS_FAQS);
 
 interface ConfessionThread {
   id: number;
@@ -80,6 +102,12 @@ export default async function ConfessionsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {confessionsFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(confessionsFaqLd) }}
+        />
+      )}
 
       <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
         <ol className="flex items-center gap-1 flex-wrap">
@@ -175,6 +203,21 @@ export default async function ConfessionsPage() {
           moderation staff can access metadata in the event of a Terms of Service violation.
         </p>
       </footer>
+
+      <section className="mt-10 border-t border-slate-200 pt-8 pb-4">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+        <div className="space-y-3">
+          {CONFESSIONS_FAQS.map((faq) => (
+            <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                {faq.q}
+                <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+              </summary>
+              <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

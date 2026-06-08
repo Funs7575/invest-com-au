@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 86400;
 
@@ -15,6 +16,27 @@ const breadcrumbLd = breadcrumbJsonLd([
   { name: "Methodology", url: absoluteUrl("/methodology") },
   { name: "The Invest Score" },
 ]);
+
+const INVEST_SCORE_FAQS = [
+  {
+    q: "What is The Invest Score and what does it measure?",
+    a: "The Invest Score is a daily composite index between 0 and 100 that summarises observable Australian market signals tracked by Invest.com.au. It aggregates four components: the average savings rate across all products in our database (Rate Level, 30%), the net direction of rate changes over 30 days (Rate Momentum, 25%), advisor enquiry volume compared to the 30-day baseline (Platform Activity, 30%), and the number of actively listed investment platforms in our directory (Market Breadth, 15%). It is a factual data summary — not a buy/sell signal, financial advice, or prediction of future returns.",
+  },
+  {
+    q: "How often is The Invest Score updated?",
+    a: "The Invest Score is recomputed once per calendar day by an automated job that runs alongside our daily savings-rate snapshot refresh. The homepage gauge is revalidated every hour. If the daily computation job has not yet completed for the current date, the previous day's score is displayed. Each component's source data is updated at different cadences: savings rate snapshots are daily, rate change logs are continuous, advisor metrics are daily, and broker active-status is updated when provider listings change.",
+  },
+  {
+    q: "Why does The Invest Score not include ASX index or RBA cash rate data?",
+    a: "The Invest Score is constructed entirely from Invest.com.au's own database of observable signals — savings rates, rate changes, advisor enquiries, and platform counts. It deliberately excludes real-time market prices (ASX index, commodity prices) and official monetary policy data (RBA cash rate) because these are publicly available through authoritative sources and incorporating them would require real-time data licensing. The score's value is in providing a single view across the signals specific to our platform's coverage — retail deposit rates and financial advice demand.",
+  },
+  {
+    q: "Is The Invest Score financial advice?",
+    a: "No. The Invest Score is general information only. It is a factual summary of observable signals in Invest.com.au's database and does not constitute personal financial advice or a recommendation to buy, sell, or hold any investment product. Past score readings are not a reliable guide to future market conditions. Always consider your personal circumstances and consult a licensed financial adviser (AFSL-authorised) before making investment decisions. Invest.com.au holds an Australian Financial Services Licence but does not provide personal advice.",
+  },
+];
+
+const investScoreFaqLd = faqJsonLd(INVEST_SCORE_FAQS);
 
 const COMPONENTS = [
   {
@@ -63,6 +85,12 @@ export default function InvestScoreMethodologyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {investScoreFaqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(investScoreFaqLd) }}
+        />
+      )}
       <div className="container-custom max-w-3xl py-10 md:py-16">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
@@ -168,6 +196,22 @@ export default function InvestScoreMethodologyPage() {
           <li>The score is a lagging indicator — it reflects conditions observable from data we have already collected, not real-time market prices.</li>
           <li>All weights were set editorially and may be adjusted as our data coverage grows.</li>
         </ul>
+
+        {/* FAQ accordion */}
+        <section className="mt-10 border-t border-slate-200 pt-8 mb-10">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-5">Frequently asked questions</h2>
+          <div className="space-y-3">
+            {INVEST_SCORE_FAQS.map((faq) => (
+              <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none">
+                  {faq.q}
+                  <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
 
         {/* Footer links */}
         <div className="border-t border-slate-200 pt-6 flex flex-wrap gap-4 text-sm">
