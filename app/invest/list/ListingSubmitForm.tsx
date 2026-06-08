@@ -6,6 +6,7 @@ import Icon from "@/components/Icon";
 import { AdvisorOptInCheckboxes } from "@/components/AdvisorOptInCheckboxes";
 import type { ProfessionalType } from "@/lib/types";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { useUser } from "@/lib/hooks/useUser";
 
 const VERTICALS = [
   { value: "business", label: "Business for Sale", icon: "💼", desc: "Sell your established business" },
@@ -28,7 +29,7 @@ const PLANS = [
   {
     id: "standard",
     name: "Standard",
-    price: "$99",
+    price: "Free",
     period: "/ 30 days",
     features: [
       "Listed in your vertical directory",
@@ -111,6 +112,11 @@ export default function ListingSubmitForm() {
   const [advisorOptIns, setAdvisorOptIns] = useState<ProfessionalType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Phase 1 (listings consolidation): posting requires an account. Gate the
+  // wizard so we never lose a part-filled form to a 401; the submit route
+  // enforces the same requirement server-side as defence-in-depth. useUser()
+  // is already in the shared bundle (Header uses it), so this adds no weight.
+  const { user, loading: authLoading } = useUser();
 
   function set(key: keyof FormData, value: string | boolean) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -190,6 +196,43 @@ export default function ListingSubmitForm() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (authLoading) {
+    return (
+      <div className="max-w-md mx-auto text-center py-10">
+        <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="max-w-md mx-auto text-center bg-white border border-slate-200 rounded-2xl p-8">
+        <div className="w-14 h-14 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Icon name="shield" size={26} className="text-amber-600" />
+        </div>
+        <h2 className="text-xl font-extrabold text-slate-900 mb-2">Sign in to list an opportunity</h2>
+        <p className="text-sm text-slate-600 mb-6">
+          Listings are tied to your account so you can manage them, track enquiries, and renew &mdash; and so every listing has a verified owner.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            href="/auth/login?next=/invest/list"
+            className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
+          >
+            Sign in
+            <Icon name="arrow-right" size={16} />
+          </Link>
+          <Link
+            href="/auth/signup?next=/invest/list"
+            className="inline-flex items-center justify-center gap-2 border border-slate-300 text-slate-700 font-semibold px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            Create an account
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   if (step === "success") {

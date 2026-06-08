@@ -709,20 +709,39 @@ export default async function InvestVerticalPage({
 }) {
   const { slug } = await params;
 
-  const supabase = await createClient();
-  const { data: vertical } = await supabase
-    .from("investment_verticals")
-    .select(
-      "id, slug, name, description, icon, fdi_share_percent, sort_order, hero_title, hero_subtitle, domestic, international"
-    )
-    .eq("slug", slug)
-    .single();
+  // Resolve the vertical defensively. This catch-all only serves slugs that
+  // have no dedicated /invest/<slug>/ directory, so an unknown or
+  // unresolvable slug must 404 cleanly rather than throwing into the segment
+  // error boundary (app/invest/[slug]/error.tsx) — which renders a 500 and is
+  // bad for both users and SEO (Google won't index a soft-500). `.single()`
+  // surfaces the no-row case as an error; `.maybeSingle()` + a try/catch turns
+  // every "can't resolve this vertical" path into a deterministic notFound().
+  let vertical: InvestmentVertical | null = null;
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("investment_verticals")
+      .select(
+        "id, slug, name, description, icon, fdi_share_percent, sort_order, hero_title, hero_subtitle, domestic, international"
+      )
+      .eq("slug", slug)
+      .maybeSingle();
+    if (error) {
+      log.error("vertical query failed", { err: error.message, slug });
+    }
+    vertical = (data as InvestmentVertical | null) ?? null;
+  } catch (err) {
+    log.error("vertical resolution threw", {
+      err: err instanceof Error ? err.message : String(err),
+      slug,
+    });
+  }
 
   if (!vertical) {
     notFound();
   }
 
-  const v = vertical as InvestmentVertical;
+  const v = vertical;
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },

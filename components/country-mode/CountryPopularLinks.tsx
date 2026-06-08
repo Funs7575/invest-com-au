@@ -1,6 +1,6 @@
 /**
- * Country Mode popular-starting-points strip — rendered above the
- * HomePathfinder when the user is in country mode. Each item is a
+ * Country Mode popular-starting-points strip — rendered near the top of
+ * the homepage when the user is in country mode. Each item is a
  * pre-filtered destination tailored to the country (e.g. "Brokers
  * that accept HK residents", "Get matched for HK investors").
  *

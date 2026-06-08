@@ -293,7 +293,7 @@ async function buildAdvisorSection(supabase: any, userId: string, since: string)
     const slug = p.professionals?.slug ?? "";
     const title = escapeHtml(p.title ?? p.body?.slice(0, 80) ?? "New post");
     return `<li style="margin-bottom:10px;font-size:14px;color:#334155">
-      <a href="${BASE_URL}/advisors/${slug}" style="color:#0f172a;font-weight:600;text-decoration:none">${name}</a>
+      <a href="${BASE_URL}/advisor/${slug}" style="color:#0f172a;font-weight:600;text-decoration:none">${name}</a>
       <span style="color:#64748b"> shared: </span>
       <span>${title}</span>
     </li>`;

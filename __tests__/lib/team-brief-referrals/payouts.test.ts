@@ -160,6 +160,86 @@ describe("recordReferralPayout", () => {
     expect(mockRecordLedgerEntry.mock.calls[0]?.[0]).toMatchObject({ kind: "lead_spend" });
   });
 
+  it("skips the accept-time charge for success_only pros but still pays the referrer", async () => {
+    const result = await recordReferralPayout({
+      referralId: 100,
+      briefId: 500,
+      acceptCreditsCost: 25,
+      acceptingProfessionalId: 1,
+      fromProfessionalId: 2,
+      fromTeamId: 10,
+      pricingTier: "success_only",
+    });
+
+    // No accept-time debit for success_only pros.
+    expect(result.chargeCents).toBe(0);
+    // Referrer payout is still 20% of the STANDARD 2500c basis = 500c.
+    expect(result.payoutCents).toBe(500);
+
+    // Only ONE ledger write — the referral_payout. No lead_spend.
+    expect(mockRecordLedgerEntry).toHaveBeenCalledTimes(1);
+    const kinds = mockRecordLedgerEntry.mock.calls.map((c) => c[0].kind);
+    expect(kinds).not.toContain("lead_spend");
+    expect(kinds).toContain("referral_payout");
+  });
+
+  it("charges the full accept cost for standard tier (explicit) and stamps the tier in metadata", async () => {
+    await recordReferralPayout({
+      referralId: 100,
+      briefId: 500,
+      acceptCreditsCost: 25,
+      acceptingProfessionalId: 1,
+      fromProfessionalId: 2,
+      fromTeamId: 10,
+      pricingTier: "standard",
+    });
+    const spendCall = mockRecordLedgerEntry.mock.calls.find(
+      (c) => c[0].kind === "lead_spend",
+    )?.[0];
+    expect(spendCall).toMatchObject({
+      amountCents: -2500,
+      kind: "lead_spend",
+      referenceType: "brief_accept",
+      referenceId: "500",
+    });
+    expect(spendCall?.metadata).toMatchObject({ pricing_tier_at_accept: "standard" });
+  });
+
+  it("defaults to standard tier (full charge) when pricingTier is omitted", async () => {
+    const result = await recordReferralPayout({
+      referralId: 100,
+      briefId: 500,
+      acceptCreditsCost: 25,
+      acceptingProfessionalId: 1,
+      fromProfessionalId: 2,
+      fromTeamId: 10,
+    });
+    expect(result.chargeCents).toBe(2500);
+    const kinds = mockRecordLedgerEntry.mock.calls.map((c) => c[0].kind);
+    expect(kinds).toContain("lead_spend");
+  });
+
+  it("relies on the ledger idempotency triple for the accept-time charge (brief_accept, briefId)", async () => {
+    // Re-running the same payout must reuse the (lead_spend, brief_accept,
+    // briefId) triple so a retry never double-charges.
+    await recordReferralPayout({
+      referralId: 100,
+      briefId: 500,
+      acceptCreditsCost: 25,
+      acceptingProfessionalId: 1,
+      fromProfessionalId: 2,
+      fromTeamId: 10,
+      pricingTier: "standard",
+    });
+    const spendCall = mockRecordLedgerEntry.mock.calls.find(
+      (c) => c[0].kind === "lead_spend",
+    )?.[0];
+    expect(spendCall).toMatchObject({
+      referenceType: "brief_accept",
+      referenceId: "500",
+    });
+  });
+
   it("throws when there is no payout target (null fromProfessionalId AND no team members)", async () => {
     mockFrom.mockImplementation((table: string) => {
       if (table === "expert_team_members") {

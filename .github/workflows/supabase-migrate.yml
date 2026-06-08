@@ -16,8 +16,14 @@
 #
 # Safety:
 #   - Only runs on push to `main` (not on PRs) or via manual dispatch.
-#   - Skips cleanly (no failure) when secrets aren't set, so the first
-#     push after this workflow lands won't break.
+#   - FAILS LOUDLY (red) when the required secrets aren't all set, so a
+#     misconfiguration can never again masquerade as a successful apply.
+#     (This replaced a "skip cleanly = green" precheck that silently
+#     no-op'd every run since the workflow landed — the live DB drifted
+#     from supabase/migrations/ the whole time and the green ticks hid it.
+#     This job is not a required check and does not trigger the auto-revert
+#     workflow, so a red here blocks nothing; it is purely a visible signal.
+#     See docs/runbooks/MIGRATION_DEPLOY_BACKLOG.md.)
 #   - `db push --include-all` applies any remote-missing migrations in
 #     order. Supabase records applied versions in
 #     `supabase_migrations.schema_migrations`, so re-runs are no-ops.
@@ -53,32 +59,31 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Check secrets are configured
-        id: precheck
+      - name: Require Supabase secrets
         env:
           ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
           DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
-          if [ -z "$ACCESS_TOKEN" ] || [ -z "$PROJECT_REF" ] || [ -z "$DB_PASSWORD" ]; then
-            echo "::warning::SUPABASE_ACCESS_TOKEN / SUPABASE_PROJECT_REF / SUPABASE_DB_PASSWORD secrets are not all set. Skipping migration apply. Configure them in Settings → Secrets → Actions to enable auto-apply."
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
+          missing=""
+          if [ -z "$ACCESS_TOKEN" ]; then missing="${missing} SUPABASE_ACCESS_TOKEN"; fi
+          if [ -z "$PROJECT_REF" ];  then missing="${missing} SUPABASE_PROJECT_REF"; fi
+          if [ -z "$DB_PASSWORD" ];  then missing="${missing} SUPABASE_DB_PASSWORD"; fi
+          if [ -n "$missing" ]; then
+            echo "::error::Supabase migrate did NOT run — missing required Actions secret(s):${missing}. No migrations were applied, so the live database will silently drift from supabase/migrations/. Set them under Settings → Secrets and variables → Actions, then re-run. NOTE: turning auto-apply on is founder/legal-gated until the migration backlog and the CSF compliance hold are cleared via docs/runbooks/MIGRATION_DEPLOY_BACKLOG.md (db push --include-all would otherwise replay the whole backlog at once)."
+            exit 1
           fi
+          echo "All required Supabase secrets are present — proceeding with apply."
 
       - name: Checkout
-        if: steps.precheck.outputs.skip != 'true'
         uses: actions/checkout@v6
 
       - name: Install Supabase CLI
-        if: steps.precheck.outputs.skip != 'true'
         uses: supabase/setup-cli@v2
         with:
           version: latest
 
       - name: Link project
-        if: steps.precheck.outputs.skip != 'true'
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
@@ -88,7 +93,6 @@ jobs:
             --password "$SUPABASE_DB_PASSWORD"
 
       - name: Push pending migrations
-        if: steps.precheck.outputs.skip != 'true'
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}

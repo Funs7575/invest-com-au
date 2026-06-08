@@ -9,6 +9,7 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { logger } from "@/lib/logger";
 import NextActions from "@/components/NextActions";
 import { faqJsonLd } from "@/lib/schema-markup";
+import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 
 const ADVISOR_FAQS = [
   {
@@ -116,6 +117,7 @@ async function AdvisorsData() {
       firmMemberCounts={firmMemberCounts}
       expertTeams={expertTeams}
       intentCountry={intentCountry}
+      banners={<DirectoryBanners surface="advisors" />}
     />
   );
 }

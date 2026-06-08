@@ -163,11 +163,37 @@ export const handleChargeRefunded: WebhookHandler = async (event, ctx) => {
   //   - advisor_billing       (a per-lead invoice)
   //
   // Default behaviour: write a `refund_to_credit` ledger row for the
-  // delta vs prior credit-refunds for the same charge. Cash refunds
-  // (refund_policy === "cash") skip the credit and rely on Stripe to
-  // return funds to the original card — no ledger row, since no balance
-  // movement.
+  // delta vs prior credit-refunds for the same charge.
+  //
+  // Cash refunds (refund_policy === "cash") return funds to the original
+  // card via Stripe. Whether that needs a ledger movement depends on
+  // what the original payment *granted*:
+  //
+  //   - advisor_billing (per-lead invoice): the original payment never
+  //     added to credit_balance_cents, so a cash refund is purely a
+  //     Stripe card movement — no ledger row (a true no-op).
+  //
+  //   - advisor_credit_topup: the original Checkout DID grant spendable
+  //     credit (checkout-session-completed records a `topup` ledger row
+  //     that raises credit_balance_cents by the full top-up). A cash
+  //     refund must therefore ALSO claw the granted credit back, or the
+  //     advisor keeps the credit AND gets the cash back (double-pay /
+  //     revenue leak). We record a negative `refund_to_cash_clawback`
+  //     ledger entry for the same partial-refund-safe delta, guarded by
+  //     the same (kind, reference_type, reference_id) idempotency triple.
+  //
+  //   Negative-balance policy (deliberate, conservative — flagged for
+  //   founder/ops sign-off): we claw the FULL granted delta even if the
+  //   advisor has already spent some of the credit on leads, so the
+  //   balance can go negative. This is the only option that returns net
+  //   credit to its pre-topup state; capping the clawback at the current
+  //   balance would silently under-claw and re-introduce the leak. A
+  //   negative balance is tolerated everywhere balance is consumed —
+  //   lead billing gates on `balance >= priceCents` (advisor-enquiry),
+  //   so a negative balance simply blocks further billed leads until the
+  //   advisor tops back up; it never crashes or over-charges.
   let advisorCreditRefundCents = 0;
+  let advisorCreditClawbackCents = 0;
   let advisorRefundIdempotent = false;
   let advisorRefundPolicy: string | null = null;
 
@@ -202,17 +228,15 @@ export const handleChargeRefunded: WebhookHandler = async (event, ctx) => {
 
   if (advisorSource) {
     advisorRefundPolicy = (charge.metadata?.refund_policy as string) ?? "credit";
-    if (advisorRefundPolicy === "cash") {
-      ctx.log.info("Advisor refund issued as cash — skipping credit ledger", {
-        chargeId: charge.id,
-        professionalId: advisorSource.professionalId,
-      });
-    } else {
-      // Partial-refund-safe delta — Stripe sends amount_refunded as the
-      // *cumulative* amount refunded on the charge.
-      // The `advisor_credit_ledger` table is new in this migration so it
-      // isn't in the auto-generated database.types.ts yet; cast to a
-      // loose query surface until the next types regen.
+
+    // Shared partial-refund-safe delta helper. Stripe sends
+    // amount_refunded as the *cumulative* amount refunded on the charge,
+    // so we subtract prior ledger rows of the same `kind` for this charge
+    // and only move the delta (capped against the original amount). The
+    // `advisor_credit_ledger` table isn't in the auto-generated
+    // database.types.ts yet; cast to a loose query surface until the next
+    // types regen.
+    const readPriorLedgerCents = async (kind: string): Promise<number> => {
       const ledgerQuery = (
         ctx.admin as unknown as {
           from: (t: string) => {
@@ -228,15 +252,86 @@ export const handleChargeRefunded: WebhookHandler = async (event, ctx) => {
           };
         }
       ).from("advisor_credit_ledger");
-      const { data: priorRefunds } = await ledgerQuery
+      const { data: priorRows } = await ledgerQuery
         .select("amount_cents")
-        .eq("kind", "refund_to_credit")
+        .eq("kind", kind)
         .eq("reference_type", "stripe_charge")
         .eq("reference_id", charge.id);
-      const alreadyCreditedCents = (priorRefunds ?? []).reduce(
-        (sum, r) => sum + (r.amount_cents ?? 0),
+      // Sum absolute magnitudes so the delta math is consistent whether the
+      // ledger rows are positive (refund_to_credit) or negative (clawback).
+      return (priorRows ?? []).reduce(
+        (sum, r) => sum + Math.abs(r.amount_cents ?? 0),
         0,
       );
+    };
+
+    if (advisorRefundPolicy === "cash") {
+      // For a per-lead invoice (advisor_billing) the original payment never
+      // granted credit, so a cash refund needs no ledger movement.
+      if (advisorSource.sourceType !== "advisor_credit_topup") {
+        ctx.log.info("Advisor cash refund — billing invoice, no credit to claw back", {
+          chargeId: charge.id,
+          professionalId: advisorSource.professionalId,
+        });
+      } else {
+        // Top-up cash refund: the original Checkout granted spendable
+        // credit. We MUST claw it back (negative ledger entry) or the
+        // advisor keeps the credit AND gets the cash. Same partial-refund
+        // delta math + idempotency triple as the credit branch.
+        const alreadyClawedBackCents = await readPriorLedgerCents("refund_to_cash_clawback");
+        const targetCents = Math.min(refundedAmountCents, advisorSource.originalCents);
+        const deltaCents = targetCents - alreadyClawedBackCents;
+
+        if (deltaCents <= 0) {
+          ctx.log.info("Advisor cash-refund clawback already fully applied — skipping", {
+            chargeId: charge.id,
+            professionalId: advisorSource.professionalId,
+            alreadyClawedBackCents,
+            targetCents,
+          });
+          advisorRefundIdempotent = true;
+        } else {
+          try {
+            const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+            const result = await recordLedgerEntry({
+              professionalId: advisorSource.professionalId,
+              // Negative: removes the granted credit. Balance may go
+              // negative if the advisor already spent some of it — that is
+              // the intended conservative policy (see block comment above).
+              amountCents: -deltaCents,
+              kind: "refund_to_cash_clawback",
+              description: `Stripe cash refund clawback — A$${(deltaCents / 100).toFixed(2)} (${advisorSource.sourceType})`,
+              referenceType: "stripe_charge",
+              referenceId: charge.id,
+              createdBy: "webhook",
+              metadata: {
+                source_type: advisorSource.sourceType,
+                source_id: advisorSource.sourceId,
+                cumulative_refunded_cents: refundedAmountCents,
+                original_amount_cents: advisorSource.originalCents,
+                refund_policy: "cash",
+              },
+              supabase: ctx.admin,
+            });
+            advisorCreditClawbackCents = deltaCents;
+            advisorRefundIdempotent = result.idempotent;
+            ctx.log.info("Advisor cash-refund clawback recorded", {
+              chargeId: charge.id,
+              professionalId: advisorSource.professionalId,
+              clawedBackCents: deltaCents,
+              balanceAfterCents: result.balanceAfterCents,
+            });
+          } catch (err) {
+            ctx.log.error("Advisor cash-refund clawback failed", {
+              error: err instanceof Error ? err.message : String(err),
+              chargeId: charge.id,
+              professionalId: advisorSource.professionalId,
+            });
+          }
+        }
+      }
+    } else {
+      const alreadyCreditedCents = await readPriorLedgerCents("refund_to_credit");
       const targetCents = Math.min(refundedAmountCents, advisorSource.originalCents);
       const deltaCents = targetCents - alreadyCreditedCents;
 
@@ -318,6 +413,7 @@ export const handleChargeRefunded: WebhookHandler = async (event, ctx) => {
       wallet_reversed: !!walletTxn,
       consultation_cancelled: !!booking,
       advisor_credit_refund_cents: advisorCreditRefundCents,
+      advisor_credit_clawback_cents: advisorCreditClawbackCents,
       advisor_refund_idempotent: advisorRefundIdempotent,
       advisor_refund_policy: advisorRefundPolicy,
     },

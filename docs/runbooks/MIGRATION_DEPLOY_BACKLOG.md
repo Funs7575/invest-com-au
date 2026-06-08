@@ -1,6 +1,28 @@
 # Runbook: Deploy the migration backlog + clear "Supabase types drift"
 
-**Status:** prep only — no changes have been applied to the production database by this runbook.
+> ## 🛑 SUPERSEDED — DO NOT FOLLOW (2026-06-07)
+>
+> This runbook's core action — `supabase db push` to apply "118 pending
+> migrations" — is **dangerous and based on a model that is no longer true**.
+> Measured 2026-06-07: only **5 of 250** local migration versions are tracked in
+> the prod ledger, so `db push` would attempt **~245** migrations — re-creating
+> existing tables and **re-running ~35 non-idempotent data backfills**, plus the
+> CSF/Tier-E startup-portal migration. The schema content is already ~98% in
+> prod; the real problem is a **forked migration ledger** caused by the
+> `supabase-migrate.yml` workflow silently no-op'ing for months (its secrets were
+> unset — see PR #1463).
+>
+> **Use instead:**
+> - **State:** `docs/audits/DB-STATE-2026-06-07.md`
+> - **Fix:** `docs/runbooks/MIGRATION_LEDGER_RECONCILIATION.md` (baseline-squash)
+>
+> The historical content below is retained for the per-migration notes and the
+> compliance-hold record only.
+
+---
+
+**Status:** ⚠️ SUPERSEDED — historical reference only. The original "prep only"
+status and the `db push` procedure below must not be executed.
 **Prepared:** 2026-05-26. **Project ref:** `guggzyqceattncjwvgyc` (invest-com-au, eu-west-1).
 
 ## Why this exists
@@ -24,6 +46,27 @@ Composition of the 118:
   changes; verify app auth still works after.
 - Feature/seed/repair migrations across the marketplace, advisor, content, and
   API surfaces.
+
+## Root cause of the backlog (confirmed 2026-06-07)
+
+The backlog is not just "we forgot to deploy" — the auto-deploy was never wired
+up. `.github/workflows/supabase-migrate.yml` is meant to `supabase db push` on
+every push to `main`, but its `SUPABASE_PROJECT_REF` and `SUPABASE_DB_PASSWORD`
+secrets were never set (only `SUPABASE_ACCESS_TOKEN` was), so its secret-precheck
+**green-skipped every run since the workflow landed** — it has never applied a
+single migration, while reporting success the whole time. That false-green is why
+drift accumulated unseen and why migrations only ever reached prod via manual
+`apply_migration` / direct SQL (e.g. the `drift_backfill_*` batch hand-applied on
+2026-06-04). The workflow now **fails loudly** when the secrets are missing, so the
+gap is visible.
+
+**Do not simply add the two secrets to "fix" it.** The first `db push
+--include-all` would replay this entire backlog at once — including the `#97` CSF
+compliance-hold migration below and ~35 hard-to-reverse data-backfills. Drain the
+backlog via the pipeline here first (snapshot → dry-run → resolve the compliance
+hold → push → regen types); only once the live ledger is at parity should the
+secrets be added to enable auto-apply for the steady state (where `--include-all`
+only ever has 0–1 pending migration).
 
 ## ⚠️ Compliance hold — review BEFORE deploy
 

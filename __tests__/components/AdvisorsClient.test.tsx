@@ -110,4 +110,17 @@ describe("AdvisorsClient — filter panel wiring", () => {
     render(<AdvisorsClient professionals={professionals} />);
     expect(screen.queryByText(/Filtering:/i)).not.toBeInTheDocument();
   });
+
+  // ADV-016: the All-filters button must show a labelled count, not a bare icon.
+  it("labels the filter button 'All filters' when nothing is active", () => {
+    render(<AdvisorsClient professionals={professionals} />);
+    expect(screen.getByRole("button", { name: "All filters" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Filters \(/ })).not.toBeInTheDocument();
+  });
+
+  it("labels the filter button 'Filters (N)' when N filters are active", () => {
+    paramsRef.current = new URLSearchParams("type=financial_planner");
+    render(<AdvisorsClient professionals={professionals} />);
+    expect(screen.getByRole("button", { name: "Filters (1)" })).toBeInTheDocument();
+  });
 });

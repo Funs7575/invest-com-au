@@ -259,7 +259,7 @@ export default async function OfficeHoursSessionPage({
               <p className="text-sm text-slate-600">
                 with{" "}
                 <Link
-                  href={`/advisors/${advisor.slug}`}
+                  href={`/advisor/${advisor.slug}`}
                   className="font-semibold text-indigo-600 hover:underline"
                 >
                   {advisor.name}

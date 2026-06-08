@@ -138,7 +138,7 @@ export async function maybeAutoRecharge(professionalId: number): Promise<void> {
 
     // Off-session PaymentIntent — Stripe charges the saved card without
     // user intervention. The webhook handler grants credits on success.
-    await stripe.paymentIntents.create({
+    const intent = await stripe.paymentIntents.create({
       amount: pack.priceCents,
       currency: "aud",
       customer: pro.stripe_customer_id,
@@ -161,19 +161,68 @@ export async function maybeAutoRecharge(professionalId: number): Promise<void> {
       professionalId,
       pack: pack.slug,
       amountCents: pack.priceCents,
+      intentStatus: intent.status,
     });
 
     // ── In-app inbox (C1 / mm06) ────────────────────────────────────
-    // The Stripe payment_intent is off_session + confirm:true above —
-    // a clean return means the charge succeeded and the webhook will
-    // grant credits asynchronously. We notify "succeeded" optimistically;
-    // any later refund / dispute lands its own row via the refund
-    // webhook handler.
-    void notifyProInbox(
-      pro,
-      "topup_succeeded",
-      `${pack.leads} credits topped up via auto-recharge (A$${(pack.priceCents / 100).toFixed(0)}).`,
-    );
+    // Gate the notification on the ACTUAL PaymentIntent status. A
+    // non-throwing return from `paymentIntents.create({confirm:true})`
+    // does NOT mean money settled: Stripe only THROWS for hard declines
+    // / authentication_required. It returns normally with status
+    // `processing`, `requires_action`, or `requires_payment_method` when
+    // the charge is pending or needs more from the cardholder. Firing
+    // "topup_succeeded" on a clean return therefore falsely tells the pro
+    // their balance topped up when it has not.
+    //
+    // - succeeded → real settlement; notify "succeeded".
+    // - requires_action / requires_payment_method → off-session step-up
+    //   (e.g. 3DS) or a card problem the pro must resolve; notify
+    //   "failed" with an action-required message so they take action.
+    // - processing (or any other non-terminal status) → no money has
+    //   settled yet; suppress the notification and let the asynchronous
+    //   webhook / reconciliation surface the eventual outcome. Do NOT
+    //   claim success.
+    //
+    // ⚠️ KNOWN LATENT GAP (founder + payments review — see PR body): even
+    // a genuinely `succeeded` raw PaymentIntent has no registered handler
+    // that grants the advisor_credit_topup credits. `checkout.session.
+    // completed` (the comment's stated design) never fires for a raw
+    // PaymentIntent, and the `payment_intent.succeeded` handler early-
+    // returns unless metadata.kind === "marketplace_payment". So the
+    // "succeeded" notification is presently still optimistic about the
+    // credit grant. Wiring the credit-grant path (Checkout Session in
+    // payment mode, or an advisor_credit_topup branch in a
+    // payment_intent.succeeded handler) is the load-bearing companion fix
+    // and is intentionally NOT done here — it is money-movement and needs
+    // explicit founder + payments sign-off.
+    if (intent.status === "succeeded") {
+      void notifyProInbox(
+        pro,
+        "topup_succeeded",
+        `${pack.leads} credits topped up via auto-recharge (A$${(pack.priceCents / 100).toFixed(0)}).`,
+      );
+    } else if (
+      intent.status === "requires_action" ||
+      intent.status === "requires_payment_method"
+    ) {
+      log.warn("auto-recharge needs cardholder action", {
+        professionalId,
+        intentStatus: intent.status,
+      });
+      void notifyProInbox(
+        pro,
+        "topup_failed",
+        "We couldn't complete your auto-recharge — your card needs verification or updating. Top up manually or update your payment method.",
+      );
+    } else {
+      // processing / requires_capture / canceled / unknown — the charge
+      // has not settled. Do not assert success; stay silent and let the
+      // webhook / reconciliation surface the eventual outcome.
+      log.info("auto-recharge pending (no success notification)", {
+        professionalId,
+        intentStatus: intent.status,
+      });
+    }
   } catch (err) {
     // Common failures: card declined, auth required, customer deleted.
     // Stripe surfaces these as `StripeCardError` — we log and let the

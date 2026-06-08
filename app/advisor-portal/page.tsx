@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import AdvisorPortalLogin from "./AdvisorPortalLogin";
+import { anyFetchFailed } from "@/lib/advisor-portal/load-state";
 import type {
   Advisor,
   Lead, Stats, ViewDay, Review, WeeklyEnquiry, ProfileCompleteness,
@@ -60,9 +61,13 @@ export default function AdvisorPortalPage() {
 
   // Onboarding banner
   const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
-  const [dataLoadError, setDataLoadError] = useState(false);
   const [dataLoadedAt, setDataLoadedAt] = useState<Date | null>(null);
   const [moreNavOpen, setMoreNavOpen] = useState(false);
+
+  // Dashboard load error (ADV-003): surface a banner instead of silently
+  // swallowing fetch failures so advisors aren't left staring at a blank shell.
+  const [loadError, setLoadError] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -118,14 +123,18 @@ export default function AdvisorPortalPage() {
   };
 
   const loadData = useCallback(async () => {
-    setDataLoadError(false);
-    try {
-      const [dashRes, summaryRes] = await Promise.all([
-        fetch("/api/advisor-dashboard"),
-        fetch("/api/advisor-auth/billing-summary"),
-      ]);
-      if (dashRes.ok) {
-        const data = await dashRes.json();
+    // ADV-003: track each call independently so a single failed/unavailable API
+    // surfaces a banner rather than being silently swallowed.
+    const [dashResult, summaryResult] = await Promise.allSettled([
+      fetch("/api/advisor-dashboard"),
+      fetch("/api/advisor-auth/billing-summary"),
+    ]);
+
+    let parseFailed = false;
+
+    if (dashResult.status === "fulfilled" && dashResult.value.ok) {
+      try {
+        const data = await dashResult.value.json();
         setLeads(data.leads);
         setStats(data.stats);
         setViewsByDay(data.viewsByDay);
@@ -134,18 +143,29 @@ export default function AdvisorPortalPage() {
         setProfileCompleteness(data.profileCompleteness || null);
         if (data.categoryPricing) setCategoryPricing(data.categoryPricing);
         if (data.advisor) setAdvisor(data.advisor);
-      } else {
-        setDataLoadError(true);
+      } catch {
+        parseFailed = true;
       }
-      if (summaryRes.ok) {
-        const summary = (await summaryRes.json()) as BillingSummary;
-        setBillingSummary(summary);
-      }
-      setDataLoadedAt(new Date());
-    } catch {
-      setDataLoadError(true);
     }
+
+    if (summaryResult.status === "fulfilled" && summaryResult.value.ok) {
+      try {
+        const summary = (await summaryResult.value.json()) as BillingSummary;
+        setBillingSummary(summary);
+      } catch {
+        parseFailed = true;
+      }
+    }
+
+    setLoadError(parseFailed || anyFetchFailed([dashResult, summaryResult]));
+    setDataLoadedAt(new Date());
   }, []);
+
+  const refreshData = useCallback(async () => {
+    setRefreshing(true);
+    await loadData();
+    setRefreshing(false);
+  }, [loadData]);
 
   const logout = async () => {
     await fetch("/api/advisor-auth/session", { method: "DELETE" });
@@ -370,13 +390,29 @@ export default function AdvisorPortalPage() {
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 py-6">
 
-        {/* ─── DATA LOAD ERROR BANNER ─── */}
-        {dataLoadError && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-            <Icon name="alert-circle" size={18} className="text-red-500 shrink-0" />
-            <p className="text-sm text-red-700 flex-1">Some data couldn&apos;t be loaded — your dashboard may be incomplete.</p>
-            <button onClick={() => loadData()} className="text-xs font-semibold text-red-600 hover:text-red-800 underline whitespace-nowrap">
-              Try again
+        {/* ─── LOAD ERROR BANNER (ADV-003) ─── */}
+        {loadError && (
+          <div
+            role="alert"
+            className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-start gap-3"
+          >
+            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+              <Icon name="alert-triangle" size={16} className="text-red-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-bold text-red-900">Some data couldn&apos;t be loaded</h3>
+              <p className="text-xs text-red-700 mt-0.5">
+                We couldn&apos;t reach part of your dashboard. Some figures may be out of date or missing.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={refreshData}
+              disabled={refreshing}
+              className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-100 disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
+            >
+              <Icon name="rotate-ccw" size={14} className={refreshing ? "animate-spin" : ""} />
+              {refreshing ? "Refreshing…" : "Try again"}
             </button>
           </div>
         )}

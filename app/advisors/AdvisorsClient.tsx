@@ -2,11 +2,12 @@
 
 /* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
+import DirectoryHero from "@/components/directory/DirectoryHero";
 import type { Professional, ProfessionalType, AdvisorFirm } from "@/lib/types";
 import EligibilityBadge from "@/components/EligibilityBadge";
 import { PROFESSIONAL_TYPE_LABELS, PROFESSIONAL_TYPE_ICONS, AU_STATES, AU_LANGUAGES } from "@/lib/types";
@@ -246,7 +247,7 @@ function AdvisorPhoto({
   );
 }
 
-export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [], editorial, firms = [], firmMemberCounts = {}, expertTeams = [], intentCountry = null }: {
+export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [], editorial, firms = [], firmMemberCounts = {}, expertTeams = [], intentCountry = null, banners = null }: {
   professionals: Professional[];
   initialType?: ProfessionalType;
   initialState?: string;
@@ -259,6 +260,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   expertTeams?: ExpertTeamCard[];
   /** PR queue #12.5 — visitor's resolved intent country. When set, every advisor card renders an EligibilityBadge based on country_eligibility. */
   intentCountry?: import("@/lib/intent-context").IntentCountryCode | null;
+  /** Server-rendered country banner stack, passed through so it can render in the
+      canonical slot directly below the shared DirectoryHero (matches /invest, /compare). */
+  banners?: ReactNode;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -672,48 +676,27 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   }, [professionals]);
 
   return (
-    <div className="py-5 md:py-12">
-      <div className="container-custom">
-        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
-          <Link href="/" className="hover:text-slate-900">Home</Link>
-          <span className="mx-1.5 md:mx-2">/</span>
-          <span className="text-slate-700">{activeTypeLabel || "Find an Advisor"}</span>
-        </nav>
-
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-ink-900 to-ink-800 text-white p-5 md:p-8 mb-4 md:mb-6 shadow-sm">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(242,88,34,.20), transparent 65%)" }}
-          />
-          <div className="relative grid gap-6 md:grid-cols-[1.4fr_1fr] md:items-end">
-            <div>
-              <span className="iv2-pill border border-coral-500/30 bg-coral-500/15 text-coral-300">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-coral-400" />
-                Verified advisors
-              </span>
-              <h1 className="mt-3 md:mt-4 text-2xl md:text-5xl font-extrabold leading-[1.04] tracking-tight">
-                {activeTypeLabel
-                  ? <>{providerTypeCounts.all} {dynamicTitle.replace(/^Find\s+/, "").toLowerCase()}</>
-                  : <>{providerTypeCounts.all} licensed advisors.</>}
-                <span className="hidden md:inline"><br /><span className="text-coral-400">Three free intros.</span></span>
-              </h1>
-              <p className="mt-3 md:mt-4 max-w-xl text-xs md:text-base leading-relaxed text-white/70">
-                <span className="md:hidden">{dynamicDescription.slice(0, 80)}…</span>
-                <span className="hidden md:inline">{dynamicDescription}</span>
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-2.5 md:gap-3">
-              {advisorHeroStats.map((s) => (
-                <div key={s.l} className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 md:px-4 md:py-3">
-                  <div className="iv2-bignum text-xl text-white md:text-3xl">{s.v}</div>
-                  <div className="mt-1 text-[11px] font-semibold text-white/55 md:text-xs">{s.l}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
+    <>
+      {/* Shared full-bleed dark stat-led hero (SC-4) — matches /invest + /compare.
+          Headline + breadcrumb stay filter-reactive; banners render in the
+          canonical slot directly below the hero. */}
+      <DirectoryHero
+        containerClassName="container-custom"
+        breadcrumbLabel={activeTypeLabel || "Find an Advisor"}
+        pill={{ label: "Verified advisors", live: true }}
+        headlineLead={
+          activeTypeLabel
+            ? `${providerTypeCounts.all} ${dynamicTitle.replace(/^Find\s+/, "").toLowerCase()}`
+            : `${providerTypeCounts.all} licensed advisors.`
+        }
+        headlineAccent="Three free intros."
+        subtitle={dynamicDescription}
+        stats={advisorHeroStats}
+      >
+        {banners}
+      </DirectoryHero>
+      <div className="py-5 md:py-12">
+        <div className="container-custom">
         {/* Advisor matching + concierge — light band below the hero */}
         <div className="mb-4 md:mb-6">
           <p className="text-sm font-medium text-slate-600 mb-2 text-center">Not sure which advisor you need? Get matched in 60 seconds.</p>
@@ -782,7 +765,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             className={`inline-flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg border text-sm font-bold whitespace-nowrap transition-colors shrink-0 ${activeFilterCount > 0 ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-800 border-slate-300 hover:border-slate-400"}`}
           >
             <Icon name="sliders" size={14} />
-            <span>{activeFilterCount > 0 ? `Filters (${activeFilterCount})` : "All filters"}</span>
+            {/* ADV-016: show the active count on mobile too, not just a bare
+                sliders icon. "Filters (N)" when filters are active, else the
+                full "All filters" label. */}
           </button>
           <SortDropdown
             options={SORT_OPTIONS.map((o) => ({ value: o.key, label: o.label }))}
@@ -1251,7 +1236,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                         onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
                         disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
                         title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
-                        className={`shrink-0 p-1.5 rounded-lg backdrop-blur transition-colors ${inShortlist(pro.slug) ? "text-white bg-violet-600 hover:bg-violet-700" : shortlistCount >= shortlistMax ? "text-white/40 bg-black/30 cursor-not-allowed" : "text-white/90 bg-black/45 hover:text-white hover:bg-black/60"}`}
+                        className={`shrink-0 p-1.5 rounded-lg backdrop-blur transition-colors ${inShortlist(pro.slug) ? "text-slate-900 bg-amber-500 hover:bg-amber-400" : shortlistCount >= shortlistMax ? "text-white/40 bg-black/30 cursor-not-allowed" : "text-white/90 bg-black/45 hover:text-white hover:bg-black/60"}`}
                       >
                         <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
                       </button>
@@ -1567,5 +1552,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         </div>
       </div>
     </div>
+    </>
   );
 }

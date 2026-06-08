@@ -20,16 +20,16 @@ import { logger } from "@/lib/logger";
 import { listingUrl, categoryForListing, rawVerticalVariants } from "@/lib/listing-url";
 import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import { faqJsonLd } from "@/lib/schema-markup";
-import InvestListingsClient from "@/components/InvestListingsClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { loadInvestPageContext } from "@/lib/listing-page-context";
 import { computeMatchScore } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
-import DirectoryHero from "@/components/directory/DirectoryHero";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
+import DirectoryHero from "@/components/directory/DirectoryHero";
+import InvestListingsClient from "@/components/InvestListingsClient";
 
 const log = logger("invest-marketplace");
 
@@ -196,20 +196,21 @@ export default async function InvestMarketplacePage() {
   const categories = getOpportunityCategories();
   const categoryTabs = categories.map((c) => ({ slug: c.slug, label: c.label }));
 
-  // Discovery-card counts must match what the sector pages actually fetch.
-  // A listing belongs to a category only if BOTH conditions hold:
-  //   1. categoryForListing(l) === cat.slug
-  //   2. l.vertical is one of the category's alias-expanded dbVerticals
-  //      (for vertical-based categories) — OR there are no dbVerticals
-  //      (kind-based, e.g. listed-securities, which are bucketed purely
-  //      by categoryForListing).
-  // Using rawVerticalVariants expands each canonical vertical to its known
-  // alias set, so slugs like "renewable-energy" / "renewables" / "startups"
-  // all map to the right category rather than falling through to "funds".
+  // Discovery-card counts must match what each sector's /listings page
+  // actually shows. That page fetches by the category's vertical(s) and then
+  // the client filters by categoryForListing — so a listing counts for a
+  // sector only if it satisfies BOTH: categoryForListing(l) === slug AND
+  // l.vertical is one of the category's (alias-expanded) verticals.
+  // (categoryForListing alone over-counted "funds": cross-vertical listed
+  // securities — uranium/hydrogen/oil-gas ASX stocks — fall to "funds" via
+  // the categoryForListing fallback but aren't fetched by the funds page's
+  // vertical query, so the badge said 55 while the page showed 11.)
   const categoryCounts: Record<string, number> = {};
   for (const cat of categories) {
     const verts = new Set(cat.dbVerticals.flatMap(rawVerticalVariants));
-    const kindBased = verts.size === 0;
+    // Kind-based categories (no dbVerticals — e.g. listed-securities) are
+    // bucketed purely by categoryForListing; vertical-based ones additionally
+    // require the listing's vertical to be one the sector page fetches.
     categoryCounts[cat.slug] = listings.filter(
       (l) => categoryForListing(l) === cat.slug && (kindBased || verts.has(l.vertical as string)),
     ).length;
@@ -309,7 +310,6 @@ export default async function InvestMarketplacePage() {
       <div className="container-custom max-w-5xl mt-4 mb-2">
         <GetMatchedEmbed context="opportunity" />
       </div>
-
       {/* ── Marketplace (primary — no two-step) ───────────────── */}
       {/* Suspense required: InvestListingsClient calls useSearchParams(), which
           causes Next.js to bail out of SSR for the whole page when unwrapped.

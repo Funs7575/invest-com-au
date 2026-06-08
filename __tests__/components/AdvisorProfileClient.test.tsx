@@ -92,3 +92,98 @@ describe("AdvisorProfileClient enquiry submit", () => {
     expect(screen.queryByText(/temporarily unavailable/i)).not.toBeInTheDocument();
   });
 });
+
+describe("AdvisorProfileClient booking CTA (ADV-002)", () => {
+  afterEach(() => vi.clearAllMocks());
+
+  it("renders a primary 'Book a Call' CTA when booking_link is set", () => {
+    render(
+      <AdvisorProfileClient
+        professional={pro({ booking_link: "https://cal.com/jane" })}
+        similar={[]}
+        reviews={[]}
+      />,
+    );
+    const bookLinks = screen.getAllByRole("link", { name: /Book a Call/i });
+    expect(bookLinks.length).toBeGreaterThan(0);
+    // The hero booking CTA points at the external booking link, not the form anchor.
+    expect(bookLinks[0]).toHaveAttribute("href", "https://cal.com/jane");
+    expect(bookLinks[0]).toHaveAttribute("target", "_blank");
+  });
+
+  it("does not render a 'Book a Call' CTA when booking_link is absent", () => {
+    render(<AdvisorProfileClient professional={pro()} similar={[]} reviews={[]} />);
+    expect(screen.queryByRole("link", { name: /Book a Call/i })).not.toBeInTheDocument();
+  });
+});
+
+describe("AdvisorProfileClient reviews cap note (ADV-011)", () => {
+  const review = (id: number) => ({
+    id,
+    reviewer_name: `Reviewer ${id}`,
+    rating: 5,
+    title: "Great",
+    body: "Helpful advisor.",
+    created_at: "2026-01-01T00:00:00Z",
+    status: "approved",
+  }) as unknown as import("@/lib/types").ProfessionalReview;
+
+  it("notes the cap when more approved reviews exist than were embedded", () => {
+    render(
+      <AdvisorProfileClient
+        professional={pro({ rating: 5, review_count: 47 })}
+        similar={[]}
+        reviews={[review(1), review(2)]}
+        reviewTotalCount={47}
+      />,
+    );
+    const note = screen.getByTestId("reviews-cap-note");
+    expect(note).toHaveTextContent(/Showing the 2 most recent reviews of 47 total/i);
+  });
+
+  it("does not show the cap note when all reviews are shown", () => {
+    render(
+      <AdvisorProfileClient
+        professional={pro({ rating: 5, review_count: 2 })}
+        similar={[]}
+        reviews={[review(1), review(2)]}
+        reviewTotalCount={2}
+      />,
+    );
+    expect(screen.queryByTestId("reviews-cap-note")).not.toBeInTheDocument();
+  });
+});
+
+describe("AdvisorProfileClient expert team link (ADV-013)", () => {
+  it("renders 'Part of <Team>' linking to the team page", () => {
+    render(
+      <AdvisorProfileClient
+        professional={pro()}
+        similar={[]}
+        reviews={[]}
+        expertTeams={[{ slug: "smsf-squad", name: "SMSF Squad", public_title: "Lead Strategist" }]}
+      />,
+    );
+    const teamLink = screen.getByRole("link", { name: /Part of SMSF Squad/i });
+    expect(teamLink).toHaveAttribute("href", "/teams/smsf-squad");
+    expect(screen.getByText("Lead Strategist")).toBeInTheDocument();
+  });
+
+  it("renders nothing extra when the advisor has no public teams", () => {
+    render(<AdvisorProfileClient professional={pro()} similar={[]} reviews={[]} />);
+    expect(screen.queryByText(/Part of /i)).not.toBeInTheDocument();
+  });
+});
+
+describe("AdvisorProfileClient last-updated caption (ADV-019)", () => {
+  it("shows a 'Profile updated' caption derived from updated_at", () => {
+    render(
+      <AdvisorProfileClient
+        professional={pro({ updated_at: "2026-01-01T00:00:00Z" })}
+        similar={[]}
+        reviews={[]}
+      />,
+    );
+    expect(screen.getByText(/Profile updated/i)).toBeInTheDocument();
+  });
+});

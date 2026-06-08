@@ -54,7 +54,12 @@ export default async function FundsListingsPage() {
         <InvestListingsClient
           listings={listings}
           categories={categoryTabs}
-          lockedCategory="fund"
+          // Must be the category SLUG ("funds"), not the DB vertical ("fund").
+          // InvestListingsClient filters client-side by
+          // categoryForListing(l) === lockedCategory, and categoryForListing
+          // returns the slug "funds" — so "fund" matched nothing and the page
+          // rendered "0 listings" despite 78 fund rows.
+          lockedCategory="funds"
           pageTitle="Fund Investment Listings"
           pageSubtitle="Browse Australian fund investment opportunities — managed funds, syndicated property funds, infrastructure funds and wholesale vehicles open to qualified investors."
         />

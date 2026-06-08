@@ -14,8 +14,15 @@ import { trackEvent } from "@/lib/tracking";
 import { submitLead } from "@/lib/submit-lead-client";
 import { isCrossBorderSpecialty } from "@/lib/advisor-billing-multipliers";
 import { browseAdvisorsHref } from "@/lib/find-advisor/browse-link";
+import { formatCountdown, secondsRemaining } from "@/lib/format-countdown";
 import EligibilityQuizSkipBanner from "@/components/EligibilityQuizSkipBanner";
 import CountryRuleAlerts from "@/components/CountryRuleAlerts";
+
+// ADV-015: OTP codes are valid for 10 minutes server-side; mirror that for the
+// expiry countdown. Resend is gated for a short cooldown to discourage spamming
+// the rate-limited send endpoint, then re-enabled.
+const OTP_TTL_MS = 10 * 60 * 1000;
+const OTP_RESEND_COOLDOWN_MS = 30 * 1000;
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -103,49 +110,42 @@ function clearMatchStorage() {
   try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
 }
 
-// ─── Quiz-progress persistence (localStorage, non-PII only) ──────────────────
+// ─── In-progress quiz persistence (ADV-008) ──────────────────────────────────
+// Unlike the match payload above (sessionStorage, cleared on tab close), the
+// in-progress answers are saved to localStorage so a visitor who closes the
+// browser mid-quiz can resume where they left off.
 
-const QUIZ_PROGRESS_KEY = "quiz-progress";
+const PROGRESS_KEY = "quiz-progress";
+const PROGRESS_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-interface QuizProgress {
-  step: number;
-  intent: Intent | null;
-  context: string[];
-  state: string;
-  postcode: string;
-  suburb: string;
-  budget: string;
-  savedAt: number;
+interface PersistedProgress {
+  quiz: QuizState;
+  timestamp: number;
 }
 
-function saveQuizProgress(q: QuizState) {
-  if (q.step >= 5 || !q.intent) return;
+function saveQuizProgress(quiz: QuizState) {
   try {
-    const p: QuizProgress = {
-      step: q.step, intent: q.intent, context: q.context,
-      state: q.state, postcode: q.postcode, suburb: q.suburb, budget: q.budget,
-      savedAt: Date.now(),
-    };
-    localStorage.setItem(QUIZ_PROGRESS_KEY, JSON.stringify(p));
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify({ quiz, timestamp: Date.now() }));
   } catch {}
 }
 
-function loadQuizProgress(): QuizProgress | null {
+function loadQuizProgress(): QuizState | null {
   try {
-    const raw = typeof localStorage !== "undefined" ? localStorage.getItem(QUIZ_PROGRESS_KEY) : null;
+    const raw = localStorage.getItem(PROGRESS_KEY);
     if (!raw) return null;
-    const data = JSON.parse(raw) as QuizProgress;
-    if (Date.now() - data.savedAt > 24 * 60 * 60 * 1000) {
-      localStorage.removeItem(QUIZ_PROGRESS_KEY);
+    const data = JSON.parse(raw) as PersistedProgress;
+    if (!data?.quiz || Date.now() - data.timestamp > PROGRESS_TTL_MS) {
+      localStorage.removeItem(PROGRESS_KEY);
       return null;
     }
-    if (!data.intent || data.step < 2) return null;
-    return data;
-  } catch { return null; }
+    return data.quiz;
+  } catch {
+    return null;
+  }
 }
 
 function clearQuizProgress() {
-  try { localStorage.removeItem(QUIZ_PROGRESS_KEY); } catch {}
+  try { localStorage.removeItem(PROGRESS_KEY); } catch {}
 }
 
 // ─── Step 1 data ──────────────────────────────────────────────────────────────
@@ -471,6 +471,12 @@ function FindAdvisorQuiz() {
   const _savedMatch = typeof sessionStorage !== "undefined" ? loadMatchFromStorage() : null;
   const savedMatch = _savedMatch && _savedMatch.matchedAdvisors.length > 0 ? _savedMatch : null;
 
+  // ADV-008: in-progress answers persisted to localStorage. Only offer a resume
+  // when there's no completed match to restore and the user actually got past
+  // the first step.
+  const _savedProgress = typeof localStorage !== "undefined" ? loadQuizProgress() : null;
+  const resumableQuiz = !savedMatch && _savedProgress && _savedProgress.step > 1 ? _savedProgress : null;
+
   // If no explicit ?need= param, check whether the user just came through the
   // /start matchmaker and use that context to pre-fill their intent.
   const matchmakerIntent = !prefilledIntent ? getMatchmakerIntent() : null;
@@ -535,6 +541,9 @@ function FindAdvisorQuiz() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(!!savedMatch);
+  // ADV-008: whether the "Resume your quiz" banner should still show. Hidden
+  // once the user resumes or dismisses it.
+  const [showResumePrompt, setShowResumePrompt] = useState(!!resumableQuiz);
   const [matchedAdvisors, setMatchedAdvisors] = useState<MatchedAdvisor[]>(() => savedMatch?.matchedAdvisors ?? []);
   const [excludeIds, setExcludeIds] = useState<number[]>(() => savedMatch?.excludeIds ?? []);
   const [leadIds, setLeadIds] = useState<number[]>(() => savedMatch?.leadIds ?? []);
@@ -546,8 +555,35 @@ function FindAdvisorQuiz() {
   const [otpCode, setOtpCode] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
   const [otpSentAt, setOtpSentAt] = useState<number | null>(null);
-  const [savedProgress, setSavedProgress] = useState<QuizProgress | null>(null);
+  const [savedProgress, setSavedProgress] = useState<QuizState | null>(null);
+  // ADV-015: OTP expiry countdown + resend cooldown. Codes are valid for 10 min
+  // server-side; the resend button is gated for a short cooldown then re-enabled.
+  const [otpExpiresAt, setOtpExpiresAt] = useState<number | null>(null);
+  const [otpResendAt, setOtpResendAt] = useState<number | null>(null);
+  const [nowMs, setNowMs] = useState(() => Date.now());
 
+  // Tick once a second while a code is outstanding so the countdown and the
+  // resend-cooldown derived values stay live. Stops at expiry to avoid a
+  // permanent interval.
+  const otpPanelActive = otpStage === "sent" || otpStage === "verifying";
+  useEffect(() => {
+    if (!otpPanelActive || otpExpiresAt == null) return;
+    const id = setInterval(() => setNowMs(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [otpPanelActive, otpExpiresAt]);
+
+  const otpSecondsLeft = otpExpiresAt ? secondsRemaining(otpExpiresAt, nowMs) : 0;
+  const otpExpired = otpExpiresAt != null && otpSecondsLeft <= 0;
+  const otpCanResend = otpResendAt == null || nowMs >= otpResendAt;
+  const otpResendInSeconds = otpResendAt ? secondsRemaining(otpResendAt, nowMs) : 0;
+
+  // ADV-008: persist in-progress answers so the quiz can be resumed later.
+  // Skip the pristine step-1 state and stop once a match is submitted (the
+  // match payload owns that lifecycle, and we clear progress on success).
+  useEffect(() => {
+    if (submitted) return;
+    if (quiz.step > 1) saveQuizProgress(quiz);
+  }, [quiz, submitted]);
 
   const currentMatch = matchedAdvisors.length > 0 ? matchedAdvisors[matchedAdvisors.length - 1] : null;
 
@@ -600,8 +636,22 @@ function FindAdvisorQuiz() {
     setQuiz({ step: 1, intent: null, context: [], state: "", postcode: "", suburb: "", budget: "", firstName: "", email: "", phone: "", consent: false });
     setErrors({}); setSubmitError(null); setSubmitted(false);
     setMatchedAdvisors([]); setExcludeIds([]); setNoMoreMatches(false);
+    setShowResumePrompt(false);
     clearMatchStorage();
-    clearQuizProgress();
+    clearQuizProgress(); // ADV-008
+  };
+
+  // ADV-008: restore a previously-saved in-progress quiz.
+  const resumeQuiz = () => {
+    if (!resumableQuiz) return;
+    setQuiz(resumableQuiz);
+    setShowResumePrompt(false);
+    setErrors({});
+    trackEvent("find_advisor_resume", { step: resumableQuiz.step }, "/find-advisor");
+  };
+
+  const dismissResume = () => {
+    setShowResumePrompt(false);
   };
 
   const handleIntent = (intent: Intent) => {
@@ -702,6 +752,10 @@ function FindAdvisorQuiz() {
       });
       const data = await res.json();
       if (!res.ok) { setOtpError(data.error || "Failed to send code."); setOtpStage("idle"); return; }
+      const sentAt = Date.now();
+      setOtpExpiresAt(sentAt + OTP_TTL_MS);
+      setOtpResendAt(sentAt + OTP_RESEND_COOLDOWN_MS);
+      setNowMs(sentAt);
       setOtpStage("sent");
       setOtpSentAt(Date.now());
     } catch {
@@ -759,6 +813,7 @@ function FindAdvisorQuiz() {
       }
       setSubmitted(true);
       update({ step: 5 });
+      clearQuizProgress(); // ADV-008: quiz finished — drop the resume snapshot.
       trackEvent("find_advisor_complete", { intent: quiz.intent, matched: !!data.matched }, "/find-advisor");
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Network error. Please try again.");
@@ -887,6 +942,33 @@ function FindAdvisorQuiz() {
           <span className="text-slate-600 font-medium">Find an Advisor</span>
         </nav>
 
+        {/* Resume-in-progress banner (ADV-008) */}
+        {showResumePrompt && resumableQuiz && quiz.step === 1 && (
+          <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+            <div className="flex items-start gap-2.5 flex-1 min-w-0">
+              <Icon name="clock" size={18} className="text-amber-600 shrink-0 mt-0.5" />
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-amber-900">Pick up where you left off</p>
+                <p className="text-xs text-amber-700">
+                  You started this quiz earlier — resume to skip the questions you already answered.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button type="button" variant="primary" onClick={resumeQuiz} className="px-4 py-2 text-sm">
+                Resume quiz
+              </Button>
+              <button
+                type="button"
+                onClick={dismissResume}
+                className="text-xs font-semibold text-amber-700 hover:text-amber-900 px-2 py-2"
+              >
+                Start fresh
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Progress bar */}
         {quiz.step <= 4 && (
           <div className="mb-8">
@@ -958,6 +1040,10 @@ function FindAdvisorQuiz() {
             onOtpCodeChange={setOtpCode}
             onOtpVerify={handleVerifyAndSubmit}
             onOtpResend={handleSendOtp}
+            otpSecondsLeft={otpSecondsLeft}
+            otpExpired={otpExpired}
+            otpCanResend={otpCanResend}
+            otpResendInSeconds={otpResendInSeconds}
           />
         )}
 
@@ -1043,7 +1129,7 @@ function Step1({ onSelect }: { onSelect: (intent: Intent) => void }) {
       </div>
       <div className="mt-4 text-center">
         <Link href="/find-advisor/life-event" className="text-xs text-amber-700 hover:text-amber-800 font-semibold">
-          Find by life event instead (getting married, new baby, selling a business\u2026) &rarr;
+          Find by life event instead (getting married, new baby, selling a business…) &rarr;
         </Link>
       </div>
     </Card>
@@ -1351,7 +1437,8 @@ function Step3({
 function Step4({
   firstName, email, phone, consent, onChange, onSubmit, onBack,
   submitting, errors, submitError,
-  otpStage, otpCode, otpError, otpSentAt, onOtpCodeChange, onOtpVerify, onOtpResend,
+  otpStage, otpCode, otpError, onOtpCodeChange, onOtpVerify, onOtpResend,
+  otpSentAt, otpSecondsLeft, otpExpired, otpCanResend, otpResendInSeconds,
 }: {
   firstName: string; email: string; phone: string; consent: boolean;
   onChange: (field: string, value: string | boolean) => void;
@@ -1362,6 +1449,8 @@ function Step4({
   onOtpCodeChange: (v: string) => void;
   onOtpVerify: () => void;
   onOtpResend: (e: React.SyntheticEvent) => void;
+  otpSecondsLeft: number; otpExpired: boolean;
+  otpCanResend: boolean; otpResendInSeconds: number;
 }) {
   const otpActive = otpStage === "sent" || otpStage === "verifying";
 
@@ -1376,7 +1465,6 @@ function Step4({
     return () => clearInterval(id);
   }, [otpSentAt, otpActive]);
 
-  const otpExpired = otpActive && secondsLeft <= 0;
   const countdownStr = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, "0")}`;
 
   return (
@@ -1456,7 +1544,7 @@ function Step4({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-slate-900">Check your inbox</p>
               <p className="text-xs text-slate-500 mt-0.5">We sent a 6-digit code to <strong>{email}</strong></p>
               {otpActive && (
@@ -1464,6 +1552,14 @@ function Step4({
                   ? <p className="text-xs text-red-500 font-semibold mt-1">Code expired — resend below</p>
                   : <p className="text-xs text-slate-400 mt-1">Expires in <span className={secondsLeft < 60 ? "text-red-500 font-semibold" : ""}>{countdownStr}</span></p>
               )}
+            </div>
+            {/* ADV-015: live expiry countdown so users know when the code dies. */}
+            <div
+              className={`shrink-0 text-xs font-semibold tabular-nums px-2.5 py-1 rounded-lg border ${otpExpired ? "bg-red-50 border-red-200 text-red-700" : "bg-white border-amber-200 text-amber-700"}`}
+              role="timer"
+              aria-live="off"
+            >
+              {otpExpired ? "Code expired" : `Expires in ${formatCountdown(otpSecondsLeft)}`}
             </div>
           </div>
 
@@ -1502,17 +1598,24 @@ function Step4({
               {otpStage === "verifying" || submitting ? "Verifying\u2026" : "Verify & Get Matched \u2192"}
             </Button>
 
-            {otpExpired ? (
-              <button
-                type="button"
-                onClick={onOtpResend}
-                className="w-full py-2.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-xl"
-              >
-                Resend code →
-              </button>
-            ) : (
-              <p className="text-center text-xs text-slate-400">
-                Didn&apos;t get it?{" "}
+            {/* ADV-015: when the code expires, surface an unmissable resend
+                prompt; otherwise the resend link is gated by a short cooldown. */}
+            {otpExpired && (
+              <p className="text-center text-xs font-semibold text-red-600">
+                Your code has expired.{" "}
+                <button
+                  type="button"
+                  onClick={onOtpResend}
+                  className="underline text-red-700 hover:text-red-800"
+                >
+                  Send a new code
+                </button>
+              </p>
+            )}
+
+            <p className="text-center text-xs text-slate-400">
+              Didn&apos;t get it?{" "}
+              {otpCanResend ? (
                 <button
                   type="button"
                   onClick={onOtpResend}
@@ -1520,16 +1623,20 @@ function Step4({
                 >
                   Resend code
                 </button>
-                {" "}· Wrong email?{" "}
-                <button
-                  type="button"
-                  onClick={() => { clearMatchStorage(); onOtpCodeChange(""); window.location.reload(); }}
-                  className="text-slate-500 hover:text-slate-700 font-semibold"
-                >
-                  Start over
-                </button>
-              </p>
-            )}
+              ) : (
+                <span className="text-slate-400 tabular-nums">
+                  Resend in {formatCountdown(otpResendInSeconds)}
+                </span>
+              )}
+              {" "}· Wrong email?{" "}
+              <button
+                type="button"
+                onClick={() => { clearMatchStorage(); onOtpCodeChange(""); window.location.reload(); }}
+                className="text-slate-500 hover:text-slate-700 font-semibold"
+              >
+                Start over
+              </button>
+            </p>
           </div>
         </div>
       )}

@@ -9,6 +9,13 @@ vi.mock("@/lib/marketplace/wallet", () => ({
   debitWallet: (...args: unknown[]) => mockDebitWallet(...args),
 }));
 
+const { mockRecordLedgerEntry } = vi.hoisted(() => ({
+  mockRecordLedgerEntry: vi.fn(),
+}));
+vi.mock("@/lib/advisor-credit-ledger", () => ({
+  recordLedgerEntry: (...args: unknown[]) => mockRecordLedgerEntry(...args),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
@@ -268,14 +275,20 @@ describe("handleChargeRefunded", () => {
 describe("handleChargeRefunded — advisor flow", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRecordLedgerEntry.mockResolvedValue({
+      entry: { id: 1 },
+      balanceAfterCents: 0,
+      idempotent: false,
+    });
   });
 
   function makeAdvisorCtx(opts: {
     topupRow?: { id: number; professional_id: number; amount_cents: number; status?: string } | null;
     billingRow?: { id: number; professional_id: number; amount_cents: number } | null;
     priorRefunds?: Array<{ amount_cents: number }>;
+    priorClawbacks?: Array<{ amount_cents: number }>;
   }): WebhookContext {
-    const { topupRow = null, billingRow = null, priorRefunds = [] } = opts;
+    const { topupRow = null, billingRow = null, priorRefunds = [], priorClawbacks = [] } = opts;
     let topupCalls = 0;
     let billingCalls = 0;
 
@@ -325,15 +338,27 @@ describe("handleChargeRefunded — advisor flow", () => {
         return writeBuilder();
       }
       if (table === "advisor_credit_ledger") {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
+        // The handler reads prior ledger rows via
+        //   .select("amount_cents").eq("kind", K).eq("reference_type",...).eq("reference_id",...)
+        // which resolves as a Promise. Return priorRefunds for the
+        // refund_to_credit read and priorClawbacks for the cash-clawback
+        // read by capturing the kind from the first .eq() call.
+        let capturedKind: string | null = null;
+        const builder: Record<string, unknown> = {
+          select: vi.fn(() => builder),
+          eq: vi.fn((col: string, val: string) => {
+            if (col === "kind") capturedKind = val;
+            return builder;
+          }),
           then: vi.fn((cb: (v: unknown) => void) => {
-            cb({ data: priorRefunds });
+            const data =
+              capturedKind === "refund_to_cash_clawback" ? priorClawbacks : priorRefunds;
+            cb({ data });
             return Promise.resolve();
           }),
-          insert: vi.fn().mockReturnThis(),
+          insert: vi.fn(() => builder),
         };
+        return builder;
       }
       if (table === "professionals") {
         // recordLedgerEntry reads/updates this; balance starts at 0
@@ -389,20 +414,209 @@ describe("handleChargeRefunded — advisor flow", () => {
     );
   });
 
-  it("respects refund_policy = 'cash' (no ledger insert)", async () => {
+  // ── Default credit-policy path (regression guard) ──────────────────────────
+
+  it("records a positive refund_to_credit entry for a topup under default (credit) policy", async () => {
     const ctx = makeAdvisorCtx({
-      topupRow: { id: 7, professional_id: 1, amount_cents: 5000 },
+      topupRow: { id: 7, professional_id: 1, amount_cents: 20000 },
     });
-    const event = makeEvent();
+    await handleChargeRefunded(makeEvent({ amountRefunded: 20000, chargeId: "ch_topup" }), ctx);
+    expect(mockRecordLedgerEntry).toHaveBeenCalledWith(
+      expect.objectContaining({
+        professionalId: 1,
+        amountCents: 20000,
+        kind: "refund_to_credit",
+        referenceType: "stripe_charge",
+        referenceId: "ch_topup",
+      }),
+    );
+  });
+
+  it("records a positive refund_to_credit entry for a billing invoice under default policy", async () => {
+    const ctx = makeAdvisorCtx({
+      billingRow: { id: 3, professional_id: 9, amount_cents: 4900 },
+    });
+    await handleChargeRefunded(makeEvent({ amountRefunded: 4900, chargeId: "ch_bill" }), ctx);
+    expect(mockRecordLedgerEntry).toHaveBeenCalledWith(
+      expect.objectContaining({
+        professionalId: 9,
+        amountCents: 4900,
+        kind: "refund_to_credit",
+      }),
+    );
+  });
+
+  // ── Cash-policy clawback path (the fix) ────────────────────────────────────
+
+  function cashEvent(over: { amountRefunded?: number; chargeId?: string } = {}): Stripe.Event {
+    const event = makeEvent(over);
     (event.data.object as unknown as { metadata: Record<string, string> }).metadata = {
       refund_policy: "cash",
     };
-    await handleChargeRefunded(event, ctx);
-    // We do touch the ledger table to read priorRefunds when policy isn't cash;
-    // with policy=cash the helper logs but doesn't credit.
-    const audit = (ctx.admin.from as ReturnType<typeof vi.fn>).mock.calls.filter(
-      (c) => c[0] === "admin_audit_log",
+    return event;
+  }
+
+  it("claws back the granted credit on a cash refund of a TOPUP (full refund)", async () => {
+    const ctx = makeAdvisorCtx({
+      topupRow: { id: 7, professional_id: 1, amount_cents: 20000 },
+    });
+    await handleChargeRefunded(cashEvent({ amountRefunded: 20000, chargeId: "ch_cash" }), ctx);
+    expect(mockRecordLedgerEntry).toHaveBeenCalledTimes(1);
+    expect(mockRecordLedgerEntry).toHaveBeenCalledWith(
+      expect.objectContaining({
+        professionalId: 1,
+        amountCents: -20000, // NEGATIVE — credit removed
+        kind: "refund_to_cash_clawback",
+        referenceType: "stripe_charge",
+        referenceId: "ch_cash",
+      }),
     );
-    expect(audit.length).toBeGreaterThan(0);
+  });
+
+  it("does NOT claw back credit on a cash refund of a BILLING invoice (correct no-op)", async () => {
+    const ctx = makeAdvisorCtx({
+      billingRow: { id: 3, professional_id: 9, amount_cents: 4900 },
+    });
+    await handleChargeRefunded(cashEvent({ amountRefunded: 4900, chargeId: "ch_bill_cash" }), ctx);
+    expect(mockRecordLedgerEntry).not.toHaveBeenCalled();
+  });
+
+  it("clawback is partial-refund-safe — caps at original and subtracts prior clawbacks", async () => {
+    // Cumulative refund of 15000 on a 20000 topup, with 5000 already clawed back.
+    const ctx = makeAdvisorCtx({
+      topupRow: { id: 7, professional_id: 1, amount_cents: 20000 },
+      priorClawbacks: [{ amount_cents: -5000 }],
+    });
+    await handleChargeRefunded(cashEvent({ amountRefunded: 15000, chargeId: "ch_partial" }), ctx);
+    expect(mockRecordLedgerEntry).toHaveBeenCalledWith(
+      expect.objectContaining({
+        amountCents: -10000, // 15000 target - 5000 already = 10000 delta, negated
+        kind: "refund_to_cash_clawback",
+      }),
+    );
+  });
+
+  it("clawback never over-claws — cumulative refund above original is capped", async () => {
+    // Stripe-side bug sends amount_refunded > topup amount; must cap at original.
+    const ctx = makeAdvisorCtx({
+      topupRow: { id: 7, professional_id: 1, amount_cents: 20000 },
+    });
+    await handleChargeRefunded(cashEvent({ amountRefunded: 99999, chargeId: "ch_over" }), ctx);
+    expect(mockRecordLedgerEntry).toHaveBeenCalledWith(
+      expect.objectContaining({ amountCents: -20000, kind: "refund_to_cash_clawback" }),
+    );
+  });
+
+  it("clawback is idempotent — already fully clawed back, no new entry", async () => {
+    const ctx = makeAdvisorCtx({
+      topupRow: { id: 7, professional_id: 1, amount_cents: 20000 },
+      priorClawbacks: [{ amount_cents: -20000 }],
+    });
+    await handleChargeRefunded(cashEvent({ amountRefunded: 20000, chargeId: "ch_done" }), ctx);
+    expect(mockRecordLedgerEntry).not.toHaveBeenCalled();
+  });
+
+  it("clawback allows the balance to go negative (conservative over-spend policy)", async () => {
+    // recordLedgerEntry reports a negative post-balance — advisor already spent
+    // some credit. The handler must still record the full clawback and not crash.
+    mockRecordLedgerEntry.mockResolvedValue({
+      entry: { id: 2 },
+      balanceAfterCents: -8000,
+      idempotent: false,
+    });
+    const ctx = makeAdvisorCtx({
+      topupRow: { id: 7, professional_id: 1, amount_cents: 20000 },
+    });
+    const result = await handleChargeRefunded(
+      cashEvent({ amountRefunded: 20000, chargeId: "ch_neg" }),
+      ctx,
+    );
+    expect(result).toEqual({ status: "done" });
+    expect(mockRecordLedgerEntry).toHaveBeenCalledWith(
+      expect.objectContaining({ amountCents: -20000 }),
+    );
+  });
+
+  it("records advisor_credit_clawback_cents in the audit log for a cash topup refund", async () => {
+    const auditInsert = vi.fn().mockResolvedValue({ data: null, error: null });
+    const ctx = makeAdvisorCtx({
+      topupRow: { id: 7, professional_id: 1, amount_cents: 20000 },
+    });
+    const baseFrom = ctx.admin.from as ReturnType<typeof vi.fn>;
+    const baseImpl = baseFrom.getMockImplementation()!;
+    baseFrom.mockImplementation((table: string) => {
+      if (table === "admin_audit_log") return { insert: auditInsert };
+      return baseImpl(table);
+    });
+    await handleChargeRefunded(cashEvent({ amountRefunded: 20000, chargeId: "ch_audit" }), ctx);
+    expect(auditInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        details: expect.objectContaining({
+          advisor_credit_clawback_cents: 20000,
+          advisor_refund_policy: "cash",
+        }),
+      }),
+    );
+  });
+
+  it("clawback failure is non-fatal — handler still returns done", async () => {
+    mockRecordLedgerEntry.mockRejectedValue(new Error("ledger boom"));
+    const ctx = makeAdvisorCtx({
+      topupRow: { id: 7, professional_id: 1, amount_cents: 20000 },
+    });
+    const result = await handleChargeRefunded(
+      cashEvent({ amountRefunded: 20000, chargeId: "ch_fail" }),
+      ctx,
+    );
+    expect(result).toEqual({ status: "done" });
+    expect(ctx.log.error).toHaveBeenCalledWith(
+      "Advisor cash-refund clawback failed",
+      expect.objectContaining({ error: "ledger boom" }),
+    );
+  });
+
+  it("still flips topup status to refunded on a full cash refund", async () => {
+    const updateEq = vi.fn().mockResolvedValue({ data: null, error: null });
+    const update = vi.fn(() => ({ eq: updateEq }));
+    const ctx = makeAdvisorCtx({
+      topupRow: { id: 7, professional_id: 1, amount_cents: 20000 },
+    });
+    let topupSelectDone = false;
+    (ctx.admin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
+      if (table === "advisor_credit_topups") {
+        if (!topupSelectDone) {
+          topupSelectDone = true;
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            maybeSingle: vi
+              .fn()
+              .mockResolvedValue({ data: { id: 7, professional_id: 1, amount_cents: 20000 } }),
+          };
+        }
+        return { update };
+      }
+      if (table === "advisor_credit_ledger") {
+        const builder: Record<string, unknown> = {
+          select: vi.fn(() => builder),
+          eq: vi.fn(() => builder),
+          then: vi.fn((cb: (v: unknown) => void) => {
+            cb({ data: [] });
+            return Promise.resolve();
+          }),
+        };
+        return builder;
+      }
+      if (table === "admin_audit_log") {
+        return { insert: vi.fn().mockResolvedValue({ data: null, error: null }) };
+      }
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockResolvedValue({ data: null }),
+      };
+    });
+    await handleChargeRefunded(cashEvent({ amountRefunded: 20000, chargeId: "ch_status" }), ctx);
+    expect(update).toHaveBeenCalledWith({ status: "refunded" });
   });
 });

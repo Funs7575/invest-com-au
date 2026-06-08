@@ -14,6 +14,110 @@
 
 ## Active strategic decisions log
 
+### 2026-06-08 — Listings: anonymous-submission hole closed (carve-out of #1459, no DB)
+
+A bot sprawl + review of `/invest/list` (2026-06-07) surfaced that we ran **two
+parallel post-a-listing products** plus a real regulatory hole: `/invest/list →
+investment_listings` accepted **anonymous, unverified-email** submissions across
+10 verticals **including capital-markets** (`startup`/`fund`/`pre_ipo`). The full
+consolidation plan + founder decisions live in
+`docs/plans/LISTINGS_MARKETPLACE_CONSOLIDATION.md` (D1–D7) and the wholesale
+sign-off brief in `docs/strategy/LISTINGS_S708_LEGAL_BRIEF.md`.
+
+PR #1459 bundled the safe build increments **with** a Tier-E prod migration
+(`20260907040000_investment_listings_ownership.sql`, adds `owner_user_id` + RLS),
+which can't land until the migration-ledger baseline-squash is done
+(`docs/runbooks/MIGRATION_LEDGER_RECONCILIATION.md`). That coupling blocked the
+whole PR.
+
+**This session — shipped the schema-free carve-out (new PR, no DB):**
+- **Phase 0 (Tier-A):** `/invest/[slug]` unknown slug now **404s** (was a soft-500
+  via the segment error boundary — bad for users + SEO); `/invest/my-listings`
+  dead link `/invest/submit` → `/invest/list`; hero "8"→"10" categories.
+- **Phase 1 increment 1 (the compliance win):** `/api/listings/submit` now
+  **requires an authenticated session (401 for anon)** and best-effort provisions
+  the `listing_owner_accounts` workspace (a table that **already exists in prod**,
+  so no migration needed). `ListingSubmitForm` gates client-side (no part-filled
+  form lost to a 401) via the shared `useUser()` hook. **D5 honesty:** Standard
+  shown as **Free** (it's never actually charged today).
+- This **removes the anonymous capital-markets submission path** — a real de-risk
+  even before the s708 gate.
+
+**Deliberately EXCLUDED from the carve-out (stay blocked):**
+- The `owner_user_id` migration + everything that writes that column. It does
+  **not** exist in prod; writing it pre-apply would 500 the live submit. Stays
+  fenced per `MIGRATION_LEDGER_RECONCILIATION.md`.
+- **Increment 2** (owner-scoped RLS portal, `listings`→`investment_listings`
+  data-migration, `/listings/new` 308, authed my-listings rewrite) — depends on
+  that migration. Not started.
+- **D4 / s708 capital-markets gate** — ⚠️ founder direction set (wholesale-only),
+  but **unbuilt pending legal sign-off** recorded in repo (§5 of the s708 brief).
+
+**Revisit:** 2026-07-07 — has the migration-ledger baseline-squash been scheduled
+(it's the blocker for increment 2) and has legal ruled on D4?
+
+### 2026-06-07 — Database migration ledger: forked, not "behind"; decision = baseline-squash
+
+Deep-dive of the standing "database backlog" (was framed as "118 migrations
+behind main; run `db push`"). That framing is **wrong and dangerous**. Measured
+against live prod:
+
+- The local migration tree and the prod `schema_migrations` **ledger have
+  forked**: only **5 of 250** local versions are tracked in prod; **245** local
+  versions are untracked; **434** prod ledger rows have no local file. A
+  `supabase db push` would attempt ~245 migrations (re-creating existing tables,
+  re-running ~35 non-idempotent backfills, sweeping in the CSF migration).
+- **Root cause:** `supabase-migrate.yml` silently no-op'd for **months** (its
+  `PROJECT_REF`/`DB_PASSWORD` secrets were unset → green-but-applied-nothing; see
+  PR #1463). Every prod migration was applied **out-of-band via MCP**, each with
+  a fresh timestamp, so the ledger never matched the files.
+- **Good news:** schema *content* is ~98% converged (397/412 local tables live)
+  and RLS is comprehensive (414/415). So this is **history reconciliation +
+  pipeline repair**, not a schema rebuild.
+
+**Decision — Path A: baseline-squash.** Treat live prod as source of truth; dump
+it to one baseline migration; archive the 404 legacy files; `migration repair`
+the ledger so the tree == ledger == types; then resume a normal pipeline.
+Rejected Path B (per-file `migration repair`) — infeasible against 50 colliding
+date-only versions + 3 version formats. Full procedure:
+`docs/runbooks/MIGRATION_LEDGER_RECONCILIATION.md`; state of record:
+`docs/audits/DB-STATE-2026-06-07.md`.
+
+**Shipped this session (safe, repo-only):** corrected runbook + DB-state doc;
+deprecated the dangerous `MIGRATION_DEPLOY_BACKLOG.md`; `audit:migration-filenames`
+gate (blocks new non-14-digit / colliding versions) + `audit:ledger-drift` audit;
+CONTRIBUTING migration discipline (14-digit timestamps; apply via pipeline, not
+MCP; never `db push` pre-reconciliation).
+
+**Founder-gated (Tier E — not done autonomously):** the prod baseline-squash +
+ledger repair, the zombie-table drops, and **enabling auto-apply** (adding the
+two secrets) — all must wait until *after* the baseline, else `db push
+--include-all` replays the backlog. **⚖️ Legal-gated:** the startup-portal (CSF)
+and wholesale-cert (s708) tables stay held per `REGULATORY-AVOID-LIST.md`.
+
+**Revisit:** 2026-06-21 — has the baseline-squash been scheduled? Until it is,
+every new feature needing a table keeps hitting the same wall (PR #1459, in-app
+charts). This is now the #1 infrastructure blocker.
+
+### 2026-06-07 — Sign-off: factual "Listed Securities (ASX)" category
+
+Founder signed off on adding a **Listed Securities (ASX)** browse category to
+the /invest marketplace. ~32 ASX-listed securities (uranium / hydrogen /
+oil-gas / digital-infrastructure themes) were previously mis-bucketed into
+"Funds" via the `categoryForListing` fallback; `categoryForListing` is now
+keyed on `listing_kind="listed_security"` so they group correctly, with a
+dedicated `/invest/listed-securities/listings` page.
+
+**Regulatory posture (lean lane, per `REGULATORY-AVOID-LIST.md`):** this is a
+**factual listing of already-public securities + referral** ("buy via your own
+broker"), explicitly the sanctioned lean alternative — *not* an escalator. It
+does **not** issue, sell, arrange, facilitate an offer, run a market, or give
+personal advice. `GENERAL_ADVICE_WARNING` + a "general information only, not an
+offer/recommendation" notice are wired onto the page. If legal wants to review
+the securities framing, the category can be flag-gated. (Sign-off recorded here
+per the avoid-list's "founder + legal sign-off recorded in this repo" rule;
+legal review still open if desired.)
+
 ### 2026-06-03 — Bot-QA system: ranked roadmap for the next big projects
 
 Context: the AI-Journey bot found a real P1 in one run (`/api/versus/vote` 500s

@@ -60,8 +60,13 @@ function makeCtx(tableFactories: Record<string, () => ReturnType<typeof thenable
     return thenable();
   });
 
+  // Stub rpc so recordLedgerEntry's atomic path short-circuits cleanly:
+  // rpcBalance=null with no error skips all branches (number check fails)
+  // and leaves finalBalance=newBalance — no extra from() calls needed.
+  const adminRpc = vi.fn().mockResolvedValue({ data: null, error: null });
+
   return {
-    admin: { from: adminFrom } as unknown as WebhookContext["admin"],
+    admin: { from: adminFrom, rpc: adminRpc } as unknown as WebhookContext["admin"],
     stripe: {
       invoices: {
         retrieve: vi.fn().mockResolvedValue({ hosted_invoice_url: "https://inv.stripe.com/inv" }),

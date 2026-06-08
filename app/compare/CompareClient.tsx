@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
-import { trackEvent, getAffiliateLink, trackClick, AFFILIATE_REL } from "@/lib/tracking";
+import { trackEvent } from "@/lib/tracking";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -441,15 +441,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   return (
     <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom">
-        <nav aria-label="Breadcrumb" className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
-          <Link href="/" className="hover:text-slate-900">Home</Link>
-          <span className="mx-1.5 md:mx-2">/</span>
-          <span className="text-slate-700">Compare Platforms</span>
-        </nav>
-
+        {/* Breadcrumb now lives in the shared DirectoryHero (page.tsx); this
+            client only renders the meta row + table below it. */}
         {/* Meta row — the H1 + subhead live in page.tsx (single source, streamed
             for crawlers); here we keep only freshness + trust/utility links. */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-3 md:mb-5 text-[0.62rem] md:text-xs text-slate-500">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-2 md:mb-3 text-[0.62rem] md:text-xs text-slate-500">
           <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
           <span className="text-slate-300">·</span>
           <SocialProofCounter />
@@ -478,38 +474,12 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <Link href="/how-we-earn" className="underline hover:text-slate-700">How we earn</Link>
         </div>
 
-        {/* Deal of the Month — compact on mobile */}
-        {(() => {
-          const dealBroker = brokers.find(b => b.deal && b.deal_text);
-          if (!dealBroker) return null;
-          return (
-            <div className="mb-3 md:mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-lg md:rounded-xl px-3 py-2 md:p-4 flex items-center justify-between gap-2 md:gap-3">
-              <div className="flex items-center gap-2 md:gap-3 min-w-0">
-                <Icon name="flame" size={16} className="text-amber-500 shrink-0 md:hidden" />
-                <Icon name="flame" size={24} className="text-amber-500 shrink-0 hidden md:block" />
-                <div className="min-w-0">
-                  <p className="text-[0.69rem] md:text-sm text-slate-700 leading-snug">
-                    <strong>{dealBroker.name}</strong>
-                    <span className="hidden md:inline"> — {dealBroker.deal_text}</span>
-                    <span className="md:hidden text-slate-500"> — {dealBroker.deal_text}</span>
-                  </p>
-                </div>
-              </div>
-              <a
-                href={getAffiliateLink(dealBroker)}
-                target="_blank"
-                rel={AFFILIATE_REL}
-                onClick={() => trackClick(dealBroker.slug, dealBroker.name, 'compare-deal-banner', '/compare', 'compare')}
-                className="shrink-0 px-3 md:px-4 py-1.5 md:py-2 bg-amber-600 text-slate-900 text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
-              >
-                Claim →
-              </a>
-            </div>
-          );
-        })()}
+        {/* Deal/TradingView promo moved into the page hero (see app/compare/page.tsx
+            dealPromo + <DirectoryHero promo=…>) so it's part of the header rather
+            than an extra band above the table. */}
 
-        <details className="group mb-4">
-          <summary className="flex items-center justify-between gap-2 cursor-pointer list-none rounded-xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm hover:border-slate-300">
+        <details className="group mb-2.5">
+          <summary className="flex items-center justify-between gap-2 cursor-pointer list-none rounded-xl border border-slate-200 bg-white px-4 py-2 shadow-sm hover:border-slate-300">
             <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
               <Icon name="sliders" size={15} className="text-blue-700" />
               Rank by scenario &amp; estimate true cost
@@ -583,7 +553,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </details>
 
         {/* Desktop Filter System */}
-        <div className="hidden md:block mb-4 space-y-3">
+        <div className="hidden md:block mb-3 space-y-2.5">
           {/* Search leads the toolbar (mirrors /invest /advisors) */}
           <div className="max-w-md">
             <SearchInput

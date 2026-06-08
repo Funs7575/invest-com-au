@@ -7,6 +7,7 @@ import {
   getCategoryDbFilter,
 } from "@/lib/invest-categories";
 import { getInvestGuide } from "@/lib/invest-guides";
+import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import { getInvestGuideListings } from "@/lib/invest-guide-data";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, UPDATED_LABEL, SITE_NAME } from "@/lib/seo";
 import { faqJsonLd } from "@/lib/schema-markup";
@@ -77,12 +78,12 @@ export default async function HowToInvestPage({
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Invest", url: absoluteUrl("/invest") },
-    { name: cat.label, url: absoluteUrl(`/invest?category=${cat.slug}`) },
+    { name: cat.label, url: absoluteUrl(categoryListingsHref(cat.slug)) },
     { name: `How to invest` },
   ]);
   const faqSchema = faqJsonLd(faqs.map((f) => ({ q: f.question, a: f.answer })));
 
-  const browseHref = `/invest?category=${cat.slug}`;
+  const browseHref = categoryListingsHref(cat.slug);
 
   return (
     <>

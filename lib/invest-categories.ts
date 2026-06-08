@@ -97,6 +97,12 @@ const INTENT_BY_SLUG: Record<string, InvestCategoryIntent> = {
   "carbon-credits": "opportunity",
   "sda-housing": "opportunity",
 
+  // ASX-listed securities — instrument-class category (grouped by
+  // listing_kind, not vertical) so ASX equities/ETFs across themes stop
+  // falling to the "funds" fallback. Factual listing only (founder
+  // sign-off 2026-06-07; lean lane per docs/strategy/REGULATORY-AVOID-LIST.md).
+  "listed-securities": "opportunity",
+
   // Compare (4) — 301-redirected to canonical Compare/duplicate. The
   // entries are kept in categories[] for back-compat with iterators
   // that key off the array; redirects in next.config.ts intercept the
@@ -1143,7 +1149,12 @@ const categoriesRaw: Omit<InvestCategory, "intent">[] = [
   {
     slug: "income-assets",
     label: "Income-Asset Businesses",
-    dbVerticals: ["business"],
+    // No distinct DB vertical is seeded for income-assets yet. The old
+    // ["business"] value collided with the buy-business category (same
+    // vertical), so the /invest/income-assets/listings page surfaced
+    // unrelated business-for-sale rows. Empty until a dedicated vertical
+    // or sub_category is seeded — the page shows a graceful empty state.
+    dbVerticals: [],
     color: {
       bg: "bg-emerald-50",
       border: "border-emerald-200",
@@ -2192,6 +2203,36 @@ const categoriesRaw: Omit<InvestCategory, "intent">[] = [
     h1: "SDA Housing — 10-13% Yield, Government-Backed NDIS Rent",
     metaDescription: `Specialist Disability Accommodation (SDA) — Fully-Accessible, High-Physical-Support, Robust and Improved-Livability NDIS-registered dwellings. Net yields 10-13%, LRBA-compatible, SMSF-eligible. ${upd}.`,
     intro: `Specialist Disability Accommodation — purpose-built dwellings for NDIS participants with extreme functional impairment. The NDIA pays Reasonable Rent Contribution directly to the owner (typically $80,000-$130,000 per qualifying tenant per year depending on design category), producing net yields of 10-13% on $650k-$1.1M contract prices. Four design categories: Improved-Livability, Robust, Fully-Accessible, and High-Physical-Support. LRBA-compatible bare-trust structures available for SMSF investors. Vacancy risk is real — choose locations near disability services and reputable SIL (Supported Independent Living) operators.`,
+    sections: [],
+    faqs: [],
+    subcategories: [],
+  },
+
+  // ─── Listed securities (ASX) ───
+  // Instrument-class category (NOT vertical-based): groups ASX-listed
+  // equities/ETFs that span sectors (uranium, hydrogen, oil & gas, …).
+  // categoryForListing routes listing_kind="listed_security" here so they
+  // stop falling to the "funds" fallback. Factual listing only — public
+  // securities bought via the user's own broker; no issuing, arranging,
+  // offer facilitation or advice (founder sign-off 2026-06-07; lean lane
+  // per docs/strategy/REGULATORY-AVOID-LIST.md). dbVerticals is intentionally
+  // empty: the /listings page fetches by listing_kind, not vertical.
+  {
+    slug: "listed-securities",
+    label: "Listed Securities (ASX)",
+    dbVerticals: [],
+    color: {
+      bg: "bg-blue-50",
+      border: "border-blue-200",
+      text: "text-blue-700",
+      accent: "bg-blue-600",
+      gradient: "from-blue-50 to-white",
+    },
+    icon: "trending-up",
+    title: `ASX-Listed Securities by Theme — Uranium, Hydrogen, Oil & Gas (${yr})`,
+    h1: "ASX-Listed Securities",
+    metaDescription: `A factual directory of ASX-listed companies grouped by theme — uranium, hydrogen, oil & gas and more. Publicly traded securities you buy through your own broker. General information only, not a recommendation or an offer. ${upd}.`,
+    intro: `A factual directory of ASX-listed companies grouped by investment theme — uranium, hydrogen, oil & gas, critical minerals and more. These are publicly traded securities: you buy and sell them yourself through your own broker. We don't issue, sell, arrange or recommend them, and nothing here is a recommendation or an offer. General information only — do your own research and consider seeking licensed advice before investing.`,
     sections: [],
     faqs: [],
     subcategories: [],

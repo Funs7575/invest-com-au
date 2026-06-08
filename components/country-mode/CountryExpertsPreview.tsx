@@ -92,7 +92,7 @@ export default async function CountryExpertsPreview() {
           {visible.map((e) => (
             <li key={e.slug}>
               <TrackedCountryLink
-                href={`/advisors/${e.slug}`}
+                href={`/advisor/${e.slug}`}
                 eventName="country_expert_click"
                 country={code}
                 targetId={e.slug}

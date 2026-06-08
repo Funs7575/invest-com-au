@@ -3,9 +3,7 @@ import { getActiveBrokersListing } from "@/lib/cached-data";
 import HomeHero from "@/components/HomeHero";
 import HomeRouteCards from "@/components/HomeRouteCards";
 import CountryToolsStripWrapper from "@/components/country-mode/CountryToolsStripWrapper";
-import HomePathfinder from "@/components/HomePathfinder";
-import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
-import ResumeBanner from "@/components/get-matched/ResumeBanner";
+import HomeGetMatched from "@/components/HomeGetMatched";
 import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
 import HomeSquadOfTheMonth from "@/components/HomeSquadOfTheMonth";
@@ -22,7 +20,6 @@ import CountryPopularLinks from "@/components/country-mode/CountryPopularLinks";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import HomeActivitySection from "@/components/HomeActivitySection";
 import HomepagePersonalisedStrip from "@/components/HomepagePersonalisedStrip";
-import HomeHowItWorks from "@/components/HomeHowItWorks";
 import HomeRateOfTheDay from "@/components/HomeRateOfTheDay";
 import RateChangesToday from "@/components/RateChangesToday";
 import InvestScoreGauge from "@/components/InvestScoreGauge";
@@ -37,7 +34,7 @@ export const metadata = {
       "Compare Investing Platforms, Browse Investments for Sale, Find Experts — Invest.com.au",
   },
   description:
-    "Compare brokers, crypto, super and savings. Browse Australian investments for sale. Find a verified financial expert or get matched in 60 seconds.",
+    "Compare brokers, crypto, super and savings. Browse Australian investments for sale — businesses, farmland, mining, property. Find a verified expert, or get matched in 60 seconds. Independent. ASIC-registered. General information only.",
   openGraph: {
     title:
       "Compare Investing Platforms, Browse Investments for Sale, Find Experts — Invest.com.au",
@@ -251,14 +248,13 @@ export default async function HomePage() {
         }}
       />
 
-      {/* ── ABOVE-THE-FOLD SECTION ─────────────────────────────────────────
-          ADV-069: first-time visitors must be able to answer "what is this?"
-          and take one clear action within 3 seconds. Structure:
-            1. HomeHero     — H1 + single primary CTA ("Take the quiz")
-            2. HomeRouteCards — 4 large clickable route cards directly below
-          Everything else (rates, feed, personalisation) is pushed below this
-          anchor so it never competes for attention on a fresh page load.
-          ─────────────────────────────────────────────────────────────────── */}
+      {/* Personalised strip — visible to signed-in and returning visitors;
+          renders null for anonymous / first-time visitors. Wrapped in its
+          own Suspense so the async auth read never blocks the ISR-cached
+          static content below. See components/HomepagePersonalisedStrip.tsx. */}
+      <HomepagePersonalisedStrip />
+
+      <HomeActivitySection />
 
       <HomeHero
         topBrokers={topBrokersForHero}
@@ -268,27 +264,6 @@ export default async function HomePage() {
         listingCount={totalListingCount}
         advisorCount={totalProfessionalCount}
       />
-
-      {/* Route cards sit immediately after the hero — no widgets in between —
-          so the full above-fold offer is visible before any scroll. */}
-      <HomeRouteCards
-        listingCount={totalListingCount}
-        professionalCount={totalProfessionalCount}
-        brokerCount={brokerCount}
-        topBrokers={topBrokersForCards}
-        topListings={topListingsForCards}
-        topAdvisors={topAdvisorsForCards}
-      />
-
-      {/* ── BELOW-THE-FOLD: personalisation, rates, feed ───────────────── */}
-
-      {/* Personalised strip — visible to signed-in and returning visitors;
-          renders null for anonymous / first-time visitors. Wrapped in its
-          own Suspense so the async auth read never blocks the ISR-cached
-          static content below. See components/HomepagePersonalisedStrip.tsx. */}
-      <HomepagePersonalisedStrip />
-
-      <HomeActivitySection />
 
       {/* Temporarily hidden for the next few months. Keep the component intact
           so the homepage AI concierge entry can be restored without rebuilding it. */}
@@ -303,50 +278,21 @@ export default async function HomePage() {
         <HomeFeedSection />
       </Suspense>
 
+      <ScrollFadeIn>
+        <HomeRouteCards
+          listingCount={totalListingCount}
+          professionalCount={totalProfessionalCount}
+          brokerCount={brokerCount}
+          topBrokers={topBrokersForCards}
+          topListings={topListingsForCards}
+          topAdvisors={topAdvisorsForCards}
+        />
+      </ScrollFadeIn>
+
       <CountryPopularLinks />
 
-      {/* ── ADV-132: ResumeBanner + GetMatchedEmbed ─────────────────────────
-          These two components are visually separated and serve distinct
-          audiences:
-
-          ResumeBanner — drop-off rescue for returning visitors who have a
-          partial quiz/plan stored in sessionStorage. It is client-side only
-          (reads sessionStorage on mount) and self-hides when no partial plan
-          exists. Conditional rendering is handled inside the component itself;
-          the Suspense boundary here prevents any SSR hydration flash.
-
-          GetMatchedEmbed — entry point into the full Get Matched flow for ALL
-          visitors. Always rendered regardless of login state.
-
-          The <hr> divider and distinct background colour on GetMatchedEmbed
-          provide clear visual separation between the two sections.
-          ──────────────────────────────────────────────────────────────────── */}
-      <ScrollFadeIn>
-        {/* ResumeBanner: only shown to returning users with an incomplete
-            session (partial plan in sessionStorage). Returns null otherwise. */}
-        <section className="container-custom my-6">
-          <ResumeBanner />
-        </section>
-      </ScrollFadeIn>
-
-      {/* Visual separator — ensures the two sections are never perceived as
-          a single unit even when ResumeBanner is visible. */}
-      <div className="container-custom">
-        <hr className="border-slate-200" />
-      </div>
-
-      <ScrollFadeIn>
-        <section className="container-custom py-10">
-          <GetMatchedEmbed context="homepage" />
-        </section>
-      </ScrollFadeIn>
-
-      <ScrollFadeIn>
-        <HomePathfinder />
-      </ScrollFadeIn>
-
       {/* Quick-access chips for buried tools */}
-      <section className="container-custom -mt-4 mb-6">
+      <section className="container-custom my-8">
         <div className="flex flex-wrap gap-2">
           <Link href="/score" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-amber-50 hover:border-amber-200 border border-slate-200 rounded-full text-sm font-semibold text-slate-700 hover:text-amber-800 transition-colors">
             📊 Financial Health Score
@@ -375,8 +321,12 @@ export default async function HomePage() {
         <HomeListingsTeaser listings={listingList} totalCount={totalListingCount} />
       </ScrollFadeIn>
 
+      {/* Single consolidated get-matched band — the one catch-all funnel,
+          placed after platforms + opportunities and leading into experts.
+          Replaces the former top-of-page triple-up (goal-chip grid +
+          pathfinder 3-step) and the duplicate advisor how-it-works block. */}
       <ScrollFadeIn>
-        <HomeHowItWorks />
+        <HomeGetMatched />
       </ScrollFadeIn>
 
       <CountryExpertsPreview />

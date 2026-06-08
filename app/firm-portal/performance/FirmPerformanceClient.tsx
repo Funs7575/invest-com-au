@@ -64,7 +64,7 @@ function MemberRow({ m, rank }: { m: MemberMetrics; rank: number }) {
           )}
           <div className="min-w-0">
             <Link
-              href={`/advisors/${m.slug}`}
+              href={`/advisor/${m.slug}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm font-semibold text-slate-800 hover:text-violet-700 truncate block"

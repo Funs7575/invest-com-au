@@ -16,7 +16,7 @@ const TYPE_CONFIG: Record<
 > = {
   broker: { label: "Broker", emoji: "🏦", href: (ref) => `/brokers/${ref}` },
   etf: { label: "ETF", emoji: "📈", href: (ref) => `/etf/${ref}` },
-  advisor: { label: "Advisor", emoji: "🎓", href: (ref) => `/advisors/${ref}` },
+  advisor: { label: "Advisor", emoji: "🎓", href: (ref) => `/advisor/${ref}` },
   property: { label: "Property", emoji: "🏠", href: (ref) => `/property/${ref}` },
 };
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AUSTRALIAN_STATES } from "@/lib/seo/best-pages";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { getEnabledIntents } from "@/lib/getmatched/intents";
+import { providerNounForIntent } from "@/lib/getmatched/intent-presentation";
 
 export const revalidate = 86400;
 
@@ -42,9 +43,12 @@ export default async function FindHubPage() {
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {intents.map((intent) => (
           <div key={intent.slug} className="bg-white border border-slate-200 rounded-2xl p-5">
-            <h2 className="text-base font-bold text-slate-900 mb-1.5">
+            <h2 className="text-base font-bold text-slate-900">
               {intent.label}
             </h2>
+            <p className="text-xs text-slate-500 mb-1.5">
+              Verified {providerNounForIntent(intent)}
+            </p>
             <ul className="grid grid-cols-2 gap-1.5 mt-2">
               {AUSTRALIAN_STATES.map((s) => (
                 <li key={s.slug}>

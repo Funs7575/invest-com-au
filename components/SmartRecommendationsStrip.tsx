@@ -202,7 +202,7 @@ export default async function SmartRecommendationsStrip() {
     items: ranked.slice(0, MIN_ITEMS_TO_SHOW).map((a) => ({
       slug: a.slug,
       name: a.name,
-      href: `/advisors/${a.slug}`,
+      href: `/advisor/${a.slug}`,
       avatar: a.photo_url,
       sub: a.firm_name ?? a.type,
     })),

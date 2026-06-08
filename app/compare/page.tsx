@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
+import Link from "next/link";
+import Icon from "@/components/Icon";
 import CompareClient from "./CompareClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
@@ -10,7 +12,6 @@ import ComplianceFooter from "@/components/ComplianceFooter";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import DirectoryHero from "@/components/directory/DirectoryHero";
-import Icon from "@/components/Icon";
 import NextActions from "@/components/NextActions";
 
 export const metadata = {

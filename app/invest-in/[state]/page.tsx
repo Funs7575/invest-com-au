@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { STATE_SURCHARGES } from "@/lib/firb-data";
 import { getInvestStateData } from "@/lib/invest-state-data";
 import { getInvestCategoryBySlug } from "@/lib/invest-categories";
+import { categoryListingsHref } from "@/lib/invest-listing-routes";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, UPDATED_LABEL, SITE_NAME } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import InvestListingCard from "@/components/InvestListingCard";
@@ -145,7 +146,7 @@ export default async function InvestInStatePage({
                 return (
                   <Link
                     key={slug}
-                    href={`/invest?category=${slug}&state=${st.code}`}
+                    href={categoryListingsHref(slug, { state: st.code })}
                     className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors capitalize"
                   >
                     {label}

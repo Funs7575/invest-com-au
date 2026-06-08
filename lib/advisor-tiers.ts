@@ -100,6 +100,14 @@ export function getTier(id: string): TierSpec | null {
  * to plan B with N days remaining in the current billing cycle,
  * returns the cents owed today. Negative means we owe the user
  * a credit (downgrade).
+ *
+ * `daysRemaining` is clamped to `[0, cycleDays]` so the proration
+ * multiplier can never exceed 1.0 (which would inflate a downgrade
+ * credit beyond a full plan price) nor go negative (which would
+ * flip the sign). This matters most for annual subscriptions, where
+ * a caller may pass ~365 days-remaining against a 30-day cycle — an
+ * unclamped ratio of ~12x produced credits many multiples of what
+ * the advisor ever paid. See finding "Proration amount not clamped".
  */
 export function prorateUpgradeCents(
   fromTier: AdvisorTier,
@@ -113,12 +121,15 @@ export function prorateUpgradeCents(
   const to = getTier(toTier);
   if (!from || !to) return 0;
 
+  // Bound the multiplier to [0, 1] regardless of caller input.
+  const days = Math.min(Math.max(daysRemaining, 0), cycleDays);
+
   const priceKey = billing === "annual" ? "annualPriceCents" : "monthlyPriceCents";
   const fromPrice = from[priceKey];
   const toPrice = to[priceKey];
 
-  const unusedFromCredit = Math.round((fromPrice * daysRemaining) / cycleDays);
-  const proratedToCharge = Math.round((toPrice * daysRemaining) / cycleDays);
+  const unusedFromCredit = Math.round((fromPrice * days) / cycleDays);
+  const proratedToCharge = Math.round((toPrice * days) / cycleDays);
   return proratedToCharge - unusedFromCredit;
 }
 

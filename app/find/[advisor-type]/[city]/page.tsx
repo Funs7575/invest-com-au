@@ -188,7 +188,7 @@ function AdvisorCard({ advisor }: { advisor: AdvisorRow }) {
         <div className="flex items-start justify-between gap-2 flex-wrap">
           <div>
             <Link
-              href={`/advisors/${advisor.slug}`}
+              href={`/advisor/${advisor.slug}`}
               className="font-semibold text-slate-900 hover:text-blue-600 transition-colors"
             >
               {advisor.name}
@@ -215,7 +215,7 @@ function AdvisorCard({ advisor }: { advisor: AdvisorRow }) {
             )}
           </div>
           <Link
-            href={`/advisors/${advisor.slug}`}
+            href={`/advisor/${advisor.slug}`}
             className="shrink-0 text-sm bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors"
           >
             View Profile
@@ -283,7 +283,7 @@ export default async function FindAdvisorPage({ params }: Props) {
       item: {
         "@type": "LocalBusiness",
         name: a.name,
-        url: absoluteUrl(`/advisors/${a.slug}`),
+        url: absoluteUrl(`/advisor/${a.slug}`),
         ...(a.location_suburb ? { address: { "@type": "PostalAddress", addressLocality: a.location_suburb, addressCountry: "AU" } } : {}),
         ...(a.rating !== null && a.review_count !== null && a.review_count > 0
           ? { aggregateRating: { "@type": "AggregateRating", ratingValue: a.rating, reviewCount: a.review_count } }

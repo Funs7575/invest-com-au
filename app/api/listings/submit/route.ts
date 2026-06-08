@@ -5,6 +5,7 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { processAdvisorOptIns } from "@/lib/advisor-opt-ins";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
+import { createClient } from "@/lib/supabase/server";
 
 const log = logger("listings:submit");
 
@@ -62,6 +63,21 @@ export const POST = withValidatedBody(SubmitSchema, async (request: NextRequest,
       return NextResponse.json({ error: "Too many submissions. Please try again later." }, { status: 429 });
     }
 
+    // Phase 1 (listings consolidation): posting requires an authenticated
+    // account so every listing has an identified owner — no more anonymous
+    // submissions of (potentially capital-markets) opportunities. The
+    // listing_owner workspace is provisioned on first successful submit.
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user || !user.email) {
+      return NextResponse.json(
+        { error: "You must be signed in to post a listing." },
+        { status: 401 }
+      );
+    }
+
     const baseSlug = body.title
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, "")
@@ -103,6 +119,25 @@ export const POST = withValidatedBody(SubmitSchema, async (request: NextRequest,
         { error: "Failed to save your listing. Please try again." },
         { status: 500 }
       );
+    }
+
+    // Provision the listing_owner workspace (idempotent on auth_user_id).
+    // Best-effort: a provisioning failure must not fail the submission — the
+    // listing is already saved and the owner can still claim it by email.
+    try {
+      await admin.from("listing_owner_accounts").upsert(
+        {
+          auth_user_id: user.id,
+          display_name: user.email,
+          status: "active",
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "auth_user_id" }
+      );
+    } catch (err) {
+      log.warn("[listings/submit] listing_owner provisioning failed", {
+        err: err instanceof Error ? err.message : String(err),
+      });
     }
 
     let opt_ins_queued = 0;

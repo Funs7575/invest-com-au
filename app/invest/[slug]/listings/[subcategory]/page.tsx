@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import type { InvestmentListing } from "@/lib/types";
+import type { InvestmentListing, InvestListingVertical } from "@/lib/types";
+import type { InvestmentListing as CardListing } from "@/components/ListingCard";
 import {
   getInvestCategoryBySlug,
   getSubcategoryBySlug,
@@ -12,13 +13,17 @@ import {
 import {
   absoluteUrl,
   breadcrumbJsonLd,
+  CURRENT_YEAR,
 } from "@/lib/seo";
 import {
   ADVERTISER_DISCLOSURE_SHORT,
   GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
 import InvestListingCard from "@/components/InvestListingCard";
-import { listingUrl } from "@/lib/listing-url";
+import ListingsEmptyState from "@/components/ListingsEmptyState";
+import ListingDetailView from "@/components/invest/ListingDetailView";
+import { fetchRelatedListings } from "@/lib/investment-listings-query";
+import { listingUrl, rawVerticalVariants, categoryForListing } from "@/lib/listing-url";
 import ScrollReveal from "@/components/ScrollReveal";
 import SubCategoryNav from "@/components/SubCategoryNav";
 
@@ -26,7 +31,14 @@ export const revalidate = 3600;
 
 // ── Static params for ISR ──
 export function generateStaticParams() {
-  return getAllSubcategorySlugs();
+  // getAllSubcategorySlugs() returns { category, subcategory }, but the
+  // route segments are [slug]/[subcategory] — so the `slug` key was never
+  // provided (a latent bug that contributed to a prod-only 500 on this
+  // route). Map category → slug.
+  return getAllSubcategorySlugs().map(({ category, subcategory }) => ({
+    slug: category,
+    subcategory,
+  }));
 }
 
 // ── Dynamic metadata ──
@@ -39,7 +51,36 @@ export async function generateMetadata({
   const cat = getInvestCategoryBySlug(category);
   if (!cat) return { robots: { index: false } };
   const sub = getSubcategoryBySlug(category, subcategory);
-  if (!sub) return { robots: { index: false } };
+  if (!sub) {
+    // Not a subcategory — may be a single listing slug. Look it up by slug
+    // (not vertical-scoped, see the page body) and verify it belongs to this
+    // URL category; give it real metadata so the detail page is indexable,
+    // otherwise noindex.
+    const supabase = await createClient();
+    const { data: rows } = await supabase
+      .from("investment_listings")
+      .select("*")
+      .eq("slug", subcategory)
+      .eq("status", "active")
+      .limit(5);
+    const l = ((rows ?? []) as InvestmentListing[]).find(
+      (r) => categoryForListing(r) === category,
+    );
+    if (l) {
+      return {
+        title: `${l.title} — ${cat.label} (${CURRENT_YEAR})`,
+        description: (l.description ?? "").slice(0, 160) || cat.metaDescription,
+        alternates: { canonical: `/invest/${category}/listings/${subcategory}` },
+        openGraph: {
+          title: `${l.title} — ${cat.label}`,
+          description: (l.description ?? "").slice(0, 160) || cat.metaDescription,
+          url: absoluteUrl(`/invest/${category}/listings/${subcategory}`),
+        },
+        twitter: { card: "summary_large_image" as const },
+      };
+    }
+    return { robots: { index: false } };
+  }
 
   const ogImageUrl = `/api/og?title=${encodeURIComponent(sub.h1)}&subtitle=${encodeURIComponent(sub.metaDescription.slice(0, 80))}&type=invest`;
 
@@ -66,7 +107,46 @@ export default async function InvestSubcategoryListingsPage({
   const cat = getInvestCategoryBySlug(category);
   if (!cat) notFound();
   const sub = getSubcategoryBySlug(category, subcategory);
-  if (!sub) notFound();
+  if (!sub) {
+    // Not a subcategory — resolve a single listing by slug, else show a
+    // friendly empty state. Never notFound()/crash: this is what makes
+    // listing detail pages work for categories with no bespoke [slug]
+    // route (funds, private-equity, royalties, venture-capital, …), which
+    // previously 500'd in production.
+    // Resolve a single listing by slug — NOT vertical-scoped. listingUrl's
+    // category comes from categoryForListing, whose `?? "funds"` fallback
+    // buckets unmapped verticals (e.g. listed securities) into /invest/funds,
+    // so a vertical filter misses them. Look up by slug, then verify the
+    // listing actually belongs to this URL category; else a friendly empty
+    // state. (limit(5) guards the unlikely duplicate-slug case.)
+    const supabaseForDetail = await createClient();
+    const { data: rows } = await supabaseForDetail
+      .from("investment_listings")
+      .select("*")
+      .eq("slug", subcategory)
+      .eq("status", "active")
+      .limit(5);
+    const listing = ((rows ?? []) as InvestmentListing[]).find(
+      (r) => categoryForListing(r) === category,
+    );
+    if (listing) {
+      const related = await fetchRelatedListings(
+        listing.vertical as InvestListingVertical,
+        subcategory,
+        listing.sub_category,
+        3,
+      );
+      return (
+        <ListingDetailView
+          listing={listing as unknown as CardListing}
+          relatedListings={related as unknown as CardListing[]}
+          categorySlug={category}
+          categoryLabel={cat.label}
+        />
+      );
+    }
+    return <ListingsEmptyState categoryLabel={cat.label} categorySlug={category} />;
+  }
 
   const supabase = await createClient();
   const filter = getCategoryDbFilter(cat);
@@ -76,7 +156,7 @@ export default async function InvestSubcategoryListingsPage({
     .from("investment_listings")
     .select("*")
     .eq("status", "active")
-    .in("vertical", filter.verticals)
+    .in("vertical", filter.verticals.flatMap(rawVerticalVariants))
     .eq("sub_category", sub.dbValue)
     .order("created_at", { ascending: false });
 

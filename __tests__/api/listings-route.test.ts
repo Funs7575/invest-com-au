@@ -99,10 +99,19 @@ describe("GET /api/listings", () => {
     expect(types[2]).toBe("standard");
   });
 
-  it("applies vertical filter when provided", async () => {
+  it("applies vertical filter when provided (alias-aware .in)", async () => {
     const b = setupQuery([]);
     await GET(makeGet({ vertical: "property" }));
-    expect(b.eq).toHaveBeenCalledWith("vertical", "property");
+    // A vertical with no drift variants resolves to a single-element .in().
+    expect(b.in).toHaveBeenCalledWith("vertical", ["property"]);
+  });
+
+  it("expands a drift-aliased vertical to all its raw variants", async () => {
+    const b = setupQuery([]);
+    await GET(makeGet({ vertical: "energy" }));
+    // energy ↔ renewable-energy is a known seed-drift pair; the API must
+    // match the site's alias-aware bucketing (lib/listing-url).
+    expect(b.in).toHaveBeenCalledWith("vertical", ["energy", "renewable-energy"]);
   });
 
   it("applies state filter when provided", async () => {
