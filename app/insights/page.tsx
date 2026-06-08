@@ -38,8 +38,30 @@ import {
   type CurrentMarketSnapshot, // used in datasetJsonLd param
 } from "@/lib/market-intelligence";
 import Sparkline from "@/components/Sparkline";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 // ─── Page config ─────────────────────────────────────────────────────────────
+
+const INSIGHTS_FAQS = [
+  {
+    q: "What is the Australian Investing Index?",
+    a: "The Australian Investing Index is Invest.com.au's live aggregation of retail investing market data, updated daily. It covers the brokerage fee index (mean and median ASX, US, and FX fees across all tracked platforms), the Investor Health Score distribution (aggregate platform quality ratings), and advisor supply by state. All outputs are descriptive statistics drawn from Invest.com.au's own fee snapshots, platform health records, and advisor directory.",
+  },
+  {
+    q: "How often is the brokerage fee data in the Australian Investing Index updated?",
+    a: "The fee index draws on daily fee snapshots captured from every tracked platform's pricing page and PDS. The page itself revalidates every hour (ISR). Historical trend lines show the rolling 30-day window so you can see whether average fees have been rising or falling.",
+  },
+  {
+    q: "What platforms are included in the brokerage fee index?",
+    a: "Every Australian share trading platform actively tracked by Invest.com.au is included — currently 50+ platforms covering ASX-only, international, crypto, robo-advisors, and multi-asset platforms. Platforms must have at least one verified fee data point to appear in the index. The active platform count is shown at the top of the page for the latest data period.",
+  },
+  {
+    q: "What is the Investor Health Score?",
+    a: "The Investor Health Score is Invest.com.au's weighted platform quality rating (0–100) covering five dimensions: fees (25%), product range (20%), safety (20%), platform features (20%), and user experience (15%). The Health Score Distribution chart on this page shows how many platforms fall in each score band, giving you a market-level view of average platform quality.",
+  },
+];
+
+const insightsFaqLd = faqJsonLd(INSIGHTS_FAQS);
 
 export const revalidate = 3600; // 1 hour ISR
 
@@ -362,6 +384,9 @@ export default async function InsightsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(dataset) }}
       />
+      {insightsFaqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(insightsFaqLd) }} />
+      )}
 
       <div className="pt-5 pb-12 md:py-12">
         <div className="container-custom max-w-4xl">
@@ -591,6 +616,22 @@ export default async function InsightsPage() {
               Read the report →
             </Link>
           </div>
+
+          {/* FAQ */}
+          <section className="mb-8 border-t border-slate-200 pt-8">
+            <h2 className="text-base font-bold text-slate-900 mb-4">Frequently asked questions</h2>
+            <div className="space-y-3">
+              {INSIGHTS_FAQS.map((faq) => (
+                <details key={faq.q} className="group rounded-xl border border-slate-200 bg-slate-50">
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 px-5 py-4 font-semibold text-slate-900 list-none text-sm">
+                    {faq.q}
+                    <span className="shrink-0 text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
 
           {/* Compliance */}
           <div className="space-y-2 text-[0.7rem] leading-relaxed text-slate-500 md:text-xs">
