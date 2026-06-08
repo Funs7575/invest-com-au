@@ -839,3 +839,13 @@ All items ADV-070 through ADV-178 are shipped — see Resolved section below. Re
 **[ADV-327]** Concierge: citation visual design — citation pill badges — Changed the inline "Sources: link · link" text at the bottom of AI messages to distinct pill badges (`rounded-full`, amber hover state). Each badge is individually tappable on mobile and visually separated from the message body. `app/concierge/ConciergeClient.tsx`
 
 **[ADV-328]** Concierge: starters horizontal scroll on mobile — Starter suggestion chips were `flex-wrap` causing uneven line-wrapping on small phones. Changed to `overflow-x-auto` horizontal scroll on `< sm` breakpoint with hidden scrollbar, wrapping normally on `sm+`. Added `shrink-0` to chips so they don't compress. `app/concierge/ConciergeClient.tsx`
+
+**[ADV-329]** Compare: mobile sort state indicator on Filter & Sort button — After applying a non-default sort in the bottom sheet, the mobile button reverted to "Filter & Sort" giving users no feedback that a sort was active. Button label now shows "Sort: {label} ↑↓" when a non-default sort is selected. `app/compare/CompareClient.tsx`
+
+**[ADV-330]** Homepage: goal chips horizontal scroll on mobile — `HomeGetMatched` goal-chip strip was `flex-wrap`, causing chips to wrap into cramped multi-row on phones < 640px. Added `flex-nowrap` + `overflow-x-auto` at `< sm` breakpoint. `components/HomeGetMatched.tsx`
+
+**[ADV-331]** Reading progress bar on 7 long guide pages — `ArticleReadingProgress` (thin teal→blue fixed bar) was only on article/[slug] pages but not on the long guide pages. Added to 7 guides (IBKR setup, CHESS vs custodial, FIRB, buy-property-foreigner, non-resident bank account, property ban 2025, stamp-duty-foreign-buyers). Each is 370–710 lines long.
+
+**[ADV-332]** Calculator touch targets — `InputField` and `SelectField` in CalcShared were `py-2`/`py-2.5` (~32–40px) on mobile, below the 44px minimum touch target. Added `min-h-11` (44px). TradeCostCalculator quick-preset chips (py-1.5 = 32px) bumped to `py-2`. `app/calculators/_components/CalcShared.tsx`, `TradeCostCalculator.tsx`
+
+**[ADV-333]** Score email input touch target + Compare card label readability — Score email capture input was `py-2.5` (~40px, marginal). Bumped to `py-3 min-h-11`. Compare mobile card column labels were `text-[0.62rem]` (~10px) — bumped to `text-xs` (~12px) for readability on <375px screens. `app/score/ScoreClient.tsx`, `app/compare/CompareClient.tsx`

@@ -133,7 +133,7 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
               setUsTradesMonth(p.us);
               setTradeAmount(p.amt);
             }}
-            className="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 transition-colors"
+            className="px-3 py-2 min-h-9 rounded-full text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 transition-colors"
           >
             {p.label}
           </button>
