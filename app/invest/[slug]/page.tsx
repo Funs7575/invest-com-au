@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, absoluteUrl, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
 import { logger } from "@/lib/logger";
@@ -744,6 +745,26 @@ export default async function InvestVerticalPage({
 
   const showIntlBadge = v.domestic && v.international;
 
+  const verticalFaqs = [
+    {
+      q: `How do I invest in ${v.name} in Australia?`,
+      a: `${v.description ? v.description + " " : ""}Australians can typically access ${v.name.toLowerCase()} investment through ASX-listed companies or funds, managed funds with relevant exposure, or direct investment (subject to FIRB requirements for some asset classes). The best approach depends on your investment size, time horizon, and risk appetite. We recommend consulting a specialist financial adviser before committing capital. Use our advisor matching tool at invest.com.au/find-advisor to connect with a ${v.name.toLowerCase()} specialist.`,
+    },
+    {
+      q: `What are the risks of investing in ${v.name}?`,
+      a: `Like all investments, ${v.name.toLowerCase()} carries risk. Specific risk factors may include market and commodity price volatility, regulatory and licensing changes, liquidity risk (especially for private or unlisted assets), currency risk for international exposure, and concentration risk if your portfolio lacks diversification. Always read the Product Disclosure Statement (PDS) for any managed fund or investment product, and seek personalised financial advice before investing. Past performance is not a reliable indicator of future performance.`,
+    },
+    {
+      q: `Is ${v.name} investment in Australia regulated?`,
+      a: `Investment products offering exposure to ${v.name.toLowerCase()} are regulated by ASIC (Australian Securities and Investments Commission) under the Corporations Act 2001. Fund managers, advisers, and financial services providers must hold an Australian Financial Services Licence (AFSL). Foreign investment in certain ${v.name.toLowerCase()} assets may also require FIRB (Foreign Investment Review Board) approval. Always verify that any provider you deal with holds a current AFSL at connect.asic.gov.au.`,
+    },
+    {
+      q: `Can I get personalised advice on ${v.name} investments?`,
+      a: `Yes. The content on this page is general financial information only — it does not take into account your personal financial situation, needs, or objectives. For personalised advice on ${v.name.toLowerCase()} investment strategy, structure, and tax treatment, use our advisor matching tool at invest.com.au/find-advisor to connect with a verified, AFSL-licensed specialist.`,
+    },
+  ];
+  const verticalFaqLd = faqJsonLd(verticalFaqs);
+
   return (
     <div>
       <script
@@ -753,6 +774,10 @@ export default async function InvestVerticalPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(verticalFaqLd) }}
       />
 
       {/* Hero */}
@@ -854,6 +879,34 @@ export default async function InvestVerticalPage({
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ accordion */}
+      <section className="py-10 bg-white border-t border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-xl font-bold text-slate-900 mb-6">
+            Frequently asked questions — {v.name} investing in Australia
+          </h2>
+          <div className="divide-y divide-slate-100">
+            {verticalFaqs.map(({ q, a }) => (
+              <details key={q} className="group py-4">
+                <summary className="flex items-center justify-between cursor-pointer list-none text-slate-800 font-medium text-sm leading-snug gap-4">
+                  {q}
+                  <svg
+                    className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="mt-3 text-sm text-slate-600 leading-relaxed">{a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
