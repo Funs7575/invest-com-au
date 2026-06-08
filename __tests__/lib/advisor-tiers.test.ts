@@ -119,6 +119,77 @@ describe("prorateUpgradeCents", () => {
     // Annual is roughly 10× monthly (12 months at ~20% discount)
     expect(annual).toBeGreaterThan(monthly);
   });
+
+  // ── clamp: daysRemaining must be bounded to [0, cycleDays] ───────────────────
+  // Regression guard for the unclamped-proration finding: an over-cycle
+  // daysRemaining (e.g. annual sub's ~365 days against a 30-day cycle) must NOT
+  // inflate the multiplier beyond 1.0, and a negative daysRemaining must NOT
+  // flip the sign.
+
+  describe("clamp — daysRemaining bounded to [0, cycleDays]", () => {
+    it("daysRemaining > cycleDays is clamped to cycleDays (multiplier capped at 1.0)", () => {
+      // free→growth monthly: full-cycle credit is the full price difference (4900).
+      const fullCycle = prorateUpgradeCents("free", "growth", 30, 30);
+      const overCycle = prorateUpgradeCents("free", "growth", 60, 30);
+      expect(overCycle).toBe(fullCycle);
+      expect(overCycle).toBe(4900); // not 9800 (the pre-fix doubled value)
+    });
+
+    it("annual downgrade with ~365 days against a 30-day cycle is capped at one cycle's credit", () => {
+      // The exact scenario from the finding: elite→pro deferred downgrade, annual,
+      // daysRemaining≈365, cycleDays=30. Pre-fix this returned ≈ -4,087,000
+      // (~$40,870 credit). Clamped, it equals the full-cycle (30/30) credit.
+      const clamped = prorateUpgradeCents("elite", "pro", 365, 30, "annual");
+      const fullCycle = prorateUpgradeCents("elite", "pro", 30, 30, "annual");
+      expect(clamped).toBe(fullCycle);
+      // Full annual cycle credit = pro annual (143000) - elite annual (479000) = -336000.
+      expect(clamped).toBe(143000 - 479000);
+      // Credit owed must never exceed the highest annual plan price the advisor
+      // could have paid (elite annual = 479000).
+      expect(Math.abs(clamped)).toBeLessThanOrEqual(479000);
+    });
+
+    it("downgrade credit ratio can never exceed 1.0 of the full price difference", () => {
+      const fullDiff = prorateUpgradeCents("elite", "free", 30, 30); // most negative possible
+      const overCycle = prorateUpgradeCents("elite", "free", 999, 30);
+      expect(overCycle).toBe(fullDiff);
+      expect(overCycle).toBeGreaterThanOrEqual(fullDiff); // not more negative than a full cycle
+    });
+
+    it("negative daysRemaining is clamped to 0 (returns 0, never sign-flipped)", () => {
+      expect(prorateUpgradeCents("free", "growth", -5, 30)).toBe(0);
+      // A downgrade with negative days must not become a positive charge.
+      expect(prorateUpgradeCents("elite", "free", -100, 30)).toBe(0);
+    });
+
+    it("daysRemaining exactly equal to cycleDays is unaffected (boundary)", () => {
+      expect(prorateUpgradeCents("free", "growth", 30, 30)).toBe(4900);
+    });
+
+    it("over-cycle never over-credits for any downgrade pair (annual + monthly)", () => {
+      const pairs: [AdvisorTier, AdvisorTier][] = [
+        ["elite", "pro"],
+        ["elite", "growth"],
+        ["elite", "free"],
+        ["pro", "growth"],
+        ["growth", "free"],
+      ];
+      for (const billing of ["monthly", "annual"] as const) {
+        for (const [from, to] of pairs) {
+          const fullCycle = prorateUpgradeCents(from, to, 30, 30, billing);
+          const overCycle = prorateUpgradeCents(from, to, 400, 30, billing);
+          // Clamped over-cycle equals the full-cycle figure exactly.
+          expect(overCycle).toBe(fullCycle);
+          // And the credit magnitude never exceeds the from-tier's full price.
+          const fromPrice =
+            billing === "annual"
+              ? getTier(from)!.annualPriceCents
+              : getTier(from)!.monthlyPriceCents;
+          expect(Math.abs(overCycle)).toBeLessThanOrEqual(fromPrice);
+        }
+      }
+    });
+  });
 });
 
 // ── isUpgrade ─────────────────────────────────────────────────────────────────
